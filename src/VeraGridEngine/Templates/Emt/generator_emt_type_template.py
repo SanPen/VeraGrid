@@ -9,182 +9,10 @@ from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block, find_name_in_block, Const
-from VeraGridEngine.enumerations import VarPowerFlowReferenceType, DeviceType, ParamPowerFlowReferenceType
-from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block, tf_to_diffblock_with_output, \
-    tf_to_block_with_states, tf_to_diffblock_with_antiwindup
-
-
-def _get_pf_phase_voltage_components(
-        v_phase: sym.Expr,
-        d_v_phase: sym.Expr,
-        omega_base: sym.Expr) -> tuple[sym.Expr, sym.Expr]:
-    """
-    Reconstruct the phase-voltage phasor components from EMT initialization references.
-
-    :param v_phase: Instantaneous phase voltage at ``t = 0``.
-    :param d_v_phase: Instantaneous phase-voltage derivative at ``t = 0``.
-    :param omega_base: Electrical base angular frequency.
-    :return: Tuple ``(v_real, v_imag)`` with the RMS phasor components.
-    """
-    c_sqrt_2: sym.Expr = sym.sqrt(2.0)
-    v_real: sym.Expr = d_v_phase / (omega_base * c_sqrt_2)
-    v_imag: sym.Expr = v_phase / c_sqrt_2
-    return v_real, v_imag
-
-
-def _get_pf_phase_current_components_from_power(
-        p_phase: sym.Expr,
-        q_phase: sym.Expr,
-        v_real: sym.Expr,
-        v_imag: sym.Expr) -> tuple[sym.Expr, sym.Expr]:
-    """
-    Reconstruct the phase-current phasor components from PF power and voltage references.
-
-    :param p_phase: Active power for the phase.
-    :param q_phase: Reactive power for the phase.
-    :param v_real: Real part of the phase-voltage phasor.
-    :param v_imag: Imaginary part of the phase-voltage phasor.
-    :return: Tuple ``(i_real, i_imag)`` with the RMS current phasor components.
-    """
-    voltage_sq: sym.Expr = v_real * v_real + v_imag * v_imag
-    i_real: sym.Expr = (p_phase * v_real + q_phase * v_imag) / voltage_sq
-    i_imag: sym.Expr = (p_phase * v_imag - q_phase * v_real) / voltage_sq
-    return i_real, i_imag
-
-
-def _get_positive_sequence_components(
-        phase_a_real: sym.Expr,
-        phase_a_imag: sym.Expr,
-        phase_b_real: sym.Expr,
-        phase_b_imag: sym.Expr,
-        phase_c_real: sym.Expr,
-        phase_c_imag: sym.Expr) -> tuple[sym.Expr, sym.Expr]:
-    """
-    Compute the positive-sequence phasor components from three phase phasors.
-
-    :param phase_a_real: Real part of phase A.
-    :param phase_a_imag: Imaginary part of phase A.
-    :param phase_b_real: Real part of phase B.
-    :param phase_b_imag: Imaginary part of phase B.
-    :param phase_c_real: Real part of phase C.
-    :param phase_c_imag: Imaginary part of phase C.
-    :return: Tuple ``(positive_real, positive_imag)``.
-    """
-    c_half: sym.Expr = 0.5
-    c_sqrt_3_over_2: sym.Expr = sym.sqrt(3.0) / 2.0
-    positive_real: sym.Expr = (
-        phase_a_real
-        - c_half * phase_b_real
-        - c_sqrt_3_over_2 * phase_b_imag
-        - c_half * phase_c_real
-        + c_sqrt_3_over_2 * phase_c_imag
-    ) / 3.0
-    positive_imag: sym.Expr = (
-        phase_a_imag
-        - c_half * phase_b_imag
-        + c_sqrt_3_over_2 * phase_b_real
-        - c_half * phase_c_imag
-        - c_sqrt_3_over_2 * phase_c_real
-    ) / 3.0
-    return positive_real, positive_imag
-
-
-def get_pf_positive_sequence_init_refs(
-        v_a: sym.Expr,
-        v_b: sym.Expr,
-        v_c: sym.Expr,
-        d_v_a: sym.Expr,
-        d_v_b: sym.Expr,
-        d_v_c: sym.Expr,
-        p_a: sym.Expr,
-        q_a: sym.Expr,
-        p_b: sym.Expr,
-        q_b: sym.Expr,
-        p_c: sym.Expr,
-        q_c: sym.Expr,
-        omega_base: sym.Expr) -> tuple[sym.Expr, sym.Expr, sym.Expr, sym.Expr]:
-    """
-    Compute generator initialization references from PF voltage and power inputs.
-
-    :param v_a: Instantaneous phase-A voltage at ``t = 0``.
-    :param v_b: Instantaneous phase-B voltage at ``t = 0``.
-    :param v_c: Instantaneous phase-C voltage at ``t = 0``.
-    :param d_v_a: Instantaneous derivative of phase-A voltage at ``t = 0``.
-    :param d_v_b: Instantaneous derivative of phase-B voltage at ``t = 0``.
-    :param d_v_c: Instantaneous derivative of phase-C voltage at ``t = 0``.
-    :param p_a: Active power in phase A.
-    :param q_a: Reactive power in phase A.
-    :param p_b: Active power in phase B.
-    :param q_b: Reactive power in phase B.
-    :param p_c: Active power in phase C.
-    :param q_c: Reactive power in phase C.
-    :param omega_base: Electrical base angular frequency.
-    :return: Tuple ``(phi_v, phi, vpk, ipk)``.
-    """
-    v_a_real: sym.Expr
-    v_a_imag: sym.Expr
-    v_b_real: sym.Expr
-    v_b_imag: sym.Expr
-    v_c_real: sym.Expr
-    v_c_imag: sym.Expr
-    v_a_real, v_a_imag = _get_pf_phase_voltage_components(v_phase=v_a, d_v_phase=d_v_a, omega_base=omega_base)
-    v_b_real, v_b_imag = _get_pf_phase_voltage_components(v_phase=v_b, d_v_phase=d_v_b, omega_base=omega_base)
-    v_c_real, v_c_imag = _get_pf_phase_voltage_components(v_phase=v_c, d_v_phase=d_v_c, omega_base=omega_base)
-
-    i_a_real: sym.Expr
-    i_a_imag: sym.Expr
-    i_b_real: sym.Expr
-    i_b_imag: sym.Expr
-    i_c_real: sym.Expr
-    i_c_imag: sym.Expr
-    i_a_real, i_a_imag = _get_pf_phase_current_components_from_power(
-        p_phase=p_a,
-        q_phase=q_a,
-        v_real=v_a_real,
-        v_imag=v_a_imag,
-    )
-    i_b_real, i_b_imag = _get_pf_phase_current_components_from_power(
-        p_phase=p_b,
-        q_phase=q_b,
-        v_real=v_b_real,
-        v_imag=v_b_imag,
-    )
-    i_c_real, i_c_imag = _get_pf_phase_current_components_from_power(
-        p_phase=p_c,
-        q_phase=q_c,
-        v_real=v_c_real,
-        v_imag=v_c_imag,
-    )
-
-    v1_real: sym.Expr
-    v1_imag: sym.Expr
-    i1_real: sym.Expr
-    i1_imag: sym.Expr
-    v1_real, v1_imag = _get_positive_sequence_components(
-        phase_a_real=v_a_real,
-        phase_a_imag=v_a_imag,
-        phase_b_real=v_b_real,
-        phase_b_imag=v_b_imag,
-        phase_c_real=v_c_real,
-        phase_c_imag=v_c_imag,
-    )
-    i1_real, i1_imag = _get_positive_sequence_components(
-        phase_a_real=i_a_real,
-        phase_a_imag=i_a_imag,
-        phase_b_real=i_b_real,
-        phase_b_imag=i_b_imag,
-        phase_c_real=i_c_real,
-        phase_c_imag=i_c_imag,
-    )
-
-    phi_v: sym.Expr = sym.atan2(v1_imag, v1_real)
-    phi_i: sym.Expr = sym.atan2(i1_imag, i1_real)
-    delta_phi: sym.Expr = phi_i - phi_v
-    phi: sym.Expr = sym.atan2(sym.sin(delta_phi), sym.cos(delta_phi))
-    vpk: sym.Expr = sym.sqrt(2.0) * sym.sqrt(v1_real * v1_real + v1_imag * v1_imag)
-    ipk: sym.Expr = sym.sqrt(2.0) * sym.sqrt(i1_real * i1_real + i1_imag * i1_imag)
-    return phi_v, phi, vpk, ipk
-
+from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, DeviceType, ParamPowerFlowRefferenceType
+from VeraGridEngine.Templates.templates_common_functions import (tf_to_block, tf_to_diffblock_with_output,
+                                                                 tf_to_diffblock_with_antiwindup,
+                                                                 tf_to_block_with_states)
 
 def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_type_generator_template") -> EmtModelTemplate:
     """
@@ -203,22 +31,18 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
     # --------------------------------------------------------------------------------------
     # Inputs: instantaneous abc terminal voltages in pu (at bus)
     # --------------------------------------------------------------------------------------
-    v_A = vf.add_var(name=f"v_A_{name}", reference= VarPowerFlowReferenceType.v_A)
-    v_B = vf.add_var(name=f"v_B_{name}", reference= VarPowerFlowReferenceType.v_B)
-    v_C = vf.add_var(name=f"v_C_{name}", reference= VarPowerFlowReferenceType.v_C)
+    v_A = vf.add_var(name=f"v_A_{name}", reference= VarPowerFlowRefferenceType.v_A)
+    v_B = vf.add_var(name=f"v_B_{name}", reference= VarPowerFlowRefferenceType.v_B)
+    v_C = vf.add_var(name=f"v_C_{name}", reference= VarPowerFlowRefferenceType.v_C)
     Tm = vf.add_var(name=f"Tm_{name}")
     v_f = vf.add_var(name=f"v_f_{name}")
 
-    d_v_A = vf.add_var(name=f"d_v_A_{name}", reference=VarPowerFlowReferenceType.d_v_A)
-    d_v_B = vf.add_var(name=f"d_v_B_{name}", reference=VarPowerFlowReferenceType.d_v_B)
-    d_v_C = vf.add_var(name=f"d_v_C_{name}", reference=VarPowerFlowReferenceType.d_v_C)
-    p_A = vf.add_var(name=f"P_A_{name}", reference=VarPowerFlowReferenceType.P_A)
-    q_A = vf.add_var(name=f"Q_A_{name}", reference=VarPowerFlowReferenceType.Q_A)
-    p_B = vf.add_var(name=f"P_B_{name}", reference=VarPowerFlowReferenceType.P_B)
-    q_B = vf.add_var(name=f"Q_B_{name}", reference=VarPowerFlowReferenceType.Q_B)
-    p_C = vf.add_var(name=f"P_C_{name}", reference=VarPowerFlowReferenceType.P_C)
-    q_C = vf.add_var(name=f"Q_C_{name}", reference=VarPowerFlowReferenceType.Q_C)
-    inputs = [v_A, v_B, v_C, Tm, v_f]
+    # to connect complete block with gen block
+    Ipk = vf.add_var(name="Ipk", reference= VarPowerFlowRefferenceType.Ipk)
+    Vpk = vf.add_var(name="Vpk", reference= VarPowerFlowRefferenceType.Vpk)
+    phi = vf.add_var(name="phi", reference= VarPowerFlowRefferenceType.phi)
+    phi_v = vf.add_var(name="phi_v", reference= VarPowerFlowRefferenceType.phi_v)
+    inputs = [v_A, v_B, v_C, Tm, v_f, phi_v, phi, Vpk, Ipk]
     # --------------------------------------------------------------------------------------
     # States (pu, except theta [rad])
     # --------------------------------------------------------------------------------------
@@ -242,9 +66,9 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
     # --------------------------------------------------------------------------------------
     # Algebraic eqs
     # --------------------------------------------------------------------------------------
-    i_A = vf.add_var(name=f"i_A_{name}", reference= VarPowerFlowReferenceType.i_A)
-    i_B = vf.add_var(name=f"i_B_{name}", reference= VarPowerFlowReferenceType.i_B)
-    i_C = vf.add_var(name=f"i_C_{name}", reference= VarPowerFlowReferenceType.i_C)
+    i_A = vf.add_var(name=f"i_A_{name}", reference= VarPowerFlowRefferenceType.i_A)
+    i_B = vf.add_var(name=f"i_B_{name}", reference= VarPowerFlowRefferenceType.i_B)
+    i_C = vf.add_var(name=f"i_C_{name}", reference= VarPowerFlowRefferenceType.i_C)
 
     # dq0 voltages
     v_d = vf.add_var("v_d_" + name)
@@ -284,26 +108,6 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
 
     omega_ref = vf.add_var("omega_ref")  # pu
     delta = vf.add_var("delta_" + name)  # difference between rotor angle and grid angle
-
-    phi_v_init: sym.Expr
-    phi_init: sym.Expr
-    vpk_init: sym.Expr
-    ipk_init: sym.Expr
-    phi_v_init, phi_init, vpk_init, ipk_init = get_pf_positive_sequence_init_refs(
-        v_a=v_A,
-        v_b=v_B,
-        v_c=v_C,
-        d_v_a=d_v_A,
-        d_v_b=d_v_B,
-        d_v_c=d_v_C,
-        p_a=p_A,
-        q_a=q_A,
-        p_b=p_B,
-        q_b=q_B,
-        p_c=p_C,
-        q_c=q_C,
-        omega_base=omega_base,
-    )
 
     templ.block = Block(
         # --------------------------------------------------------------------------------------
@@ -366,31 +170,26 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
     # --------------------------------------------------------------------------------------
 
     templ.block.external_mapping = {
-        # VarPowerFlowReferenceType.P_N: None,
-        # VarPowerFlowReferenceType.Q_N: None,
-        # VarPowerFlowReferenceType.P_A: None,
-        # VarPowerFlowReferenceType.Q_A: None,
-        # VarPowerFlowReferenceType.P_B: None,
-        # VarPowerFlowReferenceType.Q_B: None,
-        # VarPowerFlowReferenceType.P_C: None,
-        # VarPowerFlowReferenceType.Q_C: None,
-        # VarPowerFlowReferenceType.i_N: None,
-        VarPowerFlowReferenceType.i_A: i_A,
-        VarPowerFlowReferenceType.i_B: i_B,
-        VarPowerFlowReferenceType.i_C: i_C,
-        VarPowerFlowReferenceType.d_v_A: d_v_A,
-        VarPowerFlowReferenceType.d_v_B: d_v_B,
-        VarPowerFlowReferenceType.d_v_C: d_v_C,
-        VarPowerFlowReferenceType.P_A: p_A,
-        VarPowerFlowReferenceType.Q_A: q_A,
-        VarPowerFlowReferenceType.P_B: p_B,
-        VarPowerFlowReferenceType.Q_B: q_B,
-        VarPowerFlowReferenceType.P_C: p_C,
-        VarPowerFlowReferenceType.Q_C: q_C,
-        # VarPowerFlowReferenceType.d_v_N: None,
-        # VarPowerFlowReferenceType.d_v_A: None,
-        # VarPowerFlowReferenceType.d_v_B: None,
-        # VarPowerFlowReferenceType.d_v_C: None,
+        VarPowerFlowRefferenceType.P_N: None,
+        VarPowerFlowRefferenceType.Q_N: None,
+        VarPowerFlowRefferenceType.P_A: None,
+        VarPowerFlowRefferenceType.Q_A: None,
+        VarPowerFlowRefferenceType.P_B: None,
+        VarPowerFlowRefferenceType.Q_B: None,
+        VarPowerFlowRefferenceType.P_C: None,
+        VarPowerFlowRefferenceType.Q_C: None,
+        VarPowerFlowRefferenceType.i_N: None,
+        VarPowerFlowRefferenceType.i_A: i_A,
+        VarPowerFlowRefferenceType.i_B: i_B,
+        VarPowerFlowRefferenceType.i_C: i_C,
+        VarPowerFlowRefferenceType.phi_v: phi_v,
+        VarPowerFlowRefferenceType.phi: phi,
+        VarPowerFlowRefferenceType.Vpk: Vpk,
+        VarPowerFlowRefferenceType.Ipk: Ipk,
+        VarPowerFlowRefferenceType.d_v_N: None,
+        VarPowerFlowRefferenceType.d_v_A: None,
+        VarPowerFlowRefferenceType.d_v_B: None,
+        VarPowerFlowRefferenceType.d_v_C: None,
     }
 
 
@@ -408,22 +207,18 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
         R0:         vf.add_const(0.001),
         omega_ref:  vf.add_const(1.0),
         Lmd: Ld - La,
-        d_v_A: vf.add_const(None),
-        d_v_B: vf.add_const(None),
-        d_v_C: vf.add_const(None),
-        p_A: vf.add_const(None),
-        q_A: vf.add_const(None),
-        p_B: vf.add_const(None),
-        q_B: vf.add_const(None),
-        p_C: vf.add_const(None),
-        q_C: vf.add_const(None),
+        # init-only external auxiliary values
+        phi_v: vf.add_const(None),
+        phi: vf.add_const(None),
+        Vpk: vf.add_const(None),
+        Ipk: vf.add_const(None),
         delta: vf.add_const(None),
     }
     templ.block.api_obj_mapping = {
-        ParamPowerFlowReferenceType.omega_base : omega_base,
-        ParamPowerFlowReferenceType.R1: Ra,
-        ParamPowerFlowReferenceType.X1: Ld,
-        ParamPowerFlowReferenceType.X0: L0,
+        ParamPowerFlowRefferenceType.omega_base : omega_base,
+        ParamPowerFlowRefferenceType.R1: Ra,
+        ParamPowerFlowRefferenceType.X1: Ld,
+        ParamPowerFlowRefferenceType.X0: L0,
     }
 
 
@@ -434,10 +229,10 @@ def get_simple_generator_emt_template(vf: VarFactory, name: str = "simple_emt_ty
     templ.block.init_eqs = {
         omega: omega_ref,
         delta: sym.atan(
-            (Ra * ipk_init * sym.sin(phi_init) - omega * (Lmq + La) * ipk_init * sym.cos(phi_init)) /
-            (vpk_init + Ra * ipk_init * sym.cos(phi_init) + omega * (Lmq + La) * ipk_init * sym.sin(phi_init))
+            ( Ra * Ipk * sym.sin(phi) - omega * (Lmq + La) * Ipk * sym.cos(phi)) /
+            (Vpk + Ra * Ipk * sym.cos(phi) + omega * (Lmq + La) * Ipk * sym.sin(phi))
         ),
-        theta: phi_v_init + delta,
+        theta: phi_v + delta,
 
         v_d: 2 / 3 * (sym.sin(theta) * inputs[0] +
                       sym.sin(theta - 2 * np.pi / 3) * inputs[1] +
@@ -510,22 +305,17 @@ def get_generator_emt_type_template(vf: VarFactory, name: str = "emt_type_genera
     # ----------------------------------------------------------------------------------
     # Inputs: instantaneous abc terminal voltages at the bus
     # ----------------------------------------------------------------------------------
-    v_A = vf.add_var("v_A_" + name, reference=VarPowerFlowReferenceType.v_A)
-    v_B = vf.add_var("v_B_" + name, reference=VarPowerFlowReferenceType.v_B)
-    v_C = vf.add_var("v_C_" + name, reference=VarPowerFlowReferenceType.v_C)
+    v_A = vf.add_var("v_A_" + name)
+    v_B = vf.add_var("v_B_" + name)
+    v_C = vf.add_var("v_C_" + name)
     Tm = vf.add_var("Tm_" + name)
     v_f = vf.add_var("v_f_" + name)
 
-    d_v_A = vf.add_var("d_v_A_" + name, reference=VarPowerFlowReferenceType.d_v_A)
-    d_v_B = vf.add_var("d_v_B_" + name, reference=VarPowerFlowReferenceType.d_v_B)
-    d_v_C = vf.add_var("d_v_C_" + name, reference=VarPowerFlowReferenceType.d_v_C)
-    p_A = vf.add_var("P_A_" + name, reference=VarPowerFlowReferenceType.P_A)
-    q_A = vf.add_var("Q_A_" + name, reference=VarPowerFlowReferenceType.Q_A)
-    p_B = vf.add_var("P_B_" + name, reference=VarPowerFlowReferenceType.P_B)
-    q_B = vf.add_var("Q_B_" + name, reference=VarPowerFlowReferenceType.Q_B)
-    p_C = vf.add_var("P_C_" + name, reference=VarPowerFlowReferenceType.P_C)
-    q_C = vf.add_var("Q_C_" + name, reference=VarPowerFlowReferenceType.Q_C)
-    inputs = [v_A, v_B, v_C, Tm, v_f]
+    Ipk = vf.add_var("Ipk_" + name)
+    Vpk = vf.add_var("Vpk_" + name)
+    phi = vf.add_var("phi_" + name)
+    phi_v = vf.add_var("phi_v_" + name)
+    inputs = [v_A, v_B, v_C, Tm, v_f, phi_v, phi, Vpk, Ipk]
 
     # ----------------------------------------------------------------------------------
     # State variables
@@ -568,9 +358,9 @@ def get_generator_emt_type_template(vf: VarFactory, name: str = "emt_type_genera
     v_0 = vf.add_var("v_0_" + name)
 
     # abc stator currents (positive when machine injects into the bus)
-    i_A = vf.add_var("i_A_" + name, reference=VarPowerFlowReferenceType.i_A)
-    i_B = vf.add_var("i_B_" + name, reference=VarPowerFlowReferenceType.i_B)
-    i_C = vf.add_var("i_C_" + name, reference=VarPowerFlowReferenceType.i_C)
+    i_A = vf.add_var("i_A_" + name)
+    i_B = vf.add_var("i_B_" + name)
+    i_C = vf.add_var("i_C_" + name)
 
     # dq0 and rotor currents
     i_d = vf.add_var("i_d_" + name)
@@ -651,26 +441,6 @@ def get_generator_emt_type_template(vf: VarFactory, name: str = "emt_type_genera
     # ----------------------------------------------------------------------------------
     delta = vf.add_var("delta_" + name)
 
-    phi_v_init: sym.Expr
-    phi_init: sym.Expr
-    vpk_init: sym.Expr
-    ipk_init: sym.Expr
-    phi_v_init, phi_init, vpk_init, ipk_init = get_pf_positive_sequence_init_refs(
-        v_a=v_A,
-        v_b=v_B,
-        v_c=v_C,
-        d_v_a=d_v_A,
-        d_v_b=d_v_B,
-        d_v_c=d_v_C,
-        p_a=p_A,
-        q_a=q_A,
-        p_b=p_B,
-        q_b=q_B,
-        p_c=p_C,
-        q_c=q_C,
-        omega_base=omega_base,
-    )
-
     # ----------------------------------------------------------------------------------
     # MODEL EQUATIONS
     # ----------------------------------------------------------------------------------
@@ -750,31 +520,26 @@ def get_generator_emt_type_template(vf: VarFactory, name: str = "emt_type_genera
     # External Mapping (Connecting to Grid/Power Flow)
     # ----------------------------------------------------------------------------------
     templ.block.external_mapping = {
-        # VarPowerFlowReferenceType.P_N: None,
-        # VarPowerFlowReferenceType.Q_N: None,
-        # VarPowerFlowReferenceType.P_A: None,
-        # VarPowerFlowReferenceType.Q_A: None,
-        # VarPowerFlowReferenceType.P_B: None,
-        # VarPowerFlowReferenceType.Q_B: None,
-        # VarPowerFlowReferenceType.P_C: None,
-        # VarPowerFlowReferenceType.Q_C: None,
-        # VarPowerFlowReferenceType.i_N: None,
-        VarPowerFlowReferenceType.i_A: i_A,
-        VarPowerFlowReferenceType.i_B: i_B,
-        VarPowerFlowReferenceType.i_C: i_C,
-        VarPowerFlowReferenceType.d_v_A: d_v_A,
-        VarPowerFlowReferenceType.d_v_B: d_v_B,
-        VarPowerFlowReferenceType.d_v_C: d_v_C,
-        VarPowerFlowReferenceType.P_A: p_A,
-        VarPowerFlowReferenceType.Q_A: q_A,
-        VarPowerFlowReferenceType.P_B: p_B,
-        VarPowerFlowReferenceType.Q_B: q_B,
-        VarPowerFlowReferenceType.P_C: p_C,
-        VarPowerFlowReferenceType.Q_C: q_C,
-        # VarPowerFlowReferenceType.d_v_N: None,
-        # VarPowerFlowReferenceType.d_v_A: None,
-        # VarPowerFlowReferenceType.d_v_B: None,
-        # VarPowerFlowReferenceType.d_v_C: None,
+        VarPowerFlowRefferenceType.P_N: None,
+        VarPowerFlowRefferenceType.Q_N: None,
+        VarPowerFlowRefferenceType.P_A: None,
+        VarPowerFlowRefferenceType.Q_A: None,
+        VarPowerFlowRefferenceType.P_B: None,
+        VarPowerFlowRefferenceType.Q_B: None,
+        VarPowerFlowRefferenceType.P_C: None,
+        VarPowerFlowRefferenceType.Q_C: None,
+        VarPowerFlowRefferenceType.i_N: None,
+        VarPowerFlowRefferenceType.i_A: i_A,
+        VarPowerFlowRefferenceType.i_B: i_B,
+        VarPowerFlowRefferenceType.i_C: i_C,
+        VarPowerFlowRefferenceType.phi_v: phi_v,
+        VarPowerFlowRefferenceType.phi: phi,
+        VarPowerFlowRefferenceType.Vpk: Vpk,
+        VarPowerFlowRefferenceType.Ipk: Ipk,
+        VarPowerFlowRefferenceType.d_v_N: None,
+        VarPowerFlowRefferenceType.d_v_A: None,
+        VarPowerFlowRefferenceType.d_v_B: None,
+        VarPowerFlowRefferenceType.d_v_C: None,
     }
 
     # ----------------------------------------------------------------------------------
@@ -859,22 +624,17 @@ def get_generator_emt_type_template(vf: VarFactory, name: str = "emt_type_genera
         # Initialization auxiliaries obtained from PF
         # --------------------------------------------------------------------------
         delta: vf.add_const(None),
-        d_v_A: vf.add_const(None),
-        d_v_B: vf.add_const(None),
-        d_v_C: vf.add_const(None),
-        p_A: vf.add_const(None),
-        q_A: vf.add_const(None),
-        p_B: vf.add_const(None),
-        q_B: vf.add_const(None),
-        p_C: vf.add_const(None),
-        q_C: vf.add_const(None),
+        Ipk: vf.add_const(None),
+        Vpk: vf.add_const(None),
+        phi: vf.add_const(None),
+        phi_v: vf.add_const(None),
     }
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowReferenceType.omega_base: omega_base,
-        ParamPowerFlowReferenceType.R1: Ra,
-        ParamPowerFlowReferenceType.X1: Ld,
-        ParamPowerFlowReferenceType.X0: L0,
+        ParamPowerFlowRefferenceType.omega_base: omega_base,
+        ParamPowerFlowRefferenceType.R1: Ra,
+        ParamPowerFlowRefferenceType.X1: Ld,
+        ParamPowerFlowRefferenceType.X0: L0,
     }
 
     # ----------------------------------------------------------------------------------
@@ -888,9 +648,9 @@ def get_generator_emt_type_template(vf: VarFactory, name: str = "emt_type_genera
         w_mec: c1,
         w_elec: (0.5 * p_poles) * w_mec,
         # Rotor angle initialization based on Load Angle (delta)
-        delta: sym.atan((Ra * ipk_init * sym.sin(phi_init) - w_elec * Lq * ipk_init * sym.cos(phi_init)) / (
-                    vpk_init + Ra * ipk_init * sym.cos(phi_init) + w_elec * Lq * ipk_init * sym.sin(phi_init))),
-        theta_elec: phi_v_init + delta,
+        delta: sym.atan((Ra * Ipk * sym.sin(phi) - w_elec * Lq * Ipk * sym.cos(phi)) / (
+                    Vpk + Ra * Ipk * sym.cos(phi) + w_elec * Lq * Ipk * sym.sin(phi))),
+        theta_elec: phi_v + delta,
 
         # Terminal dq voltages and currents
         v_d: (2 / 3) * (sym.sin(theta_elec) * inputs[0] + sym.sin(theta_elec - two_pi_over_3) * inputs[1] + sym.sin(
@@ -1066,28 +826,24 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
     # ------------------------------------------------------------------
     # Inputs: abc terminal voltages + controller inputs
     # ------------------------------------------------------------------
-    v_A = vf.add_var("v_A_" + name, reference=VarPowerFlowReferenceType.v_A)
-    v_B = vf.add_var("v_B_" + name, reference=VarPowerFlowReferenceType.v_B)
-    v_C = vf.add_var("v_C_" + name, reference=VarPowerFlowReferenceType.v_C)
-    Tm = vf.add_var("Tm_" + name, shared_reference = "Tm_reference")
-    v_f = vf.add_var("v_f_" + name, shared_reference = "v_f_reference")
+    v_A = vf.add_var("v_A_" + name)
+    v_B = vf.add_var("v_B_" + name)
+    v_C = vf.add_var("v_C_" + name)
+    Tm = vf.add_var("Tm_" + name)
+    v_f = vf.add_var("v_f_" + name)
 
-    d_v_A = vf.add_var("d_v_A_" + name, reference=VarPowerFlowReferenceType.d_v_A)
-    d_v_B = vf.add_var("d_v_B_" + name, reference=VarPowerFlowReferenceType.d_v_B)
-    d_v_C = vf.add_var("d_v_C_" + name, reference=VarPowerFlowReferenceType.d_v_C)
-    p_A = vf.add_var("P_A_" + name, reference=VarPowerFlowReferenceType.P_A)
-    q_A = vf.add_var("Q_A_" + name, reference=VarPowerFlowReferenceType.Q_A)
-    p_B = vf.add_var("P_B_" + name, reference=VarPowerFlowReferenceType.P_B)
-    q_B = vf.add_var("Q_B_" + name, reference=VarPowerFlowReferenceType.Q_B)
-    p_C = vf.add_var("P_C_" + name, reference=VarPowerFlowReferenceType.P_C)
-    q_C = vf.add_var("Q_C_" + name, reference=VarPowerFlowReferenceType.Q_C)
-    inputs = [v_A, v_B, v_C, Tm, v_f]
-    #
+    Ipk = vf.add_var("Ipk_" + name)
+    Vpk = vf.add_var("Vpk_" + name)
+    phi = vf.add_var("phi_" + name)
+    phi_v = vf.add_var("phi_v_" + name)
+    inputs = [v_A, v_B, v_C, Tm, v_f, phi_v, phi, Vpk, Ipk]
+
     # ------------------------------------------------------------------
     # State variables
     # ------------------------------------------------------------------
     theta_abs = vf.add_var("theta_abs_" + name)
-    omega = vf.add_var("omega_" + name, shared_reference = "omega_reference")
+    delta_rel = vf.add_var("delta_rel_" + name)
+    omega = vf.add_var("omega_" + name)
 
     psi_d = vf.add_var("psi_d_" + name)
     psi_q = vf.add_var("psi_q_" + name)
@@ -1100,6 +856,7 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
 
     # Differential variables
     d_theta_abs = vf.add_diff_var(name=f"d_theta_abs_{name}", base_var=theta_abs)
+    d_delta_rel = vf.add_diff_var(name=f"d_delta_rel_{name}", base_var=delta_rel)
     d_omega = vf.add_diff_var(name=f"d_omega_{name}", base_var=omega)
 
     d_psi_d = vf.add_diff_var(name=f"d_psi_d_{name}", base_var=psi_d)
@@ -1122,15 +879,15 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
     i_q = vf.add_var("i_q_" + name)
     i_0 = vf.add_var("i_0_" + name)
 
-    i_A = vf.add_var("i_A_" + name, reference=VarPowerFlowReferenceType.i_A)
-    i_B = vf.add_var("i_B_" + name, reference=VarPowerFlowReferenceType.i_B)
-    i_C = vf.add_var("i_C_" + name, reference=VarPowerFlowReferenceType.i_C)
+    i_A = vf.add_var("i_A_" + name)
+    i_B = vf.add_var("i_B_" + name)
+    i_C = vf.add_var("i_C_" + name)
 
-    Te = vf.add_var("Te_" + name, shared_reference = "Te_reference")
+    Te = vf.add_var("Te_" + name)
     p_e = vf.add_var("p_e_" + name)
     q_e = vf.add_var("q_e_" + name)
 
-    IRPu = vf.add_var("IRPu_" + name, shared_reference = "IRPu_reference")
+    IRPu = vf.add_var("IRPu_" + name)
 
     # ------------------------------------------------------------------
     # Parameters
@@ -1161,26 +918,6 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
     omega_b = vf.add_var("omega_b_" + name)
     omega_s = vf.add_var("omega_s_" + name)
 
-    phi_v_init: sym.Expr
-    phi_init: sym.Expr
-    vpk_init: sym.Expr
-    ipk_init: sym.Expr
-    phi_v_init, phi_init, vpk_init, ipk_init = get_pf_positive_sequence_init_refs(
-        v_a=v_A,
-        v_b=v_B,
-        v_c=v_C,
-        d_v_a=d_v_A,
-        d_v_b=d_v_B,
-        d_v_c=d_v_C,
-        p_a=p_A,
-        q_a=q_A,
-        p_b=p_B,
-        q_b=q_B,
-        p_c=p_C,
-        q_c=q_C,
-        omega_base=omega_b,
-    )
-
 
     # ------------------------------------------------------------------
     # MODEL EQUATIONS
@@ -1189,6 +926,9 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
         state_eqs=[
             # absolute electrical angle for EMT transforms
             omega_b * omega,
+
+            # Milano relative rotor angle
+            omega_b * (omega - omega_s),
 
             # swing equation driven by governor torque input
             (Tm - Te - D * (omega - omega_s)) / (2.0 * H),
@@ -1207,12 +947,12 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
             (-psi_pp_q - e_dp - (xqp - xl) * i_q) / Tq0pp,
         ],
         state_vars=[
-            theta_abs, omega,
+            theta_abs, delta_rel, omega,
             psi_d, psi_q, psi_0,
             e_qp, e_dp, psi_pp_d, psi_pp_q
         ],
         diff_vars=[
-            d_theta_abs, d_omega,
+            d_theta_abs, d_delta_rel, d_omega,
             d_psi_d, d_psi_q, d_psi_0,
             d_e_qp, d_e_dp, d_psi_pp_d, d_psi_pp_q
         ],
@@ -1263,7 +1003,7 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
             ),
 
             # electromagnetic torque
-            Te - (3.0 / 2.0) * (psi_d * i_q - psi_q * i_d),
+            Te - (psi_d * i_q - psi_q * i_d),
 
             # terminal powers
             p_e - (v_A * i_A + v_B * i_B + v_C * i_C),
@@ -1321,60 +1061,47 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
         gamma_d2: (xdp - xdpp) / ((xdp - xl) ** 2),
         gamma_q2: (xqp - xqpp) / ((xqp - xl) ** 2),
 
-        d_v_A: vf.add_const(None),
-        d_v_B: vf.add_const(None),
-        d_v_C: vf.add_const(None),
-        p_A: vf.add_const(None),
-        q_A: vf.add_const(None),
-        p_B: vf.add_const(None),
-        q_B: vf.add_const(None),
-        p_C: vf.add_const(None),
-        q_C: vf.add_const(None),
+        Ipk: vf.add_const(None),
+        Vpk: vf.add_const(None),
+        phi: vf.add_const(None),
+        phi_v: vf.add_const(None),
     }
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowReferenceType.omega_base: omega_b,
-        ParamPowerFlowReferenceType.R1: ra,
-        ParamPowerFlowReferenceType.X1: xd,
-        ParamPowerFlowReferenceType.X0: x0,
+        ParamPowerFlowRefferenceType.omega_base: omega_b,
+        ParamPowerFlowRefferenceType.R1: ra,
+        ParamPowerFlowRefferenceType.X1: xd,
+        ParamPowerFlowRefferenceType.X0: x0,
     }
     # ------------------------------------------------------------------
     # INITIALIZATION
     # ------------------------------------------------------------------
     # Rotor angle estimate from transient internal emf phasor
     E_re = (
-        vpk_init * sym.cos(phi_v_init)
-        + ra * ipk_init * sym.cos(phi_init)
-        - xqp * ipk_init * sym.sin(phi_init)
+        Vpk * sym.cos(phi_v)
+        + ra * Ipk * sym.cos(phi)
+        - xqp * Ipk * sym.sin(phi)
     )
     E_im = (
-        vpk_init * sym.sin(phi_v_init)
-        + ra * ipk_init * sym.sin(phi_init)
-        + xqp * ipk_init * sym.cos(phi_init)
+        Vpk * sym.sin(phi_v)
+        + ra * Ipk * sym.sin(phi)
+        + xqp * Ipk * sym.cos(phi)
     )
-    q_axis_span = xq - xqp
-    q_axis_det = (vf.add_const(1.0) - gamma_q1) + q_axis_span * gamma_q2
-    e_dp_init = (
-        -(psi_q + xqpp * i_q) * q_axis_span * gamma_q2
-        + (vf.add_const(1.0) - gamma_q1) * q_axis_span * gamma_q1 * i_q
-    ) / q_axis_det
-    psi_pp_q_init = (
-        gamma_q1 * q_axis_span * gamma_q1 * i_q
-        + (vf.add_const(1.0) + q_axis_span * gamma_q2) * (psi_q + xqpp * i_q)
-    ) / q_axis_det
 
     templ.block.init_eqs = {
 
         omega: omega_s,
 
-        theta_abs: sym.atan2(E_im, E_re),
+        theta_abs: sym.atan(E_im/ E_re),
+        delta_rel: theta_abs,
+
         # terminal dq0 values in Milano physical axes
-        v_d: vpk_init * sym.sin(theta_abs - phi_v_init),
-        v_q: vpk_init * sym.cos(theta_abs - phi_v_init),
+        v_d: Vpk * sym.sin(theta_abs - phi_v),
+        v_q: Vpk * sym.cos(theta_abs - phi_v),
         v_0: c0,
 
-        i_d: ipk_init * sym.sin(theta_abs - phi_init),
-        i_q: ipk_init * sym.cos(theta_abs - phi_init),
+        i_d: Ipk * sym.sin(theta_abs - phi),
+        i_q: Ipk * sym.cos(theta_abs - phi),
 
         # PF initialization is typically balanced; keep zero-seq explicit but zero initially
         i_0: c0,
@@ -1386,17 +1113,12 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
         # zero-sequence magnetic initialization
         psi_0: -x0 * i_0,
 
-        # Sauer-Pai q-axis steady-state initialization. These expressions are
-        # chosen to satisfy both d_psi_pp_q = 0 and d_e_dp = 0 for the
-        # implemented model equations.
+        # Sauer-Pai magnetic algebraic initialization
         e_qp: psi_d + xdp * i_d,
-        e_dp: (
-            (xq - xqp) * (gamma_q1 + gamma_q2 * (xqp - xl))
-            / (c1 - (xq - xqp) * gamma_q2)
-        ) * i_q,
+        e_dp: -psi_q - xqp * i_q,
 
         psi_pp_d: (psi_d + xdpp * i_d - gamma_d1 * e_qp) / (c1 - gamma_d1),
-        psi_pp_q: -e_dp - (xqp - xl) * i_q,
+        psi_pp_q: (psi_q + xqpp * i_q + gamma_q1 * e_dp) / (c1 - gamma_q1),
 
         # abc current injection
         i_A: i_q * sym.sin(theta_abs) - i_d * sym.cos(theta_abs) + i_0,
@@ -1408,7 +1130,7 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
         ),
 
         # electromagnetic torque
-        Te: (3.0 / 2.0) * (psi_d * i_q - psi_q * i_d),
+        Te: psi_d * i_q - psi_q * i_d,
 
         v_f: e_qp + (xd - xdp) * (
             gamma_d1 * i_d - gamma_d2 * psi_pp_d + gamma_d2 * e_qp
@@ -1425,6 +1147,7 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
 
     templ.block.diff_init_eqs = {
         d_theta_abs: omega_b * c1,
+        d_delta_rel: c0,
         d_omega: c0,
         d_psi_d: c0,
         d_psi_q: c0,
@@ -1439,31 +1162,26 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
     # External mapping
     # ------------------------------------------------------------------
     templ.block.external_mapping = {
-        # VarPowerFlowReferenceType.P_N: None,
-        # VarPowerFlowReferenceType.Q_N: None,
-        # VarPowerFlowReferenceType.P_A: None,
-        # VarPowerFlowReferenceType.Q_A: None,
-        # VarPowerFlowReferenceType.P_B: None,
-        # VarPowerFlowReferenceType.Q_B: None,
-        # VarPowerFlowReferenceType.P_C: None,
-        # VarPowerFlowReferenceType.Q_C: None,
-        # VarPowerFlowReferenceType.i_N: None,
-        VarPowerFlowReferenceType.i_A: i_A,
-        VarPowerFlowReferenceType.i_B: i_B,
-        VarPowerFlowReferenceType.i_C: i_C,
-        VarPowerFlowReferenceType.d_v_A: d_v_A,
-        VarPowerFlowReferenceType.d_v_B: d_v_B,
-        VarPowerFlowReferenceType.d_v_C: d_v_C,
-        VarPowerFlowReferenceType.P_A: p_A,
-        VarPowerFlowReferenceType.Q_A: q_A,
-        VarPowerFlowReferenceType.P_B: p_B,
-        VarPowerFlowReferenceType.Q_B: q_B,
-        VarPowerFlowReferenceType.P_C: p_C,
-        VarPowerFlowReferenceType.Q_C: q_C,
-        # VarPowerFlowReferenceType.d_v_N: None,
-        # VarPowerFlowReferenceType.d_v_A: None,
-        # VarPowerFlowReferenceType.d_v_B: None,
-        # VarPowerFlowReferenceType.d_v_C: None,
+        VarPowerFlowRefferenceType.P_N: None,
+        VarPowerFlowRefferenceType.Q_N: None,
+        VarPowerFlowRefferenceType.P_A: None,
+        VarPowerFlowRefferenceType.Q_A: None,
+        VarPowerFlowRefferenceType.P_B: None,
+        VarPowerFlowRefferenceType.Q_B: None,
+        VarPowerFlowRefferenceType.P_C: None,
+        VarPowerFlowRefferenceType.Q_C: None,
+        VarPowerFlowRefferenceType.i_N: None,
+        VarPowerFlowRefferenceType.i_A: i_A,
+        VarPowerFlowRefferenceType.i_B: i_B,
+        VarPowerFlowRefferenceType.i_C: i_C,
+        VarPowerFlowRefferenceType.phi_v: phi_v,
+        VarPowerFlowRefferenceType.phi: phi,
+        VarPowerFlowRefferenceType.Vpk: Vpk,
+        VarPowerFlowRefferenceType.Ipk: Ipk,
+        VarPowerFlowRefferenceType.d_v_N: None,
+        VarPowerFlowRefferenceType.d_v_A: None,
+        VarPowerFlowRefferenceType.d_v_B: None,
+        VarPowerFlowRefferenceType.d_v_C: None,
     }
 
     return templ
@@ -1472,35 +1190,64 @@ def get_generator_sauer_pai_type_emt_template(vf: VarFactory, name: str = "sauer
 
 def get_governor_emt(vf: VarFactory, name: str = "Governor") -> EmtModelTemplate:
     templ = EmtModelTemplate(name=name)
-    inputs = [vf.add_var(name=f"omega_{name}", shared_reference = "omega_reference"), vf.add_var(name=f'Te_{name}', shared_reference = "Te_reference")]
-    Tm = vf.add_var(name=f"Tm_{name}", shared_reference = "Tm_reference")  # Mechanical power input (pu
-    Pm_ref = vf.add_var(f'Pm_ref_{name}')
-    y_gov0 = vf.add_var(f'y_gov0_{name}')
-    y2_3 = vf.add_var(f'y2_3_gov_{name}')
 
-    d_y_gov0 = vf.add_diff_var(name=f'd_y_gov0_{name}', base_var=y_gov0)
-    K = vf.add_var(f"K_{name}")  # governor gain (inverse droop)
-    Pmax = vf.add_var(f"Pmax_{name}")  # max mechanical power (pu)
-    Pmin = vf.add_var(f"Pmin_{name}")  # min mechanical power (pu)
-    Uc = vf.add_var(f"Uc_{name}")  # max valve closing rate (pu/s)
-    Uo = vf.add_var(f"Uo_{name}")  # max valve opening rate (pu/s)
-    T_aux = vf.add_var(f"T_aux_{name}")
+    parameters = {
+        # Time constants
+        "T1": vf.add_const(1.0),  # governor time constant (s)
+        "T2": vf.add_const(1.0),  # reheater time constant (s)
+        "T3": vf.add_const(10.0),  # crossover time constant (s)
+        "T4": vf.add_const(0.2),  # lead/lag constant (s)
+        "T5": vf.add_const(0.5),  # lead/lag constant (s)
+        "T6": vf.add_const(0.1),  # lead/lag constant (s)
+        "T7": vf.add_const(0.05),  # lead/lag constant (s)
+
+        # Steam fractions (distribution factors)
+        "K1": vf.add_const(0.5),
+        "K2": vf.add_const(0.5),
+        "K3": vf.add_const(0.0),
+        "K4": vf.add_const(0.0),
+        "K5": vf.add_const(0.0),
+        "K6": vf.add_const(0.0),
+        "K7": vf.add_const(0.0),
+        "K8": vf.add_const(0.0),
+    }
+
+    inputs = [vf.add_var("omega_"), vf.add_var('Te_')]
+
+    # ______________________________________________________________________________________
+    #                                    variables
+    # ______________________________________________________________________________________
+
+    Tm = vf.add_var("Tm")  # Mechanical power input (pu
+    # et = vf.add_var("et")
+
+    # reference
+    Pm_ref = vf.add_var('Pm_ref')
+    algebraic_eqs = []
+    algebraic_vars = []
+
+    # ______________________________________________________________________________________
+    #                                    parameters
+    # ______________________________________________________________________________________
+
+    # Gains and limits
+    K = vf.add_var("K")  # governor gain (inverse droop)
+    Pmax = vf.add_var("Pmax")  # max mechanical power (pu)
+    Pmin = vf.add_var("Pmin")  # min mechanical power (pu)
+    Uc = vf.add_var("Uc")  # max valve closing rate (pu/s)
+    Uo = vf.add_var("Uo")  # max valve opening rate (pu/s)
+    T_aux = vf.add_var("T_aux")
 
     # Control
-    Kp = vf.add_var(f"Kp_{name}")
-    Ki = vf.add_var(f"Ki_{name}")
-    omega_ref = vf.add_var(f'omega_ref_{name}')
-    p0 = vf.add_var(f'p0_{name}')
-    P0 = vf.add_var(f'P0_{name}')
-    T1 = vf.add_var(f'T1_gov_{name}')
-    T3 = vf.add_var(f'T3_gov_{name}')
+    Kp = vf.add_var("Kp")
+    Ki = vf.add_var("Ki")
+    omega_ref = vf.add_var('omega_ref')
+    p0 = vf.add_var('p0')
+    P0 = vf.add_var('P0')
 
     events_dict = {
         # control parameters
-        # The complete generator wrapper may replace this placeholder with a
-        # model-level shared-power reference. The standalone governor keeps a
-        # neutral default until the wrapper or initialization layer provides it.
-        # Pm_ref: vf.add_const(None),
+        Pm_ref: vf.add_const(None),
         Kp: vf.add_const(-0.01),
         Ki: vf.add_const(-0.01),
         p0: vf.add_const(1.0),
@@ -1513,55 +1260,127 @@ def get_governor_emt(vf: VarFactory, name: str = "Governor") -> EmtModelTemplate
         Uc: vf.add_const(-0.5),  # max valve closing rate (pu/s)
         Uo: vf.add_const(0.5),  # max valve opening rate (pu/s)
         T_aux: vf.add_const(0.0),
-        T1: vf.add_const(0.2),
-        T3: vf.add_const(1.0),
+
     }
-    speed_error = omega_ref - inputs[0]
-    # The governor regulates around the assigned mechanical-power reference so a
-    # shared slack-bus initialization can prescribe one target per generator.
-    torque_order = Pm_ref + y_gov0
-    torque_tracking_error = inputs[1] - Pm_ref
-    ramped_torque_order = sym.hard_sat(torque_order, Pmin, Pmax)
+    # controller_block = Block(
+    #     state_eqs=[
+    #         P0 * (inputs[0] - omega_ref)
+    #     ],
+    #     state_vars=[et],
+    #     algebraic_eqs=[
+    #         T_aux - (Kp * (inputs[0] - omega_ref) + Ki * et),
+    #     ],
+    #     algebraic_vars=[T_aux],
+    # )
+    controller_block = Block()
+
+    u1 = inputs[0] - omega_ref
+    lead_lag_block, y1, x1 = tf_to_diffblock_with_output(
+        var_factory=vf,
+        num=[1.0, parameters["T2"].value],
+        den=[1.0, parameters["T1"].value],
+        x=u1,
+        name='gov0',
+    )
+
+    # ==============================
+    # First Feed back Loop
+    y2_3 = vf.add_var('y2_3_gov')
+    algebraic_vars.append(y2_3)
+    x2 = Pm_ref - K * y1 - y2_3
+
+    y2 = x2 * (1 / parameters["T3"].value)
+    y2_1 = sym.hard_sat(y2, Uc, Uo)
+    # tf1, y2_2, u_gov1 = tf_to_diffblock_with_output(
+    #     var_factory=vf,
+    #     num=[1.0],
+    #     den=[1e-10, 1.0],
+    #     x=y2_1,
+    #     name='gov1',
+    # )
+    tf1, y2_2, u_gov1 = tf_to_diffblock_with_output(
+        var_factory=vf,
+        num=[1.0],
+        den=[0.001, 1.0],
+        x=y2_1,
+        name='gov1',
+    )
+
+    algebraic_eqs.append(y2_3 - sym.hard_sat(y2_2, Pmin, Pmax))
+
+    # ==============================
+    # We compute different outputs for every tf
+    tf2, y3_1 = tf_to_block(
+        var_factory=vf,
+        num=[1.0],
+        den=[1.0, parameters["T4"].value],
+        x=y2_3,
+        name='gov2',
+    )
+    tf3, y3_2 = tf_to_block(
+        var_factory=vf,
+        num=[1.0],
+        den=[1.0, parameters["T5"].value],
+        x=y3_1,
+        name='gov3',
+    )
+    tf4, y3_3 = tf_to_block(
+        var_factory=vf,
+        num=[1.0],
+        den=[1.0, parameters["T6"].value],
+        x=y3_2,
+        name='gov4',
+    )
+    tf5, y3_4 = tf_to_block(
+        var_factory=vf,
+        num=[1.0],
+        den=[1.0, parameters["T7"].value],
+        x=y3_3,
+        name='gov5',
+    )
+
+    u = parameters["K1"].value * y3_1 + parameters["K2"].value * y3_2 + parameters["K3"].value * y3_3 + \
+        parameters["K4"].value * y3_4
+    aux_block = Block(
+        algebraic_eqs=[u - Tm] + algebraic_eqs,
+        algebraic_vars=[Tm] + algebraic_vars,
+    )
 
     templ.block = Block(
-        state_eqs=[
-            (K * speed_error + torque_tracking_error - y_gov0) / T1,
-        ],
-        state_vars=[y_gov0],
-        diff_vars=[d_y_gov0],
-        algebraic_eqs=[
-            y2_3 - ramped_torque_order,
-            Tm - y2_3,
-        ],
-        algebraic_vars=[y2_3, Tm],
+        children=[lead_lag_block, tf1, tf2, tf3, tf4, tf5, aux_block, controller_block],
         out_vars=[Tm],
         in_vars=inputs,
         event_dict=events_dict,
-        name=name,
+        name="governor",
 
         init_eqs={
-            y_gov0: vf.add_const(0.0),
-            y2_3: ramped_torque_order,
-            Tm: ramped_torque_order
+            Pm_ref: inputs[1],
+            y1: vf.add_const(0.0),
+            x1: inputs[0] - omega_ref,
+            u_gov1: vf.add_const(0),
+            y2_2: Pm_ref,
+            y2_3: Pm_ref,
+            y3_1: Pm_ref,
+            y3_2: Pm_ref,
+            y3_3: Pm_ref,
+            y3_4: Pm_ref,
+            Tm: Pm_ref
         },
         api_obj_mapping={
             # Gains and limits
-            ParamPowerFlowReferenceType.K: K,  # governor gain (inverse droop)
-            ParamPowerFlowReferenceType.Pmax: Pmax,  # max mechanical power (pu)
-            ParamPowerFlowReferenceType.Pmin: Pmin,  # min mechanical power (pu)
-            ParamPowerFlowReferenceType.Uc: Uc,  # max valve closing rate (pu/s)
-            ParamPowerFlowReferenceType.Uo: Uo,  # max valve opening rate (pu/s)
-            ParamPowerFlowReferenceType.T_aux: T_aux,
+            ParamPowerFlowRefferenceType.K: K,  # governor gain (inverse droop)
+            ParamPowerFlowRefferenceType.Pmax: Pmax,  # max mechanical power (pu)
+            ParamPowerFlowRefferenceType.Pmin: Pmin,  # min mechanical power (pu)
+            ParamPowerFlowRefferenceType.Uc: Uc,  # max valve closing rate (pu/s)
+            ParamPowerFlowRefferenceType.Uo: Uo,  # max valve opening rate (pu/s)
+            ParamPowerFlowRefferenceType.T_aux: T_aux,
 
             # Control
-            ParamPowerFlowReferenceType.Kp: Kp,
-            ParamPowerFlowReferenceType.Ki: Ki,
-            ParamPowerFlowReferenceType.omega_ref: omega_ref,
-            ParamPowerFlowReferenceType.p0: p0,
-            ParamPowerFlowReferenceType.P0: P0,
-
-            # shared ref
-            ParamPowerFlowReferenceType.generator_share_p_ref: Pm_ref
+            ParamPowerFlowRefferenceType.Kp: Kp,
+            ParamPowerFlowRefferenceType.Ki: Ki,
+            ParamPowerFlowRefferenceType.omega_ref: omega_ref,
+            ParamPowerFlowRefferenceType.p0: p0,
+            ParamPowerFlowRefferenceType.P0: P0,
         }
 
     )
@@ -1573,6 +1392,9 @@ def get_stabilizer_emt(vf: VarFactory, name: str = "stabilizer") -> EmtModelTemp
     templ = EmtModelTemplate(name=name)
 
     parameters = {
+        # Stabilizer parameters
+        "A1": vf.add_const(1.0),  # notch filter coefficient 1
+        "A2": vf.add_const(1.0),  # notch filter coefficient 2
         "t1": vf.add_const(0.1),  # lead time constant
         "t2": vf.add_const(0.02),  # lag time constant
         "t3": vf.add_const(0.02),  # lag time constant
@@ -1584,14 +1406,14 @@ def get_stabilizer_emt(vf: VarFactory, name: str = "stabilizer") -> EmtModelTemp
     # input variables
     # omega: omega from generator
 
-    inputs = [vf.add_var(f"omega_{name}", shared_reference = "omega_reference")]
+    inputs = [vf.add_var("omega_")]
 
     # PSS parameters with typical values
 
-    Ks = vf.add_var(f"Ks_{name}")  # stabilizer gain
-    VPssMaxPu = vf.add_var(f"VPssMaxPu_{name}")  # max stabilizer output
-    VPssMinPu = vf.add_var(f"VPssMinPu_{name}")  # min stabilizer output
-    SNom = vf.add_var(f"SNom_{name}")  # nominal apparent power
+    Ks = vf.add_var("Ks")  # stabilizer gain
+    VPssMaxPu = vf.add_var("VPssMaxPu")  # max stabilizer output
+    VPssMinPu = vf.add_var("VPssMinPu")  # min stabilizer output
+    SNom = vf.add_var("SNom")  # nominal apparent power
 
     events_dict = {
         # Stabilizer parameters
@@ -1602,51 +1424,74 @@ def get_stabilizer_emt(vf: VarFactory, name: str = "stabilizer") -> EmtModelTemp
     }
 
     # variables
-    Vpss = vf.add_var(f'V_pss_{name}', shared_reference = "V_pss_reference")
-    y1 = vf.add_var(f'y_stabilizer1_{name}')
-    y2 = vf.add_var(f'y_stabilizer2_{name}')
-    y3 = vf.add_var(f'y_stabilizer3_{name}')
-    y4 = vf.add_var(f'y_stabilizer4_{name}')
-    y5 = vf.add_var(f'y_stabilizer5_{name}')
+    Vpss = vf.add_var('V_pss')
 
-    d_y1 = vf.add_diff_var(name=f'd_y_stabilizer1_{name}', base_var=y1)
-    d_y2 = vf.add_diff_var(name=f'd_y_stabilizer2_{name}', base_var=y2)
-    d_y4 = vf.add_diff_var(name=f'd_y_stabilizer4_{name}', base_var=y4)
-    d_y5 = vf.add_diff_var(name=f'd_y_stabilizer5_{name}', base_var=y5)
+    vars_block = Block(
+        algebraic_vars=[],
+    )
 
-    speed_deviation = inputs[0] - vf.add_const(1.0)
-    washout_output = Ks * (y1 - y2)
-    lead_lag_1 = y4 + (parameters["t1"].value / parameters["t2"].value) * (y3 - y4)
-    lead_lag_2 = y5 + (parameters["t3"].value / parameters["t4"].value) * (lead_lag_1 - y5)
+    tf, y = tf_to_block(
+        var_factory=vf,
+        num=[1.0],
+        den=[1.0, parameters["t6"].value],
+        x=inputs[0],
+        name='stabilizer1',
+    )
+
+    tf2, y2 = tf_to_block(
+        var_factory=vf,
+        num=[0, Ks * parameters["t5"].value],
+        den=[1.0, parameters["t5"].value],
+        x=y,
+        name='stabilizer2',
+    )
+    tf3, y3 = tf_to_block_with_states(
+        var_factory=vf,
+        num=[1.0],
+        den=[1.0, parameters["A1"].value, parameters["A2"].value],
+        x=y2,
+        name='stabilizer3',
+    )
+    tf4, y4 = tf_to_block(
+        var_factory=vf,
+        num=[1.0, parameters["t1"].value],
+        den=[1.0, parameters["t2"].value],
+        x=y3,
+        name='stabilizer4',
+    )
+    tf5, y5 = tf_to_block(
+        var_factory=vf,
+        num=[1.0, parameters["t3"].value],
+        den=[1.0, parameters["t4"].value],
+        x=y4,
+        name='stabilizer5',
+    )
+
+    algebraic_eqs = list()
+    algebraic_eqs.append(sym.hard_sat(y5, VPssMinPu, VPssMaxPu) - Vpss)
+    block_1 = Block()
 
     templ.block = Block(
-        state_eqs=[
-            (speed_deviation - y1) / parameters["t6"].value,
-            (y1 - y2) / parameters["t5"].value,
-            (y3 - y4) / parameters["t2"].value,
-            (lead_lag_1 - y5) / parameters["t4"].value,
-        ],
-        state_vars=[y1, y2, y4, y5],
-        diff_vars=[d_y1, d_y2, d_y4, d_y5],
-        algebraic_eqs=[
-            y3 - washout_output,
-            Vpss - sym.hard_sat(lead_lag_2, VPssMinPu, VPssMaxPu),
-        ],
-        algebraic_vars=[y3, Vpss],
+        children=[tf, tf2, tf3, tf4, tf5],
+        algebraic_eqs=algebraic_eqs,
+        algebraic_vars=[Vpss],
         in_vars=inputs,
         out_vars=[Vpss],
         event_dict=events_dict,
-        name=name,
+        name="stabilizer",
 
         init_eqs={
             Vpss: vf.add_const(0.0),
-            y1: vf.add_const(0.0),
-            y2: vf.add_const(0.0),
-            y3: vf.add_const(0.0),
-            y4: vf.add_const(0.0),
-            y5: vf.add_const(0.0),
+            y: vf.add_const(1.0),
+            y2: vf.add_const(1e-6),
+            y3: vf.add_const(1e-6),
+            y4: vf.add_const(1e-6),
+            y5: vf.add_const(1e-6),
         }
     )
+
+    templ.block.add(vars_block)
+    templ.block.add(block_1)
 
     return templ
 
@@ -1661,19 +1506,24 @@ def get_exciter_emt(vf: VarFactory, name: str = "exciter") -> EmtModelTemplate:
     templ = EmtModelTemplate(name=name)
 
     parameters = {
-        "Ka": vf.add_const(50.0),
-        "Kf": vf.add_const(0.03),
-        "tA": vf.add_const(0.1),
-        "tB": vf.add_const(10.0),
-        "tC": vf.add_const(1.0),
-        "tE": vf.add_const(0.5),
-        "tF": vf.add_const(1.0),
-        "tR": vf.add_const(0.08),
-        "Kd": vf.add_const(0.1),
-        "Ke": vf.add_const(1.0),
-        # The complete EMT generator uses the Sauer-Pai model, whose field channel
-        # is initialized in the same units as IRPu.
-        "Kfd": vf.add_const(1.0),
+        # Exciter (AVR) parameters
+        "Ka": vf.add_const(50.0),  # AVR gain
+        "Kf": vf.add_const(0.03),  # exciter rate feedback gain
+
+        # Time constants
+        "tA": vf.add_const(0.1),  # AVR time constant (s)
+        "tB": vf.add_const(10.0),  # lead-lag: lag time constant (s)
+        "tC": vf.add_const(1.0),  # lead-lag: lead time constant (s)
+        "tE": vf.add_const(0.5),  # exciter field time constant (s)
+        "tF": vf.add_const(1.0),  # rate feedback time constant (s)
+        "tR": vf.add_const(0.08),  # stator voltage filter time constant (s)
+
+        # Exciter submodel parameters
+        "Kc": vf.add_const(0.2),  # rectifier loading factor
+        "Kd": vf.add_const(0.1),  # demagnetizing factor
+        "Ke": vf.add_const(1.0),  # field resistance constant
+        "Kfd": vf.add_const(0.5),  # converting factor
+
     }
 
     # input variables
@@ -1681,60 +1531,56 @@ def get_exciter_emt(vf: VarFactory, name: str = "exciter") -> EmtModelTemplate:
     # Va: measured stator voltage (from generator) (pu)
     # Vpss: output from power system stabilizer (pu)
 
-    IRPu = vf.add_var(f"IRPu_{name}", shared_reference = "IRPu_reference")
-    v_A = vf.add_var("v_A_" + name, reference=VarPowerFlowReferenceType.v_A)
-    v_B = vf.add_var("v_B_" + name, reference=VarPowerFlowReferenceType.v_B)
-    v_C = vf.add_var("v_C_" + name, reference=VarPowerFlowReferenceType.v_C)
-    Vpss = vf.add_var(f"V_pss_{name}", shared_reference = "V_pss_reference")
+    IRPu = vf.add_var("IRPu_")
+    v_A = vf.add_var("v_A")
+    v_B = vf.add_var("v_B")
+    v_C = vf.add_var("v_C")
+    Vpss = vf.add_var("Vpss_")
 
     inputs = [IRPu, v_A, v_B, v_C, Vpss]
 
-    Vm = vf.add_var(f"Vm_{name}")
+    Vm = vf.add_var("Vm_")
 
-    Vf = vf.add_var(f"Vf_{name}", shared_reference = "v_f_reference")
-    Efe = vf.add_var(f'Efe_{name}')
-    UsRefPu = vf.add_var(name=f"UsRefPu_{name}")  # reference voltage (pu)
-    y1 = vf.add_var(f'y_exciter1_{name}')
-    y2 = vf.add_var(f'y_exciter2_{name}')
-    y3 = vf.add_var(f'y_exciter3_{name}')
-    y4 = vf.add_var(f'y_exciter4_{name}')
+    algebraic_vars = []
 
-    d_y1 = vf.add_diff_var(name=f'd_y_exciter1_{name}', base_var=y1)
-    d_y2 = vf.add_diff_var(name=f'd_y_exciter2_{name}', base_var=y2)
-    d_y3 = vf.add_diff_var(name=f'd_y_exciter3_{name}', base_var=y3)
-    d_y4 = vf.add_diff_var(name=f'd_y_exciter4_{name}', base_var=y4)
-    d_Vf = vf.add_diff_var(name=f'd_Vf_{name}', base_var=Vf)
+    # ______________________________________________________________________________________
+    #                                    variables
+    # ______________________________________________________________________________________
+
+    Vf = vf.add_var("Vf")
+    Efe = vf.add_var('Efe')
+    UsRefPu = vf.add_var(name="UsRefPu")  # reference voltage (pu)
 
     # Exciter internal variables
-    VeMaxPu = vf.add_var(f'VeMaxPu_{name}')
-    u_aux = vf.add_var(f'u_aux_{name}')
+    VeMaxPu = vf.add_var('VeMaxPu')
+    u_aux = vf.add_var('u_aux')
 
     # ______________________________________________________________________________________
     #                                    parameters
     # ______________________________________________________________________________________
 
     # ---- Exciter (AVR) parameters ----
-    AEz = vf.add_var(f"AEz_{name}")  # saturation gain
-    BEz = vf.add_var(f"BEz_{name}")  # saturation exponential coefficient
-    EfeMaxPu = vf.add_var(f"EfeMaxPu_{name}")  # max exciter field voltage (pu)
-    EfeMinPu = vf.add_var(f"EfeMinPu_{name}")  # min exciter field voltage (pu)
+    AEz = vf.add_var("AEz")  # saturation gain
+    BEz = vf.add_var("BEz")  # saturation exponential coefficient
+    EfeMaxPu = vf.add_var("EfeMaxPu")  # max exciter field voltage (pu)
+    EfeMinPu = vf.add_var("EfeMinPu")  # min exciter field voltage (pu)
 
     # ---- Exciter (AVR) time constants and limits ----
 
-    TolLi = vf.add_var(f"TolLi_{name}")  # limiter crossing tolerance (fraction)
+    TolLi = vf.add_var("TolLi")  # limiter crossing tolerance (fraction)
 
-    VaMaxPu = vf.add_var(f"VaMaxPu_{name}")  # AVR output max (pu)
-    VaMinPu = vf.add_var(f"VaMinPu_{name}")  # AVR output min (pu)
-    VeMinPu = vf.add_var(f"VeMinPu_{name}")  # min exciter output voltage (pu)
-    VfeMaxPu = vf.add_var(f"VfeMaxPu_{name}")  # max exciter field current signal (pu)
+    VaMaxPu = vf.add_var("VaMaxPu")  # AVR output max (pu)
+    VaMinPu = vf.add_var("VaMinPu")  # AVR output min (pu)
+    VeMinPu = vf.add_var("VeMinPu")  # min exciter output voltage (pu)
+    VfeMaxPu = vf.add_var("VfeMaxPu")  # max exciter field current signal (pu)
 
     # exciter submodel parameters
-    AEx = vf.add_var(f"AEx_{name}")  # Gain of saturation function
-    BEx = vf.add_var(f"BEx_{name}")  # Exponential coefficient of saturation function
-    Se_threshold = vf.add_var(f"Se_threshold_{name}")  # Exponential coefficient of saturation function
-    ToLLi = vf.add_var(f"ToLLi_{name}")  # Tolerance on limit crossing
-    VeMinPu_submodel = vf.add_var(f"VeMinPu_submodel_{name}")  # Minimum exciter output voltage (pu)
-    VfeMaxPu_submodel = vf.add_var(f"VfeMaxPu_submodel_{name}")  # Maximum exciter field current signal (pu)
+    AEx = vf.add_var("AEx")  # Gain of saturation function
+    BEx = vf.add_var("BEx")  # Exponential coefficient of saturation function
+    Se_threshold = vf.add_var("Se_threshold")  # Exponential coefficient of saturation function
+    ToLLi = vf.add_var("ToLLi")  # Tolerance on limit crossing
+    VeMinPu_submodel = vf.add_var("VeMinPu_submodel")  # Minimum exciter output voltage (pu)
+    VfeMaxPu_submodel = vf.add_var("VfeMaxPu_submodel")  # Maximum exciter field current signal (pu)
 
     events_dict = {
         # Exciter (AVR) parameters
@@ -1761,58 +1607,144 @@ def get_exciter_emt(vf: VarFactory, name: str = "exciter") -> EmtModelTemplate:
         VeMinPu_submodel: vf.add_const(-5.1),  # minimum exciter output voltage
         VfeMaxPu_submodel: vf.add_const(5.0),  # max exciter field current signal
     }
+    # ---Internal Blocks---
+    tf1, y1 = tf_to_block(
+        var_factory=vf,
+        num=[1.0],
+        den=[1.0, parameters["tR"].value],
+        x=Vm,
+        name='exciter1',
+    )  # filtered stator voltage
 
+    # error1 = UPssPu - y + UsRefPu
+    error1 = (- y1 + UsRefPu) + inputs[4]
+    tf2, y2 = tf_to_block(
+        var_factory=vf,
+        num=[1e-6, parameters["Kf"].value],
+        den=[1.0, parameters["tF"].value],
+        x=Vf,
+        name='exciter2',
+    )
+    error2 = error1 - y2
+
+    tf3, y3 = tf_to_block(
+        var_factory=vf,
+        num=[1.0, parameters["tC"].value],
+        den=[1.0, parameters["tB"].value],
+        x=error2,
+        name='exciter3',
+    )
     min_const = max(events_dict[VaMinPu].value, events_dict[EfeMinPu].value)
-    i_field_abs = sym.abs(inputs[0])
-    measured_vm = sym.sqrt((1.0 / 3.0) * (v_A * v_A + v_B * v_B + v_C * v_C))
-    exciter_error = UsRefPu + inputs[4] - y1 - y2
-    lead_lag_output = y3 + (parameters["tC"].value / parameters["tB"].value) * (exciter_error - y3)
-    vf_positive = sym.hard_sat(Vf, vf.add_const(0.0), vf.add_const(1e6))
-    saturation_term = AEx * vf_positive * (
-        sym.exp(BEx * (vf_positive - Se_threshold)) - vf.add_const(1.0)
-    ) * sym.heaviside(vf_positive - Se_threshold)
-    field_feedback = parameters['Ke'].value * Vf + saturation_term
-    field_ceiling = sym.hard_sat(VfeMaxPu - parameters['Kd'].value * i_field_abs,
-                                 VeMinPu_submodel,
-                                 VfeMaxPu_submodel)
-    field_voltage_ref = sym.hard_sat(y4, min_const, field_ceiling)
-    vf_init = parameters['Kfd'].value * inputs[0]
-    field_feedback_init = parameters['Ke'].value * vf_init + AEx * sym.hard_sat(vf_init, vf.add_const(0.0), vf.add_const(1e6)) * (
-        sym.exp(BEx * (sym.hard_sat(vf_init, vf.add_const(0.0), vf.add_const(1e6)) - Se_threshold)) - vf.add_const(1.0)
-    ) * sym.heaviside(sym.hard_sat(vf_init, vf.add_const(0.0), vf.add_const(1e6)) - Se_threshold)
+    max_const = min(events_dict[VaMaxPu].value, events_dict[EfeMaxPu].value)
+
+    tf4, y4 = tf_to_diffblock_with_antiwindup(
+        var_factory=vf,
+        num=[parameters["Ka"].value],
+        den=[1.0, parameters["tA"].value],
+        x=y3,
+        sat_min=Const(min_const),
+        sat_max=Const(max_const),
+        name='exciter4',
+    )
+    y6 = sym.hard_sat(y4, min_const, max_const)
+
+    # exciter submodel
+
+    algebraic_eqs_submodel = []
+    algebraic_vars_submodel = []
+
+    x1 = VfeMaxPu - inputs[0] * parameters["Kd"].value
+    error1 = Efe - (inputs[0] * parameters["Kd"].value + u_aux)
+
+    tf1_sub, Ve = tf_to_block(
+        var_factory=vf,
+        num=[1.0],
+        den=[0.01, parameters["tE"].value],
+        x=error1,
+        # sat_min= VeMinPu,
+        # sat_max= VeMaxPu,
+        name='subexciter1',
+    )
+
+
+    Se_threshold = parameters['Ke'].value
+
+    Sx = ((sym.exp(BEx * (Ve - Se_threshold)) - vf.add_const(1)) * sym.heaviside(Ve - Se_threshold))
+    aux_expr = parameters['Ke'].value * Ve + AEx * Ve * Sx
+    algebraic_eqs_submodel.append(u_aux - aux_expr)
+    algebraic_eqs_submodel.append(VeMaxPu * u_aux - x1 * Ve)
+
+    f_input = vf.add_var('f_input')
+    f_output = vf.add_var('f_output')
+
+    f_input_eff = sym.hard_sat(f_input, vf.add_const(0.0), vf.add_const(1.0))
+    f_output_res = sym.f_exc(f_input_eff)
+    # f_output_res = sym.f_exc(f_input)
+    algebraic_vars_submodel.append(f_input)
+    algebraic_vars_submodel.append(f_output)
+
+    Ve_eff = sym.hard_sat(sym.abs(Ve), vf.add_const(1e-4), vf.add_const(1e6))
+    algebraic_eqs_submodel.append(f_input * Ve_eff - inputs[0] * parameters["Kc"].value)
+    # algebraic_eqs_submodel.append(f_input * Ve - inputs[0] * parameters["Kc"].value)
+
+    algebraic_eqs_submodel.append(Vf - f_output * Ve)
+    algebraic_eqs_submodel.append(f_output_res - f_output)
+
+    aux_model = Block(
+        algebraic_eqs=algebraic_eqs_submodel,
+        algebraic_vars=[u_aux, VeMaxPu, Vf] + algebraic_vars_submodel
+    )
+
+    exciter_submodel = Block(children=[tf1_sub, aux_model])
+
+    linking_block = Block(
+        algebraic_eqs=[y6 - Efe],
+        algebraic_vars=[Efe] + algebraic_vars,
+    )
+
+    u_exciter3 = find_name_in_block('u_exciter3', tf3)
+    u_subexciter1 = find_name_in_block('u_subexciter1', tf1_sub)
+    y_subexciter1 = find_name_in_block('y_subexciter1', tf1_sub)
+
+    Ve_sat = sym.hard_sat(y_subexciter1, VeMinPu, VeMaxPu)
+    Ve_expr = sym.hard_sat(y_subexciter1, VeMinPu, vf.add_const(1000))
+    aux_expr = parameters['Ke'].value * Ve_expr + AEx * Ve_expr * (
+            sym.exp(BEx * (Ve_expr - Se_threshold)) - vf.add_const(1)) * sym.heaviside(
+        Ve_expr - Se_threshold)
+
     templ.block = Block(
-        state_eqs=[
-            (Vm - y1) / parameters["tR"].value,
-            (parameters["Kf"].value * Vf - y2) / parameters["tF"].value,
-            (exciter_error - y3) / parameters["tB"].value,
-            (parameters["Ka"].value * lead_lag_output - y4) / parameters["tA"].value,
-            (field_voltage_ref - field_feedback) / parameters["tE"].value,
-        ],
-        state_vars=[y1, y2, y3, y4, Vf],
-        diff_vars=[d_y1, d_y2, d_y3, d_y4, d_Vf],
+        children=[tf1, tf2, tf3, tf4, exciter_submodel, linking_block],
         out_vars=[Vf],
         algebraic_eqs=[
-            Vm - measured_vm,
-            VeMaxPu - field_ceiling,
-            u_aux - field_feedback,
-            Efe - field_voltage_ref,
+            Vm - sym.sqrt((1.0 / 3.0) * (v_A * v_A + v_B * v_B + v_C * v_C))
         ],
-        algebraic_vars=[Vm, VeMaxPu, u_aux, Efe],
+        algebraic_vars=[Vm],
         in_vars=inputs,
         event_dict=events_dict,
         init_eqs={
-            Vm: measured_vm,
+            Vf: y_subexciter1 * f_output,
+            Vm: sym.sqrt((1.0 / 3.0) * (v_A * v_A + v_B * v_B + v_C * v_C)),
+            y_subexciter1: inputs[0],
+            # y_subexciter1: inputs[0] * (1 / sym.f_exc(inputs[0] * parameters["Kc"].value / y_subexciter1)),
+
+            # Ve: sym.hard_sat(y_subexciter1, VeMinPu, vf.add_const(1000)),
+            # Sx: (sym.exp(BEx * (Ve - Se_threshold)) - vf.add_const(1)) * sym.heaviside(Ve - Se_threshold),
+            VeMaxPu: (VfeMaxPu - inputs[0] * parameters["Kd"].value) / (
+                    parameters["Ke"].value + AEx * (
+                    sym.exp(BEx * (Ve - Se_threshold)) - vf.add_const(1)) * sym.heaviside(
+                Ve - Se_threshold)),
+            u_aux: aux_expr,
+            Efe: inputs[0] * parameters["Kd"].value + u_aux,
+            UsRefPu: Efe / parameters['Ka'].value + Vm,
             y1: Vm,
-            Vf: vf_init,
-            y2: parameters["Kf"].value * Vf,
-            u_aux: field_feedback_init,
-            VeMaxPu: field_ceiling,
-            Efe: field_feedback_init,
-            y4: Efe,
-            y3: Efe / parameters["Ka"].value,
-            UsRefPu: y1 + y2 - inputs[4] + y3,
+            y2: vf.add_const(0.0),
+            y3: -y1 + UsRefPu,
+            u_exciter3: y3,
+            y4: y3 * parameters["Ka"].value,
+            u_subexciter1: vf.add_const(0.0),
+            f_input: parameters['Kc'].value * inputs[0] / (y_subexciter1 + vf.add_const(1e-10)),
+            f_output: sym.f_exc(sym.max(f_input,vf.add_const(0.0))),
         },
-        name=name,
     )
 
     return templ
@@ -1828,103 +1760,79 @@ def get_complete_generator_template_emt(vf: VarFactory, name="complete_generator
     templ.name = name
     templ.block.name = name
 
-    # The wrapper exposes its own terminal-voltage inputs so EmtProblemDae can
-    # bind the complete generator at the wrapper boundary. The internal machine
-    # and exciter inputs are then connected to these wrapper variables before the
-    # child blocks are flattened.
-    v_a_in = vf.add_var(name=f"v_A_{name}", reference=VarPowerFlowReferenceType.v_A)
-    v_b_in = vf.add_var(name=f"v_B_{name}", reference=VarPowerFlowReferenceType.v_B)
-    v_c_in = vf.add_var(name=f"v_C_{name}", reference=VarPowerFlowReferenceType.v_C)
-
     # generate models
-    # The exciter interface is defined in terms of IRPu -> v_f, which matches the
-    # Sauer-Pai EMT generator semantics directly.
-    # gen_mdl = get_simple_generator_emt_template(vf = vf).block
+    gen_mdl = get_simple_generator_emt_template(vf = vf).block
     # gen_mdl = get_generator_emt_type_template(vf = vf).block
-    gen_mdl = get_generator_sauer_pai_type_emt_template(vf=vf, name=f"{name}_gen").block
+    # gen_mdl = get_generator_sauer_pai_type_emt_template(vf = vf).block
 
-    exciter_mdl = get_exciter_emt(vf=vf, name=f"{name}_exciter").block
-    governor_mdl = get_governor_emt(vf=vf, name=f"{name}_governor").block
-    stabilizer_mdl = get_stabilizer_emt(vf=vf, name=f"{name}_stabilizer").block
+    exciter_mdl = get_exciter_emt(vf=vf).block
+    governor_mdl = get_governor_emt(vf=vf).block
+    stabilizer_mdl = get_stabilizer_emt(vf=vf).block
 
     # connect models
-    # The wrapper boundary must substitute the internal voltage placeholders by
-    # the exact wrapper input variables. Using ``update_model`` here keeps one
-    # symbolic object across the whole flattened model, which is required later
-    # when EmtProblemDae rewrites the wrapper terminal voltages to bus variables.
-    gen_mdl.update_model(gen_mdl.in_vars[0], v_a_in)
-    gen_mdl.update_model(gen_mdl.in_vars[1], v_b_in)
-    gen_mdl.update_model(gen_mdl.in_vars[2], v_c_in)
+    gen_mdl.connect([gen_mdl.in_vars[4]], [exciter_mdl.out_vars[0]]) # v_f
+    exciter_mdl.connect([exciter_mdl.in_vars[0]], [gen_mdl.out_vars[4]]) # IRPu / i_f
+    exciter_mdl.connect([exciter_mdl.in_vars[1]], [gen_mdl.in_vars[0]])  # v_A
+    exciter_mdl.connect([exciter_mdl.in_vars[2]], [gen_mdl.in_vars[1]])  # v_B
+    exciter_mdl.connect([exciter_mdl.in_vars[3]], [gen_mdl.in_vars[2]])  # v_C
+    exciter_mdl.connect([exciter_mdl.in_vars[4]], [stabilizer_mdl.out_vars[0]]) # Vpps
 
-    vf.add_connections([gen_mdl.in_vars[4]], [exciter_mdl.out_vars[0]]) # v_f
-    vf.add_connections([exciter_mdl.in_vars[0]], [gen_mdl.out_vars[4]]) # IRPu / i_f
+    stabilizer_mdl.connect([stabilizer_mdl.in_vars[0]], [gen_mdl.out_vars[3]]) # omega
 
-    # gen_mdl.connect([gen_mdl.in_vars[4]], [exciter_mdl.out_vars[0]])  # v_f
-    # exciter_mdl.connect([exciter_mdl.in_vars[0]], [gen_mdl.out_vars[4]])  # IRPu / i_f
+    gen_mdl.connect([gen_mdl.in_vars[3]], [governor_mdl.out_vars[0]]) # Tm
 
-    exciter_mdl.update_model(exciter_mdl.in_vars[1], v_a_in)  # v_A
-    exciter_mdl.update_model(exciter_mdl.in_vars[2], v_b_in)  # v_B
-    exciter_mdl.update_model(exciter_mdl.in_vars[3], v_c_in)  # v_C
+    governor_mdl.connect([governor_mdl.in_vars[0]], [gen_mdl.out_vars[3]]) # omega
 
-    vf.add_connections([exciter_mdl.in_vars[4]], [stabilizer_mdl.out_vars[0]]) # Vpps
-    vf.add_connections([stabilizer_mdl.in_vars[0]], [gen_mdl.out_vars[3]]) # omega
-    vf.add_connections([gen_mdl.in_vars[3]], [governor_mdl.out_vars[0]]) # Tm
-    vf.add_connections([governor_mdl.in_vars[0]], [gen_mdl.out_vars[3]]) # omega
-    vf.add_connections([governor_mdl.in_vars[1]], [gen_mdl.out_vars[5]]) # Te
-
-    # exciter_mdl.connect([exciter_mdl.in_vars[4]], [stabilizer_mdl.out_vars[0]])  # Vpps
-    # stabilizer_mdl.connect([stabilizer_mdl.in_vars[0]], [gen_mdl.out_vars[3]])  # omega
-    # gen_mdl.connect([gen_mdl.in_vars[3]], [governor_mdl.out_vars[0]])  # Tm
-    # governor_mdl.connect([governor_mdl.in_vars[0]], [gen_mdl.out_vars[3]])  # omega
-    # governor_mdl.connect([governor_mdl.in_vars[1]], [gen_mdl.out_vars[5]])  # Te
-
+    governor_mdl.connect([governor_mdl.in_vars[1]], [gen_mdl.out_vars[5]]) # Te
 
     templ.block.children.append(gen_mdl)
     templ.block.children.append(governor_mdl)
     templ.block.children.append(stabilizer_mdl)
     templ.block.children.append(exciter_mdl)
-    templ.block.in_vars = [v_a_in, v_b_in, v_c_in]
-    # templ.block.unify_blocks()
-
-    # pm_ref_var = None
-    # event_parameter_var = None
-    # for event_parameter_var in templ.block.event_dict.keys():
-    #     if event_parameter_var.name.startswith("Pm_ref_"):
-    #         pm_ref_var = event_parameter_var
-    #     else:
-    #         pass
-
+    templ.block.unify_blocks()
     templ.block.external_mapping = {
-        VarPowerFlowReferenceType.v_A: v_a_in,
-        VarPowerFlowReferenceType.v_B: v_b_in,
-        VarPowerFlowReferenceType.v_C: v_c_in,
-        VarPowerFlowReferenceType.i_A: gen_mdl.out_vars[0],
-        VarPowerFlowReferenceType.i_B: gen_mdl.out_vars[1],
-        VarPowerFlowReferenceType.i_C: gen_mdl.out_vars[2],
-        VarPowerFlowReferenceType.d_v_A: gen_mdl.external_mapping[VarPowerFlowReferenceType.d_v_A],
-        VarPowerFlowReferenceType.d_v_B: gen_mdl.external_mapping[VarPowerFlowReferenceType.d_v_B],
-        VarPowerFlowReferenceType.d_v_C: gen_mdl.external_mapping[VarPowerFlowReferenceType.d_v_C],
-        VarPowerFlowReferenceType.P_A: gen_mdl.external_mapping[VarPowerFlowReferenceType.P_A],
-        VarPowerFlowReferenceType.Q_A: gen_mdl.external_mapping[VarPowerFlowReferenceType.Q_A],
-        VarPowerFlowReferenceType.P_B: gen_mdl.external_mapping[VarPowerFlowReferenceType.P_B],
-        VarPowerFlowReferenceType.Q_B: gen_mdl.external_mapping[VarPowerFlowReferenceType.Q_B],
-        VarPowerFlowReferenceType.P_C: gen_mdl.external_mapping[VarPowerFlowReferenceType.P_C],
-        VarPowerFlowReferenceType.Q_C: gen_mdl.external_mapping[VarPowerFlowReferenceType.Q_C],
+        VarPowerFlowRefferenceType.v_N: None,
+        VarPowerFlowRefferenceType.v_A: gen_mdl.in_vars[0],
+        VarPowerFlowRefferenceType.v_B: gen_mdl.in_vars[1],
+        VarPowerFlowRefferenceType.v_C: gen_mdl.in_vars[2],
+        VarPowerFlowRefferenceType.P_N: None,
+        VarPowerFlowRefferenceType.Q_N: None,
+        VarPowerFlowRefferenceType.P_A: None,
+        VarPowerFlowRefferenceType.Q_A: None,
+        VarPowerFlowRefferenceType.P_B: None,
+        VarPowerFlowRefferenceType.Q_B: None,
+        VarPowerFlowRefferenceType.P_C: None,
+        VarPowerFlowRefferenceType.Q_C: None,
+        VarPowerFlowRefferenceType.i_N: None,
+        VarPowerFlowRefferenceType.i_A: gen_mdl.out_vars[0],
+        VarPowerFlowRefferenceType.i_B: gen_mdl.out_vars[1],
+        VarPowerFlowRefferenceType.i_C: gen_mdl.out_vars[2],
+        VarPowerFlowRefferenceType.phi_v: gen_mdl.in_vars[5],
+        VarPowerFlowRefferenceType.phi: gen_mdl.in_vars[6],
+        VarPowerFlowRefferenceType.Vpk: gen_mdl.in_vars[7],
+        VarPowerFlowRefferenceType.Ipk: gen_mdl.in_vars[8],
+        VarPowerFlowRefferenceType.d_v_N: None,
+        VarPowerFlowRefferenceType.d_v_A: None,
+        VarPowerFlowRefferenceType.d_v_B: None,
+        VarPowerFlowRefferenceType.d_v_C: None,
     }
+
+
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowReferenceType.omega_base:
-            gen_mdl.api_obj_mapping[ParamPowerFlowReferenceType.omega_base],
-        ParamPowerFlowReferenceType.R1:
-            gen_mdl.api_obj_mapping[ParamPowerFlowReferenceType.R1],
-        ParamPowerFlowReferenceType.X1:
-            gen_mdl.api_obj_mapping[ParamPowerFlowReferenceType.X1],
-        ParamPowerFlowReferenceType.X0:
-            gen_mdl.api_obj_mapping[ParamPowerFlowReferenceType.X0],
-        ParamPowerFlowReferenceType.generator_share_p_ref: governor_mdl.api_obj_mapping[ParamPowerFlowReferenceType.generator_share_p_ref],
+        ParamPowerFlowRefferenceType.omega_base:
+            gen_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.omega_base],
+        ParamPowerFlowRefferenceType.R1:
+            gen_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.R1],
+        ParamPowerFlowRefferenceType.X1:
+            gen_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.X1],
+        ParamPowerFlowRefferenceType.X0:
+            gen_mdl.api_obj_mapping[ParamPowerFlowRefferenceType.X0],
     }
 
-    templ.block.in_vars = [v_a_in, v_b_in, v_c_in] # v_abc
+    templ.block.in_vars = [gen_mdl.in_vars[0], gen_mdl.in_vars[1], gen_mdl.in_vars[2]] # v_abc
     templ.block.out_vars = [gen_mdl.out_vars[0], gen_mdl.out_vars[1], gen_mdl.out_vars[2]] #i_abc
 
     return templ
+
+

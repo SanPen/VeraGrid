@@ -6,7 +6,7 @@
 from typing import Dict, Tuple
 import numpy as np
 import math
-from VeraGridEngine.IO.matpower.devices.matpower_circuit import MatpowerCircuit
+from VeraGridEngine.IO.matpower.matpower_circuit import MatpowerCircuit
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.enumerations import TapModuleControl, TapPhaseControl, ConverterControlType
 import VeraGridEngine.Devices as dev
@@ -365,7 +365,7 @@ def convert_branches(circuit: MultiCircuit,
                                  # Beq_max=table[i, matpower_branches.BEQ_MAX],
                                  # Beq_min=table[i, matpower_branches.BEQ_MIN],
                                  rate=rate,
-                                 control1_droop=br.kdp,
+                                 kdp=br.kdp,
                                  # tap_phase_control_mode=tap_phase_control_mode,
                                  # tap_module_control_mode=tap_module_control_mode,
                                  # Pset=Pset,
@@ -662,7 +662,7 @@ def convert_converters(circuit: MultiCircuit,
             alpha3=alpha3,
             alpha2=alpha2,
             alpha1=alpha1,
-            control1_droop=br.droop,
+            kdp=br.droop,
             control1=control1,
             control1_val=control1_val,
             control2=control2,

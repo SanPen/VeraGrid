@@ -3,17 +3,8 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
 
-from PySide6 import QtWidgets
-from PySide6.QtCore import QCoreApplication, QT_TRANSLATE_NOOP
 
-# ponytail: keep these stock message-box titles visible to lupdate so the
-# compiled catalog always contains the "messages" context used at runtime.
-MESSAGE_TRANSLATION_KEYS: tuple[str, str, str, str] = (
-    QT_TRANSLATE_NOOP("messages", "Information"),
-    QT_TRANSLATE_NOOP("messages", "Warning"),
-    QT_TRANSLATE_NOOP("messages", "Error"),
-    QT_TRANSLATE_NOOP("messages", "Question"),
-)
+from PySide6 import QtWidgets
 
 
 class CenteredMessageBox(QtWidgets.QMessageBox):
@@ -30,7 +21,7 @@ class CenteredMessageBox(QtWidgets.QMessageBox):
             )
 
 
-def info_msg(text, title=None):
+def info_msg(text, title="Information"):
     """
     Message box
     :param text: Text to display
@@ -39,17 +30,12 @@ def info_msg(text, title=None):
     msg = CenteredMessageBox()
     msg.setIcon(QtWidgets.QMessageBox.Icon.Information)
     msg.setText(text)
-    default_title: str = QCoreApplication.translate("messages", "Information")
-    if title is None:
-        window_title: str = default_title
-    else:
-        window_title = title
-    msg.setWindowTitle(window_title)
+    msg.setWindowTitle(title)
     msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
     return msg.exec()
 
 
-def warning_msg(text: str, title: str | None = None) -> int:
+def warning_msg(text: str, title: str = "Warning") -> int:
     """
     Message box
     :param text: Text to display
@@ -58,17 +44,12 @@ def warning_msg(text: str, title: str | None = None) -> int:
     msg = CenteredMessageBox()
     msg.setIcon(QtWidgets.QMessageBox.Icon.Warning)
     msg.setText(text)
-    default_title: str = QCoreApplication.translate("messages", "Warning")
-    if title is None:
-        window_title: str = default_title
-    else:
-        window_title = title
-    msg.setWindowTitle(window_title)
+    msg.setWindowTitle(title)
     msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
     return msg.exec()
 
 
-def error_msg(text: str, title: str | None = None) -> int:
+def error_msg(text: str, title: str = "Error") -> int:
     """
     Message box
     :param text: Text to display
@@ -77,31 +58,21 @@ def error_msg(text: str, title: str | None = None) -> int:
     msg = CenteredMessageBox()
     msg.setIcon(QtWidgets.QMessageBox.Icon.Critical)
     msg.setText(text)
-    default_title: str = QCoreApplication.translate("messages", "Error")
-    if title is None:
-        window_title: str = default_title
-    else:
-        window_title = title
-    msg.setWindowTitle(window_title)
+    msg.setWindowTitle(title)
     msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
     return msg.exec()
 
 
-def yes_no_question(text: str, title: str | None = None) -> bool:
+def yes_no_question(text: str, title: str = 'Question') -> bool:
     """
     Question message
     :param text:
     :param title:
     :return: True / False
     """
-    default_title: str = QCoreApplication.translate("messages", "Question")
-    if title is None:
-        window_title: str = default_title
-    else:
-        window_title = title
     buttonReply = QtWidgets.QMessageBox.question(
         None,
-        window_title,
+        title,
         text,
         QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
         QtWidgets.QMessageBox.StandardButton.No

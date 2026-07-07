@@ -86,7 +86,7 @@ class PandasModel(WrappableTableModel):
                     QtCore.Qt.ItemFlag.ItemIsEnabled |
                     QtCore.Qt.ItemFlag.ItemIsSelectable)
         else:
-            return QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable
+            return QtCore.Qt.ItemFlag.ItemIsEnabled
 
     def rowCount(self, parent: Union[QtCore.QModelIndex, QtCore.QPersistentModelIndex] = ...) -> int:
         """

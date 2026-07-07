@@ -4,11 +4,9 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from VeraGrid.Gui.Diagrams.generic_graphics import BatterySymbol
+from VeraGrid.Gui.Diagrams.generic_graphics import Square
 from VeraGridEngine.Devices.Injections.battery import Battery
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
-from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorEditorDialog
-
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
@@ -16,7 +14,7 @@ if TYPE_CHECKING:  # Only imports the below statements during type checking
 
 class BatteryGraphicItem(InjectionTemplateGraphicItem):
 
-    def __init__(self, parent, api_obj: Battery, editor: SchematicWidget, draw_labels: bool = True):
+    def __init__(self, parent, api_obj: Battery, editor: SchematicWidget):
         """
 
         :param parent:
@@ -27,12 +25,11 @@ class BatteryGraphicItem(InjectionTemplateGraphicItem):
                                               parent=parent,
                                               api_obj=api_obj,
                                               editor=editor,
-                                              device_type_name='battery',
+                                              device_type_name='generator',
                                               w=40,
                                               h=40,
-                                              draw_labels=draw_labels,
                                               )
-        self.set_glyph(glyph=BatterySymbol(self, 40, 40))
+        self.set_glyph(glyph=Square(self, 40, 40, "B", self.update_nexus))
 
     @property
     def api_object(self) -> Battery:
@@ -41,15 +38,3 @@ class BatteryGraphicItem(InjectionTemplateGraphicItem):
         :return:
         """
         return self._api_object
-
-    def open_device_editor(self) -> bool:
-        """
-        Open the battery editor using the generator editor implementation.
-
-        :return: ``True`` when the editor was opened.
-        """
-        dlg = GeneratorEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
-        if dlg.exec():
-            return True
-        else:
-            return True

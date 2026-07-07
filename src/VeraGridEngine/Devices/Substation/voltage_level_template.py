@@ -6,44 +6,18 @@ from __future__ import annotations
 from typing import Tuple
 
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
-from VeraGridEngine.enumerations import DeviceType, VoltageLevelTypes, PrpCat
+from VeraGridEngine.enumerations import DeviceType, VoltageLevelTypes
 
 
 class VoltageLevelTemplate(EditableDevice):
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(
-            prop_name='vl_type',
-            units='',
-            tpe=VoltageLevelTypes,
-            definition='Voltage level type',
-            editable=True,
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='voltage',
-            units='kV',
-            tpe=float,
-            definition='Voltage.',
-            editable=True,
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='n_bays',
-            units='',
-            tpe=int,
-            definition='Number of bays or modules to add.',
-            editable=True,
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='add_disconnectors',
-            units='',
-            tpe=bool,
-            definition='Add disconnectors additionally to the circuit breakers',
-            editable=True,
-            cat=[PrpCat.TP],
-        ),
+        GCProp(key='vl_type', units='', tpe=VoltageLevelTypes, definition='Voltage level type', editable=True),
+        GCProp(key='voltage', units='kV', tpe=float, definition='Voltage.', editable=True),
+        GCProp(key='n_bays', units='', tpe=int,
+                      definition='Number of bays or modules to add.', editable=True),
+        GCProp(key='add_disconnectors', units='', tpe=bool,
+                      definition='Add disconnectors additionally to the circuit breakers', editable=True),
     )
 
     def __init__(self,

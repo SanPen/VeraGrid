@@ -10,9 +10,7 @@ from PySide6.QtGui import QCursor, QColor, QBrush
 from PySide6.QtWidgets import (QGraphicsEllipseItem, QMenu,
                                QGraphicsSceneContextMenuEvent,
                                QGraphicsSceneMouseEvent)
-from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
-from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
-from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
+from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.node_template import NodeTemplate
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.types import INJECTION_DEVICE_TYPES
@@ -210,17 +208,6 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         # plot the profiles
         self.api_object.plot_profiles(time=ts)
 
-    def open_device_editor(self) -> bool:
-        """
-        Open the default map-injection editor.
-
-        :return: ``True`` when the editor was opened.
-        """
-        circuit = self._editor.circuit
-        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=circuit)
-        dialog.exec()
-        return True
-
 
     def mouseDoubleClickEvent(self, event, /):
         """
@@ -230,7 +217,6 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         """
         super().mouseDoubleClickEvent(event)
         self.set_api_object_color()
-        self.open_device_editor()
 
     def get_base_context_menu(self) -> QMenu:
         """
@@ -240,17 +226,12 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         menu = QMenu()
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Plot profiles"),
+                       text="Plot profiles",
                        function_ptr=self.plot,
                        icon_path=":/Icons/icons/plot.png")
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Editor"),
-                       function_ptr=self.open_device_editor,
-                       icon_path=":/Icons/icons/edit.png")
-
-        add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Consolidate coordinates"),
+                       text="Consolidate coordinates",
                        function_ptr=self.editor.consolidate_object_coordinates,
                        icon_path=":/Icons/icons/assign_to_profile.png")
 
@@ -258,7 +239,7 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Delete"),
+                       text="Delete",
                        function_ptr=self.delete,
                        icon_path=":/Icons/icons/delete_schematic.png")
 
@@ -266,22 +247,19 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         ss_counter = 0
         gen_counter = 0
 
-        for graphic_obj in self.editor.get_selected():
-            if isinstance(graphic_obj, GenericDiagramWidget):
-                if graphic_obj.api_object.device_type == DeviceType.SubstationDevice:
-                    has_substation = True
-                    ss_counter += 1
-                elif graphic_obj.api_object.device_type == DeviceType.GeneratorDevice:
-                    gen_counter += 1
-                else:
-                    pass
-            else:
-                pass
+        for graphic_obj in self.editor._get_selected():
+            if hasattr(graphic_obj, 'api_object'):
+                if hasattr(graphic_obj.api_object, 'device_type'):
+                    if graphic_obj.api_object.device_type == DeviceType.SubstationDevice:
+                        has_substation = True
+                        ss_counter += 1
+                    elif graphic_obj.api_object.device_type == DeviceType.GeneratorDevice:
+                        gen_counter += 1
         if ss_counter == 1 and gen_counter > 0:
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Change bus connection for the generator"),
+                           text="Change bus connection for the generator",
                            function_ptr=self.editor.change_generator_bus_connection,
                            icon_path=":/Icons/icons/move_bus.png")
 
@@ -310,3 +288,4 @@ class MapInjectionTemplateGraphicItem(NodeTemplate, QGraphicsEllipseItem):
         self.api_object.latitude = lat
         self.api_object.longitude = long
         self.editor.gui.show_info_toast("Coordinates consolidated!")
+

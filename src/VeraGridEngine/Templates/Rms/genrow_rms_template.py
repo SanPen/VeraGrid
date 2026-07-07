@@ -4,10 +4,10 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import numpy as np
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Utils.Symbolic.block import VarPowerFlowReferenceType, Block
+from VeraGridEngine.Utils.Symbolic.block import VarPowerFlowRefferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import cos, sin, exp, imag, log, conj, real, abs
 
 
@@ -18,13 +18,12 @@ def get_genrow_rms_template(vfactory: VarFactory, name="Genrow rms template") ->
     """
     templ = RmsModelTemplate(name=name)
     templ.tpe = DeviceType.GeneratorDevice
-    templ.name = name
 
-    inputs = [vfactory.add_var("Vm_" + name, reference=VarPowerFlowReferenceType.Vm),
-              vfactory.add_var("Va_" + name, reference=VarPowerFlowReferenceType.Va)]
+    inputs = [vfactory.add_var("Vm_" + name),
+              vfactory.add_var("Va_" + name)]
 
-    P_g = vfactory.add_var('P_g', reference=VarPowerFlowReferenceType.P)
-    Q_g = vfactory.add_var('Q_g', reference=VarPowerFlowReferenceType.Q)
+    P_g = vfactory.add_var('P_g')
+    Q_g = vfactory.add_var('Q_g')
 
     delta = vfactory.add_var("delta")
     omega = vfactory.add_var("omega")
@@ -51,23 +50,20 @@ def get_genrow_rms_template(vfactory: VarFactory, name="Genrow rms template") ->
     vf = vfactory.add_var("vf")
     tm0 = vfactory.add_var("tm0")
 
-    block = Block()
-    block.name = name
+    templ.block.event_dict[R1] = vfactory.add_const(0.3)
+    templ.block.event_dict[X1] = vfactory.add_const(0.86138701)
+    templ.block.event_dict[freq] = vfactory.add_const(50.0)
+    templ.block.event_dict[M] = vfactory.add_const(4.0)
+    templ.block.event_dict[D] = vfactory.add_const(1.0)
+    templ.block.event_dict[omega_ref] = vfactory.add_const(1.0)
+    templ.block.event_dict[Kp] = vfactory.add_const(0.0)
+    templ.block.event_dict[Ki] = vfactory.add_const(0.0)
+    templ.block.event_dict[vf] = vfactory.add_const(None)
+    templ.block.event_dict[tm0] = vfactory.add_const(None)
 
-    block.event_dict[R1] = vfactory.add_const(0.3)
-    block.event_dict[X1] = vfactory.add_const(0.86138701)
-    block.event_dict[freq] = vfactory.add_const(50.0)
-    block.event_dict[M] = vfactory.add_const(4.0)
-    block.event_dict[D] = vfactory.add_const(1.0)
-    block.event_dict[omega_ref] = vfactory.add_const(1.0)
-    block.event_dict[Kp] = vfactory.add_const(0.0)
-    block.event_dict[Ki] = vfactory.add_const(0.0)
-    block.event_dict[vf] = psid + X1 * i_d
-    block.event_dict[tm0] = tm
+    templ.block.algebraic_vars = [P_g, Q_g, v_d, v_q, i_d, i_q, psid, psiq, te, tm, et]
 
-    block.algebraic_vars = [P_g, Q_g, v_d, v_q, i_d, i_q, psid, psiq, te, tm, et]
-
-    block.algebraic_eqs = [
+    templ.block.algebraic_eqs = [
         psid - (R1 * i_q + v_q),
         psiq + (R1 * i_d + v_d),
         0 - (psid + X1 * i_d - vf),
@@ -81,13 +77,13 @@ def get_genrow_rms_template(vfactory: VarFactory, name="Genrow rms template") ->
         2 * np.pi * freq * et - delta,
     ]
 
-    block.state_vars = [delta, omega]
-    block.state_eqs = [
+    templ.block.state_vars = [delta, omega]
+    templ.block.state_eqs = [
         (2 * np.pi * freq) * (omega - omega_ref),
         (tm - te - D * (omega - omega_ref)) / M,
     ]
 
-    block.init_eqs = {
+    templ.block.init_eqs = {
         delta: imag(
             log((inputs[0] * exp(1j * inputs[1]) + (R1 + 1j * X1) * (
                 conj((P_g + 1j * Q_g) / (inputs[0] * exp(1j * inputs[1]))))) / (
@@ -109,23 +105,31 @@ def get_genrow_rms_template(vfactory: VarFactory, name="Genrow rms template") ->
         vf: psid + X1 * i_d
     }
 
-    block.in_vars = inputs
-    block.out_vars = [P_g, Q_g]
-
-    templ.block.children.append(block)
-
     templ.block.external_mapping = {
-        VarPowerFlowReferenceType.Vm: inputs[0],
-        VarPowerFlowReferenceType.Va: inputs[1],
-        VarPowerFlowReferenceType.P: P_g,
-        VarPowerFlowReferenceType.Q: Q_g
+        VarPowerFlowRefferenceType.Vm: inputs[0],
+        VarPowerFlowRefferenceType.Va: inputs[1],
+        VarPowerFlowRefferenceType.P: P_g,
+        VarPowerFlowRefferenceType.Q: Q_g
     }
 
     templ.block.api_obj_mapping = {
         # Electrical parameters
-        ParamPowerFlowReferenceType.R1: R1,
-        ParamPowerFlowReferenceType.X1: X1,
-        ParamPowerFlowReferenceType.freq: freq,
+        ParamPowerFlowRefferenceType.R1: R1,
+        ParamPowerFlowRefferenceType.X1: X1,
+        ParamPowerFlowRefferenceType.freq: freq,
+
+        # Mechanical parameters
+        ParamPowerFlowRefferenceType.M: M,
+        ParamPowerFlowRefferenceType.D: D,
+
+        # Control parameters
+        ParamPowerFlowRefferenceType.omega_ref: omega_ref,
+        ParamPowerFlowRefferenceType.Kp: Kp,
+        ParamPowerFlowRefferenceType.Ki: Ki,
+
+        # Inputs / initial conditions
+        ParamPowerFlowRefferenceType.vf: vf,
+        ParamPowerFlowRefferenceType.tm0: tm0,
     }
 
     templ.block.in_vars = inputs

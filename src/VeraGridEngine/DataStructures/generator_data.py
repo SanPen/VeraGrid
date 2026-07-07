@@ -8,7 +8,6 @@ import numpy as np
 from scipy.sparse import csc_matrix, coo_matrix
 import VeraGridEngine.Topology.topology as tp
 from VeraGridEngine.basic_structures import CxVec, Vec, IntVec, BoolVec, StrVec
-from VeraGridEngine.enumerations import GeneratorControlMode
 
 
 class GeneratorData:
@@ -27,7 +26,7 @@ class GeneratorData:
         self.names: StrVec = np.empty(nelm, dtype=object)
         self.idtag: StrVec = np.empty(nelm, dtype=object)
 
-        self.control_mode_int: IntVec = np.zeros(nelm, dtype=int)  # int representation of GeneratorControlMode
+        self.controllable: BoolVec = np.zeros(nelm, dtype=bool)
         self.installed_p: Vec = np.zeros(nelm, dtype=float)
 
         self.active: BoolVec = np.zeros(nelm, dtype=bool)
@@ -38,8 +37,6 @@ class GeneratorData:
         self.q: Vec = np.zeros(nelm, dtype=float)
 
         self.v: Vec = np.zeros(nelm, dtype=float)
-        self.k_droop: Vec = np.zeros(nelm, dtype=float)
-        self.dead_band: Vec = np.zeros(nelm, dtype=float)
 
         self.qmin: Vec = np.zeros(nelm, dtype=float)
         self.qmax: Vec = np.zeros(nelm, dtype=float)
@@ -61,15 +58,6 @@ class GeneratorData:
         self.x0: Vec = np.zeros(nelm, dtype=float)
         self.x1: Vec = np.zeros(nelm, dtype=float)
         self.x2: Vec = np.zeros(nelm, dtype=float)
-
-        # asynchronous generator impedance
-        self.Rs: Vec = np.zeros(nelm, dtype=float)
-        self.Xs: Vec = np.zeros(nelm, dtype=float)
-        self.Xm: Vec = np.zeros(nelm, dtype=float)
-        self.Rr: Vec = np.zeros(nelm, dtype=float)
-        self.Xr: Vec = np.zeros(nelm, dtype=float)
-
-        self.tpe_int: IntVec = np.zeros(self.nelm, dtype=int)  # GeneratorType values
 
         self.dispatchable: BoolVec = np.zeros(nelm, dtype=bool)
         self.must_run: BoolVec = np.zeros(nelm, dtype=bool)
@@ -113,7 +101,7 @@ class GeneratorData:
         data.names = self.names[elm_idx]
         data.idtag = self.idtag[elm_idx]
 
-        data.control_mode_int = self.control_mode_int[elm_idx]
+        data.controllable = self.controllable[elm_idx]
         data.installed_p = self.installed_p[elm_idx]
 
         data.active = self.active[elm_idx]
@@ -122,8 +110,6 @@ class GeneratorData:
         data.p3_star = self.p3_star[elm_idx_3]
         data.q = self.q[elm_idx]
         data.v = self.v[elm_idx]
-        data.k_droop = self.k_droop[elm_idx]
-        data.dead_band = self.dead_band[elm_idx]
 
         data.qmin = self.qmin[elm_idx]
         data.qmax = self.qmax[elm_idx]
@@ -153,14 +139,6 @@ class GeneratorData:
         data.x0 = self.x0[elm_idx]
         data.x1 = self.x1[elm_idx]
         data.x2 = self.x2[elm_idx]
-
-        data.Rs = self.Rs[elm_idx]
-        data.Xs = self.Xs[elm_idx]
-        data.Xm = self.Xm[elm_idx]
-        data.Rr = self.Rr[elm_idx]
-        data.Xr = self.Xr[elm_idx]
-
-        data.tpe_int = self.tpe_int[elm_idx]
 
         data.dispatchable = self.dispatchable[elm_idx]
         data.must_run = self.must_run[elm_idx]
@@ -200,10 +178,6 @@ class GeneratorData:
             new_i = bus_map_arr[i]
             self.bus_idx[k] = new_i
 
-            control_bus_idx = self.controllable_bus_idx[k]
-            if control_bus_idx >= 0:
-                self.controllable_bus_idx[k] = bus_map_arr[control_bus_idx]
-
     def size(self) -> int:
         """
         Get size of the structure
@@ -223,7 +197,7 @@ class GeneratorData:
         data.names = self.names.copy()
         data.idtag = self.idtag.copy()
 
-        data.control_mode_int = self.control_mode_int.copy()
+        data.controllable = self.controllable.copy()
         data.installed_p = self.installed_p.copy()
 
         data.active = self.active.copy()
@@ -231,8 +205,6 @@ class GeneratorData:
         data.p3_star = self.p3_star.copy()
         data.q = self.q.copy()
         data.v = self.v.copy()
-        data.k_droop = self.k_droop.copy()
-        data.dead_band = self.dead_band.copy()
 
         data.qmin = self.qmin.copy()
         data.qmax = self.qmax.copy()
@@ -252,14 +224,6 @@ class GeneratorData:
         data.x0 = self.x0.copy()
         data.x1 = self.x1.copy()
         data.x2 = self.x2.copy()
-
-        data.Rs = self.Rs.copy()
-        data.Xs = self.Xs.copy()
-        data.Xm = self.Xm.copy()
-        data.Rr = self.Rr.copy()
-        data.Xr = self.Xr.copy()
-
-        data.tpe_int = self.tpe_int.copy()
 
         data.dispatchable = self.dispatchable.copy()
         data.must_run = self.must_run.copy()
@@ -450,9 +414,7 @@ class GeneratorData:
         Get the indices of controllable generators
         :return: idx_controllable, idx_non_controllable
         """
-        v_idx = GeneratorControlMode.V.idx()
-        return (np.where(self.control_mode_int == v_idx)[0],
-                np.where(self.control_mode_int != v_idx)[0])
+        return np.where(self.controllable == 1)[0], np.where(self.controllable == 0)[0]
 
     def get_gen_indices_at_buses(self, bus_indices: IntVec) -> IntVec:
 

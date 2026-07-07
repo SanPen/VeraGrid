@@ -7,13 +7,12 @@ from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.load_group import LoadGroup
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.conform_load import ConformLoad
 
 class ConformLoadGroup(LoadGroup):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='EnergyConsumers', class_type='ConformLoad', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Conform loads assigned to this ConformLoadGroup.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='EnergyConsumers', class_type='ConformLoad', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Conform loads assigned to this ConformLoadGroup.''', profiles=[]),
 	)
 	__slots__ = ('EnergyConsumers',)
 	def __init__(self, rdfid='', tpe='ConformLoadGroup'):

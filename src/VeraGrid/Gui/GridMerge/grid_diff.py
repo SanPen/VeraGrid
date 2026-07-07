@@ -14,7 +14,8 @@ from typing import Dict
 from VeraGrid.Gui.GridMerge.build_diff_tree import populate_tree
 from VeraGrid.Gui.GridMerge.grid_diff_gui import Ui_Dialog
 from VeraGrid.Gui.general_dialogues import LogsDialogue
-from VeraGrid.Gui.messages import error_msg, warning_msg
+from VeraGrid.Gui.messages import error_msg
+# import VeraGrid.Session.file_handler as filedrv
 
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.enumerations import FileType
@@ -333,16 +334,6 @@ class GridDiffDialogue(QtWidgets.QDialog):
         self.ui.acceptButton.clicked.connect(self.save_diff)
         self.ui.addButton.clicked.connect(self.open_base_grid)
 
-    def any_thread_running(self) -> bool:
-        """
-        Check if any background worker owned by this dialog is still active.
-        """
-        for thread in (self.open_file_thread_object, self.save_file_thread_object):
-            if thread is not None and thread.isRunning():
-                return True
-
-        return False
-
     def open_base_grid(self):
         """
         Open base grid
@@ -384,29 +375,22 @@ class GridDiffDialogue(QtWidgets.QDialog):
         After open, make the diff
         :return:
         """
-        thread = self.open_file_thread_object
-        self.open_file_thread_object = None
+        if self.open_file_thread_object is not None:
 
-        if thread is not None:
-
-            if thread.valid:
+            if self.open_file_thread_object.valid:
 
                 # assign the loaded circuit
-                if thread.circuit is not None:
+                if self.open_file_thread_object.circuit is not None:
 
                     # Create the base dictionary
-                    self.all_elms_base_dict = thread.all_elms_base_dict
-                    self._diff = thread.diff
+                    self.all_elms_base_dict = self.open_file_thread_object.all_elms_base_dict
+                    self._diff =  self.open_file_thread_object.diff
+                    self.diff_objects_dict, _ = self._diff.get_all_elements_dict(logger=self.logger)
 
-                    if self._diff is not None:
-                        self.diff_objects_dict, _ = self._diff.get_all_elements_dict(logger=self.logger)
-
-                        if thread.logger.has_logs():
-                            dlg = LogsDialogue('Errors while computing the differential :(',
-                                               thread.logger)
-                            dlg.exec()
-                    else:
-                        pass
+                    if self.open_file_thread_object.logger.has_logs():
+                        dlg = LogsDialogue('Errors while computing the differential :(',
+                                           self.open_file_thread_object.logger)
+                        dlg.exec()
 
                     self.build_tree()
 
@@ -497,8 +481,8 @@ class GridDiffDialogue(QtWidgets.QDialog):
                 )
 
                 # make connections
-                self.save_file_thread_object.progress_signal.connect(self.ui.progressBar.setValue)
-                self.save_file_thread_object.progress_text.connect(self.ui.progressLabel.setText)
+                self.open_file_thread_object.progress_signal.connect(self.ui.progressBar.setValue)
+                self.open_file_thread_object.progress_text.connect(self.ui.progressLabel.setText)
                 self.save_file_thread_object.done_signal.connect(self.post_save_diff)
 
                 # thread start
@@ -510,19 +494,5 @@ class GridDiffDialogue(QtWidgets.QDialog):
 
         :return:
         """
-        self.save_file_thread_object = None
         self.ui.progressFrame.setVisible(False)
         self.close()
-
-    def closeEvent(self, event) -> None:
-        """
-        Keep the dialog alive until its worker threads finish to avoid tearing
-        down QThread wrappers while Qt is still delivering their signals.
-        """
-        if self.any_thread_running():
-            warning_msg("Wait for the differential worker to finish before closing this window.",
-                        "Grid differential")
-            event.ignore()
-            return
-
-        super().closeEvent(event)

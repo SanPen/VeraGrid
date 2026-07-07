@@ -109,12 +109,7 @@ def test_method_benchmark() -> None:
     glob_time = vf.add_var("t_glob")
 
     # 1. Create BaseProblem (Network Topology & Equations)
-    static_parameter_values_mapping: Dict[Var, Const] = dict(sys_block.parameters)
-    problem: GenericEmtProblem = GenericEmtProblem(
-        sys_block=sys_block,
-        glob_time=glob_time,
-        static_parameter_values_mapping=static_parameter_values_mapping,
-    )
+    problem: GenericEmtProblem = GenericEmtProblem(sys_block, glob_time)
 
     # 2. Configure Controller
     offset: int = problem.get_variable_parameter_number()
@@ -132,7 +127,7 @@ def test_method_benchmark() -> None:
 
         # 4. Simulate
         t0: float = time.perf_counter()
-        t_arr, y_arr, dy_arr, _, _ = solver.simulate(boundary_updater=pwm_updater)
+        t_arr, y_arr, dy_arr = solver.simulate(boundary_updater=pwm_updater)
         elapsed: float = time.perf_counter() - t0
 
         # Extract Data

@@ -6,24 +6,12 @@
 import numpy as np
 import pandas as pd
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
+from VeraGridEngine.Simulations.results_template import ResultsTemplate
 from VeraGridEngine.basic_structures import DateVec, IntVec, Vec
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 
 
 class ReliabilityResults(ResultsTemplate):
-
-    LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='LOLE_evolution', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='ENS_evolution', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='LOLF_evolution', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='LOLET_evolution', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='LOLFT_evolution', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='SAIDI_evolution', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='SAIFI_evolution', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='CAIDI_evolution', tpe=Vec, old_names=list(), expandable=False),
-    )
-
     __slots__ = (
         "LOLE_evolution",
         "ENS_evolution",
@@ -66,6 +54,14 @@ class ReliabilityResults(ResultsTemplate):
         self.SAIFI_evolution = np.zeros(nsim)
         self.CAIDI_evolution = np.zeros(nsim)
 
+        self.register(name='LOLE_evolution', tpe=Vec)
+        self.register(name='ENS_evolution', tpe=Vec)
+        self.register(name='LOLF_evolution', tpe=Vec)
+        self.register(name='LOLET_evolution', tpe=Vec)
+        self.register(name='LOLFT_evolution', tpe=Vec)
+        self.register(name='SAIDI_evolution', tpe=Vec)
+        self.register(name='SAIFI_evolution', tpe=Vec)
+        self.register(name='CAIDI_evolution', tpe=Vec)
 
     def mdl(self, result_type: ResultTypes) -> ResultsTable:
         """

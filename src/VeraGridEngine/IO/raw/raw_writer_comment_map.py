@@ -9,9 +9,9 @@ comment_version_map = {
     35: {
         "BUS": "@!   I,'NAME        ', BASKV, IDE,AREA,ZONE,OWNER, VM,        VA,    NVHI,   NVLO,   EVHI,   "
                "EVLO\n",
-        "LOAD": "@!   I,'ID',STATUS,AREA,ZONE,      PL,        QL,"
+        "LOAD": "@!   I,'ID',STAT,AREA,ZONE,      PL,        QL,"
                 "        IP,        IQ,        YP,        YQ, OWNER,"
-                "SCALE,INTRPT,  DGENP,     DGENQ,DGENM,'  LOAD TYPE '\n",
+                "SCALE,INTRPT,  DGENP,     DGENQ,DGENF,'  LOAD TYPE '\n",
         "FIXED SHUNT": "@!   I,'ID',STATUS,  GL,        BL\n",
         "GENERATOR": "@!   I,'ID',      PG,        QG,        QT,"
                      "        QB,     VS,    IREG,NREG,     MBASE,     ZR,      "
@@ -26,7 +26,7 @@ comment_version_map = {
                   "  F2,    O3,  F3,    O4,  F4\n",
         "SYSTEM SWITCHING DEVICE": "@!   I,     J,'CKT',          X,  RATE1,"
                                    "  RATE2,  RATE3,  RATE4,  RATE5,  RATE6,  RATE7,  RATE8,  "
-                                   "RATE9, RATE10, RATE11, RATE12, STATUS,NSTATUS,METERED,STYPE,'NAME'\n",
+                                   "RATE9, RATE10, RATE11, RATE12, STAT,NSTAT,  MET,STYPE,'NAME'\n",
         "TRANSFORMER": "@!   I,     J,     K,'CKT',CW,CZ,CM,     MAG1,        MAG2,NMETR,               'N A M E',"
                        "               STAT,O1,  F1,    O2,  F2,    O3,  F3,    O4,  F4,     'VECGRP', ZCOD\n"
                        "@!   R1-2,       X1-2, SBASE1-2,     R2-3,"
@@ -34,16 +34,16 @@ comment_version_map = {
                        " VMSTAR,   ANSTAR\n"
                        "@!WINDV1, NOMV1,   ANG1, RATE1-1, RATE1-2,"
                        " RATE1-3, RATE1-4, RATE1-5, RATE1-6, RATE1-7, RATE1-8,"
-                       " RATE1-9,RATE1-10,RATE1-11,RATE1-12,COD1,CONT1,NODE1,  RMA1,   RMI1,"
+                       " RATE1-9,RATE1-10,RATE1-11,RATE1-12,COD1,CONT1,NOD1,  RMA1,   RMI1,"
                        "   VMA1,   VMI1, NTP1,TAB1, CR1,    CX1,  CNXA1\n"
                        "@!WINDV2, NOMV2,   ANG2, RATE2-1, RATE2-2,"
                        " RATE2-3, RATE2-4, RATE2-5, RATE2-6, RATE2-7, RATE2-8,"
-                       " RATE2-9,RATE2-10,RATE2-11,RATE2-12,COD2,CONT2,NODE2,  RMA2,   RMI2,"
+                       " RATE2-9,RATE2-10,RATE2-11,RATE2-12,COD2,CONT2,NOD2,  RMA2,   RMI2,"
                        "   VMA2,   VMI2, NTP2,TAB2, CR2,    CX2,  CNXA2\n"
                        "@!WINDV3, NOMV3,   ANG3, RATE3-1, RATE3-2,"
                        " RATE3-3, RATE3-4, RATE3-5, RATE3-6, RATE3-7, RATE3-8, "
                        "RATE3-9,RATE3-10,RATE3-11,RATE3-12,COD3,CONT3,"
-                       "NODE3,  RMA3,   RMI3,   VMA3,   VMI3, NTP3,TAB3, CR3,   "
+                       "NOD3,  RMA3,   RMI3,   VMA3,   VMI3, NTP3,TAB3, CR3,   "
                        " CX3,  CNXA3\n",
         "AREA INTERCHANGE": "@! I,   ISW,    PDES,     PTOL,    'ARNAME'\n",
         "TWO-TERMINAL DC LINE": "@!  'NAME',   MDC,    RDC,     SETVL,    VSCHD,    VCMOD,    RCOMP,   DELTI,"
@@ -79,12 +79,12 @@ comment_version_map = {
         "FACTS DEVICE": "@!  'NAME',         I,     J,MODE,PDES,   QDES,  VSET,   SHMX,   TRMX,   VTMN,"
                         "   VTMX,   VSMX,    "
                         "IMX,   LINX,   RMPCT,OWNER,  SET1,    SET2,VSREF, FCREG,NREG,   'MNAME'\n",
-        "SWITCHED SHUNT": "@!   I,'ID',MODSW,ADJM,STAT, VSWHI,  VSWLO, SWREG,NREG, RMPCT,   'RMIDNT',     BINIT,"
+        "SWITCHED SHUNT": "@!   I,'ID',MODSW,ADJM,ST, VSWHI,  VSWLO, SWREG,NREG, RMPCT,   'RMIDNT',     BINIT,"
                           "S1,N1,    B1, S2,"
                           "N2,    B2, S3,N3,    B3, S4,N4,    B4, S5,N5,    B5, S6,N6,    B6, S7,N7,"
                           "    B7, S8,N8,    B8\n",
         "GNE": "@!  'NAME',        'MODEL',     NTERM,BUS1...BUSNTERM,NREAL,NINTG,NCHAR\n"
-               "@!STATUS,OWNER,NMET\n"
+               "@!ST,OWNER,NMETR\n"
                "@! REAL1...REAL(MIN(10,NREAL))\n"
                "@! INTG1...INTG(MIN(10,NINTG))\n"
                "@! CHAR1...CHAR(MIN(10,NCHAR))\n",

@@ -777,20 +777,20 @@ No docstring provided.
 - `argparse(s)`
   Summary: :param s:
 
-## Class: VarPowerFlowReferenceType
+## Class: VarPowerFlowRefferenceType
 
 - Bases: Enum
-- Summary: VarPowerFlowReferenceType
+- Summary: VarPowerFlowRefferenceType
 
 ### Methods
 
 - `argparse(s)`
   Summary: :param s:
 
-## Class: ParamPowerFlowReferenceType
+## Class: ParamPowerFlowRefferenceType
 
 - Bases: Enum
-- Summary: ParamPowerFlowReferenceType
+- Summary: ParamPowerFlowRefferenceType
 
 ### Methods
 

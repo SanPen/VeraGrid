@@ -8,7 +8,7 @@ from PySide6.QtGui import QPen
 from PySide6.QtWidgets import (QMenu)
 from VeraGridEngine.Devices.Fluid.fluid_turbine import FluidTurbine
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, Circle
-from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
+from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
@@ -65,22 +65,22 @@ class FluidTurbineGraphicItem(InjectionTemplateGraphicItem):
         @return:
         """
         menu = QMenu()
-        menu.addSection(translate_context_menu_text("Turbine"))
+        menu.addSection("Turbine")
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Plot fluid profiles"),
+                       text="Plot fluid profiles",
                        icon_path=":/Icons/icons/plot.png",
                        function_ptr=self.plot)
 
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Delete"),
+                       text="Delete",
                        icon_path=":/Icons/icons/delete3.png",
                        function_ptr=self.delete)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Change bus"),
+                       text="Change bus",
                        icon_path=":/Icons/icons/move_bus.png",
                        function_ptr=self.change_bus)
 

@@ -3,17 +3,17 @@
 # file, You can see it at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Sequence
+from typing import Any, Sequence
 
 from VeraGridEngine.enumerations import BlockType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Templates.BasicBlockCatalog.predefined_blocks import (
+from VeraGridEngine.Templates.predefined_blocks import (
     constant,
     gain,
     adder,
     substract,
-    product_2,
+    product,
     divide,
     absolut,
     generic
@@ -21,12 +21,7 @@ from VeraGridEngine.Templates.BasicBlockCatalog.predefined_blocks import (
 from VeraGridEngine.Templates.Rms.genrow_rms_template import get_genrow_rms_template
 from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
 from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
-from VeraGridEngine.Templates.Rms.vsc_gfl_dclinked import build_vsc_rms
-# from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import (get_genqec_rms,
-#                                                                       get_governor_rms,
-#                                                                       get_stabilizer_rms,
-#                                                                       get_exciter_rms)
-from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template_v2 import (get_genqec_rms,
+from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import (get_genqec_rms,
                                                                       get_governor_rms,
                                                                       get_stabilizer_rms,
                                                                       get_exciter_rms)
@@ -35,7 +30,7 @@ from VeraGridEngine.Templates.Emt.generator_emt_type_template import (get_simple
                                                                       get_exciter_emt,
                                                                       get_governor_emt,
                                                                       get_stabilizer_emt)
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
+from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
 from VeraGridEngine.Templates.Emt.bergeron_line_emt_template import get_bergeron_line_emt_template
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import (get_shunt_r_emt_template,
@@ -45,10 +40,7 @@ from VeraGridEngine.Templates.Emt.load_exponential_emt_template import get_expon
 from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_template
 from VeraGridEngine.Templates.Emt.dc_load_emt_template import get_dc_load_emt_template
 
-def create_sum_block(var_factory: VarFactory, item_name: str)  -> Block | None:
-    blk = adder(var_factory, minuend_inputs, substrahend_inputs, item_name)
-    blk.name = item_name
-    return blk
+
 
 def create_block_of_type(var_factory: VarFactory,
                          block_type: BlockType,
@@ -70,7 +62,6 @@ def create_block_of_type(var_factory: VarFactory,
 
     # SUM / ADDER (2 inputs)
     elif block_type == BlockType.SUM:
-
         blk = adder(var_factory, item_name)
         blk.name = item_name
         return blk
@@ -83,7 +74,7 @@ def create_block_of_type(var_factory: VarFactory,
 
     # PRODUCT (2 inputs)
     elif block_type == BlockType.PRODUCT:
-        blk = product_2(var_factory, item_name)
+        blk = product(var_factory, item_name)
         blk.name = item_name
         return blk
 
@@ -143,18 +134,6 @@ def create_block_of_type(var_factory: VarFactory,
         blk.name = item_name
         return blk
 
-    # VSC grid following
-    elif block_type == BlockType.GFL_VSC_RMS:
-        blk = build_vsc_rms(var_factory).block
-        blk.name = item_name
-        return blk
-
-    # DC PV source averaged
-    # elif block_type == BlockType.DC_PV_SOURCE_RMS:
-    #     blk = tem.DCPVSourceAveraged(var_factory).block
-    #     blk.name = item_name
-    #     return blk
-
     # ---------- EMT BLOCKS ----------
     # EMT type GENERATOR
     elif block_type == BlockType.EMT_GENERATOR:
@@ -164,7 +143,7 @@ def create_block_of_type(var_factory: VarFactory,
 
     # Thevenin equivalent generator
     elif block_type == BlockType.EMT_THEVENIN:
-        blk = get_generator_thevenin_rl_emt_template_with_ref(var_factory).block
+        blk = get_generator_thevenin_rl_emt_template(var_factory).block
         blk.name = item_name
         return blk
 

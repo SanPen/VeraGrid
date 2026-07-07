@@ -29,10 +29,7 @@ def get_ptdf_comp_numba(data: Vec, indices: IntVec, indptr: IntVec, PTDF: Mat, m
     :return:
     """
     # Perform the operation
-    # We need to create a copy. Otherwise we were modifying the PTDF matrix
-    # and over several passes it degraded making curtailments not converge
-    # += would mutate the original PTDF matrix since it is a view
-    result = PTDF[m, :].copy()
+    result = PTDF[m, :]
 
     for j, bd_index in enumerate(bd_indices):
         for i in range(indptr[j], indptr[j + 1]):
@@ -557,17 +554,10 @@ class ContingencyResultsReport:
         :param detailed_massive_report: Generate massive report
         """
 
-        mon_idx = np.asarray(mon_idx)
-
         # Reporting base case
         if contingency_group_idx == 0:  # only doing it once per hour
 
-            # Only the branches overloaded in the base case can produce an entry
-            base_overloaded = mon_idx[
-                np.abs(base_flow[mon_idx]) > nc.passive_branch_data.rates[mon_idx]
-            ]
-
-            for m in base_overloaded:
+            for m in mon_idx:
 
                 if area_names is None:
                     area_from = ""
@@ -580,44 +570,32 @@ class ContingencyResultsReport:
                         area_from = ""
                         area_to = ""
 
-                self.add(time_index=t if t is not None else 0,
-                         t_prob=t_prob,
-                         mon_idx=m,
-                         con_group_idx=contingency_group_idx,
-                         area_from=area_from,
-                         area_to=area_to,
-                         base_name=nc.passive_branch_data.names[m],
-                         contingency_name='Base',
-                         base_rating=nc.passive_branch_data.rates[m],
-                         contingency_rating=nc.passive_branch_data.contingency_rates[m],
-                         srap_rating=srap_ratings[m],
-                         base_flow=abs(base_flow[m]),
-                         post_contingency_flow=0.0,
-                         post_srap_flow=0.0,
-                         base_loading=abs(base_flow[m]) / (nc.passive_branch_data.rates[m] + 1e-9),
-                         post_contingency_loading=0.0,
-                         post_srap_loading=0.0,
-                         msg_ov='Overload not acceptable',
-                         msg_srap='SRAP not applicable',
-                         srap_power=0.0,
-                         solved_by_srap=False)
+                if abs(base_flow[m]) > nc.passive_branch_data.rates[m]:  # only add if overloaded
 
-        # Now evaluating the effect of contingencies.
-        # (`affected_by_cont1 and affected_by_cont2 and c_load > 1 and c_flow > b_flow`).
-        # Only branches actually overloaded by this contingency can produce an entry
-        _cf_sel = contingency_flows[mon_idx]
-        _bf_sel = base_flow[mon_idx]
-        _cflow_sel = np.abs(_cf_sel)
-        _bflow_sel = np.abs(_bf_sel)
-        _cload_sel = np.abs(contingency_loadings[mon_idx])
+                    self.add(time_index=t if t is not None else 0,
+                             t_prob=t_prob,
+                             mon_idx=m,
+                             con_group_idx=contingency_group_idx,
+                             area_from=area_from,
+                             area_to=area_to,
+                             base_name=nc.passive_branch_data.names[m],
+                             contingency_name='Base',
+                             base_rating=nc.passive_branch_data.rates[m],
+                             contingency_rating=nc.passive_branch_data.contingency_rates[m],
+                             srap_rating=srap_ratings[m],
+                             base_flow=abs(base_flow[m]),
+                             post_contingency_flow=0.0,
+                             post_srap_flow=0.0,
+                             base_loading=abs(base_flow[m]) / (nc.passive_branch_data.rates[m] + 1e-9),
+                             post_contingency_loading=0.0,
+                             post_srap_loading=0.0,
+                             msg_ov='Overload not acceptable',
+                             msg_srap='SRAP not applicable',
+                             srap_power=0.0,
+                             solved_by_srap=False)
 
-        _screen = ((_cf_sel != _bf_sel)
-                   & (_cflow_sel / (_bflow_sel + 1e-9) - 1.0 > contingency_deadband)
-                   & (_cload_sel > 1.0)
-                   & (_cflow_sel > _bflow_sel))
-        candidate_branches = mon_idx[_screen]
-
-        for m in candidate_branches:  # for each branch actually overloaded by this contingency
+        # Now evaluating the effect of contingencies
+        for m in mon_idx:  # for each monitored branch ...
 
             if area_names is None:
                 area_from = ""

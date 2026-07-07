@@ -7,9 +7,9 @@
 import numpy as np
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
+from VeraGridEngine.Simulations.results_template import ResultsTemplate
 from VeraGridEngine.Simulations.ContingencyAnalysis.contingencies_report import ContingencyResultsReport
-from VeraGridEngine.basic_structures import IntVec, StrVec, CxMat, Mat, Vec, CxVec
+from VeraGridEngine.basic_structures import IntVec, StrVec, CxMat, Mat
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 
 
@@ -17,21 +17,6 @@ class ContingencyAnalysisResults(ResultsTemplate):
     """
     Contingency analysis results
     """
-
-    LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
-        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
-        ResultsProperty(name='con_names', tpe=StrVec, old_names=list(), expandable=False),
-        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
-        ResultsProperty(name='voltage', tpe=CxMat, old_names=list(), expandable=False),
-        ResultsProperty(name='Sbus', tpe=CxMat, old_names=list(), expandable=False),
-        ResultsProperty(name='Sf_base', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='Sf', tpe=CxMat, old_names=list(), expandable=False),
-        ResultsProperty(name='loading', tpe=CxMat, old_names=list(), expandable=False),
-        ResultsProperty(name='srap_used_power', tpe=Mat, old_names=list(), expandable=False),
-        ResultsProperty(name='report', tpe=ContingencyResultsReport, old_names=list(), expandable=False),
-    )
-
     __slots__ = (
         "branch_names",
         "bus_names",
@@ -39,7 +24,6 @@ class ContingencyAnalysisResults(ResultsTemplate):
         "con_names",
         "voltage",
         "Sbus",
-        "Sf_base",
         "Sf",
         "loading",
         "srap_used_power",
@@ -69,7 +53,6 @@ class ContingencyAnalysisResults(ResultsTemplate):
             name='Contingency Analysis Results',
             available_results=[
                 ResultTypes.BusActivePower,
-                ResultTypes.BranchActivePowerFromBase,
                 ResultTypes.BranchActivePowerFrom,
                 ResultTypes.BranchLoading,
                 ResultTypes.ContingencyAnalysisReport,
@@ -88,13 +71,24 @@ class ContingencyAnalysisResults(ResultsTemplate):
 
         self.voltage: CxMat = np.ones((ncon, nbus), dtype=complex)
         self.Sbus: CxMat = np.zeros((ncon, nbus), dtype=complex)
-        self.Sf_base: CxVec = np.zeros(nbr, dtype=complex)
         self.Sf: CxMat = np.zeros((ncon, nbr), dtype=complex)
         self.loading: CxMat = np.zeros((ncon, nbr), dtype=complex)
         self.srap_used_power = np.zeros((nbr, nbus), dtype=float)
 
         self.report: ContingencyResultsReport = ContingencyResultsReport()
 
+        self.register(name='branch_names', tpe=StrVec)
+        self.register(name='bus_names', tpe=StrVec)
+        self.register(name='con_names', tpe=StrVec)
+        self.register(name='bus_types', tpe=IntVec)
+
+        self.register(name='voltage', tpe=CxMat)
+        self.register(name='Sbus', tpe=CxMat)
+        self.register(name='Sf', tpe=CxMat)
+        self.register(name='loading', tpe=CxMat)
+        self.register(name='srap_used_power', tpe=Mat)
+
+        self.register(name='report', tpe=ContingencyResultsReport)
 
     def apply_new_rates(self, nc: NumericalCircuit):
         """
@@ -171,18 +165,6 @@ class ContingencyAnalysisResults(ResultsTemplate):
                 units='(MW)',
                 cols_device_type=DeviceType.ContingencyDevice,
                 idx_device_type=DeviceType.BusDevice
-            )
-
-        elif result_type == ResultTypes.BranchActivePowerFromBase:
-
-            return ResultsTable(
-                data=self.Sf_base.real,
-                index=self.branch_names,
-                columns=['Base case (MW)'],
-                title=result_type.value,
-                units='(MW)',
-                cols_device_type=DeviceType.NoDevice,
-                idx_device_type=DeviceType.BranchDevice
             )
 
         elif result_type == ResultTypes.BranchActivePowerFrom:

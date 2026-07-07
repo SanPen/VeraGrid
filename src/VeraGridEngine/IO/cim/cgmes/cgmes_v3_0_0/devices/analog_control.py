@@ -10,8 +10,8 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class AnalogControl(Control):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='maxValue', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Normal value range maximum for any of the Control.value. Used for scaling, e.g. in bar graphs.''', mandatory=True, profiles=[CgmesProfileType.OP]),
-		CgmesProperty(property_name='minValue', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Normal value range minimum for any of the Control.value. Used for scaling, e.g. in bar graphs.''', mandatory=True, profiles=[CgmesProfileType.OP]),
+		CgmesProperty(property_name='maxValue', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Normal value range maximum for any of the Control.value. Used for scaling, e.g. in bar graphs.''', profiles=[]),
+		CgmesProperty(property_name='minValue', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Normal value range minimum for any of the Control.value. Used for scaling, e.g. in bar graphs.''', profiles=[]),
 	)
 	__slots__ = ('maxValue', 'minValue')
 	def __init__(self, rdfid='', tpe='AnalogControl'):

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'grid_generator_gui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.11.0
+## Created by: Qt User Interface Compiler version 6.9.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -42,23 +42,25 @@ class Ui_MainWindow(object):
         icon2 = QIcon()
         icon2.addFile(u":/Icons/icons/import_profiles.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.actionSave.setIcon(icon2)
-        self.verticalLayout = QVBoxLayout(MainWindow)
+        self.verticalLayout_2 = QVBoxLayout(MainWindow)
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.splitter_3 = QSplitter(MainWindow)
         self.splitter_3.setObjectName(u"splitter_3")
-        self.splitter_3.setOrientation(Qt.Orientation.Horizontal)
+        self.splitter_3.setOrientation(Qt.Horizontal)
         self.frame_8 = QFrame(self.splitter_3)
         self.frame_8.setObjectName(u"frame_8")
         self.frame_8.setMaximumSize(QSize(400, 16777215))
-        self.frame_8.setFrameShape(QFrame.Shape.NoFrame)
-        self.frame_8.setFrameShadow(QFrame.Shadow.Raised)
+        self.frame_8.setFrameShape(QFrame.NoFrame)
+        self.frame_8.setFrameShadow(QFrame.Raised)
         self.verticalLayout_7 = QVBoxLayout(self.frame_8)
         self.verticalLayout_7.setObjectName(u"verticalLayout_7")
         self.verticalLayout_7.setContentsMargins(-1, 0, -1, -1)
         self.frame = QFrame(self.frame_8)
         self.frame.setObjectName(u"frame")
-        self.frame.setFrameShape(QFrame.Shape.NoFrame)
-        self.frame.setFrameShadow(QFrame.Shadow.Raised)
+        self.frame.setFrameShape(QFrame.NoFrame)
+        self.frame.setFrameShadow(QFrame.Raised)
         self.gridLayout = QGridLayout(self.frame)
         self.gridLayout.setObjectName(u"gridLayout")
         self.power_SpinBox = QDoubleSpinBox(self.frame)
@@ -241,6 +243,37 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_7.addWidget(self.frame)
 
+        self.frame_2 = QFrame(self.frame_8)
+        self.frame_2.setObjectName(u"frame_2")
+        self.frame_2.setFrameShape(QFrame.NoFrame)
+        self.frame_2.setFrameShadow(QFrame.Raised)
+        self.horizontalLayout_2 = QHBoxLayout(self.frame_2)
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.applyButton = QPushButton(self.frame_2)
+        self.applyButton.setObjectName(u"applyButton")
+        self.applyButton.setMinimumSize(QSize(24, 24))
+        icon3 = QIcon()
+        icon3.addFile(u":/Icons/icons/color_grid.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.applyButton.setIcon(icon3)
+
+        self.horizontalLayout_2.addWidget(self.applyButton)
+
+        self.previewButton = QPushButton(self.frame_2)
+        self.previewButton.setObjectName(u"previewButton")
+        self.previewButton.setMinimumSize(QSize(24, 24))
+        icon4 = QIcon()
+        icon4.addFile(u":/Icons/icons/run_cascade_step.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.previewButton.setIcon(icon4)
+
+        self.horizontalLayout_2.addWidget(self.previewButton)
+
+        self.horizontalSpacer = QSpacerItem(543, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_2.addItem(self.horizontalSpacer)
+
+
+        self.verticalLayout_7.addWidget(self.frame_2)
+
         self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_7.addItem(self.verticalSpacer)
@@ -248,8 +281,8 @@ class Ui_MainWindow(object):
         self.splitter_3.addWidget(self.frame_8)
         self.PlotFrame = QFrame(self.splitter_3)
         self.PlotFrame.setObjectName(u"PlotFrame")
-        self.PlotFrame.setFrameShape(QFrame.Shape.NoFrame)
-        self.PlotFrame.setFrameShadow(QFrame.Shadow.Raised)
+        self.PlotFrame.setFrameShape(QFrame.NoFrame)
+        self.PlotFrame.setFrameShadow(QFrame.Raised)
         self.horizontalLayout = QHBoxLayout(self.PlotFrame)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.plotwidget = MatplotlibWidget(self.PlotFrame)
@@ -261,38 +294,8 @@ class Ui_MainWindow(object):
 
         self.verticalLayout.addWidget(self.splitter_3)
 
-        self.frame_2 = QFrame(MainWindow)
-        self.frame_2.setObjectName(u"frame_2")
-        self.frame_2.setMaximumSize(QSize(16777215, 36))
-        self.frame_2.setFrameShape(QFrame.Shape.NoFrame)
-        self.frame_2.setFrameShadow(QFrame.Shadow.Raised)
-        self.horizontalLayout_2 = QHBoxLayout(self.frame_2)
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.previewButton = QPushButton(self.frame_2)
-        self.previewButton.setObjectName(u"previewButton")
-        self.previewButton.setMinimumSize(QSize(24, 24))
-        icon3 = QIcon()
-        icon3.addFile(u":/Icons/icons/run_cascade_step.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.previewButton.setIcon(icon3)
 
-        self.horizontalLayout_2.addWidget(self.previewButton)
-
-        self.horizontalSpacer = QSpacerItem(543, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontalLayout_2.addItem(self.horizontalSpacer)
-
-        self.applyButton = QPushButton(self.frame_2)
-        self.applyButton.setObjectName(u"applyButton")
-        self.applyButton.setMinimumSize(QSize(24, 24))
-        icon4 = QIcon()
-        icon4.addFile(u":/Icons/icons/color_grid.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.applyButton.setIcon(icon4)
-
-        self.horizontalLayout_2.addWidget(self.applyButton)
-
-
-        self.verticalLayout.addWidget(self.frame_2)
+        self.verticalLayout_2.addLayout(self.verticalLayout)
 
 
         self.retranslateUi(MainWindow)
@@ -323,12 +326,12 @@ class Ui_MainWindow(object):
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Reactance(X) ", None))
         self.label_12.setText(QCoreApplication.translate("MainWindow", u"Power factor", None))
 #if QT_CONFIG(tooltip)
-        self.previewButton.setToolTip(QCoreApplication.translate("MainWindow", u"Preview", None))
-#endif // QT_CONFIG(tooltip)
-        self.previewButton.setText(QCoreApplication.translate("MainWindow", u"Preview", None))
-#if QT_CONFIG(tooltip)
         self.applyButton.setToolTip(QCoreApplication.translate("MainWindow", u"Create Grid", None))
 #endif // QT_CONFIG(tooltip)
-        self.applyButton.setText(QCoreApplication.translate("MainWindow", u"Accept", None))
+        self.applyButton.setText("")
+#if QT_CONFIG(tooltip)
+        self.previewButton.setToolTip(QCoreApplication.translate("MainWindow", u"Preview", None))
+#endif // QT_CONFIG(tooltip)
+        self.previewButton.setText("")
     # retranslateUi
 

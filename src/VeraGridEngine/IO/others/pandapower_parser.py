@@ -13,7 +13,7 @@ import pandas as pd
 
 import VeraGridEngine.Devices as dev
 # from VeraGridEngine.Devices.Branches.tap_changer import TapChanger
-from VeraGridEngine.enumerations import (ExternalGridMode, TapChangerTypes, GeneratorControlMode)
+from VeraGridEngine.enumerations import (ExternalGridMode, TapChangerTypes)
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.basic_structures import Logger
 
@@ -393,7 +393,7 @@ class Panda2VeraGrid:
                     name=row['name'],
                     code=idx,
                     P=row['p_mw'] * self.load_scale,
-                    control_mode=GeneratorControlMode.V,
+                    is_controlled=True,
                     idtag=row.get('uuid', None),
                     vset=row["vm_pu"]
                 )

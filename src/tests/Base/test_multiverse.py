@@ -5,18 +5,9 @@
 import os
 from pathlib import Path
 import pytest
-import numpy as np
-import pandas as pd
 
 import VeraGridEngine.api as vge
-import VeraGridEngine.Templates as tem
-from VeraGridEngine.Devices.Diagrams.graphic_location import GraphicLocation
-from VeraGridEngine.Devices.Diagrams.map_location import MapLocation
-from VeraGridEngine.Devices.Dynamic.fmu_template import FmuTemplate
-from VeraGridEngine.enumerations import DeviceType, FmuTemplateDomain
-from VeraGridEngine.IO.file_save import FileSavingOptions, save_veragrid_multiverse
 from VeraGridEngine.IO.file_open import FileOpen
-from VeraGridEngine.Utils.Symbolic.block import Block
 
 
 GRID_FOLDER = Path(__file__).resolve().parents[1] / "data" / "grids"
@@ -43,194 +34,6 @@ def _get_bus_by_name(grid, bus_name: str):
         if bus.name == bus_name:
             return bus
     return None
-
-
-def _build_grid_with_schematic_diagram():
-    """
-    Build a minimal grid whose schematic locations point to its API objects.
-    """
-    grid = vge.MultiCircuit(name="diagram-pointer-grid")
-    bus_from = grid.add_bus(vge.Bus(name="B1", Vnom=10.0, is_slack=True))
-    bus_to = grid.add_bus(vge.Bus(name="B2", Vnom=10.0))
-    line = grid.add_line(vge.Line(name="L12", bus_from=bus_from, bus_to=bus_to, r=0.1, x=0.2, rate=100.0))
-
-    diagram = vge.SchematicDiagram(name="diagram-pointer-schematic")
-    diagram.set_point(bus_from, GraphicLocation(x=0.0, y=0.0, w=80.0, h=40.0, api_object=bus_from))
-    diagram.set_point(bus_to, GraphicLocation(x=200.0, y=0.0, w=80.0, h=40.0, api_object=bus_to))
-    diagram.set_point(line, GraphicLocation(x=0.0, y=0.0, w=0.0, h=0.0, api_object=line))
-    grid.add_diagram(diagram)
-
-    return grid
-
-
-def _build_grid_with_schematic_and_map_diagrams():
-    """
-    Build a minimal grid with both schematic and map locations.
-    """
-    grid = _build_grid_with_schematic_diagram()
-    line = grid.lines[0]
-
-    map_diagram = vge.MapDiagram(name="diagram-pointer-map")
-    map_diagram.set_point(
-        line,
-        MapLocation(latitude=28.1, longitude=-15.4, altitude=12.0, draw_labels=False, api_object=line),
-    )
-    grid.add_diagram(map_diagram)
-
-    return grid
-
-
-def _build_grid_with_internal_references():
-    """
-    Build a grid containing direct, association, and profile device references.
-    """
-    grid = vge.MultiCircuit(name="internal-pointer-grid")
-    bus_from = grid.add_bus(vge.Bus(name="B1", Vnom=10.0, is_slack=True))
-    bus_to = grid.add_bus(vge.Bus(name="B2", Vnom=10.0))
-    dc_bus = grid.add_bus(vge.Bus(name="DC", Vnom=10.0, is_dc=True))
-
-    line = grid.add_line(vge.Line(name="L12", bus_from=bus_from, bus_to=bus_to, r=0.1, x=0.2, rate=100.0))
-    grid.add_load(bus=bus_to, api_obj=vge.Load(name="LD"))
-
-    technology = vge.Technology(name="Solar")
-    grid.add_technology(technology)
-
-    generator = grid.add_generator(bus=bus_from, api_obj=vge.Generator(name="G"))
-    generator.technologies.add_object(api_object=technology, val=1.0)
-
-    vsc = vge.VSC(
-        name="VSC",
-        bus_from=dc_bus,
-        bus_to=bus_from,
-        control1_dev=line,
-        control2_dev=bus_to,
-    )
-    vsc.control1_dev_prof.create_sparse(size=3, default_value=line, map_data={1: bus_to})
-    vsc.control2_dev_prof.create_dense(size=2, default_value=bus_to)
-    vsc.control2_dev_prof[1] = line
-    grid.add_vsc(vsc)
-
-    return grid
-
-
-def add_rms_model_catalogue(grid):
-    """
-    Here the list of all rms templates must be returned in a list
-    :return:
-    """
-    # TODO: eliminate
-    grid.rms_models += [
-        tem.get_genqec_rms(vfactory=grid.var_factory),
-        tem.get_governor_rms(vfactory=grid.var_factory),
-        tem.get_stabilizer_rms(vfactory=grid.var_factory),
-        tem.get_exciter_rms(vfactory=grid.var_factory),
-        tem.get_complete_generator_template_rms(vfactory=grid.var_factory),
-        tem.get_genrow_rms_template(vfactory=grid.var_factory),
-        tem.get_line_rms_template(vfactory=grid.var_factory),
-        tem.get_load_rms_template(vfactory=grid.var_factory),
-        tem.get_pvd1_rms_template(vfactory=grid.var_factory),
-        tem.build_vsc_rms(vfactory=grid.var_factory)
-    ]
-
-def add_emt_model_catalogue(grid):
-    """
-    Create default catalogue of EMT values
-    :return:
-    """
-    grid.emt_models += [
-
-        tem.get_simple_generator_emt_template(vf=grid.var_factory),
-        tem.get_generator_sauer_pai_type_emt_template(vf=grid.var_factory),
-        tem.get_governor_emt(vf=grid.var_factory),
-        tem.get_stabilizer_emt(vf=grid.var_factory),
-        tem.get_exciter_emt(vf=grid.var_factory),
-        tem.get_complete_generator_template_emt(vf=grid.var_factory),
-
-        tem.get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory),
-        tem.get_emt_ideal_converter(vf=grid.var_factory),
-        tem.get_full_pseudo_emt_converter(vf=grid.var_factory),
-        tem.get_switched_emt_converter(vf=grid.var_factory),
-        tem.get_bridge_2level_3ph_emt_template(vf=grid.var_factory),
-        tem.get_bridge_filter_2level_3ph_emt_template(vf=grid.var_factory),
-        tem.get_bridge_filter_control_2level_3ph_emt_template(vf=grid.var_factory),
-        tem.get_dc_load_emt_template(vf=grid.var_factory),
-        # tem.get_dc_line_emt_template(vf=self._var_factory),
-        tem.get_dc_line_with_power_input_emt_template(vf=grid.var_factory),
-        tem.get_valve_emt_template(vf=grid.var_factory),
-        tem.get_transformer_emt_template(vf=grid.var_factory),
-        tem.get_xfmr_emt_template(vf=grid.var_factory),
-        tem.get_induction_motor_single_cage_emt_template(vf=grid.var_factory),
-        tem.get_induction_motor_double_cage_emt_template(vf=grid.var_factory),
-        tem.get_bess_avm_grid_following_emt_template(vf=grid.var_factory),
-        tem.get_pv_avm_grid_following_emt_template(vf=grid.var_factory),
-        tem.get_pv_avm_boost_grid_following_emt_template(vf=grid.var_factory),
-        tem.get_gfm_emt_template(vf=grid.var_factory),
-
-        # the following are functions that generate templates depending on phases or things
-        tem.get_shunt_c_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
-        tem.get_shunt_l_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
-        tem.get_shunt_r_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
-        tem.get_exponential_load_emt(vf=grid.var_factory, phA=True, phB=True, phC=True),
-        tem.get_load_ZIP_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True),
-        tem.get_pi_line_emt_template(vf=grid.var_factory, phN=False, phA=True, phB=True, phC=True),
-        tem.get_bergeron_line_emt_template(vf=grid.var_factory, phN=False, phA=True, phB=True, phC=True),
-
-    ]
-
-def _build_grid_with_dynamic_templates():
-    """
-    Build a grid with native RMS/EMT templates and one RMS FMU template.
-    """
-    grid = vge.MultiCircuit(name="dynamic-template-pointer-grid")
-    bus_from = grid.add_bus(vge.Bus(name="B1", Vnom=10.0, is_slack=True))
-    bus_to = grid.add_bus(vge.Bus(name="B2", Vnom=10.0))
-    line = grid.add_line(vge.Line(name="L12", bus_from=bus_from, bus_to=bus_to, r=0.1, x=0.2, rate=100.0))
-    load = grid.add_load(bus=bus_to, api_obj=vge.Load(name="LD"))
-
-    add_rms_model_catalogue(grid)
-    add_emt_model_catalogue(grid)
-
-    rms_template = next(t for t in grid.rms_models if t.tpe == DeviceType.LineDevice)
-    emt_template = next(t for t in grid.emt_models if t.tpe == DeviceType.LineDevice)
-    line.rms_template = rms_template
-    line.emt_template = emt_template
-
-    fmu_template = FmuTemplate(name="load-rms-fmu")
-    fmu_template.tpe = DeviceType.LoadDevice
-    fmu_template.domain = FmuTemplateDomain.RMS
-    fmu_template.block = Block(name="load-rms-fmu-block")
-    grid.add_fmu_template(fmu_template)
-    load.rms_fmu_template = fmu_template
-
-    return grid, rms_template, emt_template, fmu_template
-
-
-def _build_grid_with_time_series():
-    """
-    Build a minimal time-series grid with one line profile that can be changed in a scenario delta.
-    """
-    grid = vge.MultiCircuit(name="time-series-profile-grid")
-    bus_from = grid.add_bus(vge.Bus(name="B1", Vnom=10.0, is_slack=True))
-    bus_to = grid.add_bus(vge.Bus(name="B2", Vnom=10.0))
-    line = grid.add_line(vge.Line(name="L12", bus_from=bus_from, bus_to=bus_to, r=0.1, x=0.2, rate=100.0))
-    grid.format_profiles(pd.date_range("2030-01-01", periods=3, freq="h"))
-    line.active_prof.set(np.array([True, True, True], dtype=bool))
-    return grid
-
-
-def _assert_diagram_locations_point_to_circuit_objects(grid) -> None:
-    """
-    Assert every diagram location points to the canonical object in the circuit.
-    """
-    obj_dict = grid.get_all_elements_dict_by_type(add_locations=True)
-
-    for diagram in grid.diagrams:
-        for category, points_group in diagram.data.items():
-            category_obj_dict = obj_dict.get(category, dict())
-
-            for idtag, location in points_group.locations.items():
-                assert idtag in category_obj_dict
-                assert location.api_object is category_obj_dict[idtag]
 
 
 def _assert_circuits_equal(grid1, grid2) -> None:
@@ -435,64 +238,6 @@ def test_multiverse_nested_checkout_replays_parent_deltas() -> None:
     assert _get_bus_by_name(grandchild_grid, "grandchild_only_bus") is not None
 
 
-def test_multiverse_profile_only_child_delta_roundtrips_without_defaulting_to_ones(tmp_path: Path) -> None:
-    """
-    Profile-only scenario edits must be stored as real deltas, not recreated from active=True defaults on save.
-    """
-    mv = vge.MultiVerse(_build_grid_with_time_series())
-    root = mv.root_nodes[0]
-    child = mv.create_node(
-        data=vge.MultiCircuit(name="profile-child"),
-        parent_id=root.node_id,
-        position=root.child_count(),
-    )
-
-    expected_profile = np.array([True, False, True], dtype=bool)
-
-    child_grid = mv.activate_scenario(child.node_id)
-    child_line = next(line for line in child_grid.lines if line.name == "L12")
-    child_line.active_prof.set(expected_profile)
-    mv.commit_current()
-
-    # The stored child payload is a delta, so the modified line must be present there.
-    assert len(child.circuit.lines) == 1
-    np.testing.assert_array_equal(child.circuit.lines[0].active_prof.toarray(), expected_profile)
-
-    file_name = tmp_path / "profile_only_delta.veragrid"
-    save_veragrid_multiverse(
-        file_name=str(file_name),
-        multiverse=mv,
-        options=FileSavingOptions(),
-    )
-
-    drv = FileOpen(str(file_name))
-    drv.open()
-    loaded_mv = drv.multiverse
-    assert loaded_mv is not None
-
-    loaded_child = loaded_mv.get_node(child.node_id)
-    loaded_child_grid = loaded_mv.checkout(loaded_child)
-    loaded_line = next(line for line in loaded_child_grid.lines if line.name == "L12")
-    np.testing.assert_array_equal(loaded_line.active_prof.toarray(), expected_profile)
-
-
-def test_multiverse_save_rejects_degenerate_epoch_time_profile(tmp_path: Path) -> None:
-    """
-    A multi-step master time profile made only of epoch-near duplicate values is almost certainly corrupted.
-    """
-    grid = _build_grid_with_time_series()
-    grid.set_unix_time(np.ones(grid.get_time_number(), dtype=int))
-    mv = vge.MultiVerse(grid)
-
-    file_name = tmp_path / "bad_time_profile.veragrid"
-    with pytest.raises(ValueError, match="degenerate master time profile"):
-        save_veragrid_multiverse(
-            file_name=str(file_name),
-            multiverse=mv,
-            options=FileSavingOptions(),
-        )
-
-
 def test_multiverse_parse_json_roundtrip() -> None:
     """
     Verify that get_save_data() and parse_json() rebuild the same multiverse in memory.
@@ -524,7 +269,7 @@ def test_multiverse_save_load_roundtrip(tmp_path: Path) -> None:
     mv.activate_scenario(sibling.node_id)
 
     # Save to a real .veragrid file and load it back through the file API.
-    file_name = tmp_path / "multiverse_roundtrip.veragrid"
+    file_name = os.path.join("output", "multiverse_roundtrip.veragrid")
     vge.save_multiverse(mv=mv, filename=str(file_name))
 
     loader = FileOpen(str(file_name))
@@ -736,129 +481,6 @@ def test_multicircuit_copy_deep_copies_diagrams() -> None:
     assert original.diagrams[original_schematic_index].name == "Schematic Copy Test"
 
 
-def test_multicircuit_copy_rebinds_diagram_objects_to_copied_circuit() -> None:
-    """
-    Verify copied circuit diagrams point to copied API objects, not stale source objects.
-    """
-    original = _build_grid_with_schematic_and_map_diagrams()
-
-    copied = original.copy()
-    _assert_diagram_locations_point_to_circuit_objects(copied)
-
-    copied_line = copied.lines[0]
-    copied_diagram_line = copied.diagrams[0].query_point(copied_line).api_object
-    copied_map_line_location = copied.diagrams[1].query_point(copied_line)
-
-    assert copied_diagram_line is copied_line
-    assert copied_diagram_line is not original.lines[0]
-    assert copied_map_line_location.api_object is copied_line
-    assert copied_map_line_location.draw_labels is False
-
-    copied_diagram_line.rate = 1234.0
-    assert copied_line.rate == 1234.0
-    assert original.lines[0].rate == 100.0
-
-
-def test_multicircuit_copy_rebinds_internal_device_references_to_copied_circuit() -> None:
-    """
-    Verify copied device pointers refer to canonical objects inside the copied circuit.
-    """
-    original = _build_grid_with_internal_references()
-
-    copied = original.copy()
-
-    copied_bus_from = copied.buses[0]
-    copied_bus_to = copied.buses[1]
-    copied_dc_bus = copied.buses[2]
-    copied_line = copied.lines[0]
-    copied_load = copied.loads[0]
-    copied_generator = copied.generators[0]
-    copied_technology = copied.technologies[0]
-    copied_vsc = copied.vsc_devices[0]
-    copied_generator_technology = next(iter(copied_generator.technologies)).api_object
-
-    assert copied_line.bus_from is copied_bus_from
-    assert copied_line.bus_to is copied_bus_to
-    assert copied_load.bus is copied_bus_to
-    assert copied_generator.bus is copied_bus_from
-    assert copied_generator_technology is copied_technology
-    assert copied_generator_technology is not original.technologies[0]
-    assert copied_bus_from._var_factory is copied.var_factory
-    assert copied_line._var_factory is copied.var_factory
-    assert copied_load._var_factory is copied.var_factory
-    assert copied_generator._var_factory is copied.var_factory
-
-    assert copied_vsc.bus_from is copied_dc_bus
-    assert copied_vsc.bus_to is copied_bus_from
-    assert copied_vsc.control1_dev is copied_line
-    assert copied_vsc.control2_dev is copied_bus_to
-    assert copied_vsc._var_factory is copied.var_factory
-    assert copied_vsc.control1_dev_prof.default_value is copied_line
-    assert copied_vsc.control1_dev_prof[0] is copied_line
-    assert copied_vsc.control1_dev_prof[1] is copied_bus_to
-    assert copied_vsc.control2_dev_prof.default_value is copied_bus_to
-    assert copied_vsc.control2_dev_prof[0] is copied_bus_to
-    assert copied_vsc.control2_dev_prof[1] is copied_line
-
-    copied_line.rate = 2468.0
-    assert copied_vsc.control1_dev.rate == 2468.0
-    assert original.lines[0].rate == 100.0
-
-
-def test_multicircuit_copy_deep_copies_dynamic_template_blocks() -> None:
-    """
-    Verify copied RMS/EMT catalogue templates do not share symbolic blocks.
-    """
-    original, rms_template, emt_template, _ = _build_grid_with_dynamic_templates()
-
-    copied = original.copy()
-    copied_line = copied.lines[0]
-    copied_rms_template = next(t for t in copied.rms_models if t.idtag == rms_template.idtag)
-    copied_emt_template = next(t for t in copied.emt_models if t.idtag == emt_template.idtag)
-
-    assert copied_rms_template is not rms_template
-    assert copied_emt_template is not emt_template
-    assert copied_rms_template.block is not rms_template.block
-    assert copied_emt_template.block is not emt_template.block
-    assert copied_line.rms_template is copied_rms_template
-    assert copied_line.emt_template is copied_emt_template
-    assert copied_line.rms_model is not original.lines[0].rms_model
-    assert copied_line.emt_model is not original.lines[0].emt_model
-
-    copied_rms_template.block.name = "copied-rms-template-block"
-    copied_emt_template.block.name = "copied-emt-template-block"
-    copied_line.rms_model.name = "copied-rms-concrete-block"
-    copied_line.emt_model.name = "copied-emt-concrete-block"
-
-    assert rms_template.block.name != "copied-rms-template-block"
-    assert emt_template.block.name != "copied-emt-template-block"
-    assert original.lines[0].rms_model.name != "copied-rms-concrete-block"
-    assert original.lines[0].emt_model.name != "copied-emt-concrete-block"
-
-
-def test_multicircuit_copy_copies_fmu_templates_and_rebinds_devices() -> None:
-    """
-    Verify copied RMS FMU template references point to the copied catalogue entry.
-    """
-    original, _, _, fmu_template = _build_grid_with_dynamic_templates()
-
-    copied = original.copy()
-    copied_load = copied.loads[0]
-    copied_fmu_template = next(t for t in copied.fmu_templates if t.idtag == fmu_template.idtag)
-
-    assert len(copied.fmu_templates) == len(original.fmu_templates)
-    assert copied_fmu_template is not fmu_template
-    assert copied_fmu_template.block is not fmu_template.block
-    assert copied_fmu_template.name == fmu_template.name
-    assert copied_fmu_template.device_type == fmu_template.device_type
-    assert copied_fmu_template.tpe == fmu_template.tpe
-    assert copied_fmu_template.domain == fmu_template.domain
-    assert copied_load.rms_fmu_template is copied_fmu_template
-
-    copied_fmu_template.block.name = "copied-fmu-template-block"
-    assert fmu_template.block.name != "copied-fmu-template-block"
-
-
 def test_multiverse_child_starts_with_copies_of_parent_diagrams() -> None:
     """
     Verify that a newly created child scenario inherits deep-copied diagrams from its parent.
@@ -881,55 +503,6 @@ def test_multiverse_child_starts_with_copies_of_parent_diagrams() -> None:
     for root_diagram, child_diagram in zip(root.diagrams, child.diagrams):
         assert child_diagram is not root_diagram
         assert child_diagram.name == root_diagram.name
-
-
-def test_multiverse_root_commit_syncs_diagrams_for_new_child() -> None:
-    """
-    Verify root commit keeps root-owned diagram snapshots in sync for child inheritance.
-    """
-    mv = vge.MultiVerse(_load_grid("lynn5node.gridcal"))
-    root = mv.root_nodes[0]
-
-    edited_name = "Root Diagram Edited"
-    mv.current_model.diagrams[0].name = edited_name
-    mv.commit_current()
-
-    child = mv.create_node(
-        data=vge.MultiCircuit(name="child"),
-        parent_id=root.node_id,
-        position=root.child_count(),
-    )
-
-    assert root.diagrams[0].name == edited_name
-    assert child.diagrams[0].name == edited_name
-    assert child.diagrams[0] is not root.diagrams[0]
-
-
-def test_multiverse_save_load_rebinds_active_diagram_objects_to_current_model(tmp_path: Path) -> None:
-    """
-    Verify loaded diagrams edit the same objects used by the active simulation circuit.
-    """
-    mv = vge.MultiVerse(_build_grid_with_schematic_and_map_diagrams())
-    file_name = tmp_path / "diagram_pointer_multiverse.veragrid"
-
-    vge.save_multiverse(mv=mv, filename=str(file_name))
-
-    loader = FileOpen(str(file_name))
-    loader.open()
-
-    loaded_grid = loader.multiverse.current_model
-    _assert_diagram_locations_point_to_circuit_objects(loaded_grid)
-
-    loaded_line = loaded_grid.lines[0]
-    loaded_diagram_line = loaded_grid.diagrams[0].query_point(loaded_line).api_object
-    loaded_map_line_location = loaded_grid.diagrams[1].query_point(loaded_line)
-
-    assert loaded_diagram_line is loaded_line
-    assert loaded_map_line_location.api_object is loaded_line
-    assert loaded_map_line_location.draw_labels is False
-
-    loaded_diagram_line.rate = 4321.0
-    assert loaded_line.rate == 4321.0
 
 
 def test_multiverse_child_diagram_edits_persist_across_switches() -> None:
@@ -1004,25 +577,6 @@ def test_multiverse_reactivated_child_rebinds_branch_bus_references() -> None:
 
     assert restored_line.bus_from in child_bus_set
     assert restored_line.bus_to in child_bus_set
-
-
-def test_multiverse_activation_rebinds_diagram_locations_to_active_circuit_objects() -> None:
-    """
-    Verify scenario activation leaves diagram locations bound to the active model objects.
-    """
-    mv = vge.MultiVerse(_build_grid_with_schematic_and_map_diagrams())
-    root = mv.root_nodes[0]
-    child = mv.create_node(
-        data=vge.MultiCircuit(name="child"),
-        parent_id=root.node_id,
-        position=root.child_count(),
-    )
-
-    child_grid = mv.activate_scenario(child.node_id)
-    _assert_diagram_locations_point_to_circuit_objects(child_grid)
-
-    root_grid = mv.activate_scenario(root.node_id)
-    _assert_diagram_locations_point_to_circuit_objects(root_grid)
 
 
 def test_multiverse_get_save_data_contains_consistent_metadata() -> None:

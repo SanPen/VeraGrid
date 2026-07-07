@@ -5,7 +5,7 @@
 
 import numpy as np
 
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
@@ -84,10 +84,10 @@ def VscAc2acModel(vfactory: VarFactory, name: str = "VscAc2acModel") -> RmsModel
     
     # External mapping for power flow integration
     vsc_block.external_mapping = {
-        VarPowerFlowReferenceType.Pt: pac,
-        VarPowerFlowReferenceType.Qt: qac,
-        VarPowerFlowReferenceType.Pf: pdc,
-        VarPowerFlowReferenceType.Vdc: vdc,
+        VarPowerFlowRefferenceType.Pt: pac,
+        VarPowerFlowRefferenceType.Qt: qac,
+        VarPowerFlowRefferenceType.Pf: pdc,
+        VarPowerFlowRefferenceType.Vdc: vdc,
     }
     
     vsc_block.name = name

@@ -6,7 +6,7 @@ import os
 import sys
 import chardet
 import subprocess
-from PySide6 import QtCore, QtWidgets
+from PySide6 import QtWidgets
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QClipboard
 from typing import List
@@ -99,18 +99,6 @@ def sanitize_tsv_field(text: str) -> str:
     return text.strip()
 
 
-def translate_about_dialog(source_text: str, disambiguation: str | None = None, n: int = -1) -> str:
-    """
-    Translate one runtime About dialog string through the generated UI context.
-
-    :param source_text: Source string to translate.
-    :param disambiguation: Optional Qt disambiguation text.
-    :param n: Optional plural parameter.
-    :return: Translated text.
-    """
-    return QtCore.QCoreApplication.translate("AboutDialog", source_text, disambiguation, n)
-
-
 class AboutDialogueGuiGUI(QtWidgets.QDialog):
     """
     AboutDialogueGuiGUI
@@ -124,7 +112,7 @@ class AboutDialogueGuiGUI(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_AboutDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle(self.tr('About VeraGrid'))
+        self.setWindowTitle('About VeraGrid')
         self.setAcceptDrops(True)
 
         self.fill_optional_libs()
@@ -175,17 +163,6 @@ class AboutDialogueGuiGUI(QtWidgets.QDialog):
 
         self.show_license()
 
-    def tr(self, source_text: str, disambiguation: str | None = None, n: int = -1) -> str:
-        """
-        Translate runtime strings through the ``AboutDialog`` catalog context.
-
-        :param source_text: Source string to translate.
-        :param disambiguation: Optional Qt disambiguation text.
-        :param n: Optional plural parameter.
-        :return: Translated text.
-        """
-        return translate_about_dialog(source_text, disambiguation, n)
-
     def fill_optional_libs(self):
         """
 
@@ -193,23 +170,18 @@ class AboutDialogueGuiGUI(QtWidgets.QDialog):
         """
         self.ui.librariesTableWidget.setColumnCount(4)
         self.ui.librariesTableWidget.setRowCount(5)
-        self.ui.librariesTableWidget.setHorizontalHeaderLabels([
-            self.tr("Name"),
-            self.tr("version"),
-            self.tr("supported version"),
-            self.tr("licensed"),
-        ])
+        self.ui.librariesTableWidget.setHorizontalHeaderLabels(["Name", "version", "supported version", "licensed"])
 
         self.ui.librariesTableWidget.setItem(0, 0, QtWidgets.QTableWidgetItem("VeraGrid"))
         self.ui.librariesTableWidget.setItem(0, 1, QtWidgets.QTableWidgetItem(__VeraGrid_VERSION__))
         self.ui.librariesTableWidget.setItem(0, 2, QtWidgets.QTableWidgetItem(__VeraGridEngine_VERSION__))
-        self.ui.librariesTableWidget.setItem(0, 3, QtWidgets.QTableWidgetItem(self.tr("True")))
+        self.ui.librariesTableWidget.setItem(0, 3, QtWidgets.QTableWidgetItem("True"))
 
         # GSLV
         self.ui.librariesTableWidget.setItem(1, 0, QtWidgets.QTableWidgetItem("GSLV"))
         self.ui.librariesTableWidget.setItem(1, 1, QtWidgets.QTableWidgetItem(GSLV_VERSION
                                                                               if GSLV_AVAILABLE else
-                                                                              self.tr("Not installed")))
+                                                                              "Not installed"))
 
         self.ui.librariesTableWidget.setItem(1, 2, QtWidgets.QTableWidgetItem(GSLV_RECOMMENDED_VERSION))
         self.ui.librariesTableWidget.setItem(1, 3, QtWidgets.QTableWidgetItem(str(GSLV_AVAILABLE)))
@@ -218,7 +190,7 @@ class AboutDialogueGuiGUI(QtWidgets.QDialog):
         self.ui.librariesTableWidget.setItem(2, 0, QtWidgets.QTableWidgetItem("NewtonPa"))
         self.ui.librariesTableWidget.setItem(2, 1, QtWidgets.QTableWidgetItem(NEWTON_PA_VERSION
                                                                               if NEWTON_PA_AVAILABLE else
-                                                                              self.tr("Not installed")))
+                                                                              "Not installed"))
 
         self.ui.librariesTableWidget.setItem(2, 2, QtWidgets.QTableWidgetItem(NEWTON_PA_RECOMMENDED_VERSION))
         self.ui.librariesTableWidget.setItem(2, 3, QtWidgets.QTableWidgetItem(str(NEWTON_PA_AVAILABLE)))
@@ -227,7 +199,7 @@ class AboutDialogueGuiGUI(QtWidgets.QDialog):
         self.ui.librariesTableWidget.setItem(3, 0, QtWidgets.QTableWidgetItem("Bentayga"))
         self.ui.librariesTableWidget.setItem(3, 1, QtWidgets.QTableWidgetItem(BENTAYGA_VERSION
                                                                               if BENTAYGA_AVAILABLE else
-                                                                              self.tr("Not installed")))
+                                                                              "Not installed"))
         self.ui.librariesTableWidget.setItem(3, 2, QtWidgets.QTableWidgetItem(BENTAYGA_RECOMMENDED_VERSION))
         self.ui.librariesTableWidget.setItem(3, 3, QtWidgets.QTableWidgetItem(str(BENTAYGA_AVAILABLE)))
 
@@ -235,7 +207,7 @@ class AboutDialogueGuiGUI(QtWidgets.QDialog):
         self.ui.librariesTableWidget.setItem(4, 0, QtWidgets.QTableWidgetItem("power-grid-model"))
         self.ui.librariesTableWidget.setItem(4, 1, QtWidgets.QTableWidgetItem(PGM_VERSION
                                                                               if PGM_AVAILABLE else
-                                                                              self.tr("Not installed")))
+                                                                              "Not installed"))
         self.ui.librariesTableWidget.setItem(4, 2, QtWidgets.QTableWidgetItem(PGM_RECOMMENDED_VERSION))
         self.ui.librariesTableWidget.setItem(4, 3, QtWidgets.QTableWidgetItem(str(PGM_AVAILABLE)))
 
@@ -243,8 +215,7 @@ class AboutDialogueGuiGUI(QtWidgets.QDialog):
 
         self.ui.allLibsTableWidget.setColumnCount(5)
         self.ui.allLibsTableWidget.setHorizontalHeaderLabels([
-            self.tr("Package"), self.tr("Version"), self.tr("License"),
-            self.tr("Installation Path"), self.tr("Dependencies")
+            "Package", "Version", "License", "Installation Path", "Dependencies"
         ])
 
         pkgs = sorted(get_packages(), key=lambda x: x[0].lower())

@@ -9,8 +9,8 @@ from matplotlib import pyplot as plt
 from typing import List, Any
 
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
-from VeraGridEngine.basic_structures import Vec, Mat, StrVec
+from VeraGridEngine.Simulations.results_template import ResultsTemplate
+from VeraGridEngine.basic_structures import Vec, Mat
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 
@@ -62,23 +62,9 @@ class SmallSignalStabilityRmsResults(ResultsTemplate):
     """
     Small-signal Analysis results storage and visualization.
     """
-
-    LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='stat_vars_array', tpe=StrVec, old_names=list(), expandable=False),
-        ResultsProperty(name='eigenvalues', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='participation_factors', tpe=Mat, old_names=list(), expandable=False),
-        ResultsProperty(name='damping_ratios', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='conjugate_frequencies', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='state_matrix', tpe=Mat, old_names=list(), expandable=False),
-    )
     __slots__ = [
-        'stat_vars_array',
-        'algebraic_vars_array',
-        'eigenvalues',
-        'participation_factors',
-        'damping_ratios',
-        'conjugate_frequencies',
-        'state_matrix'
+        'stat_vars_array', 'eigenvalues', 'participation_factors',
+        'damping_ratios', 'conjugate_frequencies', 'state_matrix'
     ]
     def __init__(self,
                  eigenvalues: Vec,
@@ -86,8 +72,7 @@ class SmallSignalStabilityRmsResults(ResultsTemplate):
                  damping_ratios: Vec,
                  conjugate_frequencies: Vec,
                  state_matrix: Mat,
-                 stat_vars: List[Var],
-                 algebraic_vars: List[Var])-> None:
+                 stat_vars: List[Var])-> None:
         """
         Small-signal Analysis results
         :param eigenvalues:
@@ -96,7 +81,7 @@ class SmallSignalStabilityRmsResults(ResultsTemplate):
         :param conjugate_frequencies:
         :param state_matrix:
         :param stat_vars:
-        :param algebraic_vars:
+        :param reduced_state_matrix:
         """
 
         available_list: list = list([
@@ -116,17 +101,11 @@ class SmallSignalStabilityRmsResults(ResultsTemplate):
             study_results_type=StudyResultsType.SmallSignalStability
         )
 
-        stat_names_list: list = list()
+        names_list: list = list()
         for i, var in enumerate(stat_vars):
-            stat_names_list.append(f"{var}{i // 2 + 1}")
+            names_list.append(f"{var}{i // 2 + 1}")
 
-        algebraic_names_list: list = list()
-        for i, var in enumerate(algebraic_vars):
-            algebraic_names_list.append(f"{var}{i // 2 + 1}")
-
-
-        self.stat_vars_array: Vec = np.array(stat_names_list, dtype=np.str_)
-        self.algebraic_vars_array: Vec = np.array(algebraic_names_list, dtype=np.str_)
+        self.stat_vars_array: Vec = np.array(names_list, dtype=np.str_)
         self.eigenvalues: Vec = eigenvalues
         self.participation_factors: Mat = participation_factors
         self.damping_ratios: Vec = damping_ratios
@@ -134,56 +113,37 @@ class SmallSignalStabilityRmsResults(ResultsTemplate):
 
         self.state_matrix: Mat = state_matrix
 
+        self.register(name='eigenvalues', tpe=Vec)
+        self.register(name='participation_factors', tpe=Mat)
+        self.register(name='damping_ratios', tpe=Vec)
+        self.register(name='conjugate_frequencies', tpe=Vec)
+        self.register(name='state_matrix', tpe=Mat)
 
     def mdl(self, result_type: ResultTypes) -> ResultsTable:
         """
         Export the results as a ResultsTable for plotting.
         """
         if result_type == ResultTypes.StateMatrix:
-            if len(self.stat_vars_array) == self.state_matrix.shape[0]:
 
-                return ResultsTable(
-                    data=self.state_matrix,
-                    index=np.array([f"Equation {i}" for i in range(len(self.eigenvalues))], dtype=np.str_),
-                    columns=np.array(self.stat_vars_array.astype(str), dtype=np.str_),
-                    title="State Matrix",
-                    idx_device_type=DeviceType.NoDevice,
-                    cols_device_type=DeviceType.NoDevice
-                )
-            else:
-                # TODO: adapt to generalized!
-                return ResultsTable(
-                    data=self.state_matrix,
-                    index=np.array([f"Equation {i}" for i in range(len(self.eigenvalues))], dtype=np.str_),
-                    columns=np.array(list(self.stat_vars_array.astype(str)) + list(self.algebraic_vars_array.astype(str)), dtype=np.str_),
-                    title="State Matrix",
-                    idx_device_type=DeviceType.NoDevice,
-                    cols_device_type=DeviceType.NoDevice
-                )
-
+            return ResultsTable(
+                data=self.state_matrix,
+                index=np.array([f"Equation {i}" for i in range(len(self.eigenvalues))], dtype=np.str_),
+                columns=np.array(self.stat_vars_array.astype(str), dtype=np.str_),
+                title="State Matrix",
+                idx_device_type=DeviceType.NoDevice,
+                cols_device_type=DeviceType.NoDevice
+            )
 
         elif result_type == ResultTypes.ParticipationFactors:
 
-            if len(self.stat_vars_array) == self.participation_factors.shape[0]:
-
-                return ResultsTable(
-                    data=self.participation_factors,
-                    index=np.array(self.stat_vars_array.astype(str), dtype=np.str_),
-                    columns=np.array([f"Mode {i}" for i in range(len(self.eigenvalues))], dtype=np.str_),
-                    title="Participation factors for each eigenvalue",
-                    idx_device_type=DeviceType.NoDevice,
-                    cols_device_type=DeviceType.NoDevice
-                )
-            else:
-                # TODO: adapt to generalized!
-                return ResultsTable(
-                    data=self.participation_factors,
-                    index=np.array(list(self.stat_vars_array.astype(str)) + list(self.algebraic_vars_array.astype(str)), dtype=np.str_),
-                    columns=np.array([f"Mode {i}" for i in range(len(self.eigenvalues))], dtype=np.str_),
-                    title="Participation factors for each eigenvalue",
-                    idx_device_type=DeviceType.NoDevice,
-                    cols_device_type=DeviceType.NoDevice
-                )
+            return ResultsTable(
+                data=self.participation_factors,
+                index=np.array(self.stat_vars_array.astype(str), dtype=np.str_),
+                columns=np.array([f"Mode {i}" for i in range(len(self.eigenvalues))], dtype=np.str_),
+                title="Participation factors for each eigenvalue",
+                idx_device_type=DeviceType.NoDevice,
+                cols_device_type=DeviceType.NoDevice
+            )
 
         elif result_type == ResultTypes.Modes:
             re: Vec = self.eigenvalues.real

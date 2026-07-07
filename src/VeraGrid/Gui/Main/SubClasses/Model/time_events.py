@@ -12,12 +12,12 @@ from VeraGrid.Gui.object_proxy_model import ObjectModelFilterProxy
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import DeviceType, SimulationTypes
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
-from VeraGrid.Gui.general_dialogues import (NewProfilesStructureDialogue, TimeReIndexDialogue,
+from VeraGrid.Gui.general_dialogues import (NewProfilesStructureDialogue, TimeReIndexDialogue, LogsDialogue,
                                             StartEndSelectionDialogue)
 from VeraGrid.Gui.messages import yes_no_question, warning_msg, info_msg, error_msg
 from VeraGrid.Gui.Main.SubClasses.Model.data_base import DataBaseTableMain
-from VeraGrid.Gui.FileDialogues.ProfilesInput.models_dialogue import ModelsInputGUI
-from VeraGrid.Gui.FileDialogues.ProfilesInput.profile_dialogue import ProfileInputGUI, GeneratorsProfileOptionsDialogue
+from VeraGrid.Gui.ProfilesInput.models_dialogue import ModelsInputGUI
+from VeraGrid.Gui.ProfilesInput.profile_dialogue import ProfileInputGUI, GeneratorsProfileOptionsDialogue
 from VeraGrid.Gui.profiles_model import ProfilesModel
 
 
@@ -425,7 +425,8 @@ class TimeEventsMain(DataBaseTableMain):
                 pass
 
         if logger.has_logs():
-            self.show_logs(name="Set profile", logger=logger)
+            dlg = LogsDialogue("Set profile", logger=logger)
+            dlg.exec()
 
     def re_index_time(self):
         """
@@ -527,7 +528,8 @@ class TimeEventsMain(DataBaseTableMain):
                 self.display_profiles(proxy_mdl=self.get_current_objects_model_view())
 
                 if logger.has_logs():
-                    self.show_logs(name="Import profiles", logger=logger)
+                    dialogue = LogsDialogue(name="Import profiles", logger=logger)
+                    dialogue.exec()
 
         else:
             warning_msg("The import of profiles from many grid models "

@@ -84,29 +84,29 @@ class NewProfilesStructureDialogue(CenteredDialog):
 
         # accept button
         self.accept_btn = QtWidgets.QPushButton()
-        self.accept_btn.setText(self.tr('Accept'))
+        self.accept_btn.setText('Accept')
         self.accept_btn.clicked.connect(self.accept_click)
 
         # labels
 
         # add all to the GUI
-        self.layout.addWidget(QtWidgets.QLabel(self.tr("Start date")))
+        self.layout.addWidget(QtWidgets.QLabel("Start date"))
         self.layout.addWidget(self.calendar)
 
-        self.layout.addWidget(QtWidgets.QLabel(self.tr("Number of time steps")))
+        self.layout.addWidget(QtWidgets.QLabel("Number of time steps"))
         self.layout.addWidget(self.steps_spinner)
 
-        self.layout.addWidget(QtWidgets.QLabel(self.tr("Time step length")))
+        self.layout.addWidget(QtWidgets.QLabel("Time step length"))
         self.layout.addWidget(self.step_length)
 
-        self.layout.addWidget(QtWidgets.QLabel(self.tr("Time units")))
+        self.layout.addWidget(QtWidgets.QLabel("Time units"))
         self.layout.addWidget(self.units)
 
         self.layout.addWidget(self.accept_btn)
 
         self.setLayout(self.layout)
 
-        self.setWindowTitle(self.tr('New profiles structure'))
+        self.setWindowTitle('New profiles structure')
 
     def accept_click(self):
         self.accept()
@@ -132,14 +132,7 @@ def fill_tree_from_logs(logger: Logger):
     d = logger.to_dict()
     editable = False
     model = QtGui.QStandardItemModel()
-    model.setHorizontalHeaderLabels([
-        QtCore.QCoreApplication.translate("LogsDialogue", 'Time'),
-        QtCore.QCoreApplication.translate("LogsDialogue", 'Class'),
-        QtCore.QCoreApplication.translate("LogsDialogue", 'Property'),
-        QtCore.QCoreApplication.translate("LogsDialogue", 'Device'),
-        QtCore.QCoreApplication.translate("LogsDialogue", 'Value'),
-        QtCore.QCoreApplication.translate("LogsDialogue", 'Expected value'),
-    ])
+    model.setHorizontalHeaderLabels(['Time', 'Class', 'Property', 'Device', 'Value', 'Expected value'])
     parent = model.invisibleRootItem()
 
     for severity, messages_dict in d.items():
@@ -243,15 +236,15 @@ class LogsDialogue(CenteredDialog):
 
         # accept button
         self.accept_btn = QtWidgets.QPushButton()
-        self.accept_btn.setText(self.tr('Accept'))
+        self.accept_btn.setText('Accept')
         self.accept_btn.clicked.connect(self.accept_click)
 
         self.save_btn = QtWidgets.QPushButton()
-        self.save_btn.setText(self.tr('Save'))
+        self.save_btn.setText('Save')
         self.save_btn.clicked.connect(self.save_click)
 
         self.copy_btn = QtWidgets.QPushButton()
-        self.copy_btn.setText(self.tr('Copy'))
+        self.copy_btn.setText('Copy')
         self.copy_btn.clicked.connect(self.copy_click)
 
         self.btn_frame = QtWidgets.QFrame()
@@ -284,12 +277,8 @@ class LogsDialogue(CenteredDialog):
         """
         Save the logs to excel or CSV
         """
-        file, filter_ = QtWidgets.QFileDialog.getSaveFileName(
-            self,
-            self.tr("Export results"),
-            '',
-            filter=self.tr("CSV (*.csv);;Excel files (*.xlsx)"),
-        )
+        file, filter_ = QtWidgets.QFileDialog.getSaveFileName(self, "Export results", '',
+                                                              filter="CSV (*.csv);;Excel files (*.xlsx)", )
 
         if file != '':
             if 'xlsx' in filter_:
@@ -415,24 +404,24 @@ class TimeReIndexDialogue(CenteredDialog):
 
         # accept button
         self.accept_btn = QtWidgets.QPushButton()
-        self.accept_btn.setText(self.tr('Accept'))
+        self.accept_btn.setText('Accept')
         self.accept_btn.clicked.connect(self.accept_click)
 
         # add all to the GUI
-        self.main_layout.addWidget(QtWidgets.QLabel(self.tr("Start date")))
+        self.main_layout.addWidget(QtWidgets.QLabel("Start date"))
         self.main_layout.addWidget(self.date_time_editor)
 
-        self.main_layout.addWidget(QtWidgets.QLabel(self.tr("Time step length")))
+        self.main_layout.addWidget(QtWidgets.QLabel("Time step length"))
         self.main_layout.addWidget(self.step_length)
 
-        self.main_layout.addWidget(QtWidgets.QLabel(self.tr("Time units")))
+        self.main_layout.addWidget(QtWidgets.QLabel("Time units"))
         self.main_layout.addWidget(self.units)
 
         self.main_layout.addWidget(self.accept_btn)
 
         self.setLayout(self.main_layout)
 
-        self.setWindowTitle(self.tr('Time re-index'))
+        self.setWindowTitle('Time re-index')
 
         h = 120
         self.resize(h, int(1.1 * h))
@@ -459,7 +448,7 @@ class CorrectInconsistenciesDialogue(CenteredDialog):
         self.is_accepted = False
 
         self.label1 = QtWidgets.QLabel()
-        self.label1.setText(self.tr("Minimum generator set point"))
+        self.label1.setText("Minimum generator set point")
 
         # min voltage
         self.min_voltage = QtWidgets.QDoubleSpinBox()
@@ -469,7 +458,7 @@ class CorrectInconsistenciesDialogue(CenteredDialog):
         self.min_voltage.setValue(0.98)
 
         self.label2 = QtWidgets.QLabel()
-        self.label2.setText(self.tr("Maximum generator set point"))
+        self.label2.setText("Maximum generator set point")
 
         # min voltage
         self.max_voltage = QtWidgets.QDoubleSpinBox()
@@ -479,7 +468,7 @@ class CorrectInconsistenciesDialogue(CenteredDialog):
         self.max_voltage.setValue(1.02)
 
         self.label3 = QtWidgets.QLabel()
-        self.label3.setText(self.tr("Maximum virtual tap difference"))
+        self.label3.setText("Maximum virtual tap difference")
 
         self.max_virtual_tap = QtWidgets.QDoubleSpinBox()
         self.max_virtual_tap.setMinimum(0)
@@ -489,7 +478,7 @@ class CorrectInconsistenciesDialogue(CenteredDialog):
 
         # accept button
         self.accept_btn = QtWidgets.QPushButton()
-        self.accept_btn.setText(self.tr('Accept'))
+        self.accept_btn.setText('Accept')
         self.accept_btn.clicked.connect(self.accept_click)
 
         # add all to the GUI
@@ -503,7 +492,7 @@ class CorrectInconsistenciesDialogue(CenteredDialog):
 
         self.setLayout(self.main_layout)
 
-        self.setWindowTitle(self.tr('Correct inconsistencies'))
+        self.setWindowTitle('Correct inconsistencies')
 
         h = 120
         self.resize(h, int(1.1 * h))
@@ -516,23 +505,13 @@ class CorrectInconsistenciesDialogue(CenteredDialog):
         self.accept()
 
 
-def clear_qt_layout(layout: QtWidgets.QLayout) -> None:
+def clear_qt_layout(layout):
     """
     Remove all widgets from a layout object
     :param layout:
     """
-    while layout.count():
-        item = layout.takeAt(0)
-        widget = item.widget()
-        child_layout = item.layout()
-
-        if child_layout is not None:
-            clear_qt_layout(child_layout)
-            child_layout.deleteLater()
-        elif widget is not None:
-            # Fully detach the widget now so stale layout items do not outlive it.
-            widget.setParent(None)
-            widget.deleteLater()
+    for i in reversed(range(layout.count())):
+        layout.itemAt(i).widget().deleteLater()
 
 
 class CheckListDialogue(CenteredDialog):
@@ -1145,7 +1124,7 @@ class ArrayEditor(CenteredDialog):
     def __init__(self):
         CenteredDialog.__init__(self)
 
-        self.setWindowTitle(self.tr("Array Editor"))
+        self.setWindowTitle("Array Editor")
 
         self._g_steps = np.arange(10)
         self._b_steps = np.arange(10)
@@ -1154,8 +1133,8 @@ class ArrayEditor(CenteredDialog):
         self.table_view = QTableView()
         self.table_view.setModel(self.model)
 
-        self.add_button = QPushButton(self.tr("Add"))
-        self.delete_button = QPushButton(self.tr("Delete"))
+        self.add_button = QPushButton("Add")
+        self.delete_button = QPushButton("Delete")
 
         self.add_button.clicked.connect(self.add_row)
         self.delete_button.clicked.connect(self.delete_row)
@@ -1332,12 +1311,12 @@ class FileTypeSelector(CenteredDialog):
 
     def __init__(self, file_name: List[str] | str) -> None:
         super().__init__()
-        self.setWindowTitle(self.tr("Select how to load the file"))
+        self.setWindowTitle("Select how to load the file")
         self.setModal(False)
         layout = QVBoxLayout(self)
 
         if isinstance(file_name, list):
-            txt = self.tr("You've passed a generic list of files\nselect the expected processing format")
+            txt = "You've passed a generic list of files\nselect the expected processing format"
 
             xml_types_count = 0
             ucte_types_count = 0
@@ -1359,7 +1338,7 @@ class FileTypeSelector(CenteredDialog):
                 tpes = []
 
         elif isinstance(file_name, str):
-            txt = self.tr("You've passed a generic of file\nselect the expected processing format")
+            txt = "You've passed a generic of file\nselect the expected processing format"
 
             if file_name.endswith(".xml"):
                 tpes = [FileType.CGMES, FileType.CIM, FileType.Iidm]
@@ -1379,17 +1358,17 @@ class FileTypeSelector(CenteredDialog):
         layout.addWidget(QLabel(txt))
 
         # Method
+        self.tpe_dict = {e.value: e for e in tpes}
         self.cb_method = QComboBox()
-        for tpe in tpes:
-            self.cb_method.addItem(self.tr(tpe.value), tpe)
-        layout.addWidget(QLabel(self.tr("Format:")))
+        self.cb_method.addItems([e.value for e in tpes])
+        layout.addWidget(QLabel("Format:"))
         layout.addWidget(self.cb_method)
 
         # --- VERTICAL SPACER ---
         layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
 
         # Accept button
-        self.btn_accept = QPushButton(self.tr("Accept"))
+        self.btn_accept = QPushButton("Accept")
         layout.addWidget(self.btn_accept)
 
         # Logic connections
@@ -1400,7 +1379,7 @@ class FileTypeSelector(CenteredDialog):
 
     def accept_clicked(self):
         """Check if values are valid and close dialog."""
-        self.file_type = self.cb_method.currentData()
+        self.file_type = self.tpe_dict[self.cb_method.currentText()]
         self.was_accepted = True
         self.close()
 
@@ -1412,24 +1391,24 @@ class CgmesOptionsSelector(CenteredDialog):
 
     def __init__(self) -> None:
         super().__init__()
-        self.setWindowTitle(self.tr("Select the CGMES options"))
+        self.setWindowTitle("Select the CGMES options")
         self.setModal(False)
         layout = QVBoxLayout(self)
 
         tpes = [CGMESVersions.v2_4_15, CGMESVersions.v3_0_0]
 
         # Method
+        self.tpe_dict = {e.value: e for e in tpes}
         self.cb_method = QComboBox()
-        for tpe in tpes:
-            self.cb_method.addItem(self.tr(tpe.value), tpe)
-        layout.addWidget(QLabel(self.tr("CGMES Version:")))
+        self.cb_method.addItems([e.value for e in tpes])
+        layout.addWidget(QLabel("CGMES Version:"))
         layout.addWidget(self.cb_method)
 
         # --- VERTICAL SPACER ---
         layout.addSpacerItem(QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding))
 
         # Accept button
-        self.btn_accept = QPushButton(self.tr("Accept"))
+        self.btn_accept = QPushButton("Accept")
         layout.addWidget(self.btn_accept)
 
         # Logic connections
@@ -1440,7 +1419,7 @@ class CgmesOptionsSelector(CenteredDialog):
 
     def accept_clicked(self):
         """Check if values are valid and close dialog."""
-        self.version = self.cb_method.currentData()
+        self.version = self.tpe_dict[self.cb_method.currentText()]
         self.was_accepted = True
         self.close()
 

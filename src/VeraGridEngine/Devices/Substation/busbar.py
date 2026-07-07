@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 from typing import Union, Tuple
-from VeraGridEngine.enumerations import DeviceType, BuildStatus, PrpCat
+from VeraGridEngine.enumerations import DeviceType, BuildStatus
 from VeraGridEngine.Devices.Parents.physical_device import PhysicalDevice
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
@@ -17,12 +17,8 @@ class BusBar(PhysicalDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(
-            prop_name="voltage_level",
-            tpe=DeviceType.BusDevice,
-            definition="Voltage level of this BusBar",
-            cat=[PrpCat.TP],
-        ),
+        GCProp(key="voltage_level", tpe=DeviceType.BusDevice,
+                      definition="Voltage level of this BusBar"),
     )
 
     def __init__(self,

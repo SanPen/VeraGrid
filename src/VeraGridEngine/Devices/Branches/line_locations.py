@@ -56,26 +56,13 @@ class LineLocation(EditableDevice):
                 np.isclose(self.alt, other.alt) and
                 np.isclose(self.seq, other.seq))
 
-    def copy(self, forced_new_idtag: bool = False):
-        return LineLocation(
-            lat=self.lat,
-            lon=self.long,
-            z=self.alt,
-            seq=self.seq,
-            name=self.name,
-            code=self.code,
-            idtag=None if forced_new_idtag else self.idtag,
-        )
-
 
 class LineLocations(EditableDevice):
     """
     LineLocations
     """
 
-    __slots__ = (
-        'data'
-    )
+    __slots__ = ("data")
 
     def __init__(self,
                  name: str = "",
@@ -137,15 +124,11 @@ class LineLocations(EditableDevice):
             self.data = list()
 
 
-    def copy(self, forced_new_idtag: bool = False):
-        """
-
-        :param forced_new_idtag:
-        :return:
-        """
+    def copy(self):
         ll = LineLocations(name=self.name, idtag=self.idtag, code=self.code)
-        ll.data = [dta.copy(forced_new_idtag) for dta in self.data]
+        ll.data = list(self.data)
         return ll
+
 
     def set(self, data: np.ndarray):
         """

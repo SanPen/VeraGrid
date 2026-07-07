@@ -126,12 +126,20 @@ class ScenariosMain(ConfigurationMain):
         selected_index: QModelIndex | None = self.get_selected_scenario_index()
         has_selection: bool = selected_index is not None and selected_index.isValid()
 
+        # Add root scenario - always available
+        # gf.add_menu_entry(
+        #     menu=context_menu,
+        #     text="Add root scenario",
+        #     icon_path=":/Icons/icons/plus.png",
+        #     function_ptr=self.add_root_scenario
+        # )
+
         # Add child scenario - only available if a node is selected
         if has_selection:
             # Set as the current scenario - only available if a node is selected
             gf.add_menu_entry(
                 menu=context_menu,
-                text=self.tr("Set as current scenario"),
+                text="Set as current scenario",
                 icon_path=":/Icons/icons/schematic.png",
                 function_ptr=self.set_as_current_scenario
             )
@@ -139,14 +147,14 @@ class ScenariosMain(ConfigurationMain):
             # Rename scenario - only available if a node is selected
             gf.add_menu_entry(
                 menu=context_menu,
-                text=self.tr("Rename scenario"),
+                text="Rename scenario",
                 icon_path=":/Icons/icons/edit.png",
                 function_ptr=self.rename_scenario
             )
 
             gf.add_menu_entry(
                 menu=context_menu,
-                text=self.tr("Commit scenario"),
+                text="Commit scenario",
                 icon_path=":/Icons/icons/save.png",
                 function_ptr=self.commit_scenario
             )
@@ -156,14 +164,14 @@ class ScenariosMain(ConfigurationMain):
 
             gf.add_menu_entry(
                 menu=context_menu,
-                text=self.tr("Add child scenario"),
+                text="Add child scenario",
                 icon_path=":/Icons/icons/plus.png",
                 function_ptr=self.add_child_scenario
             )
 
             gf.add_menu_entry(
                 menu=context_menu,
-                text=self.tr("Merge children into scenario"),
+                text="Merge children into scenario",
                 icon_path=":/Icons/icons/fusion.png",
                 function_ptr=self.merge_children_into_scenario
             )
@@ -174,7 +182,7 @@ class ScenariosMain(ConfigurationMain):
             # Remove scenario - only available if a node is selected
             gf.add_menu_entry(
                 menu=context_menu,
-                text=self.tr("Remove scenario"),
+                text="Remove scenario",
                 icon_path=":/Icons/icons/minus.png",
                 function_ptr=self.remove_scenario
             )
@@ -418,7 +426,7 @@ class ScenariosMain(ConfigurationMain):
         if self.circuit.has_diagrams():
             self.create_circuit_stored_diagrams()
         else:
-            pass
+            self.add_complete_bus_branch_diagram()
 
     def rename_scenario(self) -> None:
         """

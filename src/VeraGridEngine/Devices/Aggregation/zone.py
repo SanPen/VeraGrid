@@ -6,20 +6,13 @@
 from typing import Union, Tuple
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Aggregation.area import GenericAreaGroup, Area
-from VeraGridEngine.enumerations import PrpCat
 
 
 class Zone(GenericAreaGroup):
     __slots__ = ('area',)
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(
-            prop_name="area",
-            units="",
-            tpe=DeviceType.AreaDevice,
-            definition="Area of this zone.",
-            cat=[PrpCat.TP],
-        ),
+        GCProp(key="area", units="", tpe=DeviceType.AreaDevice, definition="Area of this zone."),
     )
 
     def __init__(self, name='Zone',

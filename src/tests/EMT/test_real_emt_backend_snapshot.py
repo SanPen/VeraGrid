@@ -11,25 +11,25 @@ import pytest
 import VeraGridEngine.api as gce
 from VeraGridEngine.Utils.Symbolic.symbolic import Const
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions
-from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
+from VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph import PowerFlowDriver3Ph
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
 from VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver import JitSymbolicSolver
 from VeraGridEngine.Simulations.EMT.solvers.solver_AD import JitAdSolver
 from VeraGridEngine.Simulations.EMT.solvers.StructuralVectorizedSolver import StructuralVectorizedSolver
 from VeraGridEngine.Simulations.EMT.solvers.structural_compiled_solver import StructuralCompiledSolver
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Templates.Emt.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
 from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_template
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_r_emt_template
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
+from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template
 from VeraGridEngine.enumerations import (
     DynamicIntegrationMethod,
     EmtInitializationMethod,
     EmtSolverTypes,
     ShuntConnectionType,
 )
-from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
+from VeraGridEngine.Templates.templates_common_functions import set_emt_model
 
 
 def build_full_params(problem: EmtProblemDae, t_curr: float) -> np.ndarray:
@@ -84,7 +84,7 @@ def build_two_bus_real_emt_case(
     for bus in grid.buses:
         get_bus_emt_template(grid, bus)
 
-    gen_mdl = get_generator_thevenin_rl_emt_template_with_ref(vf = grid.var_factory).block
+    gen_mdl = get_generator_thevenin_rl_emt_template(vf = grid.var_factory).block
     line_mdl = get_pi_line_emt_template(vf = grid.var_factory, phN = False, phA = True, phB = True, phC = True).block
     if zip_load:
         load_mdl = get_load_ZIP_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True).block
@@ -345,10 +345,10 @@ def test_short_trajectory_matches_between_all_backends(
     dx0 = problem.get_dx0().copy()
     params0 = problem.event_params_values.copy()
 
-    sym_t, sym_y, sym_dy, _, _ = solvers_shunt[EmtSolverTypes.Symbolic].simulate(
+    sym_t, sym_y, sym_dy = solvers_shunt[EmtSolverTypes.Symbolic].simulate(
         x0=x0.copy(), dx0=dx0.copy(), params0=params0.copy(), boundary_updater=problem
     )
-    ref_t, ref_y, ref_dy, _, _ = solvers_shunt[EmtSolverTypes.Automatic].simulate(
+    ref_t, ref_y, ref_dy = solvers_shunt[EmtSolverTypes.Automatic].simulate(
         x0=x0.copy(), dx0=dx0.copy(), params0=params0.copy(), boundary_updater=problem
     )
 
@@ -357,7 +357,7 @@ def test_short_trajectory_matches_between_all_backends(
     assert np.all(np.isfinite(sym_dy))
 
     for key in (EmtSolverTypes.StructuralAD, EmtSolverTypes.StructuralCompiled):
-        t_arr, y_arr, dy_arr, _, _ = solvers_shunt[key].simulate(
+        t_arr, y_arr, dy_arr = solvers_shunt[key].simulate(
             x0=x0.copy(), dx0=dx0.copy(), params0=params0.copy(), boundary_updater=problem
         )
         np.testing.assert_allclose(t_arr, ref_t, rtol=0.0, atol=0.0)
@@ -409,11 +409,11 @@ def test_zip_short_trajectory_matches_between_all_backends(
     dx0 = problem.get_dx0().copy()
     params0 = problem.event_params_values.copy()
 
-    ref_t, ref_y, ref_dy, _, _ = solvers_zip[EmtSolverTypes.Automatic].simulate(
+    ref_t, ref_y, ref_dy = solvers_zip[EmtSolverTypes.Automatic].simulate(
         x0=x0.copy(), dx0=dx0.copy(), params0=params0.copy(), boundary_updater=problem
     )
 
-    sym_t, sym_y, sym_dy, _, _ = solvers_zip[EmtSolverTypes.Symbolic].simulate(
+    sym_t, sym_y, sym_dy = solvers_zip[EmtSolverTypes.Symbolic].simulate(
         x0=x0.copy(),
         dx0=dx0.copy(),
         params0=params0.copy(),
@@ -425,12 +425,12 @@ def test_zip_short_trajectory_matches_between_all_backends(
     assert np.all(np.isfinite(sym_dy))
 
     for key in (EmtSolverTypes.StructuralAD, EmtSolverTypes.StructuralCompiled):
-        t_arr, y_arr, dy_arr, _, _ = solvers_zip[key].simulate(
+        t_arr, y_arr, dy_arr = solvers_zip[key].simulate(
             x0=x0.copy(), dx0=dx0.copy(), params0=params0.copy(), boundary_updater=problem
         )
         np.testing.assert_allclose(t_arr, ref_t, rtol=0.0, atol=0.0)
         np.testing.assert_allclose(y_arr, ref_y, rtol=5e-5, atol=1.5e-5)
         if key == EmtSolverTypes.StructuralCompiled:
-            np.testing.assert_allclose(dy_arr, ref_dy, rtol=5e-5, atol=4e-2)
+            np.testing.assert_allclose(dy_arr, ref_dy, rtol=5e-5, atol=2e-2)
         else:
-            np.testing.assert_allclose(dy_arr, ref_dy, rtol=1e-5, atol=6e-3)
+            np.testing.assert_allclose(dy_arr, ref_dy, rtol=1e-5, atol=5e-4)

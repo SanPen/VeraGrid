@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.identified_object import IdentifiedObject
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import OperationalLimitDirectionKind, LimitTypeKind, UnitSymbol, CgmesProfileType
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import OperationalLimitDirectionKind, LimitTypeKind, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.operational_limit import OperationalLimit
@@ -14,9 +14,9 @@ if TYPE_CHECKING:
 class OperationalLimitType(IdentifiedObject):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
 		CgmesProperty(property_name='OperationalLimit', class_type='OperationalLimit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The operational limits associated with this type of limit.''', profiles=[]),
-		CgmesProperty(property_name='acceptableDuration', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.s, description='''Time, in seconds.''', profiles=[CgmesProfileType.EQ]),
-		CgmesProperty(property_name='limitType', class_type=LimitTypeKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Types of limits defined in the ENTSO-E Operational Handbook Policy 3.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
-		CgmesProperty(property_name='direction', class_type=OperationalLimitDirectionKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The direction of the limit.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='acceptableDuration', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.s, description='''Time, in seconds.''', profiles=[]),
+		CgmesProperty(property_name='limitType', class_type=LimitTypeKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Types of limits defined in the ENTSO-E Operational Handbook Policy 3.''', profiles=[]),
+		CgmesProperty(property_name='direction', class_type=OperationalLimitDirectionKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The direction of the limit.''', profiles=[]),
 	)
 	__slots__ = ('OperationalLimit', 'acceptableDuration', 'limitType', 'direction')
 	def __init__(self, rdfid='', tpe='OperationalLimitType'):

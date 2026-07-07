@@ -294,7 +294,7 @@ def test_pegase89():
     res = case_pegase89()
     assert np.allclose(res.Vm, vm_test, atol=1e-3)
     assert np.allclose(res.Va, va_test, atol=1e-3)
-    assert np.allclose(res.Pg, Pg_test, atol=1e-2, rtol=1e-3)
+    assert np.allclose(res.Pg, Pg_test, atol=1e-2)
     assert np.allclose(res.Qg, Qg_test, atol=1e-3)
 
 

@@ -5,25 +5,13 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
+import importlib
 from pathlib import Path
 import shutil
 import tempfile
 from typing import Any
 
 from .export_ir import ExportModel, VariableCategory
-
-try:
-    import fmpy
-    import fmpy.validation
-except ModuleNotFoundError:
-    fmpy = None
-
-
-def _require_fmpy() -> object:
-    if fmpy is None:
-        raise ModuleNotFoundError("fmpy is required for FMU validation and simulation")
-    else:
-        return fmpy
 
 
 def _default_extraction_root() -> Path:
@@ -90,7 +78,7 @@ def prepare_fmu_for_fmpy(
     *,
     extraction_root: str | Path | None = None,
 ):
-    fmpy_module = _require_fmpy()
+    fmpy_module = importlib.import_module("fmpy")
     extract = fmpy_module.extract
 
     path = Path(fmu_path)
@@ -113,8 +101,7 @@ def validate_fmu_with_fmpy(
     *,
     extraction_root: str | Path | None = None,
 ) -> list[str]:
-    fmpy_module = _require_fmpy()
-    validate_fmu = fmpy_module.validation.validate_fmu
+    validate_fmu = importlib.import_module("fmpy.validation").validate_fmu
 
     with prepare_fmu_for_fmpy(fmu_path, extraction_root=extraction_root) as prepared_path:
         issues = validate_fmu(str(prepared_path))
@@ -131,8 +118,7 @@ def simulate_fmu_with_fmpy(
     extraction_root: str | Path | None = None,
     step_size: float | None = None,
 ): 
-    fmpy_module = _require_fmpy()
-    simulate_fmu = fmpy_module.simulate_fmu
+    simulate_fmu = importlib.import_module("fmpy").simulate_fmu
     merged_start_values = _merge_start_values(start_values, input_signal)
 
     with prepare_fmu_for_fmpy(fmu_path, extraction_root=extraction_root) as prepared_path:

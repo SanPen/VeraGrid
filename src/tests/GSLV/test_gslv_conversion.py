@@ -5,13 +5,7 @@
 import os
 import numpy as np
 import VeraGridEngine.api as vg
-from VeraGridEngine.Compilers.circuit_to_gslv import (
-    GSLV_AVAILABLE,
-    pg,
-    to_gslv,
-    compare_nc,
-    CheckArr,
-)
+from VeraGridEngine.Compilers.circuit_to_gslv import GSLV_AVAILABLE, pg, to_gslv, compare_nc, CheckArr
 
 
 def compare_inputs(grid_gslv: "pg.MultiCircuit", grid_gc: vg.MultiCircuit, tol=1e-6, t_idx=None):
@@ -184,84 +178,6 @@ def test_power_flow_ts():
     res = drv.results
 
 
-def test_controllable_shunt_conversion_preserves_step_arrays():
-    if not GSLV_AVAILABLE:
-        return
-
-    grid = vg.MultiCircuit()
-    bus = vg.Bus(name="Bus")
-    grid.add_bus(obj=bus)
-
-    shunt = vg.ControllableShunt(
-        name="Shunt",
-        number_of_steps=3,
-        step=1,
-        g_per_step=0.0,
-        b_per_step=0.0,
-        vset=1.01,
-        control_mode=vg.ShuntControlMode.Discrete,
-    )
-    shunt.g_steps = np.array([1.0, 2.0, 3.0], dtype=float)
-    shunt.b_steps = np.array([4.0, 5.0, 6.0], dtype=float)
-    grid.add_controllable_shunt(bus=bus, api_obj=shunt)
-
-    grid_gslv, _ = to_gslv(circuit=grid,
-                           use_time_series=False,
-                           time_indices=None,
-                           override_branch_controls=False,
-                           opf_results=None)
-
-    converted = grid_gslv.controllable_shunts[0]
-    assert converted.g_steps == [1.0, 2.0, 3.0]
-    assert converted.b_steps == [4.0, 5.0, 6.0]
-    assert converted.get_bmin() == 4.0
-    assert converted.get_bmax() == 6.0
-    assert converted.control_mode == pg.ShuntControlMode.Discrete
-
-
-def test_power_flow_ts_ny_activs():
-    if not GSLV_AVAILABLE:
-        return
-
-    grid = vg.open_file(filename=os.path.join('data', 'grids', 'NY_activs.gridcal'))
-    options = vg.PowerFlowOptions(verbose=False, retry_with_other_methods=False)
-
-    drv = vg.PowerFlowTimeSeriesDriver(
-        grid=grid,
-        options=options,
-        engine=vg.EngineType.GSLV,
-    )
-    drv.run()
-
-    assert drv.results is not None
-    assert drv.results.voltage.shape[0] == grid.get_time_number()
-
-
-def test_power_flow_snapshot_device_active_power_results():
-    """
-    Verify that direct GSLV per-device active-power PF channels are mapped when
-    the loaded GSLV build exposes them.
-    """
-    if not GSLV_AVAILABLE:
-        return
-
-    grid = vg.open_file(filename=os.path.join('data', 'grids', 'case14.gridcal'))
-    options = vg.PowerFlowOptions(verbose=False)
-
-    drv_native = vg.PowerFlowDriver(grid=grid,
-                                    options=options,
-                                    engine=vg.EngineType.VeraGrid)
-    drv_native.run()
-
-    drv_gslv = vg.PowerFlowDriver(grid=grid,
-                                  options=options,
-                                  engine=vg.EngineType.GSLV)
-    drv_gslv.run()
-
-    assert np.allclose(drv_native.results.gen_p, drv_gslv.results.gen_p, atol=1e-4)
-    assert np.allclose(drv_native.results.battery_p, drv_gslv.results.battery_p, atol=1e-4)
-
-
 def test_contingencies_ts():
     if not GSLV_AVAILABLE:
         return
@@ -352,8 +268,7 @@ def test_results_compatibility():
 
         if not all_ok or inpt_err_number > 0:
             logger.print(title=path)
-            os.makedirs(os.path.join("data", "output"), exist_ok=True)
-            vg.save_file(grid=grid, filename=os.path.join("data", "output", fname + ".gridcal"))
+            vg.save_file(grid=grid, filename=os.path.join("output", fname + ".gridcal"))
             print()
         assert all_ok
 

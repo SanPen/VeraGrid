@@ -16,9 +16,8 @@ from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_generator_graphics import Ge
 from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_load_graphics import Load
 from VeraGrid.Gui.Diagrams.MapWidget.Branches.map_line_container import MapLineContainer
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.node_template import NodeTemplate
-from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
-from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
+from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.messages import yes_no_question, info_msg
 from VeraGrid.Gui.general_dialogues import InputNumberDialogue, CheckListDialogue
 from VeraGrid.Gui.object_model import ObjectsModel
@@ -105,7 +104,6 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         self.voltage_level_graphics: List[VoltageLevelGraphicItem] = list()
 
         self.select_bus_dlg = None
-        self._drag_offset: QPointF | None = None
 
     @property
     def color(self) -> QColor:
@@ -151,16 +149,6 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         """
         return self._api_object
 
-    def open_device_editor(self) -> bool:
-        """
-        Open the generic device editor for this substation.
-
-        :return: ``True`` when the editor was opened.
-        """
-        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
-        dialog.exec()
-        return True
-
     def merge(self, se: "SubstationGraphicItem"):
         """
         Merge a substation into this one
@@ -183,8 +171,6 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         :return:
         """
         if r != self.size:
-            # Keep current center before updating dimensions.
-            old_center = self.get_center_pos()
             rect = self.rect()
             rect.setWidth(r)
             rect.setHeight(r)
@@ -199,18 +185,18 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
             # Set the new rectangle with the updated dimensions
             self.setRect(new_x, new_y, r, r)
 
-            # Resizing around the same center does not move the hosted endpoints.
-            # Only trigger callbacks if a numeric drift moved the center.
-            new_center = self.get_center_pos()
-            if old_center != new_center:
-                self.set_callbacks(new_center.x(), new_center.y())
-            else:
-                pass
+            # update the callbacks position for the lines to move accordingly
+            r3 = r / 2
+            xc = new_x + r3
+            yc = new_y + r3
+            self.set_callbacks(xc, yc)
 
             for vl_graphics in self.voltage_level_graphics:
                 vl_graphics.center_on_substation()
 
             self.change_pen_width(0.05 * self.size)
+
+            self.update_position_at_the_diagram()
 
             self.resize_voltage_levels()
 
@@ -334,26 +320,6 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
 
         self.update_position_at_the_diagram()  # always update
 
-    def refresh_from_top_left(self, x: float, y: float) -> None:
-        """
-        Refresh graphics from a target top-left corner position.
-
-        :param x: top-left x in scene coordinates
-        :param y: top-left y in scene coordinates
-        """
-        width = self.rect().width()
-        height = self.rect().height()
-        self.setRect(x, y, width, height)
-
-        xc = x + width / 2.0
-        yc = y + height / 2.0
-        self.set_callbacks(xc, yc)
-
-        for vl_graphics in self.voltage_level_graphics:
-            vl_graphics.center_on_substation()
-
-        self.update_position_at_the_diagram()
-
     def get_center_pos(self) -> QPointF:
         """
         Get the center position
@@ -369,13 +335,9 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         """
 
         if self.hovered:
-            if self._drag_offset is not None:
-                scene_pos = event.scenePos()
-                x = scene_pos.x() - self._drag_offset.x()
-                y = scene_pos.y() - self._drag_offset.y()
-                self.refresh_from_top_left(x=x, y=y)
-            else:
-                pass
+            # super().mouseMoveEvent(event)
+            pos = self.mapToParent(event.pos())
+            self.refresh(pos=pos)
 
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent):
         """
@@ -389,26 +351,8 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         event.setAccepted(True)
         self.editor.map.view.disable_move = True
 
-        if event.button() == Qt.MouseButton.LeftButton:
-            self._drag_offset = QPointF(event.scenePos().x() - self.rect().x(),
-                                        event.scenePos().y() - self.rect().y())
-        else:
-            self._drag_offset = None
-
         if self.api_object is not None:
             self.editor.set_editor_model(api_object=self.api_object)
-
-    def mouseDoubleClickEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        """
-        Open the substation editor on double click.
-
-        :param event: Mouse event.
-        :return: ``None``.
-        """
-        if self.api_object is not None:
-            self.open_device_editor()
-        else:
-            pass
 
     def mouseReleaseEvent(self, event: QGraphicsSceneMouseEvent):
         """
@@ -416,7 +360,6 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         """
         # super().mouseReleaseEvent(event)
         self.editor.disableMove = True
-        self._drag_offset = None
         self.update_position_at_the_diagram()  # always update
 
     def hoverEnterEvent(self, event: QtWidgets.QGraphicsSceneHoverEvent) -> None:
@@ -442,76 +385,71 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         menu = QMenu()
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Editor"),
-                       icon_path=":/Icons/icons/edit.png",
-                       function_ptr=self.edit)
-
-        add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Add voltage level"),
+                       text="Add voltage level",
                        icon_path=":/Icons/icons/plus.png",
                        function_ptr=self.add_voltage_level)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Create line from here"),
+                       text="Create line from here",
                        icon_path=":/Icons/icons/plus.png",
                        function_ptr=self.create_new_line)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Merge selected substations here"),
+                       text="Merge selected substations here",
                        icon_path=":/Icons/icons/fusion.png",
                        function_ptr=self.merge_selected_substations)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Set coordinates to DB"),
+                       text="Set coordinates to DB",
                        icon_path=":/Icons/icons/down.png",
                        function_ptr=self.move_to_api_coordinates)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Remove substation"),
+                       text="Remove substation",
                        icon_path=":/Icons/icons/delete_schematic.png",
                        function_ptr=self.delete)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Substation diagram"),
+                       text="Substation diagram",
                        icon_path=":/Icons/icons/grid_icon.png",
                        function_ptr=self.new_substation_diagram)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Plot"),
+                       text="Plot",
                        icon_path=":/Icons/icons/plot.png",
                        function_ptr=self.plot)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Open in street view"),
+                       text="Open in street view",
                        icon_path=":/Icons/icons/map.png",
                        function_ptr=self.open_street_view)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Consolidate selected objects coordinates"),
+                       text="Consolidate selected objects coordinates",
                        function_ptr=self.editor.consolidate_object_coordinates,
                        icon_path=":/Icons/icons/assign_to_profile.png")
 
-        menu.addSection(translate_context_menu_text("Add"))
+        menu.addSection("Add")
 
         # Actions under the "Add" section
-        add_menu_entry(menu, text=translate_context_menu_text("Load"),
+        add_menu_entry(menu, text='Load',
                        icon_path=":/Icons/icons/add_load.png",
                        function_ptr=self.add_load)
 
-        add_menu_entry(menu, text=translate_context_menu_text("Generator"),
+        add_menu_entry(menu, text='Generator',
                        icon_path=":/Icons/icons/add_gen.png",
                        function_ptr=self.add_generator)
 
-        add_menu_entry(menu, text=translate_context_menu_text("Static generator"),
+        add_menu_entry(menu, text='Static generator',
                        icon_path=":/Icons/icons/add_stagen.png",
                        function_ptr=self.add_static_generator)
 
-        add_menu_entry(menu, text=translate_context_menu_text("Battery"),
+        add_menu_entry(menu, text='Battery',
                        icon_path=":/Icons/icons/add_batt.png",
                        function_ptr=self.add_battery)
 
         add_menu_entry(menu,
-                       text=translate_context_menu_text("External grid"),
+                       text='External grid',
                        icon_path=":/Icons/icons/add_external_grid.png",
                        function_ptr=self.add_external_grid)
 
@@ -1067,11 +1005,3 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
                 )
             else:
                 self.editor.gui.show_error_toast("Select only one bus")
-
-    def edit(self) -> None:
-        """
-        Open the appropriate editor dialogue.
-
-        :return: ``None``.
-        """
-        self.open_device_editor()

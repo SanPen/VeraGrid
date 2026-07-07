@@ -195,18 +195,8 @@ def get_island_monopole_indices(bus_map: IntVec, elm_active: BoolVec, elm_bus: I
 
 
 @nb.njit(cache=True)
-def get_island_branch_indices(bus_map: IntVec,
-                              elm_active: BoolVec,
-                              F: IntVec,
-                              T: IntVec) -> IntVec:
+def get_island_branch_indices(bus_map: IntVec, elm_active: BoolVec, F: IntVec, T: IntVec) -> IntVec:
     """
-    Get the branches that should belong into an island
-
-    The conditions are:
-    - is active (conducting electricity)
-    - The from bus index > -1
-    - The to bus index > -1
-    - The from bus index != to bus index (is not connected in a loop, which happens after topology reduction)
 
     :param bus_map:
     :param elm_active:
@@ -219,10 +209,9 @@ def get_island_branch_indices(bus_map: IntVec,
 
     ii = 0
     for k in range(n_elm):
-        if elm_active[k] and F[k] != T[k]:
-            if bus_map[F[k]] > -1 and bus_map[T[k]] > -1:
-                indices[ii] = k
-                ii += 1
+        if elm_active[k] and bus_map[F[k]] > -1 and bus_map[T[k]] > -1:
+            indices[ii] = k
+            ii += 1
 
     return indices[:ii]
 
@@ -258,25 +247,19 @@ def build_reducible_branches_C_coo(F: IntVec, T: IntVec, reducible: IntVec, acti
     n_red = 0
     for k in range(nelm):
         if reducible[k] and active[k]:
-            f = F[k]
-            t = T[k]
+            # C[k, f] = 1
+            i[ii] = k
+            j[ii] = F[k]
+            data[ii] = 1
+            ii += 1
 
-            # Ignore already-reduced self-loops (and invalid bus references) so
-            # repeated topology processing is stable.
-            if f != t and f >= 0 and t >= 0:
-                # C[k, f] = 1
-                i[ii] = k
-                j[ii] = f
-                data[ii] = 1
-                ii += 1
+            # C[k, t] = 1
+            i[ii] = k
+            j[ii] = T[k]
+            data[ii] = 1
+            ii += 1
 
-                # C[k, t] = 1
-                i[ii] = k
-                j[ii] = t
-                data[ii] = 1
-                ii += 1
-
-                n_red += 1
+            n_red += 1
 
     return i[:ii], j[:ii], data[:ii], n_red
 
@@ -637,7 +620,7 @@ class ConnectivityMatrices:
         :param bus_active:
         :return:
         """
-        return (diags(bus_active, dtype=float) * (self.C.T @ self.C)).tocsc()
+        return (diags(bus_active) * (self.C.T @ self.C)).tocsc()
 
 
 def compute_connectivity(branch_active: IntVec,
@@ -650,7 +633,7 @@ def compute_connectivity(branch_active: IntVec,
     :param Ct_: Connectivity branch-bus "to"
     :return: Final Ct and Cf in CSC format
     """
-    br_states_diag = sp.diags(branch_active, dtype=float)
+    br_states_diag = sp.diags(branch_active)
     Cf = br_states_diag * Cf_
     Ct = br_states_diag * Ct_
 
@@ -685,19 +668,19 @@ def compute_connectivity_flexible(branch_active: IntVec | None = None,
 
     if branch_active is not None:
         if len(branch_active):
-            br_states_diag = sp.diags(branch_active.astype(int), dtype=float)
+            br_states_diag = sp.diags(branch_active.astype(int))
             cf_stack.append(br_states_diag @ Cf_)
             ct_stack.append(br_states_diag @ Ct_)
 
     if hvdc_active is not None:
         if len(hvdc_active):
-            hvdc_states_diag = sp.diags(hvdc_active.astype(int), dtype=float)
+            hvdc_states_diag = sp.diags(hvdc_active.astype(int))
             cf_stack.append(hvdc_states_diag @ Cf_hvdc)
             ct_stack.append(hvdc_states_diag @ Ct_hvdc)
 
     if vsc_active is not None:
         if len(vsc_active):
-            vsc_states_diag = sp.diags(vsc_active.astype(int), dtype=float)
+            vsc_states_diag = sp.diags(vsc_active.astype(int))
             cf_stack.append(vsc_states_diag @ Cf_vsc)
             ct_stack.append(vsc_states_diag @ Ct_vsc)
 

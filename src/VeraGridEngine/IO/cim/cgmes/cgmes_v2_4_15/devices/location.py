@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 
 class Location(IdentifiedObject):
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='CoordinateSystem', class_type='CoordinateSystem', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Coordinate system used to describe position points of this location.''', mandatory=True, profiles=[CgmesProfileType.GL]),
-        CgmesProperty(property_name='PowerSystemResources', class_type='PowerSystemResource', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''All power system resources at this location.''', mandatory=True, profiles=[CgmesProfileType.GL]),
+        CgmesProperty(property_name='CoordinateSystem', class_type='CoordinateSystem', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Coordinate system used to describe position points of this location.''', profiles=[]),
+        CgmesProperty(property_name='PowerSystemResources', class_type='PowerSystemResource', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''All power system resources at this location.''', profiles=[]),
         CgmesProperty(property_name='PositionPoints', class_type='PositionPoint', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Sequence of position points describing this location, expressed in coordinate system 'Location.CoordinateSystem'.''', profiles=[]),
     )
     __slots__ = ('CoordinateSystem', 'PowerSystemResources', 'PositionPoints')

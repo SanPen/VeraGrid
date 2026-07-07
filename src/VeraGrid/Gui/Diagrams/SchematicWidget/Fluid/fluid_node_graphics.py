@@ -16,7 +16,6 @@ from VeraGridEngine.enumerations import DeviceType, FaultType, SchematicBranchEn
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 from VeraGridEngine.Devices.types import FLUID_TYPES
 
-from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, FONT_SCALE, GenericDiagramWidget
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry import (SchematicAttachmentSlot,
                                                                           build_explicit_slot_key,
@@ -32,7 +31,7 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_turbine_graphics import F
 from VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_pump_graphics import FluidPumpGraphicItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Fluid.fluid_p2x_graphics import FluidP2xGraphicItem
 from VeraGrid.Gui.messages import yes_no_question, error_msg
-from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
+from VeraGrid.Gui.gui_functions import add_menu_entry
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
@@ -158,16 +157,6 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         """
         self.label.setPlainText(val)
 
-    def open_device_editor(self) -> bool:
-        """
-        Open the generic device editor for this fluid node.
-
-        :return: ``True`` when the editor was opened.
-        """
-        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
-        dialog.exec()
-        return True
-
     def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         """
         mouse press: display the editor
@@ -176,18 +165,6 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         """
         if self.api_object is not None:
             self.editor.set_editor_model(api_object=self.api_object)
-
-    def mouseDoubleClickEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        """
-        Open the fluid-node editor on double click.
-
-        :param event: Mouse event.
-        :return: ``None``.
-        """
-        if self.api_object is not None:
-            self.open_device_editor()
-        else:
-            pass
 
     def mouseMoveEvent(self, event: QGraphicsSceneMouseEvent) -> None:
         """
@@ -446,64 +423,51 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         @return:
         """
         menu = QMenu()
-        menu.addSection(translate_context_menu_text("Fluid node"))
+        menu.addSection("Fluid node")
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Editor"),
-                       icon_path=":/Icons/icons/edit.png",
-                       function_ptr=self.edit)
-
-        add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Plot electrical profiles"),
+                       text="Plot electrical profiles",
                        icon_path=":/Icons/icons/plot.png",
                        function_ptr=self.plot_electrical_profiles)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Plot fluid profiles"),
+                       text="Plot fluid profiles",
                        icon_path=":/Icons/icons/plot.png",
                        function_ptr=self.plot_fluid_profiles)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Arrange"),
+                       text="Arrange",
                        icon_path=":/Icons/icons/automatic_layout.png",
                        function_ptr=self.arrange_children)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Delete all the connections"),
+                       text="Delete all the connections",
                        icon_path=":/Icons/icons/delete_conn.png",
                        function_ptr=lambda: self.delete_all_connections(ask=True, delete_from_db=True))
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Delete"),
+                       text="Delete",
                        icon_path=":/Icons/icons/delete3.png",
                        function_ptr=self.remove)
 
-        menu.addSection(translate_context_menu_text("Add"))
+        menu.addSection("Add")
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Turbine"),
+                       text="Turbine",
                        icon_path=":/Icons/icons/add_gen.png",
                        function_ptr=self.add_turbine)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Pump"),
+                       text="Pump",
                        icon_path=":/Icons/icons/add_gen.png",
                        function_ptr=self.add_pump)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("P2X"),
+                       text="P2X",
                        icon_path=":/Icons/icons/add_gen.png",
                        function_ptr=self.add_p2x)
 
         menu.exec_(event.screenPos())
-
-    def edit(self) -> None:
-        """
-        Open the appropriate editor dialogue.
-
-        :return: ``None``.
-        """
-        self.open_device_editor()
 
     def get_terminal(self) -> BarTerminalItem:
         """
@@ -793,78 +757,65 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
 
         for branch_graphic in self.get_associated_branch_graphics():
             endpoint: SchematicBranchEndpoint | None = self.get_branch_endpoint_for_graphic(branch_graphic)
-            branch_api_object = branch_graphic.api_object
-            should_process_branch: bool = True
 
             if endpoint is None:
-                should_process_branch = False
-            elif branch_api_object is None:
-                should_process_branch = False
+                continue
             else:
                 pass
 
-            if should_process_branch:
-                attachment = self.editor.get_persisted_attachment(api_object=branch_api_object,
-                                                                  endpoint=endpoint.value)
-                has_saved_endpoint_state = any(key in attachment for key in ("side",
-                                                                             "slot",
-                                                                             "terminal_key",
-                                                                             "alignment",
-                                                                             "order",
-                                                                             "anchor_x",
-                                                                             "anchor_y"))
+            attachment = self.editor.get_persisted_attachment(api_object=branch_graphic.api_object,
+                                                              endpoint=endpoint.value)
+            has_saved_endpoint_state = any(key in attachment for key in ("side",
+                                                                         "slot",
+                                                                         "terminal_key",
+                                                                         "alignment",
+                                                                         "order",
+                                                                         "anchor_x",
+                                                                         "anchor_y"))
 
-                if self.editor.is_loading_diagram():
-                    if has_saved_endpoint_state:
-                        should_process_branch = False
-                    else:
-                        pass
-                else:
-                    pass
-
-                if should_process_branch:
-                    existing_slot = str(attachment.get("slot", ""))
-                    auto_slot = bool(attachment.get("auto_slot", existing_slot in ("", "default", "left", "right", "top", "bottom")))
-                    anchor_auto = bool(attachment.get("anchor_auto", True))
-
-                    if not auto_slot or not anchor_auto:
-                        should_process_branch = False
-                    else:
-                        pass
-                else:
-                    pass
-
-                if should_process_branch:
-                    if endpoint == SchematicBranchEndpoint.FROM:
-                        other_point = branch_graphic.pos2
-                    else:
-                        other_point = branch_graphic.pos1
-
-                    local_other_point: QPointF = self.mapFromScene(other_point)
-                    side_key: SchematicAttachmentSlot = infer_attachment_side_from_points(
-                        origin=(local_center_x, local_center_y),
-                        other=(local_other_point.x(), local_other_point.y()),
-                        vertical_bias=1.0,
-                    )
-                    local_anchor: QPointF = self.get_connection_local_point_from_scene_point(other_point)
-                    attachment["anchor_x"] = float(local_anchor.x())
-                    attachment["anchor_y"] = float(local_anchor.y())
-                    attachment["anchor_auto"] = True
-
-                    if side_key in (SchematicAttachmentSlot.TOP, SchematicAttachmentSlot.BOTTOM):
-                        sort_value = float(local_other_point.x())
-                    else:
-                        sort_value = float(local_other_point.y())
-
-                    grouped_entries[side_key].append((sort_value,
-                                                      str(id(branch_api_object)),
-                                                      branch_graphic,
-                                                      endpoint,
-                                                      attachment))
+            if self.editor.is_loading_diagram():
+                if has_saved_endpoint_state:
+                    continue
                 else:
                     pass
             else:
                 pass
+
+            existing_slot = str(attachment.get("slot", ""))
+            auto_slot = bool(attachment.get("auto_slot", existing_slot in ("", "default", "left", "right", "top", "bottom")))
+            anchor_auto = bool(attachment.get("anchor_auto", True))
+
+            if not auto_slot or not anchor_auto:
+                continue
+            else:
+                pass
+
+            if endpoint == SchematicBranchEndpoint.FROM:
+                other_point = branch_graphic.pos2
+            else:
+                other_point = branch_graphic.pos1
+
+            local_other_point: QPointF = self.mapFromScene(other_point)
+            side_key: SchematicAttachmentSlot = infer_attachment_side_from_points(
+                origin=(local_center_x, local_center_y),
+                other=(local_other_point.x(), local_other_point.y()),
+                vertical_bias=1.0,
+            )
+            local_anchor: QPointF = self.get_connection_local_point_from_scene_point(other_point)
+            attachment["anchor_x"] = float(local_anchor.x())
+            attachment["anchor_y"] = float(local_anchor.y())
+            attachment["anchor_auto"] = True
+
+            if side_key in (SchematicAttachmentSlot.TOP, SchematicAttachmentSlot.BOTTOM):
+                sort_value = float(local_other_point.x())
+            else:
+                sort_value = float(local_other_point.y())
+
+            grouped_entries[side_key].append((sort_value,
+                                              str(id(branch_graphic.api_object)),
+                                              branch_graphic,
+                                              endpoint,
+                                              attachment))
 
         side_key: SchematicAttachmentSlot
 
@@ -872,20 +823,15 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
             entries.sort(key=lambda entry: (entry[0], entry[1]))
 
             for order_index, (_, _, branch_graphic, endpoint, attachment) in enumerate(entries, start=1):
-                branch_api_object = branch_graphic.api_object
-
-                if branch_api_object is None:
-                    pass
-                else:
-                    slot_key = build_explicit_slot_key(owner_kind="fluid", side=side_key, order=order_index)
-                    attachment["side"] = side_key.value
-                    attachment["order"] = order_index
-                    attachment["slot"] = slot_key
-                    attachment["terminal_key"] = slot_key
-                    attachment["auto_slot"] = True
-                    self.editor.diagram.set_attachment(api_object=branch_api_object,
-                                                       endpoint=endpoint.value,
-                                                       attachment=attachment)
+                slot_key = build_explicit_slot_key(owner_kind="fluid", side=side_key, order=order_index)
+                attachment["side"] = side_key.value
+                attachment["order"] = order_index
+                attachment["slot"] = slot_key
+                attachment["terminal_key"] = slot_key
+                attachment["auto_slot"] = True
+                self.editor.diagram.set_attachment(api_object=branch_graphic.api_object,
+                                                   endpoint=endpoint.value,
+                                                   attachment=attachment)
 
     def add_object(self, api_obj: Union[None, EditableDevice] = None):
         """

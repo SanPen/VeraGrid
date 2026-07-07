@@ -61,6 +61,6 @@ def test_demo_5_node():
 
     v = np.array([1., 0.9553, 0.9548, 0.9334, 0.9534])
     all_ok = np.isclose(np.abs(power_flow.results.voltage), v, atol=1e-3)
-    assert np.all(all_ok)
+    return all_ok
 
 

@@ -70,46 +70,6 @@ class ProfileDevice:
         else:
             return value
 
-    def _rebind_value(self,
-                      value: "EditableDevice | str | None",
-                      objects_by_idtag: dict[str, "EditableDevice"]) -> "EditableDevice | str | None":
-        """
-        Rebind one stored device payload by idtag.
-
-        :param value: Stored device object, serialized idtag, or ``None``.
-        :param objects_by_idtag: idtag -> target object lookup.
-        :return: Rebound object when present, otherwise the original payload.
-        """
-        if value is None:
-            return None
-        elif hasattr(value, "idtag"):
-            return objects_by_idtag.get(value.idtag, value)
-        elif isinstance(value, str):
-            return objects_by_idtag.get(value, value)
-        else:
-            return value
-
-    def rebind_device_references(self, objects_by_idtag: dict[str, "EditableDevice"]) -> None:
-        """
-        Rebind stored device references to equivalent objects from a target lookup.
-
-        :param objects_by_idtag: idtag -> target object lookup.
-        """
-        self._default_value = self._rebind_value(
-            value=self._default_value,
-            objects_by_idtag=objects_by_idtag,
-        )
-
-        if self._sparse_array is not None:
-            self._sparse_array.rebind_device_references(objects_by_idtag=objects_by_idtag)
-
-        if self._dense_array is not None:
-            for idx, value in enumerate(self._dense_array):
-                self._dense_array[idx] = self._rebind_value(
-                    value=value,
-                    objects_by_idtag=objects_by_idtag,
-                )
-
     def clear(self) -> None:
         """
         Clear the profile contents.

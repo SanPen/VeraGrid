@@ -8,13 +8,12 @@ from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.dc_base_terminal import DCBaseTerminal
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.dc_conducting_equipment import DCConductingEquipment
 
 class DCTerminal(DCBaseTerminal):
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='DCConductingEquipment', class_type='DCConductingEquipment', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''None''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+        CgmesProperty(property_name='DCConductingEquipment', class_type='DCConductingEquipment', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''None''', profiles=[]),
     )
     __slots__ = ('DCConductingEquipment',)
     def __init__(self, rdfid='', tpe='DCTerminal'):

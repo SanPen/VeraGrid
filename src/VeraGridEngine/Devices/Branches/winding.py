@@ -27,11 +27,10 @@ class Winding(Transformer2W):
                  no_load_current: float = 0.0,
                  short_circuit_voltage: float = 0.0,
                  r: float = 1e-20,
-                 x: float = 1e-5,
+                 x: float = 1e-20,
                  g: float = 1e-20,
                  b: float = 1e-20,
-                 design_rate: float = 9999.0,
-                 rate: float = 9999.0,
+                 rate: float = 1.0,
                  tap_module: float = 1.0,
                  tap_module_max: float = 1.2,
                  tap_module_min: float = 0.5,
@@ -85,7 +84,6 @@ class Winding(Transformer2W):
         :param x: reactance in per unit
         :param g: shunt conductance in per unit
         :param b: shunt susceptance in per unit
-        :param design_rate: Design rate (MVA)
         :param rate: rate in MVA
         :param tap_module: tap module in p.u.
         :param tap_module_max:
@@ -139,7 +137,6 @@ class Winding(Transformer2W):
                                x=x,
                                g=g,
                                b=b,
-                               design_rate=design_rate,
                                rate=rate,
                                tap_module=tap_module,
                                tap_module_max=tap_module_max,

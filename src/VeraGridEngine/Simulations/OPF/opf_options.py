@@ -11,8 +11,9 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOpt
 from VeraGridEngine.Devices.Events.contingency_group import ContingencyGroup
 from VeraGridEngine.Devices.Aggregation.inter_aggregation_info import InterAggregationInfo
 from VeraGridEngine.Simulations.options_template import OptionsTemplate
-from VeraGridEngine.basic_structures import Vec, CxVec
+from VeraGridEngine.basic_structures import Vec
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
+
 
 
 class OptimalPowerFlowOptions(OptionsTemplate):
@@ -61,7 +62,7 @@ class OptimalPowerFlowOptions(OptionsTemplate):
                  mip_solver=MIPSolvers.HIGHS,
                  power_flow_options: Union[None, PowerFlowOptions] = None,
                  consider_contingencies=False,
-                 contingency_groups_used: List[ContingencyGroup] | None = None,
+                 contingency_groups_used: List[ContingencyGroup] = (),
                  skip_generation_limits=False,
                  lodf_tolerance=0.001,
                  inter_aggregation_info: InterAggregationInfo | None = None,
@@ -79,8 +80,8 @@ class OptimalPowerFlowOptions(OptionsTemplate):
                  ips_init_with_pf: bool = False,
                  ips_control_q_limits: bool = False,
                  acopf_mode: AcOpfMode = AcOpfMode.ACOPFstd,
-                 acopf_v0: CxVec | None = None,
-                 acopf_S0: CxVec | None = None,
+                 acopf_v0: Vec | None = None,
+                 acopf_S0: Vec | None = None,
                  robust: bool = False,
                  mip_framework: MIPFramework = MIPFramework.PuLP):
         """
@@ -130,9 +131,7 @@ class OptimalPowerFlowOptions(OptionsTemplate):
 
         self.consider_contingencies = consider_contingencies
 
-        self.contingency_groups_used: List[ContingencyGroup] = (contingency_groups_used
-                                                                if contingency_groups_used is not None
-                                                                else [])
+        self.contingency_groups_used: List[ContingencyGroup] = contingency_groups_used
 
         self.lodf_tolerance = lodf_tolerance
 
@@ -174,3 +173,6 @@ class OptimalPowerFlowOptions(OptionsTemplate):
 
         self.acopf_v0 = acopf_v0
         self.acopf_S0 = acopf_S0
+
+
+

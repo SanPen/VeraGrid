@@ -516,7 +516,7 @@ class NewtonTraceCollector:
     Collects numerical diagnostics during a simulation run.
     Designed for post-analysis and research purposes.
     """
-    __slots__ = ("records", "residual_records")
+    __slots__ = ("records",)
 
     def __init__(self) -> None:
         """
@@ -525,7 +525,6 @@ class NewtonTraceCollector:
         :return: None
         """
         self.records: list[dict[str, Any]] = list()
-        self.residual_records: list[dict[str, Any]] = list()
 
     def record(
         self,
@@ -569,47 +568,3 @@ class NewtonTraceCollector:
         """
         import pandas as pd
         return pd.DataFrame(self.records)
-
-    def record_residual_vector(
-        self,
-        *,
-        ctx: NewtonSolveContext,
-        residual: Array1D,
-        top_k: int = 5,
-        debug_info: Optional[list[dict[str, Any]]] = None,
-    ) -> None:
-        """
-        Record one residual snapshot with top offending equation indices.
-
-        :param ctx: Per-iteration Newton context.
-        :param residual: Full nonlinear residual vector.
-        :param top_k: Number of largest-magnitude residual entries to keep.
-        :param debug_info: Optional residual metadata aligned with residual indices.
-        :return: None.
-        """
-        if residual.size == 0:
-            return
-        k = int(max(1, min(int(top_k), int(residual.size))))
-        idx = np.argpartition(np.abs(residual), -k)[-k:]
-        idx = idx[np.argsort(np.abs(residual[idx]))[::-1]]
-        top_rows: list[dict[str, Any]] = list()
-        for ii in idx:
-            row: dict[str, Any] = {
-                "eq_idx": int(ii),
-                "res": float(residual[ii]),
-                "abs_res": float(abs(residual[ii])),
-            }
-            if debug_info is not None and 0 <= int(ii) < len(debug_info):
-                info = debug_info[int(ii)]
-                row["kind"] = str(info.get("kind", ""))
-                row["label"] = str(info.get("label", ""))
-                row["var_name"] = str(info.get("var_name", ""))
-            top_rows.append(row)
-
-        self.residual_records.append({
-            "t": float(ctx.t),
-            "step": int(ctx.step_idx),
-            "newton_iter": int(ctx.newton_iter),
-            "res_norm_inf": float(np.max(np.abs(residual))),
-            "top": top_rows,
-        })

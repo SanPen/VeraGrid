@@ -21,11 +21,9 @@ from collections import defaultdict, deque
 from VeraGridEngine.enumerations import EmtInitializationMethod, EmtInitializationStatus
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
-from VeraGridEngine.Simulations.Rms.numerical.pseudo_transient import PseudoTransient
-from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicJacobian, SymbolicVector
 from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler
-from VeraGridEngine.Utils.Symbolic.symbolic import expression2numba, get_expression_vars, heaviside_num
+from VeraGridEngine.Utils.Symbolic.symbolic import expression2numba, get_expression_vars
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const, Expr, find_vars_order
 
@@ -286,7 +284,7 @@ class InitializationStateRhsVector:
         :return: None.
         :rtype: None
         """
-        namespace: Dict[str, object] = dict(math=__import__("math"), np=np, _heaviside=heaviside_num)
+        namespace: Dict[str, object] = dict(math=__import__("math"), np=np)
         exec(source_code, namespace)
 
         if use_jit:
@@ -675,7 +673,7 @@ def _build_persistent_initialization_cache_key(
     reduced_key: str = _build_reduced_initialization_cache_key(problem, unknown_vars, residual_eqs, state_unknown_mask)
 
     payload: str = "|".join([
-        "persistent-reduced-emt-init-v5",
+        "persistent-reduced-emt-init-v4",
         reduced_key,
         options.initialization_method.name,
         f"{float(options.init_newton_tol):.12g}",
@@ -683,12 +681,13 @@ def _build_persistent_initialization_cache_key(
         str(int(options.init_dense_threshold)),
         str(bool(options.init_newton_backtracking)),
         str(bool(options.init_allow_state_equilibrium)),
+        str(bool(options.init_pseudo_transient_enable)),
         f"{float(options.init_ptc_dtau0):.12g}",
         f"{float(options.init_ptc_dtau_min):.12g}",
         f"{float(options.init_ptc_dtau_max):.12g}",
         str(int(options.init_ptc_max_iter)),
     ])
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    return hashlib.md5(payload.encode("utf-8")).hexdigest()
 
 
 def _persistent_initialization_params_match(
@@ -838,7 +837,7 @@ def _build_reduced_initialization_cache_key(
         "::".join(mask_tokens),
         "::".join(residual_tokens),
     ])
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    return hashlib.md5(payload.encode("utf-8")).hexdigest()
 
 
 def _build_state_rhs_cache_key(problem: EmtProblemTemplate, state_eqs: List[Expr]) -> str:
@@ -868,48 +867,32 @@ def _build_state_rhs_cache_key(problem: EmtProblemTemplate, state_eqs: List[Expr
         str(problem.get_states_number()),
         "::".join(expr_tokens),
     ])
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    return hashlib.md5(payload.encode("utf-8")).hexdigest()
 
 
-def _collect_missing_dx_problem(problem: EmtProblemTemplate,
-                                include_existing: bool = False) -> Tuple[List[Var], List[Expr]]:
+def _collect_missing_dx_problem(problem: EmtProblemTemplate) -> Tuple[List[Var], List[Expr]]:
     """
     Return the differential variables that still need ``dx0`` and their state equations.
 
     :param problem: EMT problem being initialized.
     :type problem: EmtProblemTemplate
-    :param include_existing: When ``True``, collect all differential variables.
     :return: Pair ``(missing_diff_vars, missing_state_eqs)``.
     :rtype: Tuple[List[Var], List[Expr]]
     """
     diff_vars: List[Var] = problem.get_diff_vars()
-    state_vars: List[Var] = problem.get_state_vars()
     state_eqs: List[Expr] = problem.get_state_eqs()
-    state_eq_by_uid: Dict[int, Expr] = {
-        state_var.uid: state_eqs[idx]
-        for idx, state_var in enumerate(state_vars)
-        if idx < len(state_eqs)
-    }
     missing_diff_vars: List[Var] = list()
     missing_state_eqs: List[Expr] = list()
     idx: int = 0
 
     while idx < len(diff_vars):
         diff_var: Var = diff_vars[idx]
-        base_var: Var | None = diff_var.base_var
-        state_eq: Expr | None = None if base_var is None else state_eq_by_uid.get(base_var.uid, None)
 
-        if include_existing:
-            if state_eq is not None:
-                missing_diff_vars.append(diff_var)
-                missing_state_eqs.append(state_eq)
+        if diff_var.uid in problem.diff_init_guess:
+            diff_var = diff_var
         else:
-            if diff_var.uid in problem.diff_init_guess:
-                diff_var = diff_var
-            else:
-                if state_eq is not None:
-                    missing_diff_vars.append(diff_var)
-                    missing_state_eqs.append(state_eq)
+            missing_diff_vars.append(diff_var)
+            missing_state_eqs.append(state_eqs[idx])
 
         idx += 1
 
@@ -1042,7 +1025,6 @@ def init_explicit_emt(
         variable_parameters: List[Var],
         event_parameters_eqs: List[Union[Expr, Const]],
         constant_parameters: List[Var],
-        constant_parameter_values: List[Const],
         init_guess: Dict[int, float],
         diff_init_guess: Dict[int, float],
         uid2idx_vars: Dict[int, int],
@@ -1069,7 +1051,6 @@ def init_explicit_emt(
     :param variable_parameters: List of parameters that change on events.
     :param event_parameters_eqs: Initial equations for event parameters.
     :param constant_parameters: List of constant parameters.
-    :param constant_parameter_values: Values associated with ``constant_parameters``.
     :param init_guess: Initial guesses for variables.
     :param diff_init_guess: Initial guesses for derivatives.
     :param uid2idx_vars: Index map for variables.
@@ -1102,14 +1083,10 @@ def init_explicit_emt(
             print(f"Diff var {sys_diff_vars[uid].name} with uid= {uid} initialized with val: {val} ")
         dx[uid2idx_diff[uid]] = val
 
-    # Static EMT constants now live in the problem-owned mapping. Build the
-    # dense array from that canonical source instead of the block-local cache.
-    _ = mdl
-    _ = constant_parameters
-    params_array: np.ndarray = np.asarray(
-        [float(const.value) for const in constant_parameter_values],
-        dtype=np.float64,
-    )
+    # Setup constant parameter array
+    params_array: np.ndarray = np.zeros(len(constant_parameters))
+    for param, const in mdl.parameters.items():
+        params_array[uid2idx_params[param.uid]] = const.value
 
     # Primary pass: resolve basic event parameters that are constant or immediate
     event_params_array: np.ndarray = np.ones(len(variable_parameters))
@@ -1279,11 +1256,7 @@ def init_explicit_emt(
 
 def init_pseudo_transient(problem: EmtProblemTemplate, options: EmtOptions) -> EmtInitializationReport:
     """
-    Run the EMT-native initialization workflow forcing the pure pseudo-transient path.
-
-    This helper does not execute explicit initialization. It starts from the
-    current problem seed, which in the main EMT build workflow corresponds to
-    the power-flow projected variables.
+    Run the EMT-native initialization workflow forcing the pseudo-transient path.
 
     :param problem: EMT problem being initialized.
     :param options: EMT simulation options.
@@ -1311,7 +1284,6 @@ def run_emt_explicit_initialization(problem: EmtProblemTemplate, verbose: bool =
         variable_parameters=problem.get_variable_parameters(),
         event_parameters_eqs=problem.get_event_parameter_equations(),
         constant_parameters=problem.get_constant_parameters(),
-        constant_parameter_values=problem.get_parameters_values(),
         init_guess=problem.init_guess,
         diff_init_guess=problem.diff_init_guess,
         uid2idx_vars=problem.uid2idx_vars,
@@ -1507,393 +1479,6 @@ def _build_reduced_initialization_system(
         )
 
 
-class EmtPseudoTransientProblemAdapter(RmsProblemTemplate):
-    """
-    Adapt one EMT reduced initialization system to the RMS pseudo-transient solver API.
-
-    The RMS pseudo-transient implementation expects a problem object exposing the
-    RMS numerical interface. This adapter provides that interface on top of the
-    EMT reduced initialization residual and Jacobian so the EMT initializer can
-    reuse the existing pseudo-transient algorithm without changing the solver.
-    """
-
-    __slots__ = [
-        "_reduced_system",
-        "_emt_problem",
-        "_runtime_params",
-        "_constant_params",
-        "_x_full",
-        "_dx_full",
-        "_reduced_uid2idx_vars",
-        "uid2idx_vars",
-    ]
-
-    def __init__(
-            self,
-            reduced_system: ReducedInitializationSystem,
-            problem: EmtProblemTemplate,
-            x_full: np.ndarray,
-            dx_full: np.ndarray,
-            runtime_params: np.ndarray,
-            constant_params: np.ndarray,
-    ) -> None:
-        """
-        Build one RMS-compatible pseudo-transient view over an EMT reduced system.
-
-        :param reduced_system: EMT reduced initialization system.
-        :type reduced_system: ReducedInitializationSystem
-        :param problem: EMT problem being initialized.
-        :type problem: EmtProblemTemplate
-        :param x_full: Full EMT variable vector used as the backing storage.
-        :type x_full: np.ndarray
-        :param dx_full: Full EMT differential vector used during residual evaluation.
-        :type dx_full: np.ndarray
-        :param runtime_params: Runtime-parameter snapshot for initialization.
-        :type runtime_params: np.ndarray
-        :param constant_params: Constant-parameter snapshot for initialization.
-        :type constant_params: np.ndarray
-        :return: None.
-        :rtype: None
-        """
-        super().__init__(progress_signal=None, progress_text=None)
-        self._reduced_system: ReducedInitializationSystem = reduced_system
-        self._emt_problem: EmtProblemTemplate = problem
-        self._runtime_params: np.ndarray = runtime_params
-        self._constant_params: np.ndarray = constant_params
-        self._x_full: np.ndarray = x_full
-        self._dx_full: np.ndarray = dx_full
-        self._reduced_uid2idx_vars: Dict[int, int] = dict()
-        self.uid2idx_vars: Dict[int, int] = dict()
-
-        reduced_index: int = 0
-        for reduced_var in self._reduced_system.unknown_vars:
-            self._reduced_uid2idx_vars[reduced_var.uid] = reduced_index
-            self.uid2idx_vars[reduced_var.uid] = reduced_index
-            reduced_index += 1
-
-    def get_x0(self) -> np.ndarray:
-        """
-        Return the reduced unknown vector used to seed pseudo-transient iterations.
-
-        :return: Reduced initialization vector.
-        :rtype: np.ndarray
-        """
-        reduced_x0: np.ndarray = _extract_unknown_vector(self._emt_problem, self._reduced_system.unknown_vars, self._x_full)
-        return reduced_x0
-
-    def get_all_vars_number(self) -> int:
-        """
-        Return the number of reduced initialization unknowns.
-
-        :return: Number of reduced unknowns.
-        :rtype: int
-        """
-        return len(self._reduced_system.unknown_vars)
-
-    def get_diff_var_number(self) -> int:
-        """
-        Return the number of differential variables used by the reduced solver.
-
-        The RMS pseudo-transient solver asks for a differential-vector size even
-        when the EMT reduced initialization stage does not solve an explicit EMT
-        differential system in local coordinates. Returning the full EMT `dx`
-        length preserves compatibility with the residual evaluation helpers.
-
-        :return: Differential-vector size expected by the EMT residual evaluation.
-        :rtype: int
-        """
-        return int(self._dx_full.size)
-
-    def get_algebraic_var_number(self) -> int:
-        """
-        Return the number of reduced algebraic-like unknowns.
-
-        The reduced initialization system mixes algebraic variables with any
-        unresolved states. The RMS solver only needs a partition size, so the
-        complementary block to the unresolved-state count is returned here.
-
-        :return: Number of reduced unknowns treated as non-state variables.
-        :rtype: int
-        """
-        total_unknowns: int = len(self._reduced_system.unknown_vars)
-        n_states: int = self.get_states_number()
-        return total_unknowns - n_states
-
-    def get_states_number(self) -> int:
-        """
-        Return the number of reduced unknowns that correspond to unresolved states.
-
-        :return: Count of reduced state unknowns.
-        :rtype: int
-        """
-        n_states: int = int(np.count_nonzero(self._reduced_system.state_unknown_mask))
-        return n_states
-
-    def get_algebraic_vars(self) -> List[Var]:
-        """
-        Return the reduced unknowns treated as algebraic by the adapter partition.
-
-        :return: Reduced non-state unknown list.
-        :rtype: List[Var]
-        """
-        algebraic_vars: List[Var] = list()
-        idx: int = 0
-        n_unknowns: int = len(self._reduced_system.unknown_vars)
-        while idx < n_unknowns:
-            if float(self._reduced_system.state_unknown_mask[idx]) > 0.5:
-                pass
-            else:
-                algebraic_vars.append(self._reduced_system.unknown_vars[idx])
-            idx += 1
-        return algebraic_vars
-
-    def algebraic_vars(self) -> List[Var]:
-        """
-        Return the reduced non-state unknowns.
-
-        :return: Reduced non-state unknown list.
-        :rtype: List[Var]
-        """
-        return self.get_algebraic_vars()
-
-    def state_vars(self) -> List[Var]:
-        """
-        Return the reduced unknowns treated as states by the adapter partition.
-
-        :return: Reduced state unknown list.
-        :rtype: List[Var]
-        """
-        state_vars_list: List[Var] = list()
-        idx: int = 0
-        n_unknowns: int = len(self._reduced_system.unknown_vars)
-        while idx < n_unknowns:
-            if float(self._reduced_system.state_unknown_mask[idx]) > 0.5:
-                state_vars_list.append(self._reduced_system.unknown_vars[idx])
-            else:
-                pass
-            idx += 1
-        return state_vars_list
-
-    def update_variable_params(self, t: float, x_snapshot: np.ndarray | None = None) -> None:
-        """
-        Keep the EMT runtime-parameter snapshot aligned with the RMS solver API.
-
-        The EMT reduced initializer freezes the runtime parameters before entering
-        the pseudo-transient solve. The RMS solver still invokes this hook at the
-        beginning of the loop, so the adapter accepts the call and intentionally
-        preserves the already prepared parameter arrays.
-
-        :param t: Pseudo-time value requested by the solver.
-        :type t: float
-        :param x_snapshot: Optional reduced state snapshot.
-        :type x_snapshot: np.ndarray | None
-        :return: None.
-        :rtype: None
-        """
-        if x_snapshot is None:
-            t = float(t)
-        else:
-            t = float(t)
-            x_snapshot = np.array(x_snapshot, dtype=np.float64, copy=False)
-
-    def get_dx(self, x: np.ndarray, xn: np.ndarray, dx: np.ndarray, h: float) -> np.ndarray:
-        """
-        Return the EMT differential vector used by the reduced residual helpers.
-
-        The RMS pseudo-transient code requests a derivative estimate for its DAE
-        residual construction. The EMT reduced initialization residual already
-        carries all required differential information through the full EMT `dx`
-        buffer, so the adapter returns a copy of that frozen vector.
-
-        :param x: Current reduced iterate.
-        :type x: np.ndarray
-        :param xn: Previous reduced iterate.
-        :type xn: np.ndarray
-        :param dx: Previous differential estimate.
-        :type dx: np.ndarray
-        :param h: Pseudo-time step size.
-        :type h: float
-        :return: Differential vector used by EMT residual evaluation.
-        :rtype: np.ndarray
-        """
-        x = np.array(x, dtype=np.float64, copy=False)
-        xn = np.array(xn, dtype=np.float64, copy=False)
-        dx = np.array(dx, dtype=np.float64, copy=False)
-        h = float(h)
-        return self._dx_full.copy()
-
-    def rhs_state(self, x: np.ndarray, dx: np.ndarray) -> np.ndarray:
-        """
-        Return the reduced residual entries associated with unresolved states.
-
-        :param x: Current reduced iterate.
-        :type x: np.ndarray
-        :param dx: Differential vector requested by the solver.
-        :type dx: np.ndarray
-        :return: Reduced residual state block.
-        :rtype: np.ndarray
-        """
-        full_residual: np.ndarray = self._evaluate_full_reduced_residual(x, dx)
-        n_states: int = self.get_states_number()
-        if n_states > 0:
-            return full_residual[:n_states]
-        else:
-            return np.zeros(0, dtype=np.float64)
-
-    def rhs_algebraic(self, values: np.ndarray, diff_values: np.ndarray) -> np.ndarray:
-        """
-        Return the reduced residual entries associated with non-state unknowns.
-
-        :param values: Current reduced iterate.
-        :type values: np.ndarray
-        :param diff_values: Differential vector requested by the solver.
-        :type diff_values: np.ndarray
-        :return: Reduced residual algebraic block.
-        :rtype: np.ndarray
-        """
-        full_residual: np.ndarray = self._evaluate_full_reduced_residual(values, diff_values)
-        n_states: int = self.get_states_number()
-        return full_residual[n_states:]
-
-    def get_j11(self, x: np.ndarray, dx: np.ndarray, h: float) -> sp.csc_matrix:
-        """
-        Return the reduced Jacobian state-state block.
-
-        :param x: Current reduced iterate.
-        :type x: np.ndarray
-        :param dx: Differential vector requested by the solver.
-        :type dx: np.ndarray
-        :param h: Pseudo-time step size.
-        :type h: float
-        :return: State-state Jacobian block.
-        :rtype: sp.csc_matrix
-        """
-        jacobian: sp.csc_matrix = self._compute_numerical_jacobian(x, dx, h)
-        n_states: int = self.get_states_number()
-        if n_states > 0:
-            return jacobian[:n_states, :n_states].tocsc()
-        else:
-            return sp.csc_matrix((0, 0), dtype=np.float64)
-
-    def get_j12(self, x: np.ndarray, dx: np.ndarray, h: float) -> sp.csc_matrix:
-        """
-        Return the reduced Jacobian state-algebraic block.
-
-        :param x: Current reduced iterate.
-        :type x: np.ndarray
-        :param dx: Differential vector requested by the solver.
-        :type dx: np.ndarray
-        :param h: Pseudo-time step size.
-        :type h: float
-        :return: State-algebraic Jacobian block.
-        :rtype: sp.csc_matrix
-        """
-        jacobian: sp.csc_matrix = self._compute_numerical_jacobian(x, dx, h)
-        n_states: int = self.get_states_number()
-        return jacobian[:n_states, n_states:].tocsc()
-
-    def get_j21(self, x: np.ndarray, dx: np.ndarray, h: float) -> sp.csc_matrix:
-        """
-        Return the reduced Jacobian algebraic-state block.
-
-        :param x: Current reduced iterate.
-        :type x: np.ndarray
-        :param dx: Differential vector requested by the solver.
-        :type dx: np.ndarray
-        :param h: Pseudo-time step size.
-        :type h: float
-        :return: Algebraic-state Jacobian block.
-        :rtype: sp.csc_matrix
-        """
-        jacobian: sp.csc_matrix = self._compute_numerical_jacobian(x, dx, h)
-        n_states: int = self.get_states_number()
-        return jacobian[n_states:, :n_states].tocsc()
-
-    def get_j22(self, x: np.ndarray, dx: np.ndarray, h: float) -> sp.csc_matrix:
-        """
-        Return the reduced Jacobian algebraic-algebraic block.
-
-        :param x: Current reduced iterate.
-        :type x: np.ndarray
-        :param dx: Differential vector requested by the solver.
-        :type dx: np.ndarray
-        :param h: Pseudo-time step size.
-        :type h: float
-        :return: Algebraic-algebraic Jacobian block.
-        :rtype: sp.csc_matrix
-        """
-        jacobian: sp.csc_matrix = self._compute_numerical_jacobian(x, dx, h)
-        n_states: int = self.get_states_number()
-        return jacobian[n_states:, n_states:].tocsc()
-
-    def _compute_numerical_jacobian(self, x: np.ndarray, dx: np.ndarray, h: float) -> sp.csc_matrix:
-        """
-        Return the EMT reduced Jacobian in the matrix form expected by RMS.
-
-        The EMT reduced system already exposes a compiled Jacobian evaluator over
-        the reduced unknown ordering. The adapter scatters the reduced iterate to
-        the backing EMT vectors and forwards the call directly.
-
-        :param x: Current reduced iterate.
-        :type x: np.ndarray
-        :param dx: Differential vector requested by the solver.
-        :type dx: np.ndarray
-        :param h: Pseudo-time step size.
-        :type h: float
-        :return: Reduced Jacobian matrix.
-        :rtype: sp.csc_matrix
-        """
-        h = float(h)
-        full_dx: np.ndarray = self._select_full_dx(dx)
-        _scatter_unknown_vector(self._emt_problem, self._reduced_system.unknown_vars, self._x_full, x)
-        jacobian: sp.csc_matrix = _evaluate_initialization_jacobian(
-            reduced_system=self._reduced_system,
-            problem=self._emt_problem,
-            x=self._x_full,
-            dx=full_dx,
-            runtime_params=self._runtime_params,
-            constant_params=self._constant_params,
-        )
-        return jacobian.tocsc(copy=True)
-
-    def _evaluate_full_reduced_residual(self, reduced_x: np.ndarray, dx: np.ndarray) -> np.ndarray:
-        """
-        Evaluate the full EMT reduced residual at one reduced iterate.
-
-        :param reduced_x: Current reduced iterate.
-        :type reduced_x: np.ndarray
-        :param dx: Differential vector requested by the solver.
-        :type dx: np.ndarray
-        :return: Reduced residual vector.
-        :rtype: np.ndarray
-        """
-        full_dx: np.ndarray = self._select_full_dx(dx)
-        _scatter_unknown_vector(self._emt_problem, self._reduced_system.unknown_vars, self._x_full, reduced_x)
-        residual: np.ndarray = _evaluate_initialization_residual(
-            reduced_system=self._reduced_system,
-            problem=self._emt_problem,
-            x=self._x_full,
-            dx=full_dx,
-            runtime_params=self._runtime_params,
-            constant_params=self._constant_params,
-        )
-        return residual.copy()
-
-    def _select_full_dx(self, dx: np.ndarray) -> np.ndarray:
-        """
-        Resolve the full EMT differential vector used for residual evaluation.
-
-        :param dx: Differential vector received from the RMS solver.
-        :type dx: np.ndarray
-        :return: Full EMT differential vector.
-        :rtype: np.ndarray
-        """
-        if dx.size == self._dx_full.size:
-            return np.array(dx, dtype=np.float64, copy=True)
-        else:
-            return self._dx_full.copy()
-
-
 def _collect_reduced_initialization_problem(
         problem: EmtProblemTemplate,
         allow_state_equilibrium: bool,
@@ -1908,10 +1493,9 @@ def _collect_reduced_initialization_problem(
     :return: Tuple ``(unknown_vars, residual_eqs, state_unknown_mask)`` or ``None``.
     :rtype: Tuple[List[Var], List[Expr], np.ndarray] | None
     """
-    state_unknown_vars: List[Var] = list()
-    state_residual_eqs: List[Expr] = list()
-    algebraic_unknown_vars: List[Var] = list()
-    algebraic_residual_eqs: List[Expr] = list()
+    unknown_vars: List[Var] = list()
+    residual_eqs: List[Expr] = list()
+    state_unknown_flags: List[float] = list()
     state_eq_lookup: Dict[int, Expr] = _build_state_equation_lookup(problem)
     init_eq_lookup: Dict[Var, Expr] = problem.sys_block.init_eqs
     algebraic_vars: List[Var] = problem.get_algebraic_vars()
@@ -1920,26 +1504,27 @@ def _collect_reduced_initialization_problem(
 
     while alg_idx < len(algebraic_vars):
         algebraic_var: Var = algebraic_vars[alg_idx]
-        algebraic_unknown_vars.append(algebraic_var)
-        algebraic_residual_eqs.append(algebraic_eqs[alg_idx])
+        if algebraic_var.uid in problem.init_guess:
+            algebraic_var = algebraic_var
+        else:
+            unknown_vars.append(algebraic_var)
+            residual_eqs.append(algebraic_eqs[alg_idx])
+            state_unknown_flags.append(0.0)
         alg_idx += 1
 
     for state_var in problem.get_state_vars():
         if state_var.uid in problem.init_guess:
             state_var = state_var
         else:
-            state_unknown_vars.append(state_var)
+            unknown_vars.append(state_var)
+            state_unknown_flags.append(1.0)
 
             if state_var in init_eq_lookup:
-                state_residual_eqs.append(state_var - init_eq_lookup[state_var])
+                residual_eqs.append(state_var - init_eq_lookup[state_var])
             elif allow_state_equilibrium and state_var.uid in state_eq_lookup:
-                state_residual_eqs.append(state_eq_lookup[state_var.uid])
+                residual_eqs.append(state_eq_lookup[state_var.uid])
             else:
-                state_residual_eqs.append(state_var)
-
-    unknown_vars: List[Var] = state_unknown_vars + algebraic_unknown_vars
-    residual_eqs: List[Expr] = state_residual_eqs + algebraic_residual_eqs
-    state_unknown_flags: List[float] = [1.0] * len(state_unknown_vars) + [0.0] * len(algebraic_unknown_vars)
+                residual_eqs.append(state_var)
 
     if len(unknown_vars) == 0:
         return None
@@ -1991,92 +1576,6 @@ def _evaluate_initialization_jacobian(
     """
     _unused = problem
     return reduced_system.jacobian_fn(x, dx, runtime_params, constant_params, 1.0).tocsc(copy=True)
-
-
-def _evaluate_reduced_pseudo_transient_residual(
-        reduced_system: ReducedInitializationSystem,
-        problem: EmtProblemTemplate,
-        x: np.ndarray,
-        x_prev_reduced: np.ndarray,
-        dx: np.ndarray,
-        runtime_params: np.ndarray,
-        constant_params: np.ndarray,
-        dtau: float,
-) -> np.ndarray:
-    """
-    Evaluate the reduced EMT pseudo-transient residual.
-
-    State rows use a backward-Euler pseudo-time term while algebraic rows keep the
-    original reduced steady-state residual.
-
-    :param reduced_system: Reduced initialization system.
-    :param problem: EMT problem being initialized.
-    :param x: Full EMT variable vector at the current reduced iterate.
-    :param x_prev_reduced: Previous reduced iterate used as the pseudo-time reference.
-    :param dx: Full EMT differential vector.
-    :param runtime_params: Runtime-parameter vector.
-    :param constant_params: Constant-parameter vector.
-    :param dtau: Pseudo-time step.
-    :return: Reduced pseudo-transient residual vector.
-    """
-    # Start from the steady-state reduced residual because the EMT initialization
-    # problem is defined in those equilibrium equations already.
-    residual: np.ndarray = _evaluate_initialization_residual(
-        reduced_system=reduced_system,
-        problem=problem,
-        x=x,
-        dx=dx,
-        runtime_params=runtime_params,
-        constant_params=constant_params,
-    )
-    # Recover the current reduced iterate so the state rows can add the
-    # backward-Euler pseudo-time difference against the previous iterate.
-    reduced_x: np.ndarray = _extract_unknown_vector(problem, reduced_system.unknown_vars, x)
-    state_mask: np.ndarray = np.asarray(reduced_system.state_unknown_mask, dtype=np.float64)
-    dtau_eff: float = float(max(dtau, 1.0e-30))
-    residual = residual.copy()
-    # Only unresolved state rows receive the pseudo-time term. Algebraic rows stay
-    # unchanged so they continue to enforce the original consistency equations.
-    residual += state_mask * ((reduced_x - x_prev_reduced) / dtau_eff)
-    return residual
-
-
-def _evaluate_reduced_pseudo_transient_jacobian(
-        reduced_system: ReducedInitializationSystem,
-        problem: EmtProblemTemplate,
-        x: np.ndarray,
-        dx: np.ndarray,
-        runtime_params: np.ndarray,
-        constant_params: np.ndarray,
-        dtau: float,
-) -> sp.csc_matrix:
-    """
-    Evaluate the Jacobian of the reduced EMT pseudo-transient residual.
-
-    :param reduced_system: Reduced initialization system.
-    :param problem: EMT problem being initialized.
-    :param x: Full EMT variable vector at the current reduced iterate.
-    :param dx: Full EMT differential vector.
-    :param runtime_params: Runtime-parameter vector.
-    :param constant_params: Constant-parameter vector.
-    :param dtau: Pseudo-time step.
-    :return: Reduced pseudo-transient Jacobian matrix in CSC format.
-    """
-    # Reuse the steady-state Jacobian because it already differentiates the reduced
-    # EMT equilibrium equations with respect to the reduced unknown ordering.
-    jacobian: sp.csc_matrix = _evaluate_initialization_jacobian(
-        reduced_system=reduced_system,
-        problem=problem,
-        x=x,
-        dx=dx,
-        runtime_params=runtime_params,
-        constant_params=constant_params,
-    )
-    state_mask: np.ndarray = np.asarray(reduced_system.state_unknown_mask, dtype=np.float64)
-    dtau_eff: float = float(max(dtau, 1.0e-30))
-    # The backward-Euler pseudo-time term contributes only on state rows, so the
-    # Jacobian adds a diagonal 1/dtau term only for reduced state unknowns.
-    return (jacobian + sp.diags(state_mask / dtau_eff, format="csc")).tocsc(copy=True)
 
 
 def _max_abs_value(values: np.ndarray) -> float:
@@ -2157,8 +1656,6 @@ def _run_reduced_newton_initialization(
         residual: np.ndarray = _evaluate_initialization_residual(reduced_system, problem, x, dx, runtime_params, constant_params)
         res_norm: float = _max_abs_value(residual)
 
-        # report
-
         if iter_idx == 0:
             report.initial_residual_inf = res_norm
         else:
@@ -2216,7 +1713,7 @@ def _run_reduced_pseudo_transient_initialization(
         report: EmtInitializationReport,
 ) -> bool:
     """
-    Solve the reduced initialization system with pseudo-transient iterations.
+    Solve the reduced initialization system with a pseudo-transient fallback.
 
     :param reduced_system: Reduced initialization system.
     :param problem: EMT problem being initialized.
@@ -2228,32 +1725,19 @@ def _run_reduced_pseudo_transient_initialization(
     :param report: Initialization report updated in place.
     :return: True if pseudo-transient converged.
     """
-    # The reduced vector stores only unresolved EMT unknowns. The pseudo-transient
-    # loop advances those unknowns while the full EMT storage remains authoritative.
     reduced_x: np.ndarray = _extract_unknown_vector(problem, reduced_system.unknown_vars, x)
     dtau: float = float(options.init_ptc_dtau0)
     dtau_min: float = float(options.init_ptc_dtau_min)
     dtau_max: float = float(options.init_ptc_dtau_max)
     max_iter: int = int(options.init_ptc_max_iter)
     tol: float = float(options.init_newton_tol)
-    # The previous reduced iterate supplies the pseudo-time reference for state rows.
-    x_prev_reduced: np.ndarray = reduced_x.copy()
+    identity_mask: np.ndarray = np.ones(len(reduced_system.unknown_vars), dtype=np.float64)
+    mass_matrix: sp.csc_matrix = sp.diags(identity_mask / max(dtau, dtau_min), format="csc")
 
     iter_idx: int = 0
     while iter_idx < max_iter:
-        # Scatter first so all residual and Jacobian evaluations see one consistent
-        # full EMT state assembled from the current reduced iterate.
         _scatter_unknown_vector(problem, reduced_system.unknown_vars, x, reduced_x)
-        residual: np.ndarray = _evaluate_reduced_pseudo_transient_residual(
-            reduced_system=reduced_system,
-            problem=problem,
-            x=x,
-            x_prev_reduced=x_prev_reduced,
-            dx=dx,
-            runtime_params=runtime_params,
-            constant_params=constant_params,
-            dtau=dtau,
-        )
+        residual: np.ndarray = _evaluate_initialization_residual(reduced_system, problem, x, dx, runtime_params, constant_params)
         res_norm: float = _max_abs_value(residual)
         report.final_residual_inf = res_norm
 
@@ -2263,160 +1747,35 @@ def _run_reduced_pseudo_transient_initialization(
         else:
             report.final_residual_inf = report.final_residual_inf
 
-        # Build the Jacobian of the pseudo-transient residual, not just the original
-        # steady-state residual, so the Newton-like correction matches the algorithm.
-        linear_matrix: sp.csc_matrix = _evaluate_reduced_pseudo_transient_jacobian(
-            reduced_system=reduced_system,
-            problem=problem,
-            x=x,
-            dx=dx,
-            runtime_params=runtime_params,
-            constant_params=constant_params,
-            dtau=max(dtau, dtau_min),
-        )
+        jacobian: sp.csc_matrix = _evaluate_initialization_jacobian(reduced_system, problem, x, dx, runtime_params, constant_params)
+        mass_matrix = sp.diags(identity_mask / max(dtau, dtau_min), format="csc")
+        linear_matrix: sp.csc_matrix = (jacobian + mass_matrix).tocsc()
 
         delta: np.ndarray = _solve_reduced_linear_system(linear_matrix, -residual, int(options.init_dense_threshold))
 
         if np.all(np.isfinite(delta)):
-            # Form one trial iterate and accept it only when the pseudo-transient
-            # residual decreases. This keeps the continuation monotone enough for
-            # the small initialization problems solved here.
             trial_reduced_x: np.ndarray = reduced_x + delta
             _scatter_unknown_vector(problem, reduced_system.unknown_vars, x, trial_reduced_x)
-            trial_residual: np.ndarray = _evaluate_reduced_pseudo_transient_residual(
-                reduced_system=reduced_system,
-                problem=problem,
-                x=x,
-                x_prev_reduced=x_prev_reduced,
-                dx=dx,
-                runtime_params=runtime_params,
-                constant_params=constant_params,
-                dtau=max(dtau, dtau_min),
-            )
+            trial_residual: np.ndarray = _evaluate_initialization_residual(reduced_system, problem, x, dx, runtime_params, constant_params)
             trial_norm: float = _max_abs_value(trial_residual)
 
             if trial_norm < res_norm:
-                # Once a step is accepted, the old iterate becomes the new pseudo-time
-                # reference and dtau is expanded to accelerate convergence.
-                x_prev_reduced = reduced_x.copy()
                 reduced_x = trial_reduced_x
                 dtau = min(dtau_max, dtau * 2.0)
             else:
-                # Rejected steps shrink dtau so the next pseudo-time correction is
-                # more damped and therefore more likely to be accepted.
                 dtau = max(dtau_min, dtau * 0.5)
         else:
-            # Non-finite linear corrections indicate an unusable local model, so the
-            # next attempt must reduce dtau instead of updating the iterate.
-            dtau = max(dtau_min, dtau * 0.5)
+            delta = _solve_reduced_linear_system(linear_matrix, -residual, int(options.init_dense_threshold))
+            if np.all(np.isfinite(delta)):
+                reduced_x = reduced_x + delta
+                dtau = min(dtau_max, dtau * 2.0)
+            else:
+                dtau = max(dtau_min, dtau * 0.5)
 
         iter_idx += 1
 
     report.pseudo_transient_steps = max_iter
     return False
-
-
-def _run_pseudo_transient_initialization(
-        reduced_system: ReducedInitializationSystem,
-        problem: EmtProblemTemplate,
-        x: np.ndarray,
-        dx: np.ndarray,
-        runtime_params: np.ndarray,
-        constant_params: np.ndarray,
-        options: EmtOptions,
-        report: EmtInitializationReport,
-) -> bool:
-    """
-    Solve the EMT reduced initialization system using the RMS pseudo-transient solver.
-
-    This function is intentionally shaped like
-    ``_run_reduced_pseudo_transient_initialization()`` so the EMT initialization
-    workflow can switch between both pseudo-transient implementations by only
-    changing the callee in the native initialization dispatcher.
-
-    The adapter created here maps the EMT reduced residual and Jacobian to the
-    problem interface expected by the RMS ``PseudoTransient`` solver. The solver
-    operates on the reduced EMT unknown vector, and the accepted solution is then
-    scattered back into the full EMT state vector before returning.
-
-    :param reduced_system: Reduced initialization system.
-    :type reduced_system: ReducedInitializationSystem
-    :param problem: EMT problem being initialized.
-    :type problem: EmtProblemTemplate
-    :param x: Full EMT variable vector updated in place.
-    :type x: np.ndarray
-    :param dx: Full EMT differential vector.
-    :type dx: np.ndarray
-    :param runtime_params: Runtime-parameter vector.
-    :type runtime_params: np.ndarray
-    :param constant_params: Constant-parameter vector.
-    :type constant_params: np.ndarray
-    :param options: EMT simulation options.
-    :type options: EmtOptions
-    :param report: Initialization report updated in place.
-    :type report: EmtInitializationReport
-    :return: ``True`` when the RMS pseudo-transient solver reaches the EMT tolerance.
-    :rtype: bool
-    """
-    adapter_problem: EmtPseudoTransientProblemAdapter = EmtPseudoTransientProblemAdapter(
-        reduced_system=reduced_system,
-        problem=problem,
-        x_full=x,
-        dx_full=dx,
-        runtime_params=runtime_params,
-        constant_params=constant_params,
-    )
-
-    # The RMS pseudo-transient solver works on its own reduced local vector. The
-    # EMT x-vector therefore remains the authoritative storage and is updated only
-    # once a candidate solution has been produced.
-    reduced_x0: np.ndarray = adapter_problem.get_x0()
-    solver: PseudoTransient = PseudoTransient(
-        problem=adapter_problem,
-        h=1.0,
-        dtau0=float(options.init_ptc_dtau0),
-        dtau_max=float(options.init_ptc_dtau_max),
-        dtau_min=float(options.init_ptc_dtau_min),
-        tol=float(options.init_newton_tol),
-        max_iter=int(options.init_ptc_max_iter),
-        verbose=bool(options.verbose > 0),
-        reference_error_tol=-1.0,
-        fixed_var_uids=list(),
-    )
-
-    reduced_solution: np.ndarray
-    reduced_solution: np.ndarray
-    init_guess_map: Dict[Var, float]
-    reduced_solution, init_guess_map = solver.simulate(plot=False, x0=reduced_x0)
-    if len(init_guess_map) > 0:
-        init_guess_map = init_guess_map
-    else:
-        init_guess_map = init_guess_map
-
-    # The RMS solver returns the reduced unknown vector. That vector must be
-    # scattered back to the full EMT variable storage before the residual is
-    # evaluated under EMT convergence rules.
-    _scatter_unknown_vector(problem, reduced_system.unknown_vars, x, reduced_solution)
-    final_residual: np.ndarray = _evaluate_initialization_residual(
-        reduced_system=reduced_system,
-        problem=problem,
-        x=x,
-        dx=dx,
-        runtime_params=runtime_params,
-        constant_params=constant_params,
-    )
-    final_residual_inf: float = _max_abs_value(final_residual)
-    report.final_residual_inf = final_residual_inf
-
-    if np.isfinite(final_residual_inf):
-        report.pseudo_transient_steps = int(options.init_ptc_max_iter)
-    else:
-        report.pseudo_transient_steps = int(options.init_ptc_max_iter)
-
-    if final_residual_inf <= float(options.init_newton_tol):
-        return True
-    else:
-        return False
 
 
 def _apply_solution_to_problem(problem: EmtProblemTemplate, x: np.ndarray) -> None:
@@ -2437,8 +1796,7 @@ def _compute_missing_dx0(problem: EmtProblemTemplate,
                          x_full: np.ndarray | None = None,
                          dx_full: np.ndarray | None = None,
                          runtime_params: np.ndarray | None = None,
-                         constant_params: np.ndarray | None = None,
-                         include_existing: bool = False) -> None:
+                         constant_params: np.ndarray | None = None) -> None:
     """
     Compute missing differential initial values from the state equations.
 
@@ -2455,7 +1813,7 @@ def _compute_missing_dx0(problem: EmtProblemTemplate,
     phase_t0: float = time.perf_counter()
     missing_diff_vars: List[Var]
     missing_state_eqs: List[Expr]
-    missing_diff_vars, missing_state_eqs = _collect_missing_dx_problem(problem, include_existing=include_existing)
+    missing_diff_vars, missing_state_eqs = _collect_missing_dx_problem(problem)
     report.missing_dx_problem_collect_s = float(time.perf_counter() - phase_t0)
 
     if len(missing_diff_vars) == 0:
@@ -2532,15 +1890,12 @@ def _build_initialization_system_if_needed(
 
 def run_emt_native_initialization(problem: EmtProblemTemplate, options: EmtOptions) -> EmtInitializationReport:
     """
-    Run the EMT-native initialization stages after power-flow variable projection.
+    Run the EMT-native initialization stages after PF projection and explicit init.
 
-    The workflow keeps the current seed intact, then solves only the unresolved
-    subset with the native initialization algorithm requested by
-    ``options.initialization_method``. In the main EMT build workflow, the seed
-    comes either from power-flow projection alone for pure ``PseudoTransient`` or
-    from power-flow projection plus explicit initialization for the other modes.
-    Missing differential initial values are computed automatically from the state
-    equations.
+    The workflow keeps the current PF/explicit seeds intact, then solves only the
+    unresolved subset with a reduced consistent Newton method. When Newton fails,
+    the workflow may fall back to a pseudo-transient continuation. Missing
+    differential initial values are computed automatically from the state equations.
 
     :param problem: EMT problem being initialized.
     :param options: EMT simulation options.
@@ -2617,14 +1972,7 @@ def run_emt_native_initialization(problem: EmtProblemTemplate, options: EmtOptio
                 else:
                     if "init_guess_by_name" in cached_payload and "diff_init_guess_by_name" in cached_payload and _persistent_initialization_params_match(cached_payload, runtime_params, constant_params):
                         problem.init_guess = _restore_problem_guess_map(problem, dict(cached_payload["init_guess_by_name"]), False)
-                        problem.diff_init_guess = dict()
-                        _compute_missing_dx0(
-                            problem,
-                            report,
-                            runtime_params=runtime_params,
-                            constant_params=constant_params,
-                            include_existing=True,
-                        )
+                        problem.diff_init_guess = _restore_problem_guess_map(problem, dict(cached_payload["diff_init_guess_by_name"]), True)
                         _restore_initialization_report_from_payload(report, dict(cached_payload["report"]))
                         report.persistent_cache_hit = True
                         report.persistent_cache_load_s = float(report.persistent_cache_load_s)
@@ -2669,7 +2017,7 @@ def run_emt_native_initialization(problem: EmtProblemTemplate, options: EmtOptio
             report.final_residual_inf = report.initial_residual_inf
         else:
             use_newton: bool = method_requested in {EmtInitializationMethod.Auto, EmtInitializationMethod.ConsistentNewton}
-            use_ptc: bool = method_requested in {EmtInitializationMethod.Auto, EmtInitializationMethod.PseudoTransient}
+            use_ptc: bool = method_requested in {EmtInitializationMethod.Auto, EmtInitializationMethod.PseudoTransient} or bool(options.init_pseudo_transient_enable)
 
             converged: bool = False
             if use_newton:
@@ -2706,58 +2054,30 @@ def run_emt_native_initialization(problem: EmtProblemTemplate, options: EmtOptio
                     options=options,
                     report=report,
                 )
-                # converged = _run_pseudo_transient_initialization(
-                #     reduced_system=reduced_system,
-                #     problem=problem,
-                #     x=x,
-                #     dx=dx,
-                #     runtime_params=runtime_params,
-                #     constant_params=constant_params,
-                #     options=options,
-                #     report=report,
-                # )
                 report.pseudo_transient_elapsed_s += float(time.perf_counter() - phase_t0)
                 if converged:
                     converged = converged
                 else:
-                    # Pure PseudoTransient mode must remain pseudo-transient only.
-                    # The broader initialization policy requested by the user is
-                    # interpreted here, not in the reduced solver itself. When the
-                    # method is explicitly PseudoTransient, failing the PTC loop must
-                    # keep the explicit seed instead of retrying with Newton. Auto
-                    # and ConsistentNewton continue to own the Newton-capable paths.
-                    if method_requested == EmtInitializationMethod.PseudoTransient:
-                        converged = False
-                    else:
-                        phase_t0 = time.perf_counter()
-                        converged = _run_reduced_newton_initialization(
-                            reduced_system=reduced_system,
-                            problem=problem,
-                            x=x,
-                            dx=dx,
-                            runtime_params=runtime_params,
-                            constant_params=constant_params,
-                            options=options,
-                            report=report,
-                        )
-                        report.newton_elapsed_s += float(time.perf_counter() - phase_t0)
+                    phase_t0 = time.perf_counter()
+                    converged = _run_reduced_newton_initialization(
+                        reduced_system=reduced_system,
+                        problem=problem,
+                        x=x,
+                        dx=dx,
+                        runtime_params=runtime_params,
+                        constant_params=constant_params,
+                        options=options,
+                        report=report,
+                    )
+                    report.newton_elapsed_s += float(time.perf_counter() - phase_t0)
                 if converged:
                     report.status = InitializationStatus.RESOLVED
-                    if method_requested == EmtInitializationMethod.PseudoTransient:
-                        report.method_used = EmtInitializationMethod.PseudoTransient
-                    elif method_requested == EmtInitializationMethod.Auto:
-                        report.method_used = EmtInitializationMethod.PseudoTransient
-                    else:
-                        report.method_used = EmtInitializationMethod.ConsistentNewton
+                    report.method_used = EmtInitializationMethod.PseudoTransient
                 else:
                     x[:] = x_seed
                     report.status = InitializationStatus.FAILED
-                    if method_requested == EmtInitializationMethod.PseudoTransient:
-                        report.method_used = EmtInitializationMethod.PseudoTransient
-                        report.message = "Pseudo-transient initialization failed."
-                    else:
-                        report.method_used = EmtInitializationMethod.Explicit
-                        report.message = "Consistent initialization failed after pseudo-transient fallback; keeping explicit initialization."
+                    report.method_used = EmtInitializationMethod.Explicit
+                    report.message = "Consistent initialization failed after pseudo-transient fallback; keeping explicit initialization."
             else:
                 x[:] = x_seed
                 report.status = InitializationStatus.FAILED
@@ -2776,7 +2096,6 @@ def run_emt_native_initialization(problem: EmtProblemTemplate, options: EmtOptio
         dx_full=dx,
         runtime_params=runtime_params,
         constant_params=constant_params,
-        include_existing=True,
     )
     report.dx0_completion_s = float(time.perf_counter() - phase_t0)
     report.elapsed_s = float(time.perf_counter() - start_time)

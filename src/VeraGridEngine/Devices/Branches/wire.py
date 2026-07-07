@@ -5,7 +5,6 @@
 
 from typing import Union, Tuple
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
-from VeraGridEngine.enumerations import PrpCat
 
 
 class Wire(EditableDevice):
@@ -24,55 +23,13 @@ class Wire(EditableDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(
-            prop_name='R',
-            units='Ohm/km',
-            tpe=float,
-            definition='resistance of the conductor',
-            old_names=['r'],
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='diameter',
-            units='mm',
-            tpe=float,
-            definition='Diameter of wire',
-            old_names=['GMR', 'gmr'],
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='diameter_internal',
-            units='mm',
-            tpe=float,
-            definition='Internal radius of the conductor',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='is_tube',
-            units='',
-            tpe=bool,
-            definition='Is it a tubular conductor?',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='max_current',
-            units='kA',
-            tpe=float,
-            definition='Maximum current of the conductor',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='stranding',
-            tpe=str,
-            definition='Stranding of wire',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='material',
-            tpe=str,
-            definition='Material of wire',
-            cat=[PrpCat.TP],
-        ),
+        GCProp(key='R', units='Ohm/km', tpe=float, definition='resistance of the conductor', old_names=['r']),
+        GCProp(key='diameter', units='mm', tpe=float, definition='Diameter of wire', old_names=['GMR', 'gmr']),
+        GCProp(key='diameter_internal', units='mm', tpe=float, definition='Internal radius of the conductor'),
+        GCProp(key='is_tube', units='', tpe=bool, definition='Is it a tubular conductor?'),
+        GCProp(key='max_current', units='kA', tpe=float, definition='Maximum current of the conductor'),
+        GCProp(key='stranding', tpe=str, definition='Stranding of wire'),
+        GCProp(key='material', tpe=str, definition='Material of wire'),
     )
 
     def __init__(self, name='',

@@ -10,7 +10,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class Conductor(ConductingEquipment):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='length', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.m, description='''Unit of length. It shall be a positive value or zero.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='length', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.m, description='''Unit of length. It shall be a positive value or zero.''', profiles=[]),
 	)
 	__slots__ = ('length',)
 	def __init__(self, rdfid='', tpe='Conductor'):

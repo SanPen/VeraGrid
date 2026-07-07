@@ -4,7 +4,6 @@ from typing import Any
 from PySide6 import QtWidgets
 from PySide6.QtCore import QPointF
 
-import VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term as vsc_graphics_3term_module
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term import VscGraphicItem3Term
 from VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics import BusGraphicItem
@@ -167,7 +166,7 @@ def _get_app() -> QtWidgets.QApplication:
         return app
 
 
-def test_vsc_3term_rotation_persists_and_refreshes_connections(override_attrs) -> None:
+def test_vsc_3term_rotation_persists_and_refreshes_connections(monkeypatch) -> None:
     """
     Rotating the three-terminal VSC should update its angle and persist it.
     """
@@ -189,7 +188,7 @@ def test_vsc_3term_rotation_persists_and_refreshes_connections(override_attrs) -
         """
         update_conn_calls.append(1)
 
-    override_attrs.setattr(graphic, "update_conn", _fake_update_conn)
+    monkeypatch.setattr(graphic, "update_conn", _fake_update_conn)
 
     graphic.set_rotation_angle(angle_degrees=90.0, persist=True)
 
@@ -199,7 +198,7 @@ def test_vsc_3term_rotation_persists_and_refreshes_connections(override_attrs) -
     assert editor.diagram_updates[-1]["r"] == 90.0
 
 
-def test_vsc_3term_context_menu_adds_rotate_entry_with_rotate_icon(override_attrs) -> None:
+def test_vsc_3term_context_menu_adds_rotate_entry_with_rotate_icon(monkeypatch) -> None:
     """
     The three-terminal VSC context menu should expose a rotate action with the rotate icon.
     """
@@ -245,8 +244,9 @@ def test_vsc_3term_context_menu_adds_rotate_entry_with_rotate_icon(override_attr
         """
         return None
 
-    override_attrs.setattr(vsc_graphics_3term_module, "add_menu_entry", _fake_add_menu_entry)
-    override_attrs.setattr(QtWidgets.QMenu, "exec_", _fake_exec)
+    monkeypatch.setattr("VeraGrid.Gui.Diagrams.SchematicWidget.Branches.vsc_graphics_3term.add_menu_entry",
+                        _fake_add_menu_entry)
+    monkeypatch.setattr(QtWidgets.QMenu, "exec_", _fake_exec)
 
     graphic.contextMenuEvent(_ContextMenuEventStub())
 

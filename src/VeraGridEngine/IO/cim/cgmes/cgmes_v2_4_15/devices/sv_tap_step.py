@@ -7,14 +7,13 @@ from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.base import Base
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.tap_changer import TapChanger
 
 class SvTapStep(Base):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='position', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', mandatory=True, profiles=[CgmesProfileType.SV]),
-		CgmesProperty(property_name='TapChanger', class_type='TapChanger', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The tap changer associated with the tap step state.''', mandatory=True, profiles=[CgmesProfileType.SV]),
+		CgmesProperty(property_name='position', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A floating point number. The range is unspecified and not limited.''', profiles=[]),
+		CgmesProperty(property_name='TapChanger', class_type='TapChanger', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The tap changer associated with the tap step state.''', profiles=[]),
 	)
 	__slots__ = ('position', 'TapChanger')
 	def __init__(self, rdfid, tpe='SvTapStep', resources=list(), class_replacements=dict()):

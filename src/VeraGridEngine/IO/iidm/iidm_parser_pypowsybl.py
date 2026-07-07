@@ -10,7 +10,6 @@ import os
 from typing import Dict
 import numpy as np
 import VeraGridEngine.Devices as dev
-from VeraGridEngine.enumerations import ShuntControlMode, GeneratorControlMode
 from VeraGridEngine.basic_structures import Logger
 
 try:
@@ -595,16 +594,16 @@ class IidmParser:
                     q = float(row["q"])
                     S = p + 1j * q
                     Sabs = abs(S)
-                    if bool(row["voltage_regulator_on"]):
-                        control_mode = GeneratorControlMode.V
+                    if Sabs > 0.0:
+                        pf = p / Sabs
                     else:
-                        control_mode = GeneratorControlMode.Q
+                        pf = 0.0
 
                     elm = dev.Generator(
                         name=row["name"] if row["name"] != "" else i,
                         code=i,
-                        P=p,
-                        Q=q,
+                        P=row["p"],
+                        power_factor=pf,
                         vset=float(row["target_v"]),
                         Pmin=float(row["min_p"]),
                         Pmax=float(row["max_p"]),
@@ -612,7 +611,7 @@ class IidmParser:
                         Qmax=float(row["max_q"]),
                         Snom=float(row["rated_s"]),
                         active=bool(row["connected"]),
-                        control_mode=control_mode,
+                        is_controlled=bool(row["voltage_regulator_on"]),
                     )
                     elm.control_bus = bus_dict.get(row["regulated_bus_id"], None)
                     grid.add_generator(bus=bus1, api_obj=elm)
@@ -696,7 +695,7 @@ class IidmParser:
                         Bmin=float(row["b_min"]),
                         Bmax=float(row["b_max"]),
                         vset=float(row["target_v"]),
-                        control_mode=ShuntControlMode.Continuous if bool(row["regulating"]) else ShuntControlMode.Locked
+                        is_controlled=bool(row["regulating"]),
                     )
                     elm.control_bus = bus_dict.get(row["regulated_bus_id"], None)
                     grid.add_controllable_shunt(bus=bus1, api_obj=elm)

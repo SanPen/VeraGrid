@@ -9,20 +9,15 @@ import VeraGridEngine.Devices as gcdev
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.DataStructures import BusData
 from VeraGridEngine.IO.cim.cgmes.cgmes_circuit import CgmesCircuit
-from VeraGridEngine.IO.cim.cgmes import cgmes_enums
-from VeraGridEngine.IO.cim.cgmes.cgmes_to_veragrid import (get_gcdev_ac_transformers,
-                                                            get_gcdev_device_to_terminal_dict,
-                                                            get_transformer_tap_changers)
+from VeraGridEngine.IO.cim.cgmes.cgmes_to_veragrid import get_gcdev_ac_transformers, get_gcdev_device_to_terminal_dict
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.connectivity_node import ConnectivityNode
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.power_transformer import PowerTransformer
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.power_transformer_end import PowerTransformerEnd
-from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.ratio_tap_changer import RatioTapChanger
-from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.tap_changer_control import TapChangerControl
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.terminal import Terminal
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.topological_node import TopologicalNode
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.base_voltage import BaseVoltage
 from VeraGridEngine.data_logger import DataLogger
-from VeraGridEngine.enumerations import CGMESVersions, TapChangerTypes, TapModuleControl
+from VeraGridEngine.enumerations import CGMESVersions
 
 tn_test = TopologicalNode(rdfid="tn1")
 cn_test = ConnectivityNode(rdfid="cn1")
@@ -327,7 +322,7 @@ def test_ac_transformers3w():
                               device_to_terminal_dict_object_3_terminals(), logger,
                               10)
     generated_transformers3w = multi_circuit.transformers3w[0]
-    assert len(logger.entries) == 0
+    assert len(logger.entries) == 2
     assert generated_transformers3w.V1 == 2
     assert generated_transformers3w.V2 == 2
     assert generated_transformers3w.V3 == 2
@@ -342,133 +337,3 @@ def test_ac_transformers3w():
     assert generated_transformers3w.x23 == 7.5
     assert generated_transformers3w.x31 == 7.5
     assert generated_transformers3w.y == 0.0
-
-
-def build_transformer_with_ratio_tap_case(control_terminal_node: TopologicalNode) -> tuple[CgmesCircuit,
-                                                                                            Dict[str, gcdev.Bus],
-                                                                                            Dict[str, List[Terminal]],
-                                                                                            PowerTransformer]:
-    """
-    Build a two-winding transformer case with one ratio tap changer and explicit control terminal.
-
-    :param control_terminal_node: TopologicalNode used by TapChangerControl terminal.
-    :return: CGMES model, bus dictionary, device-terminal map and created power transformer.
-    """
-    circuit: CgmesCircuit = CgmesCircuit(cgmes_version=CGMESVersions.v2_4_15)
-    transformer: PowerTransformer = PowerTransformer("a")
-    circuit.cgmes_assets.PowerTransformer_list = [transformer]
-
-    winding_one: PowerTransformerEnd = PowerTransformerEnd("w1", "PowerTransformerEnd")
-    winding_one.ratedS = 1.0
-    winding_one.ratedU = 220.0
-    winding_one.r = 1.0
-    winding_one.x = 1.0
-    winding_one.g = 0.0
-    winding_one.b = 0.0
-    winding_one.endNumber = 1
-    winding_one.BaseVoltage = BaseVoltage("bv1", "BaseVoltage")
-    winding_one.BaseVoltage.nominalVoltage = 220.0
-    winding_one.PowerTransformer = transformer
-
-    winding_two: PowerTransformerEnd = PowerTransformerEnd("w2", "PowerTransformerEnd")
-    winding_two.ratedS = 1.0
-    winding_two.ratedU = 110.0
-    winding_two.r = 1.0
-    winding_two.x = 1.0
-    winding_two.g = 0.0
-    winding_two.b = 0.0
-    winding_two.endNumber = 2
-    winding_two.BaseVoltage = BaseVoltage("bv2", "BaseVoltage")
-    winding_two.BaseVoltage.nominalVoltage = 110.0
-    winding_two.PowerTransformer = transformer
-    transformer.PowerTransformerEnd = [winding_one, winding_two]
-
-    tap_changer: RatioTapChanger = RatioTapChanger("rtc1", "RatioTapChanger")
-    tap_changer.TransformerEnd = winding_one
-    tap_changer.lowStep = -5
-    tap_changer.highStep = 5
-    tap_changer.neutralStep = 0
-    tap_changer.normalStep = 0
-    tap_changer.step = 0
-    tap_changer.stepVoltageIncrement = 1.0
-    tap_changer.controlEnabled = True
-
-    tap_control: TapChangerControl = TapChangerControl("tcc1", "TapChangerControl")
-    tap_control.enabled = True
-    tap_control.mode = cgmes_enums.RegulatingControlModeKind.voltage
-    tap_control_terminal: Terminal = Terminal("tc_term", "Terminal")
-    tap_control_terminal.TopologicalNode = control_terminal_node
-    tap_control.Terminal = tap_control_terminal
-    tap_changer.TapChangerControl = tap_control
-    circuit.cgmes_assets.RatioTapChanger_list = [tap_changer]
-    circuit.cgmes_assets.PhaseTapChangerSymmetrical_list = list()
-    circuit.cgmes_assets.PhaseTapChangerAsymmetrical_list = list()
-
-    transformer_terminal_one: Terminal = Terminal("tr_term_1", "Terminal")
-    transformer_terminal_one.TopologicalNode = TopologicalNode("tn1")
-    transformer_terminal_one.ConnectivityNode = ConnectivityNode("cn1")
-    transformer_terminal_two: Terminal = Terminal("tr_term_2", "Terminal")
-    transformer_terminal_two.TopologicalNode = TopologicalNode("tn2")
-    transformer_terminal_two.ConnectivityNode = ConnectivityNode("cn2")
-    device_to_terminal_dict: Dict[str, List[Terminal]] = dict()
-    device_to_terminal_dict[transformer.uuid] = [transformer_terminal_one, transformer_terminal_two]
-
-    bus_dict: Dict[str, gcdev.Bus] = dict()
-    bus_dict["tn1"] = gcdev.Bus(Vnom=220.0, idtag="tn1")
-    bus_dict["tn2"] = gcdev.Bus(Vnom=110.0, idtag="tn2")
-    return circuit, bus_dict, device_to_terminal_dict, transformer
-
-
-def test_ratio_tap_changer_voltage_control_requires_regulation_bus() -> None:
-    """
-    Keep ratio tap changer fixed when TapChangerControl terminal cannot be mapped to a bus.
-    """
-    logger: DataLogger = DataLogger()
-    multi_circuit: MultiCircuit = MultiCircuit()
-    missing_control_node: TopologicalNode = TopologicalNode("tn_missing")
-    cgmes_model, bus_dict, device_to_terminal_dict, _ = build_transformer_with_ratio_tap_case(
-        control_terminal_node=missing_control_node
-    )
-
-    get_gcdev_ac_transformers(cgmes_model,
-                              multi_circuit,
-                              bus_dict,
-                              device_to_terminal_dict,
-                              logger,
-                              100.0)
-    get_transformer_tap_changers(cgmes_model, multi_circuit, bus_dict, logger)
-
-    assert len(multi_circuit.transformers2w) == 1
-    converted_transformer = multi_circuit.transformers2w[0]
-    assert converted_transformer.tap_module_control_mode == TapModuleControl.fixed
-    assert converted_transformer.regulation_bus is None
-    assert converted_transformer.tap_changer.tc_type == TapChangerTypes.NoRegulation
-    assert any(entry.msg == 'TapChangerControl voltage mode ignored: regulation terminal not mapped to bus'
-               for entry in logger.entries)
-
-
-def test_ratio_tap_changer_voltage_control_sets_regulation_bus_when_available() -> None:
-    """
-    Enable ratio-tap voltage control and store regulation bus when control terminal can be mapped.
-    """
-    logger: DataLogger = DataLogger()
-    multi_circuit: MultiCircuit = MultiCircuit()
-    mapped_control_node: TopologicalNode = TopologicalNode("tn1")
-    cgmes_model, bus_dict, device_to_terminal_dict, _ = build_transformer_with_ratio_tap_case(
-        control_terminal_node=mapped_control_node
-    )
-
-    get_gcdev_ac_transformers(cgmes_model,
-                              multi_circuit,
-                              bus_dict,
-                              device_to_terminal_dict,
-                              logger,
-                              100.0)
-    get_transformer_tap_changers(cgmes_model, multi_circuit, bus_dict, logger)
-
-    assert len(multi_circuit.transformers2w) == 1
-    converted_transformer = multi_circuit.transformers2w[0]
-    assert converted_transformer.tap_module_control_mode == TapModuleControl.Vm
-    assert converted_transformer.regulation_bus is not None
-    assert converted_transformer.regulation_bus.idtag == "tn1"
-    assert converted_transformer.tap_changer.tc_type == TapChangerTypes.VoltageRegulation

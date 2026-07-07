@@ -159,9 +159,8 @@ class BackEulerImplicitTensygrid:
                     Jf = self._jacobian_implicit(x_new, dx, self.h)
                     delta = sp.linalg.spsolve(Jf, -rhs)
                     if converged:
-                        # print("System well initialized.")
-                        # print(f"x is {x_new}")
-                        pass
+                        print("System well initialized.")
+                        print(f"x is {x_new}")
                     else:
                         well_initialized = False
                         print(f"System bad initialized. DAE resiudal is {residual}.")
@@ -172,7 +171,6 @@ class BackEulerImplicitTensygrid:
                         for i in non_zero_indexes:
                             eq = all_eq[i]
                             print(f"eq {eq} with error {rhs[i]}")
-                            print("")
 
 
                 if not converged:
@@ -196,7 +194,7 @@ class BackEulerImplicitTensygrid:
                             print(f"\nSingular direction {i}, σ={s[i]:.3e}")
                             for j in dominant_idx:
                                 if j < self.problem.get_algebraic_var_number():
-                                    algeb_vars = self.problem.algebraic_vars
+                                    algeb_vars = self.problem.get_algebraic_vars
                                     var_name = algeb_vars[j].name
                                     print(f"  {var_name:20s} {v[j]:+.3e}")
                         print("Using LSQR")
@@ -226,7 +224,7 @@ class BackEulerImplicitTensygrid:
             if converged:
 
                 lag_update_start = time.time()
-                # print(f'converged is {converged} at step {step_idx} and iter {n_iter}')
+                print(f'converged is {converged} at step {step_idx} and iter {n_iter}')
 
                 self.y[step_idx + 1, :] = x_new
 

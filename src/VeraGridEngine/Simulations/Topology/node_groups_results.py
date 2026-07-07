@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
+from VeraGridEngine.Simulations.results_template import ResultsTemplate
 from VeraGridEngine.basic_structures import Mat
 from VeraGridEngine.enumerations import ResultTypes, StudyResultsType
 
@@ -15,13 +15,6 @@ class NodeGroupsResults(ResultsTemplate):
     """
     Store the reusable data produced by the node grouping simulation.
     """
-
-    LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name="X_train", tpe=Mat, old_names=list(), expandable=False),
-        ResultsProperty(name="sigma", tpe=float, old_names=list(), expandable=False),
-        ResultsProperty(name="groups_by_name", tpe=list, old_names=list(), expandable=False),
-        ResultsProperty(name="groups_by_index", tpe=list, old_names=list(), expandable=False),
-    )
 
     __slots__ = (
         "X_train",
@@ -60,6 +53,10 @@ class NodeGroupsResults(ResultsTemplate):
         self.groups_by_name: list[list[str]] = list()
         self.groups_by_index: list[list[int]] = list()
 
+        self.register(name="X_train", tpe=Mat)
+        self.register(name="sigma", tpe=float)
+        self.register(name="groups_by_name", tpe=list)
+        self.register(name="groups_by_index", tpe=list)
 
     def set_training_matrix(self, training_matrix: Mat) -> None:
         """

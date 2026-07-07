@@ -3,7 +3,6 @@ import inspect
 from VeraGridEngine.Devices.Injections.load import Load
 from VeraGridEngine.Devices.Injections.generator import Generator
 from VeraGridEngine.Devices.Injections.shunt import ShuntParent
-from VeraGridEngine.Devices.Profiles.profile_device import ProfileDevice
 from VeraGridEngine.enumerations import DeviceType, BuildStatus, HvdcControlType, TapPhaseControl, TapModuleControl
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
@@ -95,10 +94,7 @@ def test_generator_getters_match_profiles():
     # Fill all profile arrays with linearly increasing data
     for name, attr in inspect.getmembers(gen):
         if name.endswith("_prof") and hasattr(attr, "set"):
-            if isinstance(attr, ProfileDevice):
-                attr.set(arr=np.full(n_steps, None, dtype=object))
-            else:
-                attr.set(arr=np.linspace(1.0, 10.0, n_steps))
+            attr.set(arr=np.linspace(1.0, 10.0, n_steps))
 
     # Dynamically find all methods named get_*_at
     get_methods = [
@@ -124,14 +120,9 @@ def test_generator_getters_match_profiles():
         for t_idx in [None, 0, n_steps // 2, n_steps - 1]:
             expected = attr_value if t_idx is None else prof_value.toarray()[t_idx]
             result = method(t_idx)
-            if isinstance(prof_value, ProfileDevice):
-                assert result == expected, (
-                    f"{name}({t_idx}) returned {result}, expected {expected}"
-                )
-            else:
-                assert np.isclose(
-                    result, expected
-                ), f"{name}({t_idx}) returned {result}, expected {expected}"
+            assert np.isclose(
+                result, expected
+            ), f"{name}({t_idx}) returned {result}, expected {expected}"
 
     print("✅ All Generator.get_*_at(t_idx) methods correctly match their profiles and attributes.")
 
@@ -287,7 +278,6 @@ def test_branchparent_getters_match_profiles():
         bus_to=None,
         active=True,
         reducible=True,
-        design_rate=9999.0,
         rate=100.0,
         contingency_factor=0.9,
         protection_rating_factor=0.8,
@@ -424,7 +414,6 @@ def test_controllablebranchparent_getters_match_profiles():
         code="",
         active=True,
         reducible=False,
-        design_rate=9999,
         rate=100.0,
         r=0.01,
         x=0.05,

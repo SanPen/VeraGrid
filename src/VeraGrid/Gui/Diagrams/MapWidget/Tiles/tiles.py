@@ -117,7 +117,6 @@ class Tiles(BaseTiles):
 
         # callback must be set by higher-level code
         self.callback: Union[None, Callable[[int, float, float, QPixmap, bool], None]] = None
-        self._shutdown: bool = False
 
         # calculate a re-request age, if specified
         self.re_request_age = (time.time() - self.refresh_tiles_after_days * self.SecondsInADay)
@@ -350,23 +349,6 @@ class Tiles(BaseTiles):
                 self.request_queue.queue.clear()
             self.queued_requests.clear()
 
-    def shutdown(self) -> None:
-        """
-        Stop tile callbacks and background workers for this tile source.
-        """
-        if self._shutdown:
-            return
-
-        self._shutdown = True
-        self.callback = None
-        self.FlushRequests()
-
-        for worker in self.workers:
-            worker.stop()
-
-        for worker in self.workers:
-            worker.wait(2000)
-
     def get_server_tile(self, level: int, x: float, y: float) -> None:
         """
         Start the process to get a server tile.
@@ -392,7 +374,7 @@ class Tiles(BaseTiles):
         tile_path = self.cache.tile_path((level, x, y))
         return os.path.exists(tile_path)
 
-    def setCallback(self, callback: Callable[[int, float, float, QPixmap, bool], None] | None):
+    def setCallback(self, callback: Callable[[int, float, float, QPixmap, bool], None]):
         """Set the "tile available" callback.
 
         callback  reference to object to call when tile is found.
@@ -410,24 +392,16 @@ class Tiles(BaseTiles):
         image   tile image data
         error   True if image is 'error' image, don't cache in that case
         """
-        tile_key: tuple[int, float, float] = (level, x, y)
 
-        # Keep error tiles in the in-memory LRU only.
-        # Writing them through the normal cache assignment would persist the red
-        # fallback tile to disk because PyCacheBack.__setitem__() is write-through.
-        if error:
-            dict.__setitem__(self.cache, tile_key, image)
-            self.cache._reorder_lru(tile_key)
-            self.cache._enforce_lru_size()
-        else:
-            # Successful tiles still use the normal write-through cache path so the
-            # in-memory and on-disk caches stay synchronized.
-            self.cache[tile_key] = image
+        # put image into in-memory cache, but error images don't go to disk
+        self.cache[(level, x, y)] = image
+        if not error:
+            self.cache.add(key=(level, x, y), image=image)
 
         # delete the request from the queued requests
         # note that it may not be there - a level change can flush the dict
         try:
-            del self.queued_requests[tile_key]
+            del self.queued_requests[(level, x, y)]
         except KeyError:
             pass
 
@@ -435,7 +409,8 @@ class Tiles(BaseTiles):
         if self.callback:
             self.callback(level, x, y, image, True)
         else:
-            pass
+            msg = f'tile_is_available: self.callback is NOT SET!'
+            raise RuntimeError(msg) from None
 
     def SetAgeThresholdDays(self, num_days):
         """

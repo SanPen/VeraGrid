@@ -331,7 +331,7 @@ def compute_admittances(R: Vec,
                         Cf: sp.csc_matrix,
                         Ct: sp.csc_matrix,
                         Yshunt_bus: CxVec,
-                        conn: IntVec,
+                        conn: Union[List[WindingsConnection], ObjVec],
                         seq: int,
                         add_windings_phase: bool = False) -> AdmittanceMatrices:
     """
@@ -349,7 +349,7 @@ def compute_admittances(R: Vec,
     :param Ct: Connectivity branch-bus "to" with the branch states computed
     :param Yshunt_bus: array of shunts equivalent power per bus, from the shunt devices (p.u.)
     :param seq: Sequence [0, 1, 2]
-    :param conn: array of windings connections codes (numpy array of WindingsConnection values)
+    :param conn: array of windings connections (numpy array of WindingsConnection)
     :param add_windings_phase: Add the phases of the transformer windings (for short circuits mainly)
     :return: Admittance instance
     """
@@ -370,11 +370,11 @@ def compute_admittances(R: Vec,
             ysft = np.zeros(len(ys), dtype=complex)
 
             for i, con in enumerate(conn):
-                if con == WindingsConnection.GG.idx():
+                if con == WindingsConnection.GG:
                     ysf[i] = ys[i]
                     yst[i] = ys[i]
                     ysft[i] = ys[i]
-                elif con == WindingsConnection.GD.idx():
+                elif con == WindingsConnection.GD:
                     ysf[i] = ys[i]
 
             yff = (ysf + ysh_2) / (tap_module * tap_module * vtap_f * vtap_f)
@@ -384,8 +384,7 @@ def compute_admittances(R: Vec,
 
         elif seq == 2:  # negative sequence
             # only need to include the phase shift of +-30 degrees
-            factor_psh = np.array([r30_deg
-                                   if con == WindingsConnection.GD.idx() or con == WindingsConnection.SD.idx() else 1
+            factor_psh = np.array([r30_deg if con == WindingsConnection.GD or con == WindingsConnection.SD else 1
                                    for con in conn])
 
             yff = (ys + ysh_2) / (tap_module * tap_module * vtap_f * vtap_f)
@@ -396,8 +395,7 @@ def compute_admittances(R: Vec,
         elif seq == 1:  # positive sequence
 
             # only need to include the phase shift of +-30 degrees
-            factor_psh = np.array([r30_deg
-                                   if con == WindingsConnection.GD.idx() or con == WindingsConnection.SD.idx() else 1.0
+            factor_psh = np.array([r30_deg if con == WindingsConnection.GD or con == WindingsConnection.SD else 1.0
                                    for con in conn])
 
             yff = (ys + ysh_2) / (tap_module * tap_module * vtap_f * vtap_f)

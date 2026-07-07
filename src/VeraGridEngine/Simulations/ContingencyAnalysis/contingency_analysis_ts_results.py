@@ -6,12 +6,11 @@
 import numpy as np
 import pandas as pd
 from typing import Union
-
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
+from VeraGridEngine.Simulations.results_template import ResultsTemplate
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.Simulations.ContingencyAnalysis.contingencies_report import ContingencyResultsReport
-from VeraGridEngine.basic_structures import DateVec, IntVec, StrVec, Mat, CxVec, CxMat
+from VeraGridEngine.basic_structures import DateVec, IntVec, StrVec, Mat
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 from VeraGridEngine.Simulations.Clustering.clustering_results import ClusteringResults
 
@@ -20,23 +19,6 @@ class ContingencyAnalysisTimeSeriesResults(ResultsTemplate):
     """
     Contingency analysis time series results
     """
-
-    LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
-        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
-        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
-        ResultsProperty(name='con_names', tpe=StrVec, old_names=list(), expandable=False),
-        ResultsProperty(name='Sf_base', tpe=CxMat, old_names=list(), expandable=False),
-        ResultsProperty(name='S', tpe=Mat, old_names=list(), expandable=True),
-        ResultsProperty(name='max_flows', tpe=Mat, old_names=list(), expandable=True),
-        ResultsProperty(name='max_loading', tpe=Mat, old_names=list(), expandable=True),
-        ResultsProperty(name='sum_overload', tpe=Mat, old_names=list(), expandable=True),
-        ResultsProperty(name='mean_overload', tpe=Mat, old_names=list(), expandable=True),
-        ResultsProperty(name='std_dev_overload', tpe=Mat, old_names=list(), expandable=True),
-        ResultsProperty(name='srap_used_power', tpe=Mat, old_names=list(), expandable=True),
-        ResultsProperty(name='report', tpe=ContingencyResultsReport, old_names=list(), expandable=False),
-    )
-
     __slots__ = (
         "nt",
         "original_time_array",
@@ -44,7 +26,6 @@ class ContingencyAnalysisTimeSeriesResults(ResultsTemplate):
         "bus_names",
         "con_names",
         "bus_types",
-        "Sf_base",
         "S",
         "max_flows",
         "max_loading",
@@ -83,7 +64,6 @@ class ContingencyAnalysisTimeSeriesResults(ResultsTemplate):
             name='N-1 time series',
             available_results={
                 ResultTypes.StatisticResults: [
-                    ResultTypes.BranchActivePowerFromBase,
                     ResultTypes.MaxContingencyFlows,
                     ResultTypes.MaxContingencyLoading,
                     ResultTypes.ContingencyOverloadSum,
@@ -120,8 +100,6 @@ class ContingencyAnalysisTimeSeriesResults(ResultsTemplate):
         Tabla de suma de sobrecarga (tiempo, rama)
         """
 
-        self.Sf_base: CxMat = np.zeros((self.nt, nbr))
-
         self.S: Mat = np.zeros((self.nt, n))
 
         self.max_flows: Mat = np.zeros((self.nt, nbr))
@@ -140,6 +118,19 @@ class ContingencyAnalysisTimeSeriesResults(ResultsTemplate):
 
         self.report: ContingencyResultsReport = ContingencyResultsReport()
 
+        self.register(name='branch_names', tpe=StrVec)
+        self.register(name='bus_names', tpe=StrVec)
+        self.register(name='bus_types', tpe=IntVec)
+        self.register(name='con_names', tpe=StrVec)
+
+        self.register(name='S', tpe=Mat)
+        self.register(name='max_flows', tpe=Mat)
+        self.register(name='max_loading', tpe=Mat)
+        self.register(name='sum_overload', tpe=Mat)
+        self.register(name='mean_overload', tpe=Mat)
+        self.register(name='std_dev_overload', tpe=Mat)
+        self.register(name='srap_used_power', tpe=Mat)
+        self.register(name='report', tpe=ContingencyResultsReport)
 
     @property
     def nbus(self) -> int:
@@ -191,19 +182,6 @@ class ContingencyAnalysisTimeSeriesResults(ResultsTemplate):
         :param result_type:
         :return:
         """
-
-        if result_type == ResultTypes.BranchActivePowerFromBase:
-
-            return ResultsTable(
-                data=self.Sf_base.real,
-                index=pd.to_datetime(self.time_array),
-                columns=self.branch_names,
-                title=result_type.value,
-                units='(MW)',
-                cols_device_type=DeviceType.BranchDevice,
-                idx_device_type=DeviceType.TimeDevice
-            )
-
 
         if result_type == ResultTypes.MaxContingencyFlows:
 

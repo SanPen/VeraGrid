@@ -10,7 +10,7 @@ from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
 
 
-class SmallSignalStabilityEmtOptions(OptionsTemplate):
+class EmtSmallSignalStabilityOptions(OptionsTemplate):
     """
     EmtFloquetOptions
 

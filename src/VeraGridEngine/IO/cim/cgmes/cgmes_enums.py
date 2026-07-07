@@ -18,24 +18,6 @@ class CgmesProfileType(Enum):
     DY = 'DY'  # Dynamics
     DL = 'DL'  # ?
     GL = 'GL'  # ?
-    NC = 'NC'  # Network Code common
-    AE = 'AE'  # AssessedElement
-    MA = 'MA'  # MonitoringArea
-    SSI = 'SSI'  # SteadyStateInstruction
-    GD = 'GD'  # GridDisturbance
-    PS = 'PS'  # PowerSchedule
-    SM = 'SM'  # SensitivityMatrix
-    CO = 'CO'  # Contingency
-    AVS = 'AVS'  # AvailabilitySchedule
-    SAR = 'SAR'  # SecurityAnalysisResult
-    OR = 'OR'  # ObjectRegistry
-    RA = 'RA'  # RemedialAction
-    PSP = 'PSP'  # PowerSystemProject
-    RAS = 'RAS'  # RemedialActionSchedule
-    IAM = 'IAM'  # ImpactAssessmentMatrix
-    ER = 'ER'  # EquipmentReliability
-    SHS = 'SHS'  # SteadyStateHypothesisSchedule
-    SIS = 'SIS'  # StateInstructionSchedule
 
     def __str__(self):
         return 'cgmesProfile.' + str(self.value)

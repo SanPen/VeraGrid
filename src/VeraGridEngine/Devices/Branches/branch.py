@@ -9,7 +9,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from enum import Enum
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import BuildStatus, PrpCat
+from VeraGridEngine.enumerations import BuildStatus
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Branches.tap_changer import TapChanger
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
@@ -84,112 +84,24 @@ class Branch(BranchParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(
-            prop_name='R',
-            units='p.u.',
-            tpe=float,
-            definition='Total positive sequence resistance.',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='X',
-            units='p.u.',
-            tpe=float,
-            definition='Total positive sequence reactance.',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='B',
-            units='p.u.',
-            tpe=float,
-            definition='Total positive sequence shunt susceptance.',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='G',
-            units='p.u.',
-            tpe=float,
-            definition='Total positive sequence shunt conductance.',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='tolerance',
-            units='%',
-            tpe=float,
-            definition='Tolerance expected for the impedance values % is expected for '
-                                 'transformers0% for lines.',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='length',
-            units='km',
-            tpe=float,
-            definition='Length of the line (not used for calculation)',
-        ),
-        GCProp(
-            prop_name='tap_module',
-            units='',
-            tpe=float,
-            definition='Tap changer module, it a value close to 1.0',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='angle',
-            units='rad',
-            tpe=float,
-            definition='Angle shift of the tap changer.',
-            cat=[PrpCat.PF],
-        ),
-        # GCProp(
-        #     prop_name='template',
-        #     units='',
-        #     tpe=BranchType,
-        #     definition='',
-        #     editable=False,
-        #     cat=[PrpCat.PF],
-        # ),
-        GCProp(
-            prop_name='bus_to_regulated',
-            units='',
-            tpe=bool,
-            definition='Is the regulation at the bus to?',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='vset',
-            units='p.u.',
-            tpe=float,
-            definition='set control voltage.',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='r_fault',
-            units='p.u.',
-            tpe=float,
-            definition='Fault resistance.',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='x_fault',
-            units='p.u.',
-            tpe=float,
-            definition='Fault reactance.',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='fault_pos',
-            units='p.u.',
-            tpe=float,
-            definition='proportion of the fault location measured from the "from" bus.',
-            cat=[PrpCat.PF],
-        ),
-        # GCProp(
-        #     prop_name='branch_type',
-        #     units='p.u.',
-        #     tpe=DeviceType,
-        #     definition='Fault resistance.',
-        #     cat=[PrpCat.PF],
-        # ),
+        GCProp(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.'),
+        GCProp(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.'),
+        GCProp(key='B', units='p.u.', tpe=float, definition='Total positive sequence shunt susceptance.'),
+        GCProp(key='G', units='p.u.', tpe=float, definition='Total positive sequence shunt conductance.'),
+        GCProp(key='tolerance', units='%', tpe=float,
+                      definition='Tolerance expected for the impedance values % is expected for '
+                                 'transformers0% for lines.'),
+        GCProp(key='length', units='km', tpe=float, definition='Length of the line (not used for calculation)'),
+        GCProp(key='tap_module', units='', tpe=float, definition='Tap changer module, it a value close to 1.0'),
+        GCProp(key='angle', units='rad', tpe=float, definition='Angle shift of the tap changer.'),
+        # GCProp(key='template', units='', tpe=BranchType, definition='', editable=False),
+        GCProp(key='bus_to_regulated', units='', tpe=bool, definition='Is the regulation at the bus to?'),
+        GCProp(key='vset', units='p.u.', tpe=float, definition='set control voltage.'),
+        GCProp(key='r_fault', units='p.u.', tpe=float, definition='Fault resistance.'),
+        GCProp(key='x_fault', units='p.u.', tpe=float, definition='Fault reactance.'),
+        GCProp(key='fault_pos', units='p.u.', tpe=float,
+                      definition='proportion of the fault location measured from the "from" bus.'),
+        # GCProp(key='branch_type', units='p.u.', tpe=DeviceType, definition='Fault resistance.'),
     )
 
     def __init__(self,
@@ -197,9 +109,8 @@ class Branch(BranchParent):
                  bus_to: Bus = None,
                  name='Branch',
                  idtag=None,
-                 r=1e-20, x=1e-5, g=1e-20, b=1e-20,
-                 design_rate: float = 9999.0,
-                 rate=9999.0,
+                 r=1e-20, x=1e-20, g=1e-20, b=1e-20,
+                 rate=1.0,
                  tap=1.0,
                  shift_angle=0,
                  active=True,
@@ -231,7 +142,6 @@ class Branch(BranchParent):
         :param x: Branch reactance in per unit
         :param g: Branch shunt conductance in per unit
         :param b: Branch shunt susceptance in per unit
-        :param design_rate: Design rate (MVA)
         :param rate: Branch rate in MVA
         :param tap: Branch tap module
         :param shift_angle: Tap shift angle in radians
@@ -260,7 +170,6 @@ class Branch(BranchParent):
                               bus_to=bus_to,
                               active=active,
                               reducible=False,
-                              design_rate=design_rate,
                               rate=rate,
                               contingency_factor=1.0,
                               protection_rating_factor=1.4,

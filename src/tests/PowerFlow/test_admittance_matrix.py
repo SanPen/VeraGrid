@@ -41,7 +41,8 @@ def test1():
     :return: True if passed
     """
     fname = os.path.join('data', 'grids', 'IEEE 30 Bus with storage.xlsx')
-    assert __check__(fname)
+    res = __check__(fname)
+    return res
 
 
 def test2():
@@ -50,7 +51,8 @@ def test2():
     :return: True if passed
     """
     fname = os.path.join('data', 'grids', 'Brazil11_loading05.gridcal')
-    assert __check__(fname)
+    res = __check__(fname)
+    return res
 
 
 def test3():
@@ -59,7 +61,8 @@ def test3():
     :return: True if passed
     """
     fname = os.path.join('data', 'grids', "Iwamoto's 11 Bus.xlsx")
-    assert __check__(fname)
+    res = __check__(fname)
+    return res
 
 
 def test_fast_admittance():

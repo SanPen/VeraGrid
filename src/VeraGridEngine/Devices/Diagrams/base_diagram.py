@@ -3,7 +3,6 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
-import copy
 import sys
 import uuid
 import networkx as nx
@@ -289,36 +288,6 @@ class PointsGroup:
 
         return points
 
-    def copy(self, obj_dict: Dict[str, ALL_DEV_TYPES] | None = None) -> "PointsGroup":
-        """
-        Copy the locations while treating API objects as pointers.
-
-        If an object dictionary is supplied, locations are rebound to the matching
-        object in that dictionary by idtag. Otherwise, the current API object pointer
-        is preserved.
-        """
-        cpy = PointsGroup(name=self.name)
-
-        for idtag, location in self.locations.items():
-            api_object = location.api_object
-            if obj_dict is not None:
-                api_object = obj_dict.get(idtag, api_object)
-
-            cpy.locations[idtag] = location.copy(api_object=api_object)
-
-        return cpy
-
-    def __deepcopy__(self, memo: Dict[int, Any]) -> "PointsGroup":
-        """
-        Deep-copy the group layout without deep-copying pointed API objects.
-        """
-        if id(self) in memo:
-            return memo[id(self)]
-
-        cpy = self.copy()
-        memo[id(self)] = cpy
-        return cpy
-
     def parse_data(self,
                    data: Dict[str, Dict[str, Any]],
                    obj_dict: Dict[str, ALL_DEV_TYPES],
@@ -357,7 +326,6 @@ class PointsGroup:
                     self.locations[idtag] = MapLocation(latitude=location['latitude'],
                                                         longitude=location['longitude'],
                                                         altitude=location['altitude'],
-                                                        draw_labels=location.get('draw_labels', True),
                                                         api_object=api_object)
 
 
@@ -416,40 +384,6 @@ class BaseDiagram:
 
         self._palette = palette
         self._default_bus_voltage: float = default_bus_voltage
-
-    def copy(self, obj_dict: Dict[str, Dict[str, ALL_DEV_TYPES]] | None = None) -> "BaseDiagram":
-        """
-        Copy the diagram layout while treating API objects as pointers.
-
-        :param obj_dict: Optional dictionary by device type and idtag used to rebind
-                         locations to objects in a target circuit.
-        :return: A copied diagram with detached layout containers.
-        """
-        cpy = self.__class__.__new__(self.__class__)
-
-        for attr_name, attr_value in self.__dict__.items():
-            if attr_name == "data":
-                continue
-
-            setattr(cpy, attr_name, copy.deepcopy(attr_value))
-
-        cpy.data = dict()
-        for category, points_group in self.data.items():
-            category_obj_dict = None if obj_dict is None else obj_dict.get(category, None)
-            cpy.data[category] = points_group.copy(obj_dict=category_obj_dict)
-
-        return cpy
-
-    def __deepcopy__(self, memo: Dict[int, Any]) -> "BaseDiagram":
-        """
-        Make generic deepcopy safe for diagrams by preserving API object pointers.
-        """
-        if id(self) in memo:
-            return memo[id(self)]
-
-        cpy = self.copy()
-        memo[id(self)] = cpy
-        return cpy
 
     @property
     def use_flow_based_width(self) -> bool:
@@ -937,15 +871,3 @@ class BaseDiagram:
         self.min_bus_width: float = min_bus_width
         self.max_bus_width: float = max_bus_width
         self.arrow_size = arrow_size
-
-
-def copy_diagrams(diagrams: List[BaseDiagram],
-                  obj_dict: Dict[str, Dict[str, ALL_DEV_TYPES]] | None = None) -> List[BaseDiagram]:
-    """
-    Copy diagrams while treating API objects as pointers.
-
-    :param diagrams: Diagrams to copy.
-    :param obj_dict: Optional target circuit object dictionary used to rebind pointers.
-    :return: Copied diagrams.
-    """
-    return [diagram.copy(obj_dict=obj_dict) for diagram in diagrams]

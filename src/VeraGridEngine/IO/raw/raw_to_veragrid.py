@@ -9,319 +9,24 @@ from VeraGridEngine.basic_structures import Logger
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Topology import detect_substations
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.IO.raw.psse_circuit import PsseCircuit
-from VeraGridEngine.IO.raw.raw_types import (
-    RawBranchLike,
-    RawBusLike,
-    RawEquipmentTerminalLike,
-    RawFACTSLike,
-    RawFixedShuntLike,
-    RawGeneratorLike,
-    RawLoadLike,
-    RawNodeLike,
-    RawSubstationLike,
-    RawSubstationSwitchingDeviceLike,
-    RawSwitchedShuntLike,
-    RawSystemSwitchingDeviceLike,
-    RawTransformerLike,
-    RawTwoTerminalDCLineLike,
-    RawVscDCLineLike,
-)
+from VeraGridEngine.IO.raw.devices.branch import RawBranch
+from VeraGridEngine.IO.raw.devices.bus import RawBus
+from VeraGridEngine.IO.raw.devices.facts import RawFACTS
+from VeraGridEngine.IO.raw.devices.generator import RawGenerator
+from VeraGridEngine.IO.raw.devices.load import RawLoad
+from VeraGridEngine.IO.raw.devices.fixed_shunt import RawFixedShunt
+from VeraGridEngine.IO.raw.devices.system_switching_device import RawSystemSwitchingDevice
+from VeraGridEngine.IO.raw.devices.switched_shunt import RawSwitchedShunt
+from VeraGridEngine.IO.raw.devices.transformer import RawTransformer
+from VeraGridEngine.IO.raw.devices.two_terminal_dc_line import RawTwoTerminalDCLine
+from VeraGridEngine.IO.raw.devices.vsc_dc_line import RawVscDCLine
+from VeraGridEngine.IO.raw.devices.psse_circuit import PsseCircuit
 from VeraGridEngine.enumerations import (
-    TapChangerTypes, TapPhaseControl, TapModuleControl, ShuntControlMode, SwitchGraphicType,
-    GeneratorControlMode
+    TapChangerTypes, TapPhaseControl, TapModuleControl, ShuntControlMode, SwitchGraphicType
 )
 
 
-def _get_branch_ratings(psse_elm: RawBranchLike) -> tuple[float, float, float]:
-    if psse_elm.version <= 33:
-        return psse_elm.RATEA, psse_elm.RATEB, psse_elm.RATEC
-    return psse_elm.RATE1, psse_elm.RATE2, psse_elm.RATE3
-
-
-def _get_transformer_winding_ratings(psse_elm: RawTransformerLike, winding_index: int) -> tuple[float, float, float]:
-    return psse_elm.get_winding_rating_triplet(winding_index=winding_index, version=psse_elm.version)
-
-
-def normalize_terminal_identifier(value: int | float | str) -> str:
-    """
-    Normalize a terminal identifier for cross-record matching.
-
-    :param value: Terminal identifier from RAW.
-    :return: Normalized identifier.
-    """
-    text = str(value).replace("'", "").replace('"', "").strip()
-    if text == '':
-        return '1'
-    else:
-        return text
-
-
-def create_substation_objects(
-        psse_substations: List[RawSubstationLike],
-        circuit: MultiCircuit) -> Dict[int, dev.Substation]:
-    """
-    Create VeraGrid substations from the RAW substation records.
-
-    :param psse_substations: PSSE substation records.
-    :param circuit: Destination circuit.
-    :return: Mapping from PSSE substation number to VeraGrid substation.
-    """
-    substation_dict: Dict[int, dev.Substation] = dict()
-    for psse_substation in psse_substations:
-        name = str(psse_substation.NAME).replace("'", "").strip()
-        if name == '':
-            name = f"Substation {psse_substation.IS}"
-        else:
-            name = name
-
-        substation = dev.Substation(
-            name=name,
-            code=str(psse_substation.IS),
-            latitude=float(psse_substation.LATI),
-            longitude=float(psse_substation.LONG)
-        )
-        circuit.add_substation(substation)
-        substation_dict[psse_substation.IS] = substation
-
-    return substation_dict
-
-
-def create_node_breaker_buses(
-        psse_nodes: List[RawNodeLike],
-        raw_bus_by_number: Dict[int, RawBusLike],
-        area_dict: Dict[int, dev.Area],
-        zone_dict: Dict[int, dev.Zone],
-        substation_dict: Dict[int, dev.Substation],
-        circuit: MultiCircuit,
-        logger: Logger) -> tuple[
-    Dict[tuple[int, int], dev.Bus], Dict[tuple[int, int], dev.Bus], Dict[int, dev.Bus], set[int]]:
-    """
-    Create VeraGrid buses for PSSE node-breaker nodes.
-
-    Each PSSE node becomes a VeraGrid bus. The PSSE electrical bus record is kept as
-    metadata for voltage level, area, zone, and solved-state defaults.
-
-    :param psse_nodes: Node records.
-    :param raw_bus_by_number: RAW bus records keyed by bus number.
-    :param area_dict: Area dictionary.
-    :param zone_dict: Zone dictionary.
-    :param substation_dict: Substation dictionary.
-    :param circuit: Destination circuit.
-    :param logger: Logger.
-    :return: Node-bus lookup dictionaries and the set of electrical bus numbers with node-breaker data.
-    """
-    node_bus_by_substation_node: Dict[tuple[int, int], dev.Bus] = dict()
-    node_bus_by_bus_and_node: Dict[tuple[int, int], dev.Bus] = dict()
-    representative_bus_by_number: Dict[int, dev.Bus] = dict()
-    node_breaker_bus_numbers: set[int] = set()
-
-    for psse_node in psse_nodes:
-        raw_bus = raw_bus_by_number.get(psse_node.I, None)
-        substation = substation_dict.get(psse_node.ISUB, None)
-
-        if raw_bus is None:
-            logger.add_error('Node references a bus that does not exist', value=str(psse_node.I))
-        elif substation is None:
-            logger.add_error('Node references a substation that does not exist', value=str(psse_node.ISUB))
-        else:
-            bus, _ = get_veragrid_bus(
-                psse_bus=raw_bus,
-                area_dict=area_dict,
-                zone_dict=zone_dict,
-                logger=logger
-            )
-
-            node_name = str(psse_node.NAME).replace("'", "").strip()
-            if node_name == '':
-                node_name = f"{substation.name}_{psse_node.NI}"
-            else:
-                node_name = node_name
-
-            if psse_node.VM != 0.0 or psse_node.VA != 0.0:
-                vm0 = float(psse_node.VM)
-                va0 = np.deg2rad(float(psse_node.VA))
-            else:
-                vm0 = float(raw_bus.VM)
-                va0 = np.deg2rad(float(raw_bus.VA))
-
-            bus.name = node_name
-            bus.code = f"{psse_node.I}:{psse_node.NI}"
-            bus.substation = substation
-            bus.active = bus.active and bool(psse_node.STATUS)
-            bus.Vm0 = vm0
-            bus.Va0 = va0
-
-            # Only one node bus should carry the slack designation of the reduced
-            # electrical bus. The others are plain PQ nodes until topology reduction.
-            if raw_bus.I in representative_bus_by_number:
-                bus.is_slack = False
-                bus._bus_type = dev.BusMode.PQ_tpe
-
-            circuit.add_bus(bus)
-
-            if substation.area is None:
-                substation.area = area_dict.get(abs(raw_bus.AREA), None)
-            else:
-                substation.area = substation.area
-
-            if substation.zone is None:
-                substation.zone = zone_dict.get(abs(raw_bus.ZONE), None)
-            else:
-                substation.zone = substation.zone
-
-            node_bus_by_substation_node[(psse_node.ISUB, psse_node.NI)] = bus
-            node_bus_by_bus_and_node[(psse_node.I, psse_node.NI)] = bus
-            node_breaker_bus_numbers.add(psse_node.I)
-
-            if psse_node.I not in representative_bus_by_number:
-                representative_bus_by_number[psse_node.I] = bus
-            else:
-                representative_bus_by_number[psse_node.I] = representative_bus_by_number[psse_node.I]
-
-    return node_bus_by_substation_node, node_bus_by_bus_and_node, representative_bus_by_number, node_breaker_bus_numbers
-
-
-def build_terminal_bus_lookup(
-        terminals: List[RawEquipmentTerminalLike],
-        node_bus_by_bus_and_node: Dict[tuple[int, int], dev.Bus],
-        logger: Logger) -> Dict[tuple[str, int, int, int, str], dev.Bus]:
-    """
-    Build a lookup from terminal records to VeraGrid node buses.
-
-    :param terminals: Parsed equipment terminal records.
-    :param node_bus_by_bus_and_node: Node buses keyed by electrical bus and node number.
-    :param logger: Logger.
-    :return: Terminal lookup dictionary.
-    """
-    terminal_bus_lookup: Dict[tuple[str, int, int, int, str], dev.Bus] = dict()
-
-    for terminal in terminals:
-        if terminal.NI > 0:
-            bus = node_bus_by_bus_and_node.get((terminal.IBUS, terminal.NI), None)
-            if bus is None:
-                logger.add_warning(
-                    'Equipment terminal references a node that was not created',
-                    value=f"{terminal.IBUS}:{terminal.NI}"
-                )
-            else:
-                key = (
-                    terminal.TYPE,
-                    terminal.IBUS,
-                    terminal.JBUS,
-                    terminal.KBUS,
-                    normalize_terminal_identifier(terminal.EQID),
-                )
-                terminal_bus_lookup[key] = bus
-        else:
-            pass
-
-    return terminal_bus_lookup
-
-
-def find_terminal_bus(
-        terminal_bus_lookup: Dict[tuple[str, int, int, int, str], dev.Bus],
-        type_code: str,
-        ibus: int,
-        jbus: int,
-        kbus: int,
-        eqid: int | float | str) -> dev.Bus | None:
-    """
-    Resolve a RAW equipment terminal to a VeraGrid node bus.
-
-    :param terminal_bus_lookup: Terminal lookup dictionary.
-    :param type_code: Terminal type code.
-    :param ibus: Primary bus number.
-    :param jbus: Secondary bus number.
-    :param kbus: Tertiary bus number.
-    :param eqid: Equipment identifier.
-    :return: Node bus or ``None``.
-    """
-    normalized_id = normalize_terminal_identifier(eqid)
-    key = (type_code, ibus, jbus, kbus, normalized_id)
-    bus = terminal_bus_lookup.get(key, None)
-
-    if bus is None and type_code == '3':
-        alt_key = (type_code, ibus, kbus, jbus, normalized_id)
-        bus = terminal_bus_lookup.get(alt_key, None)
-    else:
-        bus = bus
-
-    return bus
-
-
-def find_control_node_bus(
-        node_bus_by_bus_and_node: Dict[tuple[int, int], dev.Bus],
-        bus_number: int,
-        node_number: int) -> dev.Bus | None:
-    """
-    Resolve a control target defined by electrical bus and node number.
-
-    :param node_bus_by_bus_and_node: Node buses keyed by electrical bus and node number.
-    :param bus_number: Electrical bus number.
-    :param node_number: Node number.
-    :return: Node bus or ``None``.
-    """
-    if node_number > 0:
-        return node_bus_by_bus_and_node.get((abs(bus_number), abs(node_number)), None)
-    else:
-        return None
-
-
-def create_substation_switch(
-        psse_switch: RawSubstationSwitchingDeviceLike,
-        node_bus_by_substation_node: Dict[tuple[int, int], dev.Bus],
-        logger: Logger) -> dev.Switch | None:
-    """
-    Create a VeraGrid switch from a PSSE substation switching device.
-
-    :param psse_switch: PSSE substation switching device.
-    :param node_bus_by_substation_node: Node buses keyed by substation and node number.
-    :param logger: Logger.
-    :return: VeraGrid switch or ``None``.
-    """
-    bus_from = node_bus_by_substation_node.get((psse_switch.ISUB, psse_switch.NI), None)
-    bus_to = node_bus_by_substation_node.get((psse_switch.ISUB, psse_switch.NJ), None)
-
-    if bus_from is None or bus_to is None:
-        logger.add_error(
-            'Substation switching device references a node that does not exist',
-            value=f"{psse_switch.ISUB}:{psse_switch.NI}->{psse_switch.NJ}"
-        )
-        return None
-
-    if psse_switch.TYPE == 3:
-        graphic_type = SwitchGraphicType.Disconnector
-    else:
-        graphic_type = SwitchGraphicType.CircuitBreaker
-
-    if psse_switch.version == 34:
-        code = str(psse_switch.CKTID).replace("'", "").strip()
-    else:
-        code = str(psse_switch.CKT).replace("'", "").strip()
-
-    name = str(psse_switch.NAME).replace("'", "").strip()
-    if name == '':
-        name = f"{psse_switch.ISUB}_{psse_switch.NI}_{psse_switch.NJ}_{code}"
-    else:
-        name = name
-
-    switch = dev.Switch(
-        bus_from=bus_from,
-        bus_to=bus_to,
-        name=name,
-        code=code,
-        x=float(psse_switch.X),
-        rate=float(psse_switch.RATE1),
-        active=int(psse_switch.STATUS) != 0,
-        normal_open=int(psse_switch.NSTAT) == 0,
-        graphic_type=graphic_type,
-    )
-
-    return switch
-
-
-def get_veragrid_bus(psse_bus: RawBusLike,
+def get_veragrid_bus(psse_bus: RawBus,
                      area_dict: Dict[int, dev.Area],
                      zone_dict: Dict[int, dev.Zone],
                      logger: Logger) -> Tuple[dev.Bus, Union[dev.Shunt, None]]:
@@ -397,14 +102,14 @@ def get_veragrid_bus(psse_bus: RawBusLike,
 
     # set type
     if psse_bus.IDE in bustype.keys():
-        bus._bus_type = bustype[psse_bus.IDE]
+        bus.type = bustype[psse_bus.IDE]
     else:
-        bus._bus_type = dev.BusMode.PQ_tpe
+        bus.type = dev.BusMode.PQ_tpe
 
     if int(psse_bus.IDE) == 4:
         bus.active = False
 
-    if bus._bus_type == dev.BusMode.Slack_tpe:
+    if bus.type == dev.BusMode.Slack_tpe:
         bus.is_slack = True
 
     # Ensures unique name
@@ -418,7 +123,7 @@ def get_veragrid_bus(psse_bus: RawBusLike,
     return bus, sh
 
 
-def get_veragrid_load(psse_load: RawLoadLike, bus: dev.Bus, logger: Logger) -> dev.Load:
+def get_veragrid_load(psse_load: RawLoad, bus: dev.Bus, logger: Logger) -> dev.Load:
     """
     Return VeraGrid Load object
     Returns:
@@ -454,7 +159,7 @@ def get_veragrid_load(psse_load: RawLoadLike, bus: dev.Bus, logger: Logger) -> d
     return elm
 
 
-def get_veragrid_shunt_fixed(psse_elm: RawFixedShuntLike, bus: dev.Bus, logger: Logger):
+def get_veragrid_shunt_fixed(psse_elm: RawFixedShunt, bus: dev.Bus, logger: Logger):
     """
     Return VeraGrid Shunt object
     Returns:
@@ -483,7 +188,7 @@ def get_veragrid_shunt_fixed(psse_elm: RawFixedShuntLike, bus: dev.Bus, logger: 
 
 
 def get_veragrid_shunt_switched(
-        psse_elm: RawSwitchedShuntLike,
+        psse_elm: RawSwitchedShunt,
         bus: dev.Bus,
         psse_bus_dict: Dict[int, dev.Bus],
         logger: Logger) -> dev.ControllableShunt:
@@ -540,30 +245,12 @@ def get_veragrid_shunt_switched(
             value=psse_elm.MODSW,
         )
 
-    n_list: list[int] = list()
-    b_list: list[float] = list()
-
-    for i in range(1, 9):
-        s = psse_elm.get_block_status(i)
-        n = psse_elm.get_block_steps(i)
-
-        if s == 1:
-            n_list.append(n)
-            b_list.append(psse_elm.get_block_admittance(i))
-
-    # Pick the discrete step whose cumulative susceptance matches the in-service
-    # initial value BINIT. The raw is a solved snapshot, so BINIT is the susceptance
-    # PSSe converged with; starting here lets a controls-off solve reproduce it
-    # (step 0 = neutral/off, step k = first k blocks on).
-    cum_b = np.insert(np.cumsum([n * b for n, b in zip(n_list, b_list)]), 0, 0.0)
-    init_step = int(np.argmin(np.abs(cum_b - psse_elm.BINIT))) if len(cum_b) > 1 else 0
-
     elm = dev.ControllableShunt(
         name='Switched shunt ' + busnum_id,
         code=busnum_id,
         active=bool(psse_elm.STAT),
         B=b_init,
-        step=init_step,
+        step=0,
         vset=vset,
         vmin=float(psse_elm.VSWLO),
         vmax=float(psse_elm.VSWHI),
@@ -574,19 +261,27 @@ def get_veragrid_shunt_switched(
         if psse_elm.SWREG != psse_elm.I:
             elm.control_bus = psse_bus_dict[psse_elm.SWREG]
 
+    n_list: list[int] = list()
+    b_list: list[float] = list()
+
+    for i in range(1, 9):
+        s = getattr(psse_elm, f"S{i}")
+        n = getattr(psse_elm, f"N{i}")
+
+        if s == 1:
+            n_list.append(n)
+            b_list.append(getattr(psse_elm, f"B{i}"))
+
     elm.set_blocks(n_list, b_list)
 
     return elm
 
 
-def get_veragrid_switch(psse_elm: RawSystemSwitchingDeviceLike,
+def get_veragrid_switch(psse_elm: RawSystemSwitchingDevice,
                         psse_bus_dict: Dict[int, dev.Bus],
                         logger: Logger) -> dev.Switch | None:
     """
     Return VeraGrid Switch object
-    :param psse_elm
-    :param psse_bus_dict:
-    :param logger:
     """
     bus_from = psse_bus_dict.get(psse_elm.I, None)
     bus_to = psse_bus_dict.get(psse_elm.J, None)
@@ -609,17 +304,16 @@ def get_veragrid_switch(psse_elm: RawSystemSwitchingDeviceLike,
         name=name,
         code=code,
         x=float(psse_elm.X),
-        rate=float(_get_branch_ratings(psse_elm)[0]),
+        rate=float(psse_elm.RATE1),
         active=bool(psse_elm.STATUS),
-        normal_open=int(psse_elm.NSTATUS) == 0,
+        normal_open=bool(psse_elm.NSTATUS),
         graphic_type=graphic_type,
     )
 
     return elm
 
 
-def get_veragrid_generator(psse_elm: RawGeneratorLike, psse_bus_dict: Dict[int, dev.Bus],
-                           logger: Logger) -> dev.Generator:
+def get_veragrid_generator(psse_elm: RawGenerator, psse_bus_dict: Dict[int, dev.Bus], logger: Logger) -> dev.Generator:
     """
 
     :param psse_elm:
@@ -629,65 +323,48 @@ def get_veragrid_generator(psse_elm: RawGeneratorLike, psse_bus_dict: Dict[int, 
     """
     name = str(psse_elm.I) + '_' + str(psse_elm.ID).replace("'", "")
 
-    if psse_elm.WMOD == 0:  # Conventional machine
-        control_mode = GeneratorControlMode.V
-        Q = psse_elm.QG
+    if psse_elm.WMOD == 0:  # Not a wind machine ...wtf
+        is_controlled = True
+        pf = 0.8
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
     elif psse_elm.WMOD == 1:  # Standard Qmin, Qmax limits
-        control_mode = GeneratorControlMode.V
-        Q = psse_elm.QG
+        is_controlled = True
+        pf = 0.8
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
-    elif psse_elm.WMOD == 2:  # Qmin, Qmax based based on WPF
-        control_mode = GeneratorControlMode.V
-        # pf = psse_elm.WPF
+    elif psse_elm.WMOD == 2:  # Qmin, Qmax based o PF
+        is_controlled = True
+        pf = psse_elm.WPF
         # NOTE: the QB and QT limits come correct already, no need to compute this here
-        Q = psse_elm.QG
-        # Qmin = psse_elm.PB * np.sqrt((1.0 / (pf ** 2)) - 1.0)
-        # Qmax = psse_elm.PT * np.sqrt((1.0 / (pf ** 2)) - 1.0)
+        # Q = psse_elm.PG * np.sqrt((1.0 / (pf ** 2)) - 1.0)
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
     elif psse_elm.WMOD == 3:  # Fixed Q
-        control_mode = GeneratorControlMode.Q
+        is_controlled = False
         pf = psse_elm.WPF if psse_elm.WPF is not None else 0.8
-        Q = psse_elm.PG * np.sqrt((1.0 / (pf ** 2)) - 1.0)
-        Qmin = psse_elm.QB
-        Qmax = psse_elm.QT
-    elif psse_elm.WMOD == 4:  # Infeed machine
-        control_mode = GeneratorControlMode.Q
-        pf = psse_elm.WPF if psse_elm.WPF is not None else 0.8
-        Q = psse_elm.PG * np.sqrt((1.0 / (pf ** 2)) - 1.0)
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
     else:
-        control_mode = GeneratorControlMode.V
+        is_controlled = True
+        pf = 0.8
         Qmin = psse_elm.QB
         Qmax = psse_elm.QT
-        Q = psse_elm.QG
 
-    # A non-slack generator with no reactive range (QT == QB) cannot regulate voltage.
-    # Keep the slack machine as voltage-controlled even when its reactive range is zero,
-    # because the RAW slack/reference bus still defines the system angle and voltage target.
-    bus = psse_bus_dict[psse_elm.I]
-    if Qmax == Qmin and not bus.is_slack:
-        control_mode = GeneratorControlMode.Q
-
-    elm = dev.Generator(
-        name=name,
-        idtag=None,
-        code=name,
-        P=psse_elm.PG,
-        Q=Q,
-        vset=psse_elm.VS,
-        Qmin=Qmin,
-        Qmax=Qmax,
-        Snom=psse_elm.MBASE,
-        Pmax=psse_elm.PT,
-        Pmin=psse_elm.PB,
-        active=bool(psse_elm.STAT),
-        control_mode=control_mode
-    )
+    elm = dev.Generator(name=name,
+                        idtag=None,
+                        code=name,
+                        P=psse_elm.PG,
+                        Q=psse_elm.QG,
+                        vset=psse_elm.VS,
+                        Qmin=Qmin,
+                        Qmax=Qmax,
+                        Snom=psse_elm.MBASE,
+                        Pmax=psse_elm.PT,
+                        Pmin=psse_elm.PB,
+                        active=bool(psse_elm.STAT),
+                        is_controlled=is_controlled,
+                        power_factor=pf)
 
     if psse_elm.IREG > 0:
         if psse_elm.IREG != psse_elm.I:
@@ -697,7 +374,7 @@ def get_veragrid_generator(psse_elm: RawGeneratorLike, psse_bus_dict: Dict[int, 
 
 
 def get_veragrid_transformer(
-        psse_elm: RawTransformerLike,
+        psse_elm: RawTransformer,
         psse_bus_dict: Dict[int, dev.Bus],
         Sbase: float,
         logger: Logger,
@@ -772,14 +449,12 @@ def get_veragrid_transformer(
         else:
             V2 = psse_elm.NOMV2
 
-        rate1_1, rate1_2, rate1_3 = _get_transformer_winding_ratings(psse_elm, 1)
-
-        contingency_factor = (rate1_2 / rate1_1
-                              if rate1_1 > 0.0 and rate1_2 > 0.0
+        contingency_factor = (psse_elm.RATE1_2 / psse_elm.RATE1_1
+                              if psse_elm.RATE1_1 > 0.0 and psse_elm.RATE1_2 > 0.0
                               else 1.0)
 
-        protection_factor = (rate1_3 / rate1_1
-                             if rate1_1 > 0.0 and rate1_3 > 0.0
+        protection_factor = (psse_elm.RATE1_3 / psse_elm.RATE1_1
+                             if psse_elm.RATE1_1 > 0.0 and psse_elm.RATE1_3 > 0.0
                              else 1.4)
 
         r, x, g, b, tap_module, tap_angle = psse_elm.get_2w_pu_impedances(Sbase=Sbase,
@@ -872,37 +547,48 @@ def get_veragrid_transformer(
             tc_neutral_position = int((psse_elm.NTP1 + 1) / 2)
             tc_normal_position = int((psse_elm.NTP1 + 1) / 2)
 
-            if psse_elm.NTP1 > 1:
+            alpha_per_2 = math.radians(psse_elm.RMA1 / 2)
+            # NTP1 should be an odd number
+            number_of_symmetrical_step = (psse_elm.NTP1 - 1) / 2
+            tc_dV = 2 * math.tan(alpha_per_2) / number_of_symmetrical_step
 
-                alpha_per_2 = math.radians(psse_elm.RMA1 / 2)
-                # NTP1 should be an odd number
-                number_of_symmetrical_step = (psse_elm.NTP1 - 1) / 2
-                tc_dV = 2 * math.tan(alpha_per_2) / number_of_symmetrical_step
-
-                d_ang = psse_elm.RMA1 / ((psse_elm.NTP1 - 1) / 2)
-                # ?: this value is set internally by set_tap_phase
-                # tc_tap_position
-                if d_ang != 0.0:
-                    tc_step = round(psse_elm.ANG1 / d_ang)
-                    if tc_step - (psse_elm.ANG1 / d_ang) > 0.1:
-                        logger.add_warning(
-                            device=psse_elm,
-                            device_class=psse_elm.class_name,
-                            msg="Tap changer is not on discrete step.",
-                            value=psse_elm.ANG1 / d_ang,
-                        )
-                    tc_tap_pos = tc_neutral_position + tc_step
-                else:
-                    tc_step = 0
+            d_ang = psse_elm.RMA1 / ((psse_elm.NTP1 - 1) / 2)
+            # ?: this value is set internally by set_tap_phase
+            # tc_tap_position
+            if d_ang != 0.0:
+                tc_step = round(psse_elm.ANG1 / d_ang)
+                if tc_step - (psse_elm.ANG1 / d_ang) > 0.1:
+                    logger.add_warning(
+                        device=psse_elm,
+                        device_class=psse_elm.class_name,
+                        msg="Tap changer is not on discrete step.",
+                        value=psse_elm.ANG1 / d_ang,
+                    )
+                tc_tap_pos = tc_neutral_position + tc_step
             else:
+                tc_step = 0
+            # print()
+            # corrected_phase = elm.tap_changer.set_tap_phase(elm.tap_phase)
+            # elm.tap_phase = corrected_phase
+            #
+            # print("Tap module, and phase calculated:",
+            #       elm.tap_module, elm.tap_phase)
 
-                tc_total_positions = 1
-                tc_neutral_position = 0
-                tc_normal_position = 0
-                alpha_per_2 = math.radians(psse_elm.RMA1)
-                tc_dV = 0.0
-                logger.add_warning(msg='Number of tap positions == 1', value=1)
-         
+            # if psse_elm.NTP1 > 1:
+            #     tc_total_positions = psse_elm.NTP1
+            #     tc_neutral_position = int((psse_elm.NTP1 + 1) / 2)
+            #     tc_normal_position = int((psse_elm.NTP1 + 1) / 2)
+            #     alpha_per_2 = math.radians(psse_elm.RMA1)
+            #     number_of_symmetrical_step = (psse_elm.NTP1 - 1) / 2
+            #     tc_dV = 2 * math.tan(alpha_per_2) / number_of_symmetrical_step
+            # else:
+            #     tc_total_positions = 1
+            #     tc_neutral_position = 0
+            #     tc_normal_position = 0
+            #     alpha_per_2 = math.radians(psse_elm.RMA1)
+            #     tc_dV = 0.0
+            #     logger.add_warning(msg='Number of tap positions == 1', value=1)
+
         elif psse_elm.COD1 in [4, -4]:  # for control of a dc line quantity
             # (valid only for two-winding transformers)
 
@@ -948,7 +634,7 @@ def get_veragrid_transformer(
             x=x,
             g=g,
             b=b,
-            rate=rate1_1,
+            rate=psse_elm.RATE1_1,
             contingency_factor=round(contingency_factor, 6),
             protection_rating_factor=round(protection_factor, 6),
             # regulation_bus=regulation_bus,
@@ -1003,7 +689,6 @@ def get_veragrid_transformer(
         mf, mt = elm.get_virtual_taps()
 
         # we need to discount that PSSe includes the virtual tap inside the normal tap
-        # NOTE: may need to be `/ mf / mt` (small Va error on some radial buses); see admittance_matrices.py
         elm.tap_module = tap_module / mf * mt
 
         return elm, 2
@@ -1101,10 +786,6 @@ def get_veragrid_transformer(
                                 device=code)
                 V3 = bus_3.Vnom
 
-        rate1_1, _, _ = _get_transformer_winding_ratings(psse_elm, 1)
-        rate2_1, _, _ = _get_transformer_winding_ratings(psse_elm, 2)
-        rate3_1, _, _ = _get_transformer_winding_ratings(psse_elm, 3)
-
         tr3w = dev.Transformer3W(bus1=bus_1,
                                  bus2=bus_2,
                                  bus3=bus_3,
@@ -1115,68 +796,19 @@ def get_veragrid_transformer(
                                  active=bool(psse_elm.STAT),
                                  r12=r12, r23=r23, r31=r31,
                                  x12=x12, x23=x23, x31=x31,
-                                 rate12=rate1_1,
-                                 rate23=rate2_1,
-                                 rate31=rate3_1)
+                                 rate12=psse_elm.RATE1_1,
+                                 rate23=psse_elm.RATE2_1,
+                                 rate31=psse_elm.RATE3_1)
 
-        # PSSe defines the winding off-nominal turns ratio (WINDVn) and phase shift (ANGn)
-        # on the winding-bus side. The windings are oriented winding-bus(bus_from) ->
-        # star(bus_to) with the tap applied on the bus_from (winding-bus) side, so the
-        # PSSe winding-side values are used directly.
+        # NOTE: These seem to be related to the vector group and not to the power flow tap
         tr3w.winding1.tap_phase = np.deg2rad(psse_elm.ANG1)
         tr3w.winding2.tap_phase = np.deg2rad(psse_elm.ANG2)
         tr3w.winding3.tap_phase = np.deg2rad(psse_elm.ANG3)
-
-        # STAT=2/3/4 means winding 1/2/3 is individually out of service
-        if psse_elm.STAT == 0:
-            tr3w.winding1.active = False
-            tr3w.winding2.active = False
-            tr3w.winding3.active = False
-        elif psse_elm.STAT == 1:
-            tr3w.winding1.active = True
-            tr3w.winding2.active = True
-            tr3w.winding3.active = True
-        elif psse_elm.STAT == 2:
-            tr3w.winding1.active = True
-            tr3w.winding2.active = False
-            tr3w.winding3.active = True
-        elif psse_elm.STAT == 3:
-            tr3w.winding1.active = True
-            tr3w.winding2.active = True
-            tr3w.winding3.active = False
-        elif psse_elm.STAT == 4:
-            tr3w.winding1.active = False
-            tr3w.winding2.active = True
-            tr3w.winding3.active = True
-
-        # STAT=2/3/4 means winding 1/2/3 is individually out of service
-        if psse_elm.STAT == 0:
-            tr3w.winding1.active = False
-            tr3w.winding2.active = False
-            tr3w.winding3.active = False
-        elif psse_elm.STAT == 1:
-            tr3w.winding1.active = True
-            tr3w.winding2.active = True
-            tr3w.winding3.active = True
-        elif psse_elm.STAT == 2:
-            tr3w.winding1.active = True
-            tr3w.winding2.active = False
-            tr3w.winding3.active = True
-        elif psse_elm.STAT == 3:
-            tr3w.winding1.active = True
-            tr3w.winding2.active = True
-            tr3w.winding3.active = False
-        elif psse_elm.STAT == 4:
-            tr3w.winding1.active = False
-            tr3w.winding2.active = True
-            tr3w.winding3.active = True
 
         NOMV1 = psse_elm.NOMV1 if psse_elm.NOMV1 > 0 else bus_1.Vnom
         NOMV2 = psse_elm.NOMV2 if psse_elm.NOMV2 > 0 else bus_2.Vnom
         NOMV3 = psse_elm.NOMV3 if psse_elm.NOMV3 > 0 else bus_3.Vnom
 
-        # winding-bus-side off-nominal ratio in pu (per PSSe convention), applied directly
-        # because the winding tap is on the winding-bus (bus_from) side.
         if psse_elm.CW == 1:
 
             tr3w.winding1.tap_module = psse_elm.WINDV1
@@ -1197,48 +829,6 @@ def get_veragrid_transformer(
         else:
             raise Exception('Unknown impedance combination CW=' + str(psse_elm.CZ))
 
-        # --------------------------------------------------------------------------------------
-        # Winding tap regulation. With COD = +-1 a winding steps its tap to hold the controlled
-        # bus (CONTn) voltage within the band [VMIn, VMAn], the tap ratio moving within
-        # [RMIn, RMAn] over NTPn discrete positions. PSSe writes the *initial* tap into WINDVn
-        # and adjusts it during the solve, so importing the regulation lets VeraGrid reproduce
-        # the regulated tap instead of staying frozen at the input value.
-        # --------------------------------------------------------------------------------------
-        winding_controls = [
-            (tr3w.winding1, psse_elm.COD1, psse_elm.CONT1, psse_elm.RMA1, psse_elm.RMI1,
-             psse_elm.VMA1, psse_elm.VMI1, psse_elm.NTP1),
-            (tr3w.winding2, psse_elm.COD2, psse_elm.CONT2, psse_elm.RMA2, psse_elm.RMI2,
-             psse_elm.VMA2, psse_elm.VMI2, psse_elm.NTP2),
-            (tr3w.winding3, psse_elm.COD3, psse_elm.CONT3, psse_elm.RMA3, psse_elm.RMI3,
-             psse_elm.VMA3, psse_elm.VMI3, psse_elm.NTP3),
-        ]
-        for w, cod, cont, rma, rmi, vma, vmi, ntp in winding_controls:
-            if cod in (1, -1):  # voltage control (negative => locked, kept fixed)
-                w.tap_module_control_mode = TapModuleControl.Vm if cod > 0 else TapModuleControl.fixed
-
-                reg_bus = psse_bus_dict.get(abs(int(cont)), None)
-                if reg_bus is not None:
-                    w.regulation_bus = reg_bus
-
-                # controlled-voltage band -> regulate towards its midpoint
-                if vma > 0.0 and vmi > 0.0:
-                    w.vset = 0.5 * (vma + vmi)
-
-                # tap-ratio limits and discrete positions. The parsed tap_module (WINDVn) is
-                # the regulator's starting position and is left untouched; only the changer
-                # ladder is configured so the solver can step it within [RMIn, RMAn].
-                if rma > 0.0 and rmi > 0.0:
-                    w.tap_module_max = rma
-                    w.tap_module_min = rmi
-                    if ntp > 1:
-                        tc = w.tap_changer
-                        tc.tc_type = TapChangerTypes.VoltageRegulation
-                        tc.total_positions = int(ntp)
-                        tc.neutral_position = int(ntp // 2)
-                        tc.normal_position = int(ntp // 2)
-                        tc.dV = (rma - rmi) / (ntp - 1)
-                        tc.recalc()
-
         tr3w.compute_delta_to_star()
 
         tr3w.bus0.Vm0 = psse_elm.VMSTAR
@@ -1250,7 +840,7 @@ def get_veragrid_transformer(
         raise Exception(str(psse_elm.windings) + ' number of windings!')
 
 
-def get_veragrid_line(psse_elm: RawBranchLike,
+def get_veragrid_line(psse_elm: RawBranch,
                       psse_bus_dict: Dict[int, dev.Bus],
                       Sbase: float,
                       logger: Logger,
@@ -1282,14 +872,12 @@ def get_veragrid_line(psse_elm: RawBranchLike,
     else:
         name = psse_elm.NAME.strip()
 
-    rate1, rate2, rate3 = _get_branch_ratings(psse_elm)
-
-    contingency_factor = rate2 / rate1 if rate1 > 0.0 else 1.0
+    contingency_factor = psse_elm.RATE2 / psse_elm.RATE1 if psse_elm.RATE1 > 0.0 else 1.0
 
     if contingency_factor == 0:
         contingency_factor = 1.0
 
-    protection_factor = rate3 / rate1 if rate1 > 0.0 else 1.4
+    protection_factor = psse_elm.RATE3 / psse_elm.RATE1 if psse_elm.RATE1 > 0.0 else 1.4
 
     if protection_factor == 0:
         protection_factor = 1.4
@@ -1302,7 +890,7 @@ def get_veragrid_line(psse_elm: RawBranchLike,
                       r=psse_elm.R,
                       x=psse_elm.X,
                       b=psse_elm.B,
-                      rate=rate1,
+                      rate=psse_elm.RATE1,
                       contingency_factor=round(contingency_factor, 6),
                       protection_rating_factor=round(protection_factor, 6),
                       active=bool(psse_elm.ST),
@@ -1312,7 +900,7 @@ def get_veragrid_line(psse_elm: RawBranchLike,
     return branch
 
 
-def get_hvdc_from_vscdc(psse_elm: RawVscDCLineLike,
+def get_hvdc_from_vscdc(psse_elm: RawVscDCLine,
                         psse_bus_dict: Dict[int, dev.Bus],
                         Sbase: float,
                         logger: Logger) -> Union[dev.HvdcLine, None]:
@@ -1363,7 +951,7 @@ def get_hvdc_from_vscdc(psse_elm: RawVscDCLineLike,
         return None
 
 
-def get_hvdc_from_twotermdc(psse_elm: RawTwoTerminalDCLineLike,
+def get_hvdc_from_twotermdc(psse_elm: RawTwoTerminalDCLine,
                             psse_bus_dict: Dict[int, dev.Bus],
                             Sbase: float,
                             logger: Logger) -> Union[dev.HvdcLine, None]:
@@ -1425,7 +1013,7 @@ def get_hvdc_from_twotermdc(psse_elm: RawTwoTerminalDCLineLike,
         return None
 
 
-def get_upfc_from_facts(psse_elm: RawFACTSLike,
+def get_upfc_from_facts(psse_elm: RawFACTS,
                         psse_bus_dict: Dict[int, dev.Bus],
                         Sbase: float,
                         logger: Logger,
@@ -1569,11 +1157,11 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
 
     area_dict = {val.I: elm for val, elm in zip(psse_circuit.areas, circuit.areas)}
     zones_dict = {val.I: elm for val, elm in zip(psse_circuit.zones, circuit.zones)}
-    raw_bus_by_number: Dict[int, RawBusLike] = {bus.I: bus for bus in psse_circuit.buses}
 
     # scan for missing zones or areas (yes, PSSe is so crappy that can reference areas that do not exist)
     missing_areas = False
     missing_zones = False
+    psse_bus_dict: Dict[int, dev.Bus] = dict()
     slack_buses: List[int] = list()
     for psse_bus in psse_circuit.buses:
 
@@ -1586,10 +1174,22 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
             zones_dict[abs(psse_bus.ZONE)] = dev.Zone(name='Z' + str(abs(psse_bus.ZONE)))
             missing_zones = True
 
-        if int(psse_bus.IDE) == 3:
+        bus, bus_shunt = get_veragrid_bus(psse_bus=psse_bus,
+                                          area_dict=area_dict,
+                                          zone_dict=zones_dict,
+                                          logger=logger)
+
+        # bus.ensure_area_objects(circuit)
+
+        if bus.type.value == 3:
             slack_buses.append(psse_bus.I)
-        else:
-            slack_buses = slack_buses
+
+        circuit.add_bus(bus)
+        psse_bus_dict[psse_bus.I] = bus
+
+        # legacy PSSe buses may have shunts declared within, so add them
+        if bus_shunt is not None:
+            circuit.add_shunt(bus=bus, api_obj=bus_shunt)
 
     if missing_areas:
         circuit.areas = [v for k, v in area_dict.items()]
@@ -1597,49 +1197,7 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
     if missing_zones:
         circuit.zones = [v for k, v in zones_dict.items()]
 
-    substation_dict = create_substation_objects(psse_circuit.substations, circuit)
-    node_bus_by_substation_node, node_bus_by_bus_and_node, representative_node_bus_by_number, node_breaker_bus_numbers = (
-        create_node_breaker_buses(
-            psse_nodes=psse_circuit.nodes,
-            raw_bus_by_number=raw_bus_by_number,
-            area_dict=area_dict,
-            zone_dict=zones_dict,
-            substation_dict=substation_dict,
-            circuit=circuit,
-            logger=logger
-        )
-    )
-
-    psse_bus_dict: Dict[int, dev.Bus] = dict()
-    for psse_bus in psse_circuit.buses:
-        if psse_bus.I in node_breaker_bus_numbers:
-            representative_node_bus = representative_node_bus_by_number.get(psse_bus.I, None)
-            if representative_node_bus is not None:
-                psse_bus_dict[psse_bus.I] = representative_node_bus
-            else:
-                logger.add_error('Node-breaker bus has no representative node bus', value=str(psse_bus.I))
-        else:
-            bus, bus_shunt = get_veragrid_bus(psse_bus=psse_bus,
-                                              area_dict=area_dict,
-                                              zone_dict=zones_dict,
-                                              logger=logger)
-
-            circuit.add_bus(bus)
-            psse_bus_dict[psse_bus.I] = bus
-
-            # legacy PSSe buses may have shunts declared within, so add them
-            if bus_shunt is not None:
-                circuit.add_shunt(bus=bus, api_obj=bus_shunt)
-            else:
-                bus_shunt = bus_shunt
-
-    terminal_bus_lookup = build_terminal_bus_lookup(
-        terminals=psse_circuit.equipment_terminals,
-        node_bus_by_bus_and_node=node_bus_by_bus_and_node,
-        logger=logger
-    )
-
-    # check that the area slack buses actually make sense
+    # check htat the area slack buses actually make sense
     for area in psse_circuit.areas:
         if area.ISW not in slack_buses:
             logger.add_error('The area slack bus is not marked as slack', str(area.ISW))
@@ -1647,11 +1205,7 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
     # Go through loads
     for psse_load in psse_circuit.loads:
         if psse_load.I in psse_bus_dict:
-            terminal_bus = find_terminal_bus(terminal_bus_lookup, 'L', psse_load.I, 0, 0, psse_load.ID)
-            if terminal_bus is not None:
-                bus = terminal_bus
-            else:
-                bus = psse_bus_dict[psse_load.I]
+            bus = psse_bus_dict[psse_load.I]
             api_obj = get_veragrid_load(psse_load, bus, logger)
 
             circuit.add_load(bus, api_obj)
@@ -1661,11 +1215,7 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
     # Go through shunts
     for psse_shunt in psse_circuit.fixed_shunts:
         if psse_shunt.I in psse_bus_dict:
-            terminal_bus = find_terminal_bus(terminal_bus_lookup, 'F', psse_shunt.I, 0, 0, psse_shunt.ID)
-            if terminal_bus is not None:
-                bus = terminal_bus
-            else:
-                bus = psse_bus_dict[psse_shunt.I]
+            bus = psse_bus_dict[psse_shunt.I]
             api_obj = get_veragrid_shunt_fixed(psse_shunt, bus, logger)
             circuit.add_shunt(bus, api_obj)
         else:
@@ -1673,48 +1223,19 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
 
     for psse_shunt in psse_circuit.switched_shunts:
         if psse_shunt.I in psse_bus_dict:
-            if psse_shunt.version >= 35:
-                terminal_bus = find_terminal_bus(terminal_bus_lookup, 'S', psse_shunt.I, 0, 0, psse_shunt.ID)
-            else:
-                terminal_bus = find_terminal_bus(terminal_bus_lookup, 'S', psse_shunt.I, 0, 0, '1')
-
-            if terminal_bus is not None:
-                bus = terminal_bus
-            else:
-                bus = psse_bus_dict[psse_shunt.I]
+            bus = psse_bus_dict[psse_shunt.I]
             api_obj = get_veragrid_shunt_switched(psse_shunt, bus, psse_bus_dict, logger)
-
-            if psse_shunt.version >= 35 and psse_shunt.NREG > 0:
-                control_bus = find_control_node_bus(node_bus_by_bus_and_node, psse_shunt.SWREG, psse_shunt.NREG)
-                if control_bus is not None:
-                    api_obj.control_bus = control_bus
-                else:
-                    api_obj.control_bus = api_obj.control_bus
-            else:
-                api_obj.control_bus = api_obj.control_bus
             circuit.add_controllable_shunt(bus, api_obj)
         else:
             logger.add_error("Switched shunt bus missing", psse_shunt.I, psse_shunt.I)
 
     # Go through generators
     for psse_gen in psse_circuit.generators:
-        terminal_bus = find_terminal_bus(terminal_bus_lookup, 'M', psse_gen.I, 0, 0, psse_gen.ID)
-        if terminal_bus is not None:
-            bus = terminal_bus
-        else:
-            bus = psse_bus_dict[psse_gen.I]
+        bus = psse_bus_dict[psse_gen.I]
         api_obj = get_veragrid_generator(psse_gen, psse_bus_dict, logger)
 
-        if psse_gen.version >= 35 and psse_gen.NREG > 0:
-            control_bus = find_control_node_bus(node_bus_by_bus_and_node, psse_gen.IREG, psse_gen.NREG)
-            if control_bus is not None:
-                api_obj.control_bus = control_bus
-            else:
-                api_obj.control_bus = api_obj.control_bus
-        else:
-            api_obj.control_bus = api_obj.control_bus
-
         circuit.add_generator(bus, api_obj)
+        api_obj.is_controlled = psse_gen.WMOD == 0 or psse_gen.WMOD == 1
 
     # Go through Branches
     branches_already_there = set()
@@ -1731,54 +1252,6 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
             simple_naming=use_short_names,
             flatten_virtual_taps=flatten_virtual_taps
         )
-
-        if n_windings == 2:
-            bus_from = find_terminal_bus(terminal_bus_lookup, '2', psse_transformer.I, psse_transformer.J, 0,
-                                         psse_transformer.CKT)
-            bus_to = find_terminal_bus(terminal_bus_lookup, '2', psse_transformer.J, psse_transformer.I, 0,
-                                       psse_transformer.CKT)
-
-            if bus_from is not None:
-                transformer.bus_from = bus_from
-            else:
-                transformer.bus_from = transformer.bus_from
-
-            if bus_to is not None:
-                transformer.bus_to = bus_to
-            else:
-                transformer.bus_to = transformer.bus_to
-
-            if psse_transformer.CONT1 > 0 and psse_transformer.NODE1 > 0:
-                control_bus = find_control_node_bus(node_bus_by_bus_and_node, psse_transformer.CONT1,
-                                                    psse_transformer.NODE1)
-                if control_bus is not None:
-                    transformer.regulation_bus = control_bus
-                else:
-                    transformer.regulation_bus = transformer.regulation_bus
-            else:
-                transformer.regulation_bus = transformer.regulation_bus
-        else:
-            bus_1 = find_terminal_bus(terminal_bus_lookup, '3', psse_transformer.I, psse_transformer.J,
-                                      psse_transformer.K, psse_transformer.CKT)
-            bus_2 = find_terminal_bus(terminal_bus_lookup, '3', psse_transformer.J, psse_transformer.I,
-                                      psse_transformer.K, psse_transformer.CKT)
-            bus_3 = find_terminal_bus(terminal_bus_lookup, '3', psse_transformer.K, psse_transformer.I,
-                                      psse_transformer.J, psse_transformer.CKT)
-
-            if bus_1 is not None:
-                transformer.bus1 = bus_1
-            else:
-                transformer.bus1 = transformer.bus1
-
-            if bus_2 is not None:
-                transformer.bus2 = bus_2
-            else:
-                transformer.bus2 = transformer.bus2
-
-            if bus_3 is not None:
-                transformer.bus3 = bus_3
-            else:
-                transformer.bus3 = transformer.bus3
 
         if transformer.idtag not in branches_already_there:
             # Add to the circuit
@@ -1798,18 +1271,6 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
     for psse_branch in psse_circuit.branches:
         # get the object
         branch = get_veragrid_line(psse_branch, psse_bus_dict, psse_circuit.SBASE, logger, use_short_names)
-
-        bus_from = find_terminal_bus(terminal_bus_lookup, 'B', psse_branch.I, psse_branch.J, 0, psse_branch.CKT)
-        bus_to = find_terminal_bus(terminal_bus_lookup, 'B', psse_branch.J, psse_branch.I, 0, psse_branch.CKT)
-        if bus_from is not None:
-            branch.bus_from = bus_from
-        else:
-            branch.bus_from = branch.bus_from
-
-        if bus_to is not None:
-            branch.bus_to = bus_to
-        else:
-            branch.bus_to = branch.bus_to
 
         # detect if this branch is actually a transformer
         if branch.should_this_be_a_transformer(branch_connection_voltage_tolerance, logger=logger):
@@ -1845,37 +1306,12 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
                 logger.add_warning('The RAW file has a repeated switch device and it is omitted from the model',
                                    switch_key)
 
-    for psse_substation_switch in psse_circuit.substation_switching_devices:
-        switch = create_substation_switch(psse_substation_switch, node_bus_by_substation_node, logger)
-        if switch is not None:
-            switch_key = psse_substation_switch.get_id()
-            if switch_key not in branches_already_there:
-                circuit.add_switch(switch)
-                branches_already_there.add(switch_key)
-            else:
-                logger.add_warning('The RAW file has a repeated substation switch and it is omitted from the model',
-                                   switch_key)
-        else:
-            switch = switch
-
     # Go through hvdc lines
     for psse_branch in psse_circuit.vsc_dc_lines:
         # get the object
         branch = get_hvdc_from_vscdc(psse_branch, psse_bus_dict, psse_circuit.SBASE, logger)
 
         if branch is not None:
-            bus_from = find_terminal_bus(terminal_bus_lookup, 'V', psse_branch.IBUS1, 0, 0, psse_branch.NAME)
-            bus_to = find_terminal_bus(terminal_bus_lookup, 'V', psse_branch.IBUS2, 0, 0, psse_branch.NAME)
-            if bus_from is not None:
-                branch.bus_from = bus_from
-            else:
-                branch.bus_from = branch.bus_from
-
-            if bus_to is not None:
-                branch.bus_to = bus_to
-            else:
-                branch.bus_to = branch.bus_to
-
             if branch.idtag not in branches_already_there:
 
                 # Add to the circuit
@@ -1891,18 +1327,6 @@ def psse_to_veragrid(psse_circuit: PsseCircuit,
         branch = get_hvdc_from_twotermdc(psse_branch, psse_bus_dict, psse_circuit.SBASE, logger)
 
         if branch is not None:
-            bus_from = find_terminal_bus(terminal_bus_lookup, 'D', psse_branch.IPR, 0, 0, psse_branch.NAME)
-            bus_to = find_terminal_bus(terminal_bus_lookup, 'D', psse_branch.IPI, 0, 0, psse_branch.NAME)
-            if bus_from is not None:
-                branch.bus_from = bus_from
-            else:
-                branch.bus_from = branch.bus_from
-
-            if bus_to is not None:
-                branch.bus_to = bus_to
-            else:
-                branch.bus_to = branch.bus_to
-
             if branch.idtag not in branches_already_there:
 
                 # Add to the circuit

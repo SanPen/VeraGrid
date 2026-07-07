@@ -296,9 +296,8 @@ class VoltageLevelConversionWizard(QDialog):
         row2_layout.addWidget(self.enable_transfer_bus_checkbox)
 
         self.reducible_branches_checkbox = QCheckBox("Reducible branches")
-        self.reducible_branches_checkbox.setChecked(True)
-        self.reducible_branches_checkbox.setToolTip("If true, every switch created reducible. If false, "
-                                                    "the switches are kept in the analysis.")
+        self.reducible_branches_checkbox.setChecked(False)
+        self.reducible_branches_checkbox.setToolTip("If enabled, new branches are marked as reducible")
         row2_layout.addWidget(self.reducible_branches_checkbox)
         row2_layout.addStretch()
         options_layout.addLayout(row2_layout)

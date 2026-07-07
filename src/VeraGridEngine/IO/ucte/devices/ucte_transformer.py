@@ -8,7 +8,6 @@ from VeraGridEngine.IO.ucte.devices.ucte_base import (
     sub_float,
     sub_int,
     sub_optional_float,
-    sub_optional_str,
     sub_str,
     try_float,
     try_int,
@@ -101,7 +100,7 @@ class UcteTransformer:
             self.susceptance = sub_float(line, 54, 62, device, "susceptance", logger)
             self.conductance = sub_optional_float(line, 63, 69, device, "conductance", logger)
             self.current_limit = sub_optional_float(line, 70, 76, device, "current_limit", logger)
-            self.name = sub_optional_str(line, 77, 88)
+            self.name = sub_str(line, 77, 88, device, "name", logger)
         else:
             logger.add_warning(f"Non canonical line length ",
                                device_class=device,

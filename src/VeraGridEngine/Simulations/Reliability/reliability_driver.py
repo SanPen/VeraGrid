@@ -46,13 +46,10 @@ def get_gen_pmax(nt: int, k: int, Snom: float, P_array: Vec, active_array: BoolV
 def count_device_incidences(active_states: Mat) -> int:
     """
     Count device incidence starts in an active-state matrix.
-
-    An incidence is counted when one device changes from active to inactive.
-    If one device is already inactive at ``t=0``, that also counts as one
-    incidence. The matrix is organized as ``(time, device)``.
-
+    An incidence is counted when a device changes from active to inactive.
+    If a device is already inactive at t=0, that also counts as one incidence.
     :param active_states: Boolean matrix of shape (time, device)
-    :return: Number of incidences.
+    :return: Number of incidences
     """
     nt, n_devices = active_states.shape
     n_incidences = 0
@@ -71,7 +68,6 @@ def count_device_incidences(active_states: Mat) -> int:
     return n_incidences
 
 
-
 class ReliabilityStudyDriver(DriverTemplate):
     __slots__ = (
         "pf_options",
@@ -79,7 +75,6 @@ class ReliabilityStudyDriver(DriverTemplate):
         "n_sim",
         "time_indices",
         "greedy_dispatch_inputs",
-        "__cancel__",
     )
 
     name = 'Reliability analysis'
@@ -363,7 +358,3 @@ class ReliabilityStudyDriver(DriverTemplate):
                                                  cumulative_customer_interruptions,
                                                  out=np.zeros(self.n_sim),
                                                  where=cumulative_customer_interruptions > 0)
-
-    def cancel(self):
-        self._DriverTemplate__cancel__ = True
-        self.__cancel__ = True

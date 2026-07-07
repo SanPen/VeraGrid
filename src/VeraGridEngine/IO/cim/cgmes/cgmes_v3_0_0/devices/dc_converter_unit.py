@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.dc_equipment_container import DCEquipmentContainer
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import DCConverterOperatingModeKind, CgmesProfileType
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import DCConverterOperatingModeKind
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 if TYPE_CHECKING:
@@ -16,8 +16,8 @@ if TYPE_CHECKING:
 
 class DCConverterUnit(DCEquipmentContainer):
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='operationMode', class_type=DCConverterOperatingModeKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The operating mode of an HVDC bipole (bipolar, monopolar metallic return, etc).''', mandatory=True, profiles=[CgmesProfileType.EQ]),
-        CgmesProperty(property_name='Substation', class_type='Substation', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The containing substation of the DC converter unit.''', profiles=[CgmesProfileType.EQ]),
+        CgmesProperty(property_name='operationMode', class_type=DCConverterOperatingModeKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The operating mode of an HVDC bipole (bipolar, monopolar metallic return, etc).''', profiles=[]),
+        CgmesProperty(property_name='Substation', class_type='Substation', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The containing substation of the DC converter unit.''', profiles=[]),
     )
     __slots__ = ('operationMode', 'Substation')
     def __init__(self, rdfid='', tpe='DCConverterUnit'):

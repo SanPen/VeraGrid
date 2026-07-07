@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import numpy as np
-from scipy.sparse.linalg import svds, ArpackError
+from scipy.sparse.linalg import svds
 from scipy.sparse.linalg import splu
 from scipy.sparse import csc_matrix
 
@@ -17,20 +17,18 @@ def sparse_instability_svd_test(A: csc_matrix, condition_number_thrshold: float 
              unstable (bool): 'stable' or 'unstable' based on the condition number
     """
     if A.shape[0] > 2:  # 0 < k < A.shape[0]
+        # Compute the singular values using the svds function (k=2 to get largest and smallest)
+        u, s, vt = svds(A, k=2)  # Gets the smallest and largest singular values
 
-        try:
-            # Compute the singular values using the svds function (k=2 to get largest and smallest)
-            u, s, vt = svds(A, k=2)  # Gets the smallest and largest singular values
+        # Condition number is the ratio of largest to smallest singular value
+        condition_number = s[-1] / s[0]
 
-            # Condition number is the ratio of largest to smallest singular value
-            condition_number = s[-1] / s[0]
+        print("SVD  rcond:", condition_number)
 
-            # Determine stability
-            unstable = condition_number > condition_number_thrshold
-            return condition_number, unstable
-        except ArpackError as e:
-            print(f"Error running svds: {str(e)}")
-            return 0, False
+        # Determine stability
+        unstable = condition_number > condition_number_thrshold
+
+        return condition_number, unstable
     else:
         return 0, False
 
@@ -56,6 +54,7 @@ def sparse_instability_lu_test(A: csc_matrix, condition_number_thrshold: float =
             # Determine stability
             unstable = rcond < condition_number_thrshold
 
+            print("LU  decomposition ok, rcond:", rcond)
             return rcond, unstable
 
         except RuntimeError as e:

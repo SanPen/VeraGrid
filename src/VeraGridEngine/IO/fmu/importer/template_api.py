@@ -13,8 +13,8 @@ from VeraGridEngine.enumerations import (
     DeviceType,
     FmuTemplateDomain,
     FmuTemplateMode,
-    ParamPowerFlowReferenceType,
-    VarPowerFlowReferenceType,
+    ParamPowerFlowRefferenceType,
+    VarPowerFlowRefferenceType,
 )
 from VeraGridEngine.Utils.Symbolic.block import Block
 
@@ -77,17 +77,17 @@ def _sanitize_symbol_name(text: str) -> str:
         return candidate
 
 
-def _build_var_reference_aliases() -> dict[str, VarPowerFlowReferenceType]:
+def _build_var_reference_aliases() -> dict[str, VarPowerFlowRefferenceType]:
     """
     Build the alias map used to auto-match FMU variable names to VeraGrid references.
 
     :return: Normalized alias map.
     """
 
-    aliases: dict[str, VarPowerFlowReferenceType] = dict()
-    reference: VarPowerFlowReferenceType
-    for reference in VarPowerFlowReferenceType:
-        if reference == VarPowerFlowReferenceType.NOTHING:
+    aliases: dict[str, VarPowerFlowRefferenceType] = dict()
+    reference: VarPowerFlowRefferenceType
+    for reference in VarPowerFlowRefferenceType:
+        if reference == VarPowerFlowRefferenceType.NOTHING:
             pass
         else:
             aliases[_normalize_identifier(reference.name)] = reference
@@ -95,17 +95,17 @@ def _build_var_reference_aliases() -> dict[str, VarPowerFlowReferenceType]:
     return aliases
 
 
-def _build_param_reference_aliases() -> dict[str, ParamPowerFlowReferenceType]:
+def _build_param_reference_aliases() -> dict[str, ParamPowerFlowRefferenceType]:
     """
     Build the alias map used to auto-match FMU parameter names to VeraGrid parameter references.
 
     :return: Normalized alias map.
     """
 
-    aliases: dict[str, ParamPowerFlowReferenceType] = dict()
-    reference: ParamPowerFlowReferenceType
-    for reference in ParamPowerFlowReferenceType:
-        if reference == ParamPowerFlowReferenceType.NOTHING:
+    aliases: dict[str, ParamPowerFlowRefferenceType] = dict()
+    reference: ParamPowerFlowRefferenceType
+    for reference in ParamPowerFlowRefferenceType:
+        if reference == ParamPowerFlowRefferenceType.NOTHING:
             pass
         else:
             aliases[_normalize_identifier(reference.name)] = reference
@@ -113,7 +113,7 @@ def _build_param_reference_aliases() -> dict[str, ParamPowerFlowReferenceType]:
     return aliases
 
 
-def _resolve_variable_reference(variable_name: str) -> VarPowerFlowReferenceType | None:
+def _resolve_variable_reference(variable_name: str) -> VarPowerFlowRefferenceType | None:
     """
     Resolve one FMU variable name into a VeraGrid runtime reference when possible.
 
@@ -125,7 +125,7 @@ def _resolve_variable_reference(variable_name: str) -> VarPowerFlowReferenceType
     return aliases.get(_normalize_identifier(variable_name), None)
 
 
-def _resolve_parameter_reference(variable_name: str) -> ParamPowerFlowReferenceType | None:
+def _resolve_parameter_reference(variable_name: str) -> ParamPowerFlowRefferenceType | None:
     """
     Resolve one FMU parameter name into a VeraGrid device-parameter reference when possible.
 
@@ -200,7 +200,7 @@ def _build_auto_input_bindings(metadata: FmuModelDescription) -> tuple[FmuRefBin
     """
 
     bindings: list[FmuRefBinding] = list()
-    seen_references: set[VarPowerFlowReferenceType] = set()
+    seen_references: set[VarPowerFlowRefferenceType] = set()
     variable: FmuVariableDescription
     for variable in _list_input_variables(metadata):
         reference = _resolve_variable_reference(variable.name)
@@ -224,7 +224,7 @@ def _build_auto_output_bindings(metadata: FmuModelDescription) -> tuple[FmuRefBi
     """
 
     bindings: list[FmuRefBinding] = list()
-    seen_references: set[VarPowerFlowReferenceType] = set()
+    seen_references: set[VarPowerFlowRefferenceType] = set()
     variable: FmuVariableDescription
     for variable in _list_output_variables(metadata):
         reference = _resolve_variable_reference(variable.name)
@@ -268,7 +268,7 @@ def _parse_numeric_start_value(variable: FmuVariableDescription) -> float:
 
 
 def _build_output_defaults(metadata: FmuModelDescription,
-                           output_bindings: tuple[FmuRefBinding, ...]) -> dict[VarPowerFlowReferenceType, float]:
+                           output_bindings: tuple[FmuRefBinding, ...]) -> dict[VarPowerFlowRefferenceType, float]:
     """
     Build default output values for the bound FMU output references.
 
@@ -277,7 +277,7 @@ def _build_output_defaults(metadata: FmuModelDescription,
     :return: Default values indexed by VeraGrid reference.
     """
 
-    defaults: dict[VarPowerFlowReferenceType, float] = dict()
+    defaults: dict[VarPowerFlowRefferenceType, float] = dict()
     binding: FmuRefBinding
     for binding in output_bindings:
         defaults[binding.reference] = _parse_numeric_start_value(metadata.get_variable(binding.fmu_variable_name))
@@ -399,7 +399,7 @@ def _append_visual_input_ports(block: Block,
     :return: None.
     """
 
-    bound_references: dict[str, VarPowerFlowReferenceType] = dict()
+    bound_references: dict[str, VarPowerFlowRefferenceType] = dict()
     binding: FmuRefBinding
     for binding in input_bindings:
         bound_references[binding.fmu_variable_name] = binding.reference
@@ -614,7 +614,8 @@ def _to_interface_mode(mode: FmuTemplateMode) -> FmuInterfaceMode:
 
 
 def configure_fmu_template(template: FmuTemplate,
-                           var_factory: VarFactory,
+                           rms_var_factory: VarFactory,
+                           emt_var_factory: VarFactory,
                            fmu_path: str | Path,
                            device_tpe: DeviceType,
                            domain: FmuTemplateDomain,
@@ -628,7 +629,8 @@ def configure_fmu_template(template: FmuTemplate,
     the RMS or EMT import adapters.
 
     :param template: Template instance to mutate.
-    :param var_factory: RMS variable factory owned by the current grid.
+    :param rms_var_factory: RMS variable factory owned by the current grid.
+    :param emt_var_factory: EMT variable factory owned by the current grid.
     :param fmu_path: FMU archive selected by the user.
     :param device_tpe: Target VeraGrid device type.
     :param domain: Simulation domain where the template will be used.
@@ -659,7 +661,7 @@ def configure_fmu_template(template: FmuTemplate,
     if domain == FmuTemplateDomain.RMS:
         if mode == FmuTemplateMode.CO_SIMULATION:
             shell_template = build_rms_fmu_cs_injection_template(
-                vfactory=var_factory,
+                vfactory=rms_var_factory,
                 config=template_config,
                 input_bindings=input_bindings,
                 output_bindings=output_bindings,
@@ -667,7 +669,7 @@ def configure_fmu_template(template: FmuTemplate,
                 device_tpe=device_tpe,
                 output_defaults=output_defaults,
             )
-            _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
+            _decorate_template_block(shell_template.block, rms_var_factory, metadata, input_bindings, output_bindings)
             serialized_config = dump_fmu_cs_device_config(
                 build_record_from_device_arguments(
                     domain=FmuCsDomain.RMS,
@@ -681,7 +683,7 @@ def configure_fmu_template(template: FmuTemplate,
         else:
             if mode == FmuTemplateMode.MODEL_EXCHANGE:
                 shell_template = build_rms_fmu_me_injection_template(
-                    vfactory=var_factory,
+                    vfactory=rms_var_factory,
                     config=template_config,
                     input_bindings=input_bindings,
                     output_bindings=output_bindings,
@@ -690,7 +692,7 @@ def configure_fmu_template(template: FmuTemplate,
                     output_defaults=output_defaults,
                     integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER,
                 )
-                _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
+                _decorate_template_block(shell_template.block, rms_var_factory, metadata, input_bindings, output_bindings)
                 serialized_config = dump_fmu_me_device_config(
                     build_me_record_from_device_arguments(
                         domain=FmuMeDomain.RMS,
@@ -708,7 +710,7 @@ def configure_fmu_template(template: FmuTemplate,
         if domain == FmuTemplateDomain.EMT:
             if mode == FmuTemplateMode.CO_SIMULATION:
                 shell_template = build_emt_fmu_cs_injection_template(
-                    vfactory=var_factory,
+                    vfactory=emt_var_factory,
                     config=template_config,
                     input_bindings=input_bindings,
                     output_bindings=output_bindings,
@@ -716,7 +718,7 @@ def configure_fmu_template(template: FmuTemplate,
                     device_tpe=device_tpe,
                     output_defaults=output_defaults,
                 )
-                _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
+                _decorate_template_block(shell_template.block, emt_var_factory, metadata, input_bindings, output_bindings)
                 serialized_config = dump_fmu_cs_device_config(
                     build_record_from_device_arguments(
                         domain=FmuCsDomain.EMT,
@@ -730,7 +732,7 @@ def configure_fmu_template(template: FmuTemplate,
             else:
                 if mode == FmuTemplateMode.MODEL_EXCHANGE:
                     shell_template = build_emt_fmu_me_injection_template(
-                        vfactory=var_factory,
+                        vfactory=emt_var_factory,
                         config=template_config,
                         input_bindings=input_bindings,
                         output_bindings=output_bindings,
@@ -739,7 +741,7 @@ def configure_fmu_template(template: FmuTemplate,
                         output_defaults=output_defaults,
                         integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER,
                     )
-                    _decorate_template_block(shell_template.block, var_factory, metadata, input_bindings, output_bindings)
+                    _decorate_template_block(shell_template.block, emt_var_factory, metadata, input_bindings, output_bindings)
                     serialized_config = dump_fmu_me_device_config(
                         build_me_record_from_device_arguments(
                             domain=FmuMeDomain.EMT,

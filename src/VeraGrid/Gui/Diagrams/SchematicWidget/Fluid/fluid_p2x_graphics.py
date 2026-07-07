@@ -8,7 +8,7 @@ from PySide6.QtGui import QPen
 from PySide6.QtWidgets import (QMenu)
 from VeraGridEngine.Devices.Fluid.fluid_p2x import FluidP2x
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE,  Circle
-from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
+from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
@@ -57,22 +57,22 @@ class FluidP2xGraphicItem(InjectionTemplateGraphicItem):
         @return:
         """
         menu = QMenu()
-        menu.addSection(translate_context_menu_text("Power2X"))
+        menu.addSection("Power2X")
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Plot fluid profiles"),
+                       text="Plot fluid profiles",
                        icon_path=":/Icons/icons/plot.png",
                        function_ptr=self.plot)
 
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Delete"),
+                       text="Delete",
                        icon_path=":/Icons/icons/delete3.png",
                        function_ptr=self.delete)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Change bus"),
+                       text="Change bus",
                        icon_path=":/Icons/icons/move_bus.png",
                        function_ptr=self.change_bus)
 

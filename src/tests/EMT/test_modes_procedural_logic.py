@@ -626,12 +626,7 @@ def run_case(
     block.unify_blocks()
 
     glob_time: Var = vf.add_var("t_glob")
-    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
-    problem = GenericEmtProblem(
-        sys_block=block,
-        glob_time=glob_time,
-        static_parameter_values_mapping=static_parameter_values_mapping,
-    )
+    problem = GenericEmtProblem(sys_block=block, glob_time=glob_time)
 
     solver = JitSymbolicSolver(
         problem=problem,
@@ -646,7 +641,7 @@ def run_case(
     assert protection is not None
 
     params0 = problem.event_params_values.copy()
-    t, y_hist, dy_hist, _, _ = solver.simulate(params0=params0, boundary_updater=protection)
+    t, y_hist, dy_hist = solver.simulate(params0=params0, boundary_updater=protection)
 
     return t, y_hist, dy_hist, problem, vars_map, logic
 
@@ -660,12 +655,7 @@ def run_boolean_operator_case(
     block, vars_map = create_boolean_operator_logic_system(vf=vf)
     block.unify_blocks()
 
-    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
-    problem = GenericEmtProblem(
-        sys_block=block,
-        glob_time=vf.add_var("t_glob_bool_demo"),
-        static_parameter_values_mapping=static_parameter_values_mapping,
-    )
+    problem = GenericEmtProblem(sys_block=block, glob_time=vf.add_var("t_glob_bool_demo"))
     base_updater = build_boundary_updater_from_block(problem)
     assert base_updater is not None
 
@@ -687,7 +677,7 @@ def run_boolean_operator_case(
     )
 
     params0 = problem.event_params_values.copy()
-    t, y_hist, dy_hist, _, _ = solver.simulate(params0=params0, boundary_updater=tracing_updater)
+    t, y_hist, dy_hist = solver.simulate(params0=params0, boundary_updater=tracing_updater)
     return t, y_hist, dy_hist, problem, vars_map, tracing_updater
 
 
@@ -700,12 +690,7 @@ def run_analog_flipflop_case(
     block, vars_map = create_analog_flipflop_logic_system(vf=vf)
     block.unify_blocks()
 
-    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
-    problem = GenericEmtProblem(
-        sys_block=block,
-        glob_time=vf.add_var("t_glob_af_demo"),
-        static_parameter_values_mapping=static_parameter_values_mapping,
-    )
+    problem = GenericEmtProblem(sys_block=block, glob_time=vf.add_var("t_glob_af_demo"))
     base_updater = build_boundary_updater_from_block(problem)
     assert base_updater is not None
 
@@ -725,7 +710,7 @@ def run_analog_flipflop_case(
     )
 
     params0 = problem.event_params_values.copy()
-    t, y_hist, dy_hist, _, _ = solver.simulate(params0=params0, boundary_updater=tracing_updater)
+    t, y_hist, dy_hist = solver.simulate(params0=params0, boundary_updater=tracing_updater)
     return t, y_hist, dy_hist, problem, vars_map, tracing_updater
 
 

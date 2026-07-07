@@ -4,8 +4,13 @@ from pathlib import Path
 
 import pytest
 
-from VeraGridEngine.IO.fmu.importer.bindings import FmuBindingDirection, FmuVariableBinding, validate_bindings
-from VeraGridEngine.IO.fmu.importer.model_description import FmuInterfaceMode, read_fmu_model_description
+from VeraGridEngine.IO.fmu.importer import (
+    FmuBindingDirection,
+    FmuInterfaceMode,
+    FmuVariableBinding,
+    read_fmu_model_description,
+    validate_bindings,
+)
 
 
 def _artifacts_root() -> Path:

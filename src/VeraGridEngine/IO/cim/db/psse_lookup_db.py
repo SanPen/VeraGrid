@@ -8,7 +8,7 @@ import pandas as pd
 
 from VeraGridEngine.IO.cim.db.base_db import BaseDb
 from VeraGridEngine.IO.cim.db.file_system import get_create_roseta_db_folder
-from VeraGridEngine.IO.raw.psse_circuit import PsseCircuit
+from VeraGridEngine.IO.raw.devices.psse_circuit import PsseCircuit
 
 
 class PSSeLookUpDb(BaseDb):

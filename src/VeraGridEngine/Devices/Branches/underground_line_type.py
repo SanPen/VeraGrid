@@ -7,7 +7,6 @@ from typing import Tuple
 import numpy as np
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
-from VeraGridEngine.enumerations import PrpCat
 
 
 class UndergroundLineType(DynamicDevice):
@@ -29,105 +28,22 @@ class UndergroundLineType(DynamicDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(
-            prop_name='Imax',
-            units='kA',
-            tpe=float,
-            definition='Current rating of the line',
-            old_names=['rating'],
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='Vnom',
-            units='kV',
-            tpe=float,
-            definition='Voltage rating of the line',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='freq',
-            units='Hz',
-            tpe=float,
-            definition='Cable frequency',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='R',
-            units='Ohm/km',
-            tpe=float,
-            definition='Positive-sequence resistance per km',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='X',
-            units='Ohm/km',
-            tpe=float,
-            definition='Positive-sequence reactance per km',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='B',
-            units='uS/km',
-            tpe=float,
-            definition='Positive-sequence shunt susceptance per km',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='C',
-            units='uF/km',
-            tpe=float,
-            definition='Positive-sequence shunt capacitance per km (alternative to B',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='R0',
-            units='Ohm/km',
-            tpe=float,
-            definition='Zero-sequence resistance per km',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='X0',
-            units='Ohm/km',
-            tpe=float,
-            definition='Zero-sequence reactance per km',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='B0',
-            units='uS/km',
-            tpe=float,
-            definition='Zero-sequence shunt susceptance per km',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='C0',
-            units='uF/km',
-            tpe=float,
-            definition='Zero-sequence shunt capacitance per km (alternative to B0',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='n_circuits',
-            units='',
-            tpe=int,
-            definition='number of circuits',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='capex',
-            units='currency/km',
-            tpe=float,
-            definition='Capital expenditure per km',
-            cat=[PrpCat.INV],
-        ),
-        GCProp(
-            prop_name='opex',
-            units='currency/MWh',
-            tpe=float,
-            definition='Operational expenditure',
-            cat=[PrpCat.INV],
-        ),
+        GCProp(key='Imax', units='kA', tpe=float, definition='Current rating of the line', old_names=['rating']),
+        GCProp(key='Vnom', units='kV', tpe=float, definition='Voltage rating of the line'),
+        GCProp(key='freq', units='Hz', tpe=float, definition='Cable frequency'),
+        GCProp(key='R', units='Ohm/km', tpe=float, definition='Positive-sequence resistance per km'),
+        GCProp(key='X', units='Ohm/km', tpe=float, definition='Positive-sequence reactance per km'),
+        GCProp(key='B', units='uS/km', tpe=float, definition='Positive-sequence shunt susceptance per km'),
+        GCProp(key='C', units='uF/km', tpe=float,
+                   definition='Positive-sequence shunt capacitance per km (alternative to B'),
+        GCProp(key='R0', units='Ohm/km', tpe=float, definition='Zero-sequence resistance per km'),
+        GCProp(key='X0', units='Ohm/km', tpe=float, definition='Zero-sequence reactance per km'),
+        GCProp(key='B0', units='uS/km', tpe=float, definition='Zero-sequence shunt susceptance per km'),
+        GCProp(key='C0', units='uF/km', tpe=float,
+                   definition='Zero-sequence shunt capacitance per km (alternative to B0'),
+        GCProp(key='n_circuits', units='', tpe=int, definition='number of circuits'),
+        GCProp(key='capex', units='currency/km', tpe=float, definition='Capital expenditure per km'),
+        GCProp(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure'),
     )
 
     def __init__(self, name: str = 'UndergroundLine', idtag: None | str = None, Imax: float = 1.0,

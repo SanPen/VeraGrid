@@ -187,17 +187,13 @@ def get_certificate(base_url: str, certificate_path: str, pwd: str, logger: Logg
 
 
 def gather_model_as_jsons_for_communication(circuit: MultiCircuit,
-                                            instruction: RemoteInstruction) -> dict[
-    str, str | float | int | dict[str, str] | dict[str, dict[str, dict[str, str] | list[dict[str, str]]] | dict[
-        str, list[dict[str, Any]] | dict[int, dict[str, Any]] | list[int]]] | list[Any]]:
+                                            instruction: RemoteInstruction) -> Dict[str, Dict[str, Dict[str, str]]]:
     """
     Create a Json with the same information expected for loading with `parse_veragrid_data`
     :param circuit: MultiCircuit
     :param instruction: RemoteInstruction
     :return: JSON like data
     """
-
-    packed_circuit_data = gather_model_as_jsons(circuit=circuit)
 
     data = {
         'name': circuit.name,
@@ -207,8 +203,7 @@ def gather_model_as_jsons_for_communication(circuit: MultiCircuit,
         'UserName': circuit.user_name,
         'sender_id': uuid4().hex,
         'instruction': instruction.get_data(),
-        'model_data': packed_circuit_data['model_data'],
-        'symbolic_data': packed_circuit_data['symbolic_data'],
+        'model_data': gather_model_as_jsons(circuit=circuit),
         'diagrams': []
     }
     return data

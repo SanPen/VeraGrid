@@ -14,7 +14,6 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOpt
 from VeraGridEngine.Simulations.driver_template import TimeSeriesDriverTemplate
 from VeraGridEngine.Simulations.OPF.simple_dispatch_ts import GreedyDispatchInputsSnapshot, greedy_dispatch2
 from VeraGridEngine.Compilers.circuit_to_newton_pa import newton_pa_linear_opf, newton_pa_nonlinear_opf
-import VeraGridEngine.Compilers.circuit_to_gslv as gslv
 
 
 class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
@@ -278,8 +277,6 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
 
             self.results.hvdc_Pf = res.hvdc_Pf
             self.results.hvdc_loading = res.hvdc_loading
-            self.results.vsc_Pf = res.vsc_Pf * Sbase
-            self.results.vsc_loading = res.vsc_loading
             self.results.converged = res.converged
             self.results.error = res.error
             self.results.non_linear = True
@@ -306,18 +303,6 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
         """
 
         self.tic()
-
-        if self.engine == EngineType.GSLV:
-            if not gslv.GSLV_AVAILABLE:
-                self.engine = EngineType.VeraGrid
-                self.logger.add_warning('GSLV not available, falling back to VeraGrid')
-            else:
-                if self.options.solver != SolverType.LINEAR_OPF:
-                    self.engine = EngineType.VeraGrid
-                    self.logger.add_warning('GSLV OPF snapshot only supports LINEAR_OPF, falling back to VeraGrid')
-                else:
-                    pass
-
         if self.engine == EngineType.VeraGrid:
             self.opf()
 
@@ -382,49 +367,6 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
 
             else:
                 raise Exception(f"{self.options.solver} Not implemented yet")
-
-        elif self.engine == EngineType.GSLV:
-
-            self.report_text('Running Linear OPF with GSLV...')
-
-            gslv_res = gslv.gslv_opf(circuit=self.grid,
-                                     opf_options=self.options,
-                                     time_series=False,
-                                     time_indices=None,
-                                     logger=self.logger)
-
-            self.results.voltage = gslv_res.voltage[0, :]
-            self.results.Sbus = gslv_res.Sbus[0, :].real
-            self.results.bus_shadow_prices = gslv_res.bus_shadow_prices[0, :]
-
-            self.results.load_power = gslv_res.load_power[0, :]
-            self.results.load_shedding = gslv_res.load_shedding[0, :]
-            self.results.load_shedding_cost = gslv_res.load_shedding_cost[0, :]
-            self.results.battery_power = gslv_res.battery_power[0, :]
-            self.results.generator_power = gslv_res.generator_power[0, :]
-            self.results.generator_reactive_power = gslv_res.generator_reactive_power[0, :]
-            self.results.Sf = gslv_res.Sf[0, :].real
-            self.results.St = gslv_res.St[0, :].real
-            self.results.overloads = gslv_res.overloads[0, :].real
-            self.results.overloads_cost = gslv_res.overloads_cost[0, :]
-            self.results.loading = gslv_res.loading[0, :].real
-            self.results.losses = gslv_res.losses[0, :]
-            self.results.tap_angle = gslv_res.tap_angle[0, :]
-            self.results.tap_module = gslv_res.tap_module[0, :]
-
-            self.results.hvdc_Pf = gslv_res.hvdc_Pf[0, :]
-            self.results.hvdc_loading = gslv_res.hvdc_loading[0, :]
-            self.results.vsc_Pf = gslv_res.vsc_Pf[0, :]
-            self.results.vsc_loading = gslv_res.vsc_loading[0, :]
-            self.results.shunt_like_reactive_power = gslv_res.shunt_like_reactive_power[0, :]
-
-            self.results.fluid_node_current_level = gslv_res.fluid_node_current_level[0, :]
-            self.results.fluid_node_flow_in = gslv_res.fluid_node_flow_in[0, :]
-            self.results.fluid_node_flow_out = gslv_res.fluid_node_flow_out[0, :]
-            self.results.fluid_node_p2x_flow = gslv_res.fluid_node_p2x_flow[0, :]
-            self.results.fluid_node_spillage = gslv_res.fluid_node_spillage[0, :]
-            self.results.fluid_path_flow = gslv_res.fluid_path_flow[0, :]
-            self.results.fluid_injection_flow = gslv_res.fluid_injection_flow[0, :]
 
         else:
             self.opf()

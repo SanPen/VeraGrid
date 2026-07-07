@@ -8,11 +8,12 @@ import os
 import json
 import numpy as np
 import pandas as pd
-from typing import Any, List, Set, Dict, Union, Tuple, TYPE_CHECKING, Iterable, TypeVar
+from typing import Any, List, Set, Dict, Union, Tuple, TYPE_CHECKING, Iterable
 from collections.abc import Callable
 from collections import defaultdict
 from warnings import warn
 import networkx as nx
+import pyproj
 from matplotlib import pyplot as plt
 
 from PySide6.QtCore import (Qt, QPoint, QSize, QPointF, QRect, QRectF, QMimeData, QIODevice, QByteArray,
@@ -37,13 +38,6 @@ from VeraGridEngine.Devices.Branches.hvdc_line import HvdcLine
 from VeraGridEngine.Devices.Branches.transformer3w import Transformer3W, Winding
 from VeraGridEngine.Devices.Branches.transformerNw import TransformerNW
 from VeraGridEngine.Devices.Injections.generator import Generator
-from VeraGridEngine.Devices.Injections.battery import Battery
-from VeraGridEngine.Devices.Injections.shunt import Shunt
-from VeraGridEngine.Devices.Injections.controllable_shunt import ControllableShunt
-from VeraGridEngine.Devices.Injections.static_generator import StaticGenerator
-from VeraGridEngine.Devices.Injections.load import Load
-from VeraGridEngine.Devices.Injections.external_grid import ExternalGrid
-from VeraGridEngine.Devices.Injections.current_injection import CurrentInjection
 from VeraGridEngine.Devices.Fluid import FluidNode, FluidPath
 from VeraGridEngine.Devices.Diagrams.schematic_diagram import SchematicDiagram
 from VeraGridEngine.Devices.Diagrams.graphic_location import GraphicLocation
@@ -74,7 +68,6 @@ from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.switch_graphics import Switc
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.transformer3w_graphics import Transformer3WGraphicItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.transformerNw_graphics import TransformerNWGraphicItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.generator_graphics import GeneratorGraphicItem
-from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, GenericDiagramWidget
 from VeraGrid.Gui.Diagrams.base_diagram_widget import BaseDiagramWidget
 from VeraGrid.Gui.general_dialogues import InputNumberDialogue
@@ -117,9 +110,6 @@ SCHEMATIC_BRANCH_DEVICE_TYPES: Tuple[DeviceType, ...] = (
 )
 
 OPTIONAL_PORT = Union[BarTerminalItem, RoundTerminalItem, None]
-TERMINAL_OWNER_GRAPHICS = BusGraphicItem | FluidNodeGraphicItem
-_GRAPHIC_T = TypeVar("_GRAPHIC_T")
-_LINE_GRAPHIC_T = TypeVar("_LINE_GRAPHIC_T", bound=LineGraphicTemplateItem)
 
 
 class SchematicLibraryModel(QStandardItemModel):
@@ -299,7 +289,6 @@ class SchematicScene(QGraphicsScene):
         #
         # nue with the rest of the actions)
         super(SchematicScene, self).mouseReleaseEvent(event)
-        self.parent_.persist_selected_item_positions()
 
 
 class CustomGraphicsView(QGraphicsView):
@@ -389,188 +378,6 @@ def is_vsc3_terminal(arriving_widget: Union[BarTerminalItem, RoundTerminalItem, 
     return isinstance(arriving_widget.parent, VscGraphicItem3Term)
 
 
-def _hide_zero_result_value(value: float) -> float | None:
-    """
-    Hide exact zeros so result badges only show meaningful channels.
-
-    :param value: Resolved channel value.
-    :return: ``None`` for zero, else the original value.
-    """
-    if value == 0.0:
-        return None
-    else:
-        return value
-
-
-def _get_injection_result_index(device_name: str,
-                                fallback_index: int,
-                                lookup: dict[str, int]) -> int:
-    """
-    Resolve one device result index, preferring the engine-provided name mapping.
-
-    :param device_name: Device name to look up.
-    :param fallback_index: Local device order fallback.
-    :param lookup: Result name lookup.
-    :return: Resolved result index.
-    """
-    normalized_name: str = str(device_name).strip()
-
-    if normalized_name:
-        return lookup.get(normalized_name, fallback_index)
-    else:
-        return fallback_index
-
-
-def _has_single_phase_explicit_injection_results(gen_p: Vec | None,
-                                                 gen_q: Vec | None,
-                                                 battery_p: Vec | None,
-                                                 battery_q: Vec | None,
-                                                 shunt_q: Vec | None) -> bool:
-    """
-    Tell whether the active study exported explicit single-phase injection results.
-
-    :param gen_p: Generator active powers.
-    :param gen_q: Generator reactive powers.
-    :param battery_p: Battery active powers.
-    :param battery_q: Battery reactive powers.
-    :param shunt_q: Shunt-like reactive powers.
-    :return: ``True`` when at least one explicit injection result channel is present.
-    """
-    # Dynamic and fallback colouring paths can reuse ``colour_results()``
-    # without providing any per-device injection arrays. In those cases the
-    # GUI must clear stale overlays and stop, otherwise profile-backed
-    # setpoints get painted as if they were simulation results.
-    if gen_p is not None or gen_q is not None:
-        return True
-    else:
-        pass
-
-    if battery_p is not None or battery_q is not None:
-        return True
-    else:
-        pass
-
-    if shunt_q is not None:
-        return True
-    else:
-        return False
-
-
-def _has_three_phase_explicit_injection_results(gen_q_a: Vec | None,
-                                                gen_q_b: Vec | None,
-                                                gen_q_c: Vec | None,
-                                                battery_q_a: Vec | None,
-                                                battery_q_b: Vec | None,
-                                                battery_q_c: Vec | None,
-                                                shunt_q_a: Vec | None,
-                                                shunt_q_b: Vec | None,
-                                                shunt_q_c: Vec | None) -> bool:
-    """
-    Tell whether the active study exported explicit three-phase injection results.
-
-    :param gen_q_a: Generator phase-a reactive powers.
-    :param gen_q_b: Generator phase-b reactive powers.
-    :param gen_q_c: Generator phase-c reactive powers.
-    :param battery_q_a: Battery phase-a reactive powers.
-    :param battery_q_b: Battery phase-b reactive powers.
-    :param battery_q_c: Battery phase-c reactive powers.
-    :param shunt_q_a: Shunt-like phase-a reactive powers.
-    :param shunt_q_b: Shunt-like phase-b reactive powers.
-    :param shunt_q_c: Shunt-like phase-c reactive powers.
-    :return: ``True`` when at least one explicit 3-phase injection result channel is present.
-    """
-    if gen_q_a is not None or gen_q_b is not None or gen_q_c is not None:
-        return True
-    else:
-        pass
-
-    if battery_q_a is not None or battery_q_b is not None or battery_q_c is not None:
-        return True
-    else:
-        pass
-
-    if shunt_q_a is not None or shunt_q_b is not None or shunt_q_c is not None:
-        return True
-    else:
-        return False
-
-
-def _get_injection_result_color(graphic_object: InjectionTemplateGraphicItem) -> QColor:
-    """
-    Get the result overlay color for an injection graphic.
-
-    :param graphic_object: Injection graphic item.
-    :return: Overlay color.
-    """
-    parent_graphic = graphic_object.parent
-    color: QColor = ACTIVE['color']
-
-    # Use the host bus color when available so the overlay remains visually tied to the node state.
-    if isinstance(parent_graphic, BusGraphicItem):
-        if parent_graphic.tile is None:
-            color = parent_graphic.terminal.brush().color()
-        else:
-            color = parent_graphic.tile.brush().color()
-    else:
-        pass
-
-    return color
-
-
-def _get_optional_result_value(values: Vec | None,
-                               index: int) -> float | None:
-    """
-    Read one optional result channel safely.
-
-    :param values: Optional result vector.
-    :param index: Requested index.
-    :return: Float value when present, else ``None``.
-    """
-    if values is not None and index < len(values):
-        return float(values[index])
-    else:
-        return None
-
-
-def _apply_single_phase_injection_result(graphic_object: InjectionTemplateGraphicItem,
-                                         device_name: str,
-                                         tooltip_title: str,
-                                         p_value: float | None,
-                                         q_value: float | None) -> None:
-    """
-    Apply a single-phase result badge to an injection graphic.
-
-    :param graphic_object: Injection graphic item.
-    :param device_name: Injection device name.
-    :param tooltip_title: Tooltip title.
-    :param p_value: Active power value.
-    :param q_value: Reactive power value.
-    :return: ``None``.
-    """
-    if p_value is None and q_value is None:
-        pass
-    else:
-        color: QColor = _get_injection_result_color(graphic_object=graphic_object)
-        lines: list[str] = list()
-
-        # Only show channels that are present in the resolved result for this device.
-        if p_value is None:
-            pass
-        else:
-            lines.append(f"P {p_value:+.1f} MW")
-
-        if q_value is None:
-            pass
-        else:
-            lines.append(f"Q {q_value:+.1f} MVAr")
-
-        tooltip_lines: list[str] = [device_name, tooltip_title]
-        tooltip_lines.extend(lines)
-        graphic_object.set_result_visuals(lines=lines,
-                                          tooltip="\n".join(tooltip_lines),
-                                          color=color)
-
-
 class SchematicWidget(BaseDiagramWidget):
     """
     This is the bus-branch editor
@@ -595,7 +402,7 @@ class SchematicWidget(BaseDiagramWidget):
 
     def __init__(self,
                  gui: VeraGridMainGUI | DiagramsMain,
-                 diagram: SchematicDiagram,
+                 diagram: Union[SchematicDiagram, None],
                  default_bus_voltage: float = 10.0,
                  time_index: Union[None, int] = None):
         """
@@ -636,9 +443,6 @@ class SchematicWidget(BaseDiagramWidget):
 
         # Scale the view / do the zoom
         self.scale_factor = 1.15  # 1.15
-        self.zoom_angle_step: float = 120.0
-        self.zoom_pixel_step: float = 240.0
-        self.zoom_max_event_steps: float = 1.0
 
         # Zoom indicator
         self._zoom = 0
@@ -762,66 +566,6 @@ class SchematicWidget(BaseDiagramWidget):
                                         draw_labels=graphic_object.draw_labels,
                                         graphic_object=graphic_object)
 
-    def _query_graphic_of_type(self,
-                               elm: ALL_DEV_TYPES | None,
-                               graphic_type: type[_GRAPHIC_T]) -> _GRAPHIC_T | None:
-        """
-        Query one registered graphic and narrow it to the expected widget class.
-        """
-        graphic_object = self.graphics_manager.query(elm)
-
-        if isinstance(graphic_object, graphic_type):
-            return graphic_object
-        else:
-            return None
-
-    def _get_device_type_graphics(self,
-                                  device_type: DeviceType,
-                                  graphic_type: type[_GRAPHIC_T]) -> list[_GRAPHIC_T]:
-        """
-        Return only graphics of the requested widget class for one device type bucket.
-        """
-        return [
-            graphic_object
-            for graphic_object in self.graphics_manager.get_device_type_list(device_type)
-            if isinstance(graphic_object, graphic_type)
-        ]
-
-    def _query_generic_graphic(self, elm: ALL_DEV_TYPES | None) -> GenericDiagramWidget | None:
-        return self._query_graphic_of_type(elm=elm, graphic_type=GenericDiagramWidget)
-
-    def _query_bus_graphic(self, bus: Bus | None) -> BusGraphicItem | None:
-        return self._query_graphic_of_type(elm=bus, graphic_type=BusGraphicItem)
-
-    def _query_fluid_node_graphic(self, node: FluidNode | None) -> FluidNodeGraphicItem | None:
-        return self._query_graphic_of_type(elm=node, graphic_type=FluidNodeGraphicItem)
-
-    def _query_terminal_owner_graphic(self,
-                                      elm: Bus | FluidNode | None) -> TERMINAL_OWNER_GRAPHICS | None:
-        graphic_object = self._query_bus_graphic(elm) if isinstance(elm, Bus) else self._query_fluid_node_graphic(elm)
-        return graphic_object
-
-    def _query_line_graphic(self, elm: ALL_DEV_TYPES | None) -> LineGraphicTemplateItem | None:
-        return self._query_graphic_of_type(elm=elm, graphic_type=LineGraphicTemplateItem)
-
-    def _query_transformer3w_graphic(self, elm: Transformer3W | None) -> Transformer3WGraphicItem | None:
-        return self._query_graphic_of_type(elm=elm, graphic_type=Transformer3WGraphicItem)
-
-    def _query_transformer_nw_graphic(self, elm: TransformerNW | None) -> TransformerNWGraphicItem | None:
-        return self._query_graphic_of_type(elm=elm, graphic_type=TransformerNWGraphicItem)
-
-    def _query_vsc_graphic(self, elm: VSC | None) -> VscGraphicItem | None:
-        return self._query_graphic_of_type(elm=elm, graphic_type=VscGraphicItem)
-
-    def _query_hvdc_graphic(self, elm: HvdcLine | None) -> HvdcGraphicItem | None:
-        return self._query_graphic_of_type(elm=elm, graphic_type=HvdcGraphicItem)
-
-    def _query_fluid_path_graphic(self, elm: FluidPath | None) -> FluidPathGraphicItem | None:
-        return self._query_graphic_of_type(elm=elm, graphic_type=FluidPathGraphicItem)
-
-    def _query_injection_graphic(self, elm: INJECTION_DEVICE_TYPES | None) -> InjectionTemplateGraphicItem | None:
-        return self._query_graphic_of_type(elm=elm, graphic_type=InjectionTemplateGraphicItem)
-
     def graphicsWheelEvent(self, event: QWheelEvent) -> None:
         """
         Zoom
@@ -830,52 +574,14 @@ class SchematicWidget(BaseDiagramWidget):
         """
         self.editor_graphics_view.setTransformationAnchor(QGraphicsView.ViewportAnchor.AnchorUnderMouse)
 
-        zoom_steps: float = self.get_wheel_zoom_steps(event=event)
-        if zoom_steps != 0.0:
-            # Use the wheel magnitude so high-resolution touchpad events produce small smooth zoom increments.
-            self.zoom_by_steps(steps=zoom_steps)
-            event.accept()
+        # print(event.angleDelta().x(), event.angleDelta().y(), event.angleDelta().manhattanLength() )
+        if event.angleDelta().y() > 0:
+            # Zoom in
+            self.zoom_in()
+
         else:
-            event.ignore()
-
-    def get_wheel_zoom_steps(self, event: QWheelEvent) -> float:
-        """
-        Convert a wheel event into a normalized zoom step count.
-
-        A mouse wheel commonly emits an angle delta of 120 units per notch, while laptop touchpads emit many smaller
-        high-resolution events and may provide pixel deltas. Normalizing by the event magnitude keeps mouse-wheel zoom
-        unchanged and makes touchpad zoom proportional to the gesture instead of applying one full zoom step per event.
-
-        :param event: Wheel event coming from the graphics view.
-        :return: Signed zoom step count.
-        """
-        pixel_delta_y: int = event.pixelDelta().y()
-        angle_delta_y: int = event.angleDelta().y()
-
-        if pixel_delta_y != 0:
-            zoom_steps: float = float(pixel_delta_y) / self.zoom_pixel_step
-        else:
-            zoom_steps = float(angle_delta_y) / self.zoom_angle_step
-
-        if zoom_steps > self.zoom_max_event_steps:
-            normalized_zoom_steps: float = self.zoom_max_event_steps
-        else:
-            if zoom_steps < -self.zoom_max_event_steps:
-                normalized_zoom_steps = -self.zoom_max_event_steps
-            else:
-                normalized_zoom_steps = zoom_steps
-
-        return normalized_zoom_steps
-
-    def zoom_by_steps(self, steps: float) -> None:
-        """
-        Apply zoom using a normalized number of mouse-wheel steps.
-
-        :param steps: Signed zoom step count. One positive step matches one traditional mouse-wheel zoom-in notch.
-        :return: None.
-        """
-        zoom_factor: float = self.scale_factor ** steps
-        self.editor_graphics_view.scale(zoom_factor, zoom_factor)
+            # Zooming out
+            self.zoom_out()
 
     def graphicsKeyPressEvent(self, event: QKeyEvent):
         """
@@ -1067,30 +773,29 @@ class SchematicWidget(BaseDiagramWidget):
 
                 for idtag, location in location_items:
 
-                    if isinstance(location, GraphicLocation):
-                        # search for the api object, because it may be created already
-                        graphic_object = self.graphics_manager.query(elm=location.api_object)
+                    # search for the api object, because it may be created already
+                    graphic_object = self.graphics_manager.query(elm=location.api_object)
 
-                        if graphic_object is None:
-                            # add the graphic object to the diagram view
-                            graphic_object = self.create_fluid_node_graphics(node=location.api_object,
-                                                                             x=location.x,
-                                                                             y=location.y,
-                                                                             h=location.h,
-                                                                             w=location.w,
-                                                                             draw_labels=location.draw_labels)
-                            self.add_to_scene(graphic_object=graphic_object)
+                    if graphic_object is None:
+                        # add the graphic object to the diagram view
+                        graphic_object = self.create_fluid_node_graphics(node=location.api_object,
+                                                                         x=location.x,
+                                                                         y=location.y,
+                                                                         h=location.h,
+                                                                         w=location.w,
+                                                                         draw_labels=location.draw_labels)
+                        self.add_to_scene(graphic_object=graphic_object)
 
-                            # create the bus children
-                            graphic_object.create_children_widgets(
-                                injections_by_tpe=inj_dev_by_fluid_node.get(location.api_object, dict()))
+                        # create the bus children
+                        graphic_object.create_children_widgets(
+                            injections_by_tpe=inj_dev_by_fluid_node.get(location.api_object, dict()))
 
-                            graphic_object.change_size(h=location.h, w=location.w)
+                        graphic_object.change_size(h=location.h, w=location.w)
 
-                            # add fluid node reference for later
-                            self.graphics_manager.add_device(elm=location.api_object, graphic=graphic_object)
-                            if location.api_object.bus is not None:
-                                self.graphics_manager.add_device(elm=location.api_object.bus, graphic=graphic_object)
+                        # add fluid node reference for later
+                        self.graphics_manager.add_device(elm=location.api_object, graphic=graphic_object)
+                        if location.api_object.bus is not None:
+                            self.graphics_manager.add_device(elm=location.api_object.bus, graphic=graphic_object)
 
             else:
                 # pass for now...
@@ -1497,12 +1202,6 @@ class SchematicWidget(BaseDiagramWidget):
         """
         if graphic_object is not None:
             self.diagram_scene.addItem(graphic_object)
-            # Newly created graphics must immediately reflect the device active state
-            # and the current GUI theme instead of waiting for a later recolour pass.
-            if isinstance(graphic_object, GenericDiagramWidget):
-                graphic_object.recolour_mode()
-            else:
-                pass
         else:
             warn("Null graphics skipped")
 
@@ -1518,276 +1217,14 @@ class SchematicWidget(BaseDiagramWidget):
                 # self.gui.show_warning_toast(f"Null scene for {graphic_object}, was it deleted already?")
                 pass
 
-    def persist_selected_item_positions(self) -> None:
-        """
-        Persist the final position of every selected movable diagram widget.
-        """
-        graphic_object: QGraphicsItem
-
-        for graphic_object in self.diagram_scene.selectedItems():
-            if graphic_object.flags() & QGraphicsItem.GraphicsItemFlag.ItemIsMovable:
-                if isinstance(graphic_object, GenericDiagramWidget):
-                    api_object = graphic_object.api_object
-                    draw_labels_value: bool = graphic_object.draw_labels
-                else:
-                    try:
-                        api_object = graphic_object.api_object
-                        draw_labels_value = graphic_object.draw_labels
-                    except AttributeError:
-                        api_object = None
-                        draw_labels_value = True
-            else:
-                api_object = None
-                draw_labels_value = True
-
-            if api_object is not None:
-                # Only the resizable diagram widgets persist their stored width and
-                # height. All other movable graphics only need the new position.
-                if isinstance(graphic_object,
-                              (BusGraphicItem,
-                               FluidNodeGraphicItem,
-                               InjectionTemplateGraphicItem,
-                               Transformer3WGraphicItem,
-                               TransformerNWGraphicItem,
-                               VscGraphicItem3Term)):
-                    width_value: float = float(graphic_object.w)
-                    height_value: float = float(graphic_object.h)
-                else:
-                    width_value = 0.0
-                    height_value = 0.0
-
-                scene_position: QPointF = graphic_object.scenePos()
-
-                self.update_diagram_element(device=api_object,
-                                            x=scene_position.x(),
-                                            y=scene_position.y(),
-                                            w=width_value,
-                                            h=height_value,
-                                            r=graphic_object.rotation(),
-                                            draw_labels=draw_labels_value,
-                                            graphic_object=graphic_object)
-            else:
-                pass
-
-    @staticmethod
-    def _clamp_manual_injection_alignment(alignment: Any) -> float:
-        """
-        Clamp one optional manual injection alignment value.
-
-        :param alignment: Raw alignment value.
-        :return: Clamped normalized alignment.
-        """
-        if alignment is None:
-            return 0.5
-        else:
-            pass
-
-        alignment_value: float = float(alignment)
-
-        if alignment_value < 0.0:
-            return 0.0
-        elif alignment_value > 1.0:
-            return 1.0
-        else:
-            return alignment_value
-
-    @staticmethod
-    def _is_plausible_manual_injection_local_position(owner_graphic: Any,
-                                                      injection_graphic: Any,
-                                                      local_position: QPointF,
-                                                      multiplier: float) -> bool:
-        """
-        Check whether one manual child position is broadly plausible in owner-local coordinates.
-
-        :param owner_graphic: Parent node graphic.
-        :param injection_graphic: Child injection graphic.
-        :param local_position: Candidate position in owner-local coordinates.
-        :param multiplier: Width-based plausibility margin multiplier.
-        :return: ``True`` when the local point looks reasonable.
-        """
-        margin: float = max(0.0, float(multiplier) * float(owner_graphic.w))
-        min_x: float = -float(injection_graphic.w) - margin
-        max_x: float = float(owner_graphic.w) + margin
-        min_y: float = -float(injection_graphic.h) - margin
-        max_y: float = float(owner_graphic.h) + margin
-
-        return min_x <= float(local_position.x()) <= max_x and min_y <= float(local_position.y()) <= max_y
-
-    @staticmethod
-    def _build_manual_injection_local_position_from_dock(owner_graphic: Any,
-                                                         injection_graphic: Any,
-                                                         dock: dict[str, Any]) -> QPointF:
-        """
-        Rebuild the expected owner-local position from persisted manual dock metadata.
-
-        The dock metadata stores side, alignment, and offset derived from the
-        child local coordinates. Rebuilding that position gives a stronger
-        legacy-repair signal than a large plausibility box because it preserves
-        the user's original dock intent.
-
-        :param owner_graphic: Parent node graphic.
-        :param injection_graphic: Child injection graphic.
-        :param dock: Persisted dock metadata.
-        :return: Expected owner-local child origin.
-        """
-        side_value: str = str(dock.get("side", "bottom")).strip().lower()
-        alignment: float = SchematicWidget._clamp_manual_injection_alignment(dock.get("alignment", None))
-        offset: float = max(0.0, float(dock.get("offset", 0.0)))
-
-        if side_value == "top":
-            x_pos = float(owner_graphic.w) * alignment - float(injection_graphic.w) * 0.5
-            y_pos = -float(injection_graphic.h) - 40.0 - offset
-        elif side_value == "left":
-            x_pos = -float(injection_graphic.w) - 40.0 - offset
-            y_pos = float(owner_graphic.h) * alignment - float(injection_graphic.h) * 0.5
-        elif side_value == "right":
-            x_pos = float(owner_graphic.w) + 40.0 + offset
-            y_pos = float(owner_graphic.h) * alignment - float(injection_graphic.h) * 0.5
-        else:
-            x_pos = float(owner_graphic.w) * alignment - float(injection_graphic.w) * 0.5
-            y_pos = float(owner_graphic.get_bottom_dock_baseline()) + offset
-
-        return QPointF(x_pos, y_pos)
-
-    def repair_suspicious_injection_positions(self, multiplier: float = 4.0) -> int:
-        """
-        Repair legacy manual injection positions that were accidentally persisted in owner-local space.
-
-        Only injections with ``auto_layout == False`` are considered. The helper
-        repairs a point only when the canonical scene-space interpretation is not
-        plausible but the raw stored value treated as owner-local is plausible.
-
-        :param multiplier: Width-based plausibility margin multiplier.
-        :return: Number of repaired injections.
-        """
-        repaired_count: int = 0
-        owners_to_refresh: list[BusGraphicItem] = list()
-        device_type: DeviceType
-
-        for device_type in (
-                DeviceType.GeneratorDevice,
-                DeviceType.BatteryDevice,
-                DeviceType.StaticGeneratorDevice,
-                DeviceType.ShuntDevice,
-                DeviceType.ControllableShuntDevice,
-                DeviceType.LoadDevice,
-                DeviceType.ExternalGridDevice,
-                DeviceType.CurrentInjectionDevice,
-        ):
-            for graphic_object in self._get_device_type_graphics(device_type, InjectionTemplateGraphicItem):
-                location: GraphicLocation | None = self.diagram.query_point(graphic_object.api_object)
-                should_inspect_graphic: bool = location is not None
-                dock: dict[str, Any] = dict()
-                owner_graphic: BusGraphicItem | None = None
-
-                # The repair only makes sense for persisted manual layouts.
-                # Automatic layouts and graphics without stored coordinates are ignored explicitly.
-                if should_inspect_graphic:
-                    dock = self.diagram.get_dock(graphic_object.api_object)
-                    if bool(dock.get("auto_layout", True)):
-                        should_inspect_graphic = False
-                    else:
-                        should_inspect_graphic = True
-                else:
-                    should_inspect_graphic = False
-
-                # The repair logic needs a concrete owner graphic because the legacy bug
-                # mixed owner-local coordinates with scene coordinates.
-                if should_inspect_graphic:
-                    owner_graphic = graphic_object.parent
-
-                    if owner_graphic is None:
-                        should_inspect_graphic = False
-                    else:
-                        should_inspect_graphic = True
-                else:
-                    owner_graphic = None
-
-                if should_inspect_graphic and owner_graphic is not None and location is not None:
-                    # Evaluate the stored point both as canonical scene coordinates and
-                    # as the legacy broken owner-local coordinates.
-                    scene_candidate_local: QPointF = owner_graphic.mapFromScene(QPointF(float(location.x),
-                                                                                        float(location.y)))
-                    raw_candidate_local: QPointF = QPointF(float(location.x), float(location.y))
-
-                    # Rebuild the expected docked local position from the saved dock metadata.
-                    # This gives a much stronger signal than a wide plausibility box alone.
-                    expected_local: QPointF = SchematicWidget._build_manual_injection_local_position_from_dock(
-                        owner_graphic=owner_graphic,
-                        injection_graphic=graphic_object,
-                        dock=dock
-                    )
-                    raw_distance_to_expected: float = float(np.hypot(float(raw_candidate_local.x()
-                                                                            - expected_local.x()),
-                                                                     float(raw_candidate_local.y()
-                                                                           - expected_local.y())))
-                    scene_distance_to_expected: float = float(np.hypot(float(scene_candidate_local.x()
-                                                                              - expected_local.x()),
-                                                                       float(scene_candidate_local.y()
-                                                                             - expected_local.y())))
-                    repair_distance_margin: float = max(20.0, float(owner_graphic.w) * 0.1)
-
-                    # The legacy bug stores the intended owner-local point directly in the
-                    # scene-space slots. When that happens, the raw stored values remain much
-                    # closer to the dock-derived expectation than the scene-space interpretation.
-                    # A clear distance win is enough for the manual repair tool.
-                    scene_is_plausible: bool = SchematicWidget._is_plausible_manual_injection_local_position(
-                        owner_graphic=owner_graphic,
-                        injection_graphic=graphic_object,
-                        local_position=scene_candidate_local,
-                        multiplier=multiplier
-                    )
-                    raw_is_plausible: bool = SchematicWidget._is_plausible_manual_injection_local_position(
-                        owner_graphic=owner_graphic,
-                        injection_graphic=graphic_object,
-                        local_position=raw_candidate_local,
-                        multiplier=multiplier
-                    )
-
-                    if raw_distance_to_expected + repair_distance_margin < scene_distance_to_expected:
-                        should_repair: bool = True
-                    elif raw_is_plausible and not scene_is_plausible:
-                        should_repair = True
-                    else:
-                        should_repair = False
-
-                    # Rewrite the stored point back to canonical scene coordinates.
-                    if should_repair:
-                        graphic_object.setPos(float(raw_candidate_local.x()), float(raw_candidate_local.y()))
-                        scene_position: QPointF = graphic_object.scenePos()
-                        self.update_diagram_element(device=graphic_object.api_object,
-                                                    x=scene_position.x(),
-                                                    y=scene_position.y(),
-                                                    w=float(graphic_object.w),
-                                                    h=float(graphic_object.h),
-                                                    r=float(graphic_object.rotation()),
-                                                    draw_labels=graphic_object.draw_labels,
-                                                    graphic_object=graphic_object)
-                        repaired_count += 1
-
-                        if not any(owner_graphic is existing_owner for existing_owner in owners_to_refresh):
-                            owners_to_refresh.append(owner_graphic)
-                        else:
-                            pass
-                    else:
-                        pass
-                else:
-                    pass
-
-        owner_graphic: BusGraphicItem
-        for owner_graphic in owners_to_refresh:
-            owner_graphic.arrange_children()
-
-        return repaired_count
-
     def set_selected_buses(self, buses: List[Bus]):
         """
         Select the buses
         :param buses: list of Buses
         """
         for bus in buses:
-            graphic_object = self._query_bus_graphic(bus)
-            if graphic_object is not None:
+            graphic_object = self.graphics_manager.query(bus)
+            if isinstance(graphic_object, BusGraphicItem):
                 graphic_object.setSelected(True)
 
     def get_selected_buses(self) -> List[Tuple[int, Bus, BusGraphicItem]]:
@@ -1795,7 +1232,7 @@ class SchematicWidget(BaseDiagramWidget):
         Get the selected buses
         :return:
         """
-        lst: List[Tuple[int, Bus, BusGraphicItem]] = list()
+        lst: List[Tuple[int, Bus, Union[BusGraphicItem, None]]] = list()
         bus_graphic_dict = self.graphics_manager.get_device_type_dict(DeviceType.BusDevice)
 
         bus_dict: Dict[str, Tuple[int, Bus]] = {b.idtag: (i, b) for i, b in enumerate(self.circuit.get_buses())}
@@ -1812,14 +1249,13 @@ class SchematicWidget(BaseDiagramWidget):
         Get all the buses
         :return: tuple(bus index, bus_api_object, bus_graphic_object)
         """
-        lst: List[Tuple[int, Bus, BusGraphicItem]] = list()
+        lst: List[Tuple[int, Bus, Union[BusGraphicItem, None]]] = list()
         bus_graphics_dict = self.graphics_manager.get_device_type_dict(DeviceType.BusDevice)
         bus_dict: Dict[str, Tuple[int, Bus]] = {b.idtag: (i, b) for i, b in enumerate(self.circuit.get_buses())}
 
         for bus_idtag, graphic_object in bus_graphics_dict.items():
-            if isinstance(graphic_object, BusGraphicItem):
-                idx, bus = bus_dict[bus_idtag]
-                lst.append((idx, bus, graphic_object))
+            idx, bus = bus_dict[bus_idtag]
+            lst.append((idx, bus, graphic_object))
 
         return lst
 
@@ -2361,20 +1797,6 @@ class SchematicWidget(BaseDiagramWidget):
         :param elements: list of API
         """
 
-        if elements is None:
-            boundaries = self.diagram_scene.itemsBoundingRect()
-
-            if boundaries.isNull():
-                return
-
-            mx = boundaries.width() * margin_factor
-            my = boundaries.height() * margin_factor
-            boundaries.adjust(-mx, -my, mx, my)
-            self.diagram_scene.setSceneRect(boundaries)
-            self.editor_graphics_view.fitInView(boundaries, Qt.AspectRatioMode.KeepAspectRatio)
-            self.editor_graphics_view.scale(1.0, 1.0)
-            return
-
         min_x = sys.maxsize
         min_y = sys.maxsize
         max_x = -sys.maxsize
@@ -2382,14 +1804,12 @@ class SchematicWidget(BaseDiagramWidget):
         max_w = 100
         max_h = 60
 
-        elements_s = set(elements)
-        for item in self.diagram_scene.items():
-            if isinstance(item, (BusGraphicItem,
-                                 FluidNodeGraphicItem,
-                                 Transformer3WGraphicItem,
-                                 TransformerNWGraphicItem)):
-
-                if item.api_object in elements_s:
+        if elements is None:
+            for item in self.diagram_scene.items():
+                if isinstance(item, (BusGraphicItem,
+                                     FluidNodeGraphicItem,
+                                     Transformer3WGraphicItem,
+                                     TransformerNWGraphicItem)):
                     x = item.pos().x()
                     y = item.pos().y()
 
@@ -2399,6 +1819,24 @@ class SchematicWidget(BaseDiagramWidget):
                     min_y = min(min_y, y)
                     max_w = max(max_w, item.rect().width())
                     max_h = max(max_h, item.rect().height())
+        else:
+            elements_s = set(elements)
+            for item in self.diagram_scene.items():
+                if isinstance(item, (BusGraphicItem,
+                                     FluidNodeGraphicItem,
+                                     Transformer3WGraphicItem,
+                                     TransformerNWGraphicItem)):
+
+                    if item.api_object in elements_s:
+                        x = item.pos().x()
+                        y = item.pos().y()
+
+                        max_x = max(max_x, x)
+                        min_x = min(min_x, x)
+                        max_y = max(max_y, y)
+                        min_y = min(min_y, y)
+                        max_w = max(max_w, item.rect().width())
+                        max_h = max(max_h, item.rect().height())
 
         # set the limits of the view
         dx = max_x - min_x
@@ -2474,7 +1912,7 @@ class SchematicWidget(BaseDiagramWidget):
 
         for node_idx, elm in enumerate(node_like_api_objects):
             loc: GraphicLocation | None = self.diagram.query_point(elm)
-            graphic_object = self._query_generic_graphic(elm=elm)
+            graphic_object = self.graphics_manager.query(elm=elm)
             pos_vec: np.ndarray | None = calculated_positions.get(node_idx, None)
 
             if loc is not None and graphic_object is not None and pos_vec is not None:
@@ -2503,20 +1941,39 @@ class SchematicWidget(BaseDiagramWidget):
         :return Logger object
         """
 
-        # Project the coordinates for *every* bus in the circuit (not only the
-        # ones present in this diagram) so that diagrams created afterwards
-        # already use the projected x, y. The engine method also falls back to
-        # the substation coordinates when a bus has no lat/lon of its own.
-        logger = self.circuit.fill_xy_from_lat_lon(destructive=destructive,
-                                                   factor=factor,
-                                                   remove_offset=remove_offset)
+        buses_info_list = self.get_buses()
 
-        # move the graphics of the buses present in this diagram to the new positions
-        for idx, bus, graphic_object in self.get_buses():
-            if graphic_object is not None:
-                graphic_object.set_position(bus.x, bus.y)
+        n = len(buses_info_list)
+        lon = np.zeros(n)
+        lat = np.zeros(n)
+        i = 0
+        for idx, bus, graphic_object in buses_info_list:
+            lon[i] = bus.longitude
+            lat[i] = bus.latitude
+            i += 1
 
-        return logger
+        transformer = pyproj.Transformer.from_crs(4326, 25830, always_xy=True)
+
+        # the longitude is more related to x, the latitude is more related to y
+        y, x = transformer.transform(xx=lon, yy=lat)
+        x *= - factor
+        y *= - factor
+
+        # delete the offset
+        if remove_offset:
+            x_min = np.min(x)
+            y_max = np.max(y)
+            x -= x_min + 100  # 100 is a healthy offset
+            y -= y_max - 100  # 100 is a healthy offset
+
+        # assign the values
+        i = 0
+        for idx, bus, graphic_object in buses_info_list:
+            graphic_object.set_position(x[i], y[i])
+            if destructive:
+                bus.x = x[i]
+                bus.y = y[i]
+            i += 1
 
     def rotate(self, angle_degrees):
         """
@@ -2664,7 +2121,7 @@ class SchematicWidget(BaseDiagramWidget):
             if bus is not None:  # bus provided, no cn provided
 
                 # Bus provided, search its graphics
-                bus_graphic0 = self._query_bus_graphic(bus)
+                bus_graphic0 = self.graphics_manager.query(bus)
 
                 if bus_graphic0 is None:
                     # could not find any graphics :(
@@ -2672,7 +2129,10 @@ class SchematicWidget(BaseDiagramWidget):
 
                 else:
                     # the bus is found, return its default terminal
-                    return bus_graphic0.get_terminal()
+                    if isinstance(bus_graphic0, (BusGraphicItem, FluidNodeGraphicItem)):
+                        return bus_graphic0.get_terminal()
+                    else:
+                        return None
 
             else:
                 # nothing was provided...
@@ -2727,11 +2187,14 @@ class SchematicWidget(BaseDiagramWidget):
         if owner_object is None:
             return None
 
-        owner_graphic = self._query_terminal_owner_graphic(owner_object)
+        owner_graphic = self.graphics_manager.query(owner_object)
         if owner_graphic is None:
             return None
 
-        return owner_graphic.get_terminal()
+        if isinstance(owner_graphic, (BusGraphicItem, FluidNodeGraphicItem)):
+            return owner_graphic.get_terminal()
+        else:
+            return None
 
     def set_all_branch_drawing_styles(self, route_style: SchematicAutoRouteStyle) -> None:
         """
@@ -2752,11 +2215,16 @@ class SchematicWidget(BaseDiagramWidget):
 
     def add_api_branch(self,
                        branch: BRANCH_TYPES,
-                       new_graphic_func: type[_LINE_GRAPHIC_T],
+                       new_graphic_func: Callable[[Union[BarTerminalItem, RoundTerminalItem],
+                                                   Union[BarTerminalItem, RoundTerminalItem, None],
+                                                   "SchematicWidget",
+                                                   int,
+                                                   BRANCH_TYPES,
+                                                   bool], BRANCH_GRAPHICS],
                        from_port: OPTIONAL_PORT = None,
                        to_port: OPTIONAL_PORT = None,
                        draw_labels: bool = True,
-                       logger: Logger = Logger()) -> _LINE_GRAPHIC_T | None:
+                       logger: Logger = Logger()) -> Union[TransformerGraphicItem, None]:
         """
         add API branch to the Scene
         :param branch: Branch instance
@@ -2768,7 +2236,7 @@ class SchematicWidget(BaseDiagramWidget):
         """
 
         # search for the api object, because it may be created already
-        graphic_object = self._query_graphic_of_type(elm=branch, graphic_type=new_graphic_func)
+        graphic_object = self.graphics_manager.query(elm=branch)
 
         if graphic_object is None:
 
@@ -2880,7 +2348,7 @@ class SchematicWidget(BaseDiagramWidget):
                     x: float | None = None,
                     y: float | None = None,
                     r: float = 0.0,
-                    logger: Logger = Logger()) -> Union[VscGraphicItem, VscGraphicItem3Term, None]:
+                    logger: Logger = Logger()) -> Union[VscGraphicItem, None]:
         """
         add API VSC to the Scene
         :param elm: VSC instance
@@ -3068,16 +2536,19 @@ class SchematicWidget(BaseDiagramWidget):
         :return: WindingGraphicItem or None
         """
 
-        terminal_bus = branch.bus_from
-        terminal_graphics = self._query_bus_graphic(terminal_bus)
+        # NOTE: The from port has to come from the 3W object
+        #       The to port has to be found looking at the bus_to
+        #       (that is alwas the non center bus in the 3W arrangement)
 
-        if terminal_graphics is None:
+        bus_to_graphics = self.graphics_manager.query(branch.bus_to)
+
+        if bus_to_graphics is None:
             return None
         else:
             return self.add_api_branch(branch=branch,
                                        new_graphic_func=WindingGraphicItem,
                                        from_port=from_port,
-                                       to_port=terminal_graphics.get_terminal(),
+                                       to_port=bus_to_graphics.get_terminal(),
                                        draw_labels=draw_labels,
                                        logger=logger)
 
@@ -3156,15 +2627,14 @@ class SchematicWidget(BaseDiagramWidget):
         trn_graphic_object = self.create_transformer_nw_graphics(elm=elm, x=elm.x, y=elm.y)
 
         for i, winding in enumerate(elm.windings[:trn_graphic_object.n_windings]):
-            terminal_bus = winding.bus_from
-            port = self.find_port(bus=terminal_bus)
+            port = self.find_port(bus=winding.bus_to)
             if port is None:
                 continue
 
             conn = WindingGraphicItem(from_port=trn_graphic_object.terminals[i],
                                       to_port=port,
                                       editor=self)
-            trn_graphic_object.set_connection(i=i, bus=terminal_bus, conn=conn, set_voltage=set_voltage)
+            trn_graphic_object.set_connection(i=i, bus=winding.bus_to, conn=conn, set_voltage=set_voltage)
             self.update_diagram_element(device=conn._api_object, graphic_object=conn)
 
         self.update_diagram_element(device=elm,
@@ -3213,8 +2683,8 @@ class SchematicWidget(BaseDiagramWidget):
         add API branch to the Scene
         :param branch: Branch instance
         """
-        bus_f_graphics = self._query_fluid_node_graphic(branch.source)
-        bus_t_graphics = self._query_fluid_node_graphic(branch.target)
+        bus_f_graphics = self.graphics_manager.query(branch.source)
+        bus_t_graphics = self.graphics_manager.query(branch.target)
 
         if bus_f_graphics and bus_t_graphics:
 
@@ -3438,7 +2908,7 @@ class SchematicWidget(BaseDiagramWidget):
         """
         battery = self.circuit.convert_generator_to_battery(gen)
 
-        bus_graphic_object = self._query_bus_graphic(gen.bus)
+        bus_graphic_object = self.graphics_manager.query(gen.bus)
 
         # add device to the schematic
         if bus_graphic_object is not None:
@@ -3459,7 +2929,7 @@ class SchematicWidget(BaseDiagramWidget):
         :param hvdc_line: HvdcLine
         """
 
-        hvdc_graphics = self._query_hvdc_graphic(hvdc_line)
+        hvdc_graphics: HvdcGraphicItem = self.graphics_manager.query(hvdc_line)
 
         (ac_bus_1, ac_bus_2,
          dc_bus_1, dc_bus_2,
@@ -3792,7 +3262,7 @@ class SchematicWidget(BaseDiagramWidget):
             # first pass
             for bus in lst:
 
-                graphic_object = self._query_bus_graphic(bus)
+                graphic_object = self.graphics_manager.query(bus)
 
                 if graphic_object:
                     graphic_object.arrange_children()
@@ -3808,7 +3278,7 @@ class SchematicWidget(BaseDiagramWidget):
             # second pass
             for bus in lst:
                 location = self.diagram.query_point(bus)
-                graphic_object = self._query_bus_graphic(bus)
+                graphic_object = self.graphics_manager.query(bus)
 
                 if graphic_object:
                     # get the item position
@@ -3836,10 +3306,6 @@ class SchematicWidget(BaseDiagramWidget):
         Change the colour according to the system theme
         :return:
         """
-        palette = self.palette()
-        ACTIVE['color'] = QColor(palette.color(palette.ColorGroup.Active, palette.ColorRole.WindowText))
-        ACTIVE['text'] = QColor(palette.color(palette.ColorGroup.Active, palette.ColorRole.Text))
-        ACTIVE['background'] = QColor(palette.color(palette.ColorGroup.Active, palette.ColorRole.Window))
 
         for device_type, graphics_dict in self.graphics_manager.graphic_dict.items():
             for idtag, graphic_object in graphics_dict.items():
@@ -3855,7 +3321,7 @@ class SchematicWidget(BaseDiagramWidget):
 
         for bus in buses:
 
-            graphic_obj = self._query_bus_graphic(bus)
+            graphic_obj = self.graphics_manager.query(bus)
             if graphic_obj is not None:
                 graphic_obj.add_big_marker(color=color)
                 graphic_obj.setSelected(True)
@@ -3874,7 +3340,7 @@ class SchematicWidget(BaseDiagramWidget):
         if tool_tips:
             for bus, color, tool_tip in zip(buses, colors, tool_tips):
 
-                graphic_obj = self._query_bus_graphic(bus)
+                graphic_obj = self.graphics_manager.query(bus)
 
                 if graphic_obj is not None:
                     graphic_obj.add_big_marker(color=color, tool_tip_text=tool_tip)
@@ -3882,7 +3348,7 @@ class SchematicWidget(BaseDiagramWidget):
         else:
             for bus, color in zip(buses, colors):
 
-                graphic_obj = self._query_bus_graphic(bus)
+                graphic_obj = self.graphics_manager.query(bus)
 
                 if graphic_obj is not None:
                     graphic_obj.add_big_marker(color=color)
@@ -3904,6 +3370,9 @@ class SchematicWidget(BaseDiagramWidget):
         :return:
         """
         if not self.diagram.use_api_colors:
+            ACTIVE['color'] = QColor(255, 255, 255, 255)  # white
+            ACTIVE['text'] = QColor(255, 255, 255, 255)  # white
+            ACTIVE['background'] = QColor(0, 0, 0, 255)  # black
             self.recolour_mode()
 
     def set_light_mode(self) -> None:
@@ -3912,6 +3381,9 @@ class SchematicWidget(BaseDiagramWidget):
         :return:
         """
         if not self.diagram.use_api_colors:
+            ACTIVE['color'] = QColor(0, 0, 0, 255)  # black
+            ACTIVE['text'] = QColor(0, 0, 0, 255)  # black
+            ACTIVE['background'] = QColor(255, 255, 255, 255)  # white
             self.recolour_mode()
 
     def _sync_multiwinding_transformer_result_colours(self) -> None:
@@ -3920,7 +3392,7 @@ class SchematicWidget(BaseDiagramWidget):
         multi-winding transformer graphics.
         """
         for transformer in self.circuit.transformers3w:
-            graphic_object = self._query_transformer3w_graphic(transformer)
+            graphic_object: Transformer3WGraphicItem | None = self.graphics_manager.query(transformer)
             if graphic_object is None:
                 continue
 
@@ -3931,7 +3403,7 @@ class SchematicWidget(BaseDiagramWidget):
                     graphic_object.set_winding_color(i, conn._route_item.pen().color())
 
         for transformer in self.circuit.transformers_nw:
-            graphic_object = self._query_transformer_nw_graphic(transformer)
+            graphic_object: TransformerNWGraphicItem | None = self.graphics_manager.query(transformer)
             if graphic_object is None:
                 continue
 
@@ -3945,13 +3417,6 @@ class SchematicWidget(BaseDiagramWidget):
                                   value: float,
                                   cmap: palettes.Colormaps | None,
                                   voltage_cmap: Callable) -> QColor:
-        """
-
-        :param value:
-        :param cmap:
-        :param voltage_cmap:
-        :return:
-        """
         a = 255
         if cmap == palettes.Colormaps.Green2Red:
             b, g, r = palettes.green_to_red_bgr(value)
@@ -3967,19 +3432,11 @@ class SchematicWidget(BaseDiagramWidget):
             a *= 255
         return QColor(r, g, b, a)
 
-    @staticmethod
-    def _get_branch_result_color(value: float,
+    def _get_branch_result_color(self,
+                                 value: float,
                                  cmap: palettes.Colormaps | None,
                                  loading_cmap: Callable,
                                  nominal_voltage: float) -> QColor:
-        """
-
-        :param value:
-        :param cmap:
-        :param loading_cmap:
-        :param nominal_voltage:
-        :return:
-        """
         a = 255
         if cmap == palettes.Colormaps.Green2Red:
             b, g, r = palettes.green_to_red_bgr(value)
@@ -4005,22 +3462,7 @@ class SchematicWidget(BaseDiagramWidget):
                             bus_types: list[str],
                             voltage_cmap: Callable,
                             cmap: palettes.Colormaps | None,
-                            use_flow_based_width: bool,
-                            apply_result_coloring: bool = True) -> None:
-        """
-
-        :param Sbus:
-        :param bus_active:
-        :param vabs:
-        :param vang:
-        :param vnorm:
-        :param types:
-        :param bus_types:
-        :param voltage_cmap:
-        :param cmap:
-        :param use_flow_based_width:
-        :return:
-        """
+                            use_flow_based_width: bool) -> None:
         nbus = self.circuit.get_bus_number()
         if nbus != len(vnorm):
             error_msg("Bus results length differs from the number of Bus results. \n"
@@ -4028,7 +3470,7 @@ class SchematicWidget(BaseDiagramWidget):
             return
 
         for i, bus in enumerate(self.circuit.buses):
-            graphic_object = self._query_bus_graphic(bus)
+            graphic_object: BusGraphicItem | None = self.graphics_manager.query(bus)
             if graphic_object is None:
                 continue
 
@@ -4039,10 +3481,7 @@ class SchematicWidget(BaseDiagramWidget):
                                           P=Sbus[i].real if Sbus is not None else None,
                                           Q=Sbus[i].imag if Sbus is not None else None,
                                           tpe=bus_types[int(types[i])] if types is not None else None)
-                if apply_result_coloring:
-                    graphic_object.set_tile_color(self._get_voltage_result_color(vnorm[i], cmap, voltage_cmap))
-                else:
-                    graphic_object.update_color()
+                graphic_object.set_tile_color(self._get_voltage_result_color(vnorm[i], cmap, voltage_cmap))
                 if use_flow_based_width:
                     graphic_object.change_size(w=graphic_object.w)
             else:
@@ -4065,25 +3504,6 @@ class SchematicWidget(BaseDiagramWidget):
                                ma: Vec | None,
                                tau: Vec | None,
                                is_three_phase: bool = False) -> float | None:
-        """
-
-        :param Sf:
-        :param St:
-        :param loadings:
-        :param losses:
-        :param br_active:
-        :param hvdc_Pf:
-        :param loading_label:
-        :param use_flow_based_width:
-        :param min_branch_width:
-        :param max_branch_width:
-        :param loading_cmap:
-        :param cmap:
-        :param ma:
-        :param tau:
-        :param is_three_phase:
-        :return:
-        """
         if Sf is None or len(Sf) == 0:
             return 1.0
 
@@ -4103,7 +3523,7 @@ class SchematicWidget(BaseDiagramWidget):
 
         ph = np.array([0, 1, 2])
         for i, branch in enumerate(self.circuit.get_branches_iter(add_vsc=False, add_hvdc=False, add_switch=True)):
-            graphic_object = self._query_line_graphic(branch)
+            graphic_object: BRANCH_GRAPHICS | None = self.graphics_manager.query(branch)
             if graphic_object is None:
                 continue
 
@@ -4156,13 +3576,13 @@ class SchematicWidget(BaseDiagramWidget):
                                                       branch.get_max_bus_nominal_voltage())
                 graphic_object.setToolTipText(tooltip)
                 graphic_object.set_colour(color, width, Qt.PenStyle.SolidLine)
-                if isinstance(graphic_object, LineGraphicTemplateItem):
+                if hasattr(graphic_object, 'set_arrows_with_power'):
                     graphic_object.set_arrows_with_power(Sf=arrow_sf, St=arrow_st)
             else:
                 width = graphic_object.pen_width
                 graphic_object.set_pen(QPen(QColor(115, 115, 115, 255), width, Qt.PenStyle.DashLine))
                 graphic_object.setToolTipText("")
-                if isinstance(graphic_object, LineGraphicTemplateItem):
+                if hasattr(graphic_object, 'set_arrows_with_power'):
                     graphic_object.set_arrows_with_power(Sf=None, St=None)
 
         self._sync_multiwinding_transformer_result_colours()
@@ -4182,23 +3602,6 @@ class SchematicWidget(BaseDiagramWidget):
                             loading_cmap: Callable,
                             cmap: palettes.Colormaps | None,
                             max_flow: float) -> None:
-        """
-
-        :param vsc_Pf:
-        :param vsc_Pt:
-        :param vsc_Qt:
-        :param vsc_losses:
-        :param vsc_loading:
-        :param vsc_active:
-        :param loading_label:
-        :param use_flow_based_width:
-        :param min_branch_width:
-        :param max_branch_width:
-        :param loading_cmap:
-        :param cmap:
-        :param max_flow:
-        :return:
-        """
         if vsc_Pf is None:
             return
 
@@ -4209,7 +3612,7 @@ class SchematicWidget(BaseDiagramWidget):
             return
 
         for i, elm in enumerate(self.circuit.vsc_devices):
-            graphic_object = self._query_vsc_graphic(elm)
+            graphic_object: VscGraphicItem | None = self.graphics_manager.query(elm)
             if graphic_object is None:
                 continue
 
@@ -4264,22 +3667,6 @@ class SchematicWidget(BaseDiagramWidget):
                              loading_cmap: Callable,
                              cmap: palettes.Colormaps | None,
                              max_flow: float) -> None:
-        """
-
-        :param hvdc_Pf:
-        :param hvdc_Pt:
-        :param hvdc_losses:
-        :param hvdc_loading:
-        :param hvdc_active:
-        :param loading_label:
-        :param use_flow_based_width:
-        :param min_branch_width:
-        :param max_branch_width:
-        :param loading_cmap:
-        :param cmap:
-        :param max_flow:
-        :return:
-        """
         if hvdc_Pf is None:
             return
 
@@ -4290,7 +3677,7 @@ class SchematicWidget(BaseDiagramWidget):
             return
 
         for i, elm in enumerate(self.circuit.hvdc_lines):
-            graphic_object = self._query_hvdc_graphic(elm)
+            graphic_object: HvdcGraphicItem | None = self.graphics_manager.query(elm)
             if graphic_object is None:
                 continue
 
@@ -4324,11 +3711,6 @@ class SchematicWidget(BaseDiagramWidget):
                                             Qt.PenStyle.DashLine))
 
     def _colour_fluid_path_results(self, fluid_path_flow: Vec | None) -> None:
-        """
-
-        :param fluid_path_flow:
-        :return:
-        """
         if fluid_path_flow is None:
             return
 
@@ -4336,7 +3718,7 @@ class SchematicWidget(BaseDiagramWidget):
             return
 
         for i, elm in enumerate(self.circuit.fluid_paths):
-            graphic_object = self._query_fluid_path_graphic(elm)
+            graphic_object: FluidPathGraphicItem | None = self.graphics_manager.query(elm)
             if graphic_object is not None:
                 graphic_object.set_api_object_color()
                 graphic_object.set_arrows_with_fluid_flow(flow=fluid_path_flow[i])
@@ -4352,20 +3734,6 @@ class SchematicWidget(BaseDiagramWidget):
                                    fluid_node_spillage: Vec | None,
                                    fluid_node_flow_in: Vec | None,
                                    fluid_node_flow_out: Vec | None) -> None:
-        """
-
-        :param vabs:
-        :param vang:
-        :param Sbus:
-        :param types:
-        :param bus_types:
-        :param fluid_node_p2x_flow:
-        :param fluid_node_current_level:
-        :param fluid_node_spillage:
-        :param fluid_node_flow_in:
-        :param fluid_node_flow_out:
-        :return:
-        """
         if fluid_node_current_level is None:
             return
 
@@ -4373,7 +3741,7 @@ class SchematicWidget(BaseDiagramWidget):
             return
 
         for i, elm in enumerate(self.circuit.fluid_nodes):
-            graphic_object = self._query_fluid_node_graphic(elm)
+            graphic_object: FluidNodeGraphicItem | None = self.graphics_manager.query(elm)
             if graphic_object is not None:
                 graphic_object.set_api_object_color()
                 graphic_object.set_fluid_values(
@@ -4389,827 +3757,6 @@ class SchematicWidget(BaseDiagramWidget):
                     fluid_node_flow_in=fluid_node_flow_in[i] if fluid_node_flow_in is not None else None,
                     fluid_node_flow_out=fluid_node_flow_out[i] if fluid_node_flow_out is not None else None,
                 )
-
-    def _clear_all_injection_results(self) -> None:
-        """
-        Clear every injection result overlay.
-
-        :return: ``None``.
-        """
-        device_type: DeviceType
-
-        for device_type in (
-            DeviceType.GeneratorDevice,
-            DeviceType.BatteryDevice,
-            DeviceType.StaticGeneratorDevice,
-            DeviceType.ShuntDevice,
-            DeviceType.ControllableShuntDevice,
-            DeviceType.LoadDevice,
-            DeviceType.ExternalGridDevice,
-            DeviceType.CurrentInjectionDevice,
-        ):
-            for graphic_object in self._get_device_type_graphics(device_type, InjectionTemplateGraphicItem):
-                graphic_object.clear_result_visuals()
-
-    def _build_injection_name_lookup(self, names: np.ndarray | list[str] | None) -> dict[str, int]:
-        """
-        Build a name-to-index lookup for injection result arrays.
-
-        :param names: Result name sequence.
-        :return: Lookup from device name to result index.
-        """
-        lookup: dict[str, int] = dict()
-        counts: dict[str, int] = dict()
-
-        if names is None:
-            pass
-        else:
-            for name in names:
-                name_str: str = str(name).strip()
-
-                if name_str:
-                    counts[name_str] = counts.get(name_str, 0) + 1
-                else:
-                    pass
-
-            for index, name in enumerate(names):
-                name_str = str(name).strip()
-
-                # Ambiguous or blank result names cannot identify a unique device.
-                if name_str and counts.get(name_str, 0) == 1:
-                    lookup[name_str] = index
-                else:
-                    pass
-
-        return lookup
-
-    def _colour_generator_results(self,
-                                  gen_p: Vec | None,
-                                  gen_q: Vec | None,
-                                  generator_lookup: dict[str, int]) -> None:
-        """
-        Colour generator injection results.
-
-        :param gen_p: Generator active powers.
-        :param gen_q: Generator reactive powers.
-        :param generator_lookup: Generator result-name lookup.
-        :return: ``None``.
-        """
-        generator_devices: list[Generator] = self.circuit.get_generators()
-        generator_index: int
-        generator: Generator
-
-        # Result name vectors can be reordered by the engine, so named matches take priority.
-        for generator_index, generator in enumerate(generator_devices):
-            graphic_object = self._query_injection_graphic(generator)
-
-            if graphic_object is None:
-                pass
-            else:
-                result_index: int = _get_injection_result_index(
-                    device_name=generator.name,
-                    fallback_index=generator_index,
-                    lookup=generator_lookup,
-                )
-                p_value: float | None = _get_optional_result_value(values=gen_p, index=result_index)
-                q_value: float | None = _get_optional_result_value(values=gen_q, index=result_index)
-
-                _apply_single_phase_injection_result(graphic_object=graphic_object,
-                                                          device_name=generator.name,
-                                                          tooltip_title="Generator results",
-                                                          p_value=p_value,
-                                                          q_value=q_value)
-
-    def _colour_battery_results(self,
-                                battery_p: Vec | None,
-                                battery_q: Vec | None,
-                                battery_lookup: dict[str, int]) -> None:
-        """
-        Colour battery injection results.
-
-        :param battery_p: Battery active powers.
-        :param battery_q: Battery reactive powers.
-        :param battery_lookup: Battery result-name lookup.
-        :return: ``None``.
-        """
-        battery_devices: list[Battery] = self.circuit.get_batteries()
-        battery_index: int
-        battery: Battery
-
-        for battery_index, battery in enumerate(battery_devices):
-            graphic_object = self._query_injection_graphic(battery)
-
-            if graphic_object is None:
-                pass
-            else:
-                result_index: int = _get_injection_result_index(
-                    device_name=battery.name,
-                    fallback_index=battery_index,
-                    lookup=battery_lookup,
-                )
-                p_value: float | None = _get_optional_result_value(values=battery_p, index=result_index)
-                q_value: float | None = _get_optional_result_value(values=battery_q, index=result_index)
-
-                _apply_single_phase_injection_result(graphic_object=graphic_object,
-                                                          device_name=battery.name,
-                                                          tooltip_title="Battery results",
-                                                          p_value=p_value,
-                                                          q_value=q_value)
-
-    def _colour_shunt_like_results(self,
-                                   shunt_q: Vec | None,
-                                   shunt_lookup: dict[str, int]) -> None:
-        """
-        Colour shunt-like injection results.
-
-        :param shunt_q: Shunt-like reactive powers.
-        :param shunt_lookup: Shunt-like result-name lookup.
-        :return: ``None``.
-        """
-        shunt_like_devices: list[INJECTION_DEVICE_TYPES] = self.circuit.get_shunt_like_devices()
-        shunt_index: int
-        shunt_like_device: INJECTION_DEVICE_TYPES
-
-        for shunt_index, shunt_like_device in enumerate(shunt_like_devices):
-            graphic_object = self._query_injection_graphic(shunt_like_device)
-
-            if graphic_object is None:
-                pass
-            else:
-                result_index: int = _get_injection_result_index(
-                    device_name=shunt_like_device.name,
-                    fallback_index=shunt_index,
-                    lookup=shunt_lookup,
-                )
-                q_value: float | None = _get_optional_result_value(values=shunt_q, index=result_index)
-
-                if isinstance(shunt_like_device, ControllableShunt):
-                    tooltip_title: str = "Controllable shunt results"
-                else:
-                    tooltip_title = "Shunt results"
-
-                _apply_single_phase_injection_result(graphic_object=graphic_object,
-                                                          device_name=shunt_like_device.name,
-                                                          tooltip_title=tooltip_title,
-                                                          p_value=None,
-                                                          q_value=q_value)
-
-    def _colour_static_generator_results(self, t_idx: int | None) -> None:
-        """
-        Colour static-generator injection results.
-
-        :param t_idx: Optional time index for profile-backed injections.
-        :return: ``None``.
-        """
-        static_generator_devices: list[StaticGenerator] = self.circuit.get_static_generators()
-        static_generator: StaticGenerator
-
-        for static_generator in static_generator_devices:
-            graphic_object = self._query_injection_graphic(static_generator)
-
-            if graphic_object is None:
-                pass
-            else:
-                p_value: float = float(static_generator.get_P_at(t_idx))
-                q_value: float = float(static_generator.get_Q_at(t_idx))
-
-                _apply_single_phase_injection_result(graphic_object=graphic_object,
-                                                          device_name=static_generator.name,
-                                                          tooltip_title="Static generator setpoint",
-                                                          p_value=_hide_zero_result_value(p_value),
-                                                          q_value=_hide_zero_result_value(q_value))
-
-    def _colour_load_results(self, t_idx: int | None) -> None:
-        """
-        Colour load injection results.
-
-        :param t_idx: Optional time index for profile-backed injections.
-        :return: ``None``.
-        """
-        load_devices: list[Load] = self.circuit.get_loads()
-        load_device: Load
-
-        for load_device in load_devices:
-            graphic_object = self._query_injection_graphic(load_device)
-
-            if graphic_object is None:
-                pass
-            else:
-                p_value: float = -float(load_device.get_P_at(t_idx))
-                q_value: float = -float(load_device.get_Q_at(t_idx))
-
-                # Fall back to equivalent current channels when the ZIP power channels are empty.
-                if p_value == 0.0 and q_value == 0.0:
-                    p_value = -float(load_device.get_Ir_at(t_idx))
-                    q_value = -float(load_device.get_Ii_at(t_idx))
-                else:
-                    pass
-
-                _apply_single_phase_injection_result(graphic_object=graphic_object,
-                                                          device_name=load_device.name,
-                                                          tooltip_title="Load equivalent injection",
-                                                          p_value=_hide_zero_result_value(p_value),
-                                                          q_value=_hide_zero_result_value(q_value))
-
-    def _colour_external_grid_results(self, t_idx: int | None) -> None:
-        """
-        Colour external-grid injection results.
-
-        :param t_idx: Optional time index for profile-backed injections.
-        :return: ``None``.
-        """
-        external_grid_devices: list[ExternalGrid] = self.circuit.get_external_grids()
-        external_grid: ExternalGrid
-
-        for external_grid in external_grid_devices:
-            graphic_object = self._query_injection_graphic(external_grid)
-
-            if graphic_object is None:
-                pass
-            else:
-                p_value: float = -float(external_grid.get_P_at(t_idx))
-                q_value: float = -float(external_grid.get_Q_at(t_idx))
-
-                _apply_single_phase_injection_result(graphic_object=graphic_object,
-                                                          device_name=external_grid.name,
-                                                          tooltip_title="External grid equivalent injection",
-                                                          p_value=_hide_zero_result_value(p_value),
-                                                          q_value=_hide_zero_result_value(q_value))
-
-    def _colour_current_injection_results(self, t_idx: int | None) -> None:
-        """
-        Colour current-injection results.
-
-        :param t_idx: Optional time index for profile-backed injections.
-        :return: ``None``.
-        """
-        current_injection_devices: list[CurrentInjection] = self.circuit.get_current_injections()
-        current_injection: CurrentInjection
-
-        for current_injection in current_injection_devices:
-            graphic_object = self._query_injection_graphic(current_injection)
-
-            if graphic_object is None:
-                pass
-            else:
-                p_value: float = -float(current_injection.get_Ir_at(t_idx))
-                q_value: float = -float(current_injection.get_Ii_at(t_idx))
-
-                _apply_single_phase_injection_result(graphic_object=graphic_object,
-                                                          device_name=current_injection.name,
-                                                          tooltip_title="Current injection equivalent power",
-                                                          p_value=_hide_zero_result_value(p_value),
-                                                          q_value=_hide_zero_result_value(q_value))
-
-    def _apply_three_phase_injection_result(self,
-                                            graphic_object: InjectionTemplateGraphicItem,
-                                            device_name: str,
-                                            tooltip_title: str,
-                                            qa: float | None,
-                                            qb: float | None,
-                                            qc: float | None,
-                                            include_total_p: bool = False,
-                                            pa: float | None = None,
-                                            pb: float | None = None,
-                                            pc: float | None = None) -> None:
-        """
-        Apply a three-phase result badge to an injection graphic.
-
-        :param graphic_object: Injection graphic item.
-        :param device_name: Injection device name.
-        :param tooltip_title: Tooltip title.
-        :param qa: Phase-a reactive power.
-        :param qb: Phase-b reactive power.
-        :param qc: Phase-c reactive power.
-        :param include_total_p: Include aggregated active power in the badge.
-        :param pa: Phase-a active power.
-        :param pb: Phase-b active power.
-        :param pc: Phase-c active power.
-        :return: ``None``.
-        """
-        if qa is None and qb is None and qc is None:
-            pass
-        else:
-            color: QColor = _get_injection_result_color(graphic_object=graphic_object)
-            total_q: float = float((0.0 if qa is None else qa) +
-                                   (0.0 if qb is None else qb) +
-                                   (0.0 if qc is None else qc))
-            lines: list[str] = list()
-
-            if include_total_p:
-                total_p: float = float((0.0 if pa is None else pa) +
-                                       (0.0 if pb is None else pb) +
-                                       (0.0 if pc is None else pc))
-                lines.append(f"PΣ {total_p:+.1f} MW")
-            else:
-                pass
-
-            lines.append(f"QΣ {total_q:+.1f} MVAr")
-
-            tooltip_lines: list[str] = [device_name, tooltip_title]
-
-            if include_total_p:
-                if pa is None:
-                    pass
-                else:
-                    tooltip_lines.append(f"Pa {pa:+.1f} MW")
-
-                if pb is None:
-                    pass
-                else:
-                    tooltip_lines.append(f"Pb {pb:+.1f} MW")
-
-                if pc is None:
-                    pass
-                else:
-                    tooltip_lines.append(f"Pc {pc:+.1f} MW")
-            else:
-                pass
-
-            if qa is None:
-                pass
-            else:
-                tooltip_lines.append(f"Qa {qa:+.1f} MVAr")
-
-            if qb is None:
-                pass
-            else:
-                tooltip_lines.append(f"Qb {qb:+.1f} MVAr")
-
-            if qc is None:
-                pass
-            else:
-                tooltip_lines.append(f"Qc {qc:+.1f} MVAr")
-
-            graphic_object.set_result_visuals(lines=lines,
-                                              tooltip="\n".join(tooltip_lines),
-                                              color=color)
-
-    def _colour_generator_results_3ph(self,
-                                      gen_q_a: Vec | None,
-                                      gen_q_b: Vec | None,
-                                      gen_q_c: Vec | None,
-                                      generator_lookup: dict[str, int]) -> None:
-        """
-        Colour three-phase generator results.
-
-        :param gen_q_a: Generator phase-a reactive powers.
-        :param gen_q_b: Generator phase-b reactive powers.
-        :param gen_q_c: Generator phase-c reactive powers.
-        :param generator_lookup: Generator result-name lookup.
-        :return: ``None``.
-        """
-        generator_devices: list[Generator] = self.circuit.get_generators()
-        index: int
-        generator: Generator
-
-        for index, generator in enumerate(generator_devices):
-            graphic_object = self._query_injection_graphic(generator)
-
-            if graphic_object is None:
-                pass
-            else:
-                result_index: int = _get_injection_result_index(
-                    device_name=generator.name,
-                    fallback_index=index,
-                    lookup=generator_lookup,
-                )
-                qa: float | None = None
-                qb: float | None = None
-                qc: float | None = None
-
-                if gen_q_a is not None and result_index < len(gen_q_a):
-                    qa = float(gen_q_a[result_index])
-                else:
-                    pass
-
-                if gen_q_b is not None and result_index < len(gen_q_b):
-                    qb = float(gen_q_b[result_index])
-                else:
-                    pass
-
-                if gen_q_c is not None and result_index < len(gen_q_c):
-                    qc = float(gen_q_c[result_index])
-                else:
-                    pass
-
-                self._apply_three_phase_injection_result(graphic_object=graphic_object,
-                                                         device_name=generator.name,
-                                                         tooltip_title="Generator 3ph results",
-                                                         qa=qa,
-                                                         qb=qb,
-                                                         qc=qc)
-
-    def _colour_battery_results_3ph(self,
-                                    battery_q_a: Vec | None,
-                                    battery_q_b: Vec | None,
-                                    battery_q_c: Vec | None,
-                                    battery_lookup: dict[str, int]) -> None:
-        """
-        Colour three-phase battery results.
-
-        :param battery_q_a: Battery phase-a reactive powers.
-        :param battery_q_b: Battery phase-b reactive powers.
-        :param battery_q_c: Battery phase-c reactive powers.
-        :param battery_lookup: Battery result-name lookup.
-        :return: ``None``.
-        """
-        battery_devices: list[Battery] = self.circuit.get_batteries()
-        index: int
-        battery: Battery
-
-        for index, battery in enumerate(battery_devices):
-            graphic_object = self._query_injection_graphic(battery)
-
-            if graphic_object is None:
-                pass
-            else:
-                result_index: int = _get_injection_result_index(
-                    device_name=battery.name,
-                    fallback_index=index,
-                    lookup=battery_lookup,
-                )
-                qa: float | None = None
-                qb: float | None = None
-                qc: float | None = None
-
-                if battery_q_a is not None and result_index < len(battery_q_a):
-                    qa = float(battery_q_a[result_index])
-                else:
-                    pass
-
-                if battery_q_b is not None and result_index < len(battery_q_b):
-                    qb = float(battery_q_b[result_index])
-                else:
-                    pass
-
-                if battery_q_c is not None and result_index < len(battery_q_c):
-                    qc = float(battery_q_c[result_index])
-                else:
-                    pass
-
-                self._apply_three_phase_injection_result(graphic_object=graphic_object,
-                                                         device_name=battery.name,
-                                                         tooltip_title="Battery 3ph results",
-                                                         qa=qa,
-                                                         qb=qb,
-                                                         qc=qc)
-
-    def _colour_shunt_like_results_3ph(self,
-                                       shunt_q_a: Vec | None,
-                                       shunt_q_b: Vec | None,
-                                       shunt_q_c: Vec | None,
-                                       shunt_lookup: dict[str, int]) -> None:
-        """
-        Colour three-phase shunt-like results.
-
-        :param shunt_q_a: Shunt-like phase-a reactive powers.
-        :param shunt_q_b: Shunt-like phase-b reactive powers.
-        :param shunt_q_c: Shunt-like phase-c reactive powers.
-        :param shunt_lookup: Shunt-like result-name lookup.
-        :return: ``None``.
-        """
-        shunt_like_devices: list[INJECTION_DEVICE_TYPES] = self.circuit.get_shunt_like_devices()
-        index: int
-        shunt_like_device: INJECTION_DEVICE_TYPES
-
-        for index, shunt_like_device in enumerate(shunt_like_devices):
-            graphic_object = self._query_injection_graphic(shunt_like_device)
-
-            if graphic_object is None:
-                pass
-            else:
-                result_index: int = _get_injection_result_index(
-                    device_name=shunt_like_device.name,
-                    fallback_index=index,
-                    lookup=shunt_lookup,
-                )
-                qa: float | None = None
-                qb: float | None = None
-                qc: float | None = None
-
-                if shunt_q_a is not None and result_index < len(shunt_q_a):
-                    qa = float(shunt_q_a[result_index])
-                else:
-                    pass
-
-                if shunt_q_b is not None and result_index < len(shunt_q_b):
-                    qb = float(shunt_q_b[result_index])
-                else:
-                    pass
-
-                if shunt_q_c is not None and result_index < len(shunt_q_c):
-                    qc = float(shunt_q_c[result_index])
-                else:
-                    pass
-
-                if isinstance(shunt_like_device, ControllableShunt):
-                    tooltip_title: str = "Controllable shunt 3ph results"
-                else:
-                    tooltip_title = "Shunt 3ph results"
-
-                self._apply_three_phase_injection_result(graphic_object=graphic_object,
-                                                         device_name=shunt_like_device.name,
-                                                         tooltip_title=tooltip_title,
-                                                         qa=qa,
-                                                         qb=qb,
-                                                         qc=qc)
-
-    def _colour_static_generator_results_3ph(self, t_idx: int | None) -> None:
-        """
-        Colour three-phase static-generator results.
-
-        :param t_idx: Optional time index for profile-backed injections.
-        :return: ``None``.
-        """
-        static_generator_devices: list[StaticGenerator] = self.circuit.get_static_generators()
-        static_generator: StaticGenerator
-
-        for static_generator in static_generator_devices:
-            graphic_object = self._query_injection_graphic(static_generator)
-
-            if graphic_object is None:
-                pass
-            else:
-                pa: float = float(static_generator.get_Pa_at(t_idx))
-                pb: float = float(static_generator.get_Pb_at(t_idx))
-                pc: float = float(static_generator.get_Pc_at(t_idx))
-                qa: float = float(static_generator.get_Qa_at(t_idx))
-                qb: float = float(static_generator.get_Qb_at(t_idx))
-                qc: float = float(static_generator.get_Qc_at(t_idx))
-                total_p: float = pa + pb + pc
-                total_q: float = qa + qb + qc
-
-                if total_p == 0.0 and total_q == 0.0:
-                    pass
-                else:
-                    self._apply_three_phase_injection_result(graphic_object=graphic_object,
-                                                             device_name=static_generator.name,
-                                                             tooltip_title="Static generator 3ph setpoint",
-                                                             qa=qa,
-                                                             qb=qb,
-                                                             qc=qc,
-                                                             include_total_p=True,
-                                                             pa=pa,
-                                                             pb=pb,
-                                                             pc=pc)
-
-    def _colour_load_results_3ph(self, t_idx: int | None) -> None:
-        """
-        Colour three-phase load results.
-
-        :param t_idx: Optional time index for profile-backed injections.
-        :return: ``None``.
-        """
-        load_devices: list[Load] = self.circuit.get_loads()
-        load_device: Load
-
-        for load_device in load_devices:
-            graphic_object = self._query_injection_graphic(load_device)
-
-            if graphic_object is None:
-                pass
-            else:
-                pa: float = -float(load_device.get_Pa_at(t_idx))
-                pb: float = -float(load_device.get_Pb_at(t_idx))
-                pc: float = -float(load_device.get_Pc_at(t_idx))
-                qa: float = -float(load_device.get_Qa_at(t_idx))
-                qb: float = -float(load_device.get_Qb_at(t_idx))
-                qc: float = -float(load_device.get_Qc_at(t_idx))
-                total_p: float = pa + pb + pc
-                total_q: float = qa + qb + qc
-
-                # Fall back to equivalent current channels when the ZIP power channels are empty.
-                if total_p == 0.0 and total_q == 0.0:
-                    pa = -float(load_device.get_Ir1_at(t_idx))
-                    pb = -float(load_device.get_Ir2_at(t_idx))
-                    pc = -float(load_device.get_Ir3_at(t_idx))
-                    qa = -float(load_device.get_Ii1_at(t_idx))
-                    qb = -float(load_device.get_Ii2_at(t_idx))
-                    qc = -float(load_device.get_Ii3_at(t_idx))
-                    total_p = pa + pb + pc
-                    total_q = qa + qb + qc
-                else:
-                    pass
-
-                if total_p == 0.0 and total_q == 0.0:
-                    pass
-                else:
-                    self._apply_three_phase_injection_result(graphic_object=graphic_object,
-                                                             device_name=load_device.name,
-                                                             tooltip_title="Load 3ph equivalent injection",
-                                                             qa=qa,
-                                                             qb=qb,
-                                                             qc=qc,
-                                                             include_total_p=True,
-                                                             pa=pa,
-                                                             pb=pb,
-                                                             pc=pc)
-
-    def _colour_external_grid_results_3ph(self, t_idx: int | None) -> None:
-        """
-        Colour three-phase external-grid results.
-
-        :param t_idx: Optional time index for profile-backed injections.
-        :return: ``None``.
-        """
-        external_grid_devices: list[ExternalGrid] = self.circuit.get_external_grids()
-        external_grid: ExternalGrid
-
-        for external_grid in external_grid_devices:
-            graphic_object = self._query_injection_graphic(external_grid)
-
-            if graphic_object is None:
-                pass
-            else:
-                pa: float = -float(external_grid.get_Pa_at(t_idx))
-                pb: float = -float(external_grid.get_Pb_at(t_idx))
-                pc: float = -float(external_grid.get_Pc_at(t_idx))
-                qa: float = -float(external_grid.get_Qa_at(t_idx))
-                qb: float = -float(external_grid.get_Qb_at(t_idx))
-                qc: float = -float(external_grid.get_Qc_at(t_idx))
-                total_p: float = pa + pb + pc
-                total_q: float = qa + qb + qc
-
-                if total_p == 0.0 and total_q == 0.0:
-                    pass
-                else:
-                    self._apply_three_phase_injection_result(graphic_object=graphic_object,
-                                                             device_name=external_grid.name,
-                                                             tooltip_title="External grid 3ph equivalent injection",
-                                                             qa=qa,
-                                                             qb=qb,
-                                                             qc=qc,
-                                                             include_total_p=True,
-                                                             pa=pa,
-                                                             pb=pb,
-                                                             pc=pc)
-
-    def _colour_current_injection_results_3ph(self, t_idx: int | None) -> None:
-        """
-        Colour three-phase current-injection results.
-
-        :param t_idx: Optional time index for profile-backed injections.
-        :return: ``None``.
-        """
-        current_injection_devices: list[CurrentInjection] = self.circuit.get_current_injections()
-        current_injection: CurrentInjection
-
-        for current_injection in current_injection_devices:
-            graphic_object = self._query_injection_graphic(current_injection)
-
-            if graphic_object is None:
-                pass
-            else:
-                pa: float = -float(current_injection.get_Ir1_at(t_idx))
-                pb: float = -float(current_injection.get_Ir2_at(t_idx))
-                pc: float = -float(current_injection.get_Ir3_at(t_idx))
-                qa: float = -float(current_injection.get_Ii1_at(t_idx))
-                qb: float = -float(current_injection.get_Ii2_at(t_idx))
-                qc: float = -float(current_injection.get_Ii3_at(t_idx))
-                total_p: float = pa + pb + pc
-                total_q: float = qa + qb + qc
-
-                if total_p == 0.0 and total_q == 0.0:
-                    pass
-                else:
-                    self._apply_three_phase_injection_result(graphic_object=graphic_object,
-                                                             device_name=current_injection.name,
-                                                             tooltip_title="Current injection 3ph equivalent power",
-                                                             qa=qa,
-                                                             qb=qb,
-                                                             qc=qc,
-                                                             include_total_p=True,
-                                                             pa=pa,
-                                                             pb=pb,
-                                                             pc=pc)
-
-    def _colour_injection_results(self,
-                                  gen_p: Vec | None,
-                                  gen_q: Vec | None,
-                                  gen_names: np.ndarray | list[str] | None,
-                                  battery_p: Vec | None,
-                                  battery_q: Vec | None,
-                                  battery_names: np.ndarray | list[str] | None,
-                                  shunt_q: Vec | None,
-                                  shunt_names: np.ndarray | list[str] | None,
-                                  t_idx: int | None) -> None:
-        """
-        Apply snapshot injection result overlays using the existing coloring flow.
-
-        :param gen_p: Generator active powers.
-        :param gen_q: Generator reactive powers.
-        :param gen_names: Generator result names.
-        :param battery_p: Battery active powers.
-        :param battery_q: Battery reactive powers.
-        :param battery_names: Battery result names.
-        :param shunt_q: Shunt-like reactive powers.
-        :param shunt_names: Shunt-like result names.
-        :param t_idx: Optional time index for profile-backed injections.
-        :return: ``None``.
-        """
-        self._clear_all_injection_results()
-
-        generator_lookup: dict[str, int] = self._build_injection_name_lookup(names=gen_names)
-        battery_lookup: dict[str, int] = self._build_injection_name_lookup(names=battery_names)
-        shunt_lookup: dict[str, int] = self._build_injection_name_lookup(names=shunt_names)
-        has_explicit_results: bool = _has_single_phase_explicit_injection_results(
-            gen_p=gen_p,
-            gen_q=gen_q,
-            battery_p=battery_p,
-            battery_q=battery_q,
-            shunt_q=shunt_q,
-        )
-
-        self._colour_generator_results(gen_p=gen_p,
-                                       gen_q=gen_q,
-                                       generator_lookup=generator_lookup)
-        self._colour_battery_results(battery_p=battery_p,
-                                     battery_q=battery_q,
-                                     battery_lookup=battery_lookup)
-        self._colour_shunt_like_results(shunt_q=shunt_q,
-                                        shunt_lookup=shunt_lookup)
-
-        # Only studies that export some explicit per-device injection channels
-        # should fall back to the profile-backed injections that still lack
-        # study-native result vectors.
-        if has_explicit_results:
-            self._colour_static_generator_results(t_idx=t_idx)
-            self._colour_load_results(t_idx=t_idx)
-            self._colour_external_grid_results(t_idx=t_idx)
-            self._colour_current_injection_results(t_idx=t_idx)
-        else:
-            pass
-
-    def _colour_injection_results_3ph(self,
-                                      gen_q_a: Vec | None,
-                                      gen_q_b: Vec | None,
-                                      gen_q_c: Vec | None,
-                                      gen_names: np.ndarray | list[str] | None,
-                                      battery_q_a: Vec | None,
-                                      battery_q_b: Vec | None,
-                                      battery_q_c: Vec | None,
-                                      battery_names: np.ndarray | list[str] | None,
-                                      shunt_q_a: Vec | None,
-                                      shunt_q_b: Vec | None,
-                                      shunt_q_c: Vec | None,
-                                      shunt_names: np.ndarray | list[str] | None,
-                                      t_idx: int | None) -> None:
-        """
-        Apply three-phase injection result overlays.
-
-        :param gen_q_a: Generator phase-a reactive powers.
-        :param gen_q_b: Generator phase-b reactive powers.
-        :param gen_q_c: Generator phase-c reactive powers.
-        :param gen_names: Generator result names.
-        :param battery_q_a: Battery phase-a reactive powers.
-        :param battery_q_b: Battery phase-b reactive powers.
-        :param battery_q_c: Battery phase-c reactive powers.
-        :param battery_names: Battery result names.
-        :param shunt_q_a: Shunt phase-a reactive powers.
-        :param shunt_q_b: Shunt phase-b reactive powers.
-        :param shunt_q_c: Shunt phase-c reactive powers.
-        :param shunt_names: Shunt result names.
-        :param t_idx: Optional time index for profile-backed injections.
-        :return: ``None``.
-        """
-        self._clear_all_injection_results()
-
-        generator_lookup: dict[str, int] = self._build_injection_name_lookup(names=gen_names)
-        battery_lookup: dict[str, int] = self._build_injection_name_lookup(names=battery_names)
-        shunt_lookup: dict[str, int] = self._build_injection_name_lookup(names=shunt_names)
-        has_explicit_results: bool = _has_three_phase_explicit_injection_results(
-            gen_q_a=gen_q_a,
-            gen_q_b=gen_q_b,
-            gen_q_c=gen_q_c,
-            battery_q_a=battery_q_a,
-            battery_q_b=battery_q_b,
-            battery_q_c=battery_q_c,
-            shunt_q_a=shunt_q_a,
-            shunt_q_b=shunt_q_b,
-            shunt_q_c=shunt_q_c,
-        )
-
-        self._colour_generator_results_3ph(gen_q_a=gen_q_a,
-                                           gen_q_b=gen_q_b,
-                                           gen_q_c=gen_q_c,
-                                           generator_lookup=generator_lookup)
-        self._colour_battery_results_3ph(battery_q_a=battery_q_a,
-                                         battery_q_b=battery_q_b,
-                                         battery_q_c=battery_q_c,
-                                         battery_lookup=battery_lookup)
-        self._colour_shunt_like_results_3ph(shunt_q_a=shunt_q_a,
-                                            shunt_q_b=shunt_q_b,
-                                            shunt_q_c=shunt_q_c,
-                                            shunt_lookup=shunt_lookup)
-
-        if has_explicit_results:
-            self._colour_static_generator_results_3ph(t_idx=t_idx)
-            self._colour_load_results_3ph(t_idx=t_idx)
-            self._colour_external_grid_results_3ph(t_idx=t_idx)
-            self._colour_current_injection_results_3ph(t_idx=t_idx)
-        else:
-            pass
 
     def colour_results(self,
                        Sbus: CxVec,
@@ -5235,14 +3782,6 @@ class SchematicWidget(BaseDiagramWidget):
                        vsc_active: IntVec = None,
                        ma: Vec = None,
                        tau: Vec = None,
-                       gen_p: Vec = None,
-                       gen_q: Vec = None,
-                       gen_names: np.ndarray | list[str] | None = None,
-                       battery_p: Vec = None,
-                       battery_q: Vec = None,
-                       battery_names: np.ndarray | list[str] | None = None,
-                       shunt_q: Vec = None,
-                       shunt_names: np.ndarray | list[str] | None = None,
                        fluid_node_p2x_flow: Vec = None,
                        fluid_node_current_level: Vec = None,
                        fluid_node_spillage: Vec = None,
@@ -5250,15 +3789,13 @@ class SchematicWidget(BaseDiagramWidget):
                        fluid_node_flow_out: Vec = None,
                        fluid_path_flow: Vec = None,
                        fluid_injection_flow: Vec = None,
-                       t_idx: int | None = None,
                        use_flow_based_width: bool = False,
                        min_branch_width: int = 5,
                        max_branch_width=5,
                        min_bus_width=20,
                        max_bus_width=20,
                        cmap: palettes.Colormaps = None,
-                       is_three_phase: bool = False,
-                       apply_bus_result_coloring: bool = True):
+                       is_three_phase: bool = False):
         """
         Color objects based on the results passed.
         """
@@ -5281,18 +3818,7 @@ class SchematicWidget(BaseDiagramWidget):
                                  bus_types=bus_types,
                                  voltage_cmap=voltage_cmap,
                                  cmap=cmap,
-                                 use_flow_based_width=use_flow_based_width,
-                                 apply_result_coloring=apply_bus_result_coloring)
-
-        self._colour_injection_results(gen_p=gen_p,
-                                       gen_q=gen_q,
-                                       gen_names=gen_names,
-                                       battery_p=battery_p,
-                                       battery_q=battery_q,
-                                       battery_names=battery_names,
-                                       shunt_q=shunt_q,
-                                       shunt_names=shunt_names,
-                                       t_idx=t_idx)
+                                 use_flow_based_width=use_flow_based_width)
 
         max_flow = self._colour_branch_results(Sf=Sf,
                                                St=St,
@@ -5364,22 +3890,6 @@ class SchematicWidget(BaseDiagramWidget):
                                 voltage_cmap: Callable,
                                 cmap: palettes.Colormaps | None,
                                 use_flow_based_width: bool) -> None:
-        """
-
-        :param VmA:
-        :param VmB:
-        :param VmC:
-        :param VaA:
-        :param VaB:
-        :param VaC:
-        :param bus_active:
-        :param types:
-        :param bus_types:
-        :param voltage_cmap:
-        :param cmap:
-        :param use_flow_based_width:
-        :return:
-        """
         nbus = self.circuit.get_bus_number()
         if nbus != len(VmA):
             error_msg("Bus results length differs from the number of Bus results. \n"
@@ -5391,7 +3901,7 @@ class SchematicWidget(BaseDiagramWidget):
         vrng = vmax - vmin
 
         for i, bus in enumerate(self.circuit.buses):
-            graphic_object = self._query_bus_graphic(bus)
+            graphic_object: BusGraphicItem | None = self.graphics_manager.query(bus)
             if graphic_object is None:
                 continue
 
@@ -5434,27 +3944,6 @@ class SchematicWidget(BaseDiagramWidget):
                                 loading_cmap: Callable,
                                 cmap: palettes.Colormaps | None,
                                 max_flow: float) -> None:
-        """
-
-        :param vsc_Pf:
-        :param vsc_PtA:
-        :param vsc_PtB:
-        :param vsc_PtC:
-        :param vsc_QtA:
-        :param vsc_QtB:
-        :param vsc_QtC:
-        :param vsc_losses:
-        :param vsc_loading:
-        :param vsc_active:
-        :param loading_label:
-        :param use_flow_based_width:
-        :param min_branch_width:
-        :param max_branch_width:
-        :param loading_cmap:
-        :param cmap:
-        :param max_flow:
-        :return:
-        """
         if vsc_Pf is None:
             return
 
@@ -5465,7 +3954,7 @@ class SchematicWidget(BaseDiagramWidget):
 
         vsc_sending_power_norm = np.abs(vsc_PtA + 1j * vsc_QtA) / (max_flow + 1e-20)
         for i, elm in enumerate(self.circuit.vsc_devices):
-            graphic_object = self._query_vsc_graphic(elm)
+            graphic_object: VscGraphicItem | None = self.graphics_manager.query(elm)
             if graphic_object is None:
                 continue
 
@@ -5511,22 +4000,6 @@ class SchematicWidget(BaseDiagramWidget):
                                  loading_cmap: Callable,
                                  cmap: palettes.Colormaps | None,
                                  max_flow: float) -> None:
-        """
-
-        :param hvdc_PfA:
-        :param hvdc_PtA:
-        :param hvdc_losses:
-        :param hvdc_loading:
-        :param hvdc_active:
-        :param loading_label:
-        :param use_flow_based_width:
-        :param min_branch_width:
-        :param max_branch_width:
-        :param loading_cmap:
-        :param cmap:
-        :param max_flow:
-        :return:
-        """
         if len(hvdc_PfA) == 0:
             return
 
@@ -5537,7 +4010,7 @@ class SchematicWidget(BaseDiagramWidget):
 
         hvdc_sending_power_norm = np.abs(hvdc_PfA) / (max_flow + 1e-20)
         for i, elm in enumerate(self.circuit.hvdc_lines):
-            graphic_object = self._query_hvdc_graphic(elm)
+            graphic_object: HvdcGraphicItem | None = self.graphics_manager.query(elm)
             if graphic_object is None:
                 continue
 
@@ -5617,84 +4090,9 @@ class SchematicWidget(BaseDiagramWidget):
                            cmap: palettes.Colormaps = None,
                            ma: Vec | None = None,
                            tau: Vec | None = None,
-                           t_idx: int | None = None,
-                           gen_q_a: Vec | None = None,
-                           gen_q_b: Vec | None = None,
-                           gen_q_c: Vec | None = None,
-                           gen_names: np.ndarray | list[str] | None = None,
-                           battery_q_a: Vec | None = None,
-                           battery_q_b: Vec | None = None,
-                           battery_q_c: Vec | None = None,
-                           battery_names: np.ndarray | list[str] | None = None,
-                           shunt_q_a: Vec | None = None,
-                           shunt_q_b: Vec | None = None,
-                           shunt_q_c: Vec | None = None,
-                           shunt_names: np.ndarray | list[str] | None = None):
+                           ):
         """
         Color objects based on the three-phase results passed.
-        :param SbusA:
-        :param SbusB:
-        :param SbusC:
-        :param voltagesA:
-        :param voltagesB:
-        :param voltagesC:
-        :param bus_active:
-        :param types:
-        :param SfA:
-        :param SfB:
-        :param SfC:
-        :param StA:
-        :param StB:
-        :param StC:
-        :param loadingsA:
-        :param loadingsB:
-        :param loadingsC:
-        :param lossesA:
-        :param lossesB:
-        :param lossesC:
-        :param br_active:
-        :param hvdc_PfA:
-        :param hvdc_PfB:
-        :param hvdc_PfC:
-        :param hvdc_PtA:
-        :param hvdc_PtB:
-        :param hvdc_PtC:
-        :param hvdc_losses:
-        :param hvdc_loading:
-        :param hvdc_active:
-        :param vsc_Pf:
-        :param vsc_PtA:
-        :param vsc_PtB:
-        :param vsc_PtC:
-        :param vsc_QtA:
-        :param vsc_QtB:
-        :param vsc_QtC:
-        :param vsc_losses:
-        :param vsc_loading:
-        :param vsc_active:
-        :param loading_label:
-        :param use_flow_based_width:
-        :param min_branch_width:
-        :param max_branch_width:
-        :param min_bus_width:
-        :param max_bus_width:
-        :param cmap:
-        :param ma:
-        :param tau:
-        :param t_idx:
-        :param gen_q_a:
-        :param gen_q_b:
-        :param gen_q_c:
-        :param gen_names:
-        :param battery_q_a:
-        :param battery_q_b:
-        :param battery_q_c:
-        :param battery_names:
-        :param shunt_q_a:
-        :param shunt_q_b:
-        :param shunt_q_c:
-        :param shunt_names:
-        :return:
         """
         VmA = np.abs(voltagesA)
         VmB = np.abs(voltagesB)
@@ -5718,20 +4116,6 @@ class SchematicWidget(BaseDiagramWidget):
                                      voltage_cmap=voltage_cmap,
                                      cmap=cmap,
                                      use_flow_based_width=use_flow_based_width)
-
-        self._colour_injection_results_3ph(gen_q_a=gen_q_a,
-                                           gen_q_b=gen_q_b,
-                                           gen_q_c=gen_q_c,
-                                           gen_names=gen_names,
-                                           battery_q_a=battery_q_a,
-                                           battery_q_b=battery_q_b,
-                                           battery_q_c=battery_q_c,
-                                           battery_names=battery_names,
-                                           shunt_q_a=shunt_q_a,
-                                           shunt_q_b=shunt_q_b,
-                                           shunt_q_c=shunt_q_c,
-                                           shunt_names=shunt_names,
-                                           t_idx=t_idx)
 
         Sf = np.empty(0, dtype=complex)
         St = np.empty(0, dtype=complex)
@@ -5811,28 +4195,28 @@ class SchematicWidget(BaseDiagramWidget):
             if graphical_obj.api_object is not None:
 
                 if use_api_color:
-                    if isinstance(graphical_obj, BusGraphicItem):
-                        color = QColor(graphical_obj.api_object.color)
-                        brush = QBrush(color)
-                        graphical_obj.set_tile_color(brush)
+                    if hasattr(graphical_obj.api_object, 'color'):
+                        color_hex = graphical_obj.api_object.color
+                        color = QColor(color_hex)
+                        if isinstance(graphical_obj, BusGraphicItem):
+                            brush = QBrush(color)
+                            graphical_obj.set_tile_color(brush)
 
-                    elif isinstance(graphical_obj, (TransformerGraphicItem, LineGraphicItem)):
-                        color = QColor(graphical_obj.api_object.color)
-                        w = graphical_obj.pen_width
+                        elif isinstance(graphical_obj, (TransformerGraphicItem, LineGraphicItem)):
 
-                        if graphical_obj.api_object.active:  # TODO: gather the property at the time step too
-                            style = Qt.PenStyle.SolidLine
-                        else:
-                            style = Qt.PenStyle.DashLine
+                            w = graphical_obj.pen_width
 
-                        graphical_obj.set_colour(color, w=w, style=style)
-                    else:
-                        pass
+                            if graphical_obj.api_object.active:  # TODO: gather the property at the time step too
+                                style = Qt.PenStyle.SolidLine
+                            else:
+                                style = Qt.PenStyle.DashLine
+
+                            graphical_obj.set_colour(color, w=w, style=style)
 
                 else:
                     graphical_obj.recolour_mode()
 
-    def get_selected(self) -> List[GenericDiagramWidget | QGraphicsItem]:
+    def _get_selected(self) -> List[GenericDiagramWidget | QGraphicsItem]:
         """
         Get selection
         :return: List of EditableDevice, QGraphicsItem
@@ -5844,7 +4228,7 @@ class SchematicWidget(BaseDiagramWidget):
         Get a list of the API objects from the selection
         :return: List[EditableDevice]
         """
-        return [e.api_object for e in self.get_selected() if isinstance(e, GenericDiagramWidget)]
+        return [e.api_object for e in self._get_selected()]
 
     def create_schematic_from_selection(self) -> SchematicDiagram:
         """
@@ -5855,7 +4239,7 @@ class SchematicWidget(BaseDiagramWidget):
 
         # first pass (only buses)
         bus_dict = dict()
-        for item in self.get_selected():
+        for item in self._get_selected():
             if isinstance(item, BusGraphicItem):
                 # check that the bus is in the original diagram
                 location = self.diagram.query_point(item.api_object)
@@ -5898,7 +4282,7 @@ class SchematicWidget(BaseDiagramWidget):
                         # if the bus was not added in the first
                         # pass and is in the original diagram, add it now
                         diagram.set_point(device=bus, location=location.copy())
-                        graphic_object = self._query_bus_graphic(bus)
+                        graphic_object = self.graphics_manager.query(elm=bus)
                         bus_dict[bus.idtag] = graphic_object
 
         # third pass: we must also add all those branches connecting the selected buses
@@ -6126,8 +4510,8 @@ class SchematicWidget(BaseDiagramWidget):
 
             bus_f_graphics_data = self.diagram.query_point(original_line.bus_from)
             bus_t_graphics_data = self.diagram.query_point(original_line.bus_to)
-            bus_f_graphic_obj = self._query_bus_graphic(original_line.bus_from)
-            bus_t_graphic_obj = self._query_bus_graphic(original_line.bus_to)
+            bus_f_graphic_obj = self.graphics_manager.query(original_line.bus_from)
+            bus_t_graphic_obj = self.graphics_manager.query(original_line.bus_to)
 
             if bus_f_graphics_data is None:
                 error_msg(f"{original_line.bus_from} was not found in the diagram")
@@ -6245,8 +4629,8 @@ class SchematicWidget(BaseDiagramWidget):
 
                                 bus_f_graphics_data = self.diagram.query_point(original_line.bus_from)
                                 bus_t_graphics_data = self.diagram.query_point(original_line.bus_to)
-                                bus_f_graphic_obj = self._query_bus_graphic(original_line.bus_from)
-                                bus_t_graphic_obj = self._query_bus_graphic(original_line.bus_to)
+                                bus_f_graphic_obj = self.graphics_manager.query(original_line.bus_from)
+                                bus_t_graphic_obj = self.graphics_manager.query(original_line.bus_to)
 
                                 if bus_f_graphics_data is None:
                                     error_msg(f"{original_line.bus_from} was not found in the diagram")
@@ -6446,10 +4830,11 @@ class SchematicWidget(BaseDiagramWidget):
         Deep copy of this widget
         :return: SchematicWidget
         """
-        d_copy: SchematicDiagram = self.diagram.copy(
-            obj_dict=self.circuit.get_all_elements_dict_by_type(add_locations=True)
-        )
-        d_copy.name = self.diagram.name + '_copy'
+        d_copy = SchematicDiagram(name=self.diagram.name + '_copy')
+        j_data = json.dumps(self.diagram.get_data_dict(), indent=4)
+        d_copy.parse_data(data=json.loads(j_data),
+                          obj_dict=self.circuit.get_all_elements_dict_by_type(add_locations=True),
+                          logger=self.logger)
 
         return SchematicWidget(
             gui=self.gui,
@@ -6484,7 +4869,7 @@ class SchematicWidget(BaseDiagramWidget):
          transformers3w, transformers_nw, windings, hvdc_lines,
          vsc_converters, upfc_devices,
          series_reactances, switches,
-         fluid_nodes, fluid_paths) = get_devices_to_expand(circuit=self.circuit, buses_set=buses, max_level=1)
+         fluid_nodes, fluid_paths) = get_devices_to_expand(circuit=self.circuit, buses=buses, max_level=1)
 
         # Draw schematic subset
         diagram = generate_schematic_diagram(buses=list(buses),
@@ -6522,7 +4907,7 @@ class SchematicWidget(BaseDiagramWidget):
          vsc_converters, upfc_devices,
          series_reactances, switches,
          fluid_nodes, fluid_paths) = get_devices_to_expand(circuit=self.circuit,
-                                                           buses_set=buses,
+                                                           buses=buses,
                                                            max_level=5,
                                                            restrict_to_voltage_levels=voltage_levels)
 
@@ -6601,9 +4986,7 @@ class SchematicWidget(BaseDiagramWidget):
         # the order of the buses matches the order of the branches because the
         # transformation function already works like that
         for i, branch_graphic in enumerate(branch_graphics):
-            new_bus_graphic = self._query_bus_graphic(new_buses[i])
-            if new_bus_graphic is None:
-                continue
+            new_bus_graphic: BusGraphicItem = self.graphics_manager.query(new_buses[i])
 
             new_bus_graphic.terminal.reassign_terminal(
                 graphic_obj=branch_graphic,
@@ -6632,7 +5015,7 @@ class SchematicWidget(BaseDiagramWidget):
         )
 
         if ok:
-            old_bus_graphic = self._query_bus_graphic(injection_graphics.api_object.bus)
+            old_bus_graphic: BusGraphicItem = self.graphics_manager.query(injection_graphics.api_object.bus)
 
             new_bus, converter = self.circuit.move_behind_converter(api_object=injection_graphics.api_object)
 
@@ -6682,9 +5065,8 @@ class SchematicWidget(BaseDiagramWidget):
 
         # correct the new buses position
         for i, bus in enumerate(new_buses):
-            new_bus_graphic = self._query_bus_graphic(bus)
-            if new_bus_graphic is not None:
-                new_bus_graphic.setPos(bus_graphics.x() + (i * x_offset), bus_graphics.y() + 20)
+            new_bus_graphic: BusGraphicItem = self.graphics_manager.query(bus)
+            new_bus_graphic.setPos(bus_graphics.x() + (i * x_offset), bus_graphics.y() + 20)
 
         # connected branches
         self.reconnect_bus_graphics(bus_graphics=bus_graphics, new_buses=new_buses)
@@ -6730,7 +5112,7 @@ class SchematicWidget(BaseDiagramWidget):
 
             # Force redraw of all new bus graphics to ensure connections are visible
             for new_bus in new_buses:
-                bus_graphic = self._query_bus_graphic(new_bus)
+                bus_graphic = self.graphics_manager.query(new_bus)
                 if bus_graphic is not None:
                     bus_graphic.update()
                     terminal = bus_graphic.get_terminal()
@@ -6743,8 +5125,8 @@ class SchematicWidget(BaseDiagramWidget):
             # the order of the buses matches the order of the branches because the
             # transformation function already works like that
             for element, old_bus, new_bus in reconnection_list:
-                new_bus_graphic = self._query_bus_graphic(new_bus)
-                branch_graphic = self._query_line_graphic(element)
+                new_bus_graphic: BusGraphicItem = self.graphics_manager.query(new_bus)
+                branch_graphic = self.graphics_manager.query(element)
 
                 # Skip if graphics not found
                 if new_bus_graphic is None:
@@ -6752,6 +5134,9 @@ class SchematicWidget(BaseDiagramWidget):
                     continue
                 if branch_graphic is None:
                     print(f"Warning: No graphic found for element {element.name}")
+                    continue
+                if not isinstance(branch_graphic, LineGraphicTemplateItem):
+                    print(f"Warning: Graphic for element {element.name} is not a branch graphic")
                     continue
 
                 # At this point the API branch has been reassigned already
@@ -6782,7 +5167,7 @@ class SchematicWidget(BaseDiagramWidget):
 
             # select the new buses
             for new_bus in new_buses:
-                new_bus_graphic = self._query_bus_graphic(new_bus)
+                new_bus_graphic: BusGraphicItem = self.graphics_manager.query(new_bus)
                 if new_bus_graphic is not None:
                     new_bus_graphic.setSelected(True)
 
@@ -7011,7 +5396,7 @@ def generate_grid_diagram(circuit: MultiCircuit,
 
 
 def get_devices_to_expand(circuit: MultiCircuit,
-                          buses_set: List[Bus],
+                          buses: List[Bus],
                           max_level: int = 1,
                           restrict_to_voltage_levels: Set | None = None) -> Tuple[List[Bus],
 List[Line],
@@ -7030,7 +5415,7 @@ List[FluidPath]]:
     """
     get lists of devices to expand given a root bus
     :param circuit: MultiCircuit
-    :param buses_set: List of Bus
+    :param buses: List of Bus
     :param max_level: max expansion level
     :param restrict_to_voltage_levels: If provided, only expand to buses within these voltage levels.
                                        This prevents expansion into the external network when drawing
@@ -7061,7 +5446,7 @@ List[FluidPath]]:
     # create a pool of buses
     bus_pool: List[Tuple[Bus, int]] = list()  # store the bus objects and their level from the root
 
-    for b in buses_set:
+    for b in buses:
         bus_pool.append((b, 0))
 
     # create maps of the multi-winding transformers that own the windings
@@ -7079,7 +5464,7 @@ List[FluidPath]]:
         for winding in tr_nw.windings:
             windings2tr_nw[winding] = tr_nw
 
-    buses_set = set()
+    buses = set()
     fluid_nodes = set()
     selected_branches = set()
     visited = set()
@@ -7095,7 +5480,7 @@ List[FluidPath]]:
 
         # add searched bus
         if bus.graphic_type == BusGraphicType.BusBar or bus.graphic_type == BusGraphicType.Connectivity:
-            buses_set.add(bus)
+            buses.add(bus)
 
         if level < (max_level + max_level_offset):
 
@@ -7128,8 +5513,8 @@ List[FluidPath]]:
     lines: List[Line] = list()
     dc_lines: List[DcLine] = list()
     transformers2w: List[Transformer2W] = list()
-    transformers3w_set: Set[Transformer3W] = set()
-    transformers_nw_set: Set[TransformerNW] = set()
+    transformers3w: Set[Transformer3W] = set()
+    transformers_nw: Set[TransformerNW] = set()
     windings: List[Winding] = list()
     hvdc_lines: List[HvdcLine] = list()
     vsc_converters: List[VSC] = list()
@@ -7157,10 +5542,10 @@ List[FluidPath]]:
             # For each winding, add its owning multi-winding transformer container.
             tr3 = windings2tr3.get(obj, None)
             if tr3 is not None:
-                transformers3w_set.add(tr3)
+                transformers3w.add(tr3)
             tr_nw = windings2tr_nw.get(obj, None)
             if tr_nw is not None:
-                transformers_nw_set.add(tr_nw)
+                transformers_nw.add(tr_nw)
 
         elif obj.device_type == DeviceType.HVDCLineDevice:
             hvdc_lines.append(obj)
@@ -7182,32 +5567,32 @@ List[FluidPath]]:
 
     # we need to add the tr3 buses, if any of the buses is selected
     buses_tr3 = set()
-    for tr3 in transformers3w_set:
+    for tr3 in transformers3w:
         # print(tr3)
-        if tr3.bus1 in buses_set:
+        if tr3.bus1 in buses:
             buses_tr3.add(tr3.bus2)
             buses_tr3.add(tr3.bus3)
-        elif tr3.bus2 in buses_set:
+        elif tr3.bus2 in buses:
             buses_tr3.add(tr3.bus1)
             buses_tr3.add(tr3.bus3)
-        elif tr3.bus3 in buses_set:
+        elif tr3.bus3 in buses:
             buses_tr3.add(tr3.bus1)
             buses_tr3.add(tr3.bus2)
 
     for b in buses_tr3:
-        buses_set.add(b)
+        buses.add(b)
 
     buses_tr_nw = set()
-    for tr_nw in transformers_nw_set:
-        if any(bus in buses_set for bus in tr_nw.buses if bus is not None):
+    for tr_nw in transformers_nw:
+        if any(bus in buses for bus in tr_nw.buses if bus is not None):
             for bus in tr_nw.buses:
                 if bus is not None:
                     buses_tr_nw.add(bus)
 
     for b in buses_tr_nw:
-        buses_set.add(b)
+        buses.add(b)
 
-    return (list(buses_set), lines, dc_lines, transformers2w, list(transformers3w_set), list(transformers_nw_set),
+    return (list(buses), lines, dc_lines, transformers2w, list(transformers3w), list(transformers_nw),
             windings, hvdc_lines, vsc_converters, upfc_devices, series_reactances, switches,
             list(fluid_nodes), fluid_paths)
 
@@ -7234,7 +5619,7 @@ def make_vicinity_diagram(circuit: MultiCircuit,
      transformers3w, transformers_nw, windings, hvdc_lines,
      vsc_converters, upfc_devices,
      series_reactances, switches,
-     fluid_nodes, fluid_paths) = get_devices_to_expand(circuit=circuit, buses_set=[root_bus], max_level=max_level)
+     fluid_nodes, fluid_paths) = get_devices_to_expand(circuit=circuit, buses=[root_bus], max_level=max_level)
 
     # Draw schematic subset
     diagram = generate_schematic_diagram(
@@ -7281,7 +5666,7 @@ def make_diagram_from_buses(circuit: MultiCircuit,
      transformers3w, transformers_nw, windings, hvdc_lines,
      vsc_converters, upfc_devices,
      series_reactances, switches,
-     fluid_nodes, fluid_paths) = get_devices_to_expand(circuit=circuit, buses_set=buses, max_level=1)
+     fluid_nodes, fluid_paths) = get_devices_to_expand(circuit=circuit, buses=buses, max_level=1)
 
     # Draw schematic subset
     diagram = generate_schematic_diagram(buses=list(buses),

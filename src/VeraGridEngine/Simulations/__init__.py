@@ -7,7 +7,6 @@
 from VeraGridEngine.Simulations.ContinuationPowerFlow import *
 from VeraGridEngine.Simulations.Stochastic import *
 from VeraGridEngine.Simulations.PowerFlow import *
-from VeraGridEngine.Simulations.PowerFlow3ph import *
 from VeraGridEngine.Simulations.ShortCircuitStudies import *
 from VeraGridEngine.Simulations.StateEstimation import *
 from VeraGridEngine.Simulations.OPF import *
@@ -21,7 +20,6 @@ from VeraGridEngine.Simulations.NTC import *
 from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGridEngine.Simulations.Clustering import *
 from VeraGridEngine.Simulations.InvestmentsEvaluation import *
-from VeraGridEngine.Simulations.CatalogueOptimization import *
 from VeraGridEngine.Simulations.NodalCapacity import *
 from VeraGridEngine.Simulations.Reliability import *
 from VeraGridEngine.Simulations.AI import *

@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.power_system_resource import PowerSystemResource
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import HydroPlantStorageKind, CgmesProfileType
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import HydroPlantStorageKind
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.hydro_generating_unit import HydroGeneratingUnit
@@ -16,9 +16,9 @@ if TYPE_CHECKING:
 
 class HydroPowerPlant(PowerSystemResource):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='HydroGeneratingUnits', class_type='HydroGeneratingUnit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The hydro generating unit belongs to a hydro power plant.''', profiles=[CgmesProfileType.EQ]),
-		CgmesProperty(property_name='hydroPlantStorageType', class_type=HydroPlantStorageKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The type of hydro power plant water storage.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
-		CgmesProperty(property_name='HydroPumps', class_type='HydroPump', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The hydro pump may be a member of a pumped storage plant or a pump for distributing water.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='HydroGeneratingUnits', class_type='HydroGeneratingUnit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The hydro generating unit belongs to a hydro power plant.''', profiles=[]),
+		CgmesProperty(property_name='hydroPlantStorageType', class_type=HydroPlantStorageKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The type of hydro power plant water storage.''', profiles=[]),
+		CgmesProperty(property_name='HydroPumps', class_type='HydroPump', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The hydro pump may be a member of a pumped storage plant or a pump for distributing water.''', profiles=[]),
 	)
 	__slots__ = ('HydroGeneratingUnits', 'hydroPlantStorageType', 'HydroPumps')
 	def __init__(self, rdfid='', tpe='HydroPowerPlant'):

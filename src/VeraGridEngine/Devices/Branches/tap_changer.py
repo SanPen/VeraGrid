@@ -23,7 +23,6 @@ class TapChanger:
         '_normal_position',
         '_tap_position',
         '_tc_type',
-        '_low_step',
         '_negative_low',
         '_ndv',
         '_tau_array',
@@ -74,9 +73,6 @@ class TapChanger:
         # tap changer mode
         self._tc_type: TapChangerTypes = tc_type
 
-        # original CGMES low step, when this tap changer comes from CGMES
-        self._low_step = 0
-
         # for CGMES compatibility we store if the low step is negative
         self._negative_low = False
 
@@ -101,12 +97,6 @@ class TapChanger:
             asymmetry_angle=self._asymmetry_angle,
             tc_type=self._tc_type
         )
-        elm._low_step = self._low_step
-        elm._negative_low = self._negative_low
-        elm._tap_position = self._tap_position
-        elm._k_re_array = self._k_re_array.copy()
-        elm._k_im_array = self._k_im_array.copy()
-        elm.recalc()
         return elm
 
     @property
@@ -214,15 +204,6 @@ class TapChanger:
         """
         return self._tau_array
 
-    @property
-    def impedance_correction_imag_array(self) -> np.ndarray:
-        """
-        Get the imaginary impedance correction factors per tap position.
-        A value of 1.0 at every position means no correction (default).
-        :return: array of length total_positions
-        """
-        return self._k_im_array
-
     def resize(self) -> None:
         """
         Resize and recalc the tap positions array
@@ -254,7 +235,6 @@ class TapChanger:
             "normal_position": self.normal_position,
             "tap_position": self._tap_position,
             "type": str(self.tc_type),
-            "low_step": self._low_step,
             "negative_low": self._negative_low,
             "impedance_correction_real": self._k_re_array.tolist(),
             "impedance_correction_imag": self._k_im_array.tolist(),
@@ -273,13 +253,7 @@ class TapChanger:
         self.normal_position = data.get("normal_position", 2)
         self.tap_position = data.get("tap_position", 2)
         self.tc_type = TapChangerTypes(data.get("type", TapChangerTypes.NoRegulation.value))
-        low_step = data.get("low_step", None)
-        if low_step is None:
-            negative_low = data.get("negative_low", False)
-            self._low_step = 1 - self.neutral_position if negative_low else 0
-        else:
-            self._low_step = int(low_step)
-        self._negative_low = self._low_step < 0
+        self._negative_low = data.get("negative_low", False)
 
         # parse the impedance correction factors
 
@@ -525,16 +499,25 @@ class TapChanger:
         :return:
         """
 
-        self._low_step = int(low)
-        self._negative_low = self._low_step < 0
+        self._negative_low = low < 0
 
-        self.asymmetry_angle = float(asymmetry_angle)  # asymmetry angle (Theta)
-        self._total_positions = int(high - low + 1)  # total number of positions
-        self.dV = float(stepVoltageIncrement / 100)  # voltage increment in p.u.
-        self.neutral_position = int(neutral - low)  # zero-based neutral position
-        self.normal_position = int(normal - low)  # zero-based normal position
-        self._tap_position = int(step - low)  # zero-based tap position
-        self.tc_type = tc_type  # tap changer mode
+        if self._negative_low:
+            self.asymmetry_angle = float(asymmetry_angle)  # asymmetry angle (Theta)
+            self._total_positions = int(high - low + 1)  # total number of positions
+            self.dV = float(stepVoltageIncrement / 100)  # voltage increment in p.u.
+            self.neutral_position = int(neutral - low + 1)  # neutral position
+            self.normal_position = int(normal - low + 1)  # normal position
+            self._tap_position = int(self.neutral_position + step)  # index with respect to the neutral position
+            self.tc_type = tc_type  # tap changer mode
+
+        else:
+            self.asymmetry_angle = float(asymmetry_angle)  # asymmetry angle (Theta)
+            self._total_positions = int(high - low + 1)  # total number of positions
+            self.dV = float(stepVoltageIncrement / 100)  # voltage increment in p.u.
+            self.neutral_position = int(neutral)  # neutral position
+            self.normal_position = int(normal)  # normal position
+            self._tap_position = int(step)  # index with respect to the neutral position
+            self.tc_type: TapChangerTypes = tc_type  # tap changer mode
 
         # Calculated arrays
         self._ndv = np.zeros(self._total_positions)
@@ -552,11 +535,19 @@ class TapChanger:
         :rtype: 
         """
 
-        low = self._low_step
-        high = low + self.total_positions - 1
-        normal = self.normal_position + low
-        neutral = self.neutral_position + low
-        sVI = round(self.dV * 100, 6)
-        step = self.tap_position + low
+        if self._negative_low:
+            low = -self.neutral_position + 1
+            high = self.total_positions - self.neutral_position
+            normal = self.normal_position + low - 1
+            neutral = self.neutral_position + low - 1
+            sVI = round(self.dV * 100, 6)
+            step = self.tap_position + low - 1
+        else:
+            low = 0
+            high = self.total_positions - 1
+            normal = self.normal_position
+            neutral = self.neutral_position
+            sVI = round(self.dV * 100, 6)
+            step = self.tap_position
 
         return low, high, normal, neutral, sVI, step

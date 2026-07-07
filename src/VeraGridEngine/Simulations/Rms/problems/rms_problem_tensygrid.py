@@ -14,7 +14,7 @@ from VeraGridEngine.Utils.Symbolic.symbolic import (Var, Const, Expr, piecewise)
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicParamsVector, \
     SymbolicDerivative
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.enumerations import VarPowerFlowReferenceType, RmsInitializationMethod
+from VeraGridEngine.enumerations import VarPowerFlowRefferenceType, RmsInitializationMethod
 from VeraGridEngine.basic_structures import Vec, ObjVec, BoolVec, Logger
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
@@ -180,8 +180,8 @@ class RmsProblemTensygrid(RmsProblemTemplate):
             self.add_variables_to_compilation_dicts(elm, mdl)
 
             # add init values from powerflow to initial guess
-            self.set_init_guess(mdl, VarPowerFlowReferenceType.Vm, np.abs(self.power_flow_results.voltage[bus_num]))
-            self.set_init_guess(mdl, VarPowerFlowReferenceType.Va, np.angle(self.power_flow_results.voltage[bus_num]))
+            self.set_init_guess(mdl, VarPowerFlowRefferenceType.Vm, np.abs(self.power_flow_results.voltage[bus_num]))
+            self.set_init_guess(mdl, VarPowerFlowRefferenceType.Va, np.angle(self.power_flow_results.voltage[bus_num]))
 
             # add model to system block
             self.sys_block.add(mdl)
@@ -196,10 +196,10 @@ class RmsProblemTensygrid(RmsProblemTemplate):
             self.add_variables_to_compilation_dicts(elm, mdl)
 
             # add init values from powerflow to initial guess
-            self.set_init_guess(mdl, VarPowerFlowReferenceType.Pf, self.Sf[branch_num].real)
-            self.set_init_guess(mdl, VarPowerFlowReferenceType.Qf, self.Sf[branch_num].imag)
-            self.set_init_guess(mdl, VarPowerFlowReferenceType.Pt, self.St[branch_num].real)
-            self.set_init_guess(mdl, VarPowerFlowReferenceType.Qt, self.St[branch_num].imag)
+            self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pf, self.Sf[branch_num].real)
+            self.set_init_guess(mdl, VarPowerFlowRefferenceType.Qf, self.Sf[branch_num].imag)
+            self.set_init_guess(mdl, VarPowerFlowRefferenceType.Pt, self.St[branch_num].real)
+            self.set_init_guess(mdl, VarPowerFlowRefferenceType.Qt, self.St[branch_num].imag)
 
             # add model to system block
             self.sys_block.add(mdl)
@@ -208,10 +208,10 @@ class RmsProblemTensygrid(RmsProblemTemplate):
             f = bus_dict[elm.bus_from]
             t = bus_dict[elm.bus_to]
 
-            setP(P, P_used, f, -mdl.E(VarPowerFlowReferenceType.Pf))
-            setP(P, P_used, t, -mdl.E(VarPowerFlowReferenceType.Pt))
-            setQ(Q, Q_used, f, -mdl.E(VarPowerFlowReferenceType.Qf))
-            setQ(Q, Q_used, t, -mdl.E(VarPowerFlowReferenceType.Qt))
+            setP(P, P_used, f, -mdl.E(VarPowerFlowRefferenceType.Pf))
+            setP(P, P_used, t, -mdl.E(VarPowerFlowRefferenceType.Pt))
+            setQ(Q, Q_used, f, -mdl.E(VarPowerFlowRefferenceType.Qf))
+            setQ(Q, Q_used, t, -mdl.E(VarPowerFlowRefferenceType.Qt))
 
         # initialize injections
 
@@ -228,15 +228,15 @@ class RmsProblemTensygrid(RmsProblemTemplate):
                     self.add_variables_to_compilation_dicts(elm, mdl)
 
                     # fill general init guess for known variables values
-                    self.set_init_guess(mdl, VarPowerFlowReferenceType.P,
+                    self.set_init_guess(mdl, VarPowerFlowRefferenceType.P,
                                         np.real(self.power_flow_results.Sbus[bus_index] / grid.Sbase))
-                    self.set_init_guess(mdl, VarPowerFlowReferenceType.Q,
+                    self.set_init_guess(mdl, VarPowerFlowRefferenceType.Q,
                                         np.imag(self.power_flow_results.Sbus[bus_index] / grid.Sbase))
 
                     # add variable to conservation equations of the bus to which the element is connected
                     k = bus_dict[elm.bus]
-                    setP(P, P_used, k, mdl.E(VarPowerFlowReferenceType.P))
-                    setQ(Q, Q_used, k, mdl.E(VarPowerFlowReferenceType.Q))
+                    setP(P, P_used, k, mdl.E(VarPowerFlowRefferenceType.P))
+                    setQ(Q, Q_used, k, mdl.E(VarPowerFlowRefferenceType.Q))
 
                     # find init values for the variables of this model
                     if self.options.initialization_method == RmsInitializationMethod.Explicit:
@@ -265,8 +265,7 @@ class RmsProblemTensygrid(RmsProblemTemplate):
                     self.sys_block.add(mdl)
 
         total_init_explicit_time += time.perf_counter() - t0
-        # print(f"\nTotal time explicit initialization: {total_init_explicit_time:.6f} seconds")
-        self.logger.add_info("Total time explicit initialization", value=total_init_explicit_time)
+        print(f"\nTotal time explicit initialization: {total_init_explicit_time:.6f} seconds")
         if self.progress_signal is not None:
             self.progress_signal.emit(10)
 
@@ -528,66 +527,62 @@ class RmsProblemTensygrid(RmsProblemTemplate):
         :rtype: None
         """
 
-        block_item: Block
-        for block_item in mdl.get_all_blocks():
-            # i is for variables
-            v: Var
-            for v in block_item.state_vars:
-                self._compiler_names_dict[v.uid] = f"{self.VARS_NAME}[{self._n_vars}]"
-                self._alias_names_dict[v.uid] = f"{self.VARS_NAME}_{self._n_vars}"
-                self._uid2idx_vars[v.uid] = self._n_vars
-                self._register_global_var_name(name_key=v.name + elm.name, uid=v.uid, block=block_item)
-                self.add_device_var(dev=elm, var=v)
-                self.sys_vars[v.uid] = v
-                self._state_vars.append(v)
-                self._n_vars += 1
+        # i is for variables
+        for v in mdl.state_vars:
+            self._compiler_names_dict[v.uid] = f"{self.VARS_NAME}[{self._n_vars}]"
+            self._alias_names_dict[v.uid] = f"{self.VARS_NAME}_{self._n_vars}"
+            self._uid2idx_vars[v.uid] = self._n_vars
+            self._vars_glob_name2uid[v.name + elm.name] = v.uid
+            self.add_device_var(dev=elm, var=v)
+            self.sys_vars[v.uid] = v
+            self._state_vars.append(v)
+            self._n_vars += 1
 
-            for v in block_item.algebraic_vars:
-                self._compiler_names_dict[v.uid] = f"{self.VARS_NAME}[{self._n_vars}]"
-                self._alias_names_dict[v.uid] = f"{self.VARS_NAME}_{self._n_vars}"
-                self._uid2idx_vars[v.uid] = self._n_vars
-                self._register_global_var_name(name_key=v.name + elm.name, uid=v.uid, block=block_item)
-                self.add_device_var(dev=elm, var=v)
-                self.sys_vars[v.uid] = v
-                self._algebraic_vars.append(v)
-                self._n_vars += 1
+        for v in mdl.algebraic_vars:
+            self._compiler_names_dict[v.uid] = f"{self.VARS_NAME}[{self._n_vars}]"
+            self._alias_names_dict[v.uid] = f"{self.VARS_NAME}_{self._n_vars}"
+            self._uid2idx_vars[v.uid] = self._n_vars
+            self._vars_glob_name2uid[v.name + elm.name] = v.uid
+            self.add_device_var(dev=elm, var=v)
+            self.sys_vars[v.uid] = v
+            self._algebraic_vars.append(v)
+            self._n_vars += 1
 
-            # j is for parameters
-            ep: Var
-            for ep, const in block_item.parameters.items():
-                self._compiler_names_dict[ep.uid] = f"{self.CONSTANT_PARAMS_NAME}[{self._n_params}]"
-                self._alias_names_dict[ep.uid] = f"{self.CONSTANT_PARAMS_NAME}_{self._n_params}"
-                self._uid2idx_params[ep.uid] = self._n_params
-                self._constant_parameters.append(ep)
-                self._parameters_values.append(const)
-                self._n_params += 1
+        # j is for parameters
+        for ep, const in mdl.parameters.items():
+            self._compiler_names_dict[ep.uid] = f"{self.CONSTANT_PARAMS_NAME}[{self._n_params}]"
+            self._alias_names_dict[ep.uid] = f"{self.CONSTANT_PARAMS_NAME}_{self._n_params}"
+            self._uid2idx_params[ep.uid] = self._n_params
+            self._constant_parameters.append(ep)
+            self._parameters_values.append(const)
+            self._n_params += 1
 
-            # m is for variable parameters
-            for ep, eq in block_item.event_dict.items():
-                self._compiler_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}[{self._n_event_params}]"
-                self._alias_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}_{self._n_event_params}"
-                self._uid2idx_event_params[ep.uid] = self._n_event_params
-                self._variable_parameters.append(ep)
-                self._event_parameters_eqs.append(eq)
-                self._n_event_params += 1
+        # m is for variable parameters
+        for ep, eq in mdl.event_dict.items():
+            self._compiler_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}[{self._n_event_params}]"
+            self._alias_names_dict[ep.uid] = f"{self.VARIABLE_PARAMS_NAME}_{self._n_event_params}"
+            self._uid2idx_event_params[ep.uid] = self._n_event_params
+            self._variable_parameters.append(ep)
+            self._event_parameters_eqs.append(eq)
+            self._n_event_params += 1
 
-            # l is for differential vars
-            for v in block_item.diff_vars:
-                self._compiler_names_dict[v.uid] = f"{self.DIFF_NAME}[{self._n_diff}]"
-                self._alias_names_dict[v.uid] = f"{self.DIFF_NAME}_{self._n_diff}"
-                self._uid2idx_diff[v.uid] = self._n_diff
-                self._register_global_var_name(name_key=v.name + elm.name, uid=v.uid, block=block_item)
-                self.add_device_var(dev=elm, var=v)
-                self._diff_vars.append(v)
-                self._n_diff += 1
+        # l is for differential vars
+        for v in mdl.diff_vars:
+            self._compiler_names_dict[v.uid] = f"{self.DIFF_NAME}[{self._n_diff}]"
+            self._alias_names_dict[v.uid] = f"{self.DIFF_NAME}_{self._n_diff}"
+            self._uid2idx_diff[v.uid] = self._n_diff
+            self._vars_glob_name2uid[v.name + elm.name] = v.uid
+            self.add_device_var(dev=elm, var=v)
+            self._diff_vars.append(v)
+            self._n_diff += 1
 
-            self._state_eqs.extend(block_item.state_eqs)
-            self._algebraic_eqs.extend(block_item.algebraic_eqs)
+        self._state_eqs.extend(mdl.state_eqs)
+        self._algebraic_eqs.extend(mdl.algebraic_eqs)
 
         if self.progress_signal is not None:
             self.progress_signal.emit(20)
 
-    def set_init_guess(self, mdl: Block, reference_powerflow: VarPowerFlowReferenceType, val: float):
+    def set_init_guess(self, mdl: Block, reference_powerflow: VarPowerFlowRefferenceType, val: float):
         """
         add values from powerflow to initial guess
 
@@ -654,27 +649,6 @@ class RmsProblemTensygrid(RmsProblemTemplate):
         """
         return self._vars_glob_name2uid
 
-    def _register_global_var_name(self, name_key: str, uid: int, block: Block | None = None) -> None:
-        prev_uid = self._vars_glob_name2uid.get(name_key)
-        if prev_uid is None or prev_uid == uid:
-            self._vars_glob_name2uid[name_key] = uid
-            return
-
-        block_tag = ""
-        if block is not None:
-            block_tag = f"::{block.name}#{block.uid}"
-
-        disambiguated_key = f"{name_key}{block_tag}"
-        if disambiguated_key == name_key:
-            disambiguated_key = f"{name_key} [{uid}]"
-
-        if disambiguated_key in self._vars_glob_name2uid and self._vars_glob_name2uid[disambiguated_key] != uid:
-            raise ValueError(
-                f"Global variable name collision for '{name_key}' and fallback '{disambiguated_key}': "
-                f"existing uid={self._vars_glob_name2uid[disambiguated_key]}, new uid={uid}."
-            )
-        self._vars_glob_name2uid[disambiguated_key] = uid
-
     @property
     def uid2idx_vars(self):
         """
@@ -683,7 +657,7 @@ class RmsProblemTensygrid(RmsProblemTemplate):
         return self._uid2idx_vars
 
     @property
-    def algebraic_vars(self):
+    def get_algebraic_vars(self):
         """
         :return:
         """
@@ -702,7 +676,7 @@ class RmsProblemTensygrid(RmsProblemTemplate):
         return variables
 
     @property
-    def state_vars(self):
+    def get_state_vars(self):
         """
         :return:
         """
@@ -739,7 +713,7 @@ class RmsProblemTensygrid(RmsProblemTemplate):
             x[i] = val
         return x
 
-    def update_variable_params(self, t: float, x_snapshot: Vec | None = None):
+    def update_variable_params(self, t: float):
         """
         Update the variable parameters
         :param t:

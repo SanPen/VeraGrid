@@ -2,16 +2,14 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+import os
 import json
-from pathlib import Path
 from typing import Dict
-from uuid import UUID
 from fastapi import APIRouter, HTTPException, BackgroundTasks, Response
 from starlette.responses import StreamingResponse
 
 from VeraGridEngine.IO.veragrid.remote import RemoteInstruction, RemoteJob, run_job
 from VeraGridEngine.IO.veragrid.pack_unpack import parse_veragrid_data
-from VeraGridEngine.IO.file_system import get_create_veragrid_folder
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.enumerations import SimulationTypes, JobStatus
 
@@ -25,23 +23,7 @@ def get_fs_folder() -> str:
     Get the folder where to save files
     :return:
     """
-    folder = Path(get_create_veragrid_folder()) / "server_jobs"
-    folder.mkdir(parents=True, exist_ok=True)
-    return str(folder)
-
-
-def _normalize_job_id(job_id: str) -> str:
-    """
-    Normalize one user-provided job identifier to the canonical UUID hex form.
-
-    :param job_id: User-supplied job identifier.
-    :return: Canonical lowercase UUID hex string.
-    :raises HTTPException: When the identifier is not a valid UUID.
-    """
-    try:
-        return UUID(job_id).hex
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail="Invalid job identifier") from exc
+    return "."
 
 
 def generate_job_file_path(job_id: str):
@@ -50,16 +32,7 @@ def generate_job_file_path(job_id: str):
     :param job_id:
     :return:
     """
-    base_dir = Path(get_fs_folder()).resolve()
-    normalized_job_id = _normalize_job_id(job_id)
-    file_path = (base_dir / f"{normalized_job_id}.zip").resolve()
-
-    try:
-        file_path.relative_to(base_dir)
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail="Invalid job results path") from exc
-
-    return file_path
+    return os.path.join(get_fs_folder(), f"{job_id}.zip")
 
 
 async def process_json_data(json_data: Dict[str, Dict[str, Dict[str, str]]]):
@@ -185,10 +158,9 @@ async def delete_job(job_id: str):
     :param job_id: The ID of the job to delete_with_dialogue
     :return: A message indicating the result
     """
-    normalized_job_id = _normalize_job_id(job_id)
-    if normalized_job_id in JOBS_LIST:
-        del JOBS_LIST[normalized_job_id]
-        return {"message": f"Job {normalized_job_id} deleted successfully"}
+    if job_id in JOBS_LIST:
+        del JOBS_LIST[job_id]
+        return {"message": f"Job {job_id} deleted successfully"}
     else:
         raise HTTPException(status_code=404, detail="Job not found")
 
@@ -200,13 +172,12 @@ async def cancel_job(job_id: str):
     :param job_id: The ID of the job to cancel
     :return: A message indicating the result
     """
-    normalized_job_id = _normalize_job_id(job_id)
-    job = JOBS_LIST.get(normalized_job_id)
+    job = JOBS_LIST.get(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
 
     job.cancel()
-    return {"message": f"Job {normalized_job_id} canceled successfully"}
+    return {"message": f"Job {job_id} canceled successfully"}
 
 
 @router.get("/download_results/{job_id}")
@@ -215,8 +186,7 @@ async def download_large_file(job_id: str):
     Function to download a large file, ie the results of a simulation
     """
 
-    normalized_job_id = _normalize_job_id(job_id)
-    job = JOBS_LIST.get(normalized_job_id, None)
+    job = JOBS_LIST.get(job_id, None)
 
     if job is None:
         return Response(status_code=404, content="Job not found")
@@ -225,11 +195,11 @@ async def download_large_file(job_id: str):
         return Response(status_code=405, content="Job not finished yet :/")
 
     # Path to your large binary file
-    file_path = generate_job_file_path(job_id=normalized_job_id)
+    file_path = generate_job_file_path(job_id=job_id)
 
     # Check if the file exists
-    if not file_path.exists():
-        return Response(status_code=406, content="Job results file not found")
+    if not os.path.exists(file_path):
+        return Response(status_code=406, content=f"File not found {file_path}")
 
     # Function to stream the file
     def iter_file(chunk_size=1024 * 1024):
@@ -245,7 +215,7 @@ async def download_large_file(job_id: str):
                 job.progress = f"{sent} MB"
                 yield chunk
 
-    print("Sending", normalized_job_id)
+    print("Sending", job_id)
 
     # Return a streaming response
     return StreamingResponse(iter_file(), media_type="application/octet-stream")

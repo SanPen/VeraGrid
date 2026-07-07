@@ -10,7 +10,7 @@ import numpy as np
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowReferenceType
+from VeraGridEngine.Utils.Symbolic.block import Block, VarPowerFlowRefferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 
 if TYPE_CHECKING:
@@ -65,9 +65,9 @@ class BusComplexRmsTemplate(RmsModelTemplate):
             )
 
             self._block.external_mapping = {
-                VarPowerFlowReferenceType.Vdc: Vdc,
-                VarPowerFlowReferenceType.P: P,
-                VarPowerFlowReferenceType.Q: Q
+                VarPowerFlowRefferenceType.Vdc: Vdc,
+                VarPowerFlowRefferenceType.P: P,
+                VarPowerFlowRefferenceType.Q: Q
             }
         else:
             # AC buses use complex voltage representation
@@ -97,13 +97,13 @@ class BusComplexRmsTemplate(RmsModelTemplate):
     
             self._block.external_mapping = {
                 # Complex phasor mapping
-                VarPowerFlowReferenceType.V_complex: self.V_complex,
-                VarPowerFlowReferenceType.I_complex: self.I_complex,
+                VarPowerFlowRefferenceType.V_complex: self.V_complex,
+                VarPowerFlowRefferenceType.I_complex: self.I_complex,
                 # Real/imaginary component mapping (for compatibility)
-                VarPowerFlowReferenceType.Vr: self.Vr,
-                VarPowerFlowReferenceType.Vi: self.Vi,
-                VarPowerFlowReferenceType.P: self.P,
-                VarPowerFlowReferenceType.Q: self.Q
+                VarPowerFlowRefferenceType.Vr: self.Vr,
+                VarPowerFlowRefferenceType.Vi: self.Vi,
+                VarPowerFlowRefferenceType.P: self.P,
+                VarPowerFlowRefferenceType.Q: self.Q
             }
 
 
@@ -135,7 +135,7 @@ def get_bus_complex_voltage(bus_rms_model: Block) -> Var:
     :param bus_rms_model: The block containing the bus model
     :return: Complex voltage variable
     """
-    return bus_rms_model.external_mapping[VarPowerFlowReferenceType.V_complex]
+    return bus_rms_model.external_mapping[VarPowerFlowRefferenceType.V_complex]
 
 
 def polar_to_complex(Vm: float, Va: float) -> complex:

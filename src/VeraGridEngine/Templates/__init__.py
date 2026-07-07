@@ -5,3 +5,4 @@
 
 from VeraGridEngine.Templates.Rms import *
 from VeraGridEngine.Templates.Emt import *
+from VeraGridEngine.Templates.templates_common_functions import *

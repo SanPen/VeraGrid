@@ -10,7 +10,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class LimitSet(IdentifiedObject):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='isPercentageLimits', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Tells if the limit values are in percentage of normalValue or the specified Unit for Measurements and Controls.''', profiles=[CgmesProfileType.OP]),
+		CgmesProperty(property_name='isPercentageLimits', class_type=bool, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Tells if the limit values are in percentage of normalValue or the specified Unit for Measurements and Controls.''', profiles=[]),
 	)
 	__slots__ = ('isPercentageLimits',)
 	def __init__(self, rdfid='', tpe='LimitSet'):

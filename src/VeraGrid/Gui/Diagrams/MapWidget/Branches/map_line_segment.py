@@ -12,9 +12,10 @@ from PySide6.QtWidgets import QMenu, QGraphicsSceneContextMenuEvent
 from PySide6.QtWidgets import QGraphicsLineItem, QGraphicsSceneMouseEvent
 
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import ArrowHead
-from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
+from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.messages import yes_no_question
-from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, OTHER, GenericDiagramWidget
+from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, OTHER
+from VeraGrid.Gui.Diagrams.Editors.line_editor import LineEditor
 
 from VeraGridEngine.Devices.types import BRANCH_TYPES, ALL_DEV_TYPES
 from VeraGridEngine.enumerations import DeviceType
@@ -66,7 +67,6 @@ class MapLineSegment(QGraphicsLineItem):
         self.hoover_color.setAlpha(180)
 
         self.width = width
-        self._stroke_visible: bool = True
 
         self.pos1: QPointF = self.first.get_center_pos()
         self.pos2: QPointF = self.second.get_center_pos()
@@ -96,12 +96,9 @@ class MapLineSegment(QGraphicsLineItem):
         self.update_endings()
         self.needsUpdate = True
         self.setZValue(0)
-        self._context_lat: float | None = None
-        self._context_lon: float | None = None
 
-        self.setFlag(self.GraphicsItemFlag.ItemIsSelectable, False)
-        self.setAcceptedMouseButtons(Qt.MouseButton.NoButton)
-        self.setCursor(QCursor(Qt.CursorShape.ArrowCursor))
+        self.setFlag(self.GraphicsItemFlag.ItemIsSelectable, True)
+        self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
 
     def get_width(self) -> float:
         return self.width
@@ -166,21 +163,10 @@ class MapLineSegment(QGraphicsLineItem):
         :param width:
         :return:
         """
-        if width != self._arrow_size:
-            self.arrow_p_from.set_size(width)
-            self.arrow_q_from.set_size(width)
-            self.arrow_p_to.set_size(width)
-            self.arrow_q_to.set_size(width)
-            self._arrow_size = width
-        else:
-            pass
-
-    def set_stroke_visible(self, is_visible: bool) -> None:
-        """
-        Set whether the segment stroke itself is visible.
-        """
-        self._stroke_visible = is_visible
-        self._pen = self.set_colour(self.color, self.style)
+        self.arrow_p_from.set_size(width)
+        self.arrow_q_from.set_size(width)
+        self.arrow_p_to.set_size(width)
+        self.arrow_q_to.set_size(width)
 
     def set_colour(self, color: QColor, style: Qt.PenStyle):
         """
@@ -190,11 +176,7 @@ class MapLineSegment(QGraphicsLineItem):
         :return:
         """
 
-        visible_color = QColor(color)
-        if not self._stroke_visible:
-            visible_color.setAlpha(0)
-
-        pen = QPen(visible_color, self.width, style, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin)
+        pen = QPen(color, self.width, style, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin)
 
         self.setPen(pen)
         self.arrow_p_from.set_colour(color)
@@ -224,7 +206,7 @@ class MapLineSegment(QGraphicsLineItem):
         self.pos2 = QPointF(x, y)
         self.update_endings()
 
-    def update_endings(self, force: bool = False) -> None:
+    def update_endings(self, force=False) -> None:
         """
         Update the endings of this segment
         """
@@ -242,9 +224,6 @@ class MapLineSegment(QGraphicsLineItem):
                     self.arrow_p_to.redraw()
                 if self.arrow_q_to.isVisible():
                     self.arrow_q_to.redraw()
-        # During bulk redraws, the container updates the polyline path once.
-        if not force:
-            self.container.update_polyline_path()
 
     def end_update(self) -> None:
         """
@@ -272,33 +251,33 @@ class MapLineSegment(QGraphicsLineItem):
 
         menu = QMenu()
 
-        menu.addSection(translate_context_menu_text("Line"))
+        menu.addSection("Line")
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Active"),
+                       text="Active",
                        function_ptr=self.enable_disable_toggle,
                        checkeable=True,
                        checked_value=self.container.api_object.active)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Draw labels"),
+                       text="Draw labels",
                        function_ptr=self.enable_disable_label_drawing,
                        checkeable=True,
                        checked_value=self.draw_labels)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Editor"),
+                       text="Editor",
                        function_ptr=self.call_editor,
                        icon_path=":/Icons/icons/edit.png")
 
         # We could create a new icon for this I guess
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Calculate total length"),
+                       text="Calculate total length",
                        function_ptr=self.calculate_total_length,
                        icon_path=":/Icons/icons/ruler.png")
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Consolidate selected objects coordinates"),
+                       text="Consolidate selected objects coordinates",
                        function_ptr=self.editor.consolidate_object_coordinates,
                        icon_path=":/Icons/icons/assign_to_profile.png")
 
@@ -309,22 +288,19 @@ class MapLineSegment(QGraphicsLineItem):
         substation_counter = 0
         line_counter = 0
 
-        for graphic_obj in self.editor.get_selected():
-            if isinstance(graphic_obj, GenericDiagramWidget):
-                if graphic_obj.api_object.device_type == DeviceType.SubstationDevice:
-                    has_substation = True
-                    substation_counter += 1
-                elif graphic_obj.api_object.device_type == DeviceType.LineDevice:
-                    line_counter += 1
-                else:
-                    pass
-            else:
-                pass
+        for graphic_obj in self.editor._get_selected():
+            if hasattr(graphic_obj, 'api_object'):
+                if hasattr(graphic_obj.api_object, 'device_type'):
+                    if graphic_obj.api_object.device_type == DeviceType.SubstationDevice:
+                        has_substation = True
+                        substation_counter += 1
+                    elif graphic_obj.api_object.device_type == DeviceType.LineDevice:
+                        line_counter += 1
 
         if line_counter > 1:
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Merge selected lines"),
+                           text="Merge selected lines",
                            function_ptr=self.editor.merge_selected_lines,
                            icon_path=":/Icons/icons/fusion.png")
 
@@ -334,51 +310,51 @@ class MapLineSegment(QGraphicsLineItem):
         if has_substation:
             if substation_counter == 1:
                 add_menu_entry(menu=menu,
-                               text=translate_context_menu_text("Split line to selected substation (In-Out)"),
+                               text="Split line to selected substation (In-Out)",
                                function_ptr=self.editor.split_line_to_substation,
                                icon_path=":/Icons/icons/divide.png")
 
             elif substation_counter == 2:
 
                 add_menu_entry(menu=menu,
-                               text=translate_context_menu_text("Change substation connection of the line"),
+                               text="Change substation connection of the line",
                                function_ptr=self.editor.change_line_connection,
                                icon_path=":/Icons/icons/move_bus.png")
             else:
                 pass
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Plot profiles"),
+                       text="Plot profiles",
                        function_ptr=self.plot_profiles,
                        icon_path=":/Icons/icons/plot.png")
 
         scene_pos = event.scenePos()  # Position in scene coordinates
         x, y = scene_pos.x(), scene_pos.y()
-        self._context_lat, self._context_lon = self.editor.to_lat_lon(x=x, y=y)
+        lat, lon = self.editor.to_lat_lon(x=x, y=y)
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Open in Street view"),
-                       function_ptr=self.open_street_view_context,
+                       text="Open in Street view",
+                       function_ptr=lambda: open_street_view(lat, lon),
                        icon_path=":/Icons/icons/map.png")
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Assign rate to profile"),
+                       text="Assign rate to profile",
                        function_ptr=self.assign_rate_to_profile,
                        icon_path=":/Icons/icons/assign_to_profile.png")
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Assign active state to profile"),
+                       text="Assign active state to profile",
                        function_ptr=self.assign_status_to_profile,
                        icon_path=":/Icons/icons/assign_to_profile.png")
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Add point"),
+                       text="Add point",
                        function_ptr=self.add_node,
                        icon_path=":/Icons/icons/cn_icon.png")
 
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Delete"),
+                       text="Delete",
                        function_ptr=self.delete,
                        icon_path=":/Icons/icons/delete_schematic.png")
 
@@ -433,10 +409,22 @@ class MapLineSegment(QGraphicsLineItem):
 
     def call_editor(self):
         """
-        Call the specific branch editor.
+        Call the line editor
         :return:
         """
-        self.container.call_editor()
+
+        Vnom = self.api_object.get_max_bus_nominal_voltage()
+        templates = list()
+
+        for lst in [self.editor.circuit.sequence_line_types,
+                    self.editor.circuit.underground_cable_types,
+                    self.editor.circuit.overhead_line_types]:
+            for temp in lst:
+                if Vnom == temp.Vnom:
+                    templates.append(temp)
+
+        dlg = LineEditor(line=self.api_object, grid=self.editor.circuit)
+        dlg.exec()
 
     def plot_profiles(self) -> None:
         """
@@ -482,15 +470,9 @@ class MapLineSegment(QGraphicsLineItem):
             else:
                 if self.first.index > self.second.index:
                     self.container.insert_new_node_at_position(self.second.index)
+
                 elif self.first.index < self.second.index:
                     self.container.insert_new_node_at_position(self.second.index)
-
-    def open_street_view_context(self) -> None:
-        """
-        Open Google Maps at the latest context-menu position.
-        """
-        if self._context_lat is not None and self._context_lon is not None:
-            open_street_view(self._context_lat, self._context_lon)
 
     def set_arrows_with_power(self, Sf: complex | None, St: complex | None) -> None:
         """

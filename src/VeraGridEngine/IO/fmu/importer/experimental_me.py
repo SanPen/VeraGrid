@@ -15,7 +15,7 @@ from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Const, Var
 
@@ -85,8 +85,8 @@ class FmuMeDeviceSpec:
         integration_method: FmuMeIntegrationMethod,
         input_bindings: tuple[FmuRefBinding, ...],
         output_bindings: tuple[FmuRefBinding, ...],
-        output_defaults: dict[VarPowerFlowReferenceType, float],
-        output_param_uids: dict[VarPowerFlowReferenceType, int],
+        output_defaults: dict[VarPowerFlowRefferenceType, float],
+        output_param_uids: dict[VarPowerFlowRefferenceType, int],
     ) -> None:
         """Store the runtime FMU ME specification.
 
@@ -103,8 +103,8 @@ class FmuMeDeviceSpec:
         self.integration_method: FmuMeIntegrationMethod = integration_method
         self.input_bindings: tuple[FmuRefBinding, ...] = input_bindings
         self.output_bindings: tuple[FmuRefBinding, ...] = output_bindings
-        self.output_defaults: dict[VarPowerFlowReferenceType, float] = output_defaults
-        self.output_param_uids: dict[VarPowerFlowReferenceType, int] = output_param_uids
+        self.output_defaults: dict[VarPowerFlowRefferenceType, float] = output_defaults
+        self.output_param_uids: dict[VarPowerFlowRefferenceType, int] = output_param_uids
 
 
 class FmuMeDeviceAdapter:
@@ -348,7 +348,7 @@ def _build_rms_me_output_shell_block(
     vfactory: VarFactory,
     name: str,
     output_bindings: tuple[FmuRefBinding, ...],
-    output_defaults: dict[VarPowerFlowReferenceType, float] | None,
+    output_defaults: dict[VarPowerFlowRefferenceType, float] | None,
 ) -> Block:
     """Build the symbolic RMS shell used to expose FMU ME outputs to VeraGrid.
 
@@ -359,7 +359,7 @@ def _build_rms_me_output_shell_block(
     :return: Symbolic shell block.
     """
 
-    defaults: dict[VarPowerFlowReferenceType, float]
+    defaults: dict[VarPowerFlowRefferenceType, float]
     if output_defaults is None:
         defaults = dict()
     else:
@@ -368,7 +368,7 @@ def _build_rms_me_output_shell_block(
     algebraic_vars: list[Var] = list()
     algebraic_eqs: list[Any] = list()
     event_dict: dict[Var, Const] = dict()
-    external_mapping: dict[VarPowerFlowReferenceType, Var] = dict()
+    external_mapping: dict[VarPowerFlowRefferenceType, Var] = dict()
 
     binding: FmuRefBinding
     for binding in output_bindings:
@@ -400,7 +400,7 @@ def build_rms_fmu_me_injection_template(
     output_bindings: tuple[FmuRefBinding, ...],
     name: str,
     device_tpe: DeviceType = DeviceType.LoadDevice,
-    output_defaults: dict[VarPowerFlowReferenceType, float] | None = None,
+    output_defaults: dict[VarPowerFlowRefferenceType, float] | None = None,
     integration_method: FmuMeIntegrationMethod = FmuMeIntegrationMethod.EXPLICIT_EULER,
 ) -> RmsModelTemplate:
     """Build the symbolic RMS shell for an imported FMU ME device.
@@ -447,7 +447,7 @@ def build_emt_fmu_me_injection_template(
     output_bindings: tuple[FmuRefBinding, ...],
     name: str,
     device_tpe: DeviceType = DeviceType.LoadDevice,
-    output_defaults: dict[VarPowerFlowReferenceType, float] | None = None,
+    output_defaults: dict[VarPowerFlowRefferenceType, float] | None = None,
     integration_method: FmuMeIntegrationMethod = FmuMeIntegrationMethod.EXPLICIT_EULER,
 ) -> EmtModelTemplate:
     """Build the symbolic EMT shell for an imported FMU ME device.
@@ -485,13 +485,13 @@ def build_emt_fmu_me_injection_template(
     template.block = _build_rms_me_output_shell_block(vfactory, name, output_bindings, output_defaults)
     _ensure_emt_external_mapping_keys(template.block)
     template.block.api_obj_mapping = dict()
-    template.block.api_obj_mapping[ParamPowerFlowReferenceType.Pl0_A] = None
-    template.block.api_obj_mapping[ParamPowerFlowReferenceType.Pl0_B] = None
-    template.block.api_obj_mapping[ParamPowerFlowReferenceType.Pl0_C] = None
-    template.block.api_obj_mapping[ParamPowerFlowReferenceType.Ql0_A] = None
-    template.block.api_obj_mapping[ParamPowerFlowReferenceType.Ql0_B] = None
-    template.block.api_obj_mapping[ParamPowerFlowReferenceType.Ql0_C] = None
-    template.block.api_obj_mapping[ParamPowerFlowReferenceType.omega_base] = None
+    template.block.api_obj_mapping[ParamPowerFlowRefferenceType.Pl0_A] = None
+    template.block.api_obj_mapping[ParamPowerFlowRefferenceType.Pl0_B] = None
+    template.block.api_obj_mapping[ParamPowerFlowRefferenceType.Pl0_C] = None
+    template.block.api_obj_mapping[ParamPowerFlowRefferenceType.Ql0_A] = None
+    template.block.api_obj_mapping[ParamPowerFlowRefferenceType.Ql0_B] = None
+    template.block.api_obj_mapping[ParamPowerFlowRefferenceType.Ql0_C] = None
+    template.block.api_obj_mapping[ParamPowerFlowRefferenceType.omega_base] = None
     return template
 
 
@@ -579,7 +579,7 @@ def _get_event_param_index_map(problem: Any) -> dict[int, int]:
         return problem.uid2idx_event_params
 
 
-def _get_rms_me_input_value(problem: Any, device: Any, reference: VarPowerFlowReferenceType, x_snapshot: np.ndarray) -> float:
+def _get_rms_me_input_value(problem: Any, device: Any, reference: VarPowerFlowRefferenceType, x_snapshot: np.ndarray) -> float:
     """Read one RMS FMU ME input from the current network snapshot.
 
     :param problem: RMS problem instance.
@@ -589,7 +589,7 @@ def _get_rms_me_input_value(problem: Any, device: Any, reference: VarPowerFlowRe
     :return: Numeric input value.
     """
 
-    if reference in {VarPowerFlowReferenceType.Vm, VarPowerFlowReferenceType.Va, VarPowerFlowReferenceType.Vdc}:
+    if reference in {VarPowerFlowRefferenceType.Vm, VarPowerFlowRefferenceType.Va, VarPowerFlowRefferenceType.Vdc}:
         bus_model: Block = device.bus.rms_model
         variable: Var = bus_model.external_mapping[reference]
         return float(x_snapshot[problem.uid2idx_vars[variable.uid]])
@@ -597,7 +597,7 @@ def _get_rms_me_input_value(problem: Any, device: Any, reference: VarPowerFlowRe
         raise KeyError(f"Unsupported RMS FMU ME input reference {reference.value!r}")
 
 
-def _get_emt_me_input_value(problem: Any, device: Any, reference: VarPowerFlowReferenceType, x_snapshot: np.ndarray) -> float:
+def _get_emt_me_input_value(problem: Any, device: Any, reference: VarPowerFlowRefferenceType, x_snapshot: np.ndarray) -> float:
     """Read one EMT FMU ME input from the current network snapshot.
 
     :param problem: EMT problem instance.
@@ -608,11 +608,11 @@ def _get_emt_me_input_value(problem: Any, device: Any, reference: VarPowerFlowRe
     """
 
     if reference in {
-        VarPowerFlowReferenceType.v_N,
-        VarPowerFlowReferenceType.v_A,
-        VarPowerFlowReferenceType.v_B,
-        VarPowerFlowReferenceType.v_C,
-        VarPowerFlowReferenceType.Vdc,
+        VarPowerFlowRefferenceType.v_N,
+        VarPowerFlowRefferenceType.v_A,
+        VarPowerFlowRefferenceType.v_B,
+        VarPowerFlowRefferenceType.v_C,
+        VarPowerFlowRefferenceType.Vdc,
     }:
         bus_model: Block = device.bus.emt_model
         variable: Var = bus_model.external_mapping[reference]
@@ -637,7 +637,7 @@ class RmsFmuMeDeviceAdapter:
         problem: Any,
         device: Any,
         spec: FmuMeDeviceSpec,
-        output_param_indices: dict[VarPowerFlowReferenceType, int],
+        output_param_indices: dict[VarPowerFlowRefferenceType, int],
     ) -> None:
         """Store the RMS FMU ME runtime adapter.
 
@@ -647,9 +647,9 @@ class RmsFmuMeDeviceAdapter:
         self.problem: Any = problem
         self.device: Any = device
         self.spec: FmuMeDeviceSpec = spec
-        self.output_param_indices: dict[VarPowerFlowReferenceType, int] = output_param_indices
+        self.output_param_indices: dict[VarPowerFlowRefferenceType, int] = output_param_indices
         self.runtime_adapter: FmuMeDeviceAdapter = FmuMeDeviceAdapter(spec)
-        self.last_outputs: dict[VarPowerFlowReferenceType, float] = dict()
+        self.last_outputs: dict[VarPowerFlowRefferenceType, float] = dict()
 
     def _build_input_values(self, x_snapshot: np.ndarray) -> dict[str, float]:
         """Collect the FMU ME input values from the current RMS snapshot.
@@ -664,20 +664,20 @@ class RmsFmuMeDeviceAdapter:
             input_values[binding.fmu_variable_name] = _get_rms_me_input_value(self.problem, self.device, binding.reference, x_snapshot)
         return input_values
 
-    def _map_outputs(self, runtime_outputs: dict[str, float]) -> dict[VarPowerFlowReferenceType, float]:
+    def _map_outputs(self, runtime_outputs: dict[str, float]) -> dict[VarPowerFlowRefferenceType, float]:
         """Map runtime FMU outputs back to VeraGrid references.
 
         :param runtime_outputs: FMU outputs indexed by FMU variable name.
         :return: FMU outputs indexed by VeraGrid reference.
         """
 
-        mapped_outputs: dict[VarPowerFlowReferenceType, float] = dict()
+        mapped_outputs: dict[VarPowerFlowRefferenceType, float] = dict()
         binding: FmuRefBinding
         for binding in self.spec.output_bindings:
             mapped_outputs[binding.reference] = float(runtime_outputs[binding.fmu_variable_name])
         return mapped_outputs
 
-    def initialize_outputs(self, time_value: float, x_snapshot: np.ndarray) -> dict[VarPowerFlowReferenceType, float]:
+    def initialize_outputs(self, time_value: float, x_snapshot: np.ndarray) -> dict[VarPowerFlowRefferenceType, float]:
         """Initialize the FMU ME runtime and return its first output sample.
 
         :param time_value: Current simulation time.
@@ -686,13 +686,13 @@ class RmsFmuMeDeviceAdapter:
         """
 
         self.runtime_adapter.initialize(start_time=time_value, input_values=self._build_input_values(x_snapshot))
-        outputs: dict[VarPowerFlowReferenceType, float] = self._map_outputs(
+        outputs: dict[VarPowerFlowRefferenceType, float] = self._map_outputs(
             self.runtime_adapter.evaluate_outputs(time_value, self._build_input_values(x_snapshot))
         )
         self.last_outputs = dict(outputs)
         return outputs
 
-    def advance(self, current_time: float, step_size: float, x_snapshot: np.ndarray) -> dict[VarPowerFlowReferenceType, float]:
+    def advance(self, current_time: float, step_size: float, x_snapshot: np.ndarray) -> dict[VarPowerFlowRefferenceType, float]:
         """Advance the FMU ME runtime for one RMS communication step.
 
         :param current_time: Current simulation time.
@@ -701,13 +701,13 @@ class RmsFmuMeDeviceAdapter:
         :return: FMU outputs indexed by VeraGrid reference.
         """
 
-        outputs: dict[VarPowerFlowReferenceType, float] = self._map_outputs(
+        outputs: dict[VarPowerFlowRefferenceType, float] = self._map_outputs(
             self.runtime_adapter.explicit_euler_step(current_time=current_time, step_size=step_size, input_values=self._build_input_values(x_snapshot))
         )
         self.last_outputs = dict(outputs)
         return outputs
 
-    def apply_outputs(self, target: np.ndarray, outputs: dict[VarPowerFlowReferenceType, float]) -> None:
+    def apply_outputs(self, target: np.ndarray, outputs: dict[VarPowerFlowRefferenceType, float]) -> None:
         """Write the FMU ME outputs into VeraGrid runtime-parameter storage.
 
         :param target: Runtime-parameter array.
@@ -715,7 +715,7 @@ class RmsFmuMeDeviceAdapter:
         :return: None.
         """
 
-        reference: VarPowerFlowReferenceType
+        reference: VarPowerFlowRefferenceType
         for reference, value in outputs.items():
             target[self.output_param_indices[reference]] = float(value)
 
@@ -751,7 +751,7 @@ class EmtFmuMeDeviceAdapter:
         problem: Any,
         device: Any,
         spec: FmuMeDeviceSpec,
-        output_param_indices: dict[VarPowerFlowReferenceType, int],
+        output_param_indices: dict[VarPowerFlowRefferenceType, int],
     ) -> None:
         """Store the EMT FMU ME runtime adapter.
 
@@ -761,7 +761,7 @@ class EmtFmuMeDeviceAdapter:
         self.problem: Any = problem
         self.device: Any = device
         self.spec: FmuMeDeviceSpec = spec
-        self.output_param_indices: dict[VarPowerFlowReferenceType, int] = output_param_indices
+        self.output_param_indices: dict[VarPowerFlowRefferenceType, int] = output_param_indices
         self.runtime_adapter: FmuMeDeviceAdapter = FmuMeDeviceAdapter(spec)
         self.last_time: float = 0.0
         self.initialized: bool = False
@@ -779,20 +779,20 @@ class EmtFmuMeDeviceAdapter:
             input_values[binding.fmu_variable_name] = _get_emt_me_input_value(self.problem, self.device, binding.reference, x_snapshot)
         return input_values
 
-    def _map_outputs(self, runtime_outputs: dict[str, float]) -> dict[VarPowerFlowReferenceType, float]:
+    def _map_outputs(self, runtime_outputs: dict[str, float]) -> dict[VarPowerFlowRefferenceType, float]:
         """Map runtime FMU outputs back to VeraGrid references.
 
         :param runtime_outputs: FMU outputs indexed by FMU variable name.
         :return: FMU outputs indexed by VeraGrid reference.
         """
 
-        mapped_outputs: dict[VarPowerFlowReferenceType, float] = dict()
+        mapped_outputs: dict[VarPowerFlowRefferenceType, float] = dict()
         binding: FmuRefBinding
         for binding in self.spec.output_bindings:
             mapped_outputs[binding.reference] = float(runtime_outputs[binding.fmu_variable_name])
         return mapped_outputs
 
-    def initialize_outputs(self, time_value: float, x_snapshot: np.ndarray) -> dict[VarPowerFlowReferenceType, float]:
+    def initialize_outputs(self, time_value: float, x_snapshot: np.ndarray) -> dict[VarPowerFlowRefferenceType, float]:
         """Initialize the FMU ME runtime and return its first output sample.
 
         :param time_value: Current simulation time.
@@ -805,7 +805,7 @@ class EmtFmuMeDeviceAdapter:
         self.last_time = time_value
         return self._map_outputs(self.runtime_adapter.evaluate_outputs(time_value, self._build_input_values(x_snapshot)))
 
-    def advance(self, current_time: float, step_size: float, x_snapshot: np.ndarray) -> dict[VarPowerFlowReferenceType, float]:
+    def advance(self, current_time: float, step_size: float, x_snapshot: np.ndarray) -> dict[VarPowerFlowRefferenceType, float]:
         """Advance the FMU ME runtime for one EMT communication step.
 
         :param current_time: Current simulation time.
@@ -814,13 +814,13 @@ class EmtFmuMeDeviceAdapter:
         :return: FMU outputs indexed by VeraGrid reference.
         """
 
-        outputs: dict[VarPowerFlowReferenceType, float] = self._map_outputs(
+        outputs: dict[VarPowerFlowRefferenceType, float] = self._map_outputs(
             self.runtime_adapter.explicit_euler_step(current_time=current_time, step_size=step_size, input_values=self._build_input_values(x_snapshot))
         )
         self.last_time = current_time + step_size
         return outputs
 
-    def apply_outputs(self, target: np.ndarray, outputs: dict[VarPowerFlowReferenceType, float]) -> None:
+    def apply_outputs(self, target: np.ndarray, outputs: dict[VarPowerFlowRefferenceType, float]) -> None:
         """Write the FMU ME outputs into VeraGrid runtime-parameter storage.
 
         :param target: Runtime-parameter array.
@@ -828,7 +828,7 @@ class EmtFmuMeDeviceAdapter:
         :return: None.
         """
 
-        reference: VarPowerFlowReferenceType
+        reference: VarPowerFlowRefferenceType
         for reference, value in outputs.items():
             target[self.output_param_indices[reference]] = float(value)
 
@@ -861,9 +861,9 @@ def register_rms_fmu_me_device(problem: Any, device: Any, block: Block) -> None:
             else:
                 pass
 
-        output_param_indices: dict[VarPowerFlowReferenceType, int] = dict()
+        output_param_indices: dict[VarPowerFlowRefferenceType, int] = dict()
         uid_to_index = _get_event_param_index_map(problem)
-        reference: VarPowerFlowReferenceType
+        reference: VarPowerFlowRefferenceType
         for reference, uid in spec.output_param_uids.items():
             output_param_indices[reference] = uid_to_index[uid]
 
@@ -956,9 +956,9 @@ def register_emt_fmu_me_device(problem: Any, device: Any, block: Block) -> None:
             else:
                 pass
 
-        output_param_indices: dict[VarPowerFlowReferenceType, int] = dict()
+        output_param_indices: dict[VarPowerFlowRefferenceType, int] = dict()
         uid_to_index = _get_event_param_index_map(problem)
-        reference: VarPowerFlowReferenceType
+        reference: VarPowerFlowRefferenceType
         for reference, uid in spec.output_param_uids.items():
             output_param_indices[reference] = uid_to_index[uid]
 

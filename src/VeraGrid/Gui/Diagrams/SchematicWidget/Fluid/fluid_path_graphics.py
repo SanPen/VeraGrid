@@ -7,11 +7,10 @@ from typing import Union, TYPE_CHECKING
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPen, QColor
 from PySide6.QtWidgets import QMenu
-from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget, ACTIVE
 from VeraGrid.Gui.messages import yes_no_question
-from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
+from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
 from VeraGridEngine.Devices.Fluid.fluid_path import FluidPath
 from VeraGridEngine.enumerations import DeviceType
@@ -65,16 +64,6 @@ class FluidPathGraphicItem(LineGraphicTemplateItem):
     def api_object(self) -> FluidPath:
         return self._api_object
 
-    def open_device_editor(self) -> bool:
-        """
-        Open the generic device editor for this fluid path.
-
-        :return: ``True`` when the editor was opened.
-        """
-        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
-        dialog.exec()
-        return True
-
     def set_api_object_color(self):
         """
         Gather the color from the api object and apply
@@ -120,9 +109,12 @@ class FluidPathGraphicItem(LineGraphicTemplateItem):
         :return:
         """
         if self.api_object is not None:
-            self.edit()
-        else:
-            pass
+            if self.api_object.device_type in [DeviceType.Transformer2WDevice, DeviceType.LineDevice]:
+                # trigger the editor
+                self.edit()
+            elif self.api_object.device_type is DeviceType.SwitchDevice:
+                # change state
+                self.enable_disable_toggle()
 
     def contextMenuEvent(self, event):
         """
@@ -132,30 +124,25 @@ class FluidPathGraphicItem(LineGraphicTemplateItem):
         """
         if self.api_object is not None:
             menu = QMenu()
-            menu.addSection(translate_context_menu_text("FluidPath"))
-
-            add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Editor"),
-                           icon_path=":/Icons/icons/edit.png",
-                           function_ptr=self.edit)
+            menu.addSection("FluidPath")
 
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Plot profiles"),
+                           text="Plot profiles",
                            icon_path=":/Icons/icons/plot.png",
                            function_ptr=self.plot_profiles)
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Delete"),
+                           text="Delete",
                            icon_path=":/Icons/icons/delete3.png",
                            function_ptr=self.delete)
 
             menu.addSeparator()
             self.add_auto_route_style_menu(menu=menu)
-            menu.addSection(translate_context_menu_text("Convert to"))
+            menu.addSection('Convert to')
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Convert to line"),
+                           text="Convert to line",
                            icon_path=":/Icons/icons/assign_to_profile.png",
                            function_ptr=self.to_line)
 
@@ -178,7 +165,7 @@ class FluidPathGraphicItem(LineGraphicTemplateItem):
         Open the appropriate editor dialogue
         :return:
         """
-        self.open_device_editor()
+        pass
 
     def to_line(self):
         """

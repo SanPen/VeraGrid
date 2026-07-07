@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
+
 from VeraGridEngine.Simulations.EMT.emt_driver import EmtSimulationDriver
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
 from VeraGridEngine.Simulations.EMT.emt_results import EmtResults
-from VeraGridEngine.Simulations.EMT.emt_driver import EmtSimulationDriver

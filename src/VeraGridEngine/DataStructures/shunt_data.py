@@ -7,7 +7,7 @@ import numpy as np
 from scipy.sparse import csc_matrix, coo_matrix
 import VeraGridEngine.Topology.topology as tp
 from VeraGridEngine.Utils.Sparse.sparse_array import SparseObjectArray
-from VeraGridEngine.basic_structures import Vec, CxVec, IntVec, StrVec, BoolVec
+from VeraGridEngine.basic_structures import Vec, CxVec, IntVec, StrVec, BoolVec, ObjVec
 from VeraGridEngine.enumerations import ShuntControlMode
 
 
@@ -30,7 +30,8 @@ class ShuntData:
 
         self.active: BoolVec = np.zeros(nelm, dtype=bool)
 
-        self.control_mode_int: IntVec = np.zeros(self.nelm, dtype=int)
+        self.control_mode: ObjVec = np.full(self.nelm, fill_value=ShuntControlMode.Locked, dtype=object)
+        self.is_pv_control: BoolVec = np.zeros(nelm, dtype=bool)  # quick proxy to not making searches
 
         self.Y: CxVec = np.zeros(nelm, dtype=complex)
 
@@ -38,9 +39,9 @@ class ShuntData:
         self.Y3_star = np.zeros((self.nelm * 4, 4), dtype=complex)
         self.Y3_delta = np.zeros((self.nelm * 4), dtype=complex)
 
-        self.A_floating_star = np.zeros(self.nelm, dtype=complex)
-        self.B_floating_star = np.zeros(self.nelm, dtype=complex)
-        self.C_floating_star = np.zeros(self.nelm, dtype=complex)
+        self.A_floatingstar = np.zeros(self.nelm, dtype=complex)
+        self.B_floatingstar = np.zeros(self.nelm, dtype=complex)
+        self.C_floatingstar = np.zeros(self.nelm, dtype=complex)
 
         self.qmin: Vec = np.zeros(nelm, dtype=float)
         self.qmax: Vec = np.zeros(nelm, dtype=float)
@@ -90,7 +91,8 @@ class ShuntData:
 
         data.active = self.active[elm_idx]
 
-        data.control_mode_int = self.control_mode_int[elm_idx]
+        data.control_mode = self.control_mode[elm_idx]
+        data.is_pv_control = self.is_pv_control[elm_idx]
 
         data.Y = self.Y[elm_idx]
 
@@ -98,9 +100,9 @@ class ShuntData:
         data.Y3_delta = self.Y3_delta[elm_idx_4]
         data.Y3_star = self.Y3_star[elm_idx_4]
 
-        data.A_floating_star = self.A_floating_star[elm_idx]
-        data.B_floating_star = self.B_floating_star[elm_idx]
-        data.C_floating_star = self.C_floating_star[elm_idx]
+        data.A_floatingstar = self.A_floatingstar[elm_idx]
+        data.B_floatingstar = self.B_floatingstar[elm_idx]
+        data.C_floatingstar = self.C_floatingstar[elm_idx]
 
         data.qmax = self.qmax[elm_idx]
         data.qmin = self.qmin[elm_idx]
@@ -146,10 +148,6 @@ class ShuntData:
             i = self.bus_idx[k]
             self.bus_idx[k] = bus_map_arr[i]
 
-            control_bus_idx = self.controllable_bus_idx[k]
-            if control_bus_idx >= 0:
-                self.controllable_bus_idx[k] = bus_map_arr[control_bus_idx]
-
     def copy(self) -> "ShuntData":
         """
         Get deep copy of this structure
@@ -161,15 +159,16 @@ class ShuntData:
         data.names = self.names.copy()
         data.idtag = self.idtag.copy()
         data.active = self.active.copy()
-        data.control_mode_int = self.control_mode_int.copy()
+        data.control_mode = self.control_mode.copy()
+        data.is_pv_control = self.is_pv_control.copy()
 
         data.Y = self.Y.copy()
         data.Y3_star = self.Y3_star.copy()
         data.Y3_delta = self.Y3_delta.copy()
 
-        data.A_floating_star = self.A_floating_star.copy()
-        data.B_floating_star = self.B_floating_star.copy()
-        data.C_floating_star = self.C_floating_star.copy()
+        data.A_floatingstar = self.A_floatingstar.copy()
+        data.B_floatingstar = self.B_floatingstar.copy()
+        data.C_floatingstar = self.C_floatingstar.copy()
 
         data.qmax = self.qmax.copy()
         data.qmin = self.qmin.copy()
@@ -217,9 +216,8 @@ class ShuntData:
         Get fixed Injections per bus
         :return:
         """
-        is_pv_control = self.control_mode_int == ShuntControlMode.Continuous.idx()
         return tp.sum_per_bus_cx(nbus=self.nbus, bus_indices=self.bus_idx,
-                                 magnitude=self.Y * self.active * (1 - is_pv_control))
+                                 magnitude=self.Y * self.active * (1 - self.is_pv_control))
 
     def get_qmax_per_bus(self) -> Vec:
         """
@@ -250,8 +248,8 @@ class ShuntData:
         Get the indices of controllable generators
         :return: idx_controllable, idx_non_controllable
         """
-        return (np.where(self.control_mode_int == ShuntControlMode.Continuous.idx())[0],
-                np.where(self.control_mode_int != ShuntControlMode.Continuous.idx())[0])
+        return (np.where(self.is_pv_control == True)[0],
+                np.where(self.is_pv_control == False)[0])
 
     def get_C_bus_elm(self) -> csc_matrix:
         """

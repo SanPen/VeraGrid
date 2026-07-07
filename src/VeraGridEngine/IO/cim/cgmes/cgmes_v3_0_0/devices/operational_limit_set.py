@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.identified_object import IdentifiedObject
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.acdc_terminal import ACDCTerminal
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.equipment import Equipment
@@ -15,9 +14,9 @@ if TYPE_CHECKING:
 
 class OperationalLimitSet(IdentifiedObject):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='Terminal', class_type='ACDCTerminal', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The terminal where the operational limit set apply.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
-		CgmesProperty(property_name='Equipment', class_type='Equipment', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The equipment to which the limit set applies.''', profiles=[CgmesProfileType.EQ]),
-		CgmesProperty(property_name='OperationalLimitValue', class_type='OperationalLimit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Values of equipment limits.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='Terminal', class_type='ACDCTerminal', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The terminal where the operational limit set apply.''', profiles=[]),
+		CgmesProperty(property_name='Equipment', class_type='Equipment', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The equipment to which the limit set applies.''', profiles=[]),
+		CgmesProperty(property_name='OperationalLimitValue', class_type='OperationalLimit', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Values of equipment limits.''', profiles=[]),
 	)
 	__slots__ = ('Terminal', 'Equipment', 'OperationalLimitValue')
 	def __init__(self, rdfid='', tpe='OperationalLimitSet'):

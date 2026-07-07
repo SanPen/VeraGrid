@@ -12,8 +12,8 @@ from VeraGridEngine.IO.raw.raw_functions import get_psse_transformer_impedances
 from VeraGridEngine.basic_structures import CompressedJsonStruct, Logger
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.IO.raw.psse_circuit import PsseCircuit
-from VeraGridEngine.IO.raw.psse_object import RawObject
+from VeraGridEngine.IO.raw.devices.psse_circuit import PsseCircuit
+from VeraGridEngine.IO.raw.devices.psse_object import RawObject
 
 
 def parse_rawx(file_name: str, logger: Logger = Logger()) -> PsseCircuit:
@@ -48,7 +48,7 @@ def parse_rawx(file_name: str, logger: Logger = Logger()) -> PsseCircuit:
         else:
 
             # get the list of elements where this element belongs
-            elm_lst = psse_grid.__dict__[psse_property.property_name]
+            elm_lst = getattr(psse_grid, psse_property.property_name)
 
             # get the attribute names
             property_names = type_data['fields']
@@ -68,7 +68,7 @@ def parse_rawx(file_name: str, logger: Logger = Logger()) -> PsseCircuit:
                     elm_prop = elm_property_dict.get(rawx_property_name, None)
 
                     if elm_prop:
-                        elm.set_registered_property_value(elm_prop.property_name, value)
+                        setattr(elm, elm_prop.property_name, value)
                     else:
                         logger.add_error("PSSe attribute not found", device=class_name, value=rawx_property_name)
 
@@ -108,7 +108,7 @@ def write_rawx(file_name: str, circuit: PsseCircuit, logger: Logger = Logger()) 
 
     for circuit_prop in circuit.get_properties():
 
-        circuit_val: List[RawObject] = circuit.__dict__[circuit_prop.property_name]
+        circuit_val: List[RawObject] = getattr(circuit, circuit_prop.property_name)
 
         elm_data = list()
         fields = list()

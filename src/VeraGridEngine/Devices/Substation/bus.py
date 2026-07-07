@@ -8,9 +8,9 @@ from typing import Tuple, Union
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from VeraGridEngine.enumerations import BusMode, DeviceType, BusGraphicType, BuildStatus, PrpCat
-from VeraGridEngine.Devices.Parents.dynamic_bus_parent import DynamicBusDevice
-from VeraGridEngine.Devices.Aggregation import Area, Zone, Country, Community, Region, Municipality
+from VeraGridEngine.enumerations import BusMode, DeviceType, BusGraphicType, BuildStatus
+from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicBusDevice
+from VeraGridEngine.Devices.Aggregation import Area, Zone, Country
 from VeraGridEngine.Devices.Substation.substation import Substation
 from VeraGridEngine.Devices.Substation.busbar import BusBar
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
@@ -42,7 +42,7 @@ class Bus(DynamicBusDevice):
         'zone',
         'substation',
         '_voltage_level',
-        '_bus_type',
+        'type',
         '_is_slack',
         '_is_dc',
         '_x',
@@ -57,222 +57,50 @@ class Bus(DynamicBusDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(
-            prop_name='active',
-            units='',
-            tpe=bool,
-            definition='Is the bus active? used to disable the bus.',
-            profile_name='active_prof',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='is_slack',
-            units='',
-            tpe=bool,
-            definition='Force the bus to be of slack type.',
-            profile_name='',
-            cat=[PrpCat.TP, PrpCat.PF, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='is_dc',
-            units='',
-            tpe=bool,
-            definition='Is this bus of DC type?.',
-            profile_name='',
-            cat=[PrpCat.TP, PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='is_grounded',
-            units='',
-            tpe=bool,
-            definition='Is this bus connected to ground?.',
-            profile_name='',
-            cat=[PrpCat.TP, PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='graphic_type',
-            units='',
-            tpe=BusGraphicType,
-            definition='Graphic to use in the schematic.',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='Vnom',
-            units='kV',
-            tpe=float,
-            definition='Nominal line voltage of the bus.',
-            profile_name='',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='Vm0',
-            units='p.u.',
-            tpe=float,
-            definition='Voltage module guess.',
-            profile_name='',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='Va0',
-            units='rad.',
-            tpe=float,
-            definition='Voltage angle guess.',
-            profile_name='',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='Vmin',
-            units='p.u.',
-            tpe=float,
-            definition='Lower range of allowed voltage module.',
-            profile_name='Vmin_prof',
-            cat=[PrpCat.OPF],
-        ),
-        GCProp(
-            prop_name='Vmax',
-            units='p.u.',
-            tpe=float,
-            definition='Higher range of allowed voltage module.',
-            profile_name='Vmax_prof',
-            cat=[PrpCat.OPF],
-        ),
-        GCProp(
-            prop_name='Vm_cost',
-            units='e/unit',
-            tpe=float,
-            definition='Cost of over and under voltages',
-            old_names=['voltage_module_cost'],
-            cat=[PrpCat.OPF],
-        ),
-        GCProp(
-            prop_name='angle_min',
-            units='rad.',
-            tpe=float,
-            definition='Lower range of allowed voltage angle.',
-            profile_name='',
-            cat=[PrpCat.OPF],
-        ),
-        GCProp(
-            prop_name='angle_max',
-            units='rad.',
-            tpe=float,
-            definition='Higher range of allowed voltage angle.',
-            profile_name='',
-            cat=[PrpCat.OPF],
-        ),
-        GCProp(
-            prop_name='angle_cost',
-            units='e/unit',
-            tpe=float,
-            definition='Cost of over and under angles',
-            old_names=['voltage_angle_cost'],
-            cat=[PrpCat.OPF],
-        ),
-        GCProp(
-            prop_name='x',
-            units='px',
-            tpe=float,
-            definition='x position in pixels.',
-            profile_name='',
-            editable=False,
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='y',
-            units='px',
-            tpe=float,
-            definition='y position in pixels.',
-            profile_name='',
-            editable=False,
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='h',
-            units='px',
-            tpe=float,
-            definition='height of the bus in pixels.',
-            profile_name='',
-            editable=False,
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='w',
-            units='px',
-            tpe=float,
-            definition='Width of the bus in pixels.',
-            profile_name='',
-            editable=False,
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='country',
-            units='',
-            tpe=DeviceType.CountryDevice,
-            definition='Country of the bus',
-            profile_name='',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='area',
-            units='',
-            tpe=DeviceType.AreaDevice,
-            definition='Area of the bus',
-            profile_name='',
-            cat=[PrpCat.TP, PrpCat.NTC],
-        ),
-        GCProp(
-            prop_name='zone',
-            units='',
-            tpe=DeviceType.ZoneDevice,
-            definition='Zone of the bus',
-            profile_name='',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='substation',
-            units='',
-            tpe=DeviceType.SubstationDevice,
-            definition='Substation of the bus.',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='voltage_level',
-            units='',
-            tpe=DeviceType.VoltageLevelDevice,
-            definition='Voltage level of the bus.',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='bus_bar',
-            units='',
-            tpe=DeviceType.BusBarDevice,
-            definition='Busbar associated to the bus.',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='longitude',
-            units='deg',
-            tpe=float,
-            definition='longitude of the bus.',
-            profile_name='',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='latitude',
-            units='deg',
-            tpe=float,
-            definition='latitude of the bus.',
-            profile_name='',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='color',
-            units='',
-            tpe=str,
-            definition='Color to paint the element in the diagram',
-            is_color=True,
-            cat=[PrpCat.TP],
-        ),
+        GCProp(key='active', units='', tpe=bool, definition='Is the bus active? used to disable the bus.',
+               profile_name='active_prof'),
+        GCProp(key='is_slack', units='', tpe=bool, definition='Force the bus to be of slack type.',
+               profile_name=''),
+        GCProp(key='is_dc', units='', tpe=bool, definition='Is this bus of DC type?.', profile_name=''),
+        GCProp(key='graphic_type', units='', tpe=BusGraphicType, definition='Graphic to use in the schematic.'),
+        GCProp(key='Vnom', units='kV', tpe=float, definition='Nominal line voltage of the bus.', profile_name=''),
+        GCProp(key='Vm0', units='p.u.', tpe=float, definition='Voltage module guess.', profile_name=''),
+        GCProp(key='Va0', units='rad.', tpe=float, definition='Voltage angle guess.', profile_name=''),
+        GCProp(key='Vmin', units='p.u.', tpe=float, definition='Lower range of allowed voltage module.',
+               profile_name='Vmin_prof'),
+        GCProp(key='Vmax', units='p.u.', tpe=float, definition='Higher range of allowed voltage module.',
+               profile_name='Vmax_prof'),
+        GCProp(key='Vm_cost', units='e/unit', tpe=float, definition='Cost of over and under voltages',
+               old_names=['voltage_module_cost']),
+        GCProp(key='angle_min', units='rad.', tpe=float, definition='Lower range of allowed voltage angle.',
+               profile_name=''),
+        GCProp(key='angle_max', units='rad.', tpe=float, definition='Higher range of allowed voltage angle.',
+               profile_name=''),
+        GCProp(key='angle_cost', units='e/unit', tpe=float, definition='Cost of over and under angles',
+               old_names=['voltage_angle_cost']),
+        GCProp(key='x', units='px', tpe=float, definition='x position in pixels.', profile_name='',
+               editable=False),
+        GCProp(key='y', units='px', tpe=float, definition='y position in pixels.', profile_name='',
+               editable=False),
+        GCProp(key='h', units='px', tpe=float, definition='height of the bus in pixels.', profile_name='',
+               editable=False),
+        GCProp(key='w', units='px', tpe=float, definition='Width of the bus in pixels.', profile_name='',
+               editable=False),
+        GCProp(key='country', units='', tpe=DeviceType.CountryDevice, definition='Country of the bus',
+               profile_name=''),
+        GCProp(key='area', units='', tpe=DeviceType.AreaDevice, definition='Area of the bus', profile_name=''),
+        GCProp(key='zone', units='', tpe=DeviceType.ZoneDevice, definition='Zone of the bus', profile_name=''),
+        GCProp(key='substation', units='', tpe=DeviceType.SubstationDevice,
+               definition='Substation of the bus.'),
+        GCProp(key='voltage_level', units='', tpe=DeviceType.VoltageLevelDevice,
+               definition='Voltage level of the bus.'),
+        GCProp(key='bus_bar', units='', tpe=DeviceType.BusBarDevice,
+               definition='Busbar associated to the bus.'),
+        GCProp(key='longitude', units='deg', tpe=float, definition='longitude of the bus.', profile_name=''),
+        GCProp(key='latitude', units='deg', tpe=float, definition='latitude of the bus.', profile_name=''),
+        GCProp(key='is_grounded', units='', tpe=bool, definition='Is this bus neutral grounded?.'),
+        GCProp(key='color', units='', tpe=str, definition='Color to paint the element in the diagram',
+               is_color=True),
     )
 
     def __init__(self, name="Bus",
@@ -341,13 +169,13 @@ class Bus(DynamicBusDevice):
         """
 
         DynamicBusDevice.__init__(self,
-                                  name=name,
-                                  idtag=idtag,
-                                  code=code,
-                                  device_type=DeviceType.BusDevice,
-                                  build_status=build_status)
+                               name=name,
+                               idtag=idtag,
+                               code=code,
+                               device_type=DeviceType.BusDevice,
+                               build_status=build_status)
 
-        self._active = bool(active)
+        self.active = bool(active)
         self._active_prof = ProfileBool(default_value=self.active)
 
         # Nominal voltage (kV)
@@ -355,17 +183,17 @@ class Bus(DynamicBusDevice):
 
         # minimum voltage limit
         self.Vmin = float(vmin)
-        self._Vmin_prof = ProfileFloat(default_value=vmin)
-
         self.Vm_cost = 1.0
 
         # maximum voltage limit
         self.Vmax = float(vmax)
-        self._Vmax_prof = ProfileFloat(default_value=vmax)
 
         self.Vm0 = float(Vm0)
 
         self.Va0 = float(Va0)
+
+        self._Vmin_prof = ProfileFloat(default_value=vmin)
+        self._Vmax_prof = ProfileFloat(default_value=vmax)
 
         self.angle_min = float(angle_min)
 
@@ -378,6 +206,8 @@ class Bus(DynamicBusDevice):
 
         # summation of upper reactive power limits connected
         self.Qmax_sum = 0
+
+
 
         self.country: Country | None = country
 
@@ -412,16 +242,16 @@ class Bus(DynamicBusDevice):
                               f"The substation from the voltage level is different from bus substation!")
 
         # Bus type
-        self._bus_type = BusMode.PQ_tpe
+        self.type = BusMode.PQ_tpe
 
         # Flag to determine if the bus is a slack bus or not
-        self._is_slack = bool(is_slack)
+        self.is_slack = bool(is_slack)
 
         # determined if this bus is an AC or DC bus
-        self._is_dc = bool(is_dc)
+        self.is_dc = bool(is_dc)
 
         # determine if the bus is solidly grounded
-        self._is_grounded = bool(is_grounded)
+        self.is_grounded = bool(is_grounded)
 
         # position and dimensions
         self.x = float(xpos)
@@ -430,6 +260,8 @@ class Bus(DynamicBusDevice):
         self.w = float(width)
         self.longitude = float(longitude)
         self.latitude = float(latitude)
+
+        self.is_grounded: bool = True
 
         self.color = color if color is not None else "#000000"
 
@@ -539,144 +371,10 @@ class Bus(DynamicBusDevice):
 
         if self.is_slack:
             # if it is set as slack, set the bus as slack and exit
-            self._bus_type = BusMode.Slack_tpe
+            self.type = BusMode.Slack_tpe
             return BusMode.Slack_tpe
 
         return BusMode.PQ_tpe
-
-    def get_country(self) -> Country | None:
-        """
-        Get the country associated to this bus.
-
-        The bus-level reference has priority because it is the most specific
-        assignment for this object. If it is not available, the method falls
-        back to the substation hierarchy.
-
-        :return: Country object or ``None``
-        """
-        if self.country is not None:
-            return self.country
-        else:
-            substation: Substation | None = self.get_substation()
-            if substation is not None:
-                return substation.country
-            else:
-                return None
-
-    def get_area(self) -> Area | None:
-        """
-        Get the area associated to this bus.
-
-        The bus-level reference has priority because it is the most specific
-        assignment for this object. If it is not available, the method falls
-        back to the substation hierarchy.
-
-        :return: Area object or ``None``
-        """
-        if self.area is not None:
-            return self.area
-        else:
-            substation: Substation | None = self.get_substation()
-            if substation is not None:
-                return substation.area
-            else:
-                return None
-
-    def get_zone(self) -> Zone | None:
-        """
-        Get the zone associated to this bus.
-
-        The bus-level reference has priority because it is the most specific
-        assignment for this object. If it is not available, the method falls
-        back to the substation hierarchy.
-
-        :return: Zone object or ``None``
-        """
-        if self.zone is not None:
-            return self.zone
-        else:
-            substation: Substation | None = self.get_substation()
-            if substation is not None:
-                return substation.zone
-            else:
-                return None
-
-    def get_substation(self) -> Substation | None:
-        """
-        Get the substation associated to this bus.
-
-        The bus-level reference has priority because it is the direct
-        association stored by the bus. If it is not available, the method
-        falls back to the voltage-level hierarchy.
-
-        :return: Substation object or ``None``
-        """
-        if self.substation is not None:
-            return self.substation
-        else:
-            if self.voltage_level is not None:
-                return self.voltage_level.substation
-            else:
-                return None
-
-    def get_voltage_level(self) -> VoltageLevel | None:
-        """
-        Get the voltage level associated to this bus.
-
-        The bus stores the voltage-level reference directly, so there is no
-        alternative hierarchy to inspect.
-
-        :return: VoltageLevel object or ``None``
-        """
-        if self.voltage_level is not None:
-            return self.voltage_level
-        else:
-            return None
-
-    def get_community(self) -> Community | None:
-        """
-        Get the community associated to this bus.
-
-        The value is obtained through the substation hierarchy because the bus
-        does not store a direct community reference.
-
-        :return: Community object or ``None``
-        """
-        substation: Substation | None = self.get_substation()
-        if substation is not None:
-            return substation.community
-        else:
-            return None
-
-    def get_region(self) -> Region | None:
-        """
-        Get the region associated to this bus.
-
-        The value is obtained through the substation hierarchy because the bus
-        does not store a direct region reference.
-
-        :return: Region object or ``None``
-        """
-        substation: Substation | None = self.get_substation()
-        if substation is not None:
-            return substation.region
-        else:
-            return None
-
-    def get_municipality(self) -> Municipality | None:
-        """
-        Get the municipality associated to this bus.
-
-        The value is obtained through the substation hierarchy because the bus
-        does not store a direct municipality reference.
-
-        :return: Municipality object or ``None``
-        """
-        substation: Substation | None = self.get_substation()
-        if substation is not None:
-            return substation.municipality
-        else:
-            return None
 
     def get_voltage_guess(self, use_stored_guess=False) -> complex:
         """
@@ -1017,6 +715,8 @@ class Bus(DynamicBusDevice):
         :return: None
         """
         self._angle_cost = float(val)
+
+
 
     @property
     def x(self) -> float:

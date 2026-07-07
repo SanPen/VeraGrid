@@ -109,28 +109,6 @@ class _EditorStub:
         """
         return None
 
-    def update_label_drawing_status(self, device: Any, draw_labels: bool) -> None:
-        """
-        Persist label-drawing updates issued by generic graphics helpers.
-
-        :param device: Device whose graphics state changed.
-        :param draw_labels: Updated label visibility flag.
-        :return: ``None``.
-        """
-        update_record: dict[str, Any] = self.diagram_updates.get(id(device), dict())
-        update_record["draw_labels"] = draw_labels
-        self.diagram_updates[id(device)] = update_record
-
-    def update_label_drwaing_status(self, device: Any, draw_labels: bool) -> None:
-        """
-        Backward-compatible alias for the current graphics callback name.
-
-        :param device: Device whose graphics state changed.
-        :param draw_labels: Updated label visibility flag.
-        :return: ``None``.
-        """
-        self.update_label_drawing_status(device=device, draw_labels=draw_labels)
-
     def get_persisted_attachment(self, api_object: Any, endpoint: str) -> dict[str, Any]:
         """
         Return persisted attachment data for a fake branch endpoint.
@@ -209,7 +187,7 @@ class _GraphicsManagerStub:
 
 
 class _DiagramStub:
-    __slots__ = ("docks", "attachments", "locations", "use_api_colors")
+    __slots__ = ("docks", "attachments", "locations")
 
     def __init__(self) -> None:
         """
@@ -220,7 +198,6 @@ class _DiagramStub:
         self.docks: dict[int, dict[str, Any]] = dict()
         self.attachments: dict[tuple[int, str], dict[str, Any]] = dict()
         self.locations: dict[int, GraphicLocation] = dict()
-        self.use_api_colors: bool = False
 
     def get_dock(self, api_object: Any) -> dict[str, Any]:
         """
@@ -1555,34 +1532,6 @@ def test_bus_graphic_auto_assign_branch_slots_uses_geometry_order() -> None:
     assert editor.diagram.get_attachment(branch_api_object_2, "from")["anchor_y"] == 45.0
 
 
-def test_bus_graphic_auto_assign_branch_slots_ignores_connector_without_api_object() -> None:
-    """
-    Auto slot assignment should skip connector graphics that do not have one diagram API object.
-    """
-    _get_app()
-    editor: _EditorStub = _EditorStub()
-    bus: Bus = Bus(name="B1")
-    other_bus: Bus = Bus(name="B2")
-    graphic: BusGraphicItem = BusGraphicItem(editor=editor, bus=bus, w=180.0, h=40.0, x=0.0, y=0.0)
-    branch_api_object: object = object()
-    branch_graphic: _BranchGraphicStub = _BranchGraphicStub(api_object=branch_api_object,
-                                                            from_parent=graphic,
-                                                            to_parent=other_bus,
-                                                            pos1=QPointF(90.0, 25.0),
-                                                            pos2=QPointF(40.0, 220.0))
-    connector_graphic: _BranchGraphicStub = _BranchGraphicStub(api_object=None,
-                                                               from_parent=graphic,
-                                                               to_parent=other_bus,
-                                                               pos1=QPointF(90.0, 25.0),
-                                                               pos2=QPointF(140.0, 220.0))
-    graphic.terminal.add_hosting_connection(branch_graphic, _noop_callback)
-    graphic.terminal.add_hosting_connection(connector_graphic, _noop_callback)
-
-    graphic.auto_assign_branch_slots()
-
-    assert editor.diagram.get_attachment(branch_api_object, "from")["slot"] == "bus-bottom-1"
-
-
 def test_bus_graphic_applies_persisted_rotation_to_bar_and_nexus_anchors() -> None:
     """
     Bus graphics should apply the stored diagram rotation angle to branch and nexus anchors.
@@ -1779,7 +1728,7 @@ def test_branch_scene_index_tracks_redraw_bounds_after_route_change() -> None:
     assert branch_graphic in moved_hit_items_after
 
 
-def test_branch_endpoint_callback_skips_immediate_redraw_during_batched_refresh(override_attrs) -> None:
+def test_branch_endpoint_callback_skips_immediate_redraw_during_batched_refresh(monkeypatch) -> None:
     """
     Batched branch refresh should collect endpoint updates without redrawing on every callback.
     """
@@ -1804,7 +1753,7 @@ def test_branch_endpoint_callback_skips_immediate_redraw_during_batched_refresh(
         """
         redraw_calls.append(1)
 
-    override_attrs.setattr(branch_graphic, "redraw", _fake_redraw)
+    monkeypatch.setattr(branch_graphic, "redraw", _fake_redraw)
 
     editor._is_batch_refreshing_branches = True
     branch_graphic.setBeginPos(QPointF(100.0, 45.0))
@@ -1820,7 +1769,7 @@ def test_branch_endpoint_callback_skips_immediate_redraw_during_batched_refresh(
     assert redraw_calls == [1]
 
 
-def test_line_graphic_constructor_skips_redraw_while_loading(override_attrs) -> None:
+def test_line_graphic_constructor_skips_redraw_while_loading(monkeypatch) -> None:
     """
     Branch construction during diagram loading should defer the first redraw.
     """
@@ -1842,7 +1791,7 @@ def test_line_graphic_constructor_skips_redraw_while_loading(override_attrs) -> 
         """
         redraw_calls.append(1)
 
-    override_attrs.setattr(LineGraphicTemplateItem, "redraw", _fake_redraw)
+    monkeypatch.setattr(LineGraphicTemplateItem, "redraw", _fake_redraw)
 
     LineGraphicTemplateItem(from_port=graphic_from.get_terminal(),
                             to_port=graphic_to.get_terminal(),
@@ -1851,7 +1800,7 @@ def test_line_graphic_constructor_skips_redraw_while_loading(override_attrs) -> 
     assert redraw_calls == list()
 
 
-def test_bus_arrange_children_skips_intermediate_callback_churn_while_loading(override_attrs) -> None:
+def test_bus_arrange_children_skips_intermediate_callback_churn_while_loading(monkeypatch) -> None:
     """
     Bus child arrangement should avoid nexus and terminal callback refreshes during loading.
     """
@@ -1883,8 +1832,8 @@ def test_bus_arrange_children_skips_intermediate_callback_churn_while_loading(ov
         """
         callback_calls.append(1)
 
-    override_attrs.setattr(load_graphic, "update_nexus", _fake_update_nexus)
-    override_attrs.setattr(graphic.get_terminal(), "process_callbacks", _fake_process_callbacks)
+    monkeypatch.setattr(load_graphic, "update_nexus", _fake_update_nexus)
+    monkeypatch.setattr(graphic.get_terminal(), "process_callbacks", _fake_process_callbacks)
 
     graphic.arrange_children()
 

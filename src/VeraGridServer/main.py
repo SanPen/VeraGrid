@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import os
-import hmac
+from hashlib import sha256
 from fastapi import FastAPI, Header, HTTPException, Response, Query
 from fastapi.responses import FileResponse
 
@@ -11,7 +11,6 @@ from VeraGridServer.endpoints import register_in_master
 from VeraGridServer.endpoints import register_sub_servers
 from VeraGridServer.endpoints import calculations
 from VeraGridServer.endpoints import jobs
-from VeraGridServer.settings import settings
 from cryptography import x509
 from cryptography.x509.oid import NameOID
 from cryptography.hazmat.primitives import hashes
@@ -29,6 +28,11 @@ app.include_router(jobs.router)
 # Store WebSocket connections in a set
 __connections__ = set()
 
+# GC_FOLDER = get_create_gridcal_folder()
+# GC_SERVER_FILE = os.path.join(GC_FOLDER, "server_config.json")
+SECRET_KEY = ""
+
+
 def verify_api_key(api_key: str = Header(None)):
     """
     Define a function to verify the API key
@@ -37,12 +41,9 @@ def verify_api_key(api_key: str = Header(None)):
     if api_key is None:
         raise HTTPException(status_code=401, detail="API Key is missing")
 
-    expected_api_key: str = settings.this_password
-
-    if len(expected_api_key) == 0:
-        raise HTTPException(status_code=503, detail="API key verification is not configured")
-
-    if not hmac.compare_digest(api_key, expected_api_key):
+    # Hash the provided API key using the same algorithm and compare with the stored hash
+    hashed_api_key = sha256(api_key.encode()).hexdigest()
+    if hashed_api_key != SECRET_KEY:
         raise HTTPException(status_code=403, detail="Invalid API Key")
 
 

@@ -3,11 +3,105 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
-from typing import Any
+
 from pathlib import Path
 from types import SimpleNamespace
+import importlib.util
+import sys
+import types
 import uuid
+
 import numpy as np
+
+
+repo_root = Path(__file__).resolve().parents[6]
+src_root = repo_root / "src"
+engine_root = src_root / "VeraGridEngine"
+
+if str(src_root) in sys.path:
+    pass
+else:
+    sys.path.insert(0, str(src_root))
+
+
+networkx_module = sys.modules.get("networkx", None)
+if networkx_module is None:
+    sys.modules["networkx"] = types.ModuleType("networkx")
+else:
+    pass
+
+matplotlib_module = sys.modules.get("matplotlib", None)
+if matplotlib_module is None:
+    matplotlib_module = types.ModuleType("matplotlib")
+    sys.modules["matplotlib"] = matplotlib_module
+else:
+    pass
+
+for submodule_name in ("pyplot", "colors", "cm"):
+    full_name = f"matplotlib.{submodule_name}"
+    submodule = sys.modules.get(full_name, None)
+    if submodule is None:
+        submodule = types.ModuleType(full_name)
+        sys.modules[full_name] = submodule
+    else:
+        pass
+    setattr(matplotlib_module, submodule_name, submodule)
+
+pyplot_module = sys.modules["matplotlib.pyplot"]
+if hasattr(pyplot_module, "axis"):
+    pass
+else:
+    setattr(pyplot_module, "axis", object)
+
+chardet_module = sys.modules.get("chardet", None)
+if chardet_module is None:
+    sys.modules["chardet"] = types.ModuleType("chardet")
+else:
+    pass
+
+sklearn_module = sys.modules.get("sklearn", None)
+if sklearn_module is None:
+    sklearn_module = types.ModuleType("sklearn")
+    sys.modules["sklearn"] = sklearn_module
+else:
+    pass
+
+sklearn_ensemble_module = sys.modules.get("sklearn.ensemble", None)
+if sklearn_ensemble_module is None:
+    sklearn_ensemble_module = types.ModuleType("sklearn.ensemble")
+    sys.modules["sklearn.ensemble"] = sklearn_ensemble_module
+else:
+    pass
+setattr(sklearn_module, "ensemble", sklearn_ensemble_module)
+if hasattr(sklearn_ensemble_module, "RandomForestRegressor"):
+    pass
+else:
+    setattr(sklearn_ensemble_module, "RandomForestRegressor", object)
+
+
+def _ensure_package(name: str, path: Path) -> None:
+    module = sys.modules.get(name, None)
+    if module is None:
+        module = types.ModuleType(name)
+        module.__path__ = [str(path)]
+        sys.modules[name] = module
+    else:
+        pass
+
+
+# _ensure_package("VeraGridEngine.Simulations", engine_root / "Simulations")
+# _ensure_package("VeraGridEngine.Simulations.Rms", engine_root / "Simulations" / "Rms")
+# _ensure_package("VeraGridEngine.Simulations.Rms.numerical", engine_root / "Simulations" / "Rms" / "numerical")
+# _ensure_package("VeraGridEngine.Simulations.Rms.problems", engine_root / "Simulations" / "Rms" / "problems")
+# _ensure_package("VeraGridEngine.Simulations.PowerFlow", engine_root / "Simulations" / "PowerFlow")
+# _ensure_package("VeraGridEngine.Simulations.PowerFlow.NumericalMethods", engine_root / "Simulations" / "PowerFlow" / "NumericalMethods")
+# _ensure_package("VeraGridEngine.Simulations.EMT", engine_root / "Simulations" / "EMT")
+# _ensure_package("VeraGridEngine.Simulations.EMT.problems", engine_root / "Simulations" / "EMT" / "problems")
+# _ensure_package("VeraGridEngine.Simulations.EMT.solvers", engine_root / "Simulations" / "EMT" / "solvers")
+# _ensure_package("VeraGridEngine.Simulations.Clustering", engine_root / "Simulations" / "Clustering")
+# _ensure_package("VeraGridEngine.Simulations.Stochastic", engine_root / "Simulations" / "Stochastic")
+# _ensure_package("VeraGridEngine.IO", engine_root / "IO")
+# _ensure_package("VeraGridEngine.IO.others", engine_root / "IO" / "others")
 
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.Injections.generator import Generator
@@ -20,30 +114,32 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriv
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver
 from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
-from VeraGridEngine.Utils.Symbolic.bus_emt_template import BusEmtTemplate
-from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
-from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Templates.Emt.bus_emt_template import BusEmtTemplate
+from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template
+from VeraGridEngine.Templates.Rms.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complete_generator_template_rms
 from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
 from VeraGridEngine.enumerations import (
     BranchImpedanceMode,
     DynamicIntegrationMethod,
     SolverType,
-    VarPowerFlowReferenceType,
+    VarPowerFlowRefferenceType,
 )
 
 from VeraGridEngine.IO.fmu.exporter.api import export_fmu
 from VeraGridEngine.IO.fmu.exporter.config import ExportConfig as CsExportConfig, detect_target_platform as detect_cs_target_platform
 from VeraGridEngine.IO.fmu.exporter.compat import Block, Const, Var
-from VeraGridEngine.IO.fmu.importer.emt_boundary import build_emt_boundary_updater
-from VeraGridEngine.IO.fmu.importer.experimental_cs import FmuRefBinding, register_emt_fmu_cs_device
-from VeraGridEngine.IO.fmu.importer.experimental_me import FmuMeIntegrationMethod, register_emt_fmu_me_device
-from VeraGridEngine.IO.fmu.importer.model_description import FmuInterfaceMode
-from VeraGridEngine.IO.fmu.importer.user_api import (
+from VeraGridEngine.IO.fmu.importer import (
     FmuDeviceAttachmentRequest,
     FmuDeviceDomain,
+    FmuInterfaceMode,
+    FmuMeIntegrationMethod,
     FmuReferenceValue,
+    FmuRefBinding,
     attach_fmu_to_device,
+    build_emt_boundary_updater,
+    register_emt_fmu_cs_device,
+    register_emt_fmu_me_device,
 )
 from VeraGridEngine.IO.fmu.exporter_me.api import export_fmu_me
 from VeraGridEngine.IO.fmu.exporter_me.config import ExportConfig as MeExportConfig, detect_target_platform as detect_me_target_platform
@@ -66,12 +162,7 @@ def _has_fmpy() -> bool:
     :return: `True` when `fmpy` can be imported.
     """
 
-    try:
-        import fmpy
-
-        return fmpy is not None
-    except ModuleNotFoundError:
-        return False
+    return importlib.util.find_spec("fmpy") is not None
 
 
 def write_example_report(report_path: Path, lines: tuple[str, ...]) -> Path:
@@ -328,23 +419,16 @@ def _build_rms_demo_grid() -> tuple[MultiCircuit, Load]:
     initialize_bus_rms(bus_load, vf=grid.var_factory)
 
     line: Line = Line(name="line_0_1", bus_from=bus_slack, bus_to=bus_load, r=0.03, x=0.07, b=0.03, rate=900.0)
-    generator: Generator = Generator(
-        name="Gen0",
-        P=10.0,
-        vset=1.0,
-        Snom=900.0,
-        x1=0.86138701,
-        r1=0.3,
-        freq=50.0,
-    )
+    generator: Generator = Generator(name="Gen0", P=10.0, vset=1.0, Snom=900.0, x1=0.86138701, r1=0.3, freq=50.0)
     load: Load = Load(name="ImportedLoad", P=10.0, Q=1.0)
+
+    line.rms_model = get_line_rms_template(grid.var_factory).block
+    generator.rms_model = get_complete_generator_template_rms(grid.var_factory).block
+    grid.add_rms_events_group(RmsEventsGroup(name="default_rms_example_group"))
 
     grid.add_line(line)
     grid.add_generator(bus=bus_slack, api_obj=generator)
     grid.add_load(bus=bus_load, api_obj=load)
-    line.rms_template = get_line_rms_template(grid.var_factory)
-    generator.rms_template = get_complete_generator_template_rms(grid.var_factory)
-    grid.add_rms_events_group(RmsEventsGroup(name="default_rms_example_group"))
     return grid, load
 
 
@@ -367,7 +451,7 @@ def _build_emt_demo_grid() -> tuple[MultiCircuit, Load]:
     bus._emt_model = bus_template.block
 
     generator: Generator = Generator(name="Gen0", P=0.0, vset=1.0, Snom=900.0, x1=0.2, r1=0.01)
-    generator_template = get_generator_thevenin_rl_emt_template_with_ref(grid=grid, gen=generator, name="emt_thevenin_source")
+    generator_template = get_generator_thevenin_rl_emt_template(grid=grid, gen=generator, name="emt_thevenin_source")
 
     # The public setter still serializes through external mappings with `None` placeholders, so we attach directly.
     generator._emt_template = generator_template
@@ -465,8 +549,8 @@ def _build_rms_results_summary(driver: RmsSimulationDriver, load: Load) -> tuple
     if driver.results is None:
         raise RuntimeError("The RMS simulation did not produce results")
     else:
-        p_var: Var = load.rms_model.external_mapping[VarPowerFlowReferenceType.P]
-        q_var: Var = load.rms_model.external_mapping[VarPowerFlowReferenceType.Q]
+        p_var: Var = load.rms_model.external_mapping[VarPowerFlowRefferenceType.P]
+        q_var: Var = load.rms_model.external_mapping[VarPowerFlowRefferenceType.Q]
         p_final = _try_get_result_value(driver.results.values, driver.results.uid2idx.get(p_var.uid, None))
         q_final = _try_get_result_value(driver.results.values, driver.results.uid2idx.get(q_var.uid, None))
         p_text: str
@@ -486,7 +570,7 @@ def _build_rms_results_summary(driver: RmsSimulationDriver, load: Load) -> tuple
         )
 
 
-def _read_rms_fmu_output(problem: Any, device: Load, reference: VarPowerFlowReferenceType) -> float | None:
+def _read_rms_fmu_output(problem: Any, device: Load, reference: VarPowerFlowRefferenceType) -> float | None:
     """
     Read one FMU-backed RMS output directly from the registered runtime adapters.
 
@@ -601,9 +685,9 @@ def _build_emt_results_summary(driver: EmtSimulationDriver, load: Load) -> tuple
     if driver.results is None:
         raise RuntimeError("The EMT simulation did not produce results")
     else:
-        i_a_var: Var = load.emt_model.external_mapping[VarPowerFlowReferenceType.i_A]
-        i_b_var: Var = load.emt_model.external_mapping[VarPowerFlowReferenceType.i_B]
-        i_c_var: Var = load.emt_model.external_mapping[VarPowerFlowReferenceType.i_C]
+        i_a_var: Var = load.emt_model.external_mapping[VarPowerFlowRefferenceType.i_A]
+        i_b_var: Var = load.emt_model.external_mapping[VarPowerFlowRefferenceType.i_B]
+        i_c_var: Var = load.emt_model.external_mapping[VarPowerFlowRefferenceType.i_C]
         i_a_final = _try_get_result_value(driver.results.values, driver.results.uid2idx.get(i_a_var.uid, None))
         i_b_final = _try_get_result_value(driver.results.values, driver.results.uid2idx.get(i_b_var.uid, None))
         i_c_final = _try_get_result_value(driver.results.values, driver.results.uid2idx.get(i_c_var.uid, None))
@@ -683,12 +767,12 @@ def run_rms_cs_example(output_dir: Path) -> Path:
         mode=FmuInterfaceMode.CO_SIMULATION,
         input_bindings=tuple(),
         output_bindings=(
-            FmuRefBinding(VarPowerFlowReferenceType.P, "p_out"),
-            FmuRefBinding(VarPowerFlowReferenceType.Q, "q_out"),
+            FmuRefBinding(VarPowerFlowRefferenceType.P, "p_out"),
+            FmuRefBinding(VarPowerFlowRefferenceType.Q, "q_out"),
         ),
         output_defaults=(
-            FmuReferenceValue(VarPowerFlowReferenceType.P, p_default),
-            FmuReferenceValue(VarPowerFlowReferenceType.Q, q_default),
+            FmuReferenceValue(VarPowerFlowRefferenceType.P, p_default),
+            FmuReferenceValue(VarPowerFlowRefferenceType.Q, q_default),
         ),
         extraction_root=output_dir,
     )
@@ -709,8 +793,8 @@ def run_rms_cs_example(output_dir: Path) -> Path:
         final_snapshot: np.ndarray = _build_final_rms_snapshot(rms_driver)
         final_time_seconds: float = float(rms_driver.results.time_array[-1].value) * 1e-9
         _refresh_rms_fmu_outputs_from_final_snapshot(rms_driver.problem, load, final_snapshot, final_time_seconds)
-        p_value = _read_rms_fmu_output(rms_driver.problem, load, VarPowerFlowReferenceType.P)
-        q_value = _read_rms_fmu_output(rms_driver.problem, load, VarPowerFlowReferenceType.Q)
+        p_value = _read_rms_fmu_output(rms_driver.problem, load, VarPowerFlowRefferenceType.P)
+        q_value = _read_rms_fmu_output(rms_driver.problem, load, VarPowerFlowRefferenceType.Q)
         p_text: str = "not available" if p_value is None else f"{p_value:.8f}"
         q_text: str = "not available" if q_value is None else f"{q_value:.8f}"
 
@@ -755,14 +839,14 @@ def run_rms_me_example(output_dir: Path) -> Path:
         fmu_path=fmu_path,
         domain=FmuDeviceDomain.RMS,
         mode=FmuInterfaceMode.MODEL_EXCHANGE,
-        input_bindings=(FmuRefBinding(VarPowerFlowReferenceType.Vm, "u"),),
+        input_bindings=(FmuRefBinding(VarPowerFlowRefferenceType.Vm, "u"),),
         output_bindings=(
-            FmuRefBinding(VarPowerFlowReferenceType.P, "p_out"),
-            FmuRefBinding(VarPowerFlowReferenceType.Q, "q_out"),
+            FmuRefBinding(VarPowerFlowRefferenceType.P, "p_out"),
+            FmuRefBinding(VarPowerFlowRefferenceType.Q, "q_out"),
         ),
         output_defaults=(
-            FmuReferenceValue(VarPowerFlowReferenceType.P, p_default),
-            FmuReferenceValue(VarPowerFlowReferenceType.Q, q_default),
+            FmuReferenceValue(VarPowerFlowRefferenceType.P, p_default),
+            FmuReferenceValue(VarPowerFlowRefferenceType.Q, q_default),
         ),
         extraction_root=output_dir,
         integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER,
@@ -783,8 +867,8 @@ def run_rms_me_example(output_dir: Path) -> Path:
         final_snapshot = _build_final_rms_snapshot(rms_driver)
         final_time_seconds = float(rms_driver.results.time_array[-1].value) * 1e-9
         _refresh_rms_fmu_outputs_from_final_snapshot(rms_driver.problem, load, final_snapshot, final_time_seconds)
-        p_value = _read_rms_fmu_output(rms_driver.problem, load, VarPowerFlowReferenceType.P)
-        q_value = _read_rms_fmu_output(rms_driver.problem, load, VarPowerFlowReferenceType.Q)
+        p_value = _read_rms_fmu_output(rms_driver.problem, load, VarPowerFlowRefferenceType.P)
+        q_value = _read_rms_fmu_output(rms_driver.problem, load, VarPowerFlowRefferenceType.Q)
         p_text = "not available" if p_value is None else f"{p_value:.8f}"
         q_text = "not available" if q_value is None else f"{q_value:.8f}"
 
@@ -821,7 +905,7 @@ def run_emt_cs_example(output_dir: Path) -> Path:
     from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
     from VeraGridEngine.Devices.Substation.bus import Bus
     from VeraGridEngine.Devices.Injections.load import Load
-    from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
+    from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
 
     grid = SimpleNamespace(var_factory=VarFactory(name="ExampleEmtCsVarFactory"))
     load = Load(name="ImportedLoad", P=0.0, Q=0.0)
@@ -836,14 +920,14 @@ def run_emt_cs_example(output_dir: Path) -> Path:
         mode=FmuInterfaceMode.CO_SIMULATION,
         input_bindings=tuple(),
         output_bindings=(
-            FmuRefBinding(VarPowerFlowReferenceType.i_A, "i_a_out"),
-            FmuRefBinding(VarPowerFlowReferenceType.i_B, "i_b_out"),
-            FmuRefBinding(VarPowerFlowReferenceType.i_C, "i_c_out"),
+            FmuRefBinding(VarPowerFlowRefferenceType.i_A, "i_a_out"),
+            FmuRefBinding(VarPowerFlowRefferenceType.i_B, "i_b_out"),
+            FmuRefBinding(VarPowerFlowRefferenceType.i_C, "i_c_out"),
         ),
         output_defaults=(
-            FmuReferenceValue(VarPowerFlowReferenceType.i_A, 0.0),
-            FmuReferenceValue(VarPowerFlowReferenceType.i_B, 0.0),
-            FmuReferenceValue(VarPowerFlowReferenceType.i_C, 0.0),
+            FmuReferenceValue(VarPowerFlowRefferenceType.i_A, 0.0),
+            FmuReferenceValue(VarPowerFlowRefferenceType.i_B, 0.0),
+            FmuReferenceValue(VarPowerFlowRefferenceType.i_C, 0.0),
         ),
         extraction_root=output_dir,
     )
@@ -892,7 +976,7 @@ def run_emt_me_example(output_dir: Path) -> Path:
     from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
     from VeraGridEngine.Devices.Substation.bus import Bus
     from VeraGridEngine.Devices.Injections.load import Load
-    from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
+    from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
 
     grid = SimpleNamespace(var_factory=VarFactory(name="ExampleEmtMeVarFactory"))
     load = Load(name="ImportedLoad", P=0.0, Q=0.0)
@@ -904,16 +988,16 @@ def run_emt_me_example(output_dir: Path) -> Path:
         fmu_path=fmu_path,
         domain=FmuDeviceDomain.EMT,
         mode=FmuInterfaceMode.MODEL_EXCHANGE,
-        input_bindings=(FmuRefBinding(VarPowerFlowReferenceType.v_A, "u"),),
+        input_bindings=(FmuRefBinding(VarPowerFlowRefferenceType.v_A, "u"),),
         output_bindings=(
-            FmuRefBinding(VarPowerFlowReferenceType.i_A, "i_a_out"),
-            FmuRefBinding(VarPowerFlowReferenceType.i_B, "i_b_out"),
-            FmuRefBinding(VarPowerFlowReferenceType.i_C, "i_c_out"),
+            FmuRefBinding(VarPowerFlowRefferenceType.i_A, "i_a_out"),
+            FmuRefBinding(VarPowerFlowRefferenceType.i_B, "i_b_out"),
+            FmuRefBinding(VarPowerFlowRefferenceType.i_C, "i_c_out"),
         ),
         output_defaults=(
-            FmuReferenceValue(VarPowerFlowReferenceType.i_A, 0.0),
-            FmuReferenceValue(VarPowerFlowReferenceType.i_B, 0.0),
-            FmuReferenceValue(VarPowerFlowReferenceType.i_C, 0.0),
+            FmuReferenceValue(VarPowerFlowRefferenceType.i_A, 0.0),
+            FmuReferenceValue(VarPowerFlowRefferenceType.i_B, 0.0),
+            FmuReferenceValue(VarPowerFlowRefferenceType.i_C, 0.0),
         ),
         extraction_root=output_dir,
         integration_method=FmuMeIntegrationMethod.EXPLICIT_EULER,
@@ -922,7 +1006,7 @@ def run_emt_me_example(output_dir: Path) -> Path:
     attached_block: Block = attach_fmu_to_device(load, grid, request)
     load.idtag = "example-emt-me-device"
     bus_voltage_var = Var("example_bus_v_a")
-    bus._emt_model = Block(external_mapping={VarPowerFlowReferenceType.v_A: bus_voltage_var})
+    bus._emt_model = Block(external_mapping={VarPowerFlowRefferenceType.v_A: bus_voltage_var})
     problem = _ExampleEmtProblem(attached_block, bus_voltage_var)
     register_emt_fmu_me_device(problem, load, attached_block)
     boundary_updater = build_emt_boundary_updater(problem)

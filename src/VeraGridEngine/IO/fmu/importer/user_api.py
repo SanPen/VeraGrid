@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any, TYPE_CHECKING
 
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.enumerations import VarPowerFlowReferenceType
+from VeraGridEngine.enumerations import VarPowerFlowRefferenceType
 
 from VeraGridEngine.IO.fmu.importer.bindings import FmuImportConfig
 from VeraGridEngine.IO.fmu.importer.device_api import (
@@ -46,13 +46,13 @@ class FmuReferenceValue:
 
     __slots__ = ("reference", "value")
 
-    def __init__(self, reference: VarPowerFlowReferenceType, value: float) -> None:
+    def __init__(self, reference: VarPowerFlowRefferenceType, value: float) -> None:
         """Store one FMU default output value.
 
         :return: None.
         """
 
-        self.reference: VarPowerFlowReferenceType = reference
+        self.reference: VarPowerFlowRefferenceType = reference
         self.value: float = float(value)
 
 
@@ -142,14 +142,14 @@ def _build_import_config_from_request(request: FmuDeviceAttachmentRequest) -> Fm
     )
 
 
-def _build_output_defaults(request: FmuDeviceAttachmentRequest) -> dict[VarPowerFlowReferenceType, float]:
+def _build_output_defaults(request: FmuDeviceAttachmentRequest) -> dict[VarPowerFlowRefferenceType, float]:
     """Translate the user default-output collection into the internal mapping.
 
     :param request: High-level FMU attachment request.
     :return: Internal default-output mapping.
     """
 
-    output_defaults: dict[VarPowerFlowReferenceType, float] = dict()
+    output_defaults: dict[VarPowerFlowRefferenceType, float] = dict()
     entry: FmuReferenceValue
     for entry in request.output_defaults:
         output_defaults[entry.reference] = entry.value
@@ -182,7 +182,7 @@ def attach_fmu_to_device(device: Any, grid: MultiCircuit, request: FmuDeviceAtta
     """
 
     config: FmuImportConfig = _build_import_config_from_request(request)
-    output_defaults: dict[VarPowerFlowReferenceType, float] = _build_output_defaults(request)
+    output_defaults: dict[VarPowerFlowRefferenceType, float] = _build_output_defaults(request)
     template_name: str = _build_template_name(device, request)
 
     # The helper dispatches to the low-level attachment function matching the selected domain and FMI mode.

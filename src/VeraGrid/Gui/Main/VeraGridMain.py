@@ -12,7 +12,6 @@ from PySide6.QtGui import QIcon
 from VeraGrid.Gui.Main.MainWindow import QApplication
 from PySide6.QtCore import QDirIterator, QResource
 from PySide6.QtSvg import QSvgRenderer
-from VeraGrid.Gui.i18n import ApplicationTranslator, read_saved_language
 from VeraGrid.Gui.update_gui_all import update_all_icons
 from VeraGrid.Gui.Main.SubClasses.Scripting.scripting import ScriptingMain
 import VeraGrid.ThirdParty.qdarktheme as qdarktheme
@@ -34,18 +33,14 @@ class VeraGridMainGUI(ScriptingMain):
     MainGUI
     """
 
-    def __init__(self, translation_controller: ApplicationTranslator | None = None) -> None:
+    def __init__(self) -> None:
         """
         Main constructor
         """
 
         # create main window
         ScriptingMain.__init__(self, parent=None)
-        if translation_controller is not None:
-            self.set_translation_controller(translation_controller)
-        else:
-            pass
-        self.setWindowTitle(self.tr("VeraGrid {version}").format(version=__VeraGrid_VERSION__))
+        self.setWindowTitle('VeraGrid ' + __VeraGrid_VERSION__)
         self.setAcceptDrops(True)
 
         self.ui.mainTabWidget.setCurrentIndex(0)
@@ -97,15 +92,6 @@ class VeraGridMainGUI(ScriptingMain):
         # global delete function
         self.ui.actionDelete_selected.triggered.connect(self.global_delete)
 
-    def refresh_runtime_translations(self) -> None:
-        """
-        Refresh runtime-owned main-window strings after a language change.
-
-        :returns: None.
-        """
-        super().refresh_runtime_translations()
-        self.setWindowTitle(self.tr("VeraGrid {version}").format(version=__VeraGrid_VERSION__))
-
     def global_delete(self):
         """
         Function to dispatch what to do when [supr] is pressed
@@ -119,9 +105,9 @@ class VeraGridMainGUI(ScriptingMain):
                 self.delete_selected_db_table_objects()
 
             else:
-                self.show_warning_toast(self.tr("No effect, select diagrams or database"))
+                self.show_warning_toast("No effect, select diagrams or database")
         else:
-            self.show_warning_toast(self.tr("No effect, select diagrams or database"))
+            self.show_warning_toast("No effect, select diagrams or database")
 
     def save_all_config(self) -> None:
         """
@@ -150,8 +136,8 @@ class VeraGridMainGUI(ScriptingMain):
         :return:
         """
         if self.circuit.get_bus_number() > 0:
-            quit_msg = self.tr("Are you sure that you want to exit VeraGrid?")
-            reply = QtWidgets.QMessageBox.question(self, self.tr("Close"), quit_msg,
+            quit_msg = "Are you sure that you want to exit VeraGrid?"
+            reply = QtWidgets.QMessageBox.question(self, 'Close', quit_msg,
                                                    QtWidgets.QMessageBox.StandardButton.Yes,
                                                    QtWidgets.QMessageBox.StandardButton.No)
 
@@ -276,8 +262,6 @@ def runVeraGrid() -> None:
     qdarktheme.enable_hi_dpi()
 
     app = QApplication(sys.argv)
-    translation_controller = ApplicationTranslator(app)
-    translation_controller.set_language(read_saved_language())
 
     # MacOS: display icons in menus
     app.setAttribute(Qt.ApplicationAttribute.AA_DontShowIconsInMenus, False)
@@ -291,7 +275,7 @@ def runVeraGrid() -> None:
     # MacOS: Fix to show the icon on the task bar
     app.setWindowIcon(icon)
 
-    window_ = VeraGridMainGUI(translation_controller=translation_controller)
+    window_ = VeraGridMainGUI()
     window_.setWindowIcon(icon)  # also apply directly
 
     # process the argument if provided

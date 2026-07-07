@@ -6,7 +6,7 @@
 # Mathematical Verification Suite for VeraGrid Unified Solvers
 # ==============================================================================
 
-from typing import Any, Dict, List, Tuple
+from typing import List, Tuple, Any
 
 import numpy as np
 import pytest
@@ -76,12 +76,7 @@ def make_solver(
 ) -> Tuple[Any, GenericEmtProblem]:
     """Helper to construct a BaseProblem and initialize the chosen solver."""
     block.unify_blocks()
-    static_parameter_values_mapping: Dict[Var, Const] = dict(block.parameters)
-    problem: GenericEmtProblem = GenericEmtProblem(
-        sys_block=block,
-        glob_time=Var("t"),
-        static_parameter_values_mapping=static_parameter_values_mapping,
-    )
+    problem: GenericEmtProblem = GenericEmtProblem(block, Var("t"))
     solver: Any = solver_class(problem, t0=0.0, t_end=t_end, h=h, method=method)
     return solver, problem
 
@@ -98,7 +93,7 @@ def test_01_backward_euler_math(solver_class: Any) -> None:
     dx0[0] = -1.0
     p0: np.ndarray = np.zeros(prob.get_variable_parameter_number(), dtype=np.float64)
 
-    _, y, _, _, _ = solver.simulate(x0=x0, dx0=dx0, params0=p0)
+    _, y, _ = solver.simulate(x0=x0, dx0=dx0, params0=p0)
 
     x_numeric: float = float(y[-1, 0])
     x_expected: float = 1.0 / (1.0 + h)
@@ -117,7 +112,7 @@ def test_02_trapezoid_math(solver_class: Any) -> None:
     dx0[0] = -1.0
     p0: np.ndarray = np.zeros(prob.get_variable_parameter_number(), dtype=np.float64)
 
-    _, y, _, _, _ = solver.simulate(x0=x0, dx0=dx0, params0=p0)
+    _, y, _ = solver.simulate(x0=x0, dx0=dx0, params0=p0)
 
     x_numeric: float = float(y[-1, 0])
     factor: float = (1.0 - h / 2.0) / (1.0 + h / 2.0)
@@ -139,7 +134,7 @@ def test_03_boundary_update_fn(solver_class: Any) -> None:
     dx0[0] = -1.0
     p0: np.ndarray = np.zeros(prob.get_variable_parameter_number(), dtype=np.float64)
 
-    _, y, _, _, _ = solver.simulate(x0=x0, dx0=dx0, params0=p0, boundary_updater=freeze_updater)
+    _, y, _ = solver.simulate(x0=x0, dx0=dx0, params0=p0, boundary_updater=freeze_updater)
 
     y_06: float = float(y[6, 0])
     y_10: float = float(y[-1, 0])
@@ -158,7 +153,7 @@ def test_04_convergence_order(solver_class: Any) -> None:
     x0_c[0] = 1.0
     dx0_c[0] = -1.0
     p0_c: np.ndarray = np.zeros(prob_c.get_variable_parameter_number(), dtype=np.float64)
-    _, y_c, _, _, _ = solver_c.simulate(x0=x0_c, dx0=dx0_c, params0=p0_c)
+    _, y_c, _ = solver_c.simulate(x0=x0_c, dx0=dx0_c, params0=p0_c)
     err_c: float = abs(float(y_c[-1, 0]) - exact_sol)
 
     solver_f, prob_f = make_solver(solver_class, block, t_target, 0.05, DynamicIntegrationMethod.DaeTrapezoidal)
@@ -167,7 +162,7 @@ def test_04_convergence_order(solver_class: Any) -> None:
     x0_f[0] = 1.0
     dx0_f[0] = -1.0
     p0_f: np.ndarray = np.zeros(prob_f.get_variable_parameter_number(), dtype=np.float64)
-    _, y_f, _, _, _ = solver_f.simulate(x0=x0_f, dx0=dx0_f, params0=p0_f)
+    _, y_f, _ = solver_f.simulate(x0=x0_f, dx0=dx0_f, params0=p0_f)
     err_f: float = abs(float(y_f[-1, 0]) - exact_sol)
 
     ratio: float = err_c / err_f
@@ -185,7 +180,7 @@ def test_05_stiff_system_stability(solver_class: Any) -> None:
     dx0: np.ndarray = np.zeros_like(x0, dtype=np.float64)
     p0: np.ndarray = np.zeros(prob.get_variable_parameter_number(), dtype=np.float64)
 
-    _, y, _, _, _ = solver.simulate(x0=x0, dx0=dx0, params0=p0)
+    _, y, _ = solver.simulate(x0=x0, dx0=dx0, params0=p0)
 
     assert abs(float(y[-1, 0])) < 1e-2
 
@@ -201,7 +196,7 @@ def test_06_nonlinear_jacobian(solver_class: Any) -> None:
     dx0: np.ndarray = np.ones_like(x0, dtype=np.float64)
     p0: np.ndarray = np.zeros(prob.get_variable_parameter_number(), dtype=np.float64)
 
-    _, y, _, _, _ = solver.simulate(x0=x0, dx0=dx0, params0=p0)
+    _, y, _ = solver.simulate(x0=x0, dx0=dx0, params0=p0)
 
     assert float(y[-1, 0]) == pytest.approx(2.0, abs=0.05)
 
@@ -228,7 +223,7 @@ def test_07_energy_conservation(solver_class: Any) -> None:
     dx0[1] = -1.0
     p0: np.ndarray = np.zeros(prob_trap.get_variable_parameter_number(), dtype=np.float64)
 
-    _, y_trap, _, _, _ = solver_trap.simulate(x0=x0, dx0=dx0, params0=p0)
+    _, y_trap, _ = solver_trap.simulate(x0=x0, dx0=dx0, params0=p0)
     amp_trap: float = float(np.max(np.abs(y_trap[-20:, 0])))
     assert amp_trap > 0.95
 
@@ -239,7 +234,7 @@ def test_07_energy_conservation(solver_class: Any) -> None:
     dx0_be[1] = -1.0
     p0_be: np.ndarray = np.zeros(prob_be.get_variable_parameter_number(), dtype=np.float64)
 
-    _, y_be, _, _, _ = solver_be.simulate(x0=x0_be, dx0=dx0_be, params0=p0_be)
+    _, y_be, _ = solver_be.simulate(x0=x0_be, dx0=dx0_be, params0=p0_be)
     amp_be: float = float(np.max(np.abs(y_be[-20:, 0])))
     assert amp_be < 0.5
 
@@ -265,7 +260,7 @@ def test_08_time_dependent_forcing(solver_class: Any) -> None:
     dx0: np.ndarray = np.zeros_like(x0, dtype=np.float64)
     p0: np.ndarray = np.zeros(prob.get_variable_parameter_number(), dtype=np.float64)
 
-    _, y, _, _, _ = solver.simulate(x0=x0, dx0=dx0, params0=p0, boundary_updater=sync_updater)
+    _, y, _ = solver.simulate(x0=x0, dx0=dx0, params0=p0, boundary_updater=sync_updater)
 
     expected: float = (2.0 ** 2) / 2.0
     assert float(y[-1, 0]) == pytest.approx(expected, abs=5e-3)

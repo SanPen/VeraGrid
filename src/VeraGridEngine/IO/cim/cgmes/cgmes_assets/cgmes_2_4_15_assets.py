@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import List, TypeAlias
+from typing import List
 
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.acdc_converter import ACDCConverter
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.acdc_converterdc_terminal import ACDCConverterDCTerminal
@@ -161,7 +161,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.coordinate_system import 
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.location import Location
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.position_point import PositionPoint
 
-CGMES_2_4_15_ASSETS: TypeAlias = (
+CGMES_2_4_15_ASSETS = (
         ACDCConverter |
         ACDCConverterDCTerminal |
         CsConverter |

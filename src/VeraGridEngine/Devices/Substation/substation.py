@@ -16,7 +16,7 @@ from VeraGridEngine.Devices.Aggregation.region import Region
 from VeraGridEngine.Devices.Aggregation.municipality import Municipality
 from VeraGridEngine.Devices.Profiles import ProfileFloat
 from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
-from VeraGridEngine.enumerations import BuildStatus, DeviceType, PrpCat
+from VeraGridEngine.enumerations import BuildStatus, DeviceType
 
 
 class Substation(PhysicalDevice):
@@ -42,114 +42,40 @@ class Substation(PhysicalDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(
-            prop_name='longitude',
-            units='deg',
-            tpe=float,
-            definition='longitude.',
-            profile_name='',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='latitude',
-            units='deg',
-            tpe=float,
-            definition='latitude.',
-            profile_name='',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='color',
-            units='',
-            tpe=str,
-            definition='Color to paint the element in the map diagram',
-            is_color=True,
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name="area",
-            units="",
-            tpe=DeviceType.AreaDevice,
-            definition="Substation area, alternatively this can be obtained from the zone",
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name="zone",
-            units="",
-            tpe=DeviceType.ZoneDevice,
-            definition="Substation area",
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name="country",
-            units="",
-            tpe=DeviceType.CountryDevice,
-            definition="Substation country, alternatively this can be obtained from the community",
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name="community",
-            units="",
-            tpe=DeviceType.CommunityDevice,
-            definition="Substation community, alternatively this can be obtained from the region",
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name="region",
-            units="",
-            tpe=DeviceType.RegionDevice,
-            definition="Substation region, alternatively this can be obtained from the municipality",
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name="municipality",
-            units="",
-            tpe=DeviceType.MunicipalityDevice,
-            definition="Substation municipality",
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name="address",
-            units="",
-            tpe=str,
-            definition="Substation address",
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name="irradiation",
-            units="W/m^2",
-            tpe=float,
-            definition="Substation solar irradiation",
-            profile_name="irradiation_prof",
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name="temperature",
-            units="ºC",
-            tpe=float,
-            definition="Substation temperature",
-            profile_name="temperature_prof",
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name="wind_speed",
-            units="m/s",
-            tpe=float,
-            definition="Substation wind speed at 80m above the ground",
-            profile_name="wind_speed_prof",
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name="terrain_roughness",
-            units="",
-            tpe=float,
-            definition="This value is ised for wind speed extrapolation.\n"
+        GCProp(key='longitude', units='deg', tpe=float, definition='longitude.', profile_name=''),
+        GCProp(key='latitude', units='deg', tpe=float, definition='latitude.', profile_name=''),
+        GCProp(key='color', units='', tpe=str, definition='Color to paint the element in the map diagram',
+                      is_color=True),
+        GCProp(key="area", units="", tpe=DeviceType.AreaDevice,
+                      definition="Substation area, altenativelly this can be obtained from the zone"),
+        GCProp(key="zone", units="", tpe=DeviceType.ZoneDevice,
+                      definition="Substation area"),
+        GCProp(key="country", units="", tpe=DeviceType.CountryDevice,
+                      definition="Substation country, altenativelly this can be obtained from the community"),
+        GCProp(key="community", units="", tpe=DeviceType.CommunityDevice,
+                      definition="Substation community, altenativelly this can be obtained from the region"),
+        GCProp(key="region", units="", tpe=DeviceType.RegionDevice,
+                      definition="Substation region, altenativelly this can be obtained from the municipality"),
+        GCProp(key="municipality", units="", tpe=DeviceType.MunicipalityDevice,
+                      definition="Substation municipality"),
+        GCProp(key="address", units="", tpe=str,
+                      definition="Substation address"),
+        GCProp(key="irradiation", units="W/m^2", tpe=float,
+                      definition="Substation solar irradiation",
+                      profile_name="irradiation_prof"),
+        GCProp(key="temperature", units="ºC", tpe=float,
+                      definition="Substation temperature",
+                      profile_name="temperature_prof"),
+        GCProp(key="wind_speed", units="m/s", tpe=float,
+                      definition="Substation wind speed at 80m above the ground",
+                      profile_name="wind_speed_prof"),
+        GCProp(key="terrain_roughness", units="", tpe=float,
+                      definition="This value is ised for wind speed extrapolation.\n"
                                  "Typical values:\n"
                                  "Not rough (sand, snow, sea): 0~0.02\n"
                                  "Slightly rough (grass, cereal field): 0.02~0.2\n"
                                  "Rough (forest, small houses): 1.0~1.5\n"
-                                 "Very rough (Large buildings):1.0~4.0",
-        ),
+                                 "Very rough (Large buildings):1.0~4.0"),
     )
 
     def __init__(self,

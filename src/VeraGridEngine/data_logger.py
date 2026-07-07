@@ -145,14 +145,8 @@ class DataLogger:
         """
         return len(self.entries) > 0
 
-    def add_info(self,
-                 msg: str,
-                 device: str = "",
-                 device_class: str = "",
-                 device_property: str = '',
-                 value: str | float | int | None = "",
-                 expected_value: str | float | int | None = "",
-                 comment: str = ""):
+    def add_info(self, msg: str, device="", device_class="", device_property='', value="", expected_value="",
+                 comment=""):
         """
 
         :param msg:
@@ -173,14 +167,8 @@ class DataLogger:
                                          expected_value=str(expected_value),
                                          comment=str(comment)))
 
-    def add_warning(self,
-                    msg: str,
-                    device: str = "",
-                    device_class: str = "",
-                    device_property: str = '',
-                    value: str | float | int | None = "",
-                    expected_value: str| float | int | None = "",
-                    comment: str = "") -> None:
+    def add_warning(self, msg: str, device: str = "", device_class: str = "", device_property: str = '',
+                    value: str = "", expected_value: str = "", comment: str = "") -> None:
         """
 
         :param msg:
@@ -201,14 +189,8 @@ class DataLogger:
                                          expected_value=str(expected_value),
                                          comment=str(comment)))
 
-    def add_error(self,
-                  msg: str,
-                  device: str = "",
-                  device_class: str = "",
-                  device_property: str = '',
-                  value: str | float | int | None = "",
-                  expected_value: str | float | int | None = "",
-                  comment: str = ""):
+    def add_error(self, msg: str, device="", device_class="", device_property='', value="", expected_value="",
+                  comment=""):
         """
 
         :param msg:

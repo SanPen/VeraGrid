@@ -11,22 +11,11 @@ twine upload dist/VeraGrid-2.30.tar.gz
 """
 import os
 import fnmatch
-from veragrid_packaging import publish, collect_extra_package_files, read_module_constant
+from VeraGridEngine.__version__ import __VeraGridEngine_VERSION__
+from VeraGrid.__version__ import __VeraGrid_VERSION__
+from VeraGridServer.__version__ import __VeraGridServer_VERSION__
+from veragrid_packaging import publish
 from VeraGrid.Gui.update_gui_common import convert_resource_file, convert_ui_file
-
-SRC_ROOT = os.path.abspath(os.path.dirname(__file__))
-__VeraGridEngine_VERSION__ = read_module_constant(
-    os.path.join(SRC_ROOT, 'VeraGridEngine', '__version__.py'),
-    '__VeraGridEngine_VERSION__',
-)
-__VeraGrid_VERSION__ = read_module_constant(
-    os.path.join(SRC_ROOT, 'VeraGrid', '__version__.py'),
-    '__VeraGrid_VERSION__',
-)
-__VeraGridServer_VERSION__ = read_module_constant(
-    os.path.join(SRC_ROOT, 'VeraGridServer', '__version__.py'),
-    '__VeraGridServer_VERSION__',
-)
 
 
 def update_gui_to_make_sure():
@@ -132,23 +121,6 @@ if __name__ == "__main__":
     update_gui_to_make_sure()
 
     if check_versions():
-        veragrid_extra_files: list[str] = list()
-        veragrid_translation_files: list[str] = collect_extra_package_files(
-            pkg_name='VeraGrid',
-            relative_folder=os.path.join('Gui', 'translations'),
-            suffixes=['.qm'],
-        )
-
-        # Keep the publish path aligned with the wheel builder so both artifacts ship the same assets.
-        veragrid_extra_files.append(os.path.join("data", "cables.csv"))
-        veragrid_extra_files.append(os.path.join("data", "VeraGrid.ico"))
-        veragrid_extra_files.append(os.path.join("data", "VeraGrid.svg"))
-        veragrid_extra_files.append(os.path.join("data", "sequence_lines.csv"))
-        veragrid_extra_files.append(os.path.join("data", "transformers.csv"))
-        veragrid_extra_files.append(os.path.join("data", "wires.csv"))
-
-        # Add the translation assets explicitly because the custom source packager uses a file allowlist.
-        veragrid_extra_files.extend(veragrid_translation_files)
 
         _long_description = "# VeraGrid \n"
         _long_description += "This software aims to be a complete platform for power systems research and simulation.)\n"
@@ -220,7 +192,14 @@ if __name__ == "__main__":
                 long_description=_long_description,
                 ext_filter=['.py', '.csv', '.txt'],
                 exeption_paths=('__pycache__', 'icons', 'svg'),
-                extra_files=veragrid_extra_files
+                extra_files=[
+                    os.path.join("data", "cables.csv"),
+                    os.path.join("data", "VeraGrid.ico"),
+                    os.path.join("data", "VeraGrid.svg"),
+                    os.path.join("data", "sequence_lines.csv"),
+                    os.path.join("data", "transformers.csv"),
+                    os.path.join("data", "wires.csv")
+                ]
                 )
 
         publish(pkg_name='VeraGridServer',

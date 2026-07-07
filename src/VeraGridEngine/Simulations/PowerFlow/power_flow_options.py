@@ -20,7 +20,6 @@ class PowerFlowOptions(OptionsTemplate):
         GCProp(key="solver_type", tpe=SolverType),
         GCProp(key="retry_with_other_methods", tpe=bool),
         GCProp(key="tolerance", tpe=float),
-        GCProp(key="controls_start_tolerance", tpe=float),
         GCProp(key="max_iter", tpe=int),
         GCProp(key="limit_i_vsc", tpe=bool),
         GCProp(key="control_Q", tpe=bool),
@@ -62,8 +61,7 @@ class PowerFlowOptions(OptionsTemplate):
                  backtracking_parameter: float = 0.05,
                  use_stored_guess: bool = False,
                  initialize_angles: bool = False,
-                 generate_report: bool = False,
-                 controls_start_tolerance: float = 1e-2,):
+                 generate_report: bool = False,):
         """
         Power flow options class
         :param solver_type: Solver type
@@ -82,7 +80,6 @@ class PowerFlowOptions(OptionsTemplate):
         :param use_stored_guess: Use the existing solution from the Bus class (Vm0, Va0)
         :param initialize_angles: Use a linear power flow to initialize the voltage guess
         :param generate_report: Generate the power flow report after the solution?
-        :param controls_start_tolerance: Residual threshold from which the iterative solvers start applying control updates
         """
         OptionsTemplate.__init__(self, name='PowerFlowOptions')
 
@@ -91,8 +88,6 @@ class PowerFlowOptions(OptionsTemplate):
         self.retry_with_other_methods = retry_with_other_methods
 
         self.tolerance = tolerance
-
-        self.controls_start_tolerance = controls_start_tolerance
 
         self.max_iter = max_iter
 
@@ -129,3 +124,4 @@ class PowerFlowOptions(OptionsTemplate):
         self.initialize_angles = initialize_angles
 
         self.generate_report = generate_report
+

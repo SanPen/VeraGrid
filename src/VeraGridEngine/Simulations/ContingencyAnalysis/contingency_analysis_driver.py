@@ -14,7 +14,7 @@ from VeraGridEngine.enumerations import EngineType, ContingencyMethod, Simulatio
 from VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_results import ContingencyAnalysisResults
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
-from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearMultiContingencies, LinearAnalysis
+from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearMultiContingencies
 from VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_options import ContingencyAnalysisOptions
 from VeraGridEngine.Simulations.ContingencyAnalysis.Methods.nonlinear_contingency_analysis import (
     nonlinear_contingency_analysis)
@@ -155,31 +155,10 @@ class ContingencyAnalysisDriver(DriverTemplate):
                                                   opf_results=self.opf_results,
                                                   t_idx=t_idx)
 
-                # Linear analysis (PTDF & LODF)
-                lin = LinearAnalysis(
-                    nc=nc,
-                    distributed_slack=self.options.lin_options.distribute_slack,
-                    correct_values=self.options.lin_options.correct_values,
-                    logger=self.logger
-                )
-
-                # "smart" Contingency factors
-                linear_multiple_contingencies = LinearMultiContingencies(
-                    grid=self.grid,
-                    contingency_groups_used=self.options.contingency_groups
-                    if self.options.contingency_groups is not None else self.grid.contingency_groups
-                )
-                linear_multiple_contingencies.compute(
-                    lin=lin,
-                    ptdf_threshold=self.options.lin_options.ptdf_threshold,
-                    lodf_threshold=self.options.lin_options.lodf_threshold
-                )
-
                 self.results = linear_contingency_analysis(
                     nc=nc,
                     options=self.options,
-                    linear_analysis=lin,
-                    linear_multiple_contingencies=linear_multiple_contingencies,
+                    linear_multiple_contingencies=self.linear_multiple_contingencies,
                     area_names=area_names,
                     bus_area_indices=np.array(bus_area_indices, dtype=int),
                     F=F,
@@ -275,6 +254,7 @@ class ContingencyAnalysisDriver(DriverTemplate):
                     srap_power=entry.srap_power,
                     solved_by_srap=entry.solved_by_srap
                 )
+
 
         return self.results
 

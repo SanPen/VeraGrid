@@ -6,14 +6,14 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Union
 from PySide6.QtWidgets import QMenu
-from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
+from VeraGrid.Gui.gui_functions import add_menu_entry
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
 from VeraGrid.Gui.messages import yes_no_question
-from VeraGrid.Gui.DeviceEditors.TransformerEditor.transformer_editor import TransformerEditor
-from VeraGrid.Gui.DeviceEditors.TransformerEditor.transformer_device_editor import TransformerDeviceEditorDialog
+from VeraGrid.Gui.Diagrams.Editors.transformer_editor import TransformerEditor
+from VeraGrid.Gui.Diagrams.Editors.transformer_taps_editor import TransformerTapsEditor
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W, TransformerType
-from VeraGridEngine.enumerations import DeviceType, TapModuleControl, DynamicSimulationMode
+from VeraGridEngine.enumerations import DeviceType, TapModuleControl
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
@@ -51,18 +51,6 @@ class TransformerGraphicItem(LineGraphicTemplateItem):
     def api_object(self) -> Transformer2W:
         return self._api_object
 
-    def open_device_editor(self) -> bool:
-        """
-        Open the transformer 2W editor.
-
-        :return: ``True`` when the editor was opened.
-        """
-        dlg = TransformerDeviceEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
-        if dlg.exec():
-            return True
-        else:
-            return True
-
     def contextMenuEvent(self, event):
         """
         Show context menu
@@ -71,64 +59,54 @@ class TransformerGraphicItem(LineGraphicTemplateItem):
         """
         if self.api_object is not None:
             menu = QMenu()
-            menu.addSection(translate_context_menu_text("Transformer"))
+            menu.addSection("Transformer")
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Active"),
+                           text="Active",
                            function_ptr=self.enable_disable_toggle,
                            checkeable=True,
                            checked_value=self.api_object.active)
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Draw labels"),
+                           text="Draw labels",
                            function_ptr=self.enable_disable_label_drawing,
                            checkeable=True,
                            checked_value=self.draw_labels)
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Delete"),
+                           text="Delete",
                            function_ptr=self.delete,
                            icon_path=":/Icons/icons/delete3.png")
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Editor"),
+                           text="Edit template",
                            function_ptr=self.edit,
                            icon_path=":/Icons/icons/edit.png")
 
-            add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("RMS Editor"),
-                           function_ptr=self.edit_dynamic_rms,
-                           icon_path=":/Icons/icons/dyn_edit.png")
+            menu.addSection('Tap changer')
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("EMT Editor"),
-                           function_ptr=self.edit_dynamic_emt,
-                           icon_path=":/Icons/icons/dyn_emt_edit.png")
-
-            menu.addSection(translate_context_menu_text("Tap changer"))
-
-            add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Edit tap changer"),
+                           text="Edit tap changer",
                            function_ptr=self.edit_tap_changer,
                            icon_path=":/Icons/icons/edit.png")
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Tap up"),
+                           text="Tap up",
                            function_ptr=self.tap_up,
                            icon_path=":/Icons/icons/up.png")
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Tap down"),
+                           text="Tap down",
                            function_ptr=self.tap_down,
                            icon_path=":/Icons/icons/down.png")
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Control V from"),
+                           text="Control V from",
                            function_ptr=self.control_v_from,
                            icon_path=":/Icons/icons/edit.png")
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Control V to"),
+                           text="Control V to",
                            function_ptr=self.control_v_to,
                            icon_path=":/Icons/icons/edit.png")
 
@@ -137,32 +115,32 @@ class TransformerGraphicItem(LineGraphicTemplateItem):
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Plot profiles"),
+                           text="Plot profiles",
                            function_ptr=self.plot_profiles,
                            icon_path=":/Icons/icons/plot.png")
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Add to catalogue"),
+                           text="Add to catalogue",
                            function_ptr=self.add_to_catalogue,
                            icon_path=":/Icons/icons/Catalogue.png")
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Assign rate to profile"),
+                           text="Assign rate to profile",
                            function_ptr=self.assign_rate_to_profile,
                            icon_path=":/Icons/icons/assign_to_profile.png")
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Assign active state to profile"),
+                           text="Assign active state to profile",
                            function_ptr=self.assign_status_to_profile,
                            icon_path=":/Icons/icons/assign_to_profile.png")
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Flip"),
+                           text="Flip",
                            function_ptr=self.flip_connections,
                            icon_path=":/Icons/icons/redo.png")
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Change bus"),
+                           text="Change bus",
                            function_ptr=self.change_bus,
                            icon_path=":/Icons/icons/move_bus.png")
 
@@ -170,22 +148,6 @@ class TransformerGraphicItem(LineGraphicTemplateItem):
 
         else:
             pass
-
-    def edit_dynamic_rms(self):
-        """
-        Open the unified dynamic editor workspace for this generator.
-        """
-
-        self.editor.gui.open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
-                                            preferred_mode=DynamicSimulationMode.RMS)
-
-    def edit_dynamic_emt(self):
-        """
-        Open the unified dynamic editor workspace for this generator.
-        """
-
-        self.editor.gui.open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
-                                            preferred_mode=DynamicSimulationMode.EMT)
 
     def mouseDoubleClickEvent(self, event):
         """
@@ -207,14 +169,19 @@ class TransformerGraphicItem(LineGraphicTemplateItem):
         Open the appropriate editor dialogue
         :return:
         """
-        self.open_device_editor()
+        dlg = TransformerEditor(self.api_object, grid=self.editor.circuit, modify_on_accept=True)
+        if dlg.exec():
+            pass
 
     def edit_tap_changer(self):
         """
 
         :return:
         """
-        self.open_device_editor()
+
+        dlg = TransformerTapsEditor(api_object=self.api_object.tap_changer)
+        if dlg.exec():
+            pass
 
     def show_transformer_editor(self):
         """

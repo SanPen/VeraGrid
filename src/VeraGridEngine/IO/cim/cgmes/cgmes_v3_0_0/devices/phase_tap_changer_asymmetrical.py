@@ -10,7 +10,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class PhaseTapChangerAsymmetrical(PhaseTapChangerNonLinear):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='windingConnectionAngle', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.deg, description='''Measurement of angle in degrees.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='windingConnectionAngle', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.deg, description='''Measurement of angle in degrees.''', profiles=[]),
 	)
 	__slots__ = ('windingConnectionAngle',)
 	def __init__(self, rdfid='', tpe='PhaseTapChangerAsymmetrical'):

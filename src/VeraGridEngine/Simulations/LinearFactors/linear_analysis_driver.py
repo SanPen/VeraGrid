@@ -135,12 +135,9 @@ class LinearAnalysisDriver(DriverTemplate):
 
             Shvdc, Losses_hvdc, Pf_hvdc, Pt_hvdc, loading_hvdc, n_free = nc.hvdc_data.get_power(Sbase=nc.Sbase,
                                                                                                 theta=np.zeros(nbus))
-            Sbus = nc.get_power_injections().real
-            # The sign is not changed internally and both VSCs and HVDCs are treated as branches
-            # So we modify the sign here
-            self.results.Sf = analysis.get_flows(Sbus=Sbus, P_hvdc=-Pf_hvdc * nc.Sbase)
-            self.results.Sbus = analysis.get_corrected_injections(P=Sbus)
-            
+            Sbus = nc.get_power_injections()
+            self.results.Sbus = Sbus
+            self.results.Sf = analysis.get_flows(Sbus=Sbus, P_hvdc=Pf_hvdc * nc.Sbase)
             self.results.loading = self.results.Sf / (nc.passive_branch_data.rates + 1e-20)
 
         elif self.engine == EngineType.Bentayga:

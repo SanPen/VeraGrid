@@ -96,7 +96,7 @@ class ServerMain(BaseMainGui):
                 except json.decoder.JSONDecodeError as e:
                     print(e)
                     self.save_server_config()
-                    self.show_error_toast(self.tr("Server config file was erroneous, wrote a new one"))
+                    self.show_error_toast("Server config file was erroneous, wrote a new one")
 
     def server_start_stop(self):
         """
@@ -120,8 +120,8 @@ class ServerMain(BaseMainGui):
 
         else:
 
-            ok = yes_no_question(text=self.tr("The server connection is running, are you sure that you want to stop it?"),
-                                 title=self.tr("Stop Server"))
+            ok = yes_no_question(text="The server connection is running, are you sure that you want to stop it?",
+                                 title="Stop Server")
 
             if ok:
                 self.server_driver.cancel()
@@ -136,7 +136,7 @@ class ServerMain(BaseMainGui):
         """
         if not self.server_driver.is_running():
             if self.server_driver.logger.has_logs():
-                self.show_error_toast(message=self.tr("Could not connect to the server :/"))
+                self.show_error_toast(message="Could not connect to the server :/")
                 self.ui.actionEnable_server_mode.setChecked(False)
 
     def server_connected(self):
@@ -144,7 +144,7 @@ class ServerMain(BaseMainGui):
         Called upon server connection
         :return:
         """
-        self.show_info_toast(message=self.tr("Connected!"))
+        self.show_info_toast(message="Connected!")
 
 
     def get_results(self):
@@ -165,4 +165,4 @@ class ServerMain(BaseMainGui):
                                                 api_key="",
                                                 local_filename=job.id_tag + '.results')
 
-        self.show_info_toast(self.tr("Results received!"))
+        self.show_info_toast("results received!")

@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from time import perf_counter
 from typing import List, Tuple, Union, Callable, Iterable
 
 import networkx as nx
@@ -21,13 +20,12 @@ from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.IO.file_system import tiles_path
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Simulations import PowerFlowResults, ContinuationPowerFlowResults, PowerFlowTimeSeriesResults
-from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph import PowerFlowResults3Ph
-from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_ts_results_3ph import PowerFlowTimeSeriesResults3Ph
+from VeraGridEngine.Simulations.PowerFlow.power_flow_results_3ph import PowerFlowResults3Ph
 from VeraGridEngine.Simulations.StateEstimation.state_estimation_results import StateEstimationResults
 from VeraGridEngine.Utils.progress_bar import print_progress_bar
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import (SimulationTypes, Colormaps, DeviceType, DynamicEventTransitionType,
-                                         MethodShortCircuit, SchematicAutoRouteStyle, DynamicSimulationMode)
+from VeraGridEngine.enumerations import (SimulationTypes, Colormaps, DeviceType, MethodShortCircuit,
+                                         SchematicAutoRouteStyle)
 from VeraGridEngine.Devices.Diagrams.schematic_diagram import SchematicDiagram
 
 import VeraGridEngine.Devices as dev
@@ -48,16 +46,14 @@ from VeraGrid.Gui.Main.SubClasses.Model.compiled_arrays import CompiledArraysMai
 from VeraGrid.Gui.Main.object_select_window import ObjectSelectWindow, ListSelectWindow
 from VeraGrid.Gui.Diagrams.MapWidget.Tiles.TileProviders.cartodb import CartoDbTiles
 from VeraGrid.Gui.object_proxy_model import ObjectModelFilterProxy
-from VeraGrid.Gui.dynamic_events_editor_dialog import DynamicEventDialogue, DynamicEventsGroupsDialog
-from VeraGrid.Gui.dynamic_events_editor_dialog import collect_block_runtime_event_parameters
+from VeraGrid.Gui.rms_events_editor_dialog import DynamicEventDialogue, DynamicEventsGroupsDialog
 from VeraGrid.Gui.Diagrams.MapWidget.Substation.substation_graphic_item import SubstationGraphicItem
 from VeraGrid.Gui.ShortCircuitEditor.short_circuit_selector import ShortCircuitSelector
 from VeraGrid.Gui.general_dialogues import (CheckListDialogue, StartEndSelectionDialogue,
-                                            InputNumberDialogue)
+                                            InputNumberDialogue, LogsDialogue)
 
 ALL_EDITORS = Union[SchematicWidget, GridMapWidget, BaseDiagramWidget]
 ALL_EDITORS_NONE = Union[None, SchematicWidget, GridMapWidget]
-DIAGRAM_WIDGETS = Union[SchematicWidget, GridMapWidget]
 
 
 class VideoExportWorker(QtCore.QThread):
@@ -91,84 +87,36 @@ class VideoExportWorker(QtCore.QThread):
         self.current_study = current_study
         self.grid_colour_function: Callable[[ALL_EDITORS, str, int, bool], None] = grid_colour_function
 
-        self.logger: Logger = Logger()
+        self.logger = Logger()
 
     def run(self):
         """
         Run function
         :return:
         """
-        total_start_time: float = perf_counter()
-        colour_elapsed_time: float = 0.0
-        capture_elapsed_time: float = 0.0
-        write_elapsed_time: float = 0.0
-        frame_count: int = max(self.end_idx - self.start_idx, 0)
+        # start recording...
+        w, h = self.diagram.start_video_recording(fname=self.filename, fps=self.fps, logger=self.logger)
 
-        # Mark export mode explicitly so the diagram can skip non-visual work.
-        self.diagram.set_video_export_active(True)
-
-        try:
-            # Start the encoder only once before the frame loop begins.
-            w, h = self.diagram.start_video_recording(fname=self.filename, fps=self.fps, logger=self.logger)
-
-            # Recolour the diagram for each simulation step and then capture it.
-            for t_idx in range(self.start_idx, self.end_idx):
-                colour_start_time: float = perf_counter()
-                self.grid_colour_function(
-                    self.diagram,
-                    self.current_study,
-                    t_idx,
-                    False
-                )
-                colour_end_time: float = perf_counter()
-                colour_elapsed_time += colour_end_time - colour_start_time
-
-                frame_capture_elapsed_time: float
-                frame_write_elapsed_time: float
-                frame_capture_elapsed_time, frame_write_elapsed_time = self.diagram.capture_video_frame_timed(
-                    w=w,
-                    h=h,
-                    logger=self.logger
-                )
-                capture_elapsed_time += frame_capture_elapsed_time
-                write_elapsed_time += frame_write_elapsed_time
-
-                self.progress_text.emit(f"Saving frame {t_idx} / {self.end_idx}")
-                self.progress_signal.emit(t_idx / self.end_idx)
-
-                print_progress_bar(t_idx + 1, self.end_idx)
-
-            # Finalize the encoder after all frames have been flushed.
-            self.diagram.end_video_recording()
-
-            self.logger.add_info(f"Video saved to {self.filename}")
-            total_end_time: float = perf_counter()
-            total_elapsed_time: float = total_end_time - total_start_time
-            other_elapsed_time: float = total_elapsed_time - colour_elapsed_time - capture_elapsed_time - write_elapsed_time
-
-            self.logger.add_info(
-                "Video export timing "
-                f"frames={frame_count}, "
-                f"total={total_elapsed_time * 1000.0:.1f} ms, "
-                f"colour={colour_elapsed_time * 1000.0:.1f} ms, "
-                f"capture={capture_elapsed_time * 1000.0:.1f} ms, "
-                f"write={write_elapsed_time * 1000.0:.1f} ms, "
-                f"other={other_elapsed_time * 1000.0:.1f} ms"
+        # paint and capture
+        for t_idx in range(self.start_idx, self.end_idx):
+            self.grid_colour_function(
+                self.diagram,  # diagram
+                self.current_study,  # current_study
+                t_idx,  # t_idx
+                False  # allow_popups
             )
 
-            if frame_count > 0:
-                self.logger.add_info(
-                    "Video export timing per frame "
-                    f"colour={colour_elapsed_time * 1000.0 / frame_count:.1f} ms, "
-                    f"capture={capture_elapsed_time * 1000.0 / frame_count:.1f} ms, "
-                    f"write={write_elapsed_time * 1000.0 / frame_count:.1f} ms"
-                )
-            else:
-                pass
+            self.diagram.capture_video_frame(w=w, h=h, logger=self.logger)
 
-        finally:
-            # Always restore the interactive colouring mode even after export failures.
-            self.diagram.set_video_export_active(False)
+            self.progress_text.emit(f"Saving frame {t_idx} / {self.end_idx}")
+            self.progress_signal.emit(t_idx / self.end_idx)
+
+            print_progress_bar(t_idx + 1, self.end_idx)
+
+        # finalize
+        self.diagram.end_video_recording()
+
+        self.logger.add_info(f"Video saved to {self.filename}")
 
         self.done_signal.emit()
 
@@ -188,7 +136,7 @@ class DiagramsMain(CompiledArraysMain):
         CompiledArraysMain.__init__(self, parent)
 
         # list of diagrams
-        self.diagram_widgets_list: List[DIAGRAM_WIDGETS] = list()
+        self.diagram_widgets_list: List[ALL_EDITORS] = list()
 
         # flag to avoid circular updating of the display settings when changing diagrams
         self._enable_setting_auto_upgrade = True
@@ -261,7 +209,7 @@ class DiagramsMain(CompiledArraysMain):
         if 'fivethirtyeight' in plt.style.available:
             self.ui.plt_style_comboBox.setCurrentText('fivethirtyeight')
 
-        self.ui.diagramSearchLineEdit.setPlaceholderText(self.tr("Type to search in the current diagram"))
+        self.ui.diagramSearchLineEdit.setPlaceholderText("Type to search in the current diagram")
 
         # configure matplotlib for pandas time series
         register_matplotlib_converters()
@@ -289,7 +237,6 @@ class DiagramsMain(CompiledArraysMain):
         self.ui.actionAdd_selected_as_remedial_action.triggered.connect(self.add_selected_to_remedial_action)
         self.ui.actionAdd_selected_as_new_investment.triggered.connect(self.add_selected_to_investment)
         self.ui.actionAdd_rms_event_to_selected.triggered.connect(self.add_rms_event_to_selected)
-        self.ui.actionAdd_emt_event_to_selected.triggered.connect(self.add_emt_event_to_selected)
         self.ui.actionAdd_short_circuit_events.triggered.connect(self.add_short_circuit_events)
 
         self.ui.actionZoom_in.triggered.connect(self.zoom_in)
@@ -313,7 +260,6 @@ class DiagramsMain(CompiledArraysMain):
 
         self.ui.actionSetReticularBranchStyles.triggered.connect(self.set_diagram_branches_reticular_style)
         self.ui.actionSetStraightBranchStyles.triggered.connect(self.set_diagram_branches_straight_style)
-        self.ui.actionRepair_diagram.triggered.connect(self.repair_selected_schematic_diagram)
 
         # Buttons
         self.ui.colour_results_pushButton.clicked.connect(self.colour_diagrams)
@@ -363,7 +309,6 @@ class DiagramsMain(CompiledArraysMain):
 
         # Set context menu policy to CustomContextMenu
         self.ui.diagramsListView.setContextMenuPolicy(QtGui.Qt.ContextMenuPolicy.CustomContextMenu)
-        self.ui.diagramsListView.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection)
 
     def get_current_objects_model_view(self) -> ObjectModelFilterProxy | None:
         """
@@ -417,9 +362,8 @@ class DiagramsMain(CompiledArraysMain):
 
                 # if the ask, checkbox is checked, then ask
                 if self.ui.ask_before_appliying_layout_checkBox.isChecked():
-                    reply = QtWidgets.QMessageBox.question(self,
-                                                           self.tr("Message"),
-                                                           self.tr("Are you sure that you want to try an automatic layout?"),
+                    reply = QtWidgets.QMessageBox.question(self, 'Message',
+                                                           'Are you sure that you want to try an automatic layout?',
                                                            QtWidgets.QMessageBox.StandardButton.Yes,
                                                            QtWidgets.QMessageBox.StandardButton.No)
 
@@ -617,15 +561,7 @@ class DiagramsMain(CompiledArraysMain):
             max_branch_width=max_branch_width,
             min_bus_width=min_bus_width,
             max_bus_width=max_bus_width,
-            cmap=cmap,
-            gen_p=results.gen_p,
-            gen_q=results.gen_q,
-            gen_names=results.gen_names,
-            battery_p=results.battery_p,
-            battery_q=results.battery_q,
-            battery_names=results.batt_names,
-            shunt_q=results.shunt_q,
-            shunt_names=results.sh_names
+            cmap=cmap
         )
 
     def pf_3ph_colouring(self, diagram_widget: ALL_EDITORS,
@@ -702,19 +638,7 @@ class DiagramsMain(CompiledArraysMain):
             max_branch_width=max_branch_width,
             min_bus_width=min_bus_width,
             max_bus_width=max_bus_width,
-            cmap=cmap,
-            gen_q_a=results.gen_q_A,
-            gen_q_b=results.gen_q_B,
-            gen_q_c=results.gen_q_C,
-            gen_names=results.gen_names,
-            battery_q_a=results.battery_q_A,
-            battery_q_b=results.battery_q_B,
-            battery_q_c=results.battery_q_C,
-            battery_names=results.batt_names,
-            shunt_q_a=results.shunt_q_A,
-            shunt_q_b=results.shunt_q_B,
-            shunt_q_c=results.shunt_q_C,
-            shunt_names=results.sh_names)
+            cmap=cmap)
 
     def se_colouring(self, diagram_widget: ALL_EDITORS,
                      results: StateEstimationResults,
@@ -769,15 +693,7 @@ class DiagramsMain(CompiledArraysMain):
             max_branch_width=max_branch_width,
             min_bus_width=min_bus_width,
             max_bus_width=max_bus_width,
-            cmap=cmap,
-            gen_p=None,
-            gen_q=results.gen_q,
-            gen_names=results.gen_names,
-            battery_p=None,
-            battery_q=results.battery_q,
-            battery_names=results.batt_names,
-            shunt_q=results.shunt_q,
-            shunt_names=results.sh_names
+            cmap=cmap
         )
 
     def pf_ts_colouring(self, t_idx: int,
@@ -825,105 +741,7 @@ class DiagramsMain(CompiledArraysMain):
                                              max_branch_width=max_branch_width,
                                              min_bus_width=min_bus_width,
                                              max_bus_width=max_bus_width,
-                                             cmap=cmap,
-                                             gen_p=results.gen_p[t_idx, :],
-                                             gen_q=results.gen_q[t_idx, :],
-                                             gen_names=results.gen_names,
-                                             battery_p=results.battery_p[t_idx, :],
-                                             battery_q=results.battery_q[t_idx, :],
-                                             battery_names=results.batt_names,
-                                             shunt_q=results.shunt_q[t_idx, :],
-                                             shunt_names=results.sh_names,
-                                             t_idx=t_idx)
-
-    def pf_3ph_ts_colouring(self, t_idx: int,
-                            diagram_widget: ALL_EDITORS,
-                            results: PowerFlowTimeSeriesResults3Ph, cmap: Colormaps,
-                            use_flow_based_width: bool = False,
-                            min_branch_width: int = 2,
-                            max_branch_width: int = 5,
-                            min_bus_width: int = 2,
-                            max_bus_width: int = 5):
-        """
-
-        :param t_idx:
-        :param diagram_widget:
-        :param results:
-        :param cmap:
-        :param use_flow_based_width:
-        :param min_branch_width:
-        :param max_branch_width:
-        :param min_bus_width:
-        :param max_bus_width:
-        :return:
-        """
-        bus_active = self.circuit.get_bus_actives(t_idx=t_idx)
-        br_active = self.circuit.get_branch_actives(t_idx=t_idx, add_vsc=False, add_hvdc=False, add_switch=True)
-        hvdc_active = self.circuit.get_hvdc_actives(t_idx=t_idx)
-        vsc_active = self.circuit.get_vsc_actives(t_idx=t_idx)
-
-        return diagram_widget.colour_results_3ph(
-            SbusA=results.Sbus_A[t_idx, :],
-            SbusB=results.Sbus_B[t_idx, :],
-            SbusC=results.Sbus_C[t_idx, :],
-            voltagesA=results.voltage_A[t_idx, :],
-            voltagesB=results.voltage_B[t_idx, :],
-            voltagesC=results.voltage_C[t_idx, :],
-            bus_active=bus_active,
-            types=results.bus_types,
-            SfA=results.Sf_A[t_idx, :],
-            SfB=results.Sf_B[t_idx, :],
-            SfC=results.Sf_C[t_idx, :],
-            StA=results.St_A[t_idx, :],
-            StB=results.St_B[t_idx, :],
-            StC=results.St_C[t_idx, :],
-            loadingsA=results.loading_A[t_idx, :],
-            loadingsB=results.loading_B[t_idx, :],
-            loadingsC=results.loading_C[t_idx, :],
-            lossesA=results.losses_A[t_idx, :],
-            lossesB=results.losses_B[t_idx, :],
-            lossesC=results.losses_C[t_idx, :],
-            br_active=br_active,
-            ma=results.tap_module[t_idx, :],
-            tau=results.tap_angle[t_idx, :],
-            hvdc_PfA=results.Pf_hvdc_A[t_idx, :],
-            hvdc_PfB=results.Pf_hvdc_B[t_idx, :],
-            hvdc_PfC=results.Pf_hvdc_C[t_idx, :],
-            hvdc_PtA=results.Pt_hvdc_A[t_idx, :],
-            hvdc_PtB=results.Pt_hvdc_B[t_idx, :],
-            hvdc_PtC=results.Pt_hvdc_C[t_idx, :],
-            hvdc_losses=results.losses_hvdc[t_idx, :],
-            hvdc_loading=results.loading_hvdc[t_idx, :],
-            hvdc_active=hvdc_active,
-            vsc_Pf=results.Pfp_vsc[t_idx, :],
-            vsc_PtA=results.St_vsc_A[t_idx, :].real,
-            vsc_PtB=results.St_vsc_B[t_idx, :].real,
-            vsc_PtC=results.St_vsc_C[t_idx, :].real,
-            vsc_QtA=results.St_vsc_A[t_idx, :].imag,
-            vsc_QtB=results.St_vsc_B[t_idx, :].imag,
-            vsc_QtC=results.St_vsc_C[t_idx, :].imag,
-            vsc_losses=results.losses_vsc[t_idx, :],
-            vsc_loading=results.loading_vsc[t_idx, :],
-            vsc_active=vsc_active,
-            loading_label='loading',
-            use_flow_based_width=use_flow_based_width,
-            min_branch_width=min_branch_width,
-            max_branch_width=max_branch_width,
-            min_bus_width=min_bus_width,
-            max_bus_width=max_bus_width,
-            cmap=cmap,
-            gen_q_a=results.gen_q_A[t_idx, :],
-            gen_q_b=results.gen_q_B[t_idx, :],
-            gen_q_c=results.gen_q_C[t_idx, :],
-            gen_names=results.gen_names,
-            battery_q_a=results.battery_q_A[t_idx, :],
-            battery_q_b=results.battery_q_B[t_idx, :],
-            battery_q_c=results.battery_q_C[t_idx, :],
-            battery_names=results.batt_names,
-            shunt_q_a=results.shunt_q_A[t_idx, :],
-            shunt_q_b=results.shunt_q_B[t_idx, :],
-            shunt_q_c=results.shunt_q_C[t_idx, :],
-            shunt_names=results.sh_names)
+                                             cmap=cmap)
 
     def cpf_colouring(self, diagram_widget: ALL_EDITORS,
                       results: ContinuationPowerFlowResults, cmap: Colormaps,
@@ -1176,15 +994,7 @@ class DiagramsMain(CompiledArraysMain):
                                              max_branch_width=max_branch_width,
                                              min_bus_width=min_bus_width,
                                              max_bus_width=max_bus_width,
-                                             cmap=cmap,
-                                             gen_p=results.generator_power,
-                                             gen_q=results.generator_reactive_power,
-                                             gen_names=results.generator_names,
-                                             battery_p=results.battery_power,
-                                             battery_q=None,
-                                             battery_names=results.battery_names,
-                                             shunt_q=results.shunt_like_reactive_power,
-                                             shunt_names=results.shunt_like_names)
+                                             cmap=cmap)
 
     def opf_ts_colouring(self, t_idx: int,
                          diagram_widget: ALL_EDITORS,
@@ -1237,16 +1047,7 @@ class DiagramsMain(CompiledArraysMain):
                                              max_branch_width=max_branch_width,
                                              min_bus_width=min_bus_width,
                                              max_bus_width=max_bus_width,
-                                             cmap=cmap,
-                                             gen_p=results.generator_power[t_idx, :],
-                                             gen_q=results.generator_reactive_power[t_idx, :],
-                                             gen_names=results.generator_names,
-                                             battery_p=results.battery_power[t_idx, :],
-                                             battery_q=None,
-                                             battery_names=results.battery_names,
-                                             shunt_q=results.shunt_like_reactive_power[t_idx, :],
-                                             shunt_names=results.shunt_like_names,
-                                             t_idx=t_idx)
+                                             cmap=cmap)
 
     def ntc_colouring(self, diagram_widget: ALL_EDITORS,
                       results: sim.OptimalNetTransferCapacityResults, cmap: Colormaps,
@@ -1613,53 +1414,28 @@ class DiagramsMain(CompiledArraysMain):
         hvdc_active = self.circuit.get_hvdc_actives(t_idx=t_idx)
         vsc_active = self.circuit.get_vsc_actives(t_idx=t_idx)
 
-        if isinstance(diagram_widget, SchematicWidget):
-            return diagram_widget.colour_results(Sbus=np.zeros(nbus, dtype=complex),
-                                                 voltages=np.ones(nbus, dtype=complex),
-                                                 bus_active=bus_active,
-                                                 Sf=np.zeros(nbr, dtype=complex),
-                                                 St=np.zeros(nbr, dtype=complex),
-                                                 loadings=np.zeros(nbr, dtype=complex),
-                                                 br_active=br_active,
-                                                 hvdc_active=hvdc_active,
-                                                 hvdc_loading=np.zeros(nhvdc, dtype=float),
-                                                 hvdc_Pf=np.zeros(nhvdc, dtype=float),
-                                                 hvdc_Pt=np.zeros(nhvdc, dtype=float),
-                                                 vsc_active=vsc_active,
-                                                 vsc_loading=np.zeros(nvsc, dtype=float),
-                                                 vsc_Pf=np.zeros(nvsc, dtype=float),
-                                                 vsc_Pt=np.zeros(nvsc, dtype=float),
-                                                 vsc_Qt=np.zeros(nvsc, dtype=float),
-                                                 use_flow_based_width=use_flow_based_width,
-                                                 min_branch_width=min_branch_width,
-                                                 max_branch_width=max_branch_width,
-                                                 min_bus_width=min_bus_width,
-                                                 max_bus_width=max_bus_width,
-                                                 cmap=cmap,
-                                                 apply_bus_result_coloring=False)
-        else:
-            return diagram_widget.colour_results(Sbus=np.zeros(nbus, dtype=complex),
-                                                 voltages=np.ones(nbus, dtype=complex),
-                                                 bus_active=bus_active,
-                                                 Sf=np.zeros(nbr, dtype=complex),
-                                                 St=np.zeros(nbr, dtype=complex),
-                                                 loadings=np.zeros(nbr, dtype=complex),
-                                                 br_active=br_active,
-                                                 hvdc_active=hvdc_active,
-                                                 hvdc_loading=np.zeros(nhvdc, dtype=float),
-                                                 hvdc_Pf=np.zeros(nhvdc, dtype=float),
-                                                 hvdc_Pt=np.zeros(nhvdc, dtype=float),
-                                                 vsc_active=vsc_active,
-                                                 vsc_loading=np.zeros(nvsc, dtype=float),
-                                                 vsc_Pf=np.zeros(nvsc, dtype=float),
-                                                 vsc_Pt=np.zeros(nvsc, dtype=float),
-                                                 vsc_Qt=np.zeros(nvsc, dtype=float),
-                                                 use_flow_based_width=use_flow_based_width,
-                                                 min_branch_width=min_branch_width,
-                                                 max_branch_width=max_branch_width,
-                                                 min_bus_width=min_bus_width,
-                                                 max_bus_width=max_bus_width,
-                                                 cmap=cmap)
+        return diagram_widget.colour_results(Sbus=np.zeros(nbus, dtype=complex),
+                                             voltages=np.ones(nbus, dtype=complex),
+                                             bus_active=bus_active,
+                                             Sf=np.zeros(nbr, dtype=complex),
+                                             St=np.zeros(nbr, dtype=complex),
+                                             loadings=np.zeros(nbr, dtype=complex),
+                                             br_active=br_active,
+                                             hvdc_active=hvdc_active,
+                                             hvdc_loading=np.zeros(nhvdc, dtype=float),
+                                             hvdc_Pf=np.zeros(nhvdc, dtype=float),
+                                             hvdc_Pt=np.zeros(nhvdc, dtype=float),
+                                             vsc_active=vsc_active,
+                                             vsc_loading=np.zeros(nvsc, dtype=float),
+                                             vsc_Pf=np.zeros(nvsc, dtype=float),
+                                             vsc_Pt=np.zeros(nvsc, dtype=float),
+                                             vsc_Qt=np.zeros(nvsc, dtype=float),
+                                             use_flow_based_width=use_flow_based_width,
+                                             min_branch_width=min_branch_width,
+                                             max_branch_width=max_branch_width,
+                                             min_bus_width=min_bus_width,
+                                             max_bus_width=max_bus_width,
+                                             cmap=cmap)
 
     def grid_colour_function(self,
                              diagram_widget: ALL_EDITORS,
@@ -1726,23 +1502,6 @@ class DiagramsMain(CompiledArraysMain):
                                      max_branch_width=max_branch_width,
                                      min_bus_width=min_bus_width,
                                      max_bus_width=max_bus_width)
-
-            else:
-                if allow_popups:
-                    self.show_warning_toast(f"{current_study} does not have values for the snapshot")
-
-        elif current_study == sim.PowerFlowTimeSeriesDriver3Ph.tpe.value:
-            if t_idx is not None:
-                _, results = self.session.power_flow_3ph_ts
-                self.pf_3ph_ts_colouring(t_idx=t_idx,
-                                         diagram_widget=diagram_widget,
-                                         results=results,
-                                         cmap=cmap,
-                                         use_flow_based_width=use_flow_based_width,
-                                         min_branch_width=min_branch_width,
-                                         max_branch_width=max_branch_width,
-                                         min_bus_width=min_bus_width,
-                                         max_bus_width=max_bus_width)
 
             else:
                 if allow_popups:
@@ -2066,95 +1825,6 @@ class DiagramsMain(CompiledArraysMain):
         mdl = DiagramsModel(self.diagram_widgets_list)
         self.ui.diagramsListView.setModel(mdl)
 
-    @staticmethod
-    def _validate_diagram_widget_entry(diagram_widget: object) -> DIAGRAM_WIDGETS:
-        """
-        Ensure the diagram widgets list only stores GUI widgets.
-
-        :param diagram_widget: candidate list entry
-        :return: validated widget
-        """
-        if isinstance(diagram_widget, (SchematicWidget, GridMapWidget)):
-            return diagram_widget
-        else:
-            raise TypeError(
-                "diagram_widgets_list only accepts SchematicWidget or GridMapWidget entries, "
-                f"got {type(diagram_widget).__name__}"
-            )
-
-    def _append_diagram_widget(self, diagram_widget: object) -> DIAGRAM_WIDGETS:
-        """
-        Append a validated diagram widget to the tracked widgets list.
-
-        :param diagram_widget: candidate list entry
-        :return: validated widget
-        """
-        widget = self._validate_diagram_widget_entry(diagram_widget=diagram_widget)
-        self.diagram_widgets_list.append(widget)
-        return widget
-
-    def dispose_diagram_widget(self, widget: DIAGRAM_WIDGETS) -> None:
-        """
-        Clear and queue one diagram widget for Qt-side destruction.
-        """
-        widget.prepare_to_delete()
-
-        # Queue Qt-side destruction on the main thread after clearing scene items now.
-        # This avoids orphaned QGraphics objects surviving until later GC/finalization.
-        self.ui.schematic_layout.removeWidget(widget)
-        widget.setParent(None)
-        widget.deleteLater()
-
-    def _create_widget_from_diagram(self, diagram: dev.SchematicDiagram | dev.MapDiagram) -> ALL_EDITORS:
-        """
-        Create a diagram widget from a stored diagram object.
-
-        :param diagram: stored diagram
-        :return: materialized diagram widget
-        """
-        if isinstance(diagram, dev.SchematicDiagram):
-            diagram_widget = SchematicWidget(
-                gui=self,
-                diagram=diagram,
-                default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
-                time_index=self.get_diagram_slider_index()
-            )
-            diagram_widget.setStretchFactor(1, 10)
-            diagram_widget.center_nodes()
-            return diagram_widget
-        elif isinstance(diagram, dev.MapDiagram):
-            default_tile_source = self.tile_name_dict[self.ui.tile_provider_comboBox.currentText()]
-            tile_source = self.tile_name_dict.get(diagram.tile_source, default_tile_source)
-            return GridMapWidget(
-                gui=self,
-                tile_src=tile_source,
-                start_level=diagram.start_level,
-                longitude=diagram.longitude,
-                latitude=diagram.latitude,
-                name=diagram.name,
-                diagram=diagram
-            )
-        else:
-            raise Exception("Unknown diagram type")
-
-    def _ensure_diagram_widget_at_index(self, index: int) -> ALL_EDITORS_NONE:
-        """
-        Return the diagram widget stored at the requested index.
-
-        :param index: diagram row index
-        :return: diagram widget or None
-        """
-        if index < 0 or index >= len(self.diagram_widgets_list):
-            return None
-        else:
-            pass
-
-        entry = self.diagram_widgets_list[index]
-        if isinstance(entry, (SchematicWidget, GridMapWidget)):
-            return entry
-        else:
-            return None
-
     def get_selected_diagram_widget(self) -> ALL_EDITORS_NONE:
         """
         Get the currently selected diagram
@@ -2164,7 +1834,7 @@ class DiagramsMain(CompiledArraysMain):
 
         if len(indices):
             idx = indices[0].row()
-            return self._ensure_diagram_widget_at_index(index=idx)
+            return self.diagram_widgets_list[idx]
         else:
             return None
 
@@ -2369,7 +2039,6 @@ class DiagramsMain(CompiledArraysMain):
                         time_index=self.get_diagram_slider_index()
                     )
 
-                    diagram_widget.center_nodes()
                     self.add_diagram_widget_and_diagram(diagram_widget=diagram_widget,
                                                         diagram=diagram)
                     self.set_diagrams_list_view()
@@ -2401,7 +2070,6 @@ class DiagramsMain(CompiledArraysMain):
                 time_index=self.get_diagram_slider_index()
             )
 
-            diagram_widget.center_nodes()
             self.add_diagram_widget_and_diagram(diagram_widget=diagram_widget, diagram=diagram)
             self.set_diagrams_list_view()
             self.show_info_toast(f"{diagram.name} added")
@@ -2431,7 +2099,6 @@ class DiagramsMain(CompiledArraysMain):
                 time_index=self.get_diagram_slider_index()
             )
 
-            diagram_widget.center_nodes()
             self.add_diagram_widget_and_diagram(diagram_widget=diagram_widget,
                                                 diagram=diagram)
             self.set_diagrams_list_view()
@@ -2480,21 +2147,50 @@ class DiagramsMain(CompiledArraysMain):
         Create as Widgets the diagrams stored in the circuit
         :return:
         """
-        for widget in self.diagram_widgets_list:
-            self.dispose_diagram_widget(widget)
-
         self.diagram_widgets_list.clear()
         self.remove_all_diagram_widgets()
 
         for diagram in self.circuit.diagrams:
-            self._append_diagram_widget(self._create_widget_from_diagram(diagram=diagram))
+
+            if isinstance(diagram, dev.SchematicDiagram):
+                diagram_widget = SchematicWidget(
+                    gui=self,
+                    diagram=diagram,
+                    default_bus_voltage=self.ui.defaultBusVoltageSpinBox.value(),
+                    time_index=self.get_diagram_slider_index()
+                )
+
+                diagram_widget.setStretchFactor(1, 10)
+                diagram_widget.center_nodes()
+                self.diagram_widgets_list.append(diagram_widget)
+
+            elif isinstance(diagram, dev.MapDiagram):
+                # select the tile source from the diagram, if not fund pick the one from the GUI
+                default_tile_source = self.tile_name_dict[self.ui.tile_provider_comboBox.currentText()]
+                tile_source = self.tile_name_dict.get(diagram.tile_source, default_tile_source)
+
+                # create the map widget
+                map_widget = GridMapWidget(
+                    gui=self,
+                    tile_src=tile_source,
+                    start_level=diagram.start_level,
+                    longitude=diagram.longitude,
+                    latitude=diagram.latitude,
+                    name=diagram.name,
+                    diagram=diagram
+                )
+
+                # map_widget.go_to_level_and_position(5, -15.41, 40.11)
+                self.diagram_widgets_list.append(map_widget)
+
+            else:
+                raise Exception("Unknown diagram type")
 
         self.set_diagrams_list_view()
 
         if len(self.diagram_widgets_list) > 0:
-            first_diagram = self._ensure_diagram_widget_at_index(index=0)
-            if first_diagram is not None:
-                self.set_diagram_widget(first_diagram)
+            diagram = self.diagram_widgets_list[0]
+            self.set_diagram_widget(diagram)
 
     def add_map_diagram(self) -> None:
         """
@@ -2584,7 +2280,7 @@ class DiagramsMain(CompiledArraysMain):
         self.show_info_toast(f"{diagram.name} added")
 
     def add_diagram_widget_and_diagram(self,
-                                       diagram_widget: DIAGRAM_WIDGETS,
+                                       diagram_widget: ALL_EDITORS,
                                        diagram: Union[dev.SchematicDiagram, dev.MapDiagram]):
         """
         Add diagram widget, it also adds the diagram to the circuit for later
@@ -2593,51 +2289,32 @@ class DiagramsMain(CompiledArraysMain):
         """
 
         # add the widget pointer
-        self._append_diagram_widget(diagram_widget)
+        self.diagram_widgets_list.append(diagram_widget)
 
         # add the diagram to the circuit
         self.circuit.add_diagram(diagram)
 
     def remove_diagram(self):
         """
-        Remove one or more selected diagrams
+        Remove diagram
         """
-        selected_rows = sorted({idx.row() for idx in self.ui.diagramsListView.selectedIndexes()})
-        if len(selected_rows) == 0:
-            return
+        diagram_widget = self.get_selected_diagram_widget()
+        if diagram_widget is not None:
+            ok = yes_no_question("Are you sure that you want to delete " + diagram_widget.name + "?",
+                                 "Remove diagram")
 
-        if len(selected_rows) == 1:
-            entry: SchematicWidget | GridMapWidget = self.diagram_widgets_list[selected_rows[0]]
+            if ok:
+                # delete the widget
+                self.diagram_widgets_list.remove(diagram_widget)
 
-            question = "Are you sure that you want to delete " + str(entry.name) + "?"
-        else:
-            question = f"Are you sure that you want to delete {len(selected_rows)} selected diagrams?"
+                # delete the diagram
+                self.circuit.remove_diagram(diagram_widget.diagram)
 
-        ok = yes_no_question(question, "Remove diagram")
-        if not ok:
-            return
+                # delete it from the layout list
+                self.remove_all_diagram_widgets()
 
-        # Remember a candidate row to select after deletion.
-        next_row = selected_rows[0]
-
-        # Delete from highest row to lowest to avoid index shifts.
-        for row in sorted(selected_rows, reverse=True):
-            widget = self.diagram_widgets_list.pop(row)
-            if isinstance(widget, (SchematicWidget, GridMapWidget)):
-                self.circuit.remove_diagram(widget.diagram)
-                self.dispose_diagram_widget(widget)
-
-        # Remove currently shown widget and rebuild list view selection.
-        self.remove_all_diagram_widgets()
-        self.set_diagrams_list_view()
-
-        if len(self.diagram_widgets_list) > 0:
-            target_row = min(next_row, len(self.diagram_widgets_list) - 1)
-            widget = self._ensure_diagram_widget_at_index(index=target_row)
-            if widget is not None:
-                self.set_diagram_widget(widget)
-        else:
-            pass
+                # update view
+                self.set_diagrams_list_view()
 
     def duplicate_diagram(self):
         """
@@ -2660,9 +2337,6 @@ class DiagramsMain(CompiledArraysMain):
         """
         Remove all diagrams and their widgets
         """
-        for widget in self.diagram_widgets_list:
-            self.dispose_diagram_widget(widget)
-
         self.diagram_widgets_list.clear()
         self.remove_all_diagram_widgets()
         self.ui.diagramsListView.setModel(None)
@@ -2694,7 +2368,7 @@ class DiagramsMain(CompiledArraysMain):
 
         # set the alignment
         self.ui.diagram_selection_splitter.setStretchFactor(0, 10)
-        self.ui.diagram_selection_splitter.setStretchFactor(1, 1)
+        self.ui.diagram_selection_splitter.setStretchFactor(1, 2)
 
         # set the selected index
         row = self.diagram_widgets_list.index(widget)
@@ -2803,12 +2477,8 @@ class DiagramsMain(CompiledArraysMain):
                 f_name = str(os.path.join(self.project_directory, self.ui.grid_name_line_edit.text()))
 
                 # call dialog to select the file
-                filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(
-                    self,
-                    self.tr('Save image file'),
-                    f_name,
-                    self.tr(files_types),
-                )
+                filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self, 'Save image file',
+                                                                                f_name, files_types)
 
                 if filename != "":
                     if 'svg' in type_selected:
@@ -2838,12 +2508,8 @@ class DiagramsMain(CompiledArraysMain):
                     f_name = str(os.path.join(self.project_directory, self.ui.grid_name_line_edit.text()))
 
                     # call dialog to select the file
-                    filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(
-                        self,
-                        self.tr('Save video file'),
-                        f_name,
-                        self.tr(files_types),
-                    )
+                    filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self, 'Save video file',
+                                                                                    f_name, files_types)
 
                     if filename != "":
                         if type_selected == "MP4 (*.mp4)" and not filename.endswith('.mp4'):
@@ -2878,7 +2544,8 @@ class DiagramsMain(CompiledArraysMain):
         :return:
         """
         if self.video_thread.logger.has_logs():
-            self.show_logs(self.video_thread.logger, "Video export")
+            dlg = LogsDialogue("Video export", self.video_thread.logger, True)
+            dlg.exec()
 
     def set_xy_from_lat_lon(self):
         """
@@ -2890,16 +2557,11 @@ class DiagramsMain(CompiledArraysMain):
             if diagram is not None:
                 if isinstance(diagram, SchematicWidget):
 
-                    if yes_no_question("All buses will be positioned to a 2D plane projection of their "
-                                       "latitude and longitude. This updates the current diagram and the "
-                                       "stored bus x, y, so diagrams created afterwards use the new positions. "
+                    if yes_no_question("All nodes in the current diagram will be positioned to a 2D plane projection "
+                                       "of their latitude and longitude. "
                                        "Are you sure of this?"):
                         diagram.fill_xy_from_lat_lon(destructive=True)
                         diagram.center_nodes()
-                else:
-                    self.show_warning_toast("No schematic diagram selected!")
-            else:
-                self.show_warning_toast("No diagram selected!")
 
     def set_big_bus_marker(self, buses: List[dev.Bus], color: QtGui.QColor):
         """
@@ -3118,9 +2780,8 @@ class DiagramsMain(CompiledArraysMain):
 
     def add_rms_event_to_selected(self) -> None:
         """
-        Add RMS event to a selected device
+        Add rms event to a selected device
         """
-        mode = DynamicSimulationMode.RMS
         if self.circuit.valid_for_simulation():
 
             # get the selected device to apply event to
@@ -3140,8 +2801,7 @@ class DiagramsMain(CompiledArraysMain):
                         "No RMS Events Group found, please create one before adding an event."
                     )
 
-                    dialog = DynamicEventsGroupsDialog(mode=mode,
-                                                       parent=self)
+                    dialog = DynamicEventsGroupsDialog(self)
                     if dialog.exec():
                         name = dialog.get_name()
                         # build group
@@ -3151,48 +2811,32 @@ class DiagramsMain(CompiledArraysMain):
 
 
                 else:
-                    pass
-                # after creating a new events group or not, open eitherway the Events dialogue
-                rms_event_parameters, mode_parameter_uids = collect_block_runtime_event_parameters(target_device.rms_model)
-                rms_events_dialog = DynamicEventDialogue(circuit=self.circuit,
-                                                         parameters_list=rms_event_parameters,
-                                                         target_device_name=target_device.type_name + ": " + target_device.name,
-                                                         mode=mode,
-                                                         mode_parameter_uids=mode_parameter_uids)
+                    rms_events_dialog = DynamicEventDialogue(circuit=self.circuit,
+                                                             parameters_list=[var for var in
+                                                                          target_device.rms_model.event_dict.keys()],
+                                                             target_device_name=target_device.type_name + ": " + target_device.name)
 
-                if rms_events_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                    if rms_events_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
 
-                    events_data = rms_events_dialog.get_data()
-                    events_list = list()
-                    for i, event in enumerate(events_data["parameters"]):
-                        transition_type = events_data["transition_types"][i]
-                        end_time = events_data["end_times"][i]
+                        events_data = rms_events_dialog.get_data()
+                        events_list = []
+                        for i, event in enumerate(events_data["parameters"]):
+                            events_list.append(dev.RmsEvent(device=target_device,
+                                                            parameter=events_data["parameters"][i],
+                                                            time=float(events_data["target_times"][i]),
+                                                            value=float(events_data["values"][i]),
+                                                            group=events_data["groups"][i]))
 
-                        if transition_type == DynamicEventTransitionType.Ramp and end_time is None:
-                            end_time = float(events_data["target_times"][i])
-                        else:
-                            pass
-
-                        events_list.append(dev.RmsEvent(device=target_device,
-                                                         parameter=events_data["parameters"][i],
-                                                         time=float(events_data["target_times"][i]),
-                                                         end_time=None if end_time is None else float(end_time),
-                                                         value=float(events_data["values"][i]),
-                                                         group=events_data["groups"][i],
-                                                         transition_type=transition_type))
-
-                    for event in events_list:
-                        self.circuit.add_rms_event(event)
+                        for event in events_list:
+                            self.circuit.add_rms_event(event)
 
             else:
-                print("Selected devices: ", target_devices)
-                self.show_warning_toast(f"Select one and only one device to add event to")
+                raise ValueError(f"Select one and only one device to add event to")
 
     def add_emt_event_to_selected(self) -> None:
         """
         Add EMT event to a selected device
         """
-        mode = DynamicSimulationMode.EMT
         if self.circuit.valid_for_simulation():
 
             # get the selected device to apply event to
@@ -3212,8 +2856,7 @@ class DiagramsMain(CompiledArraysMain):
                         "No EMT Events Group found, please create one before adding an event."
                     )
 
-                    dialog = DynamicEventsGroupsDialog(parent=self,
-                                                       mode=mode)
+                    dialog = DynamicEventsGroupsDialog(self)
                     if dialog.exec():
                         name = dialog.get_name()
                         # build group
@@ -3223,43 +2866,27 @@ class DiagramsMain(CompiledArraysMain):
 
 
                 else:
-                    pass
+                    emt_events_dialog = DynamicEventDialogue(circuit=self.circuit,
+                                                         parameters_list=[var for var in
+                                                                          target_device.emt_model.event_dict.keys()],
+                                                         target_device_name=target_device.type_name + ": " + target_device.name)
 
-                # after creating a new events group or not, open eitherway the Events dialogue
-                emt_event_parameters, mode_parameter_uids = collect_block_runtime_event_parameters(target_device.emt_model)
-                emt_events_dialog = DynamicEventDialogue(circuit=self.circuit,
-                                                         parameters_list=emt_event_parameters,
-                                                         target_device_name=target_device.type_name + ": " + target_device.name,
-                                                         mode=mode,
-                                                         mode_parameter_uids=mode_parameter_uids)
+                    if emt_events_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
 
-                if emt_events_dialog.exec() == QtWidgets.QDialog.DialogCode.Accepted:
+                        events_data = emt_events_dialog.get_data()
+                        events_list = []
+                        for i, event in enumerate(events_data["parameters"]):
+                            events_list.append(dev.EmtEvent(device=target_device,
+                                                            parameter=events_data["parameters"][i],
+                                                            time=float(events_data["target_times"][i]),
+                                                            value=float(events_data["values"][i]),
+                                                            group=events_data["groups"][i]))
 
-                    events_data = emt_events_dialog.get_data()
-                    events_list = list()
-                    for i, event in enumerate(events_data["parameters"]):
-                        transition_type = events_data["transition_types"][i]
-                        end_time = events_data["end_times"][i]
-
-                        if transition_type == DynamicEventTransitionType.Ramp and end_time is None:
-                            end_time = float(events_data["target_times"][i])
-                        else:
-                            pass
-
-                        events_list.append(dev.EmtEvent(device=target_device,
-                                                        parameter=events_data["parameters"][i],
-                                                        time=float(events_data["target_times"][i]),
-                                                        end_time=None if end_time is None else float(end_time),
-                                                        value=float(events_data["values"][i]),
-                                                        group=events_data["groups"][i],
-                                                        force_step_alignment=bool(events_data["force_step_alignment"][i]),
-                                                        transition_type=transition_type))
-
-                    for event in events_list:
-                        self.circuit.add_emt_event(event)
+                        for event in events_list:
+                            self.circuit.add_rms_event(event)
 
             else:
-                self.show_warning_toast(f"Select one and only one device to add event to")
+                raise ValueError(f"Select one and only one device to add event to")
 
     def add_short_circuit_events(self):
         """
@@ -3356,7 +2983,7 @@ class DiagramsMain(CompiledArraysMain):
         if self.object_select_window.selected_object is not None:
             self.select_buses_by_property(self.object_select_window.selected_object)
 
-    def set_selected_bus_property(self, prop: str):
+    def set_selected_bus_property(self, prop):
         """
 
         :param prop:
@@ -3542,28 +3169,28 @@ class DiagramsMain(CompiledArraysMain):
         context_menu = QtWidgets.QMenu(parent=self.ui.diagramsListView)
 
         gf.add_menu_entry(menu=context_menu,
-                          text=self.tr("New schematic"),
+                          text="New schematic",
                           icon_path=":/Icons/icons/schematic.png",
                           function_ptr=self.add_complete_bus_branch_diagram)
 
         gf.add_menu_entry(menu=context_menu,
-                          text=self.tr("New schematic from selection"),
+                          text="New schematic from selection",
                           icon_path=":/Icons/icons/schematic.png",
                           function_ptr=self.new_bus_branch_diagram_from_selection)
 
         gf.add_menu_entry(menu=context_menu,
-                          text=self.tr("New map"),
+                          text="New map",
                           icon_path=":/Icons/icons/map (add).png",
                           function_ptr=self.add_map_diagram)
 
         gf.add_menu_entry(menu=context_menu,
-                          text=self.tr("Duplicate"),
+                          text="Duplicate",
                           icon_path=":/Icons/icons/copy.png",
                           function_ptr=self.duplicate_diagram)
 
         context_menu.addSeparator()
         gf.add_menu_entry(menu=context_menu,
-                          text=self.tr("Remove"),
+                          text="Remove",
                           icon_path=":/Icons/icons/delete3.png",
                           function_ptr=self.remove_diagram)
 
@@ -3600,10 +3227,7 @@ class DiagramsMain(CompiledArraysMain):
         """
         for diagram in self.diagram_widgets_list:
             if diagram != caller:
-                if isinstance(diagram, (SchematicWidget, GridMapWidget)):
-                    diagram.delete_element_utility_function(device=api_obj, propagate=False)
-                else:
-                    pass
+                diagram.delete_element_utility_function(device=api_obj, propagate=False)
 
         try:
             self.circuit.delete_element(obj=api_obj)
@@ -3693,12 +3317,7 @@ class DiagramsMain(CompiledArraysMain):
 
     def combinations_tree_clicked(self):
         """
-        On combinations tree click. Dispatches by the active study type:
-        - ShortCircuit: re-colours the diagram for the clicked short-circuit case.
-        - InvestmentsEvaluation: applies the clicked Pareto combination to the
-          live MultiCircuit (sticky behaviour) and refreshes the diagram.
-        - CatalogueOptimization: applies the clicked Pareto combination's
-          templates to the live MultiCircuit and refreshes the diagram.
+        On combinations tree click
         """
         indices = self.ui.combinationsTreeView.selectedIndexes()
 
@@ -3730,204 +3349,9 @@ class DiagramsMain(CompiledArraysMain):
                                       max_bus_width=max_bus_width,
                                       sc_index=sel_idx)
 
-                elif current_study == sim.InvestmentsEvaluationDriver.tpe.value:
-                    # delegate to the dedicated handler so this dispatcher stays small
-                    self.apply_investments_combination(clicked_index=indices[0])
-
-                elif current_study == sim.CatalogueOptimizationDriver.tpe.value:
-                    # delegate to the dedicated catalogue handler
-                    self.apply_catalogue_combination(clicked_index=indices[0])
-
-                else:
-                    # the active study has no per-combination behaviour - nothing to do
-                    pass
-            else:
-                # no study selected or invalid row - nothing to dispatch
-                pass
-
         else:
             #  no indices selected
             pass
-
-    def apply_investments_combination(self, clicked_index: QtCore.QModelIndex) -> None:
-        """
-        Apply the Pareto combination tagged on the clicked tree item to the live
-        MultiCircuit and refresh the active diagram.
-
-        The clicked index may be either a top-level combination row or one of its
-        investment-name children; we walk up to the top-level item to recover the
-        combination index that was stamped via Qt.UserRole when the model was built.
-
-        Behaviour is sticky: every click first deactivates every investment-touched
-        device in the live grid, then activates only the investments belonging to
-        the clicked combination. This matches the convention the optimizer used
-        for each evaluation (an x of all zeros = every investment off), so the
-        diagram exactly reproduces the state the optimizer scored for that combo
-        and a click on a different row cleanly replaces the previous selection.
-
-        WARNING: every click overwrites the active *profile* (time-series) of
-        each touched device via set_investments_status. Any pre-existing
-        time-series active profile is lost permanently after the first click and
-        cannot be recovered. Tell users to save the project before exploring
-        combinations if their grid has a meaningful active profile.
-
-        :param clicked_index: QModelIndex of the row (or child row) the user clicked
-        """
-        # walk up to the top-level row, since the tree shows investment names as
-        # children of each combination row and clicks may land on a child item
-        top_index: QtCore.QModelIndex = clicked_index
-        while top_index.parent().isValid():
-            top_index = top_index.parent()
-
-        # the original combination index was stamped on column 0 at model-build
-        # time; read it from the column-0 sibling so we get the tagged item even
-        # if the user clicked a different column of the same row
-        column_zero_index: QtCore.QModelIndex = top_index.sibling(top_index.row(), 0)
-        user_data = column_zero_index.data(QtCore.Qt.ItemDataRole.UserRole)
-
-        if user_data is None:
-            # row was not tagged with a combination index (defensive guard)
-            return None
-        else:
-            i: int = int(user_data)
-
-        driver, results = self.session.investments_evaluation
-        if driver is None or results is None:
-            # results were cleared between panel build and click
-            self.show_warning_toast("Investments evaluation results are no longer available")
-            return None
-        else:
-            pass
-
-        # build the list of Investment objects activated by this combination
-        x_vec: np.ndarray = results.x[i, :]
-        inv_list = driver.problem.get_investments_for_combination(x=x_vec)
-
-        # Force a clean baseline before applying the combo: deactivate every
-        # device touched by any investment in the grid. Without this step,
-        # branches that were switched on by a previous click would stay on,
-        # compounding selections instead of replacing them. We use the cached
-        # _investments_all list (snapshot at evaluation finish) rather than the
-        # current self.circuit.investments so the deactivation set is stable
-        # across clicks and identical to what post_investments_evaluation
-        # used when seeding the diagram.
-        all_elements_dict, _ = self.circuit.get_all_elements_dict()
-        self.circuit.set_investments_status(investments_list=self._investments_all,
-                                            status=False,
-                                            all_elements_dict=all_elements_dict)
-
-        # apply the selected combination on top of the now-deactivated state
-        self.circuit.set_investments_status(investments_list=inv_list,
-                                            status=True,
-                                            all_elements_dict=all_elements_dict)
-
-        # Refresh active/inactive pen styles on every open schematic so toggled
-        # branches go from dashed (inactive) to solid (active) and vice versa.
-        # This is separate from result-based colouring done by colour_diagrams() —
-        # the dashed/solid pen style is set by recolour_mode(), which reads
-        # api_object.active. colour_diagrams() only paints results-based colours
-        # and does not refresh active-state styling on its own.
-        for diagram_widget in self.diagram_widgets_list:
-            if isinstance(diagram_widget, SchematicWidget):
-                diagram_widget.recolour_mode()
-            else:
-                # map widgets and other diagram types do not encode active state
-                # via dashed/solid pen styling, so they have nothing to refresh
-                pass
-
-        # re-apply result-based colouring on top of the active-state styling
-        self.colour_diagrams()
-        self.show_info_toast(f"Applied Pareto combination {i}: "
-                             f"{len(inv_list)} investments active")
-        return None
-
-    def apply_catalogue_combination(self, clicked_index: QtCore.QModelIndex) -> None:
-        """
-        Apply the Pareto combination tagged on the clicked tree item to the live
-        MultiCircuit by swapping each selected branch's electrical parameters to
-        those of the chosen template, then refresh the diagrams.
-
-        The clicked index may be either a top-level combination row or one of
-        its decision-variable children; we walk up to the top-level item to
-        recover the combination index that was stamped via Qt.UserRole when
-        the model was built.
-
-        Behaviour is sticky: every click first restores every problem-tracked
-        branch to its baseline state captured at problem-construction time
-        (in CatalogueOptimizationProblem.snapshots), then applies the templates
-        for the selected combination's x vector. This matches the convention
-        the optimizer used per evaluation, so the diagram exactly reproduces
-        the state NSGA-3 scored for that combination, and a click on a
-        different row cleanly replaces the previous selection.
-
-        WARNING: every click overwrites each branch's electrical parameters
-        (R, X, B, rate, ...) and template pointers via apply_template. If the
-        user has unsaved manual edits to those branches, they will be lost
-        after the first click. Tell users to save the project before exploring
-        combinations.
-
-        :param clicked_index: QModelIndex of the row (or child row) the user clicked
-        """
-        # Walk up to the top-level row, since the tree shows decision-variable
-        # entries as children of each combination row and clicks may land on
-        # a child item.
-        top_index: QtCore.QModelIndex = clicked_index
-        while top_index.parent().isValid():
-            top_index = top_index.parent()
-
-        # The combination index was stamped on column 0 at model-build time;
-        # read it from the column-0 sibling so we get the tagged item even if
-        # the user clicked a different column of the same row.
-        column_zero_index: QtCore.QModelIndex = top_index.sibling(top_index.row(), 0)
-        user_data = column_zero_index.data(QtCore.Qt.ItemDataRole.UserRole)
-
-        if user_data is None:
-            # row was not tagged with a combination index (defensive guard)
-            return None
-        else:
-            i: int = int(user_data)
-
-        driver, results = self.session.catalogue_optimization
-        if driver is None or results is None:
-            # results were cleared between panel build and click
-            self.show_warning_toast("Catalogue optimization results are no longer available")
-            return None
-        else:
-            pass
-
-        # Recover the integer x vector for this Pareto member.
-        x_vec: np.ndarray = results.x[i, :]
-
-        # Force a clean baseline before applying the combo: revert every branch
-        # tracked by the problem to its pre-evaluation snapshot. Without this
-        # step, parameter changes from a previous click would compound, and a
-        # branch whose chosen template differs between two combos would end
-        # up with the most recently-applied template both times.
-        driver.problem._restore_baseline()
-
-        # Apply the templates for the selected combination on top of the
-        # restored baseline. _apply_combination performs branch.apply_template
-        # for every decision slot using x_vec[i] as the pool index.
-        driver.problem._apply_combination(x=x_vec)
-
-        # Refresh active/inactive pen styles on every open schematic. Catalogue
-        # optimization does not toggle device.active itself, but apply_template
-        # may indirectly affect rendering (rate-based widths, etc.), so we run
-        # the same recolour pass we use for Investments to keep the diagrams
-        # consistent with the live state.
-        for diagram_widget in self.diagram_widgets_list:
-            if isinstance(diagram_widget, SchematicWidget):
-                diagram_widget.recolour_mode()
-            else:
-                # non-schematic widgets do not encode branch state via pen
-                # styling, so they have nothing to refresh here
-                pass
-
-        # Re-apply result-based colouring on top of the refreshed pen styling.
-        self.colour_diagrams()
-        self.show_info_toast(f"Applied catalogue combination {i}: "
-                             f"{len(x_vec)} branches updated")
-        return None
 
     def reset_diagram_coordinates(self):
         """
@@ -4022,15 +3446,3 @@ class DiagramsMain(CompiledArraysMain):
 
         if isinstance(diagram, SchematicWidget):
             diagram.set_all_branch_drawing_styles(SchematicAutoRouteStyle.STRAIGHT)
-
-    def repair_selected_schematic_diagram(self):
-        """
-        Repair suspicious legacy manual injection positions in the selected schematic.
-        """
-        diagram = self.get_selected_diagram_widget()
-
-        if isinstance(diagram, SchematicWidget):
-            repaired_count = diagram.repair_suspicious_injection_positions()
-            self.show_info_toast(f"Repaired {repaired_count} suspicious injection positions")
-        else:
-            self.show_warning_toast("The current diagram is not a schematic :(")

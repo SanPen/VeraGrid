@@ -8,27 +8,27 @@ from typing import TYPE_CHECKING
 
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.energy_connection import EnergyConnection
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import UnitSymbol, CgmesProfileType
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.energy_scheduling_type import EnergySchedulingType
 
 class EnergySource(EnergyConnection):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='EnergySchedulingType', class_type='EnergySchedulingType', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Energy Scheduling Type of an Energy Source.''', profiles=[CgmesProfileType.EQ]),
-		CgmesProperty(property_name='nominalVoltage', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.V, description='''Electrical voltage, can be both AC and DC.''', profiles=[CgmesProfileType.EQ]),
-		CgmesProperty(property_name='pMin', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.W, description='''Product of RMS value of the voltage and the RMS value of the in-phase component of the current.''', profiles=[CgmesProfileType.EQ]),
-		CgmesProperty(property_name='pMax', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.W, description='''Product of RMS value of the voltage and the RMS value of the in-phase component of the current.''', profiles=[CgmesProfileType.EQ]),
-		CgmesProperty(property_name='r', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Resistance (real part of impedance).''', profiles=[CgmesProfileType.SC]),
-		CgmesProperty(property_name='r0', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Resistance (real part of impedance).''', profiles=[CgmesProfileType.SC]),
-		CgmesProperty(property_name='rn', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Resistance (real part of impedance).''', profiles=[CgmesProfileType.SC]),
-		CgmesProperty(property_name='x', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', profiles=[CgmesProfileType.SC]),
-		CgmesProperty(property_name='x0', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', profiles=[CgmesProfileType.SC]),
-		CgmesProperty(property_name='xn', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', profiles=[CgmesProfileType.SC]),
-		CgmesProperty(property_name='activePower', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.W, description='''Product of RMS value of the voltage and the RMS value of the in-phase component of the current.''', mandatory=True, profiles=[CgmesProfileType.SSH], default_value=0.0),
-		CgmesProperty(property_name='reactivePower', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.VAr, description='''Product of RMS value of the voltage and the RMS value of the quadrature component of the current.''', mandatory=True, profiles=[CgmesProfileType.SSH], default_value=0.0),
-		CgmesProperty(property_name='voltageAngle', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.rad, description='''Phase angle in radians.''', profiles=[CgmesProfileType.SSH]),
-		CgmesProperty(property_name='voltageMagnitude', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.V, description='''Electrical voltage, can be both AC and DC.''', profiles=[CgmesProfileType.SSH]),
+		CgmesProperty(property_name='EnergySchedulingType', class_type='EnergySchedulingType', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Energy Scheduling Type of an Energy Source.''', profiles=[]),
+		CgmesProperty(property_name='nominalVoltage', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.V, description='''Electrical voltage, can be both AC and DC.''', profiles=[]),
+		CgmesProperty(property_name='pMin', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.W, description='''Product of RMS value of the voltage and the RMS value of the in-phase component of the current.''', profiles=[]),
+		CgmesProperty(property_name='pMax', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.W, description='''Product of RMS value of the voltage and the RMS value of the in-phase component of the current.''', profiles=[]),
+		CgmesProperty(property_name='r', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Resistance (real part of impedance).''', profiles=[]),
+		CgmesProperty(property_name='r0', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Resistance (real part of impedance).''', profiles=[]),
+		CgmesProperty(property_name='rn', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Resistance (real part of impedance).''', profiles=[]),
+		CgmesProperty(property_name='x', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', profiles=[]),
+		CgmesProperty(property_name='x0', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', profiles=[]),
+		CgmesProperty(property_name='xn', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.ohm, description='''Reactance (imaginary part of impedance), at rated frequency.''', profiles=[]),
+		CgmesProperty(property_name='activePower', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.W, description='''Product of RMS value of the voltage and the RMS value of the in-phase component of the current.''', profiles=[]),
+		CgmesProperty(property_name='reactivePower', class_type=float, multiplier=UnitMultiplier.M, unit=UnitSymbol.VAr, description='''Product of RMS value of the voltage and the RMS value of the quadrature component of the current.''', profiles=[]),
+		CgmesProperty(property_name='voltageAngle', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.rad, description='''Phase angle in radians.''', profiles=[]),
+		CgmesProperty(property_name='voltageMagnitude', class_type=float, multiplier=UnitMultiplier.k, unit=UnitSymbol.V, description='''Electrical voltage, can be both AC and DC.''', profiles=[]),
 	)
 	__slots__ = ('EnergySchedulingType', 'nominalVoltage', 'pMin', 'pMax', 'r', 'r0', 'rn', 'x', 'x0', 'xn', 'activePower', 'reactivePower', 'voltageAngle', 'voltageMagnitude')
 	def __init__(self, rdfid='', tpe='EnergySource'):

@@ -5,7 +5,7 @@
 
 
 
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Var
@@ -46,10 +46,10 @@ def get_dc_load_emt_template(
     templ.block.parameters[p_dc_static] = vf.add_const(0.0)
     templ.block.parameters[g_dc_static] = vf.add_const(0.0)
 
-    v_dc = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowReferenceType.Vdc)
+    v_dc = vf.add_var(name=f"v_dc_{name}", reference=VarPowerFlowRefferenceType.Vdc)
 
-    i_dc = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowReferenceType.Idc)
-    p_dc = vf.add_var(name=f"p_dc_{name}", reference=VarPowerFlowReferenceType.P)
+    i_dc = vf.add_var(name=f"i_dc_{name}", reference=VarPowerFlowRefferenceType.Idc)
+    p_dc = vf.add_var(name=f"p_dc_{name}", reference=VarPowerFlowRefferenceType.P)
 
     templ.block.in_vars = [v_dc]
     templ.block.algebraic_vars = [i_dc, p_dc]
@@ -60,17 +60,17 @@ def get_dc_load_emt_template(
         p_dc - v_dc * i_dc,
     ]
 
-    templ.block.out_vars = [i_dc]
+    templ.block.out_vars = [i_dc, p_dc]
 
     templ.block.external_mapping = {
-        VarPowerFlowReferenceType.Vdc: v_dc,
-        VarPowerFlowReferenceType.Idc: i_dc,
-        VarPowerFlowReferenceType.P: p_dc,
+        VarPowerFlowRefferenceType.Vdc: v_dc,
+        VarPowerFlowRefferenceType.Idc: i_dc,
+        VarPowerFlowRefferenceType.P: p_dc,
     }
 
     templ.block.api_obj_mapping = {
-        ParamPowerFlowReferenceType.Pl0: p_dc_static,
-        ParamPowerFlowReferenceType.g: g_dc_static,
+        ParamPowerFlowRefferenceType.Pl0: p_dc_static,
+        ParamPowerFlowRefferenceType.g: g_dc_static,
     }
 
     templ.block.init_eqs = {

@@ -7,13 +7,12 @@ from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.curve import Curve
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.vs_converter import VsConverter
 
 class VsCapabilityCurve(Curve):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='VsConverterDCSides', class_type='VsConverter', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''All converters with this capability curve.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='VsConverterDCSides', class_type='VsConverter', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''All converters with this capability curve.''', profiles=[]),
 	)
 	__slots__ = ('VsConverterDCSides',)
 	def __init__(self, rdfid='', tpe='VsCapabilityCurve'):

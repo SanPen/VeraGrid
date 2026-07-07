@@ -19,6 +19,8 @@ import scipy.sparse.linalg as spla
 from collections import defaultdict, deque
 
 from VeraGridEngine.enumerations import EmtInitializationMethod, EmtInitializationStatus
+from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
+from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProblemTemplate
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicJacobian, SymbolicVector
 from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler
 from VeraGridEngine.Utils.Symbolic.symbolic import expression2numba, get_expression_vars
@@ -188,8 +190,6 @@ def evaluate_single_equation_fn(
 
 
 def store_resolved_event_parameter(
-        event_param: Var,
-        event_params_init_dict: Dict[int, float | int | complex | None],
         event_parameters_eqs: List[Union[Expr, Const]],
         event_eq_idx: int,
         result: float | int | complex | None,
@@ -197,10 +197,10 @@ def store_resolved_event_parameter(
     """
   Store the calculated value in the equations array
 
-    :param event_param:
-    :type event_param:
-    :param event_params_init_dict:
-    :type event_params_init_dict:
+    :param mdl: Model block owning the runtime parameter.
+    :type mdl: Block
+    :param var: Runtime parameter variable.
+    :type var: Var
     :param event_parameters_eqs: Global runtime-parameter equation list.
     :type event_parameters_eqs: List[Union[Expr, Const]]
     :param event_eq_idx: Index of the runtime parameter in the global list.
@@ -213,8 +213,6 @@ def store_resolved_event_parameter(
     resolved_event_eq: Const = Const(result)
 
     event_parameters_eqs[event_eq_idx] = resolved_event_eq
-
-    event_params_init_dict[event_param.uid] = result
 
 
 class SymbolicVectorSingleEquationCompiler:
@@ -373,7 +371,6 @@ def add_items(blk, init_vars, init_event):
     """
 
     init_vars.update(blk.init_eqs)
-    init_vars.update(blk.diff_init_eqs)
     init_event.update(blk.event_dict)
 
 def build_init_dict(mdl, init_vars, init_event):
@@ -408,18 +405,7 @@ def build_explicit_init_graph(
     init_event = dict()
     build_init_dict(mdl, init_vars, init_event)
 
-    # Merge event equations without clobbering explicit init equations with
-    # unresolved placeholders (Const(None)).
-    #
-    # For runtime parameters declared as event_dict[var] = Const(None), the
-    # corresponding initialization expression usually lives in init_eqs[var].
-    # Overwriting it here with Const(None) prevents explicit initialization from
-    # resolving the parameter value and later triggers "Event parameter ... has
-    # None Value" during RMS problem build.
-    for ev_var, ev_eq in init_event.items():
-        if isinstance(ev_eq, Const) and ev_eq.value is None and ev_var in init_vars:
-            continue
-        init_vars[ev_var] = ev_eq
+    init_vars.update(init_event)
 
     graph: Dict[Var, List[Var]] = defaultdict(list)
     in_degree: Dict[Var, int] = defaultdict(int)
@@ -607,7 +593,6 @@ def init_explicit_common(
         event_parameters_eqs: List[Union[Expr, Const]],
         constant_parameters: List[Var],
         init_guess: Dict[int, float | int | complex | None],
-        event_param_init_dict: Dict[int, float | int | complex | None],
         diff_init_guess: Dict[int, float | int | complex | None],
         uid2idx_vars: Dict[int, int],
         uid2idx_diff: Dict[int, int],
@@ -634,7 +619,6 @@ def init_explicit_common(
     :type constant_parameters: List[Var]
     :param init_guess: Initialization guesses for algebraic or state variables.
     :type init_guess: Dict[int, float]
-    :param event_param_init_dict: Event parameter initialization dictionary.
     :param diff_init_guess: Initialization guesses for differential variables.
     :type diff_init_guess: Dict[int, float]
     :param uid2idx_vars: Variable index map.
@@ -692,8 +676,6 @@ def init_explicit_common(
             )
             event_params_array[uid2idx_event_params[var.uid]] = result
             store_resolved_event_parameter(
-                event_param=var,
-                event_params_init_dict=event_param_init_dict,
                 event_parameters_eqs=event_parameters_eqs,
                 event_eq_idx=uid2idx_event_params[var.uid],
                 result=result,
@@ -764,3 +746,4 @@ def init_explicit_common(
 
 
     return init_guess, diff_init_guess
+

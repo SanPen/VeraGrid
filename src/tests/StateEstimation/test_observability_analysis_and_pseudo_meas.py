@@ -1,6 +1,4 @@
-import warnings
 import numpy as np
-from scipy.sparse.linalg import MatrixRankWarning
 
 import VeraGridEngine as gce
 
@@ -49,10 +47,7 @@ def test_se_with_and_without_pseudo_measurements():
         verbose=0
     )
     se_no_pseudo = gce.StateEstimationDriver(circuit=grid, options=se_options_no_pseudo)
-    with warnings.catch_warnings():
-        warnings.filterwarnings("ignore", category=MatrixRankWarning)
-        warnings.filterwarnings("ignore", message="invalid value encountered in divide", category=RuntimeWarning)
-        se_no_pseudo.run()
+    se_no_pseudo.run()
     report_no_pseudo = se_no_pseudo.results.convergence_reports[0]
     assert report_no_pseudo
     assert not report_no_pseudo.is_observable

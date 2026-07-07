@@ -5,26 +5,19 @@
 import json
 import os
 from typing import Dict, Union, Any
-from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6 import QtWidgets
 
 import VeraGrid.ThirdParty.qdarktheme as qdarktheme
 from VeraGridEngine.IO.file_system import get_create_veragrid_folder
 from VeraGrid.Gui.Main.SubClasses.Results.results import ResultsMain
 from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget
 from VeraGrid.Gui.Diagrams.generic_graphics import set_dark_mode, set_light_mode
-from VeraGrid.Gui.i18n import (
-    ApplicationLanguage,
-    ApplicationTranslator,
-    get_language_display_text,
-    get_language_flag_icon_path,
-    language_from_name,
-)
 from VeraGrid.plugins import PluginsInfo, PluginFunction
 from VeraGrid.Gui.gui_functions import add_menu_entry
 
 
 def gui_struct_to_data(data_: Dict[str, Union[float, int, str, bool, Dict[str, Union[float, int, str, bool, Dict]]]],
-                       struct_: Dict[str, Dict[str, Any]]):
+                       struct_: Dict[str, Dict[str, any]]):
     """
     Recursive function to get the config dictionary from the GUI values
     :param data_: Dictionary to fill
@@ -123,16 +116,8 @@ class ConfigurationMain(ResultsMain):
         # plugins
         self.plugins_info = PluginsInfo()
 
-        # The language widgets are declared in MainWindow.ui and only need
-        # runtime population and signal wiring here.
-        self.language_label: QtWidgets.QLabel = self.ui.language_label
-        self.language_combo_box: QtWidgets.QComboBox = self.ui.language_combo_box
-        self.create_language_controls()
-
         # check boxes
-        # Use the checkbox state-change signal so the theme refresh path runs for both
-        # user clicks and programmatic setChecked() calls during configuration loading.
-        self.ui.dark_mode_checkBox.toggled.connect(self.change_theme_mode)
+        self.ui.dark_mode_checkBox.clicked.connect(self.change_theme_mode)
 
         self.plugins_investment_evaluation_method_dict = dict()
 
@@ -140,162 +125,20 @@ class ConfigurationMain(ResultsMain):
         self.ui.snapshot_dateTimeEdit.dateTimeChanged.connect(self.snapshot_datetime_changed)
 
         self.plugin_windows_list = list()
-        self.translation_controller: ApplicationTranslator | None = None
 
-    def create_language_controls(self) -> None:
+    def change_theme_mode(self) -> None:
         """
-        Initialize the language selector embedded in the main settings grid.
-
-        :returns: None.
-        """
-        # Keep the flag icons legible in the selector regardless of the platform style.
-        self.language_combo_box.setIconSize(QtCore.QSize(18, 18))
-        self.refresh_language_combo_box_texts()
-        self.language_combo_box.currentIndexChanged.connect(self.language_selection_changed)
-
-    def refresh_language_combo_box_texts(self) -> None:
-        """
-        Rebuild the language selector labels in the currently active language.
-
-        The combo stores enum values as item data and only the visible text is
-        rewritten, which keeps persistence stable across translations.
-
-        :returns: None.
-        """
-        current_language: ApplicationLanguage = self.get_selected_language()
-        available_languages: list[ApplicationLanguage] = list(
-            [
-                ApplicationLanguage.SYSTEM,
-                ApplicationLanguage.ENGLISH,
-                ApplicationLanguage.JAPANESE,
-                ApplicationLanguage.BASQUE,
-                ApplicationLanguage.GALICIAN,
-                ApplicationLanguage.ARABIC,
-                ApplicationLanguage.ITALIAN,
-                ApplicationLanguage.GREEK,
-                ApplicationLanguage.DUTCH,
-                ApplicationLanguage.CATALAN,
-                ApplicationLanguage.CHINESE,
-                ApplicationLanguage.HINDI,
-                ApplicationLanguage.CANTONESE,
-                ApplicationLanguage.GERMAN,
-                ApplicationLanguage.FRENCH,
-                ApplicationLanguage.PORTUGUESE,
-                ApplicationLanguage.SPANISH,
-            ]
-        )
-
-        self.language_label.setText(self.tr("Language"))
-        self.language_combo_box.blockSignals(True)
-        self.language_combo_box.clear()
-
-        language: ApplicationLanguage
-
-        for language in available_languages:
-            display_text: str = get_language_display_text(language, self.tr)
-
-            # The selector stores the stable enum in item data and only decorates the row with a flag icon.
-            self.language_combo_box.addItem(
-                QtGui.QIcon(get_language_flag_icon_path(language)),
-                display_text,
-                language,
-            )
-
-        selected_index: int = self.language_combo_box.findData(current_language)
-        if selected_index >= 0:
-            self.language_combo_box.setCurrentIndex(selected_index)
-        else:
-            self.language_combo_box.setCurrentIndex(0)
-
-        self.language_combo_box.blockSignals(False)
-
-    def set_translation_controller(self, translation_controller: ApplicationTranslator) -> None:
-        """
-        Attach the application translation controller to this settings controller.
-
-        :param translation_controller: Shared application translation controller.
-        :returns: None.
-        """
-        self.translation_controller = translation_controller
-        self.refresh_language_combo_box_texts()
-
-        current_language: ApplicationLanguage = translation_controller.get_current_language()
-        selected_index: int = self.language_combo_box.findData(current_language)
-
-        self.language_combo_box.blockSignals(True)
-        if selected_index >= 0:
-            self.language_combo_box.setCurrentIndex(selected_index)
-        else:
-            self.language_combo_box.setCurrentIndex(0)
-        self.language_combo_box.blockSignals(False)
-
-    def get_selected_language(self) -> ApplicationLanguage:
-        """
-        Return the language currently selected in the GUI.
-
-        :returns: Selected application language.
-        """
-        combo_data: object = self.language_combo_box.currentData()
-
-        if isinstance(combo_data, ApplicationLanguage):
-            return combo_data
-        else:
-            return ApplicationLanguage.SYSTEM
-
-    def set_selected_language(self, language: ApplicationLanguage) -> None:
-        """
-        Select one language option in the GUI without triggering signal loops.
-
-        :param language: Language to select.
-        :returns: None.
-        """
-        selected_index: int = self.language_combo_box.findData(language)
-
-        self.language_combo_box.blockSignals(True)
-        if selected_index >= 0:
-            self.language_combo_box.setCurrentIndex(selected_index)
-        else:
-            self.language_combo_box.setCurrentIndex(0)
-        self.language_combo_box.blockSignals(False)
-
-    def language_selection_changed(self, _index: int) -> None:
-        """
-        Apply the newly selected language to the running application.
-
-        :param _index: Qt combo-box index.
-        :returns: None.
-        """
-        if self.translation_controller is not None:
-            selected_language: ApplicationLanguage = self.get_selected_language()
-            self.translation_controller.set_language(selected_language)
-            self.save_gui_config()
-        else:
-            pass
-
-    def refresh_runtime_translations(self) -> None:
-        """
-        Refresh runtime-owned main-window strings after a language change.
-
-        :returns: None.
-        """
-        super().refresh_runtime_translations()
-        self.refresh_language_combo_box_texts()
-
-    def change_theme_mode(self, _checked: bool | None = None) -> None:
-        """
-        Change the GUI theme.
-
-        :param _checked: Checkbox state provided by the Qt signal when available.
-        :return: None.
+        Change the GUI theme
         """
         custom_colors = {"primary": "#00aa88ff",
                          "primary>list.selectionBackground": "#00aa88be"}
 
         if self.ui.dark_mode_checkBox.isChecked():
+            set_dark_mode()
+
             qdarktheme.setup_theme(theme='dark',
                                    custom_colors=custom_colors,
                                    additional_qss="QToolTip {color: white; background-color: black; border: 0px; }")
-            set_dark_mode()
 
             # note: The 0px border on the tooltips allow it to render properly
             for diagram in self.diagram_widgets_list:
@@ -305,10 +148,10 @@ class ConfigurationMain(ResultsMain):
             self.colour_diagrams()
 
         else:
+            set_light_mode()
             qdarktheme.setup_theme(theme='light',
                                    custom_colors=custom_colors,
                                    additional_qss="QToolTip {color: black; background-color: white; border: 0px;}")
-            set_light_mode()
 
             # note: The 0px border on the tooltips allow it to render properly
             for diagram in self.diagram_widgets_list:
@@ -332,7 +175,7 @@ class ConfigurationMain(ResultsMain):
         """
         return os.path.exists(self.config_file_path())
 
-    def get_config_structure(self) -> Dict[str, Dict[str, Any]]:
+    def get_config_structure(self) -> Dict[str, Dict[str, any]]:
         """
         Get the settings configuration dictionary
         This serves to collect automatically the settings
@@ -404,7 +247,6 @@ class ConfigurationMain(ResultsMain):
                 "apply_impedance_tolerances": self.ui.apply_impedance_tolerances_checkBox,
                 "add_pf_report": self.ui.addPowerFlowReportCheckBox,
                 "initialize_angles": self.ui.initialize_pf_angles_checkBox,
-                "controls_start_tolerance": self.ui.controls_start_tolerance_spinBox
             },
             "state_estimation": {
                 "solver": self.ui.se_solver_comboBox,
@@ -516,14 +358,6 @@ class ConfigurationMain(ResultsMain):
         data = dict()
         gui_struct_to_data(data, struct)
 
-        # Persist the language as an enum name so the saved value remains stable
-        # even when the visible language labels themselves are translated.
-        graphics_data: object = data.get("graphics", None)
-        if isinstance(graphics_data, dict):
-            graphics_data["language"] = self.get_selected_language().name
-        else:
-            pass
-
         return data
 
     def save_gui_config(self):
@@ -549,22 +383,6 @@ class ConfigurationMain(ResultsMain):
             set_dark_mode()
         else:
             set_light_mode()
-
-        graphics_data: object = data.get("graphics", None)
-        if isinstance(graphics_data, dict):
-            saved_language_name: object = graphics_data.get("language", None)
-            if isinstance(saved_language_name, str):
-                selected_language: ApplicationLanguage = language_from_name(saved_language_name)
-                self.set_selected_language(selected_language)
-
-                if self.translation_controller is not None:
-                    self.translation_controller.set_language(selected_language)
-                else:
-                    pass
-            else:
-                pass
-        else:
-            pass
 
     def load_gui_config(self) -> None:
         """
@@ -596,7 +414,7 @@ class ConfigurationMain(ResultsMain):
         self.ui.menuplugins.clear()
 
         add_menu_entry(menu=self.ui.menuplugins,
-                       text=QtCore.QCoreApplication.translate("ContextMenu", "Reload"),
+                       text="Reload",
                        icon_path=":/Icons/icons/undo.png",
                        function_ptr=self.add_plugins)
 
@@ -644,8 +462,6 @@ class ConfigurationMain(ResultsMain):
         ret = fcn.get_pointer_lambda(gui_instance=self)()
 
         if fcn.call_gui and ret is not None:
-            if isinstance(ret, QtWidgets.QWidget):
+            if hasattr(ret, "show"):
                 self.plugin_windows_list.append(ret)  # This avoids the window to be garbage collected and be displayed
                 ret.show()
-            else:
-                pass

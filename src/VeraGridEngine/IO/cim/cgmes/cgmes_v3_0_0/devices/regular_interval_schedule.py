@@ -12,8 +12,8 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class RegularIntervalSchedule(BasicIntervalSchedule):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='timeStep', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.s, description='''Time, in seconds.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
-		CgmesProperty(property_name='endTime', class_type=datetime.datetime, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The time for the last time point.  The value can be a time of day, not a specific date.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='timeStep', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.s, description='''Time, in seconds.''', profiles=[]),
+		CgmesProperty(property_name='endTime', class_type=datetime.datetime, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The time for the last time point.  The value can be a time of day, not a specific date.''', profiles=[]),
 	)
 	__slots__ = ('timeStep', 'endTime')
 	def __init__(self, rdfid='', tpe='RegularIntervalSchedule'):

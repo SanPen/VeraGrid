@@ -5,7 +5,6 @@
 from __future__ import annotations
 import os
 import json
-import pathlib
 
 from collections.abc import Callable
 from typing import Union, List, Tuple
@@ -18,9 +17,8 @@ from VeraGridEngine.data_logger import DataLogger
 from VeraGridEngine.IO.veragrid.excel_interface import (load_from_xls, interpret_excel_v3, interprete_excel_v2)
 from VeraGridEngine.IO.veragrid.pack_unpack import (parse_veragrid_data, parse_multiverse_data)
 from VeraGridEngine.IO.matpower.legacy.matpower_parser import interpret_data_v1
-from VeraGridEngine.IO.matpower.devices.matpower_circuit import MatpowerCircuit
+from VeraGridEngine.IO.matpower.matpower_circuit import MatpowerCircuit
 from VeraGridEngine.IO.matpower.matpower_to_veragrid import matpower_to_veragrid
-from VeraGridEngine.IO.Eurostag.eurostag_parser import open_eurostag
 from VeraGridEngine.IO.dgs.dgs_to_veragrid import dgs_to_circuit
 from VeraGridEngine.IO.others.dpx_parser import load_dpx
 from VeraGridEngine.IO.others.ipa_parser import load_iPA
@@ -61,15 +59,11 @@ class FileOpenOptions:
                  cgmes_try_to_map_dc_to_hvdc_line: bool = True,
                  cgmes_topology_mode: CgmesTopologyMode = CgmesTopologyMode.Auto,
                  cgmes_create_busbar_section_for_every_connectivity_node: bool = False,
-                 cgmes_recovery_mode: CgmesRecoveryMode = CgmesRecoveryMode.Auto,
                  # PSSe
                  psse_adjust_taps_to_discrete_positions: bool = False,
                  psse_use_short_names: bool = True,
                  psse_flatten_virtual_taps: bool = False,
-                 # DGS
-                 dgs_use_vsc_for_injections: bool = False,
-                 dgs_use_dynamic_information: bool = False,
-                 ):
+                 cgmes_recovery_mode: CgmesRecoveryMode = CgmesRecoveryMode.Auto):
         """
         :param file_type: FileType to load, none is unsure
         :param crash_on_errors: Mainly debug feature to allow finding the exact crash issue when loading files
@@ -109,10 +103,6 @@ class FileOpenOptions:
         self.psse_adjust_taps_to_discrete_positions = psse_adjust_taps_to_discrete_positions
         self.psse_use_short_names = psse_use_short_names
         self.psse_flatten_virtual_taps = psse_flatten_virtual_taps
-
-        # DGS
-        self.dgs_use_vsc_for_injections: bool = dgs_use_vsc_for_injections
-        self.dgs_use_dynamic_information: bool = dgs_use_dynamic_information
 
 
 def open_cgmes(files: List[str] | str,
@@ -211,16 +201,10 @@ def determine_file_type(file_name: List[str] | str) -> FileType | None:
     :param file_name: file path(s) with the extension
     """
     if isinstance(file_name, list):
-        suffixes = {pathlib.Path(f).suffix.lower() for f in file_name}
-
-        if {'.ech', '.dta'}.issubset(suffixes):
-            return FileType.Eurostag
 
         looks_like_ucte = False
         for f in file_name:
-            # Use only the final suffix. Joining all suffixes breaks normal
-            # dotted names such as "case.4.10.gridcal".
-            file_extension = pathlib.Path(f).suffix.lower()
+            _, file_extension = os.path.splitext(f)
             if file_extension.lower() in ['.xml', '.zip']:
                 looks_like_ucte = False
 
@@ -239,84 +223,74 @@ def determine_file_type(file_name: List[str] | str) -> FileType | None:
 
     else:
 
-        # Use the final suffix for normal formats. Joining all suffixes breaks
-        # dotted names such as "case.4.10.gridcal".
-        path = pathlib.Path(file_name)
-        file_extension = path.suffix.lower()
-        suffixes = [suffix.lower() for suffix in path.suffixes]
-        compound_extension = ''.join(suffixes[-2:]) if len(suffixes) >= 2 else file_extension
+        name, file_extension = os.path.splitext(file_name)
         # print(name, file_extension)
-        if file_extension in ['.xls', '.xlsx']:
+        if file_extension.lower() in ['.xls', '.xlsx']:
 
             return FileType.generic_excel
 
-        elif file_extension in ['.gridcal', '.veragrid']:
+        elif file_extension.lower() in ['.gridcal', '.veragrid']:
 
             # open file content
             return FileType.VeraGrid
 
-        elif file_extension in ['.dgridcal', '.dveragrid']:
+        elif file_extension.lower() in ['.dgridcal', '.dveragrid']:
 
             # open file content
             return FileType.VeraGrid_delta
 
-        elif file_extension == '.sqlite':
+        elif file_extension.lower() == '.sqlite':
 
             # open file content
             return FileType.VeraGrid_sqlite
 
-        elif file_extension == '.dgs':
+        elif file_extension.lower() == '.dgs':
             return FileType.DGS
 
-        elif file_extension == '.gch5':
+        elif file_extension.lower() == '.gch5':
             return FileType.VeraGrid_h5
 
-        elif file_extension in ['.m', '.matpower']:
+        elif file_extension.lower() in ['.m', '.matpower']:
             return FileType.Matpower
 
-        elif file_extension in ['.ech', '.dta']:
-            return FileType.Eurostag
-
-        elif file_extension == '.dpx':
+        elif file_extension.lower() == '.dpx':
             return FileType.DPX
 
-        elif file_extension == '.pwf':
+        elif file_extension.lower() == '.pwf':
             return FileType.PWF
 
-        elif file_extension == '.json':
+        elif file_extension.lower() == '.json':
             return FileType.VeraGrid_json
 
-        elif file_extension == '.ejson3':
+        elif file_extension.lower() == '.ejson3':
             return FileType.VeraGrid_ejson3
 
-        elif file_extension == '.raw':
+        elif file_extension.lower() == '.raw':
             return FileType.PSSE_raw
 
-        elif file_extension == '.rawx':
+        elif file_extension.lower() == '.rawx':
             return FileType.PSSE_rawx
 
-        elif file_extension == '.epc':
+        elif file_extension.lower() == '.epc':
             return FileType.EPC
 
-        elif file_extension in ['.xml', '.zip']:
+        elif file_extension.lower() in ['.xml', '.zip']:
             # inconclusive
             return None
 
-        elif file_extension == '.hdf5':
+        elif file_extension.lower() == '.hdf5':
             return FileType.PyPsa_h5
 
-        elif file_extension == '.nc':
+        elif file_extension.lower() == '.nc':
             return FileType.PyPsa
 
-        elif file_extension == '.p':
+        elif file_extension.lower() == '.p':
             return FileType.PandaPower
 
-        elif file_extension == '.uct' or file_extension == '.ucte':
+        elif file_extension.lower() == '.uct' or file_extension.lower() == '.ucte':
             return FileType.UCTE
 
-        elif (file_extension == '.iidm'
-              or file_extension == '.xiidm'
-              or compound_extension == '.xiidm.bz2'):
+        elif file_extension.lower() == '.iidm' or file_extension.lower() == '.xiidm':
             return FileType.Iidm
         else:
             return None
@@ -395,7 +369,7 @@ class FileOpen:
                                                             progress_func=progress_func,
                                                             logger=self.logger)
                 # interpret file content
-                if isinstance(data_dictionary, dict):
+                if data_dictionary is not None:
                     if has_multiverse_data:
                         self.multiverse = parse_multiverse_data(data=data_dictionary,
                                                                 metadata=self.json_files["metadata"],
@@ -556,9 +530,6 @@ class FileOpen:
                 self.logger.add("File name is not a string")
                 return None
 
-        elif self.file_type == FileType.Eurostag:
-            self.circuit = open_eurostag(files=self.file_name, logger=self.logger)
-
         elif self.file_type == FileType.DPX:
             self.circuit, log = load_dpx(self.file_name)
             self.logger += log
@@ -622,12 +593,7 @@ class FileOpen:
 
         elif self.file_type == FileType.DGS:
             if isinstance(self.file_name, str):
-                self.circuit = dgs_to_circuit(
-                    self.file_name,
-                    logger_=self.logger,
-                    use_vsc_for_injections=self.options.dgs_use_vsc_for_injections,
-                    use_dynamic_information=self.options.dgs_use_dynamic_information
-                )
+                self.circuit = dgs_to_circuit(self.file_name, logger=self.logger)
             else:
                 self.logger.add("File name is not a string")
                 return None

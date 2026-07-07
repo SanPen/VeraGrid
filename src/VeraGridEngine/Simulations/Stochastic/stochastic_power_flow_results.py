@@ -4,38 +4,13 @@
 # SPDX-License-Identifier: MPL-2.0
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
-from VeraGridEngine.basic_structures import CDF, IntVec, Vec, StrVec, CxMat, Mat
+from VeraGridEngine.basic_structures import CDF
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
+from VeraGridEngine.Simulations.results_template import ResultsTemplate
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 
 
 class StochasticPowerFlowResults(ResultsTemplate):
-    LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='points_number', tpe=int, old_names=list(), expandable=False),
-        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
-        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
-        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
-        ResultsProperty(name='S_points', tpe=CxMat, old_names=list(), expandable=False),
-        ResultsProperty(name='V_points', tpe=CxMat, old_names=list(), expandable=False),
-        ResultsProperty(name='Sbr_points', tpe=CxMat, old_names=list(), expandable=False),
-        ResultsProperty(name='loading_points', tpe=CxMat, old_names=list(), expandable=False),
-        ResultsProperty(name='losses_points', tpe=CxMat, old_names=list(), expandable=False),
-        ResultsProperty(name='error_series', tpe=list, old_names=list(), expandable=False),
-        ResultsProperty(name='voltage', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='loading', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='sbranch', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='losses', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='v_std_conv', tpe=Mat, old_names=list(), expandable=False),
-        ResultsProperty(name='s_std_conv', tpe=Mat, old_names=list(), expandable=False),
-        ResultsProperty(name='l_std_conv', tpe=Mat, old_names=list(), expandable=False),
-        ResultsProperty(name='loss_std_conv', tpe=Mat, old_names=list(), expandable=False),
-        ResultsProperty(name='v_avg_conv', tpe=Mat, old_names=list(), expandable=False),
-        ResultsProperty(name='s_avg_conv', tpe=Mat, old_names=list(), expandable=False),
-        ResultsProperty(name='l_avg_conv', tpe=Mat, old_names=list(), expandable=False),
-        ResultsProperty(name='loss_avg_conv', tpe=Mat, old_names=list(), expandable=False),
-    )
-
     __slots__ = (
         "points_number",
         "bus_names",

@@ -542,6 +542,7 @@ def build_default_grid_analysis_parameters() -> dict[str, object]:
     parameters["min_vcc"] = 8.0
     parameters["max_vcc"] = 18.0
     parameters["branch_x_threshold"] = 1e-4
+    parameters["condition_number_threshold"] = 1e-4
     parameters["eps_max"] = 1e20
     parameters["eps_min"] = 1e-20
 
@@ -619,6 +620,7 @@ def build_grid_analysis_payload_from_app(
         max_vcc=float(parameters["max_vcc"]),
         logger=logger,
         branch_x_threshold=float(parameters["branch_x_threshold"]),
+        condition_number_threshold=float(parameters["condition_number_threshold"]),
         eps_max=float(parameters["eps_max"]),
         eps_min=float(parameters["eps_min"]),
     )
@@ -4980,16 +4982,16 @@ class AiChatDialogue(QtWidgets.QDialog):
         # Build the static designer-driven widget tree first.
         self.ui: Ui_AiChatDialog = Ui_AiChatDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle(self.tr("VeraGrid AI dialogue"))
+        self.setWindowTitle("VeraGrid AI dialogue")
         self.setAttribute(QtCore.Qt.WidgetAttribute.WA_DeleteOnClose, False)
         self.ui.conversation_text_browser.setOpenExternalLinks(False)
         self.ui.message_plain_text_edit.installEventFilter(self)
         if self.ui.local_model_combo_box.lineEdit() is not None:
-            self.ui.local_model_combo_box.lineEdit().setPlaceholderText(self.tr("Pick or type a GGUF file name"))
+            self.ui.local_model_combo_box.lineEdit().setPlaceholderText("Pick or type a GGUF file name")
         else:
             pass
         if self.ui.api_model_combo_box.lineEdit() is not None:
-            self.ui.api_model_combo_box.lineEdit().setPlaceholderText(self.tr("Provider model name"))
+            self.ui.api_model_combo_box.lineEdit().setPlaceholderText("Provider model name")
         else:
             pass
         self._configure_transcript_browser()
@@ -5307,9 +5309,9 @@ class AiChatDialogue(QtWidgets.QDialog):
         self._embedded_mode = enabled
 
         if enabled:
-            self.setWindowTitle(self.tr("VeraGrid AI"))
+            self.setWindowTitle("VeraGrid AI")
         else:
-            self.setWindowTitle(self.tr("VeraGrid AI dialogue"))
+            self.setWindowTitle("VeraGrid AI dialogue")
 
     def _hide_context_controls(self) -> None:
         """
@@ -5540,13 +5542,11 @@ class AiChatDialogue(QtWidgets.QDialog):
             self.ui.api_refresh_models_button.setEnabled(False)
             self.ui.api_timeout_label.setEnabled(False)
             self.ui.api_timeout_double_spin_box.setEnabled(False)
-            self.ui.local_refresh_models_button.setToolTip(self.tr("Scan the configured path for GGUF files."))
+            self.ui.local_refresh_models_button.setToolTip("Scan the configured path for GGUF files.")
             if self.ui.local_model_combo_box.lineEdit() is None:
                 pass
             else:
-                self.ui.local_model_combo_box.lineEdit().setPlaceholderText(
-                    self.tr("Pick or type a GGUF file name")
-                )
+                self.ui.local_model_combo_box.lineEdit().setPlaceholderText("Pick or type a GGUF file name")
         else:
             self.ui.groupBox.setEnabled(True)
             self.ui.groupBox_2.setEnabled(True)
@@ -5584,15 +5584,15 @@ class AiChatDialogue(QtWidgets.QDialog):
             self.ui.api_refresh_models_button.setEnabled(True)
             self.ui.api_timeout_label.setEnabled(True)
             self.ui.api_timeout_double_spin_box.setEnabled(True)
-            self.ui.api_api_key_label.setText(self.tr("API key"))
+            self.ui.api_api_key_label.setText("API key")
             self.ui.api_api_key_line_edit.setPlaceholderText(
-                self.tr("Leave empty for unauthenticated endpoints")
+                "Leave empty for unauthenticated endpoints"
             )
-            self.ui.api_refresh_models_button.setToolTip(self.tr("Query the configured backend for models."))
+            self.ui.api_refresh_models_button.setToolTip("Query the configured backend for models.")
             if self.ui.api_model_combo_box.lineEdit() is None:
                 pass
             else:
-                self.ui.api_model_combo_box.lineEdit().setPlaceholderText(self.tr("Provider model name"))
+                self.ui.api_model_combo_box.lineEdit().setPlaceholderText("Provider model name")
 
     def _is_local_provider_selected(self) -> bool:
         """
@@ -5961,9 +5961,9 @@ class AiChatDialogue(QtWidgets.QDialog):
                         approved_arguments_json=None,
                     )
             else:
-                self._set_status_message(self.tr("Type a message before sending."))
+                self._set_status_message("Type a message before sending.")
         else:
-            self._set_status_message(self.tr("Resolve the pending tool approval or clear the chat first."))
+            self._set_status_message("Resolve the pending tool approval or clear the chat first.")
 
     def _handle_send_button_clicked(self) -> None:
         """
@@ -5989,9 +5989,9 @@ class AiChatDialogue(QtWidgets.QDialog):
                 self._turn_cancel_requested = True
                 self.cancel_turn_requested.emit()
                 self.ui.send_button.setEnabled(False)
-                self._set_status_message(self.tr("Stopping AI turn..."))
+                self._set_status_message("Stopping AI turn...")
         else:
-            self._set_status_message(self.tr("There is no running AI turn to stop."))
+            self._set_status_message("There is no running AI turn to stop.")
 
     def _try_handle_direct_app_command(self, message_text: str) -> bool:
         """
@@ -6170,7 +6170,7 @@ class AiChatDialogue(QtWidgets.QDialog):
         self._turn_cancel_requested = False
         self._set_turn_running(True)
         self._show_pending_turn_preview(base_history=base_history, user_message=user_message)
-        self._set_status_message(self.tr("Running simulation and analyzing the results..."))
+        self._set_status_message("Running simulation and analyzing the results...")
         self.direct_simulation_analysis_requested.emit(request)
 
     def approve_pending_tool_call(self) -> None:
@@ -6186,7 +6186,7 @@ class AiChatDialogue(QtWidgets.QDialog):
 
         # Approval is only valid when there is a stored snapshot to replay.
         if pending_state is None:
-            self._set_status_message(self.tr("There is no pending tool call to approve."))
+            self._set_status_message("There is no pending tool call to approve.")
         else:
             approval: PendingApproval = pending_state.approval
             self._run_turn(
@@ -6215,7 +6215,7 @@ class AiChatDialogue(QtWidgets.QDialog):
         config: Optional[ProviderConfig] = self._build_provider_config()
 
         if self._turn_running:
-            self._set_status_message(self.tr("Wait for the current AI turn to finish."))
+            self._set_status_message("Wait for the current AI turn to finish.")
         else:
             pass
 
@@ -6273,7 +6273,7 @@ class AiChatDialogue(QtWidgets.QDialog):
                 self._turn_cancel_requested = False
                 self._set_turn_running(True)
                 self._show_pending_turn_preview(base_history=base_history, user_message=user_message)
-                self._set_status_message(self.tr("Running AI turn..."))
+                self._set_status_message("Running AI turn...")
                 self.turn_execution_requested.emit(request)
 
     def _show_pending_turn_preview(
@@ -6306,8 +6306,8 @@ class AiChatDialogue(QtWidgets.QDialog):
         :returns: Nothing.
         """
         if self._turn_running and (len(text_delta) > 0):
-            if self._waiting_status_base_text != self.tr("Generating response"):
-                self._waiting_status_base_text = self.tr("Generating response")
+            if self._waiting_status_base_text != "Generating response":
+                self._waiting_status_base_text = "Generating response"
             else:
                 pass
             self._pending_stream_text_delta += text_delta
@@ -6375,16 +6375,16 @@ class AiChatDialogue(QtWidgets.QDialog):
         self.ui.clear_chat_button.setEnabled(not running)
 
         if running:
-            self._waiting_status_base_text = self.tr("Running AI turn")
+            self._waiting_status_base_text = "Running AI turn"
             self._waiting_animation_index = 0
             self._waiting_animation_timer.start()
-            self.ui.send_button.setText(self.tr("Stop"))
+            self.ui.send_button.setText("Stop")
         else:
             self._waiting_animation_timer.stop()
             self._stream_update_timer.stop()
             self._pending_stream_text_delta = ""
             self._turn_cancel_requested = False
-            self.ui.send_button.setText(self.tr("Send"))
+            self.ui.send_button.setText("Send")
             self._refresh_pending_approval_widgets()
 
     def _advance_waiting_animation(self) -> None:
@@ -6960,13 +6960,13 @@ class AiChatDialogue(QtWidgets.QDialog):
         label: str
 
         if role == "user":
-            label = self.tr("You")
+            label = "You"
         else:
             if role == "assistant":
-                label = self.tr("VeraGrid AI")
+                label = "VeraGrid AI"
             else:
                 if role == "tool":
-                    label = self.tr("Tool")
+                    label = "Tool"
                 else:
                     label = role.capitalize()
 

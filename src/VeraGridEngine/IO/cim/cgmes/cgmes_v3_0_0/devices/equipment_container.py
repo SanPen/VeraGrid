@@ -7,13 +7,12 @@ from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.connectivity_node_container import ConnectivityNodeContainer
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.equipment import Equipment
 
 class EquipmentContainer(ConnectivityNodeContainer):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='Equipments', class_type='Equipment', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Contained equipment.''', profiles=[CgmesProfileType.EQ, CgmesProfileType.EQ_BD]),
+		CgmesProperty(property_name='Equipments', class_type='Equipment', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Contained equipment.''', profiles=[]),
 	)
 	__slots__ = ('Equipments',)
 	def __init__(self, rdfid='', tpe='EquipmentContainer'):

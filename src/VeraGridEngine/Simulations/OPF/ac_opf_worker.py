@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: MPL-2.0
 import numpy as np
 from typing import Union, Tuple, Sequence
-
-from VeraGridEngine import ShuntControlMode
 from VeraGridEngine.Utils.NumericalMethods.ips import interior_point_solver
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
@@ -79,8 +77,7 @@ def run_nonlinear_opf(grid: MultiCircuit,
     # create and initialize results
     results = NonlinearOPFResults()
     results.initialize(nbus=nc.nbus, nbr=nc.nbr, nsh=nc.nshunt, ng=nc.ngen, nil=len(nc.passive_branch_data.get_monitor_enabled_indices()),
-                       nhvdc=nc.nhvdc, ncap=len(capacity_nodes_idx) if capacity_nodes_idx is not None else 0,
-                       nvsc=nc.vsc_data.nelm)
+                       nhvdc=nc.nhvdc, ncap=len(capacity_nodes_idx) if capacity_nodes_idx is not None else 0)
 
     for i, island in enumerate(islands):
 
@@ -122,9 +119,8 @@ def run_nonlinear_opf(grid: MultiCircuit,
                       gen_idx=island.generator_data.original_idx,
                       hvdc_idx=island.hvdc_data.original_idx,
                       ncap_idx=capacity_nodes_idx_org,
-                      contshunt_idx=np.where(island.shunt_data.control_mode_int == ShuntControlMode.Continuous.idx())[0],
-                      acopf_mode=opf_options.acopf_mode,
-                      vsc_idx=island.vsc_data.original_idx)
+                      contshunt_idx=np.where(island.shunt_data.is_pv_control == True)[0],
+                      acopf_mode=opf_options.acopf_mode)
         if i > 0:
             results.error = max(results.error, island_res.error)
             results.iterations = max(results.iterations, island_res.iterations)

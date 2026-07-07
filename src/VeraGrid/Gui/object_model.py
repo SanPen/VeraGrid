@@ -10,16 +10,16 @@ import math
 import numpy as np
 from typing import Any, Dict, List, Union
 from PySide6 import QtCore, QtWidgets, QtGui
-from typing import Callable
 from enum import EnumMeta
 from VeraGrid.Gui.gui_functions import (IntDelegate, ComboDelegate, TextDelegate, FloatDelegate, ColorPickerDelegate,
                                         ComplexDelegate, LineLocationsDelegate, DateTimeDelegate)
 from VeraGrid.Gui.wrappable_table_model import WrappableTableModel
+from VeraGridEngine import RmsModelTemplate
 from VeraGridEngine.Devices import Bus, ContingencyGroup
 from VeraGridEngine.Devices.Parents.editable_device import GCProp, GCPROP_TYPES
+from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
-from VeraGridEngine.enumerations import PrpCat
 
 
 class ObjectsModel(WrappableTableModel):
@@ -35,9 +35,7 @@ class ObjectsModel(WrappableTableModel):
                  editable=False,
                  transposed=False,
                  check_unique: Union[None, List[str]] = None,
-                 dictionary_of_lists: Union[None, Dict[Any, List[ALL_DEV_TYPES]]] = None,
-                 properties_filter: PrpCat = PrpCat.All,
-                 error_msg_ptr: Callable[[str], None] = None):
+                 dictionary_of_lists: Union[None, Dict[Any, List[ALL_DEV_TYPES]]] = None):
         """
 
         :param objects: list of objects associated to the editor
@@ -46,7 +44,6 @@ class ObjectsModel(WrappableTableModel):
         :param editable: Is the table editable?
         :param transposed: Display the table transposed?
         :param dictionary_of_lists: dictionary of lists for the Delegates
-        :param error_msg_ptr: Error message pointer
         """
         WrappableTableModel.__init__(self, parent)
 
@@ -67,25 +64,14 @@ class ObjectsModel(WrappableTableModel):
 
         for p in property_list:
             if p.display:
-                if properties_filter == PrpCat.All:
-                    self.property_list.append(p)
-                    self.attributes.append(p.name)
-                    self.attribute_types.append(p.tpe)
-                    self.units.append(p.units)
-                    self.tips.append(p.definition)
+                self.property_list.append(p)
+                self.attributes.append(p.name)
+                self.attribute_types.append(p.tpe)
+                self.units.append(p.units)
+                self.tips.append(p.definition)
 
-                    if not p.editable:
-                        self.non_editable_attributes.append(p.name)
-                else:
-                    if properties_filter in p.category:
-                        self.property_list.append(p)
-                        self.attributes.append(p.name)
-                        self.attribute_types.append(p.tpe)
-                        self.units.append(p.units)
-                        self.tips.append(p.definition)
-
-                        if not p.editable:
-                            self.non_editable_attributes.append(p.name)
+                if not p.editable:
+                    self.non_editable_attributes.append(p.name)
 
         self.check_unique = check_unique if check_unique is not None else list()
 
@@ -99,20 +85,7 @@ class ObjectsModel(WrappableTableModel):
 
         self.dictionary_of_lists = dictionary_of_lists if dictionary_of_lists is not None else dict()
 
-        self.error_msg_ptr: Callable[[str], None] | None = error_msg_ptr
-
         self.set_delegates()
-
-    def report_error(self, msg: str):
-        """
-
-        :param msg:
-        :return:
-        """
-        if self.error_msg_ptr is not None:
-            self.error_msg_ptr(msg)
-        else:
-            print(msg)
 
     def set_time_index(self, time_index: Union[int, None]):
         """
@@ -120,20 +93,9 @@ class ObjectsModel(WrappableTableModel):
         :param time_index: None or integer value
         """
         self.time_index_ = time_index
-
-        row_count: int = self.rowCount()
-        col_count: int = self.columnCount()
-
-        if row_count > 0 and col_count > 0:
-            top_left: QtCore.QModelIndex = self.index(0, 0)
-            bottom_right: QtCore.QModelIndex = self.index(row_count - 1, col_count - 1)
-            self.dataChanged.emit(
-                top_left,
-                bottom_right,
-                [QtCore.Qt.ItemDataRole.DisplayRole, QtCore.Qt.ItemDataRole.EditRole],
-            )
-        else:
-            pass
+        role = 0
+        index = QtCore.QModelIndex()
+        self.dataChanged.emit(index, index, [role])
 
     def set_delegates(self) -> None:
         """
@@ -257,7 +219,7 @@ class ObjectsModel(WrappableTableModel):
         if self.editable and self.attributes[attr_idx] not in self.non_editable_attributes:
             return QtCore.Qt.ItemFlag.ItemIsEditable | QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable
         else:
-            return QtCore.Qt.ItemFlag.ItemIsEnabled | QtCore.Qt.ItemFlag.ItemIsSelectable
+            return QtCore.Qt.ItemFlag.ItemIsEnabled
 
     def rowCount(self, parent: QtCore.QModelIndex = None) -> int:
         """
@@ -380,9 +342,6 @@ class ObjectsModel(WrappableTableModel):
                 else:
                     return str(self.data_with_type(index))
 
-            elif role == QtCore.Qt.ItemDataRole.EditRole:
-                return self.data_with_type(index)
-
             elif role == QtCore.Qt.ItemDataRole.BackgroundRole:
 
                 if self.property_list[attr_idx].is_color:
@@ -426,10 +385,7 @@ class ObjectsModel(WrappableTableModel):
                     else:
                         value2 = value
 
-                    try:
-                        self.objects[obj_idx].set_value(prop=prop, t_idx=self.time_index_, value=value2)
-                    except ValueError as e:
-                        self.report_error(str(e))
+                    self.objects[obj_idx].set_value(prop=prop, t_idx=self.time_index_, value=value2)
                 else:
                     pass  # the column cannot be edited
             else:

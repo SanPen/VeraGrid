@@ -131,7 +131,7 @@ def levenberg_marquardt_fx(problem: PfFormulationTemplate,
                 nu = 2.0
 
                 # update
-                update_controls = error < problem.options.controls_start_tolerance
+                update_controls = error < (tol * 100)
                 error, converged, x, f = problem.update(x - dx, update_controls=update_controls)
 
                 # record the previous objective function value
@@ -180,3 +180,4 @@ def levenberg_marquardt_fx(problem: PfFormulationTemplate,
                     print(f'error {error}, converged {converged}, x {x}, dx {dx}')
 
     return problem.get_solution(elapsed=time.time() - start, iterations=iter_)
+

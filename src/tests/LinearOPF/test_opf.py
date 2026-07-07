@@ -433,51 +433,6 @@ def test_opf_battery_shedding():
     assert np.allclose(driver.results.battery_power[:, 0], load1.P_prof.toarray())
 
 
-def test_opf_battery_energy_sign():
-    """
-    Checks the direction of the battery charging and discharging
-    """
-    grid = MultiCircuit()
-    grid.create_profiles(steps=6, step_length=1, step_unit="h")
-
-    bus1 = grid.add_bus(Bus(name="bus1", Vnom=10))
-    load1 = grid.add_load(bus=bus1, api_obj=Load(name="load1", Cost=10000.0))
-    load1.P_prof = np.array([8.0, 8.0, 8.0, 8.0, 8.0, 8.0])
-
-    # expensive backup generator so the cheap battery is dispatched to serve the load
-    grid.add_generator(bus=bus1, api_obj=Generator(name="g", enabled_dispatch=True,
-                                                   Cost=100.0, Pmax=100, Pmin=0))
-
-    # cheap dispatchable battery, starts nearly full
-    batt = grid.add_battery(bus=bus1, api_obj=Battery(name="b", enabled_dispatch=True, Cost=1.0,
-                                                      Enom=50.0, soc=0.9, min_soc=0.1, max_soc=0.99,
-                                                      Pmax=10, Pmin=-10,
-                                                      charge_efficiency=0.95, discharge_efficiency=0.9))
-
-    opf_options = OptimalPowerFlowOptions(verbose=0, solver=SolverType.LINEAR_OPF,
-                                          zonal_grouping=ZonalGrouping.NoGrouping)
-    driver = OptimalPowerFlowTimeSeriesDriver(grid=grid, options=opf_options)
-    driver.run()
-
-    p = driver.results.battery_power[:, 0]
-    e = driver.results.battery_energy[:, 0]
-
-    # the battery must actually inject power 
-    p_pos = np.maximum(p, 0.0)
-    p_neg = np.maximum(-p, 0.0)
-    assert (p_pos > 1e-6).any()
-
-    # re-write the charging/discharging formula and check 
-    ce = batt.charge_efficiency, 
-    de = batt.discharge_efficiency
-    expected = e[:-1] + (ce * p_neg[1:] - p_pos[1:] / de)
-    assert np.allclose(e[1:], expected, atol=1e-6)
-
-    # while discharging, stored energy strictly decreases
-    discharging = p[1:] > 1e-6
-    assert (e[1:][discharging] < e[:-1][discharging]).all()
-
-
 def test_opf_load_shedding():
     """
     This test, checks that a load is shed appropriately because of a generator constraint

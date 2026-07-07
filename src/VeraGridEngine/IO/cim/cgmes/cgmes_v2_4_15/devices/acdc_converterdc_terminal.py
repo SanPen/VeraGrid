@@ -6,7 +6,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v2_4_15.devices.dc_base_terminal import DCBaseTerminal
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import DCPolarityKind, CgmesProfileType
+from VeraGridEngine.IO.cim.cgmes.cgmes_enums import DCPolarityKind
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 if TYPE_CHECKING:
@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 
 class ACDCConverterDCTerminal(DCBaseTerminal):
     LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-        CgmesProperty(property_name='DCConductingEquipment', class_type='ACDCConverter', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''None''', mandatory=True, profiles=[CgmesProfileType.EQ]),
-        CgmesProperty(property_name='polarity', class_type=DCPolarityKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Represents the normal network polarity condition.''', profiles=[CgmesProfileType.EQ]),
+        CgmesProperty(property_name='DCConductingEquipment', class_type='ACDCConverter', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''None''', profiles=[]),
+        CgmesProperty(property_name='polarity', class_type=DCPolarityKind, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Represents the normal network polarity condition.''', profiles=[]),
     )
     __slots__ = ('DCConductingEquipment', 'polarity')
     def __init__(self, rdfid='', tpe='ACDCConverterDCTerminal'):

@@ -3,7 +3,8 @@
 # file, You can see it at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Any, Tuple, Dict
+from typing import Any, Tuple
+from unittest.mock import patch
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
@@ -17,7 +18,6 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProb
 from VeraGridEngine.Simulations.EMT.solvers.jit_symbolic_solver import JitSymbolicSolver
 from VeraGridEngine.enumerations import DynamicIntegrationMethod
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-
 class GenericEmtProblem(EmtProblemTemplate):
     __slots__ = list()
 
@@ -77,12 +77,9 @@ def test_implicit_armonic() -> None:
     sys_block, var_x, var_v = build_oscillator_system(vf=vf, omega = omega)
     sys_block.unify_blocks()
     glob_time = vf.add_var("t_glob")
-    static_parameter_values_mapping: Dict[Var, Const] = dict()
 
     # 2. Setup Problem
-    problem: GenericEmtProblem = GenericEmtProblem(sys_block=sys_block,
-                         static_parameter_values_mapping=static_parameter_values_mapping,
-                         glob_time=glob_time,)
+    problem: GenericEmtProblem = GenericEmtProblem(sys_block, glob_time)
 
     idx_x: int = problem.get_var_idx(var_x)
     idx_v: int = problem.get_var_idx(var_v)
@@ -100,7 +97,7 @@ def test_implicit_armonic() -> None:
         method=DynamicIntegrationMethod.DaeTrapezoidal,
         verbose=True
     )
-    t_trap, y_trap_full, _, _, _ = solver_trap.simulate()
+    t_trap, y_trap_full, _ = solver_trap.simulate()
 
     # --- CASE 2: BDF2 Method (L-Stable) ---
     print("\n[2] Running Implicit Solver (Method: BDF2)...")
@@ -109,7 +106,7 @@ def test_implicit_armonic() -> None:
         method=DynamicIntegrationMethod.DaeBDF2,
         verbose=True
     )
-    t_bdf, y_bdf_full,_, _, _= solver_bdf.simulate()
+    t_bdf, y_bdf_full, _ = solver_bdf.simulate()
 
     # --- Analysis ---
     x_trap: np.ndarray = y_trap_full[:, idx_x]

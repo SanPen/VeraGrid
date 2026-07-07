@@ -7,7 +7,7 @@ import numpy as np
 from typing import Tuple
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import BuildStatus, DeviceType, PrpCat
+from VeraGridEngine.enumerations import BuildStatus, DeviceType
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
@@ -27,56 +27,24 @@ class SeriesReactance(BranchParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(
-            prop_name='R',
-            units='p.u.',
-            tpe=float,
-            definition='Total positive sequence resistance.',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='X',
-            units='p.u.',
-            tpe=float,
-            definition='Total positive sequence reactance.',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='R0',
-            units='p.u.',
-            tpe=float,
-            definition='Total zero sequence resistance.',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='X0',
-            units='p.u.',
-            tpe=float,
-            definition='Total zero sequence reactance.',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='R2',
-            units='p.u.',
-            tpe=float,
-            definition='Total negative sequence resistance.',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='X2',
-            units='p.u.',
-            tpe=float,
-            definition='Total negative sequence reactance.',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='tolerance',
-            units='%',
-            tpe=float,
-            definition='Tolerance expected for the impedance values % is expected '
-                                 'for transformers0% for lines.',
-            cat=[PrpCat.PF],
-        ),
+        GCProp(key='R', units='p.u.', tpe=float, definition='Total positive sequence resistance.'),
+        GCProp(key='X', units='p.u.', tpe=float, definition='Total positive sequence reactance.'),
+        GCProp(key='R0', units='p.u.', tpe=float, definition='Total zero sequence resistance.'),
+        GCProp(key='X0', units='p.u.', tpe=float, definition='Total zero sequence reactance.'),
+        GCProp(key='R2', units='p.u.', tpe=float, definition='Total negative sequence resistance.'),
+        GCProp(key='X2', units='p.u.', tpe=float, definition='Total negative sequence reactance.'),
+        GCProp(key='tolerance', units='%', tpe=float,
+                      definition='Tolerance expected for the impedance values % is expected '
+                                 'for transformers0% for lines.'),
+        GCProp(key='r_fault', units='p.u.', tpe=float,
+                      definition='Resistance of the mid-line fault.Used in short circuit studies.'),
+        GCProp(key='x_fault', units='p.u.', tpe=float,
+                      definition='Reactance of the mid-line fault.Used in short circuit studies.'),
+        GCProp(key='fault_pos', units='p.u.', tpe=float,
+                      definition='Per-unit positioning of the fault:'
+                                 '0 would be at the "from" side,'
+                                 '1 would be at the "to" side,'
+                                 'therefore 0.5 is at the middle.'),
     )
 
     def __init__(self,
@@ -84,9 +52,7 @@ class SeriesReactance(BranchParent):
                  bus_to: Bus = None,
                  name='SeriesReactance',
                  idtag=None, code='',
-                 r=1e-20, x=1e-5,
-                 design_rate: float = 9999.0,
-                 rate=9999.0,
+                 r=1e-20, x=1e-20, rate=1.0,
                  active=True,
                  tolerance=0,
                  cost=100.0,
@@ -115,7 +81,6 @@ class SeriesReactance(BranchParent):
         :param code: secondary ID
         :param r: Branch resistance in per unit
         :param x: Branch reactance in per unit
-        :param design_rate: Design rate (MVA)
         :param rate: Branch rate in MVA
         :param active: Is the branch active?
         :param tolerance: Tolerance specified for the branch impedance in %
@@ -149,7 +114,6 @@ class SeriesReactance(BranchParent):
                               bus_to=bus_to,
                               active=active,
                               reducible=False,
-                              design_rate=design_rate,
                               rate=rate,
                               contingency_factor=contingency_factor,
                               protection_rating_factor=protection_rating_factor,

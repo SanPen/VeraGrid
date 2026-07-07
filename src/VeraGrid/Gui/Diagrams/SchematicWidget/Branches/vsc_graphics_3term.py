@@ -9,16 +9,15 @@ from PySide6.QtCore import Qt, QPoint, QRectF, QPointF
 from PySide6.QtGui import QIcon, QPixmap, QPainter, QPen, QBrush, QColor, QCursor, QTransform, QFont
 from PySide6.QtWidgets import QMenu, QGraphicsItem, QGraphicsRectItem, QGraphicsSceneMouseEvent
 
-from VeraGrid.Gui.DeviceEditors.VscEditor.vsc_device_editor import VscDeviceEditorDialog
-from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
-from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
+from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import RoundTerminalItem
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget, ACTIVE, DEACTIVATED
 from VeraGridEngine.Devices.Branches.vsc import VSC
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import (ConverterControlType,
+from VeraGridEngine.enumerations import (DeviceType,
+                                         ConverterControlType,
                                          SchematicAutoRouteStyle,
                                          SchematicRouteKind,
-                                         DynamicSimulationMode,
                                          TerminalType)  # Assuming VSC controls might be relevant later
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
@@ -208,18 +207,6 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
     @property
     def editor(self) -> SchematicWidget:
         return self._editor
-
-    def open_device_editor(self) -> bool:
-        """
-        Open the VSC editor for this three-terminal converter.
-
-        :return: ``True`` when the editor was opened.
-        """
-        dlg = VscDeviceEditorDialog(api_object=self.api_object, circuit=self.editor.circuit, main_gui=self.editor.gui)
-        if dlg.exec():
-            return True
-        else:
-            return True
 
     def paint(self, painter: QPainter, option, widget=None) -> None:
         """Paint the VSC symbol."""
@@ -587,12 +574,10 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
             self.editor.set_editor_model(api_object=self.api_object)
 
     def mouseDoubleClickEvent(self, event):
-        """
-        Open the VSC editor on double click.
-
-        :param event: Qt mouse event.
-        """
-        self.open_device_editor()
+        """ On double-click, potentially open an editor (optional)."""
+        # Currently no specific editor for VSC, but could be added.
+        # self.edit()
+        pass
 
     def delete(self):
         """Delete the VSC and its connections."""
@@ -703,33 +688,25 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
             menu = QMenu()
 
             # Enable/Disable
-            pe = menu.addAction(translate_context_menu_text("Enable/Disable"))
+            pe = menu.addAction('Enable/Disable')
             pe_icon = QIcon()
             if self.api_object.active:
                 pe_icon.addPixmap(QPixmap(":/Icons/icons/uncheck_all.png"))
             else:
                 pe_icon.addPixmap(QPixmap(":/Icons/icons/check_all.png"))
             pe.setIcon(pe_icon)
-            pe.triggered.connect(self.toggle_enable_from_menu)
+            pe.triggered.connect(lambda: self.set_enable(not self.api_object.active))
 
-            add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Editor"),
-                           function_ptr=self.open_device_editor,
-                           icon_path=":/Icons/icons/edit.png")
-
-            add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("RMS Editor"),
-                           function_ptr=self.edit_dynamic_rms,
-                           icon_path=":/Icons/icons/dyn_edit.png")
-
-            add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("EMT Editor"),
-                           function_ptr=self.edit_dynamic_emt,
-                           icon_path=":/Icons/icons/dyn_emt_edit.png")
+            # Draw Labels (if applicable)
+            # add_menu_entry(menu=menu,
+            #                text="Draw labels",
+            #                function_ptr=self.enable_disable_label_drawing, # Needs implementation if label drawing is kept
+            #                checkeable=True,
+            #                checked_value=self.draw_labels)
 
             # Delete
             menu.addSeparator()
-            ra2 = menu.addAction(translate_context_menu_text("Delete"))
+            ra2 = menu.addAction('Delete')
             del_icon = QIcon()
             del_icon.addPixmap(QPixmap(":/Icons/icons/delete3.png"))
             ra2.setIcon(del_icon)
@@ -739,35 +716,35 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Control V AC from DC+"),
+                           text="Control V AC from DC+",
                            function_ptr=self.control_v_from,
                            icon_path=":/Icons/icons/edit.png")
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Control V AC from AC"),
+                           text="Control V AC from AC",
                            function_ptr=self.control_v_to,
                            icon_path=":/Icons/icons/edit.png")
 
             menu.addSeparator()
 
             add_menu_entry(menu=menu,
-                           text=translate_context_menu_text("Rotate 90"),
+                           text="Rotate 90",
                            function_ptr=self.rotate_90,
                            icon_path=":/Icons/icons/rotate.svg")
 
-            ra6 = menu.addAction(translate_context_menu_text("Plot profiles"))
+            ra6 = menu.addAction('Plot profiles')
             plot_icon = QIcon()
             plot_icon.addPixmap(QPixmap(":/Icons/icons/plot.png"))
             ra6.setIcon(plot_icon)
             ra6.triggered.connect(self.plot_profiles)
 
-            ra4 = menu.addAction(translate_context_menu_text("Assign rate to profile"))
+            ra4 = menu.addAction('Assign rate to profile')
             ra4_icon = QIcon()
             ra4_icon.addPixmap(QPixmap(":/Icons/icons/assign_to_profile.png"))
             ra4.setIcon(ra4_icon)
             ra4.triggered.connect(self.assign_rate_to_profile)
 
-            ra5 = menu.addAction(translate_context_menu_text("Assign active state to profile"))
+            ra5 = menu.addAction('Assign active state to profile')
             ra5_icon = QIcon()
             ra5_icon.addPixmap(QPixmap(":/Icons/icons/assign_to_profile.png"))
             ra5.setIcon(ra5_icon)
@@ -776,15 +753,6 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
             menu.exec_(event.screenPos())
         else:
             pass
-
-    def toggle_enable_from_menu(self) -> None:
-        """
-        Toggle enable state from context-menu action.
-        """
-        if self.api_object.active:
-            self.set_enable(False)
-        else:
-            self.set_enable(True)
 
     def control_v_from(self):
         """
@@ -865,21 +833,3 @@ class VscGraphicItem3Term(GenericDiagramWidget, QGraphicsRectItem):
         else:
             print('Error in the VSC connection!')
             return False
-
-    def edit_dynamic_rms(self):
-        """
-        Open the unified dynamic editor workspace for this generator.
-        """
-
-        self.editor.gui.open_dynamic_editor(api_object=self.api_object,
-                                            circuit=self.editor.circuit,
-                                            preferred_mode=DynamicSimulationMode.RMS)
-
-    def edit_dynamic_emt(self):
-        """
-        Open the unified dynamic editor workspace for this generator.
-        """
-
-        self.editor.gui.open_dynamic_editor(api_object=self.api_object,
-                                            circuit=self.editor.circuit,
-                                            preferred_mode=DynamicSimulationMode.EMT)

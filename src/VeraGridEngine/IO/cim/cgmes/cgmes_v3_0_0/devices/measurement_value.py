@@ -12,8 +12,8 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class MeasurementValue(IOPoint):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='timeStamp', class_type=datetime.datetime, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The time when the value was last updated.''', profiles=[CgmesProfileType.OP]),
-		CgmesProperty(property_name='sensorAccuracy', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Percentage on a defined base.   For example, specify as 100 to indicate at the defined base.''', profiles=[CgmesProfileType.OP]),
+		CgmesProperty(property_name='timeStamp', class_type=datetime.datetime, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The time when the value was last updated.''', profiles=[]),
+		CgmesProperty(property_name='sensorAccuracy', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Percentage on a defined base.   For example, specify as 100 to indicate at the defined base.''', profiles=[]),
 	)
 	__slots__ = ('timeStamp', 'sensorAccuracy')
 	def __init__(self, rdfid='', tpe='MeasurementValue'):

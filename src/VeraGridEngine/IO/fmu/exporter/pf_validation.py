@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from argparse import ArgumentParser
 from pathlib import Path
+import importlib
 import sys
 
 
@@ -66,9 +67,7 @@ def load_powerfactory_module():
         if str(directory) not in sys.path:
             sys.path.insert(0, str(directory))
         try:
-            import powerfactory
-
-            return powerfactory, directory
+            return importlib.import_module("powerfactory"), directory
         except Exception:
             continue
     raise ModuleNotFoundError("Could not locate a compatible PowerFactory Python module for this Python version")

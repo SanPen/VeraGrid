@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from typing import Tuple, Union
 from numpy import sqrt
-from VeraGridEngine.enumerations import TapChangerTypes, WindingType, PrpCat
+from VeraGridEngine.enumerations import TapChangerTypes, WindingType
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 from VeraGridEngine.Devices.Parents.dynamic_parent import DynamicDevice
 from VeraGridEngine.Devices.Branches.tap_changer import TapChanger
@@ -30,159 +30,31 @@ class TransformerType(DynamicDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(
-            prop_name='HV',
-            units='kV',
-            tpe=float,
-            definition='Nominal voltage al the high voltage side',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='LV',
-            units='kV',
-            tpe=float,
-            definition='Nominal voltage al the low voltage side',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='Sn',
-            units='MVA',
-            tpe=float,
-            definition='Nominal power',
-            old_names=['rating'],
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='Pcu',
-            units='kW',
-            tpe=float,
-            definition='Copper losses',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='Pfe',
-            units='kW',
-            tpe=float,
-            definition='Iron losses',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='I0',
-            units='%',
-            tpe=float,
-            definition='No-load current',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='Vsc',
-            units='%',
-            tpe=float,
-            definition='Short-circuit voltage',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='capex',
-            units='currency',
-            tpe=float,
-            definition='Capital expenditure',
-            cat=[PrpCat.INV],
-        ),
-        GCProp(
-            prop_name='opex',
-            units='currency/MWh',
-            tpe=float,
-            definition='Operational expenditure',
-            cat=[PrpCat.INV],
-        ),
-        GCProp(
-            prop_name='tc_type',
-            units='',
-            tpe=TapChangerTypes,
-            definition='Regulation type',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='total_positions',
-            units='',
-            tpe=int,
-            definition='Number of tap positions',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='dV',
-            units='p.u.',
-            tpe=float,
-            definition='Voltage increment per step',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='neutral_position',
-            units='',
-            tpe=int,
-            definition='neutral position counting from zero',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='asymmetry_angle',
-            units='deg',
-            tpe=float,
-            definition='Asymmetry_angle',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='conn_hv',
-            units='',
-            tpe=WindingType,
-            definition='Winding 3 phase connection at the from side',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='conn_lv',
-            units='',
-            tpe=WindingType,
-            definition='Winding 3 phase connection at the to side',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='vector_group_number',
-            units='',
-            tpe=int,
-            definition='Vector group number. It indicates the structural phase:'
-                          'phase = vector_group_number · 30º',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='tap_module_min',
-            units='p.u.',
-            tpe=float,
-            definition='Min tap module',
-            editable=False,
-            cat=[PrpCat.PF, PrpCat.OPF],
-        ),
-        GCProp(
-            prop_name='tap_module_max',
-            units='p.u.',
-            tpe=float,
-            definition='Max tap module',
-            editable=False,
-            cat=[PrpCat.PF, PrpCat.OPF],
-        ),
-        GCProp(
-            prop_name='tap_phase_min',
-            units='rad',
-            tpe=float,
-            definition='Min tap phase',
-            editable=False,
-            cat=[PrpCat.PF, PrpCat.OPF],
-        ),
-        GCProp(
-            prop_name='tap_phase_max',
-            units='rad',
-            tpe=float,
-            definition='Max tap phase',
-            editable=False,
-            cat=[PrpCat.PF, PrpCat.OPF],
-        ),
+        GCProp(key='HV', units='kV', tpe=float, definition='Nominal voltage al the high voltage side'),
+        GCProp(key='LV', units='kV', tpe=float, definition='Nominal voltage al the low voltage side'),
+        GCProp(key='Sn', units='MVA', tpe=float, definition='Nominal power', old_names=['rating']),
+        GCProp(key='Pcu', units='kW', tpe=float, definition='Copper losses'),
+        GCProp(key='Pfe', units='kW', tpe=float, definition='Iron losses'),
+        GCProp(key='I0', units='%', tpe=float, definition='No-load current'),
+        GCProp(key='Vsc', units='%', tpe=float, definition='Short-circuit voltage'),
+        GCProp(key='capex', units='currency', tpe=float, definition='Capital expenditure'),
+        GCProp(key='opex', units='currency/MWh', tpe=float, definition='Operational expenditure'),
+        GCProp(key='tc_type', units='', tpe=TapChangerTypes, definition='Regulation type'),
+        GCProp(key='total_positions', units='', tpe=int, definition='Number of tap positions'),
+        GCProp(key='dV', units='p.u.', tpe=float, definition='Voltage increment per step'),
+        GCProp(key='neutral_position', units='', tpe=int, definition='neutral position counting from zero'),
+        GCProp(key='asymmetry_angle', units='deg', tpe=float, definition='Asymmetry_angle'),
+        GCProp(key='conn_hv', units='', tpe=WindingType,
+               definition='Winding 3 phase connection at the from side'),
+        GCProp(key='conn_lv', units='', tpe=WindingType,
+               definition='Winding 3 phase connection at the to side'),
+        GCProp(key='vector_group_number', units='', tpe=int,
+               definition='Vector group number. It indicates the structural phase:'
+                          'phase = vector_group_number · 30º'),
+        GCProp(key='tap_module_min', units='p.u.', tpe=float, definition='Min tap module', editable=False),
+        GCProp(key='tap_module_max', units='p.u.', tpe=float, definition='Max tap module', editable=False),
+        GCProp(key='tap_phase_min', units='rad', tpe=float, definition='Min tap phase', editable=False),
+        GCProp(key='tap_phase_max', units='rad', tpe=float, definition='Max tap phase', editable=False),
     )
 
     def __init__(self,

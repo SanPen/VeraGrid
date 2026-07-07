@@ -49,7 +49,7 @@ ygeo: latitude
 from __future__ import annotations
 from typing import List, Union, Tuple, Callable, TYPE_CHECKING
 from enum import Enum
-from PySide6.QtCore import Qt, QEvent, QPointF, QRectF
+from PySide6.QtCore import Qt, QEvent, QPointF
 from PySide6.QtGui import (QPainter, QColor, QPixmap, QCursor,
                            QMouseEvent, QKeyEvent, QWheelEvent,
                            QResizeEvent, QEnterEvent, QPaintEvent, QDragEnterEvent, QDragMoveEvent, QDropEvent)
@@ -176,9 +176,8 @@ class MapView(QGraphicsView):
         self.scale(initial_zoom_factor, initial_zoom_factor)
 
         self.setRubberBandSelectionMode(Qt.ItemSelectionMode.IntersectsItemShape)
-        self.setViewportUpdateMode(QGraphicsView.ViewportUpdateMode.MinimalViewportUpdate)
+        self.setViewportUpdateMode(QGraphicsView.ViewportUpdateMode.BoundingRectViewportUpdate)
         self.setOptimizationFlag(QGraphicsView.OptimizationFlag.DontSavePainterState, True)
-        self.setOptimizationFlag(QGraphicsView.OptimizationFlag.DontAdjustForAntialiasing, True)
 
         self.setRenderHints(QPainter.RenderHint.Antialiasing | QPainter.RenderHint.SmoothPixmapTransform)
 
@@ -268,30 +267,40 @@ class MapView(QGraphicsView):
         """
         self.map_widget.keyReleaseEvent(event)
 
-    def wheelEvent(self, event: QWheelEvent) -> None:
+    def wheelEvent(self, event: QWheelEvent):
         """
 
         :param event:
         :return:
         """
+        zoom_0 = self.map_widget.level
+
         self.mouse_x = event.position().x()
         self.mouse_y = event.position().y()
 
-        zoom_steps: float = self.map_widget.editor.get_wheel_zoom_steps(event=event)
-        if zoom_steps == 0.0:
-            event.accept()
-            return
+        if event.angleDelta().y() > 0:
+            new_level = zoom_0 + 1
         else:
-            zoom_applied: bool = self.map_widget.apply_fractional_zoom_steps(steps=zoom_steps,
-                                                                             view_x=self.mouse_x,
-                                                                             view_y=self.mouse_y)
-            if zoom_applied:
-                self.map_widget.wheelEvent(event)
-                self.center_schema()
-                self.update_label_position()
-                event.accept()
-            else:
-                event.ignore()
+            new_level = zoom_0 - 1
+
+        if self.map_widget.tile_src.level_in_range(new_level):
+
+            val = self.map_widget.apply_zoom_level(level=new_level,
+                                                   view_x=self.mouse_x,
+                                                   view_y=self.mouse_y)
+
+            if not val:
+                # revert to the previous zoom
+                self.map_widget.apply_zoom_level(level=zoom_0,
+                                                view_x=self.mouse_x,
+                                                view_y=self.mouse_y)
+
+            self.map_widget.wheelEvent(event)
+            self.center_schema()
+            self.update_label_position()
+
+        else:
+            print(f"Zoom {new_level} out of range...")
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         """
@@ -493,7 +502,6 @@ class MapWidget(QWidget):
         # keyboard state variables
         self.shift_down = False
         self.zoom_factor = 2
-        self.fractional_zoom: float = 1.0
 
         # when dragging, remember the initial start point
         self.start_drag_x: float | None = None
@@ -557,20 +565,12 @@ class MapWidget(QWidget):
         level, longitude, latitude = self.get_level_and_position()
 
         if tile_src.tile_set_name != self._tile_src.tile_set_name:  # avoid changing tile sets to themselves
-            old_tile_src: Tiles = self._tile_src
-            old_tile_src.shutdown()
             self._tile_src: Tiles = tile_src.copy()
             self._tile_src.setCallback(self.on_tile_available)
             self.view.set_notice(val=self._tile_src.attribution_string)
 
-            # Clamp level to the new tile source limits.
-            level = max(self._tile_src.min_level, min(level, self._tile_src.max_level))
-
-            # Use the synchronized zoom path so map and graphics overlay keep
-            # the same transform basis after a tile-source switch.
-            if self.apply_zoom_level(level=level):
-                if longitude is not None and latitude is not None:
-                    self.go_to_position(longitude=longitude, latitude=latitude)
+            if self.GotoLevel(level):
+                self.go_to_level_and_position(level=level, longitude=longitude, latitude=latitude)
                 self.view.center_schema()
             else:
                 while abs(self.view.schema_zoom - 0.015625) > 0.00001:
@@ -611,24 +611,6 @@ class MapWidget(QWidget):
         return self.tile_src.tile_size_y
 
     @property
-    def effective_tile_width(self) -> float:
-        """
-        Get the visible tile width after fractional zoom.
-
-        :return: Tile width in view pixels.
-        """
-        return float(self.tile_width) * self.fractional_zoom
-
-    @property
-    def effective_tile_height(self) -> float:
-        """
-        Get the visible tile height after fractional zoom.
-
-        :return: Tile height in view pixels.
-        """
-        return float(self.tile_height) * self.fractional_zoom
-
-    @property
     def num_tiles_x(self):
         """
 
@@ -650,7 +632,7 @@ class MapWidget(QWidget):
 
         :return:
         """
-        return self.num_tiles_x * self.effective_tile_width  # virtual map width
+        return self.num_tiles_x * self.tile_width  # virtual map width
 
     @property
     def map_height(self):
@@ -658,7 +640,7 @@ class MapWidget(QWidget):
 
         :return:
         """
-        return self.num_tiles_y * self.effective_tile_height  # virtual map height
+        return self.num_tiles_y * self.tile_height  # virtual map height
 
     @property
     def view_width(self):
@@ -814,24 +796,24 @@ class MapWidget(QWidget):
                 delta_x = self.start_drag_x - x
                 self.key_tile_x_offset -= delta_x
 
-                if self.key_tile_x_offset < -self.effective_tile_width:  # too far left
-                    self.key_tile_x_offset += self.effective_tile_width
+                if self.key_tile_x_offset < -self.tile_width:  # too far left
+                    self.key_tile_x_offset += self.tile_width
                     self.key_tile_left += 1
 
                 if self.key_tile_x_offset > 0:  # too far right
-                    self.key_tile_x_offset -= self.effective_tile_width
+                    self.key_tile_x_offset -= self.tile_width
                     self.key_tile_left -= 1
 
                 # drag the key tile in the Y direction
                 delta_y = self.start_drag_y - y
                 self.key_tile_y_offset -= delta_y
 
-                if self.key_tile_y_offset < -self.effective_tile_height:  # too far up
-                    self.key_tile_y_offset += self.effective_tile_height
+                if self.key_tile_y_offset < -self.tile_height:  # too far up
+                    self.key_tile_y_offset += self.tile_height
                     self.key_tile_top += 1
 
                 if self.key_tile_y_offset > 0:  # too far down
-                    self.key_tile_y_offset -= self.effective_tile_height
+                    self.key_tile_y_offset -= self.tile_height
                     self.key_tile_top -= 1
 
                 # set key tile stuff so update() shows drag
@@ -919,8 +901,6 @@ class MapWidget(QWidget):
         # 'col_list' which are list of tile coords to draw (row and colums).
 
         col_list = []
-        effective_tile_width: float = self.effective_tile_width
-        effective_tile_height: float = self.effective_tile_height
         x_coord = self.key_tile_left
         x_pix_start = self.key_tile_x_offset
         while x_pix_start < self.view_width:
@@ -928,7 +908,7 @@ class MapWidget(QWidget):
             if x_coord >= self.num_tiles_x - 1:
                 break
             x_coord = (x_coord + 1) % self.num_tiles_x
-            x_pix_start += effective_tile_width
+            x_pix_start += self.tile_width
 
         row_list = []
         y_coord = self.key_tile_top
@@ -938,7 +918,7 @@ class MapWidget(QWidget):
             if y_coord >= self.num_tiles_y - 1:
                 break
             y_coord = (y_coord + 1) % self.num_tiles_y
-            y_pix_start += effective_tile_height
+            y_pix_start += self.tile_height
 
         # Ready to update the view
         # prepare the canvas
@@ -950,18 +930,9 @@ class MapWidget(QWidget):
         for x in col_list:
             y_pix = self.key_tile_y_offset
             for y in row_list:
-                tile_pixmap: QPixmap = self.tile_src.GetTile(x, y)
-                target_rect: QRectF = QRectF(float(x_pix),
-                                             float(y_pix),
-                                             effective_tile_width,
-                                             effective_tile_height)
-                source_rect: QRectF = QRectF(0.0,
-                                             0.0,
-                                             float(tile_pixmap.width()),
-                                             float(tile_pixmap.height()))
-                painter.drawPixmap(target_rect, tile_pixmap, source_rect)
-                y_pix += effective_tile_height
-            x_pix += effective_tile_width
+                painter.drawPixmap(x_pix, y_pix, self.tile_src.GetTile(x, y))
+                y_pix += self.tile_height
+            x_pix += self.tile_width
 
         painter.end()
 
@@ -983,8 +954,8 @@ class MapWidget(QWidget):
             tx, ty = self.tile_src.Geo2Tile(longitude=longitude, latitude=latitude)
 
             # using the key_tile_* variables to convert to view coordinates
-            xview = (tx - self.key_tile_left) * self.effective_tile_width + self.key_tile_x_offset
-            yview = (ty - self.key_tile_top) * self.effective_tile_height + self.key_tile_y_offset
+            xview = (tx - self.key_tile_left) * self.tile_width + self.key_tile_x_offset
+            yview = (ty - self.key_tile_top) * self.tile_height + self.key_tile_y_offset
 
             return xview, yview
         else:
@@ -1021,13 +992,10 @@ class MapWidget(QWidget):
         y_from_key = yview - self.key_tile_y_offset
 
         # get view point as tile coordinates
-        xtile: float = self.key_tile_left + x_from_key / self.effective_tile_width
-        ytile: float = self.key_tile_top + y_from_key / self.effective_tile_height
+        xtile: float = self.key_tile_left + x_from_key / self.tile_width
+        ytile: float = self.key_tile_top + y_from_key / self.tile_height
 
-        try:
-            longitude, latitude = self.tile_src.Tile2Geo(xtile, ytile)
-        except OverflowError:
-            return None, None
+        longitude, latitude = self.tile_src.Tile2Geo(xtile, ytile)
 
         if not (min_lon <= longitude <= max_lon):
             return None, None
@@ -1053,8 +1021,8 @@ class MapWidget(QWidget):
         y_from_key = yview - self.key_tile_y_offset
 
         # get view point as tile coordinates
-        xtile: int = int(self.key_tile_left + x_from_key / self.effective_tile_width)
-        ytile: int = int(self.key_tile_top + y_from_key / self.effective_tile_height)
+        xtile: int = int(self.key_tile_left + x_from_key / self.tile_width)
+        ytile: int = int(self.key_tile_top + y_from_key / self.tile_height)
 
         longitude, latitude = self.tile_src.Tile2Geo(xtile, ytile)
 
@@ -1534,15 +1502,13 @@ class MapWidget(QWidget):
     def set_zoom_level(self,
                        level: int,
                        view_x: float | None = None,
-                       view_y: float | None = None,
-                       reset_fractional_zoom: bool = True) -> bool:
+                       view_y: float | None = None) -> bool:
         """
         Zoom to a map level.
 
         :param level:  map level to zoom to
         :param view_x: view x coordinate
         :param view_y: view y coordinate
-        :param reset_fractional_zoom: reset the fractional tile scale after changing the integer level.
 
         Change the map zoom level to that given. Returns True if the zoom
         succeeded, else False. If False is returned the method call has no effect.
@@ -1566,10 +1532,6 @@ class MapWidget(QWidget):
         if result:
             # zoom worked, adjust state variables
             self.level = level
-            if reset_fractional_zoom:
-                self.fractional_zoom = 1.0
-            else:
-                pass
 
             # move to new level
             self.tile_src.GetInfo(level)
@@ -1584,23 +1546,6 @@ class MapWidget(QWidget):
 
         return result
 
-    def set_integer_zoom_level(self, level: int) -> bool:
-        """
-        Change only the backing tile level without changing the fractional scale.
-
-        :param level: New integer tile level.
-        :return: True if the tile source accepted the level.
-        """
-        result: bool = self.tile_src.set_level(level)
-        if result:
-            self.level = level
-            self.tile_src.GetInfo(level)
-            self.zoom_callback(level)
-        else:
-            pass
-
-        return result
-
     def apply_zoom_level(self,
                          level: int,
                          view_x: float | None = None,
@@ -1608,100 +1553,19 @@ class MapWidget(QWidget):
         """
         Change map zoom and keep the graphics overlay transform in sync.
         """
-        previous_fractional_zoom: float = self.fractional_zoom
-        previous_level: int = self.level
-        if level == previous_level and previous_fractional_zoom == 1.0:
+        previous_level = self.level
+        if level == previous_level:
             return True
-        else:
-            pass
 
         if not self.set_zoom_level(level=level, view_x=view_x, view_y=view_y):
             return False
 
-        level_delta: int = level - previous_level
-        scale_factor: float = (self.zoom_factor ** level_delta) / previous_fractional_zoom
+        level_delta = level - previous_level
+        scale_factor = self.zoom_factor ** level_delta
         self.view.schema_zoom *= scale_factor
         self.view.scale(scale_factor, scale_factor)
         self.view.center_schema()
         self.view.update_label_position()
-        return True
-
-    def apply_fractional_zoom_steps(self, steps: float, view_x: float | None = None, view_y: float | None = None) -> bool:
-        """
-        Apply a fractional map zoom while promoting or demoting tile levels at power-of-two boundaries.
-
-        :param steps: Signed zoom steps where one step is one integer tile level.
-        :param view_x: View x coordinate that should remain over the same geographic position.
-        :param view_y: View y coordinate that should remain over the same geographic position.
-        :return: True if the visual zoom changed.
-        """
-        if steps == 0.0:
-            return False
-        else:
-            pass
-
-        if view_x is None:
-            view_x = self.view_width / 2.0
-        else:
-            pass
-
-        if view_y is None:
-            view_y = self.view_height / 2.0
-        else:
-            pass
-
-        longitude, latitude = self.view_to_geo_float(xview=view_x, yview=view_y)
-        if longitude is None or latitude is None:
-            return False
-        else:
-            pass
-
-        requested_scale_factor: float = float(self.zoom_factor) ** steps
-        next_fractional_zoom: float = self.fractional_zoom * requested_scale_factor
-        next_level: int = self.level
-
-        while next_fractional_zoom >= float(self.zoom_factor) and next_level < self.max_level:
-            next_fractional_zoom /= float(self.zoom_factor)
-            next_level += 1
-
-        while next_fractional_zoom <= 1.0 / float(self.zoom_factor) and next_level > self.min_level:
-            next_fractional_zoom *= float(self.zoom_factor)
-            next_level -= 1
-
-        if next_level == self.max_level and next_fractional_zoom > 1.0:
-            next_fractional_zoom = 1.0
-        else:
-            pass
-
-        if next_level == self.min_level and next_fractional_zoom < 1.0:
-            next_fractional_zoom = 1.0
-        else:
-            pass
-
-        effective_scale_factor: float = next_fractional_zoom / self.fractional_zoom
-        level_delta: int = next_level - self.level
-        overlay_scale_factor: float = (float(self.zoom_factor) ** level_delta) * effective_scale_factor
-        if overlay_scale_factor == 1.0:
-            return False
-        else:
-            pass
-
-        if next_level != self.level:
-            if not self.set_integer_zoom_level(level=next_level):
-                return False
-            else:
-                pass
-        else:
-            pass
-
-        self.fractional_zoom = next_fractional_zoom
-        self.pan_position(longitude=longitude, latitude=latitude, view_x=view_x, view_y=view_y)
-        self.view.schema_zoom *= overlay_scale_factor
-        self.view.scale(overlay_scale_factor, overlay_scale_factor)
-        self.view.center_schema()
-        self.view.update_label_position()
-        self.update()
-
         return True
 
     def pan_position(self, longitude: float, latitude: float, view_x: int = None, view_y: int = None):
@@ -1734,8 +1598,8 @@ class MapWidget(QWidget):
 
         # determine what the new key tile should be
         # figure out number of tiles from centre point to edges
-        tx = view_x / self.effective_tile_width
-        ty = view_y / self.effective_tile_height
+        tx = view_x / self.tile_width
+        ty = view_y / self.tile_height
 
         # calculate tile coordinates of the top-left corner of the view
         key_tx = tile_x - tx
@@ -1743,11 +1607,11 @@ class MapWidget(QWidget):
 
         (key_tile_left, x_offset) = divmod(key_tx, 1)
         self.key_tile_left = int(key_tile_left)
-        self.key_tile_x_offset = -float(x_offset * self.effective_tile_width)
+        self.key_tile_x_offset = -int(x_offset * self.tile_width)
 
         (key_tile_top, y_offset) = divmod(key_ty, 1)
         self.key_tile_top = int(key_tile_top)
-        self.key_tile_y_offset = -float(y_offset * self.effective_tile_height)
+        self.key_tile_y_offset = -int(y_offset * self.tile_height)
 
         # adjust key tile, if necessary
         self.rectify_key_tile()
@@ -1808,9 +1672,6 @@ class MapWidget(QWidget):
         """
 
         # check map in X direction
-        effective_tile_width: float = self.effective_tile_width
-        effective_tile_height: float = self.effective_tile_height
-
         if self.map_width < self.view_width:
             # map < view, fits totally in view, centre in X
             self.key_tile_left = 0
@@ -1822,13 +1683,13 @@ class MapWidget(QWidget):
                 self.key_tile_x_offset = 0
             else:
                 # if map left/right edges showing, cover them
-                show_len = (self.num_tiles_x - self.key_tile_left) * effective_tile_width + self.key_tile_x_offset
+                show_len = (self.num_tiles_x - self.key_tile_left) * self.tile_width + self.key_tile_x_offset
                 if show_len < self.view_width:
                     # figure out key tile X to have right edge of map and view equal
-                    tiles_showing = self.view_width / effective_tile_width
+                    tiles_showing = self.view_width / self.tile_width
                     int_tiles = int(tiles_showing)
                     self.key_tile_left = self.num_tiles_x - int_tiles - 1
-                    self.key_tile_x_offset = -float((1.0 - (tiles_showing - int_tiles)) * effective_tile_width)
+                    self.key_tile_x_offset = -int((1.0 - (tiles_showing - int_tiles)) * self.tile_width)
 
         # now check map in Y direction
         if self.map_height < self.view_height:
@@ -1842,13 +1703,13 @@ class MapWidget(QWidget):
                 self.key_tile_y_offset = 0
             else:
                 # if map bottom edge showing, cover
-                show_len = (self.num_tiles_y - self.key_tile_top) * effective_tile_height + self.key_tile_y_offset
+                show_len = (self.num_tiles_y - self.key_tile_top) * self.tile_height + self.key_tile_y_offset
                 if show_len < self.view_height:
                     # figure out key tile Y to have bottom edge of map and view equal
-                    tiles_showing = self.view_height / effective_tile_height
+                    tiles_showing = self.view_height / self.tile_height
                     int_tiles = int(tiles_showing)
                     self.key_tile_top = self.num_tiles_y - int_tiles - 1
-                    self.key_tile_y_offset = -float((1.0 - (tiles_showing - int_tiles)) * effective_tile_height)
+                    self.key_tile_y_offset = -int((1.0 - (tiles_showing - int_tiles)) * self.tile_height)
 
     def zoom_level_position(self, level: int, longitude: float, latitude: float):
         """Zoom to a map level and pan to the given position in the map.
@@ -1881,8 +1742,8 @@ class MapWidget(QWidget):
 
         We need to assume little about which state variables are set.
         Only assume these are set:
-            self.effective_tile_width
-            self.effective_tile_height
+            self.tile_width
+            self.tile_height
         """
         if longitude is None:
             return
@@ -1895,23 +1756,20 @@ class MapWidget(QWidget):
         frac_ctile_tx = ctile_tx - int_ctile_tx
         frac_ctile_ty = ctile_ty - int_ctile_ty
 
-        effective_tile_width: float = self.effective_tile_width
-        effective_tile_height: float = self.effective_tile_height
+        ctile_xoff = self.view_width // 2 - self.tile_width * frac_ctile_tx
+        ctile_yoff = self.view_height // 2 - self.tile_height * frac_ctile_ty
 
-        ctile_xoff = self.view_width // 2 - effective_tile_width * frac_ctile_tx
-        ctile_yoff = self.view_height // 2 - effective_tile_height * frac_ctile_ty
+        num_whole_x = ctile_xoff // self.tile_width
+        num_whole_y = ctile_yoff // self.tile_height
 
-        num_whole_x = ctile_xoff // effective_tile_width
-        num_whole_y = ctile_yoff // effective_tile_height
-
-        xmargin = ctile_xoff - num_whole_x * effective_tile_width
-        ymargin = ctile_yoff - num_whole_y * effective_tile_height
+        xmargin = ctile_xoff - num_whole_x * self.tile_width
+        ymargin = ctile_yoff - num_whole_y * self.tile_height
 
         # update the 'key' tile state variables
         self.key_tile_left = int_ctile_tx - num_whole_x - 1
         self.key_tile_top = int_ctile_ty - num_whole_y - 1
-        self.key_tile_x_offset = effective_tile_width - xmargin
-        self.key_tile_y_offset = effective_tile_height - ymargin
+        self.key_tile_x_offset = self.tile_width - xmargin
+        self.key_tile_y_offset = self.tile_height - ymargin
 
         # centre map in view if map < view
         if self.key_tile_left < 0:
@@ -1991,7 +1849,7 @@ class MapWidget(QWidget):
     # "add a layer" routines
     ######
 
-    def GotoLevel(self, level: int) -> bool:
+    def GotoLevel(self, level: int):
         """
         Use a new tile level.
         :param: level  the new tile level to use.
@@ -2002,7 +1860,6 @@ class MapWidget(QWidget):
             return False  # couldn't change level
 
         self.level = level
-        self.fractional_zoom = 1.0
 
         self.tile_src.GetInfo(level)
 
@@ -2029,15 +1886,15 @@ class MapWidget(QWidget):
         h2 = self.view_height / 2
 
         # get tile coords of view left and top edges
-        view_tile_x = x_tile - (w2 / self.effective_tile_width)
-        view_tile_y = y_tile - (h2 / self.effective_tile_height)
+        view_tile_x = x_tile - (w2 / self.tile_width)
+        view_tile_y = y_tile - (h2 / self.tile_height)
 
         # calculate the key tile coords and offsets
         key_tile_x = int(view_tile_x)
         key_tile_y = int(view_tile_y)
 
-        key_offset_x = -float((view_tile_x - key_tile_x) * self.effective_tile_width)
-        key_offset_y = -float((view_tile_y - key_tile_y) * self.effective_tile_height)
+        key_offset_x = - int((view_tile_x - key_tile_x) * self.tile_width)
+        key_offset_y = - int((view_tile_y - key_tile_y) * self.tile_height)
 
         # update the key tile info
         self.key_tile_left = key_tile_x

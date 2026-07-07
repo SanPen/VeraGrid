@@ -10,7 +10,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 from VeraGridEngine.Devices.Substation.bus import Bus
-from VeraGridEngine.enumerations import BuildStatus, PrpCat
+from VeraGridEngine.enumerations import BuildStatus
 from VeraGridEngine.Devices.Parents.branch_parent import BranchParent
 from VeraGridEngine.Devices.Parents.editable_device import DeviceType, GCProp
 
@@ -35,117 +35,27 @@ class UPFC(BranchParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(
-            prop_name='R',
-            units='p.u.',
-            tpe=float,
-            definition='Series positive sequence resistance.',
-            old_names=['Rs'],
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='X',
-            units='p.u.',
-            tpe=float,
-            definition='Series positive sequence reactance.',
-            old_names=['Xs'],
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='Rsh',
-            units='p.u.',
-            tpe=float,
-            definition='Shunt positive sequence resistance.',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='Xsh',
-            units='p.u.',
-            tpe=float,
-            definition='Shunt positive sequence resistance.',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='R0',
-            units='p.u.',
-            tpe=float,
-            definition='Series zero sequence resistance.',
-            old_names=['Rs0'],
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='X0',
-            units='p.u.',
-            tpe=float,
-            definition='Series zero sequence reactance.',
-            old_names=['Xs0'],
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='Rsh0',
-            units='p.u.',
-            tpe=float,
-            definition='Shunt zero sequence resistance.',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='Xsh0',
-            units='p.u.',
-            tpe=float,
-            definition='Shunt zero sequence resistance.',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='R2',
-            units='p.u.',
-            tpe=float,
-            definition='Series negative sequence resistance.',
-            old_names=['Rs2'],
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='X2',
-            units='p.u.',
-            tpe=float,
-            definition='Series negative sequence reactance.',
-            old_names=['Xs2'],
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='Rsh2',
-            units='p.u.',
-            tpe=float,
-            definition='Shunt negative sequence resistance.',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='Xsh2',
-            units='p.u.',
-            tpe=float,
-            definition='Shunt negative sequence resistance.',
-            cat=[PrpCat.SC, PrpCat.PF3],
-        ),
-        GCProp(
-            prop_name='Vsh',
-            units='p.u.',
-            tpe=float,
-            definition='Shunt voltage set point.',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='Pfset',
-            units='MW',
-            tpe=float,
-            definition='Active power set point.',
-            cat=[PrpCat.PF],
-        ),
-        GCProp(
-            prop_name='Qfset',
-            units='MVAr',
-            tpe=float,
-            definition='Active power set point.',
-            cat=[PrpCat.PF],
-        ),
+        GCProp(key='R', units='p.u.', tpe=float, definition='Series positive sequence resistance.',
+                      old_names=['Rs']),
+        GCProp(key='X', units='p.u.', tpe=float, definition='Series positive sequence reactance.',
+                      old_names=['Xs']),
+        GCProp(key='Rsh', units='p.u.', tpe=float, definition='Shunt positive sequence resistance.'),
+        GCProp(key='Xsh', units='p.u.', tpe=float, definition='Shunt positive sequence resistance.'),
+        GCProp(key='R0', units='p.u.', tpe=float, definition='Series zero sequence resistance.',
+                      old_names=['Rs0']),
+        GCProp(key='X0', units='p.u.', tpe=float, definition='Series zero sequence reactance.',
+                      old_names=['Xs0']),
+        GCProp(key='Rsh0', units='p.u.', tpe=float, definition='Shunt zero sequence resistance.'),
+        GCProp(key='Xsh0', units='p.u.', tpe=float, definition='Shunt zero sequence resistance.'),
+        GCProp(key='R2', units='p.u.', tpe=float, definition='Series negative sequence resistance.',
+                      old_names=['Rs2']),
+        GCProp(key='X2', units='p.u.', tpe=float, definition='Series negative sequence reactance.',
+                      old_names=['Xs2']),
+        GCProp(key='Rsh2', units='p.u.', tpe=float, definition='Shunt negative sequence resistance.'),
+        GCProp(key='Xsh2', units='p.u.', tpe=float, definition='Shunt negative sequence resistance.'),
+        GCProp(key='Vsh', units='p.u.', tpe=float, definition='Shunt voltage set point.'),
+        GCProp(key='Pfset', units='MW', tpe=float, definition='Active power set point.'),
+        GCProp(key='Qfset', units='MVAr', tpe=float, definition='Active power set point.'),
     )
 
     def __init__(self,
@@ -159,7 +69,6 @@ class UPFC(BranchParent):
                  rp=0.0, xp=0.0,
                  vp=1.0,
                  Pset=0.0, Qset=0.0,
-                 design_rate: float = 9999,
                  rate=9999,
                  mttf=0, mttr=0, cost=100,
                  contingency_factor=1.0,
@@ -187,7 +96,6 @@ class UPFC(BranchParent):
         :param vp: shunt voltage set point (p.u.)
         :param Pset: Power set point (MW)
         :param Qset:
-        :param design_rate: Design rate (MVA)
         :param rate: Power rating (MVA)
         :param mttf:
         :param mttr:
@@ -216,7 +124,6 @@ class UPFC(BranchParent):
                               bus_to=bus_to,
                               active=active,
                               reducible=False,
-                              design_rate=design_rate,
                               rate=rate,
                               contingency_factor=contingency_factor,
                               protection_rating_factor=protection_rating_factor,

@@ -6,7 +6,7 @@ from typing import List
 import numpy as np
 import pandas as pd
 from VeraGridEngine.Simulations.results_table import ResultsTable
-from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
+from VeraGridEngine.Simulations.results_template import ResultsTemplate
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, CxVec, ObjVec
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
 
@@ -24,48 +24,6 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
         **losses**: branch losses
         **converged**: converged?
     """
-
-    LOCAL_RESULTS_DECLARATIONS = (
-        ResultsProperty(name='bus_names', tpe=StrVec, old_names=list(), expandable=False),
-        ResultsProperty(name='branch_names', tpe=StrVec, old_names=list(), expandable=False),
-        ResultsProperty(name='hvdc_names', tpe=StrVec, old_names=list(), expandable=False),
-        ResultsProperty(name='vsc_names', tpe=StrVec, old_names=list(), expandable=False),
-        ResultsProperty(name='contingency_group_names', tpe=StrVec, old_names=list(), expandable=False),
-        ResultsProperty(name='bus_types', tpe=IntVec, old_names=list(), expandable=False),
-        ResultsProperty(name='voltage', tpe=CxVec, old_names=list(), expandable=False),
-        ResultsProperty(name='Sbus', tpe=CxVec, old_names=list(), expandable=False),
-        ResultsProperty(name='dSbus', tpe=CxVec, old_names=list(), expandable=False),
-        ResultsProperty(name='bus_shadow_prices', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='load_shedding', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='nodal_balance', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='Sf', tpe=CxVec, old_names=list(), expandable=False),
-        ResultsProperty(name='St', tpe=CxVec, old_names=list(), expandable=False),
-        ResultsProperty(name='overloads', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='loading', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='losses', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='phase_shift', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='rates', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='contingency_rates', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='alpha', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='monitor_logic', tpe=ObjVec, old_names=list(), expandable=False),
-        ResultsProperty(name='hvdc_Pf', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='hvdc_loading', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='hvdc_losses', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='vsc_Pf', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='vsc_loading', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='vsc_losses', tpe=Vec, old_names=list(), expandable=False),
-        ResultsProperty(name='converged', tpe=bool, old_names=list(), expandable=False),
-        ResultsProperty(name='inter_area_flows', tpe=float, old_names=list(), expandable=False),
-        ResultsProperty(name='structural_inter_area_flows', tpe=float, old_names=list(), expandable=False),
-        ResultsProperty(name='contingency_flows_list', tpe=list, old_names=list(), expandable=False),
-        ResultsProperty(name='strict_formulation', tpe=bool, old_names=list(), expandable=False),
-        ResultsProperty(name='sending_bus_idx', tpe=list, old_names=list(), expandable=False),
-        ResultsProperty(name='receiving_bus_idx', tpe=list, old_names=list(), expandable=False),
-        ResultsProperty(name='inter_space_branches', tpe=list, old_names=list(), expandable=False),
-        ResultsProperty(name='inter_space_hvdc', tpe=list, old_names=list(), expandable=False),
-        ResultsProperty(name='inter_space_vsc', tpe=list, old_names=list(), expandable=False),
-    )
-
     __slots__ = (
         "bus_names",
         "branch_names",
@@ -101,7 +59,6 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
         "inter_space_hvdc",
         "inter_space_vsc",
         "contingency_flows_list",
-        "strict_formulation",
         "converged",
         "inter_area_flows",
         "structural_inter_area_flows",
@@ -199,18 +156,58 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
         self.inter_space_hvdc: List[tuple[int, float]] = list()  # index, sense
         self.inter_space_vsc: List[tuple[int, float]] = list()  # index, sense
 
-        # t, m, c, contingency, negative_slack, positive_slack (non-strict)
-        # t, m, c, contingency (strict)
+        # t, m, c, contingency, negative_slack, positive_slack
         self.contingency_flows_list = list()
-
-        # whether the results come from the strict formulation (no flow slacks)
-        self.strict_formulation = False
 
         self.converged = False
 
         self.inter_area_flows = 0
         self.structural_inter_area_flows = 0
 
+        self.register(name='bus_names', tpe=StrVec)
+        self.register(name='branch_names', tpe=StrVec)
+        self.register(name='hvdc_names', tpe=StrVec)
+        self.register(name='vsc_names', tpe=StrVec)
+        self.register(name='contingency_group_names', tpe=StrVec)
+        self.register(name='bus_types', tpe=IntVec)
+
+        self.register(name='voltage', tpe=CxVec)
+        self.register(name='Sbus', tpe=CxVec)
+        self.register(name='dSbus', tpe=CxVec)
+        self.register(name='bus_shadow_prices', tpe=Vec)
+        self.register(name='load_shedding', tpe=Vec)
+
+        self.register(name='Sf', tpe=CxVec)
+        self.register(name='St', tpe=CxVec)
+        self.register(name='overloads', tpe=Vec)
+        self.register(name='loading', tpe=Vec)
+        self.register(name='losses', tpe=Vec)
+        self.register(name='phase_shift', tpe=Vec)
+        self.register(name='rates', tpe=Vec)
+        self.register(name='contingency_rates', tpe=Vec)
+        self.register(name='alpha', tpe=Vec)
+        self.register(name='monitor_logic', tpe=ObjVec)
+
+        self.register(name='hvdc_Pf', tpe=Vec)
+        self.register(name='hvdc_loading', tpe=Vec)
+        self.register(name='hvdc_losses', tpe=Vec)
+
+        self.register(name='vsc_Pf', tpe=Vec)
+        self.register(name='vsc_loading', tpe=Vec)
+        self.register(name='vsc_losses', tpe=Vec)
+
+        self.register(name='converged', tpe=bool)
+
+        self.register(name='inter_area_flows', tpe=float)
+        self.register(name='structural_inter_area_flows', tpe=float)
+
+        self.register(name='contingency_flows_list', tpe=list)
+
+        self.register(name='sending_bus_idx', tpe=list)
+        self.register(name='receiving_bus_idx', tpe=list)
+        self.register(name='inter_space_branches', tpe=list)
+        self.register(name='inter_space_hvdc', tpe=list)
+        self.register(name='inter_space_vsc', tpe=list)
 
     def get_bus_df(self) -> pd.DataFrame:
         """
@@ -449,16 +446,9 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
             columns = ['Contingency group index', 'Contingency group',
                        'Monitored index', 'Monitored branch',
                        'Flow (MW)', 'Loading (%)']
-            for entry in self.contingency_flows_list:
-                # The strict formulation stores (t, m, c, flow) with no slacks,
-                # while the non-strict one stores (t, m, c, flow, neg_slack, pos_slack).
-                if self.strict_formulation:
-                    t, m, c, contingency = entry
-                    flow_c = contingency
-                else:
-                    t, m, c, contingency, negative_slack, positive_slack = entry
-                    flow_c = contingency - negative_slack + positive_slack
+            for t, m, c, contingency, negative_slack, positive_slack in self.contingency_flows_list:
                 index.append("")
+                flow_c = contingency - negative_slack + positive_slack
                 loading_c = abs(flow_c) / self.contingency_rates[m] * 100
                 data.append([
                     # Contingency group info

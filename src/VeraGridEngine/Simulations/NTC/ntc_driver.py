@@ -64,8 +64,7 @@ class OptimalNetTransferCapacityDriver(DriverTemplate):
                 zonal_grouping=self.options.opf_options.zonal_grouping,
                 skip_generation_limits=self.options.skip_generation_limits,
                 consider_contingencies=self.options.consider_contingencies,
-                corrective_contingencies=self.options.corrective_contingencies,
-                contingency_groups_used=self.grid.get_contingency_groups_active(),
+                contingency_groups_used=self.grid.contingency_groups,
                 lodf_threshold=self.options.lin_options.lodf_threshold,
                 bus_a1_idx=self.options.sending_bus_idx,
                 bus_a2_idx=self.options.receiving_bus_idx,
@@ -78,8 +77,7 @@ class OptimalNetTransferCapacityDriver(DriverTemplate):
                 progress_text=self.report_text,
                 progress_func=self.report_progress,
                 verbose=self.options.opf_options.verbose,
-                robust=self.options.opf_options.robust,
-                mip_framework=self.options.opf_options.mip_framework
+                robust=self.options.opf_options.robust
             )
         else:
             opf_vars, model = run_linear_ntc_opf(
@@ -89,8 +87,7 @@ class OptimalNetTransferCapacityDriver(DriverTemplate):
                 zonal_grouping=self.options.opf_options.zonal_grouping,
                 skip_generation_limits=self.options.skip_generation_limits,
                 consider_contingencies=self.options.consider_contingencies,
-                corrective_contingencies=self.options.corrective_contingencies,
-                contingency_groups_used=self.grid.get_contingency_groups_active(),
+                contingency_groups_used=self.grid.contingency_groups,
                 lodf_threshold=self.options.lin_options.lodf_threshold,
                 bus_a1_idx=self.options.sending_bus_idx,
                 bus_a2_idx=self.options.receiving_bus_idx,
@@ -138,7 +135,6 @@ class OptimalNetTransferCapacityDriver(DriverTemplate):
         self.results.alpha = opf_vars.branch_vars.alpha[0, :]
         self.results.monitor_logic = opf_vars.branch_vars.monitor_logic[0, :]
         self.results.contingency_flows_list = opf_vars.branch_vars.contingency_flow_data
-        self.results.strict_formulation = self.options.strict_formulation
 
         self.results.hvdc_Pf = opf_vars.hvdc_vars.flows[0, :]
         self.results.hvdc_loading = opf_vars.hvdc_vars.loading[0, :]

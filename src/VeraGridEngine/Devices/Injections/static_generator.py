@@ -6,7 +6,7 @@
 
 from typing import Tuple
 
-from VeraGridEngine.enumerations import BuildStatus, DeviceType, PrpCat, ParamPowerFlowReferenceType
+from VeraGridEngine.enumerations import BuildStatus, DeviceType
 from VeraGridEngine.Devices.Parents.load_parent import LoadParent
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
@@ -15,14 +15,7 @@ class StaticGenerator(LoadParent):
     __slots__ = "_Snom"
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(
-            prop_name='Snom',
-            units='MVA',
-            tpe=float,
-            definition='Nominal power.',
-            cat=[PrpCat.OPF],
-            dyn_ref=ParamPowerFlowReferenceType.static_generator_snom_mva,
-        ),
+        GCProp(key='Snom', units='MVA', tpe=float, definition='Nominal power.'),
     )
 
     def __init__(self, name='StaticGen', idtag=None, code='', P=0.0, Q=0.0, active=True,

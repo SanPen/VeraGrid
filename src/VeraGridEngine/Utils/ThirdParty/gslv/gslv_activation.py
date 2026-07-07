@@ -9,30 +9,23 @@ import shutil
 import packaging.version as pkg
 import warnings
 from VeraGridEngine.IO.file_system import get_create_veragrid_folder
-from VeraGridEngine.enumerations import (
-    TapModuleControl,
-    TapPhaseControl,
-    BusMode,
-    ShuntConnectionType,
-    WindingType,
-    WindingsConnection,
-)
+from VeraGridEngine.enumerations import TapModuleControl, TapPhaseControl, BusMode
 from VeraGridEngine.enumerations import (HvdcControlType, SolverType, TimeGrouping,
                                          ZonalGrouping, MIPSolvers, ContingencyMethod, ContingencyOperationTypes,
                                          BuildStatus, BranchGroupTypes, ConverterControlType)
-GSLV_RECOMMENDED_VERSION: str = "0.7.0"
-GSLV_VERSION: str = ''
-GSLV_AVAILABLE: bool = False
+GSLV_RECOMMENDED_VERSION = "0.5.4"
+GSLV_VERSION = ''
+GSLV_AVAILABLE = False
 try:
     import pygslv as pg
-    # The wrapper owns the license discovery logic, so activation is centralized here.
     pg.search_license_and_activate(verbose=False)
 
-    # The API exposes license state after activation. The rest of the code only
-    # needs one explicit availability flag to decide whether to dispatch to GSLV.
+    # activate
     if not pg.isLicensed():
+        # license not found
         GSLV_AVAILABLE = False
     else:
+        # already activated
         GSLV_AVAILABLE = True
         GSLV_VERSION = pg.get_version()
 
@@ -101,30 +94,7 @@ try:
         BusMode.PQV_tpe.value: pg.BusMode.PQV,
     }
 
-    shunt_connection_type_dict = {
-        ShuntConnectionType.GroundedStar: pg.ShuntConnectionType.GroundedStar,
-        ShuntConnectionType.FloatingStar: pg.ShuntConnectionType.FloatingStar,
-        ShuntConnectionType.NeutralStar: pg.ShuntConnectionType.NeutralStar,
-        ShuntConnectionType.Delta: pg.ShuntConnectionType.Delta,
-    }
-
-    winding_type_dict = {
-        WindingType.GroundedStar: pg.WindingType.GroundedStar,
-        WindingType.NeutralStar: pg.WindingType.NeutralStar,
-        WindingType.Delta: pg.WindingType.Delta,
-        WindingType.ZigZag: pg.WindingType.ZigZag,
-    }
-
-    windings_connection_dict = {
-        WindingsConnection.GG: pg.WindingsConnection.GG,
-        WindingsConnection.GS: pg.WindingsConnection.GS,
-        WindingsConnection.GD: pg.WindingsConnection.GD,
-        WindingsConnection.SS: pg.WindingsConnection.SS,
-        WindingsConnection.SD: pg.WindingsConnection.SD,
-        WindingsConnection.DD: pg.WindingsConnection.DD,
-    }
-
-except ImportError:
+except ImportError as e:
     pg = None
     GSLV_AVAILABLE = False
     GSLV_VERSION = ''
@@ -138,22 +108,16 @@ except ImportError:
     contingency_method_dict = dict()
     converter_control_type_dict = dict()
     bus_type_dict = dict()
-    shunt_connection_type_dict = dict()
-    winding_type_dict = dict()
-    windings_connection_dict = dict()
 
 
 def install_gslv_license(fname: str) -> Tuple[bool, str]:
     """
-    Copy one GSLV license file into VeraGrid's managed folder.
 
-    :param fname: Source license file path.
-    :return: Success flag and status message.
+    :param fname:
+    :return:
     """
 
     if os.path.exists(fname):
-        # The license must live inside VeraGrid's managed folder so the wrapper
-        # can discover it consistently on later runs.
         folder = get_create_veragrid_folder()
         name = os.path.basename(fname)
         dst = os.path.join(folder, name)

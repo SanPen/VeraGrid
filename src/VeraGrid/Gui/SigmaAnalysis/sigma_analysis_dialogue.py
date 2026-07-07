@@ -26,7 +26,7 @@ class SigmaAnalysisGUI(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self, parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.setWindowTitle(self.tr("HELM-Sigma analysis dialogue"))
+        self.setWindowTitle('HELM-Sigma analysis dialogue')
 
         self.results: SigmaAnalysisResults = results
 
@@ -48,22 +48,17 @@ class SigmaAnalysisGUI(QtWidgets.QMainWindow):
         self.ui.actionCopy_to_clipboard.triggered.connect(self.copy_to_clipboard)
         self.ui.actionSave.triggered.connect(self.save)
 
-    def msg(self, text: str, title: str | None = None) -> None:
+    def msg(self, text, title="Warning"):
         """
         Message box
         :param text: Text to display
         :param title: Name of the window
         """
-        if title is None:
-            message_title: str = self.tr("Warning")
-        else:
-            message_title = title
-
         msg = QtWidgets.QMessageBox()
         msg.setIcon(QtWidgets.QMessageBox.Icon.Information)
         msg.setText(text)
         # msg.setInformativeText("This is additional information")
-        msg.setWindowTitle(message_title)
+        msg.setWindowTitle(title)
         # msg.setDetailedText("The details are as follows:")
         msg.setStandardButtons(QtWidgets.QMessageBox.StandardButton.Ok)
         retval = msg.exec()
@@ -81,12 +76,8 @@ class SigmaAnalysisGUI(QtWidgets.QMainWindow):
         :return:
         """
         if self.mdl is not None:
-            file, filter = QtWidgets.QFileDialog.getSaveFileName(
-                self,
-                self.tr("Export results"),
-                "",
-                filter=self.tr("CSV (*.csv);;Excel files (*.xlsx)"),
-            )
+            file, filter = QtWidgets.QFileDialog.getSaveFileName(self, "Export results", '',
+                                                                 filter="CSV (*.csv);;Excel files (*.xlsx)")
 
             if file != '':
                 if 'xlsx' in filter:

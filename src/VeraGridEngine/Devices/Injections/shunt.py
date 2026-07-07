@@ -6,7 +6,7 @@
 from VeraGridEngine.enumerations import DeviceType
 from VeraGridEngine.enumerations import BuildStatus
 from VeraGridEngine.Devices.Parents.shunt_parent import ShuntParent
-from VeraGridEngine.Utils.Symbolic.block import Block, Var, Const, VarPowerFlowReferenceType
+from VeraGridEngine.Utils.Symbolic.block import Block, Var, Const, VarPowerFlowRefferenceType
 
 
 class Shunt(ShuntParent):

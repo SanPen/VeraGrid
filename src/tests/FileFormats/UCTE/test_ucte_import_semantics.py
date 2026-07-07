@@ -10,7 +10,7 @@ from VeraGridEngine.IO.file_open import open_ucte
 from VeraGridEngine.IO.ucte.devices.ucte_node import UcteNode
 from VeraGridEngine.IO.ucte.devices.ucte_transformer_regulation import UcteTransformerRegulation
 from VeraGridEngine.basic_structures import Logger, LogSeverity
-from VeraGridEngine.enumerations import GeneratorControlMode
+
 
 UCTE_FIXTURES = Path(__file__).resolve().parents[2] / "data" / "grids" / "ucte"
 
@@ -59,7 +59,7 @@ def test_voltage_regulating_xnode_uses_voltage_reference_for_generator_setpoint(
 
     assert gen.P == pytest.approx(1.0)
     assert gen.Vset == pytest.approx(409.07 / 380.0, rel=1e-4)
-    assert gen.control_mode == GeneratorControlMode.V
+    assert gen.is_controlled is True
     assert gen.Qmin == pytest.approx(-1.0)
     assert gen.Qmax == pytest.approx(1.0)
 

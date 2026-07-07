@@ -10,14 +10,14 @@ import numpy as np
 
 from PySide6.QtWidgets import QGraphicsSceneContextMenuEvent
 from VeraGridEngine.Devices.Injections.generator import Generator
-from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorEditorDialog, GeneratorQCurveEditor
-from VeraGrid.Gui.messages import yes_no_question
+from VeraGrid.Gui.Diagrams.Editors.generator_editor import GeneratorQCurveEditor
+from VeraGrid.Gui.messages import yes_no_question, info_msg
 from VeraGrid.Gui.Diagrams.MapWidget.Injections.map_injections_template_graphics import MapInjectionTemplateGraphicItem
-from VeraGrid.Gui.DeviceEditors.GeneratorEditor.SolarPowerWizard.solar_power_wizzard import SolarPvWizard
-from VeraGrid.Gui.DeviceEditors.GeneratorEditor.WindPowerWizard.wind_power_wizzard import WindFarmWizard
-from VeraGrid.Gui.profile_wizard_utils import fill_substation_weather_profiles
-from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
-from VeraGridEngine.enumerations import DynamicSimulationMode
+from VeraGrid.Gui.SolarPowerWizard.solar_power_wizzard import SolarPvWizard
+from VeraGrid.Gui.WindPowerWizard.wind_power_wizzard import WindFarmWizard
+from VeraGrid.Gui.gui_functions import add_menu_entry
+from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI, DynamicEditorMode
+from VeraGridEngine.enumerations import DeviceType, FmuTemplateDomain
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import GridMapWidget
@@ -51,18 +51,6 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
     def api_object(self) -> Generator:
         return self._api_object
 
-    def open_device_editor(self) -> bool:
-        """
-        Open the generator editor.
-
-        :return: ``True`` when the editor was opened.
-        """
-        dlg = GeneratorEditorDialog(api_object=self.api_object, circuit=self.editor.circuit)
-        if dlg.exec():
-            return True
-        else:
-            return True
-
     def contextMenuEvent(self, event: QGraphicsSceneContextMenuEvent):
         """
         Display context menu
@@ -71,60 +59,82 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
         """
         menu = self.get_base_context_menu()
 
-        menu.addSection(translate_context_menu_text("Generator"))
+        menu.addSection("Generator")
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("RMS Editor"),
+                       text="Voltage control",
+                       icon_path="",
+                       function_ptr=self.enable_disable_control_toggle,
+                       checkeable=True,
+                       checked_value=self.api_object.is_controlled)
+
+        add_menu_entry(menu=menu,
+                       text="Rms Editor",
                        function_ptr=self.edit_rms,
-                       icon_path=":/Icons/icons/dyn_edit.png")
+                       icon_path=":/Icons/icons/edit.png")
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("EMT Editor"),
+                       text="Emt Editor",
                        function_ptr=self.edit_emt,
-                       icon_path=":/Icons/icons/dyn_emt_edit.png")
+                       icon_path=":/Icons/icons/edit.png")
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Qcurve edit"),
+                       text="Qcurve edit",
                        function_ptr=self.edit_q_curve,
                        icon_path=":/Icons/icons/edit.png")
 
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Solar photovoltaic wizard"),
+                       text="Solar photovoltaic wizard",
                        icon_path=":/Icons/icons/solar_power.png",
                        function_ptr=self.solar_pv_wizard)
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Wind farm wizard"),
+                       text="Wind farm wizard",
                        icon_path=":/Icons/icons/wind_power.png",
                        function_ptr=self.wind_farm_wizard)
 
         menu.addSeparator()
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Convert to battery"),
+                       text="Convert to battery",
                        icon_path=":/Icons/icons/add_batt.png",
                        function_ptr=self.to_battery)
 
         menu.exec(event.screenPos())
-
-    def mouseDoubleClickEvent(self, event):
-        """
-        Open the generator editor on double click.
-
-        :param event: Mouse event.
-        :return: None.
-        """
-        super().mouseDoubleClickEvent(event)
 
     def edit_rms(self):
         """
 
         :return:
         """
-        self.editor.gui.open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
-                                            preferred_mode=DynamicSimulationMode.RMS)
+        # load templates
+        templates = self.editor.circuit.rms_models
+
+        # select line templates
+        templ_catalogue = dict()
+        templ_list = []
+        for templ in templates:
+            if templ.tpe == DeviceType.GeneratorDevice:
+                templ_list.append(templ.name)
+                templ_catalogue[templ.name] = templ
+
+        # prompt RmsModelEditorGUI
+
+        rms_model_editor = DynamicBlockEditorGUI(
+            var_factory=self.editor.circuit.var_factory,
+            block=self.api_object.rms_model,
+            api_object=self.api_object,
+            mode=DynamicEditorMode.RMS,
+            templates_list=self.editor.circuit.get_dynamic_templates_by_device_type_and_domain(
+                self.api_object.device_type,
+                FmuTemplateDomain.RMS,
+            ),
+            circuit=self.editor.circuit,
+            main_editor=True,
+        )
+        rms_model_editor.show()
 
     def edit_emt(self):
         """
@@ -133,16 +143,19 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
         :return: None.
         """
 
-        self.editor.gui.open_dynamic_editor(api_object=self.api_object, circuit=self.editor.circuit,
-                                            preferred_mode=DynamicSimulationMode.EMT)
-
-    def edit_dynamic(self):
-        """
-        Open the unified dynamic editor workspace for this map generator.
-        """
-
-        self.editor.gui.open_dynamic_editor(api_object=self.api_object,
-                                            circuit=self.editor.circuit)
+        emt_model_editor = DynamicBlockEditorGUI(
+            var_factory=self.editor.circuit.var_factory,
+            block=self.api_object.emt_model,
+            api_object=self.api_object,
+            mode=DynamicEditorMode.EMT,
+            templates_list=self.editor.circuit.get_dynamic_templates_by_device_type_and_domain(
+                self.api_object.device_type,
+                FmuTemplateDomain.EMT,
+            ),
+            circuit=self.editor.circuit,
+            main_editor=True,
+        )
+        emt_model_editor.show()
 
     def to_battery(self):
         """
@@ -152,6 +165,13 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
                              'Convert generator')
         if ok:
             self._editor.convert_generator_to_battery(gen=self.api_object, graphic_object=self)
+
+    def enable_disable_control_toggle(self):
+        """
+        Enable / Disable device voltage control
+        """
+        if self.api_object is not None:
+            self.api_object.is_controlled = not self.api_object.is_controlled
 
     def set_regulation_bus(self):
         """
@@ -194,14 +214,6 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
         self.api_object.Pmin = dlg.Pmin
         self.api_object.Pmax = dlg.Pmax
 
-    def edit_generator(self):
-        """
-        Open the full generator editor dialogue.
-
-        :return: None.
-        """
-        self.open_device_editor()
-
     def solar_pv_wizard(self):
         """
         Open the appropriate editor dialogue
@@ -210,7 +222,7 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
 
         if self._editor.circuit.has_time_series:
 
-            dlg = SolarPvWizard(time_array=self._editor.circuit.time_profile,
+            dlg = SolarPvWizard(time_array=self._editor.circuit.time_profile.strftime("%Y-%m-%d %H:%M").tolist(),
                                 peak_power=self.api_object.Pmax,
                                 latitude=self.api_object.bus.latitude,
                                 longitude=self.api_object.bus.longitude,
@@ -220,17 +232,12 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
                 if dlg.is_accepted:
                     if len(dlg.P) == self.api_object.P_prof.size():
                         self.api_object.P_prof.set(dlg.P)
-                        fill_substation_weather_profiles(bus=self.api_object.bus,
-                                                         temperature=dlg.temperature,
-                                                         wind_speed=dlg.wind_speed,
-                                                         irradiation=dlg.irradiation,
-                                                         expected_size=self.api_object.P_prof.size())
 
                         self.plot()
                     else:
-                        self.editor.gui.show_error_toast("Wrong length from the solar photovoltaic wizard")
+                        raise Exception("Wrong length from the solar photovoltaic wizard")
         else:
-            self.editor.gui.show_error_toast("You need to have time profiles for this function")
+            info_msg("You need to have time profiles for this function")
 
     def wind_farm_wizard(self):
         """
@@ -240,7 +247,7 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
 
         if self._editor.circuit.has_time_series:
 
-            dlg = WindFarmWizard(time_array=self._editor.circuit.time_profile,
+            dlg = WindFarmWizard(time_array=self._editor.circuit.time_profile.strftime("%Y-%m-%d %H:%M").tolist(),
                                  peak_power=self.api_object.Pmax,
                                  latitude=self.api_object.bus.latitude,
                                  longitude=self.api_object.bus.longitude,
@@ -250,13 +257,8 @@ class MapGeneratorGraphicItem(MapInjectionTemplateGraphicItem):
                 if dlg.is_accepted:
                     if len(dlg.P) == self.api_object.P_prof.size():
                         self.api_object.P_prof.set(dlg.P)
-                        fill_substation_weather_profiles(bus=self.api_object.bus,
-                                                         temperature=dlg.temperature,
-                                                         wind_speed=dlg.wind_speed,
-                                                         irradiation=None,
-                                                         expected_size=self.api_object.P_prof.size())
                         self.plot()
                     else:
-                        self.editor.gui.show_error_toast("Wrong length from the wind farm wizard")
+                        raise Exception("Wrong length from the solar photovoltaic wizard")
         else:
-            self.editor.gui.show_error_toast("You need to have time profiles for this function")
+            info_msg("You need to have time profiles for this function")

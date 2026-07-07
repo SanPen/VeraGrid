@@ -155,7 +155,7 @@ def powell_fx(problem: PfFormulationTemplate,
                 print("dx:\n", problem.get_x_df(hgn))
 
             # tol2 = tol * (norm(x) + tol)
-            update_controls = f_error < problem.options.controls_start_tolerance
+            update_controls = f_error < (tol * 100)
             f_error_new, converged, x, f = problem.update(x + hdl, update_controls=update_controls)
 
             rho = (f_error - f_error_new) / L0_Lhdl if L0_Lhdl > 0 else -1.0

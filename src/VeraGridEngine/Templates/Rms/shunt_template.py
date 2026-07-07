@@ -4,23 +4,10 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import math
-from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType, ParamPowerFlowReferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
-
-
-class ShuntTemplate(TemplateDefinition):
-
-    def __init__(self, vf):
-        super().__init__(vf, params=[
-            TemplateProp(name="phasor", units="", descr="Select the phasor shunt model when True.", tpe=bool),
-            TemplateProp(name="name", units="", descr="Name of the rms model.", tpe=str),
-        ])
-
-    def eval(self) -> RmsModelTemplate:
-        return get_shunt_template(self.vf, self.get_value("name"), self.get_value("phasor"))
 
 
 def ShuntLoadBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
@@ -52,76 +39,17 @@ def ShuntLoadBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
         init_eqs={
             P: vfactory.add_const(0.0),
             Q: vfactory.add_const(0.1),
-        },
-        api_obj_mapping={
-            ParamPowerFlowReferenceType.g: g,
-            ParamPowerFlowReferenceType.b: b,
         }
     )
 
     res_block.event_dict = events_dict
     res_block.external_mapping = {
-        VarPowerFlowReferenceType.Vm: inputs[0],
-        VarPowerFlowReferenceType.Va: inputs[1],
-        VarPowerFlowReferenceType.P: P,
-        VarPowerFlowReferenceType.Q: Q,
+        VarPowerFlowRefferenceType.Vm: inputs[0],
+        VarPowerFlowRefferenceType.Va: inputs[1],
+        VarPowerFlowRefferenceType.P: P,
+        VarPowerFlowRefferenceType.Q: Q,
     }
     res_block.in_vars = inputs
 
     templ.block = res_block
     return templ
-
-def ShuntPhasorBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
-    templ = RmsModelTemplate()
-    templ.tpe = DeviceType.ShuntDevice
-    res_block = Block()
-    # Inputs:
-    inputs = [vfactory.add_var('Vr_'), vfactory.add_var('Vi_')]
-    Vr = inputs[0]
-    Vi = inputs[1]
-
-    # Variables:
-    Ir = vfactory.add_var('Ir_shunt')
-    Ii = vfactory.add_var('Ii_shunt')
-
-    #Parameters:
-    g = vfactory.add_var('g')
-    b = vfactory.add_var('b')
-    parameters = {
-        g: vfactory.add_const(0.2),
-        b: vfactory.add_const(0.2),
-    }
-
-    res_block = Block(
-        algebraic_eqs=[
-            Ir - (-g*Vr + b*Vi),
-            Ii - (-g*Vi - b*Vr),
-        ],
-        algebraic_vars=[Ir, Ii],
-        external_mapping={
-            VarPowerFlowReferenceType.Vr: inputs[0],
-            VarPowerFlowReferenceType.Vi: inputs[1],
-            VarPowerFlowReferenceType.Ir: Ir,
-            VarPowerFlowReferenceType.Ii: Ii,
-            },
-        init_eqs={
-            Ir: -(g*Vr - b*Vi),
-            Ii: -(g*Vi + b*Vr),
-        },
-        api_obj_mapping={
-            ParamPowerFlowReferenceType.g: g,
-            ParamPowerFlowReferenceType.b: b,
-        }
-    )
-
-    res_block.parameters = parameters
-    res_block.in_vars = inputs
-
-    templ.block = res_block
-    return templ
-
-def get_shunt_template(vfactory: VarFactory, name: str = "", phasor:bool = True) -> RmsModelTemplate:
-    if phasor:
-        return ShuntPhasorBuild(vfactory, name)
-    else:
-        return ShuntLoadBuild(vfactory, name)

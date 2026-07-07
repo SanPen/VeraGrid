@@ -9,9 +9,8 @@ from PySide6.QtCore import Qt, QPointF
 from PySide6.QtGui import QBrush, QColor
 from PySide6.QtWidgets import (QMenu, QGraphicsSceneContextMenuEvent, QGraphicsSceneMouseEvent, QGraphicsEllipseItem)
 
-from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
-from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
+from VeraGrid.Gui.gui_functions import add_menu_entry
 
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
 from VeraGridEngine.Devices.Substation.bus import Bus
@@ -101,16 +100,6 @@ class VoltageLevelGraphicItem(GenericDiagramWidget, QGraphicsEllipseItem):
     def api_object(self) -> VoltageLevel:
         return self._api_object
 
-    def open_device_editor(self) -> bool:
-        """
-        Open the generic device editor for this voltage level.
-
-        :return: ``True`` when the editor was opened.
-        """
-        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
-        dialog.exec()
-        return True
-
     def center_on_substation(self) -> None:
         """
         Centers the graphic item on the substation
@@ -196,18 +185,6 @@ class VoltageLevelGraphicItem(GenericDiagramWidget, QGraphicsEllipseItem):
         if self.api_object is not None:
             self.editor.set_editor_model(api_object=self.api_object)
 
-    def mouseDoubleClickEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        """
-        Open the voltage-level editor on double click.
-
-        :param event: Mouse event.
-        :return: ``None``.
-        """
-        if self.api_object is not None:
-            self.open_device_editor()
-        else:
-            pass
-
     def mouseReleaseEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent) -> None:
         """
         Event handler for mouse release events.
@@ -239,24 +216,11 @@ class VoltageLevelGraphicItem(GenericDiagramWidget, QGraphicsEllipseItem):
         menu = QMenu()
 
         add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Editor"),
-                       icon_path=":/Icons/icons/edit.png",
-                       function_ptr=self.edit)
-
-        add_menu_entry(menu=menu,
-                       text=translate_context_menu_text("Add bus"),
+                       text="Add bus",
                        icon_path="",
                        function_ptr=self.add_bus)
 
         menu.exec_(event.screenPos())
-
-    def edit(self) -> None:
-        """
-        Open the appropriate editor dialogue.
-
-        :return: ``None``.
-        """
-        self.open_device_editor()
 
     def set_color(self, inner_color: QColor = None, border_color: QColor = None) -> None:
         """

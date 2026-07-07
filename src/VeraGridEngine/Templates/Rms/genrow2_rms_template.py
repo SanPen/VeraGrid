@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import numpy as np
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
@@ -19,8 +19,8 @@ def get_genrow2_rms_template(var_factory: VarFactory, name="Genrow rms template"
     templ.tpe = DeviceType.GeneratorDevice
     templ.name = name
 
-    inputs = [var_factory.add_var("Vm_" + name, reference=VarPowerFlowReferenceType.Vm),
-              var_factory.add_var("Va_" + name, reference=VarPowerFlowReferenceType.Va)]
+    inputs = [var_factory.add_var("Vm_" + name),
+                         var_factory.add_var("Va_" + name)]
 
     P_g = var_factory.add_var('P_g')
     Q_g = var_factory.add_var('Q_g')
@@ -103,10 +103,10 @@ def get_genrow2_rms_template(var_factory: VarFactory, name="Genrow rms template"
     }
 
     templ.block.external_mapping = {
-        VarPowerFlowReferenceType.Vm: inputs[0],
-        VarPowerFlowReferenceType.Va: inputs[1],
-        VarPowerFlowReferenceType.P: P_g,
-        VarPowerFlowReferenceType.Q: Q_g
+        VarPowerFlowRefferenceType.Vm: inputs[0],
+        VarPowerFlowRefferenceType.Va: inputs[1],
+        VarPowerFlowRefferenceType.P: P_g,
+        VarPowerFlowRefferenceType.Q: Q_g
     }
 
     templ.block.in_vars = inputs

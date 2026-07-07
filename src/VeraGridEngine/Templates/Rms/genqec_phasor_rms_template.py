@@ -14,13 +14,12 @@ import numpy as np
 import math
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
+from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowRefferenceType, VarPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 import VeraGridEngine.Utils.Symbolic.symbolic_ml as sym_ml
-from VeraGridEngine.Utils.Symbolic.block_helpers import to_implicit
-
+from VeraGridEngine.Templates.templates_common_functions import to_implicit
 
 def get_genqec_phasor(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     """
@@ -43,8 +42,8 @@ def get_genqec_phasor(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     templ.tpe = DeviceType.GeneratorDevice
 
     # Inputs: Vr, Vi (phasor voltage components), Tm, Vf
-    Vr = vfactory.add_var("Vr_" + name, VarPowerFlowReferenceType.Vr)
-    Vi = vfactory.add_var("Vi_" + name, VarPowerFlowReferenceType.Vi)
+    Vr = vfactory.add_var("Vr_" + name, VarPowerFlowRefferenceType.Vr)
+    Vi = vfactory.add_var("Vi_" + name, VarPowerFlowRefferenceType.Vi)
     inputs = [Vr, Vi,
               vfactory.add_var("Tm_" + name),
               vfactory.add_var("Vf_" + name)]
@@ -309,46 +308,46 @@ def get_genqec_phasor(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
             Id_sat: Id / Sat,
         },
         external_mapping={
-            VarPowerFlowReferenceType.Ir: Irg,
-            VarPowerFlowReferenceType.Ii: Iig,
-            VarPowerFlowReferenceType.Vr: inputs[0],
-            VarPowerFlowReferenceType.Vi: inputs[1],
+            VarPowerFlowRefferenceType.Ir: Irg,
+            VarPowerFlowRefferenceType.Ii: Iig,
+            VarPowerFlowRefferenceType.Vr: inputs[0],
+            VarPowerFlowRefferenceType.Vi: inputs[1],
         },
 
         api_obj_mapping={
-            ParamPowerFlowReferenceType.fn: fn,
-            ParamPowerFlowReferenceType.omega_base: ws,
-            ParamPowerFlowReferenceType.M: M,
-            ParamPowerFlowReferenceType.D: D,
-            ParamPowerFlowReferenceType.Rs: Rs,
-            ParamPowerFlowReferenceType.Ra: Ra,
+            ParamPowerFlowRefferenceType.fn: fn,
+            ParamPowerFlowRefferenceType.ws: ws,
+            ParamPowerFlowRefferenceType.M: M,
+            ParamPowerFlowRefferenceType.D: D,
+            ParamPowerFlowRefferenceType.Rs: Rs,
+            ParamPowerFlowRefferenceType.Ra: Ra,
 
             # Reactances
-            ParamPowerFlowReferenceType.Xd: Xd,
-            ParamPowerFlowReferenceType.Xq: Xq,
-            ParamPowerFlowReferenceType.Xd_prime: Xd_prime,
-            ParamPowerFlowReferenceType.Xq_prime: Xq_prime,
-            ParamPowerFlowReferenceType.Xd_2prime: Xd_2prime,
-            ParamPowerFlowReferenceType.Xq_2prime: Xq_2prime,
-            ParamPowerFlowReferenceType.Xl: Xl,
+            ParamPowerFlowRefferenceType.Xd: Xd,
+            ParamPowerFlowRefferenceType.Xq: Xq,
+            ParamPowerFlowRefferenceType.Xd_prime: Xd_prime,
+            ParamPowerFlowRefferenceType.Xq_prime: Xq_prime,
+            ParamPowerFlowRefferenceType.Xd_2prime: Xd_2prime,
+            ParamPowerFlowRefferenceType.Xq_2prime: Xq_2prime,
+            ParamPowerFlowRefferenceType.Xl: Xl,
 
             # Time constants
-            ParamPowerFlowReferenceType.Td0_prime: Td0_prime,
-            ParamPowerFlowReferenceType.Tq0_prime: Tq0_prime,
-            ParamPowerFlowReferenceType.Td0_2prime: Td0_2prime,
-            ParamPowerFlowReferenceType.Tq0_2prime: Tq0_2prime,
+            ParamPowerFlowRefferenceType.Td0_prime: Td0_prime,
+            ParamPowerFlowRefferenceType.Tq0_prime: Tq0_prime,
+            ParamPowerFlowRefferenceType.Td0_2prime: Td0_2prime,
+            ParamPowerFlowRefferenceType.Tq0_2prime: Tq0_2prime,
 
-            ParamPowerFlowReferenceType.Xd_prime_minus_Xl: Xd_prime_minus_Xl,
-            ParamPowerFlowReferenceType.Xq_prime_minus_Xl: Xq_prime_minus_Xl,
-            ParamPowerFlowReferenceType.Xdaux: Xdaux,
-            ParamPowerFlowReferenceType.Xdaux2: Xdaux2,
-            ParamPowerFlowReferenceType.Xdaux3: Xdaux3,
-            ParamPowerFlowReferenceType.Xqaux: Xqaux,
-            ParamPowerFlowReferenceType.Xqaux2: Xqaux2,
-            ParamPowerFlowReferenceType.Xqaux3: Xqaux3,
+            ParamPowerFlowRefferenceType.Xd_prime_minus_Xl: Xd_prime_minus_Xl,
+            ParamPowerFlowRefferenceType.Xq_prime_minus_Xl: Xq_prime_minus_Xl,
+            ParamPowerFlowRefferenceType.Xdaux: Xdaux,
+            ParamPowerFlowRefferenceType.Xdaux2: Xdaux2,
+            ParamPowerFlowRefferenceType.Xdaux3: Xdaux3,
+            ParamPowerFlowRefferenceType.Xqaux: Xqaux,
+            ParamPowerFlowRefferenceType.Xqaux2: Xqaux2,
+            ParamPowerFlowRefferenceType.Xqaux3: Xqaux3,
 
-            ParamPowerFlowReferenceType.A: A,
-            ParamPowerFlowReferenceType.B: B,
+            ParamPowerFlowRefferenceType.A: A,
+            ParamPowerFlowRefferenceType.B: B,
         },
 
         out_vars=[Irg, Iig, omega, IRPu, Te],
@@ -361,9 +360,7 @@ def get_genqec_phasor(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     return templ
 
 
-def get_complete_generator_template_phasor(vfactory: VarFactory,
-                                           name="complete generator phasor rms template",
-                                           hard_sat_type: str = "ml") -> RmsModelTemplate:
+def get_complete_generator_template_phasor(vfactory: VarFactory, name="complete generator phasor rms template") -> RmsModelTemplate:
     """
     Complete generator template with governor, exciter, and stabilizer for phasor-based RMS simulation.
     
@@ -387,10 +384,10 @@ def get_complete_generator_template_phasor(vfactory: VarFactory,
     templ.name = name
 
     # Generate models from generation_tensygrid_ml.py
-    genqec_mdl = GenqecBuild(vfactory=vfactory, name=name, hard_sat_type=hard_sat_type).block
-    governor_mdl = GovernorBuild(vfactory=vfactory, name=name, hard_sat_type=hard_sat_type).block
-    stabilizer_mdl = StabilizerBuild(vfactory=vfactory, name=name, hard_sat_type=hard_sat_type).block
-    exciter_mdl = ExciterBuild(vfactory=vfactory, name=name, hard_sat_type=hard_sat_type).block
+    genqec_mdl = GenqecBuild(vfactory=vfactory, name=name).block
+    governor_mdl = GovernorBuild(vfactory=vfactory, name=name).block
+    stabilizer_mdl = StabilizerBuild(vfactory=vfactory, name=name).block
+    exciter_mdl = ExciterBuild(vfactory=vfactory, name=name).block
 
     # Create Vm calculation block: Vm = sqrt(Vr^2 + Vi^2)
     # This computes the voltage magnitude from phasor components for the exciter
@@ -406,7 +403,7 @@ def get_complete_generator_template_phasor(vfactory: VarFactory,
         algebraic_eqs=[
             Vr_aux - Vr_input,
             Vi_aux - Vi_input,
-            Vm_calc*Vm_calc_aux - (Vr_input * Vr_aux + Vi_input * Vi_aux),
+            Vm_calc*Vm_calc_aux - (Vr_input * Vr_input + Vi_input * Vi_input),
             Vm_calc -Vm_calc_aux],
         algebraic_vars=[Vm_calc, Vm_calc_aux, Vr_aux, Vi_aux],
         out_vars=[Vm_calc],
@@ -422,17 +419,17 @@ def get_complete_generator_template_phasor(vfactory: VarFactory,
     # Connect models
     # genqec inputs: [Vr, Vi, Tm, Vf]
     # genqec outputs: [Pg, Qg, omega, IRPu, Te]
-    vfactory.add_connections([genqec_mdl.in_vars[3]], [exciter_mdl.out_vars[0]])  # Vf from exciter
-    vfactory.add_connections([exciter_mdl.in_vars[0]], [genqec_mdl.out_vars[3]])  # IRPu to exciter
-    vfactory.add_connections([exciter_mdl.in_vars[1]], [vm_calc_block.out_vars[0]])  # Vm from calculation block
-    vfactory.add_connections([exciter_mdl.in_vars[2]], [stabilizer_mdl.out_vars[0]])  # Vpss to exciter
+    genqec_mdl.connect([genqec_mdl.in_vars[3]], [exciter_mdl.out_vars[0]])  # Vf from exciter
+    exciter_mdl.connect([exciter_mdl.in_vars[0]], [genqec_mdl.out_vars[3]])  # IRPu to exciter
+    exciter_mdl.connect([exciter_mdl.in_vars[1]], [vm_calc_block.out_vars[0]])  # Vm from calculation block
+    exciter_mdl.connect([exciter_mdl.in_vars[2]], [stabilizer_mdl.out_vars[0]])  # Vpss to exciter
 
-    vfactory.add_connections([stabilizer_mdl.in_vars[0]], [genqec_mdl.out_vars[2]])  # omega to stabilizer
+    stabilizer_mdl.connect([stabilizer_mdl.in_vars[0]], [genqec_mdl.out_vars[2]])  # omega to stabilizer
 
-    vfactory.add_connections([genqec_mdl.in_vars[2]], [governor_mdl.out_vars[0]])  # Tm from governor
+    genqec_mdl.connect([genqec_mdl.in_vars[2]], [governor_mdl.out_vars[0]])  # Tm from governor
 
-    vfactory.add_connections([governor_mdl.in_vars[0]], [genqec_mdl.out_vars[2]])  # omega to governor
-    vfactory.add_connections([governor_mdl.in_vars[1]], [genqec_mdl.out_vars[4]])  # Te to governor
+    governor_mdl.connect([governor_mdl.in_vars[0]], [genqec_mdl.out_vars[2]])  # omega to governor
+    governor_mdl.connect([governor_mdl.in_vars[1]], [genqec_mdl.out_vars[4]])  # Te to governor
 
     # Convert generator P/Q outputs to injected Ir/Ii for current-balance formulations
     Pg_out = genqec_mdl.out_vars[0]
@@ -468,12 +465,12 @@ def get_complete_generator_template_phasor(vfactory: VarFactory,
     templ.block = to_implicit(templ.block, vfactory)
     # External mapping for phasor coordinates (current balance)
     templ.block.external_mapping = {
-        VarPowerFlowReferenceType.Vr: genqec_mdl.in_vars[0],
-        VarPowerFlowReferenceType.Vi: genqec_mdl.in_vars[1],
-        VarPowerFlowReferenceType.P: Pg_out,
-        VarPowerFlowReferenceType.Q: Qg_out,
-        VarPowerFlowReferenceType.Ir: Irg_out,
-        VarPowerFlowReferenceType.Ii: Iig_out,
+        VarPowerFlowRefferenceType.Vr: genqec_mdl.in_vars[0],
+        VarPowerFlowRefferenceType.Vi: genqec_mdl.in_vars[1],
+        VarPowerFlowRefferenceType.P: Pg_out,
+        VarPowerFlowRefferenceType.Q: Qg_out,
+        VarPowerFlowRefferenceType.Ir: Irg_out,
+        VarPowerFlowRefferenceType.Ii: Iig_out,
     }
 
     templ.block.in_vars = [genqec_mdl.in_vars[0], genqec_mdl.in_vars[1]]

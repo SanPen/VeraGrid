@@ -56,34 +56,35 @@ def compute_objects_masks(objects: List[ALL_DEV_TYPES], flt: Filter) -> Tuple[Bo
                 else:
                     val_i = str(objects[i])
 
-                # NOTE: The logic here is to convert the original search value to whatever the actual type is
-                #       so that the comparison later can be done among the same data types.
-                #       ``None`` values are normalized to their textual form so expressions like
-                #       ``market_unit = None`` can be evaluated explicitly by the smart-search engine.
-                try:
-                    if isinstance(val_i, str):
-                        val = str(value_to_compare_to)
-                    elif isinstance(val_i, int):
-                        val = int(value_to_compare_to)
-                    elif isinstance(val_i, float):
-                        val = float(value_to_compare_to)
-                    elif isinstance(val_i, EditableDevice):
-                        # here we also take the object name if we are filtering by database objects
-                        val_i = val_i.name
-                        val = str(value_to_compare_to)
-                    elif val_i is None:
-                        val_i = "None"
-                        val = str(value_to_compare_to)
-                    else:
+                if val_i is not None:
+
+                    # NOTE: The logic here is to convert the original search value to whatever the actual type is
+                    #       so that the comparison later can be done among the same data types
+
+                    try:
+                        if isinstance(val_i, str):
+                            val = str(value_to_compare_to)
+                        elif isinstance(val_i, int):
+                            val = int(value_to_compare_to)
+                        elif isinstance(val_i, float):
+                            val = float(value_to_compare_to)
+                        elif isinstance(val_i, EditableDevice):
+                            # here we also take the object name if we are filtering by database objects
+                            val_i = val_i.name
+                            val = str(value_to_compare_to)
+                        else:
+                            val = str(val)
+                            val_i = str(val_i)
+                    except TypeError:
+                        # if the casting failed, try string comparison
                         val = str(value_to_compare_to)
                         val_i = str(val_i)
-                except TypeError:
-                    # if the casting failed, try string comparison
-                    val = str(value_to_compare_to)
-                    val_i = str(val_i)
 
-                # Evaluate the search value with
-                idx_mask[i] = flt.apply_filter_op(val_i, val)
+                    # Evaluate the search value with
+                    idx_mask[i] = flt.apply_filter_op(val_i, val)
+                else:
+                    # the object_val is None, cannot be compared
+                    idx_mask[i] = False
 
         else:
             raise ValueError("Invalid FilterSubject")

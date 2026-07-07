@@ -277,18 +277,12 @@ class BaseTiles:
         """
         raise Exception('You must override BaseTiles.tile_on_disk(level, x, y))')
 
-    def setCallback(self, callback: Callable[[int, float, float, QPixmap, bool], None] | None):
+    def setCallback(self, callback: Callable[[int, float, float, QPixmap, bool], None]):
         """
         Set the "tile available" callback function.
         Only used with internet tiles.  See "tiles_net.py".
         """
         raise Exception('You must override BaseTiles.setCallback(callback))')
-
-    def shutdown(self) -> None:
-        """
-        Stop any background work owned by this tile source.
-        """
-        pass
 
     def Geo2Tile(self, longitude: float, latitude: float) -> Tuple[int, int]:
         """

@@ -55,10 +55,8 @@ def test_vsc_save_integration():
     control2_val_vsc6 = grid.vsc_devices[6].control2_val
 
     # save and reload grid
-    temp_file = os.path.join("data", "output", "test_vsc_save_integration_temp.veragrid")
-    os.makedirs(os.path.join("data", "output"), exist_ok=True)
-    gce.save_file(grid, temp_file)
-    grid_reload = gce.open_file(temp_file)
+    gce.save_file(grid, "test_vsc_save_integration_temp.veragrid")
+    grid_reload = gce.open_file("test_vsc_save_integration_temp.veragrid")
 
 
 
@@ -96,10 +94,10 @@ def test_vsc_save_integration():
         assert control2_val_vsc6 == grid_reload.vsc_devices[6].control2_val
 
         # delete the temp file
-        os.remove(temp_file)
+        os.remove("test_vsc_save_integration_temp.veragrid")
 
     except Exception as e:
-        os.remove(temp_file)
+        os.remove("test_vsc_save_integration_temp.veragrid")
         raise e
 
 

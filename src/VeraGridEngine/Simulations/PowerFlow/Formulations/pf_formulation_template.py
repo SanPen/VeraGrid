@@ -39,7 +39,7 @@ class PfFormulationTemplate:
 
         self._converged: bool = False
 
-        self._controls_tol: float = self.options.controls_start_tolerance
+        self._controls_tol: float = 1.0e-2  # min(1e-2, self.options.tolerance * 100.0)
 
     @property
     def converged(self) -> bool:

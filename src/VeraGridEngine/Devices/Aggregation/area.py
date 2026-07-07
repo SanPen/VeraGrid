@@ -5,7 +5,7 @@
 from __future__ import annotations
 from typing import Union, Tuple
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, DeviceType, GCProp
-from VeraGridEngine.enumerations import PrpCat
+
 
 class GenericAreaGroup(EditableDevice):
     __slots__ = (
@@ -15,30 +15,10 @@ class GenericAreaGroup(EditableDevice):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(
-            prop_name='longitude',
-            units='deg',
-            tpe=float,
-            definition='longitude.',
-            profile_name='',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='latitude',
-            units='deg',
-            tpe=float,
-            definition='latitude.',
-            profile_name='',
-            cat=[PrpCat.TP],
-        ),
-        GCProp(
-            prop_name='color',
-            units='',
-            tpe=str,
-            definition='Color to paint the element in the map diagram',
-            is_color=True,
-            cat=[PrpCat.TP],
-        ),
+        GCProp(key='longitude', units='deg', tpe=float, definition='longitude.', profile_name=''),
+        GCProp(key='latitude', units='deg', tpe=float, definition='latitude.', profile_name=''),
+        GCProp(key='color', units='', tpe=str, definition='Color to paint the element in the map diagram',
+                      is_color=True),
     )
 
     def __init__(self, name='', code='', idtag: Union[str, None] = None,

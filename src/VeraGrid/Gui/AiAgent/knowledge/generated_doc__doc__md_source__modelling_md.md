@@ -1993,9 +1993,9 @@ Now that 'House trafo' has been created, other transformers can be set to the sa
 - Z Series [Ohm/Km] for ABCN (under the 'Z series' tab at the top).
 - Z Series [Ohm/Km] for ABC (under the 'Z series' tab at the top).
 - Z Series [Ohm/Km] for the sequence components (under the 'Z series' tab at the top).
-- Y shunt [uS/km] for ABCN (under the 'Y shunt' tab at the top).
-- Y shunt [uS/km] for ABC (under the 'Y shunt' tab at the top).
-- Y shunt [uS/km] for the sequence components (under the 'Y shunt' tab at the top).
+- Y shunt [uS/Km] for ABCN (under the 'Y shunt' tab at the top).
+- Y shunt [uS/Km] for ABC (under the 'Y shunt' tab at the top).
+- Y shunt [uS/Km] for the sequence components (under the 'Y shunt' tab at the top).
 
 12. Close the window, and your 'Elements Data' tab should look lie:
 

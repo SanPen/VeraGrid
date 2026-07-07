@@ -73,17 +73,6 @@ class Association:
         """
         return Association(api_object=self.api_object, value=self.value)
 
-    def rebind_device_references(self, objects_by_idtag: Dict[str, ALL_DEV_TYPES]) -> None:
-        """
-        Rebind the associated API object to an equivalent object from a target lookup.
-
-        :param objects_by_idtag: idtag -> target object lookup
-        """
-        if self.api_object is not None and hasattr(self.api_object, "idtag"):
-            pointed = objects_by_idtag.get(self.api_object.idtag, None)
-            if pointed is not None:
-                self.api_object = pointed
-
 
 class Associations:
     """
@@ -250,24 +239,6 @@ class Associations:
         for key, val in self._data.items():
             elm._data[key] = val.copy()
         return elm
-
-    def rebind_device_references(self, objects_by_idtag: Dict[str, ALL_DEV_TYPES]) -> None:
-        """
-        Rebind all associated API objects to equivalent objects from a target lookup.
-
-        :param objects_by_idtag: idtag -> target object lookup
-        """
-        data: Dict[str, Association] = dict()
-
-        for key, val in self._data.items():
-            val.rebind_device_references(objects_by_idtag=objects_by_idtag)
-
-            if val.api_object is not None and hasattr(val.api_object, "idtag"):
-                data[val.api_object.idtag] = val
-            else:
-                data[key] = val
-
-        self._data = data
 
     def __eq__(self, other: "Associations") -> bool:
         """

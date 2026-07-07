@@ -10,7 +10,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class BusbarSection(Connector):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='ipMax', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.A, description='''Electrical current with sign convention: positive flow is out of the conducting equipment into the connectivity node. Can be both AC and DC.''', profiles=[CgmesProfileType.SC]),
+		CgmesProperty(property_name='ipMax', class_type=float, multiplier=UnitMultiplier.none, unit=UnitSymbol.A, description='''Electrical current with sign convention: positive flow is out of the conducting equipment into the connectivity node. Can be both AC and DC.''', profiles=[]),
 	)
 	__slots__ = ('ipMax',)
 	def __init__(self, rdfid='', tpe='BusbarSection'):

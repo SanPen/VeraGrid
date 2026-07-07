@@ -11,7 +11,7 @@ No docstring provided.
 
 - Class count: 1
 - Top-level function count: 0
-- Representative imports: __future__, numpy, typing, VeraGridEngine.Devices.Substation.bus, VeraGridEngine.enumerations, VeraGridEngine.Devices.Parents.branch_parent, VeraGridEngine.Devices.Branches.tap_changer, VeraGridEngine.Devices.Parents.editable_device, VeraGridEngine.Devices.Profiles
+- Representative imports: __future__, numpy, typing, VeraGridEngine.Devices.Substation.bus, VeraGridEngine.enumerations, VeraGridEngine.Devices.Parents.branch_parent, VeraGridEngine.Devices.Branches.tap_changer, VeraGridEngine.Devices.Parents.editable_device, VeraGridEngine.Devices.profile
 
 ## Class: ControllableBranchParent
 

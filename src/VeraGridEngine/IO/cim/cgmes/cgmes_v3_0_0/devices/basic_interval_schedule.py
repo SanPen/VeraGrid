@@ -12,9 +12,9 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
 
 class BasicIntervalSchedule(IdentifiedObject):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='startTime', class_type=datetime.datetime, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The time for the first time point.  The value can be a time of day, not a specific date.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
-		CgmesProperty(property_name='value1Unit', class_type=UnitSymbol, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Value1 units of measure.''', mandatory=True, profiles=[CgmesProfileType.EQ]),
-		CgmesProperty(property_name='value2Unit', class_type=UnitSymbol, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Value2 units of measure.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='startTime', class_type=datetime.datetime, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''The time for the first time point.  The value can be a time of day, not a specific date.''', profiles=[]),
+		CgmesProperty(property_name='value1Unit', class_type=UnitSymbol, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Value1 units of measure.''', profiles=[]),
+		CgmesProperty(property_name='value2Unit', class_type=UnitSymbol, multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''Value2 units of measure.''', profiles=[]),
 	)
 	__slots__ = ('startTime', 'value1Unit', 'value2Unit')
 	def __init__(self, rdfid='', tpe='BasicIntervalSchedule'):

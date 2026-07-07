@@ -4,24 +4,10 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowRefferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Templates.template_definiton import TemplateDefinition, TemplateProp
 from VeraGridEngine.Utils.Symbolic.block import Block
-
-
-class DynamicTapLoadRmsTemplate(TemplateDefinition):
-
-    def __init__(self, vf):
-        super().__init__(vf, params=[
-            TemplateProp(name="Pl0", units="pu", descr="Initial active power at nominal voltage (pu).", tpe=float),
-            TemplateProp(name="Ql0", units="pu", descr="Initial reactive power at nominal voltage (pu).", tpe=float),
-            TemplateProp(name="name", units="", descr="Name of the rms model.", tpe=str),
-        ])
-
-    def eval(self) -> RmsModelTemplate:
-        return DynamicTapLoadBuild(self.vf, self.get_value("name"), self.get_value("Pl0"), self.get_value("Ql0"))
 
 
 def DynamicTapLoadBuild(vfactory: VarFactory, name: str = "", Pl0=1.0, Ql0=0.1) -> RmsModelTemplate:
@@ -105,9 +91,9 @@ def DynamicTapLoadBuild(vfactory: VarFactory, name: str = "", Pl0=1.0, Ql0=0.1) 
     )
 
     templ.block.external_mapping = {
-        VarPowerFlowReferenceType.P: P,
-        VarPowerFlowReferenceType.Q: Q,
-        VarPowerFlowReferenceType.Vm: inputs[0],
+        VarPowerFlowRefferenceType.P: P,
+        VarPowerFlowRefferenceType.Q: Q,
+        VarPowerFlowRefferenceType.Vm: inputs[0],
     }
 
     templ.block.in_vars = inputs

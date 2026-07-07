@@ -194,7 +194,7 @@ class PowerFlowDriver(DriverTemplate):
                           time_series=False,
                           logger=self.logger)
 
-            self.results = translate_gslv_pf_results(self.grid, res=res)
+            self.results = translate_gslv_pf_results(self.grid, res=res, logger=self.logger)
             self.results.area_names = [a.name for a in self.grid.areas]
             self.convergence_reports = self.results.convergence_reports
 

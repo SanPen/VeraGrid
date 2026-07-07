@@ -43,7 +43,7 @@ def test_all_grids():
     assert len(failed) == 0
 
 
-def test_line_templates_finding(tmp_path):
+def test_line_templates_finding():
     """
     Test that checks that a line assigned a line template that is not a Sequence line can open it
     :return:
@@ -51,23 +51,15 @@ def test_line_templates_finding(tmp_path):
     # navigate to the grids folder
     fname = os.path.join('data', 'grids', 'test_line_templates.gridcal')
 
-
     opener = FileOpen(fname)
     grid = opener.open()
 
-    # it it fails, it may be because the file structure changed and the input file needs updating
-    # FileSave(grid, str(fname)).save()
+    # FileSave(grid, fname).save()  # re-save if new structures are present
 
-    normalized_fname = tmp_path / 'test_line_templates_normalized.gridcal'
-    FileSave(grid, str(normalized_fname)).save()
+    if opener.logger.has_logs():
+        opener.logger.print()
 
-    reopened = FileOpen(str(normalized_fname))
-    reopened.open()
-
-    if reopened.logger.has_logs():
-        reopened.logger.print()
-
-    assert not reopened.logger.has_logs()
+    assert not opener.logger.has_logs()
 
 
 def test_issue_337():

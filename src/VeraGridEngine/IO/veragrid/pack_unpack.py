@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
+import copy
 import json
 import math
 import os
@@ -15,20 +16,12 @@ from enum import EnumMeta as EnumType
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 import VeraGridEngine.Devices as dev
-from VeraGridEngine.Devices.Parents.editable_device import GCProp, EditableDevice
+from VeraGridEngine.Devices.Parents.editable_device import GCProp
 from VeraGridEngine.Devices.Profiles import AnyProfile
 from VeraGridEngine.Utils.Symbolic.symbolic_io import BlockSaver, BlockParser, Block
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, VERAGRID_FILE_TYPE
-from VeraGridEngine.Devices.Diagrams.base_diagram import copy_diagrams
 from VeraGridEngine.enumerations import (DiagramType, DeviceType, SubObjectType, TapPhaseControl, TapModuleControl,
                                          ContingencyOperationTypes)
-
-ProfileDictionary = Dict[str, bool | int | str | dict[str, dict[int, Any | None] | dict[Any, Any]] | Any]
-
-ModelDictionary = dict[str,
-dict[str, dict[str, str] | list[dict[str, str]]]
-| dict[str, list[dict[str, Any]] | dict[int, list[Any]] | dict[int, dict[str, Any]] | list[int]]
-]
 
 
 def get_objects_dictionary() -> Dict[str, ALL_DEV_TYPES]:
@@ -63,8 +56,6 @@ def get_objects_dictionary() -> Dict[str, ALL_DEV_TYPES]:
         'emission': dev.EmissionGas(),
 
         'facility': dev.Facility(),
-
-        'market_unit': dev.MarketUnit(),
 
         'rms_model_template': dev.RmsModelTemplate(),
         'emt_model_template': dev.EmtModelTemplate(),
@@ -246,8 +237,7 @@ def _resolve_circuit_fmu_paths(circuit: MultiCircuit, project_directory: Path | 
                 if property_name in elm.registered_properties:
                     current_value = elm.get_snapshot_value_by_name(property_name)
                     if isinstance(current_value, str):
-                        elm.set_snapshot_value(property_name,
-                                               _resolve_project_fmu_config(current_value, project_directory))
+                        elm.set_snapshot_value(property_name, _resolve_project_fmu_config(current_value, project_directory))
                     else:
                         pass
                 else:
@@ -308,7 +298,7 @@ def get_multiverse_node_metadata(metadata: Dict[str, Any]) -> Dict[str, Dict[str
     return metadata
 
 
-def order_multiverse_records(metadata: Dict[str, Dict[str, int | float]] | Dict[str, Any]) -> List[Dict[str, Any]]:
+def order_multiverse_records(metadata: Dict[str, Dict[str | int | float]] | Dict[str, Any]) -> List[Dict[str, Any]]:
     """
     Return multiverse metadata records in a parent-before-child order.
 
@@ -466,7 +456,7 @@ def gather_model_as_data_frames(circuit: MultiCircuit,
     return dfs
 
 
-def profile_todict(profile: AnyProfile) -> ProfileDictionary:
+def profile_todict(profile: AnyProfile) -> Dict[str, str | bool]:
     """
     Get a dictionary representation of the profile
     :return:
@@ -501,7 +491,7 @@ def profile_todict(profile: AnyProfile) -> ProfileDictionary:
         }
 
 
-def profile_todict_idtag(profile: AnyProfile) -> ProfileDictionary:
+def profile_todict_idtag(profile: AnyProfile) -> Dict[str, str]:
     """
     Get a dictionary representation of the profile
     :return:
@@ -529,7 +519,7 @@ def profile_todict_idtag(profile: AnyProfile) -> ProfileDictionary:
         }
 
 
-def profile_todict_str(profile: AnyProfile) -> ProfileDictionary:
+def profile_todict_str(profile: AnyProfile) -> Dict[str, str]:
     """
     Get a dictionary representation of the profile
     :return:
@@ -566,9 +556,9 @@ def profile_todict_str(profile: AnyProfile) -> ProfileDictionary:
 
 
 def cast_profile_value(
-        profile: AnyProfile,
-        value: Any,
-        collection: Union[None, Dict[str, Any]] = None,
+    profile: AnyProfile,
+    value: Any,
+    collection: Union[None, Dict[str, Any]] = None,
 ) -> Any:
     """
     Convert serialized profile payloads into the concrete type required by ``profile``.
@@ -695,9 +685,6 @@ def veragrid_object_to_json(elm: ALL_DEV_TYPES,
         elif prop.tpe == SubObjectType.LineLocations:
             data[name] = obj.to_list()
 
-        elif prop.tpe == SubObjectType.ImpedanceTripletList:
-            data[name] = obj.to_list()
-
         elif prop.tpe == SubObjectType.ListOfWires:
             data[name] = obj.to_list()
 
@@ -721,50 +708,40 @@ def veragrid_object_to_json(elm: ALL_DEV_TYPES,
             if obj is not None:
                 data[name] = obj.uid
             else:
-                # Persistent dynamic plot entries may keep unresolved legacy Var
-                # hints as ``None`` while semantic fields remain the canonical
-                # binding identity.
-                data[name] = None
+                raise ValueError("var must not be None")
 
         elif prop.tpe == SubObjectType.ConstType:
             if obj is not None:
                 data[name] = obj.uid
             else:
-                data[name] = None
+                raise ValueError("const must not be None")
 
         elif prop.tpe == SubObjectType.Array:
             data[name] = list(obj)
 
         else:
             # if the object is not of a primary type, get the idtag instead
-            if obj is None:
-                data[name] = None
+            if hasattr(obj, 'idtag'):
+                data[name] = obj.idtag
+
+                if prop.has_profile():
+                    data[name + '_prof'] = profile_todict_idtag(elm.get_profile_by_prop(prop=prop))
+
             else:
-                if isinstance(obj, EditableDevice):
-                    data[name] = obj.idtag
+                # some data types might not have the idtag, ten just use the str method
+                data[name] = str(obj)
 
-                    if prop.has_profile():
-                        data[name + '_prof'] = profile_todict_idtag(elm.get_profile_by_prop(prop=prop))
-                    else:
-                        pass
-                else:
-                    # some data types might not have the idtag, ten just use the str method
-                    data[name] = str(obj)
-
-                    if prop.has_profile():
-                        data[name + '_prof'] = profile_todict_str(elm.get_profile_by_prop(prop=prop))
-                    else:
-                        pass
+                if prop.has_profile():
+                    data[name + '_prof'] = profile_todict_str(elm.get_profile_by_prop(prop=prop))
 
     return data
 
 
 def gather_model_as_jsons(circuit: MultiCircuit,
-                          project_directory: Path | None = None) -> ModelDictionary:
+                          project_directory: Path | None = None) -> Dict[str, Dict[str, str | float | List[int]]]:
     """
     Transform a MultiCircuit into a collection of Json files
     :param circuit:
-    :param project_directory:
     :return:
     """
 
@@ -797,12 +774,6 @@ def gather_model_as_jsons(circuit: MultiCircuit,
 
     # time
     unix_time = circuit.get_unix_time()
-    if len(unix_time) > 1 and np.all(unix_time == unix_time[0]) and abs(int(unix_time[0])) <= 10:
-        raise ValueError(
-            f"Refusing to save degenerate master time profile: all {len(unix_time)} unix values are "
-            f"{int(unix_time[0])}. This usually means circuit.time_profile was overwritten before saving."
-        )
-
     data['time'] = {'unix': unix_time.tolist(),
                     'prob': list(np.ones(len(unix_time))),
                     'snapshot_unix': circuit.get_snapshot_time_unix()}
@@ -813,26 +784,12 @@ def gather_model_as_jsons(circuit: MultiCircuit,
 
     # At this point I already have the symbolic data stored in block_saver
 
-    dictionary_save = {
-        "model_data": data,
-        "symbolic_data": {
-            "vars": block_saver.get_vars_to_save(),
-            "consts": block_saver.get_const_to_save(),
-            "diff_vars": block_saver.get_diff_vars_to_save(),
-            "shared_references": block_saver.get_shared_references_to_save(),
-            "blocks": block_saver.get_blocks(),
-            "main_block_uids": block_saver.main_block_uids,
-        }
-    }
-
     return {
         "model_data": data,
         "symbolic_data": {
             "vars": block_saver.get_vars_to_save(),
             "consts": block_saver.get_const_to_save(),
             "diff_vars": block_saver.get_diff_vars_to_save(),
-            "shared_references": block_saver.get_shared_references_to_save(),
-            "connections": block_saver.get_connections_to_save(),
             "blocks": block_saver.get_blocks(),
             "main_block_uids": block_saver.main_block_uids,
         }
@@ -1081,7 +1038,7 @@ def parse_object_type_from_dataframe(
                         # the property of the file exists, parse it
                         if isinstance(gc_prop.tpe, DeviceType):
 
-                            # we must look for the reference in elements_dict
+                            # we must look for the refference in elements_dict
                             collection = elements_dict_by_type.get(gc_prop.tpe, None)
 
                             if collection is not None:
@@ -1188,12 +1145,18 @@ def parse_object_type_from_dataframe(
                                 prof.fill(bool(property_value))
 
                         elif isinstance(gc_prop.tpe, EnumType):
-                            val, ok = set_enum_snapshot_value(elm=elm,
-                                                              gc_prop=gc_prop,
-                                                              property_value=property_value,
-                                                              logger=logger)
-                            if ok and gc_prop.has_profile():
-                                prof.fill(val)
+
+                            try:
+                                val = gc_prop.tpe(property_value)
+                                elm.set_snapshot_value(gc_prop.name, val)
+
+                                if gc_prop.has_profile():
+                                    prof.fill(val)
+
+                            except ValueError:
+                                logger.add_error(f'Cannot cast value to {gc_prop.tpe}',
+                                                 device=elm.name,
+                                                 value=property_value)
 
                         else:
                             raise Exception(f'Unsupported property type: {gc_prop.tpe}')
@@ -1212,12 +1175,7 @@ def parse_object_type_from_dataframe(
                         dfp = data.get(profile_key, None)
 
                         if dfp is not None:
-                            try:
-                                elm.set_profile(gc_prop, arr=dfp.values[:, i].astype(gc_prop.tpe))
-                            except TypeError as terr:
-                                logger.add_error(msg="Cannot set profile value",
-                                                 device_property=gc_prop.profile_name,
-                                                 device=elm.name)
+                            elm.set_profile(gc_prop, arr=dfp.values[:, i].astype(gc_prop.tpe))
 
                         else:
                             skip = False
@@ -1305,45 +1263,6 @@ def search_property_into_json(json_entry: dict, prop: GCProp):
 
         # we found the property at first
         return property_value
-
-
-def set_enum_snapshot_value(elm: ALL_DEV_TYPES,
-                            gc_prop: GCProp,
-                            property_value: Any,
-                            logger: Logger) -> tuple[Any, bool]:
-    """
-    Set one enum snapshot value, allowing property setters to translate legacy values.
-    :return: (typed value, success)
-    """
-    try:
-        val = gc_prop.tpe(property_value)
-    except (TypeError, ValueError):
-        try:
-            elm.set_snapshot_value(gc_prop.name, property_value)
-        except (TypeError, ValueError) as e:
-            logger.add_error(f'Cannot cast the value to the snapshot',
-                             device=elm.name,
-                             value=property_value,
-                             comment=str(e))
-            return property_value, False
-
-        val = elm.get_snapshot_value_by_name(gc_prop.name)
-        if not isinstance(val, gc_prop.tpe):
-            logger.add_error(f'Cannot cast the value to the snapshot',
-                             device=elm.name,
-                             value=property_value)
-            return property_value, False
-    else:
-        try:
-            elm.set_snapshot_value(gc_prop.name, val)
-        except (TypeError, ValueError) as e:
-            logger.add_error(f'Cannot set the snapshot',
-                             device=elm.name,
-                             value=property_value,
-                             comment=str(e))
-            return property_value, False
-
-    return val, True
 
 
 def search_and_apply_json_profile(json_entry: Dict[str, Dict[str, Union[str, Union[Any, Dict[str, Any]]]]],
@@ -1496,14 +1415,6 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
                                     list_of_wires.parse(data=property_value,
                                                         wire_dict=elements_dict_by_type[DeviceType.WireDevice])
 
-
-                                elif gc_prop.tpe == SubObjectType.ImpedanceTripletList:
-
-                                    # get the line locations object and fill it with the json data
-                                    impedance_triplet_list: dev.ImpedanceTripletList = elm.get_snapshot_value(
-                                        prop=gc_prop)
-                                    impedance_triplet_list.parse(data=property_value)
-
                                 elif gc_prop.tpe == SubObjectType.TapChanger:
 
                                     # get the line locations object and fill it with the json data
@@ -1612,11 +1523,19 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
                                                               property_value=val)
 
                             elif isinstance(gc_prop.tpe, EnumType):
-                                val, ok = set_enum_snapshot_value(elm=elm,
-                                                                  gc_prop=gc_prop,
-                                                                  property_value=property_value,
-                                                                  logger=logger)
-                                if ok:
+
+                                try:
+                                    val = gc_prop.tpe(property_value)
+
+                                    try:
+                                        elm.set_snapshot_value(gc_prop.name, val)
+
+                                    except ValueError as e:
+                                        logger.add_error(f'Cannot set the snapshot',
+                                                         device=elm.name,
+                                                         value=property_value,
+                                                         comment=str(e))
+
                                     try:
                                         search_and_apply_json_profile(json_entry=json_entry,
                                                                       gc_prop=gc_prop,
@@ -1628,6 +1547,12 @@ def parse_object_type_from_json(template_elm: ALL_DEV_TYPES,
                                                          device=elm.name,
                                                          value=property_value,
                                                          comment=str(e))
+
+                                except ValueError as e:
+                                    logger.add_error(f'Cannot cast the value to the snapshot',
+                                                     device=elm.name,
+                                                     value=property_value,
+                                                     comment=str(e))
 
                             else:
                                 raise Exception(f'Unsupported property type: {gc_prop.tpe} for {gc_prop.name}')
@@ -1722,14 +1647,11 @@ def handle_legacy_jsons(model_data: Dict[str, List],
 def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
                         previous_circuit: Union[MultiCircuit, None] = None,
                         project_directory: str | Path | None = None,
-                        refine_pointers: bool = True,
                         text_func: Union[Callable, None] = None,
                         progress_func: Union[Callable, None] = None,
                         logger: Logger = Logger()) -> MultiCircuit:
     """
     Interpret data
-    :param project_directory: file project directory
-    :param refine_pointers: Refine (and possibly delete) the pointer objects such as investments and contingencies?
     :param data: dictionary of data frames and other information
     :param previous_circuit: Optional previous VeraGrid circuit. This is relevant in case of loading grid increments
     :param text_func: text callback function
@@ -1857,16 +1779,12 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
     # These files are just .json stored in the model_data inside the zip file
 
     block_parser = BlockParser(circuit.var_factory)
-    symbolic_data: Dict[str, Any] | None = data.get('symbolic_data', None)
+    symbolic_data = data.get('symbolic_data', None)
     if symbolic_data is not None:
         if len(symbolic_data) > 0:
-            if "shared_references" in symbolic_data:
-                block_parser.parse_references(symbolic_data["shared_references"])
             block_parser.parse_consts(symbolic_data["consts"])
             block_parser.parse_vars(symbolic_data["vars"])
             block_parser.parse_diff_vars(symbolic_data["diff_vars"])
-            if "connections" in symbolic_data:
-                block_parser.parse_connections(symbolic_data["connections"])
             for block_uid in symbolic_data["main_block_uids"]:
                 block_parser.parse_block(symbolic_data["blocks"], block_uid)
         else:
@@ -1928,8 +1846,8 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
                                                       devices=devices,
                                                       logger=logger)
                 else:
-                    # Legacy and optional sections should not generate warnings when absent.
-                    if object_type_key not in {'branch', 'fmu_template'}:
+                    # branch is a legacy structure, so we can avoid reporting its absence
+                    if object_type_key != 'branch':
                         logger.add_warning(msg=f'No data for {object_type_key}')
 
                 if progress_func is not None:
@@ -2011,8 +1929,6 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
                 ypos = df['ypos'].values[i]
                 phase = df['phase'].values[i]
                 tower.add_wire_relationship(wire=wire, xpos=xpos, ypos=ypos, phase=phase)
-    else:
-        pass
 
     # create diagrams --------------------------------------------------------------------------------------------------
     if text_func is not None:
@@ -2045,8 +1961,7 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
 
     # search contingencies, investments and remedial actions pointed devices
     # and remove those that point nowhere
-    if refine_pointers:
-        circuit.refine_pointer_objects(logger=logger)
+    circuit.refine_pointer_objects(logger=logger)
 
     if circuit.has_time_series:
         circuit.ensure_profiles_exist()
@@ -2065,8 +1980,8 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
     return circuit
 
 
-def parse_multiverse_data(data: Dict[str, VERAGRID_FILE_TYPE],
-                          metadata: Dict[str, Dict[str, int | float] | int | None],
+def parse_multiverse_data(data: dict[str, VERAGRID_FILE_TYPE],
+                          metadata: Dict[str, Dict[str | int | float] | int | None],
                           text_func: Union[Callable, None] = None,
                           progress_func: Union[Callable, None] = None,
                           logger: Logger = Logger()) -> dev.MultiVerse:
@@ -2110,7 +2025,6 @@ def parse_multiverse_data(data: Dict[str, VERAGRID_FILE_TYPE],
     #   scenario, never against the raw delta payload.
     node_metadata = get_multiverse_node_metadata(metadata)
     ordered_records = order_multiverse_records(metadata)
-    all_elements_dict = dict()
 
     for record in ordered_records:
         node_id = int(record["node_id"])
@@ -2118,91 +2032,61 @@ def parse_multiverse_data(data: Dict[str, VERAGRID_FILE_TYPE],
         parent_id_raw = record["parent_id"]
         parent_id = None if parent_id_raw is None else int(parent_id_raw)
 
-        multiverse_data = data.get("multiverse", None)
-        if multiverse_data is not None:
-            model_data = multiverse_data.get(circuit_idtag, None)
+        model_data = data["multiverse"][circuit_idtag]
+        diagrams_dict[circuit_idtag] = model_data.get("diagrams", list())
 
-            if model_data is not None:
-                diagrams_dict[circuit_idtag] = model_data.get("diagrams", list())
+        model_without_diagrams = dict(model_data)
+        model_without_diagrams["diagrams"] = list()
 
-                model_without_diagrams = dict(model_data)
-                model_without_diagrams["diagrams"] = list()
+        previous_circuit = None if parent_id is None else composed_by_node_id[parent_id]
 
-                previous_circuit = None if parent_id is None else composed_by_node_id[parent_id]
+        grid = parse_veragrid_data(data=model_without_diagrams,
+                                   previous_circuit=previous_circuit,
+                                   text_func=text_func,
+                                   progress_func=progress_func,
+                                   logger=logger)
+        grid.idtag = circuit_idtag
+        diffs_dict[circuit_idtag] = grid
 
-                grid = parse_veragrid_data(data=model_without_diagrams,
-                                           previous_circuit=previous_circuit,
-                                           refine_pointers=False,
-                                           text_func=text_func,
-                                           progress_func=progress_func,
-                                           logger=logger)
-
-                # we create a dictionary of all the elements in all the scenarios such that finding pointers doesn't fail later
-                d, ok = grid.get_all_elements_dict(logger=logger)
-                all_elements_dict.update(d)
-
-                grid.idtag = circuit_idtag
-                diffs_dict[circuit_idtag] = grid
-
-                if parent_id is None:
-                    composed_by_node_id[node_id] = grid.copy()
-                else:
-                    composed = composed_by_node_id[parent_id].copy()
-                    composed.merge_circuit(grid)
-                    composed.name = grid.name
-                    composed_by_node_id[node_id] = composed
-            else:
-                # model_data is None
-                pass
+        if parent_id is None:
+            composed_by_node_id[node_id] = grid.copy()
         else:
-            # multiverse is None
-            pass
+            composed = composed_by_node_id[parent_id].copy()
+            composed.merge_circuit(grid)
+            composed.name = grid.name
+            composed_by_node_id[node_id] = composed
 
-    # Refine pointer in all grids
-    for idtag, grid in diffs_dict.items():
-        grid.refine_pointer_objects(logger=logger, all_elements_dict=all_elements_dict)
-
-    # Parse the multiverse data
-    try:
-        mv.parse_json(diffs_dict=diffs_dict, metadata=metadata)
-    except ValueError as e:
-        logger.add_error(str(e))
+    mv.parse_json(diffs_dict, metadata)
 
     # Parse diagrams only after the multiverse tree exists, so each node can resolve them
     # against its full composed scenario instead of its raw delta payload.
     for record in node_metadata.values():
         node_id = int(record["node_id"])
         circuit_idtag = str(record["circuit_idtag"])
-        if mv.check_node(node_id):
-            node = mv.get_node(node_id)
-            full_circuit = mv.checkout(node)
-            obj_dict = full_circuit.get_all_elements_dict_by_type(add_locations=True)
-            parsed_diagrams: List[Any] = list()
+        node = mv.get_node(node_id)
+        full_circuit = mv.checkout(node)
+        obj_dict = full_circuit.get_all_elements_dict_by_type(add_locations=True)
+        parsed_diagrams: List[Any] = list()
 
-            for diagram_dict in diagrams_dict.get(circuit_idtag, list()):
-                if diagram_dict['type'] in [DiagramType.Schematic.value, "bus-branch"]:
-                    diagram = dev.SchematicDiagram()
-                    diagram.parse_data(data=diagram_dict, obj_dict=obj_dict, logger=logger)
-                    parsed_diagrams.append(diagram)
+        for diagram_dict in diagrams_dict.get(circuit_idtag, list()):
+            if diagram_dict['type'] in [DiagramType.Schematic.value, "bus-branch"]:
+                diagram = dev.SchematicDiagram()
+                diagram.parse_data(data=diagram_dict, obj_dict=obj_dict, logger=logger)
+                parsed_diagrams.append(diagram)
 
-                elif diagram_dict['type'] == DiagramType.SubstationLineMap.value:
-                    diagram = dev.MapDiagram()
-                    diagram.parse_data(data=diagram_dict, obj_dict=obj_dict, logger=logger)
-                    parsed_diagrams.append(diagram)
+            elif diagram_dict['type'] == DiagramType.SubstationLineMap.value:
+                diagram = dev.MapDiagram()
+                diagram.parse_data(data=diagram_dict, obj_dict=obj_dict, logger=logger)
+                parsed_diagrams.append(diagram)
 
-            node.diagrams = parsed_diagrams
-        else:
-            logger.add_error("Node ID not found", value=str(node_id))
+        node.diagrams = parsed_diagrams
 
-    if isinstance(metadata, dict):
-        active_node_id_raw: int = metadata.get("active_node_id", -1)
-        if mv.current_node is not None and mv.current_model is not None:
-            obj_dict = mv.current_model.get_all_elements_dict_by_type(add_locations=True)
-            mv.current_model.diagrams = copy_diagrams(diagrams=mv.current_node.diagrams, obj_dict=obj_dict)
+    active_node_id_raw = metadata.get("active_node_id", None) if isinstance(metadata, dict) else None
+    if mv.current_node is not None and mv.current_model is not None:
+        mv.current_model.diagrams = copy.deepcopy(mv.current_node.diagrams)
 
-        if (active_node_id_raw > -1
-                and (mv.current_node is None or mv.current_node.node_id != int(active_node_id_raw))):
-            if mv.check_node(active_node_id_raw):
-                mv.activate_scenario(int(active_node_id_raw))
+    if active_node_id_raw is not None and (
+            mv.current_node is None or mv.current_node.node_id != int(active_node_id_raw)):
+        mv.activate_scenario(int(active_node_id_raw))
 
     return mv

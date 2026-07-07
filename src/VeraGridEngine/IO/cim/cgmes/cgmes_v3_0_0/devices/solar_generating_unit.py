@@ -7,13 +7,12 @@ from typing import TYPE_CHECKING
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol
 from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.generating_unit import GeneratingUnit
 from VeraGridEngine.IO.cim.cgmes.cgmes_property import CgmesProperty
-from VeraGridEngine.IO.cim.cgmes.cgmes_enums import CgmesProfileType
 if TYPE_CHECKING:
 	from VeraGridEngine.IO.cim.cgmes.cgmes_v3_0_0.devices.solar_power_plant import SolarPowerPlant
 
 class SolarGeneratingUnit(GeneratingUnit):
 	LOCAL_CGMES_PROPERTIES: tuple[CgmesProperty, ...] = (
-		CgmesProperty(property_name='SolarPowerPlant', class_type='SolarPowerPlant', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A solar power plant may have solar generating units.''', profiles=[CgmesProfileType.EQ]),
+		CgmesProperty(property_name='SolarPowerPlant', class_type='SolarPowerPlant', multiplier=UnitMultiplier.none, unit=UnitSymbol.none, description='''A solar power plant may have solar generating units.''', profiles=[]),
 	)
 	__slots__ = ('SolarPowerPlant',)
 	def __init__(self, rdfid='', tpe='SolarGeneratingUnit'):

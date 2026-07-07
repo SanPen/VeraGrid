@@ -95,10 +95,12 @@ def newton_raphson_fx(problem: PfFormulationTemplate,
 
             except RuntimeError:
                 logger.add_error(f"Newton-Raphson's Jacobian is singular @iter {iteration}:")
+                print("(newton_raphson_fx.py) Singular Jacobian")
                 return problem.get_solution(elapsed=time.time() - start, iterations=iteration)
 
             if not ok:
                 logger.add_error(f"Newton-Raphson's Jacobian is singular @iter {iteration}:")
+                print("(newton_raphson_fx.py) Singular Jacobian")
                 return problem.get_solution(elapsed=time.time() - start, iterations=iteration)
 
             # line search
@@ -108,7 +110,7 @@ def newton_raphson_fx(problem: PfFormulationTemplate,
                 error, x_sol = problem.check_error(x + dx * mu)
                 mu *= 0.25
 
-            update_controls = error < problem.options.controls_start_tolerance
+            update_controls = error < (tol * 100)
             error, converged, x, f = problem.update(x=x_sol, update_controls=update_controls)
 
             if verbose > 1:

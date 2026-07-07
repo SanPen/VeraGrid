@@ -8,7 +8,7 @@ from typing import Union, Tuple
 
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
-from VeraGridEngine.enumerations import DeviceType, FaultType, MethodShortCircuit, PhasesShortCircuit, PrpCat
+from VeraGridEngine.enumerations import DeviceType, FaultType, MethodShortCircuit, PhasesShortCircuit
 
 
 class ShortCircuitEvent(PointerDeviceParent):
@@ -25,50 +25,15 @@ class ShortCircuitEvent(PointerDeviceParent):
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
-        GCProp(
-            prop_name='fault_type',
-            units='',
-            tpe=FaultType,
-            definition='Type of short circuit',
-            cat=[PrpCat.REL],
-        ),
-        GCProp(
-            prop_name='method',
-            units='',
-            tpe=MethodShortCircuit,
-            definition='Method of short circuit',
-            cat=[PrpCat.REL],
-        ),
-        GCProp(
-            prop_name='phases',
-            units='',
-            tpe=PhasesShortCircuit,
-            definition='Phases involved',
-            cat=[PrpCat.REL],
-        ),
-        GCProp(
-            prop_name='active',
-            units='',
-            tpe=bool,
-            definition='If true the short-circuit activates when calculated, otherwise is deactivated.',
-            cat=[PrpCat.REL],
-        ),
-        GCProp(
-            prop_name='r_fault',
-            units='p.u.',
-            tpe=float,
-            definition='Resistance of the fault.This is used for short circuit studies.',
-            profile_name='',
-            cat=[PrpCat.REL],
-        ),
-        GCProp(
-            prop_name='x_fault',
-            units='p.u.',
-            tpe=float,
-            definition='Reactance of the fault.This is used for short circuit studies.',
-            profile_name='',
-            cat=[PrpCat.REL],
-        ),
+        GCProp(key='fault_type', units='', tpe=FaultType, definition='Type of short circuit'),
+        GCProp(key='method', units='', tpe=MethodShortCircuit, definition='Method of short circuit'),
+        GCProp(key='phases', units='', tpe=PhasesShortCircuit, definition='Phases involved'),
+        GCProp(key='active', units='', tpe=bool,
+               definition='If true the short-circuit activates when calculated, otherwise is deactivated.'),
+        GCProp(key='r_fault', units='p.u.', tpe=float,
+               definition='Resistance of the fault.This is used for short circuit studies.', profile_name=''),
+        GCProp(key='x_fault', units='p.u.', tpe=float,
+               definition='Reactance of the fault.This is used for short circuit studies.', profile_name=''),
     )
 
     def __init__(self,
@@ -90,9 +55,9 @@ class ShortCircuitEvent(PointerDeviceParent):
         :param name: String. Contingency name
         :param code: String. Contingency code name
         :param active: If true the investment activates when applied, otherwise is deactivated
-        :param fault_type: The short-circuit type to be simulated, for instance, SLG means single-line to ground
-        :param method: The method used to perform the short-cicuit analysis
-        :param phases: The phases involved in the short-circuit, only needed if method = phases
+        :param fault_type: FaultType
+        :param method: MethodShortCircuit
+        :param phases: PhasesShortCircuit
         :param comment: Comment
         :param r_fault: Resistance of the fault in per unit (SC only)
         :param x_fault: Reactance of the fault in per unit (SC only)

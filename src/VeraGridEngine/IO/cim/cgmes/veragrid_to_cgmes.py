@@ -1654,7 +1654,7 @@ def get_cgmes_generators(multicircuit_model: MultiCircuit,
         cgmes_syn.description = mc_elm.code
         cgmes_syn.name = mc_elm.name
         # cgmes_syn.aggregate is optional, not exported
-        if mc_elm.bus.is_slack:
+        if mc_elm.bus.get_is_slack_at(t=t_idx):
             cgmes_syn.referencePriority = 1
             cgmes_gen.normalPF = 1  # in veragrid the participation factor is the cost
         else:

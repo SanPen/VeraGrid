@@ -13,7 +13,7 @@ import scipy.sparse as sp
 from VeraGridEngine.Devices import RemedialAction
 from VeraGridEngine.Topology.simulation_indices import SimulationIndices
 from VeraGridEngine.Topology.topology import find_islands
-from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, BoolVec, Mat, CxMat, Logger
+from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, BoolVec, Mat, CxMat, StrVec, Logger
 from VeraGridEngine.enumerations import ContingencyOperationTypes, GeneratorControlMode, ShuntControlMode
 import VeraGridEngine.Topology.topology as tp
 import VeraGridEngine.Topology.simulation_indices as si
@@ -34,6 +34,7 @@ from VeraGridEngine.DataStructures.fluid_p2x_data import FluidP2XData
 from VeraGridEngine.DataStructures.fluid_path_data import FluidPathData
 from VeraGridEngine.Devices.Aggregation.investment import Investment
 from VeraGridEngine.Devices.Events.contingency import Contingency
+from VeraGridEngine.Utils.compare import compare_arr
 
 ALL_STRUCTS = Union[
     BusData,
@@ -1071,6 +1072,169 @@ class NumericalCircuit:
 
         return nc
 
+    @staticmethod
+    def _get_common_indices_by_idtag(idtags_a: StrVec, idtags_b: StrVec) -> Tuple[IntVec, IntVec]:
+        """
+        Get matching indices for the common idtags of two arrays, preserving the
+        order from the first array.
+        """
+        idx_by_idtag_b = {str(idtag): i for i, idtag in enumerate(idtags_b)}
+        idx_a = list()
+        idx_b = list()
+
+        for i, idtag in enumerate(idtags_a):
+            j = idx_by_idtag_b.get(str(idtag), None)
+            if j is not None:
+                idx_a.append(i)
+                idx_b.append(j)
+
+        return np.array(idx_a, dtype=int), np.array(idx_b, dtype=int)
+
+    def _slice_explicit(self,
+                        bus_idx: IntVec,
+                        br_idx: IntVec,
+                        hvdc_idx: IntVec,
+                        vsc_idx: IntVec,
+                        load_idx: IntVec,
+                        gen_idx: IntVec,
+                        batt_idx: IntVec,
+                        shunt_idx: IntVec,
+                        logger: Logger | None = None) -> "NumericalCircuit":
+        """
+        Slice the numerical circuit using explicit index vectors for each data structure.
+        """
+        if logger is None:
+            logger = Logger()
+
+        bus_map = np.full(self.bus_data.nbus, -1, dtype=int)
+        bus_map[bus_idx] = np.arange(len(bus_idx))
+
+        nc = NumericalCircuit(
+            nbus=len(bus_idx),
+            nbr=len(br_idx),
+            nhvdc=len(hvdc_idx),
+            nvsc=len(vsc_idx),
+            nload=len(load_idx),
+            ngen=len(gen_idx),
+            nbatt=len(batt_idx),
+            nshunt=len(shunt_idx),
+            nfluidnode=0,
+            nfluidturbine=0,
+            nfluidpump=0,
+            nfluidp2x=0,
+            nfluidpath=0,
+            sbase=self.Sbase,
+            t_idx=self.t_idx,
+        )
+
+        nc.bus_data = self.bus_data.slice(elm_idx=bus_idx)
+        nc.passive_branch_data = self.passive_branch_data.slice(elm_idx=br_idx, bus_idx=bus_idx,
+                                                                bus_map=bus_map, logger=logger)
+        nc.active_branch_data = self.active_branch_data.slice(elm_idx=br_idx, bus_idx=bus_idx,
+                                                              bus_map=bus_map, logger=logger)
+        nc.load_data = self.load_data.slice(elm_idx=load_idx, bus_idx=bus_idx, bus_map=bus_map)
+        nc.battery_data = self.battery_data.slice(elm_idx=batt_idx, bus_idx=bus_idx, bus_map=bus_map)
+        nc.generator_data = self.generator_data.slice(elm_idx=gen_idx, bus_idx=bus_idx, bus_map=bus_map)
+        nc.shunt_data = self.shunt_data.slice(elm_idx=shunt_idx, bus_idx=bus_idx, bus_map=bus_map)
+        nc.vsc_data = self.vsc_data.slice(elm_idx=vsc_idx, bus_idx=bus_idx, bus_map=bus_map, logger=logger)
+        nc.hvdc_data = self.hvdc_data.slice(elm_idx=hvdc_idx, bus_idx=bus_idx, bus_map=bus_map, logger=logger)
+
+        if self.topology_performed:
+            correct_bus_types(gen_idx=gen_idx,
+                              control_mode_int=nc.generator_data.control_mode_int,
+                              gen_controllable_bus_idx=nc.generator_data.controllable_bus_idx,
+                              bus_types=nc.bus_data.bus_types,
+                              v_ctrl_val=GeneratorControlMode.V.idx())
+            correct_bus_types(gen_idx=batt_idx,
+                              control_mode_int=nc.battery_data.control_mode_int,
+                              gen_controllable_bus_idx=nc.battery_data.controllable_bus_idx,
+                              bus_types=nc.bus_data.bus_types,
+                              v_ctrl_val=GeneratorControlMode.V.idx())
+
+        nc.consolidate_information()
+        return nc
+
+    def _align_to_common_idtags(self, nc_2: "NumericalCircuit") -> Tuple["NumericalCircuit", "NumericalCircuit"]:
+        """
+        Align two numerical circuits to their common element idtags.
+        """
+        bus_idx_1, bus_idx_2 = self._get_common_indices_by_idtag(self.bus_data.idtag, nc_2.bus_data.idtag)
+        bus_set_1 = set(int(i) for i in bus_idx_1.tolist())
+        bus_set_2 = set(int(i) for i in bus_idx_2.tolist())
+
+        def _filter_branch_like(idx_1: IntVec, idx_2: IntVec, f_1: IntVec, t_1: IntVec, f_2: IntVec, t_2: IntVec):
+            keep_1 = list()
+            keep_2 = list()
+            for i_1, i_2 in zip(idx_1.tolist(), idx_2.tolist()):
+                if (int(f_1[i_1]) in bus_set_1 and int(t_1[i_1]) in bus_set_1
+                        and int(f_2[i_2]) in bus_set_2 and int(t_2[i_2]) in bus_set_2):
+                    keep_1.append(i_1)
+                    keep_2.append(i_2)
+            return np.array(keep_1, dtype=int), np.array(keep_2, dtype=int)
+
+        def _filter_monopole_like(idx_1: IntVec, idx_2: IntVec, bus_1: IntVec, bus_2: IntVec,
+                                  ctrl_1: IntVec | None = None, ctrl_2: IntVec | None = None):
+            keep_1 = list()
+            keep_2 = list()
+            for i_1, i_2 in zip(idx_1.tolist(), idx_2.tolist()):
+                if int(bus_1[i_1]) not in bus_set_1 or int(bus_2[i_2]) not in bus_set_2:
+                    continue
+                if ctrl_1 is not None and int(ctrl_1[i_1]) > -1 and int(ctrl_1[i_1]) not in bus_set_1:
+                    continue
+                if ctrl_2 is not None and int(ctrl_2[i_2]) > -1 and int(ctrl_2[i_2]) not in bus_set_2:
+                    continue
+                keep_1.append(i_1)
+                keep_2.append(i_2)
+            return np.array(keep_1, dtype=int), np.array(keep_2, dtype=int)
+
+        br_idx_1, br_idx_2 = self._get_common_indices_by_idtag(self.passive_branch_data.idtag,
+                                                               nc_2.passive_branch_data.idtag)
+        br_idx_1, br_idx_2 = _filter_branch_like(br_idx_1, br_idx_2,
+                                                 self.passive_branch_data.F, self.passive_branch_data.T,
+                                                 nc_2.passive_branch_data.F, nc_2.passive_branch_data.T)
+
+        hvdc_idx_1, hvdc_idx_2 = self._get_common_indices_by_idtag(self.hvdc_data.idtag, nc_2.hvdc_data.idtag)
+        hvdc_idx_1, hvdc_idx_2 = _filter_branch_like(hvdc_idx_1, hvdc_idx_2,
+                                                     self.hvdc_data.F, self.hvdc_data.T,
+                                                     nc_2.hvdc_data.F, nc_2.hvdc_data.T)
+
+        vsc_idx_1, vsc_idx_2 = self._get_common_indices_by_idtag(self.vsc_data.idtag, nc_2.vsc_data.idtag)
+        vsc_idx_1, vsc_idx_2 = _filter_branch_like(vsc_idx_1, vsc_idx_2,
+                                                   self.vsc_data.F, self.vsc_data.T,
+                                                   nc_2.vsc_data.F, nc_2.vsc_data.T)
+
+        load_idx_1, load_idx_2 = self._get_common_indices_by_idtag(self.load_data.idtag, nc_2.load_data.idtag)
+        load_idx_1, load_idx_2 = _filter_monopole_like(load_idx_1, load_idx_2,
+                                                       self.load_data.bus_idx, nc_2.load_data.bus_idx)
+
+        gen_idx_1, gen_idx_2 = self._get_common_indices_by_idtag(self.generator_data.idtag, nc_2.generator_data.idtag)
+        gen_idx_1, gen_idx_2 = _filter_monopole_like(gen_idx_1, gen_idx_2,
+                                                     self.generator_data.bus_idx, nc_2.generator_data.bus_idx,
+                                                     self.generator_data.controllable_bus_idx,
+                                                     nc_2.generator_data.controllable_bus_idx)
+
+        batt_idx_1, batt_idx_2 = self._get_common_indices_by_idtag(self.battery_data.idtag, nc_2.battery_data.idtag)
+        batt_idx_1, batt_idx_2 = _filter_monopole_like(batt_idx_1, batt_idx_2,
+                                                       self.battery_data.bus_idx, nc_2.battery_data.bus_idx,
+                                                       self.battery_data.controllable_bus_idx,
+                                                       nc_2.battery_data.controllable_bus_idx)
+
+        shunt_idx_1, shunt_idx_2 = self._get_common_indices_by_idtag(self.shunt_data.idtag, nc_2.shunt_data.idtag)
+        shunt_idx_1, shunt_idx_2 = _filter_monopole_like(shunt_idx_1, shunt_idx_2,
+                                                         self.shunt_data.bus_idx, nc_2.shunt_data.bus_idx,
+                                                         self.shunt_data.controllable_bus_idx,
+                                                         nc_2.shunt_data.controllable_bus_idx)
+
+        logger = Logger()
+        return (
+            self._slice_explicit(bus_idx=bus_idx_1, br_idx=br_idx_1, hvdc_idx=hvdc_idx_1, vsc_idx=vsc_idx_1,
+                                 load_idx=load_idx_1, gen_idx=gen_idx_1, batt_idx=batt_idx_1,
+                                 shunt_idx=shunt_idx_1, logger=logger),
+            nc_2._slice_explicit(bus_idx=bus_idx_2, br_idx=br_idx_2, hvdc_idx=hvdc_idx_2, vsc_idx=vsc_idx_2,
+                                 load_idx=load_idx_2, gen_idx=gen_idx_2, batt_idx=batt_idx_2,
+                                 shunt_idx=shunt_idx_2, logger=logger),
+        )
+
     def split_into_islands(self,
                            ignore_single_node_islands: bool = False,
                            consider_hvdc_as_island_links: bool = False,
@@ -1106,9 +1270,9 @@ class NumericalCircuit:
 
         return circuit_islands
 
-    def compare(self, nc_2: "NumericalCircuit", tol=1e-6) -> Tuple[bool, Logger]:
+    def _compare_strict(self, nc_2: "NumericalCircuit", tol=1e-6) -> Tuple[bool, Logger]:
         """
-        Compare this numerical circuit with another numerical circuit
+        Strict position-based numerical circuit comparison.
         :param nc_2: other NumericalCircuit
         :param tol: tolerance for numerical values
         :return: all ok?, Logger with the errors and warning events
@@ -1120,54 +1284,12 @@ class NumericalCircuit:
         #  Compare data
         # --------------------------------------------------------------------------------------------------------------
 
-        check_arr(self.passive_branch_data.F, nc_2.passive_branch_data.F, tol, 'BranchData', 'F', logger)
-        check_arr(self.passive_branch_data.T, nc_2.passive_branch_data.T, tol, 'BranchData', 'T', logger)
-        check_arr(self.passive_branch_data.active, nc_2.passive_branch_data.active, tol,
-                  'BranchData', 'active', logger)
-        check_arr(self.passive_branch_data.R, nc_2.passive_branch_data.R, tol, 'BranchData', 'r', logger)
-        check_arr(self.passive_branch_data.X, nc_2.passive_branch_data.X, tol, 'BranchData', 'x', logger)
-        check_arr(self.passive_branch_data.G, nc_2.passive_branch_data.G, tol, 'BranchData', 'g', logger)
-        check_arr(self.passive_branch_data.B, nc_2.passive_branch_data.B, tol, 'BranchData', 'b', logger)
-        check_arr(self.passive_branch_data.rates, nc_2.passive_branch_data.rates, tol, 'BranchData',
-                  'rates', logger)
-        check_arr(self.active_branch_data.tap_module, nc_2.active_branch_data.tap_module, tol,
-                  'BranchData', 'tap_module', logger)
-        check_arr(self.active_branch_data.tap_angle, nc_2.active_branch_data.tap_angle, tol,
-                  'BranchData', 'tap_angle', logger)
-
-        check_arr(self.passive_branch_data.G0, nc_2.passive_branch_data.G0, tol, 'BranchData', 'g0', logger)
-
-        check_arr(self.passive_branch_data.virtual_tap_f, nc_2.passive_branch_data.virtual_tap_f,
-                  tol, 'BranchData', 'vtap_f', logger)
-        check_arr(self.passive_branch_data.virtual_tap_t, nc_2.passive_branch_data.virtual_tap_t,
-                  tol, 'BranchData', 'vtap_t', logger)
-
-        # bus data
-        check_arr(self.bus_data.active, nc_2.bus_data.active, tol, 'BusData', 'active', logger)
-        check_arr(self.bus_data.Vbus.real, nc_2.bus_data.Vbus.real, tol, 'BusData', 'V0', logger)
-        check_arr(self.bus_data.installed_power, nc_2.bus_data.installed_power, tol, 'BusData', 'installed power',
-                  logger)
-        check_arr(self.bus_data.bus_types, nc_2.bus_data.bus_types, tol, 'BusData', 'bus_types', logger)
-
-        # generator data
-        check_arr(self.generator_data.active, nc_2.generator_data.active, tol, 'GenData', 'active', logger)
-        check_arr(self.generator_data.p, nc_2.generator_data.p, tol, 'GenData', 'P', logger)
-        check_arr(self.generator_data.v, nc_2.generator_data.v, tol, 'GenData', 'Vset', logger)
-        check_arr(self.generator_data.qmin, nc_2.generator_data.qmin, tol, 'GenData', 'Qmin', logger)
-        check_arr(self.generator_data.qmax, nc_2.generator_data.qmax, tol, 'GenData', 'Qmax', logger)
-
-        # load data
-        check_arr(self.load_data.active, nc_2.load_data.active, tol, 'LoadData',
-                  'active', logger)
-        check_arr(self.load_data.S, nc_2.load_data.S, tol, 'LoadData', 'S', logger)
-        check_arr(self.load_data.I, nc_2.load_data.I, tol, 'LoadData', 'I', logger)
-        check_arr(self.load_data.Y, nc_2.load_data.Y, tol, 'LoadData', 'Y', logger)
-
-        # shunt
-        check_arr(self.shunt_data.active, nc_2.shunt_data.active, tol, 'ShuntData', 'active', logger)
-        check_arr(self.shunt_data.Y, nc_2.shunt_data.Y, tol, 'ShuntData', 'S', logger)
-        check_arr(self.shunt_data.get_injections_per_bus(),
-                  nc_2.shunt_data.get_injections_per_bus(), tol, 'ShuntData', 'Injections per bus', logger)
+        self.passive_branch_data.compare(other=nc_2.passive_branch_data, tol=tol, logger=logger)
+        self.active_branch_data.compare(other=nc_2.active_branch_data, tol=tol, logger=logger)
+        self.bus_data.compare(other=nc_2.bus_data, tol=tol, logger=logger)
+        self.generator_data.compare(other=nc_2.generator_data, tol=tol, logger=logger)
+        self.load_data.compare(other=nc_2.load_data, tol=tol, logger=logger)
+        self.shunt_data.compare(other=nc_2.shunt_data, tol=tol, logger=logger)
 
         # --------------------------------------------------------------------------------------------------------------
         #  Compare arrays and data
@@ -1206,7 +1328,49 @@ class NumericalCircuit:
         check_arr(adm.Yt.tocsc().data.real, adm2.Yt.tocsc().data.real, tol, 'Adm.', 'Yt (real)', logger)
         check_arr(adm.Yt.tocsc().data.imag, adm2.Yt.tocsc().data.imag, tol, 'Adm.', 'Yt (imag)', logger)
 
-        # if any error in the logger, bad
+        return logger.error_count() == 0, logger
+
+    def compare(self, nc_2: "NumericalCircuit", tol=1e-6, by_idtag: bool = False) -> Tuple[bool, Logger]:
+        """
+        Compare this numerical circuit with another numerical circuit.
+        :param nc_2: other NumericalCircuit
+        :param tol: tolerance for numerical values
+        :param by_idtag: comparison mode (if true the comparison is made by idtag instead of by raw shape)
+        :return: all ok?, Logger with the errors and warning events
+        """
+        if by_idtag:
+            nc_1_cmp, nc_2_cmp = self._align_to_common_idtags(nc_2=nc_2)
+            return nc_1_cmp._compare_strict(nc_2=nc_2_cmp, tol=tol)
+        else:
+            return self._compare_strict(nc_2=nc_2, tol=tol)
+
+    def _compare_injection_sums_against(self,
+                                        other: "NumericalCircuit",
+                                        tol: float,
+                                        logger: Logger,
+                                        label: str) -> None:
+        """
+        Compare electrically relevant total injection sums against another circuit.
+        """
+        compare_arr(np.atleast_1d(self.get_power_injections_pu().sum()),
+                    np.atleast_1d(other.get_power_injections_pu().sum()),
+                    tol, label, 'sum(Sbus)', logger)
+        compare_arr(np.atleast_1d(self.get_current_injections_pu().sum()),
+                    np.atleast_1d(other.get_current_injections_pu().sum()),
+                    tol, label, 'sum(Ibus)', logger)
+        compare_arr(np.atleast_1d(self.get_admittance_injections_pu().sum()),
+                    np.atleast_1d(other.get_admittance_injections_pu().sum()),
+                    tol, label, 'sum(Ybus_load)', logger)
+        compare_arr(np.atleast_1d(self.get_Yshunt_bus_pu().sum()),
+                    np.atleast_1d(other.get_Yshunt_bus_pu().sum()),
+                    tol, label, 'sum(Ybus_shunt)', logger)
+
+    def compare_sums(self, nc_2: "NumericalCircuit", tol=1e-6) -> Tuple[bool, Logger]:
+        """
+        Compare raw injection sums.
+        """
+        logger = Logger()
+        self._compare_injection_sums_against(other=nc_2, tol=tol, logger=logger, label='Injection sums')
         return logger.error_count() == 0, logger
 
     def get_structural_ntc(self, bus_a1_idx: IntVec, bus_a2_idx: IntVec) -> float:

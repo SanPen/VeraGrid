@@ -246,7 +246,7 @@ def _get_bus_type(
     """
     if not bus.get_active_at(t_idx):
         return 4
-    elif bus.is_slack or bus in slack_external_grid_by_bus:
+    elif bus.get_is_slack_at(t_idx) or bus in slack_external_grid_by_bus:
         return int(BusMode.Slack_tpe.value)
     elif bus in pv_external_grid_by_bus or bus in controlled_generation_by_bus:
         return int(BusMode.PV_tpe.value)

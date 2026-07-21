@@ -512,15 +512,13 @@ class TimeEventsMain(DataBaseTableMain):
             return
 
         if self.circuit.time_profile is None:
-            self.models_input_dialogue = ModelsInputGUI(parent=self)
+            self.models_input_dialogue = ModelsInputGUI(parent=self, main_grid=self.circuit)
 
             self.models_input_dialogue.resize(int(1.61 * 600.0), 550)  # golden ratio
-            self.models_input_dialogue.exec()  # exec leaves the parent on hold
+            result = self.models_input_dialogue.exec()  # exec leaves the parent on hold
 
-            if self.models_input_dialogue.grids_model is not None:
-
-                logger = Logger()
-                self.models_input_dialogue.process(main_grid=self.circuit, logger=logger)
+            if result:
+                logger = self.models_input_dialogue.process_logger
 
                 # set up sliders
                 self.update_date_dependent_combos()

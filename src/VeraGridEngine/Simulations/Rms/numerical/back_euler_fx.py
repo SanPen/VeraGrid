@@ -285,6 +285,15 @@ class BackEulerImplicitIntegration:
                             solved = np.all(np.isfinite(delta))
 
                             if not solved:
+                                # Tikhonov-regularized Newton step
+                                lam = 1e-4
+                                while lam <= 1e-1 and not solved:
+                                    delta = sp.linalg.spsolve(
+                                        (Jf + lam * sp.eye(Jf.shape[0], format='csc')).tocsc(), -rhs)
+                                    solved = np.all(np.isfinite(delta))
+                                    lam *= 1000.0
+
+                            if not solved:
                                 delta, *_ = sp.linalg.lsqr(Jf, -rhs)
                                 solved = np.all(np.isfinite(delta))
                                 _, s, vh = np.linalg.svd(Jf.toarray() if sp.issparse(Jf) else Jf)
@@ -317,6 +326,10 @@ class BackEulerImplicitIntegration:
                                 print("Failed to solve linear system even with regularization.")
                                 break
 
+                            # Damped Newton
+                            _dmax = np.max(np.abs(delta))
+                            if _dmax > 1.0:
+                                delta = delta * (1.0 / _dmax)
                             x_new += delta
                             n_iter += 1
 

@@ -155,8 +155,8 @@ def create_node_breaker_buses(
             # Only one node bus should carry the slack designation of the reduced
             # electrical bus. The others are plain PQ nodes until topology reduction.
             if raw_bus.I in representative_bus_by_number:
-                bus.is_slack = False
-                bus._bus_type = dev.BusMode.PQ_tpe
+                bus.set_is_slack_at(t=None, val=False)
+                bus.bus_type = dev.BusMode.PQ_tpe
 
             circuit.add_bus(bus)
 
@@ -397,15 +397,15 @@ def get_veragrid_bus(psse_bus: RawBusLike,
 
     # set type
     if psse_bus.IDE in bustype.keys():
-        bus._bus_type = bustype[psse_bus.IDE]
+        bus.bus_type = bustype[psse_bus.IDE]
     else:
-        bus._bus_type = dev.BusMode.PQ_tpe
+        bus.bus_type = dev.BusMode.PQ_tpe
 
     if int(psse_bus.IDE) == 4:
         bus.active = False
 
-    if bus._bus_type == dev.BusMode.Slack_tpe:
-        bus.is_slack = True
+    if bus.bus_type == dev.BusMode.Slack_tpe:
+        bus.set_is_slack_at(t=None, val=True)
 
     # Ensures unique name
     bus.name = bus.name.replace("'", "").strip()

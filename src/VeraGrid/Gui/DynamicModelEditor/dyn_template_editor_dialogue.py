@@ -4,12 +4,13 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-
 from typing import List
+import numpy as np
 from PySide6 import QtCore, QtWidgets
 from PySide6.QtWidgets import (QDialog,
-                                 QAbstractItemView,
-                                 QDialogButtonBox)
+                               QAbstractItemView,
+                               QDialogButtonBox,
+                               QMessageBox)
 from VeraGridEngine.Templates.template_definition import TemplateProp
 from VeraGrid.Gui.DynamicModelEditor.dialog_inputs_model import DialogInpModel
 
@@ -23,7 +24,7 @@ class DynTemplatesEditorDialog(QDialog):
         QtWidgets.QDialog.__init__(self)
         self.setObjectName("self")
         self.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.NoContextMenu)
-        self.setWindowTitle("Edit "+name+" Template")
+        self.setWindowTitle("Edit " + name + " Template")
         self.setMinimumSize(600, 400)
         self.property_list = property_list
 
@@ -51,3 +52,6 @@ class DynTemplatesEditorDialog(QDialog):
 
     def get_values(self) -> List[TemplateProp]:
         return self.property_list
+
+    def accept(self) -> None:
+        super().accept()

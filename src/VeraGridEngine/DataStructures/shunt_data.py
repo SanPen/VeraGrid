@@ -7,8 +7,9 @@ import numpy as np
 from scipy.sparse import csc_matrix, coo_matrix
 import VeraGridEngine.Topology.topology as tp
 from VeraGridEngine.Utils.Sparse.sparse_array import SparseObjectArray
-from VeraGridEngine.basic_structures import Vec, CxVec, IntVec, StrVec, BoolVec
+from VeraGridEngine.basic_structures import Vec, CxVec, IntVec, StrVec, BoolVec, Logger
 from VeraGridEngine.enumerations import ShuntControlMode
+from VeraGridEngine.Utils.compare import compare_arr
 
 
 class ShuntData:
@@ -237,6 +238,15 @@ class ShuntData:
 
     def __len__(self) -> int:
         return self.nelm
+
+    def compare(self, other: "ShuntData", tol: float, logger: Logger) -> None:
+        """
+        Compare shunt fields used by NumericalCircuit.compare().
+        """
+        compare_arr(self.active, other.active, tol, 'ShuntData', 'active', logger)
+        compare_arr(self.Y, other.Y, tol, 'ShuntData', 'S', logger)
+        compare_arr(self.get_injections_per_bus(), other.get_injections_per_bus(), tol,
+                    'ShuntData', 'Injections per bus', logger)
 
     def get_bus_indices(self) -> IntVec:
         """

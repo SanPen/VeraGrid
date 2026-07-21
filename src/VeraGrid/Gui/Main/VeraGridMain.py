@@ -288,7 +288,7 @@ def runVeraGrid() -> None:
     # will check os internally
     create_linux_desktop_entry("veragrid", qrc_icon_path=icon_name)
 
-    # MacOS: Fix to show the icon on the task bar
+    # macOS: Fix to show the icon on the task bar
     app.setWindowIcon(icon)
 
     window_ = VeraGridMainGUI(translation_controller=translation_controller)

@@ -76,7 +76,8 @@ def initialize_bus_rms(bus: Bus, vf: VarFactory):
     :return:
     """
     bus.rms_model = BusRmsTemplate(vf=vf, is_dc=bus.is_dc).block
-def get_bus_rms_algebraic_vars(bus_rms_model: Block) -> Tuple[Var, Var] | Tuple[Var, Var, Var]:
+
+def get_bus_rms_algebraic_vars(bus_rms_model: Block) ->Tuple[Var | None, Var, Var]:
     """
     Return the RMS bus algebraic voltage variables.
 
@@ -104,7 +105,8 @@ def get_bus_rms_algebraic_vars(bus_rms_model: Block) -> Tuple[Var, Var] | Tuple[
         Va = mapping[VarPowerFlowReferenceType.Va]
 
         if Vm is not None and Va is not None:
-            return Vm, Va
+            # SPV: Because we don't want magic, functions ALWAYS return the same number of parameters
+            return None, Vm, Va
 
         else:
             raise ValueError("Invalid RMS bus model: expected either (Vdc) or (Vm, Va)")

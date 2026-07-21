@@ -784,21 +784,27 @@ class BaseDiagram:
             if groups:
                 for i, (idtag, location) in enumerate(groups.locations.items()):
                     branch = location.api_object
-                    f = graph_node_dictionary.get(branch.bus_from.idtag, None)
-                    t = graph_node_dictionary.get(branch.bus_to.idtag, None)
+                    if branch is not None:
+                        if branch.bus_from is not None and branch.bus_to is not None:
+                            f = graph_node_dictionary.get(branch.bus_from.idtag, None)
+                            t = graph_node_dictionary.get(branch.bus_to.idtag, None)
 
-                    if f is not None and t is not None:
-                        impedance = branch.get_weight()
-                        if dev_type == DeviceType.Transformer2WDevice or dev_type == DeviceType.WindingDevice:
-                            impedance *= 1e-3
+                            if f is not None and t is not None:
+                                impedance = branch.get_weight()
+                                if dev_type == DeviceType.Transformer2WDevice or dev_type == DeviceType.WindingDevice:
+                                    impedance *= 1e-3
+                                else:
+                                    impedance = impedance
+                                add_branch_layout_edge(graph=graph,
+                                                       from_idx=f,
+                                                       to_idx=t,
+                                                       branch=branch,
+                                                       dev_tpe=dev_type,
+                                                       raw_impedance=impedance)
                         else:
-                            impedance = impedance
-                        add_branch_layout_edge(graph=graph,
-                                               from_idx=f,
-                                               to_idx=t,
-                                               branch=branch,
-                                               dev_tpe=dev_type,
-                                               raw_impedance=impedance)
+                            pass
+                    else:
+                        print("Location has no API object :(")
 
         for dev_type in [DeviceType.DCLineDevice]:
 

@@ -317,6 +317,7 @@ class SolverType(Enum):
     """
 
     NR = 'Newton Raphson'
+    NR_PC = 'Newton Raphson Predictor-Corrector'
     GAUSS = 'Gauss-Seidel'
     Decoupled_LU = 'Decoupled-LU Decomposition'
     GN = "Gauss-Newton"
@@ -1316,6 +1317,19 @@ class TerminalType(Enum):
         :return:
         """
         return list(enum_item.value for enum_item in cls)
+
+
+
+class WaveformSequenceType(Enum):
+    """
+        Squence points type
+    """
+
+class V_I_CurveSequenceType(Enum):
+    """
+        Squence points type
+    """
+
 
 
 class WindingType(str, Enum):
@@ -2552,6 +2566,7 @@ class ResultTypes(Enum):
     GeneratorReactivePowerC = 'Generator reactive power C'
 
     GeneratorCost = 'Generator cost'
+    GeneratorReserve = 'Generator reserve'
     GeneratorFuels = 'Generator fuels'
     GeneratorEmissions = 'Generator emissions'
     GeneratorProducing = 'Generator producing'
@@ -2573,7 +2588,7 @@ class ResultTypes(Enum):
     ShuntNeutralVoltage = 'Shunt neutral voltage'
 
     BusVoltagePolarPlot = 'Voltage plot'
-    BusNodalCapacity = "Nodal capacity"
+    BusNodalCapacity = "Bus nodal capacity"
 
     # OPF-NTC
     HvdcOverloads = 'HVDC overloads'
@@ -2956,6 +2971,7 @@ class SimulationTypes(Enum):
     InvestmentsEvaluation_run = 'Investments evaluation'
     CatalogueOptimization_run = 'Catalogue optimization'
     TopologyProcessor_run = 'Topology Processor'
+    NodalCapacity_run = 'Nodal capacity'
     NodalCapacityTimeSeries_run = 'Nodal capacity time series'
     Reliability_run = "Reliability"
     RmsDynamic_run = "RMS Dynamic"

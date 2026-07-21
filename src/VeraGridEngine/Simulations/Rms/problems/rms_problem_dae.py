@@ -586,8 +586,8 @@ class RmsProblemDae(RmsProblemTemplate):
                                                             problem_mapping=self._static_parameters_values_mapping,
                                                             logger=None)
 
-                Vmf, Vaf = get_bus_rms_algebraic_vars(elm.bus_from.rms_model)
-                Vmt, Vat = get_bus_rms_algebraic_vars(elm.bus_to.rms_model)
+                _, Vmf, Vaf = get_bus_rms_algebraic_vars(elm.bus_from.rms_model)
+                _, Vmt, Vat = get_bus_rms_algebraic_vars(elm.bus_to.rms_model)
 
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
                 register_rms_fmu_cs_device(self, elm, elm.rms_model)

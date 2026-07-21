@@ -1173,6 +1173,8 @@ def _evaluate_unary_function(op: str, value: NUMBER) -> NUMBER:
         return builtins.abs(value)
     elif op == "heaviside":
         return heaviside_num(float(value))
+    elif op == "rand":
+        return np.random.rand()
     else:
         raise ValueError(f"Unknown unary function '{op}'")
 
@@ -1484,6 +1486,10 @@ def frac(x: Expr) -> Expr:
 
 def heaviside(x: Expr) -> Expr:
     return Func(_to_expr(x), "heaviside")
+
+
+def rand(x: Expr) -> Expr:
+    return Func(_to_expr(x), "rand")
 
 
 #
@@ -2036,6 +2042,8 @@ def expression2numba(expr: Expr,
                                0)
         if expr.op == "heaviside":
             s = f"_heaviside({arg})"
+        elif expr.op == "rand":
+            s = "np.random.rand()"
         else:
             s = f"np.{expr.op}({arg})"
 
@@ -2089,6 +2097,8 @@ def _emit_event_params_eq(expr: Expr, uid_map_t: Dict[int, str] | None = None) -
 
         if expr.op == "heaviside":
             return f"_heaviside({_emit_event_params_eq(expr.arg, uid_map_t)})"
+        elif expr.op == "rand":
+            return "np.random.rand()"
         else:
             return f"np.{expr.op}({_emit_event_params_eq(expr.arg, uid_map_t)})"
     if isinstance(expr, Func2):
@@ -2134,6 +2144,8 @@ def _emit_one(expr: Expr, uid_map_vars: Dict[int, str], uid_map_event_params: Di
 
         if expr.op == "heaviside":
             return f"_heaviside({_emit_one(expr.arg, uid_map_vars, uid_map_event_params, uid_map_params)})"
+        elif expr.op == "rand":
+            return "np.random.rand()"
         else:
             return f"np.{expr.op}({_emit_one(expr.arg, uid_map_vars, uid_map_event_params, uid_map_params)})"
 
@@ -2283,6 +2295,8 @@ def _call_symbolic_parser_function(function_name: str, arg_expr: Expr) -> Expr:
         return angle(arg_expr)
     elif function_name == "heaviside":
         return heaviside(arg_expr)
+    elif function_name == "rand":
+        return rand(arg_expr)
     else:
         raise ValueError(f"Unknown function '{function_name}'")
 
@@ -2311,6 +2325,7 @@ def _get_symbolic_parser_function_names_internal() -> List[str]:
         "conj",
         "angle",
         "heaviside",
+        "rand",
     ]
 
 
@@ -2463,6 +2478,7 @@ __all__ = [
     "diff", "eval_uid",
     "find_vars_order",
     "heaviside",
+    "rand",
     "atan2",
     "piecewise",
     "symbolic_to_string",

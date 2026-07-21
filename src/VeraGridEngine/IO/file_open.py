@@ -36,7 +36,7 @@ from VeraGridEngine.IO.veragrid.sqlite_interface import open_data_frames_from_sq
 from VeraGridEngine.IO.veragrid.h5_interface import open_h5
 from VeraGridEngine.IO.raw.rawx_parser_writer import parse_rawx
 from VeraGridEngine.IO.others.pypsa_parser import parse_pypsa_netcdf, parse_pypsa_hdf5
-from VeraGridEngine.IO.others.pandapower_parser import Panda2VeraGrid
+from VeraGridEngine.IO.others.pandapower_parser import Panda2VeraGrid, is_pandapower_file
 from VeraGridEngine.IO.ucte.devices.ucte_circuit import UcteCircuit
 from VeraGridEngine.IO.ucte.ucte_to_veragrid import convert_ucte_to_veragrid
 from VeraGridEngine.IO.others.rte_parser import rte2veragrid
@@ -261,6 +261,8 @@ def determine_file_type(file_name: List[str] | str) -> FileType | None:
             return FileType.VeraGrid_delta
 
         elif file_extension == '.sqlite':
+            if is_pandapower_file(file_name):
+                return FileType.PandaPower
 
             # open file content
             return FileType.VeraGrid_sqlite
@@ -284,6 +286,9 @@ def determine_file_type(file_name: List[str] | str) -> FileType | None:
             return FileType.PWF
 
         elif file_extension == '.json':
+            if is_pandapower_file(file_name):
+                return FileType.PandaPower
+
             return FileType.VeraGrid_json
 
         elif file_extension == '.ejson3':

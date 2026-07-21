@@ -7,7 +7,7 @@ from typing import Tuple
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol, Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_float, coerce_psse_int, coerce_psse_str
 
 
 class RawBranch(RawObject):
@@ -99,7 +99,7 @@ class RawBranch(RawObject):
         self._BJ: float = 0.0
         self._ST: int = 1
         self._MET: int = 1
-        self._LEN: float = 0.0
+        self._LEN: float = 1.0
 
         self._O1: int = 1
         self._F1: float = 1.0
@@ -133,56 +133,56 @@ class RawBranch(RawObject):
         return self._I
 
     @I.setter
-    def I(self, value):
-        self._I = value
+    def I(self, value: int | str | None) -> None:
+        self._I = coerce_psse_int(value=value, current_value=self._I)
 
     @property
     def J(self):
         return self._J
 
     @J.setter
-    def J(self, value):
-        self._J = value
+    def J(self, value: int | str | None) -> None:
+        self._J = coerce_psse_int(value=value, current_value=self._J)
 
     @property
     def CKT(self):
         return self._CKT
 
     @CKT.setter
-    def CKT(self, value):
-        self._CKT = value
+    def CKT(self, value: str | int | float | None) -> None:
+        self._CKT = coerce_psse_str(value=value, current_value=self._CKT)
 
     @property
     def R(self):
         return self._R
 
     @R.setter
-    def R(self, value):
-        self._R = value
+    def R(self, value: float | int | str | None) -> None:
+        self._R = coerce_psse_float(value=value, current_value=self._R)
 
     @property
     def X(self):
         return self._X
 
     @X.setter
-    def X(self, value):
-        self._X = value
+    def X(self, value: float | int | str | None) -> None:
+        self._X = coerce_psse_float(value=value, current_value=self._X)
 
     @property
     def B(self):
         return self._B
 
     @B.setter
-    def B(self, value):
-        self._B = value
+    def B(self, value: float | int | str | None) -> None:
+        self._B = coerce_psse_float(value=value, current_value=self._B)
 
     @property
     def NAME(self):
         return self._NAME
 
     @NAME.setter
-    def NAME(self, value):
-        self._NAME = value
+    def NAME(self, value: str | int | float | None) -> None:
+        self._NAME = coerce_psse_str(value=value, current_value=self._NAME)
 
     # Individual property methods for each RATE attribute
     @property
@@ -190,237 +190,237 @@ class RawBranch(RawObject):
         return self._RATE1
 
     @RATE1.setter
-    def RATE1(self, value):
-        self._RATE1 = value
+    def RATE1(self, value: float | int | str | None) -> None:
+        self._RATE1 = coerce_psse_float(value=value, current_value=self._RATE1)
 
     @property
     def RATE2(self):
         return self._RATE2
 
     @RATE2.setter
-    def RATE2(self, value):
-        self._RATE2 = value
+    def RATE2(self, value: float | int | str | None) -> None:
+        self._RATE2 = coerce_psse_float(value=value, current_value=self._RATE2)
 
     @property
     def RATE3(self):
         return self._RATE3
 
     @RATE3.setter
-    def RATE3(self, value):
-        self._RATE3 = value
+    def RATE3(self, value: float | int | str | None) -> None:
+        self._RATE3 = coerce_psse_float(value=value, current_value=self._RATE3)
 
     @property
     def RATEA(self):
         return self._RATE1
 
     @RATEA.setter
-    def RATEA(self, value):
-        self._RATE1 = value
+    def RATEA(self, value: float | int | str | None) -> None:
+        self._RATE1 = coerce_psse_float(value=value, current_value=self._RATE1)
 
     @property
     def RATEB(self):
         return self._RATE2
 
     @RATEB.setter
-    def RATEB(self, value):
-        self._RATE2 = value
+    def RATEB(self, value: float | int | str | None) -> None:
+        self._RATE2 = coerce_psse_float(value=value, current_value=self._RATE2)
 
     @property
     def RATEC(self):
         return self._RATE3
 
     @RATEC.setter
-    def RATEC(self, value):
-        self._RATE3 = value
+    def RATEC(self, value: float | int | str | None) -> None:
+        self._RATE3 = coerce_psse_float(value=value, current_value=self._RATE3)
 
     @property
     def RATE4(self):
         return self._RATE4
 
     @RATE4.setter
-    def RATE4(self, value):
-        self._RATE4 = value
+    def RATE4(self, value: float | int | str | None) -> None:
+        self._RATE4 = coerce_psse_float(value=value, current_value=self._RATE4)
 
     @property
     def RATE5(self):
         return self._RATE5
 
     @RATE5.setter
-    def RATE5(self, value):
-        self._RATE5 = value
+    def RATE5(self, value: float | int | str | None) -> None:
+        self._RATE5 = coerce_psse_float(value=value, current_value=self._RATE5)
 
     @property
     def RATE6(self):
         return self._RATE6
 
     @RATE6.setter
-    def RATE6(self, value):
-        self._RATE6 = value
+    def RATE6(self, value: float | int | str | None) -> None:
+        self._RATE6 = coerce_psse_float(value=value, current_value=self._RATE6)
 
     @property
     def RATE7(self):
         return self._RATE7
 
     @RATE7.setter
-    def RATE7(self, value):
-        self._RATE7 = value
+    def RATE7(self, value: float | int | str | None) -> None:
+        self._RATE7 = coerce_psse_float(value=value, current_value=self._RATE7)
 
     @property
     def RATE8(self):
         return self._RATE8
 
     @RATE8.setter
-    def RATE8(self, value):
-        self._RATE8 = value
+    def RATE8(self, value: float | int | str | None) -> None:
+        self._RATE8 = coerce_psse_float(value=value, current_value=self._RATE8)
 
     @property
     def RATE9(self):
         return self._RATE9
 
     @RATE9.setter
-    def RATE9(self, value):
-        self._RATE9 = value
+    def RATE9(self, value: float | int | str | None) -> None:
+        self._RATE9 = coerce_psse_float(value=value, current_value=self._RATE9)
 
     @property
     def RATE10(self):
         return self._RATE10
 
     @RATE10.setter
-    def RATE10(self, value):
-        self._RATE10 = value
+    def RATE10(self, value: float | int | str | None) -> None:
+        self._RATE10 = coerce_psse_float(value=value, current_value=self._RATE10)
 
     @property
     def RATE11(self):
         return self._RATE11
 
     @RATE11.setter
-    def RATE11(self, value):
-        self._RATE11 = value
+    def RATE11(self, value: float | int | str | None) -> None:
+        self._RATE11 = coerce_psse_float(value=value, current_value=self._RATE11)
 
     @property
     def RATE12(self):
         return self._RATE12
 
     @RATE12.setter
-    def RATE12(self, value):
-        self._RATE12 = value
+    def RATE12(self, value: float | int | str | None) -> None:
+        self._RATE12 = coerce_psse_float(value=value, current_value=self._RATE12)
 
     @property
     def GI(self):
         return self._GI
 
     @GI.setter
-    def GI(self, value):
-        self._GI = value
+    def GI(self, value: float | int | str | None) -> None:
+        self._GI = coerce_psse_float(value=value, current_value=self._GI)
 
     @property
     def BI(self):
         return self._BI
 
     @BI.setter
-    def BI(self, value):
-        self._BI = value
+    def BI(self, value: float | int | str | None) -> None:
+        self._BI = coerce_psse_float(value=value, current_value=self._BI)
 
     @property
     def GJ(self):
         return self._GJ
 
     @GJ.setter
-    def GJ(self, value):
-        self._GJ = value
+    def GJ(self, value: float | int | str | None) -> None:
+        self._GJ = coerce_psse_float(value=value, current_value=self._GJ)
 
     @property
     def BJ(self):
         return self._BJ
 
     @BJ.setter
-    def BJ(self, value):
-        self._BJ = value
+    def BJ(self, value: float | int | str | None) -> None:
+        self._BJ = coerce_psse_float(value=value, current_value=self._BJ)
 
     @property
     def ST(self):
         return self._ST
 
     @ST.setter
-    def ST(self, value):
-        self._ST = value
+    def ST(self, value: int | str | None) -> None:
+        self._ST = coerce_psse_int(value=value, current_value=self._ST)
 
     @property
     def MET(self):
         return self._MET
 
     @MET.setter
-    def MET(self, value):
-        self._MET = value
+    def MET(self, value: int | str | None) -> None:
+        self._MET = coerce_psse_int(value=value, current_value=self._MET)
 
     @property
     def LEN(self):
         return self._LEN
 
     @LEN.setter
-    def LEN(self, value):
-        self._LEN = value
+    def LEN(self, value: float | int | str | None) -> None:
+        self._LEN = coerce_psse_float(value=value, current_value=self._LEN)
 
     @property
     def O1(self):
         return self._O1
 
     @O1.setter
-    def O1(self, value):
-        self._O1 = value
+    def O1(self, value: int | str | None) -> None:
+        self._O1 = coerce_psse_int(value=value, current_value=self._O1)
 
     @property
     def F1(self):
         return self._F1
 
     @F1.setter
-    def F1(self, value):
-        self._F1 = value
+    def F1(self, value: float | int | str | None) -> None:
+        self._F1 = coerce_psse_float(value=value, current_value=self._F1)
 
     @property
     def O2(self):
         return self._O2
 
     @O2.setter
-    def O2(self, value):
-        self._O2 = value
+    def O2(self, value: int | str | None) -> None:
+        self._O2 = coerce_psse_int(value=value, current_value=self._O2)
 
     @property
     def F2(self):
         return self._F2
 
     @F2.setter
-    def F2(self, value):
-        self._F2 = value
+    def F2(self, value: float | int | str | None) -> None:
+        self._F2 = coerce_psse_float(value=value, current_value=self._F2)
 
     @property
     def O3(self):
         return self._O3
 
     @O3.setter
-    def O3(self, value):
-        self._O3 = value
+    def O3(self, value: int | str | None) -> None:
+        self._O3 = coerce_psse_int(value=value, current_value=self._O3)
 
     @property
     def F3(self):
         return self._F3
 
     @F3.setter
-    def F3(self, value):
-        self._F3 = value
+    def F3(self, value: float | int | str | None) -> None:
+        self._F3 = coerce_psse_float(value=value, current_value=self._F3)
 
     @property
     def O4(self):
         return self._O4
 
     @O4.setter
-    def O4(self, value):
-        self._O4 = value
+    def O4(self, value: int | str | None) -> None:
+        self._O4 = coerce_psse_int(value=value, current_value=self._O4)
 
     @property
     def F4(self):
         return self._F4
 
     @F4.setter
-    def F4(self, value):
-        self._F4 = value
+    def F4(self, value: float | int | str | None) -> None:
+        self._F4 = coerce_psse_float(value=value, current_value=self._F4)

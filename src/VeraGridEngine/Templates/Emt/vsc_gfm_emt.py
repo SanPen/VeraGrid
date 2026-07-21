@@ -113,15 +113,15 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
 
     # Instantaneous algebraic expressions (used at runtime, NOT for init).
     # Sign convention: ``i_A`` is the current from the bus into the
-    # converter (branch convention). The active and reactive power
-    # ``delivered by the converter to the bus`` is therefore the negative
-    # of the instantaneous ``i * v`` sum.
-    Pe_expr = -(i_A * v_A + i_B * v_B + i_C * v_C)
-    Qe_expr = -(1.0 / np.sqrt(3.0)) * (
+    # converter (branch convention). With the standard three-phase per-unit
+    # current base, abc instantaneous sums are three times system-base power,
+    # so divide by 3 to report total three-phase p.u. power.
+    Pe_expr = -(i_A * v_A + i_B * v_B + i_C * v_C) / 3.0
+    Qe_expr = (-(1.0 / np.sqrt(3.0)) * (
         (v_A - v_B) * i_C
         + (v_B - v_C) * i_A
         + (v_C - v_A) * i_B
-    )
+    )) / 3.0
 
     two_pi_over_3: float = 2.0 * np.pi / 3.0
 
@@ -173,16 +173,16 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
     # For balanced sinusoids in sin convention (sin(omega*t + phi_*)):
     #     i_a·v_a + i_b·v_b + i_c·v_c        = (3/2)·Vpk·Ipk·cos(phi)
     #     (1/√3)·Σ (v_a−v_b)·i_c            = -(3/2)·Vpk·Ipk·sin(phi)
-    # The model's algebraic equations use ``Pe_expr = -(i·v)_sum`` and
-    # ``Qe_expr = -(1/√3)·Σ(...)``, so:
-    #     Pe_steady = -(3/2)·Vpk·Ipk·cos(phi)
-    #     Qe_steady = +(3/2)·Vpk·Ipk·sin(phi)
+    # The model's algebraic equations divide abc sums by 3 to convert standard
+    # three-phase per-unit current samples back to total system-base power, so:
+    #     Pe_steady = -(1/2)·Vpk·Ipk·cos(phi)
+    #     Qe_steady = +(1/2)·Vpk·Ipk·sin(phi)
     # For generation, ``phi ≈ π`` so ``cos(phi) < 0`` and ``Pe > 0``;
     # the small imaginary part of the PF current phasor gives the
     # observed sign of ``Qe``.
-    c_3_2 = vf.add_const(1.5)
-    Pe_init_expr = -c_3_2 * Vpk_ref * Ipk_ref * sym.cos(phi_ref)
-    Qe_init_expr = c_3_2 * Vpk_ref * Ipk_ref * sym.sin(phi_ref)
+    c_1_2 = vf.add_const(0.5)
+    Pe_init_expr = -c_1_2 * Vpk_ref * Ipk_ref * sym.cos(phi_ref)
+    Qe_init_expr = c_1_2 * Vpk_ref * Ipk_ref * sym.sin(phi_ref)
 
     # Classic droop differential equations: ``P_ref`` and ``Q_ref`` are
     # constants pinned at init to the PF operating point ``Pe_init`` /

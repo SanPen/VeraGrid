@@ -42,20 +42,22 @@ def detect_substations(grid: MultiCircuit, r_x_threshold=1e-3) -> None:
 
     # create a connectivity matrix only with transformers and lines with small (r+x)
     branches: List[BRANCH_TYPES] = list()
+
+    # these are devices that are supposed to "live" within a substation
     reducible_types = [
         DeviceType.Transformer2WDevice,
         DeviceType.WindingDevice,
         DeviceType.SeriesReactanceDevice,
-        DeviceType.VscDevice
-    ]  # these are devices that are supposed to "live" within a substation
+        DeviceType.VscDevice,
+        DeviceType.UpfcDevice
+    ]
 
     for br in grid.get_branches(add_hvdc=True, add_vsc=True, add_switch=True):
         if br.reducible or br.device_type in reducible_types:
             branches.append(br)
-        elif br.device_type == DeviceType.LineDevice:
-            if br.R > 0.0 or br.X > 0.0:
-                if (br.R + br.X) <= r_x_threshold:
-                    branches.append(br)
+        else:
+            if 0.0 > br.get_weight() <= r_x_threshold:
+                branches.append(br)
 
     # build the connectivity matrix
     nbr = len(branches)

@@ -83,7 +83,7 @@ def convert_buses(circuit: MultiCircuit,
         bus_dict[m_bus.bus_i] = bus
 
         # determine if the bus is set as slack manually
-        bus.is_slack = m_bus.bus_type == REF
+        bus.set_is_slack_at(t=None, val=m_bus.bus_type == REF)
 
         # Add the bus to the circuit buses
         circuit.add_bus(bus)
@@ -339,8 +339,10 @@ def convert_branches(circuit: MultiCircuit,
 
                 rate = np.max([br.rate_a, br.rate_b, br.rate_c])
 
-                if rate == 0.0:
-                    # in matpower rate=0 means not limited by rating
+                if rate == 0.0 or rate >= 99999.0:
+                    # In MATPOWER, rate=0 means not limited by rating.
+                    # PGLIB also uses 99999 as an explicit placeholder for
+                    # effectively-unbounded thermal ratings.
                     rate = 10000
                     monitor_loading = False
                 else:
@@ -391,8 +393,10 @@ def convert_branches(circuit: MultiCircuit,
 
                 rate = br.rate_a
 
-                if rate == 0.0:
-                    # in matpower rate=0 means not limited by rating
+                if rate == 0.0 or rate >= 99999.0:
+                    # In MATPOWER, rate=0 means not limited by rating.
+                    # PGLIB also uses 99999 as an explicit placeholder for
+                    # effectively-unbounded thermal ratings.
                     rate = 10000.0
                     monitor_loading = False
                 else:
@@ -427,8 +431,10 @@ def convert_branches(circuit: MultiCircuit,
             else:
                 rate = br.rate_a
 
-                if rate == 0.0:
-                    # in matpower rate=0 means not limited by rating
+                if rate == 0.0 or rate >= 99999.0:
+                    # In MATPOWER, rate=0 means not limited by rating.
+                    # PGLIB also uses 99999 as an explicit placeholder for
+                    # effectively-unbounded thermal ratings.
                     rate = 10000
                     monitor_loading = False
                 else:
@@ -455,8 +461,10 @@ def convert_branches(circuit: MultiCircuit,
 
                 rate = br.rate_a
 
-                if rate == 0.0:
-                    # in matpower rate=0 means not limited by rating
+                if rate == 0.0 or rate >= 99999.0:
+                    # In MATPOWER, rate=0 means not limited by rating.
+                    # PGLIB also uses 99999 as an explicit placeholder for
+                    # effectively-unbounded thermal ratings.
                     rate = 10000.0
                     monitor_loading = False
                     logger.add_info('Branch not limited by rating', f'Branch {code}')
@@ -483,8 +491,10 @@ def convert_branches(circuit: MultiCircuit,
 
                 rate = br.rate_a
 
-                if rate == 0.0:
-                    # in matpower rate=0 means not limited by rating
+                if rate == 0.0 or rate >= 99999.0:
+                    # In MATPOWER, rate=0 means not limited by rating.
+                    # PGLIB also uses 99999 as an explicit placeholder for
+                    # effectively-unbounded thermal ratings.
                     rate = 10000
                     monitor_loading = False
                 else:
@@ -548,8 +558,10 @@ def convert_dc_branches(circuit: MultiCircuit,
 
             rate = br.rate_a
 
-            if rate == 0.0:
-                # in matpower rate=0 means not limited by rating
+            if rate == 0.0 or rate >= 99999.0:
+                # In MATPOWER, rate=0 means not limited by rating.
+                # PGLIB also uses 99999 as an explicit placeholder for
+                # effectively-unbounded thermal ratings.
                 rate = 10000
                 monitor_loading = False
             else:
@@ -573,8 +585,10 @@ def convert_dc_branches(circuit: MultiCircuit,
 
             rate = br.rate_a
 
-            if rate == 0.0:
-                # in matpower rate=0 means not limited by rating
+            if rate == 0.0 or rate >= 99999.0:
+                # In MATPOWER, rate=0 means not limited by rating.
+                # PGLIB also uses 99999 as an explicit placeholder for
+                # effectively-unbounded thermal ratings.
                 rate = 10000
                 monitor_loading = False
             else:
@@ -606,8 +620,10 @@ def convert_converters(circuit: MultiCircuit,
 
         rate = br.imax * bus_t.Vnom * np.sqrt(3)  # using the current at the AC side
 
-        if rate == 0.0:
-            # in matpower rate=0 means not limited by rating
+        if rate == 0.0 or rate >= 99999.0:
+            # In MATPOWER, rate=0 means not limited by rating.
+            # PGLIB also uses 99999 as an explicit placeholder for
+            # effectively-unbounded thermal ratings.
             rate = 10000.0
             monitor_loading = False
         else:

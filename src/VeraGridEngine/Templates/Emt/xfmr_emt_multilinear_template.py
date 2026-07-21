@@ -246,8 +246,12 @@ def get_xfmr_emt_template_multilinear(
     i_return_path_sq_aux: Var = vf.add_var(name=f"i_return_path_sq_aux")
     i_plus_smoothing_root: Var = vf.add_var(name=f"i_plus_smoothing_root{name}")
     i_plus_smoothing_root_aux: Var = vf.add_var(name=f"i_plus_smoothing_root_aux{name}")
+    i_plus_smoothing_root_pos1: Var = vf.add_var(name=f"i_plus_smoothing_root_pos1{name}")
+    i_plus_smoothing_root_pos2: Var = vf.add_var(name=f"i_plus_smoothing_root_pos2{name}")
     i_leg_plus_smoothing_sq: list[Var] = [vf.add_var(name=f"i_leg_plus_smoothing_sq_{ph}") for ph in ("A", "B", "C")]
     i_leg_plus_smoothing_sq_aux: list[Var] = [vf.add_var(name=f"i_leg_plus_smoothing_sq_aux{ph}") for ph in ("A", "B", "C")]
+    i_leg_plus_smoothing_pos1: list[Var] = [vf.add_var(name=f"i_leg_plus_smoothing_pos1_{ph}_{name}") for ph in ("A", "B", "C")]
+    i_leg_plus_smoothing_pos2: list[Var] = [vf.add_var(name=f"i_leg_plus_smoothing_pos2_{ph}_{name}") for ph in ("A", "B", "C")]
 
     templ.block.in_vars = v_f + v_t
     templ.block.state_vars = i_leak + lam_leg + q_f + q_t
@@ -264,8 +268,11 @@ def get_xfmr_emt_template_multilinear(
         + i_leg_core_sq_aux
         + [i_return_path_sq_aux]
         + [i_plus_smoothing_root, i_plus_smoothing_root_aux]
+        + [i_plus_smoothing_root_pos1, i_plus_smoothing_root_pos2]
         + i_leg_plus_smoothing_sq
         + i_leg_plus_smoothing_sq_aux
+        + i_leg_plus_smoothing_pos1
+        + i_leg_plus_smoothing_pos2
     )
 
     # ------------------------------------------------------------------
@@ -379,11 +386,15 @@ def get_xfmr_emt_template_multilinear(
         alg_eqs.append(i_leg_plus_smoothing_sq[k] - i_leg_plus_smoothing_sq_aux[k])
     alg_eqs.append(i_return_path_sq_aux - i_return_path)
     alg_eqs.append(i_plus_smoothing_root - i_plus_smoothing_root_aux)
+    alg_eqs.append(i_plus_smoothing_root - i_plus_smoothing_root_pos1 * i_plus_smoothing_root_pos2)
+    alg_eqs.append(i_plus_smoothing_root_pos1 - i_plus_smoothing_root_pos2)
 
     #Multilinear sqrt ties
     alg_eqs.append(i_plus_smoothing_equation)
     for k in range(3):
         alg_eqs.append(i_leg_plus_smoothing_sq[k]*i_leg_plus_smoothing_sq_aux[k] - (i_leg_core[k] * i_leg_core_sq_aux[k] + c_smooth))
+        alg_eqs.append(i_leg_plus_smoothing_sq[k] - i_leg_plus_smoothing_pos1[k] * i_leg_plus_smoothing_pos2[k])
+        alg_eqs.append(i_leg_plus_smoothing_pos1[k] - i_leg_plus_smoothing_pos2[k])
 
 
     # Leg constitutive laws.
@@ -578,9 +589,15 @@ def get_xfmr_emt_template_multilinear(
 
     # Core leg currents from the constitutive law.
     for k in range(3):
+        abs_lam_k: Expr = sym.sqrt(lam_leg[k] * lam_leg[k] + c_smooth)
+        i_leg_core_nl_init: Expr = (
+            xfmr_core_a_prime * lam_leg[k]
+            / (c1 - xfmr_core_b_prime * abs_lam_k + c_eps)
+        )
+
         init_eqs[i_leg_core[k]] = (
             xfmr_use_linear_core * (lam_leg[k] / (xfmr_core_linear_l_pu + c_eps))
-            + (c1 - xfmr_use_linear_core) * (lam_leg[k] / (xfmr_core_a_prime + c_eps))
+            + (c1 - xfmr_use_linear_core) * i_leg_core_nl_init
         )
         init_eqs[i_leg_core_sq_aux[k]] = i_leg_core[k]
 
@@ -592,6 +609,8 @@ def get_xfmr_emt_template_multilinear(
     init_eqs[i_return_path_sq_aux] = i_return_path
     init_eqs[i_plus_smoothing_root] = sym.sqrt(i_return_path * i_return_path_sq_aux + c_smooth)
     init_eqs[i_plus_smoothing_root_aux] = i_plus_smoothing_root
+    init_eqs[i_plus_smoothing_root_pos1] = sym.sqrt(i_plus_smoothing_root)
+    init_eqs[i_plus_smoothing_root_pos2] = i_plus_smoothing_root_pos1
     init_eqs[i_return_total] = (
         five_leg_selector * c2 * i_return_path
         + three_leg_selector * i_return_path
@@ -602,6 +621,8 @@ def get_xfmr_emt_template_multilinear(
         init_eqs[i_mag[k]] = i_leg_core[k] - i_return_total
         init_eqs[i_leg_plus_smoothing_sq[k]] = sym.sqrt(i_leg_core[k] * i_leg_core_sq_aux[k] + c_smooth)
         init_eqs[i_leg_plus_smoothing_sq_aux[k]] = i_leg_plus_smoothing_sq[k]
+        init_eqs[i_leg_plus_smoothing_pos1[k]] = sym.sqrt(i_leg_plus_smoothing_sq[k])
+        init_eqs[i_leg_plus_smoothing_pos2[k]] = i_leg_plus_smoothing_pos1[k]
 
     # Core-loss currents referred to the from side.
     for k in range(3):

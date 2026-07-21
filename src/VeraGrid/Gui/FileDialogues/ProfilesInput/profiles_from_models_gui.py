@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'profiles_from_models_gui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.2
+## Created by: Qt User Interface Compiler version 6.11.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -17,8 +17,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplication, QCheckBox,
     QDialog, QFrame, QHBoxLayout, QHeaderView,
-    QPushButton, QSizePolicy, QSpacerItem, QTableView,
-    QVBoxLayout, QWidget)
+    QProgressBar, QPushButton, QSizePolicy, QSpacerItem,
+    QTableView, QVBoxLayout, QWidget)
 from VeraGrid.Gui.Icons.icons_rc import *
 
 class Ui_Dialog(object):
@@ -31,8 +31,8 @@ class Ui_Dialog(object):
         self.frame_3 = QFrame(Dialog)
         self.frame_3.setObjectName(u"frame_3")
         self.frame_3.setMaximumSize(QSize(16777215, 34))
-        self.frame_3.setFrameShape(QFrame.NoFrame)
-        self.frame_3.setFrameShadow(QFrame.Raised)
+        self.frame_3.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame_3.setFrameShadow(QFrame.Shadow.Raised)
         self.horizontalLayout_6 = QHBoxLayout(self.frame_3)
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
         self.horizontalLayout_6.setContentsMargins(0, 0, 0, 0)
@@ -61,18 +61,18 @@ class Ui_Dialog(object):
 
         self.frame_5 = QFrame(Dialog)
         self.frame_5.setObjectName(u"frame_5")
-        self.frame_5.setFrameShape(QFrame.NoFrame)
-        self.frame_5.setFrameShadow(QFrame.Raised)
+        self.frame_5.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame_5.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayout = QVBoxLayout(self.frame_5)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, -1, 0, -1)
         self.modelsTableView = QTableView(self.frame_5)
         self.modelsTableView.setObjectName(u"modelsTableView")
-        self.modelsTableView.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
-        self.modelsTableView.setDragDropMode(QAbstractItemView.InternalMove)
-        self.modelsTableView.setDefaultDropAction(Qt.MoveAction)
+        self.modelsTableView.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustToContents)
+        self.modelsTableView.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
+        self.modelsTableView.setDefaultDropAction(Qt.DropAction.MoveAction)
         self.modelsTableView.setAlternatingRowColors(True)
-        self.modelsTableView.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.modelsTableView.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
 
         self.verticalLayout.addWidget(self.modelsTableView)
 
@@ -82,19 +82,22 @@ class Ui_Dialog(object):
         self.frame_7 = QFrame(Dialog)
         self.frame_7.setObjectName(u"frame_7")
         self.frame_7.setMaximumSize(QSize(16777215, 40))
-        self.frame_7.setFrameShape(QFrame.NoFrame)
-        self.frame_7.setFrameShadow(QFrame.Raised)
+        self.frame_7.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame_7.setFrameShadow(QFrame.Shadow.Raised)
         self.horizontalLayout_8 = QHBoxLayout(self.frame_7)
         self.horizontalLayout_8.setObjectName(u"horizontalLayout_8")
         self.horizontalLayout_8.setContentsMargins(0, 0, 0, 0)
+        self.progressBar = QProgressBar(self.frame_7)
+        self.progressBar.setObjectName(u"progressBar")
+        self.progressBar.setValue(0)
+        self.progressBar.setInvertedAppearance(False)
+
+        self.horizontalLayout_8.addWidget(self.progressBar)
+
         self.matchUsingCodeCheckBox = QCheckBox(self.frame_7)
         self.matchUsingCodeCheckBox.setObjectName(u"matchUsingCodeCheckBox")
 
         self.horizontalLayout_8.addWidget(self.matchUsingCodeCheckBox)
-
-        self.horizontalSpacer_6 = QSpacerItem(814, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontalLayout_8.addItem(self.horizontalSpacer_6)
 
         self.acceptModelsButton = QPushButton(self.frame_7)
         self.acceptModelsButton.setObjectName(u"acceptModelsButton")

@@ -423,6 +423,22 @@ def build_fixable_properties(fixable_error: FIXABLE_ERROR_TYPES) -> List[str]:
     return properties
 
 
+def is_fixable_issue(element_name: str, property_name: str, fixable_keys: set[str]) -> bool:
+    """
+    Match one dashboard row against the auto-fix lookup set.
+
+    :param element_name: Element display name in the dashboard row
+    :param property_name: Property name in the dashboard row
+    :param fixable_keys: Lookup set built from fixable errors
+    :return: True when the row is fixable
+    """
+    compound_key: str = f"{element_name}|{property_name}"
+    if compound_key in fixable_keys:
+        return True
+    else:
+        return False
+
+
 class GridAnalysisGUI(QtWidgets.QMainWindow):
     """
     Modern dashboard window merging grid analysis and sigma analysis.
@@ -1073,14 +1089,14 @@ QWidget#overviewPage QProgressBar::chunk {{
         else:
             return inputs_driver.results
 
-    def get_balance_result_type(self, aggregation: ResultTypes) -> ResultTypes:
+    def get_balance_aggregation(self, result_type: ResultTypes) -> str:
         """
-        Return the result type selected in the balance aggregation combo.
+        Return the grouping key for the selected balance result type.
 
-        :param aggregation: Aggregation result type selected in the balance explorer
-        :return: Matching balance result type
+        :param result_type: Aggregation result type selected in the balance explorer
+        :return: Inputs-analysis grouping key
         """
-        return aggregation
+        return self.inputs_results.get_result_aggregation(result_type)
 
     def update_balance_panel(self) -> None:
         """
@@ -1129,11 +1145,11 @@ QWidget#overviewPage QProgressBar::chunk {{
         else:
             pass
 
-        aggregation: ResultTypes = self.balanceAggregationComboBox.currentData()
+        result_type: ResultTypes = self.balanceAggregationComboBox.currentData()
         top_n: int = self.balanceTopNSpinBox.value()
 
         if self.circuit.get_time_number() > 0:
-            self.plot_time_series_balances(aggregation=aggregation,
+            self.plot_time_series_balances(result_type=result_type,
                                            top_n=top_n,
                                            axis=axis,
                                            label_color=label_color,
@@ -1141,7 +1157,7 @@ QWidget#overviewPage QProgressBar::chunk {{
                                            positive_color=positive_color,
                                            negative_color=negative_color)
         else:
-            self.plot_snapshot_balances(aggregation=aggregation,
+            self.plot_snapshot_balances(result_type=result_type,
                                         top_n=top_n,
                                         axis=axis,
                                         label_color=label_color,
@@ -1155,7 +1171,7 @@ QWidget#overviewPage QProgressBar::chunk {{
                                          self.tr("Balance Explorer"))
 
     def plot_time_series_balances(self,
-                                  aggregation: str,
+                                  result_type: ResultTypes,
                                   top_n: int,
                                   axis,
                                   label_color: str,
@@ -1165,7 +1181,7 @@ QWidget#overviewPage QProgressBar::chunk {{
         """
         Plot the strongest time-series balances for the selected aggregation.
 
-        :param aggregation: Aggregation label
+        :param result_type: Balance result type
         :param top_n: Maximum number of traces to show
         :param axis: Matplotlib axis
         :param label_color: Theme text color
@@ -1173,7 +1189,7 @@ QWidget#overviewPage QProgressBar::chunk {{
         :param positive_color: Positive accent color
         :param negative_color: Negative accent color
         """
-        result_type: ResultTypes = self.get_balance_result_type(aggregation)
+        aggregation: str = self.get_balance_aggregation(result_type)
         result_table = self.inputs_results.mdl(result_type)
         magnitude: np.ndarray = np.max(np.abs(result_table.data_c), axis=0)
         ranking: np.ndarray = np.argsort(magnitude)[::-1]
@@ -1245,7 +1261,7 @@ QWidget#overviewPage QProgressBar::chunk {{
         )
 
     def plot_snapshot_balances(self,
-                               aggregation: str,
+                               result_type: ResultTypes,
                                top_n: int,
                                axis,
                                label_color: str,
@@ -1255,7 +1271,7 @@ QWidget#overviewPage QProgressBar::chunk {{
         """
         Plot the strongest snapshot balances for the selected aggregation.
 
-        :param aggregation: Aggregation label
+        :param result_type: Balance result type
         :param top_n: Maximum number of bars to show
         :param axis: Matplotlib axis
         :param label_color: Theme text color
@@ -1263,6 +1279,7 @@ QWidget#overviewPage QProgressBar::chunk {{
         :param positive_color: Positive accent color
         :param negative_color: Negative accent color
         """
+        aggregation: str = self.get_balance_aggregation(result_type)
         grouped_frame: pd.DataFrame = self.inputs_results.group_by(aggregation)
         balance_series: pd.Series = grouped_frame["P"].astype(float)
         ordered_series: pd.Series = balance_series.reindex(balance_series.abs().sort_values(ascending=False).index)
@@ -1363,7 +1380,7 @@ QWidget#overviewPage QProgressBar::chunk {{
                 lower: str = display_text(raw_entry[5])
                 value: str = display_text(raw_entry[6])
                 upper: str = display_text(raw_entry[7])
-                fixable: bool = self.is_fixable_issue(element_name=element_name,
+                fixable: bool = is_fixable_issue(element_name=element_name,
                                                       property_name=property_name,
                                                       fixable_keys=fixable_keys)
 
@@ -1480,21 +1497,6 @@ QWidget#overviewPage QProgressBar::chunk {{
 
         return keys
 
-    def is_fixable_issue(self, element_name: str, property_name: str, fixable_keys: set[str]) -> bool:
-        """
-        Match one dashboard row against the auto-fix lookup set.
-
-        :param element_name: Element display name in the dashboard row
-        :param property_name: Property name in the dashboard row
-        :param fixable_keys: Lookup set built from fixable errors
-        :return: True when the row is fixable
-        """
-        compound_key: str = f"{element_name}|{property_name}"
-        if compound_key in fixable_keys:
-            return True
-        else:
-            return False
-
     def run_sigma_analysis(self) -> Tuple[Optional[SigmaAnalysisResults], str]:
         """
         Execute sigma analysis with the current power-flow options.
@@ -1535,7 +1537,7 @@ QWidget#overviewPage QProgressBar::chunk {{
 
     def build_summary(self, sigma_status_text: str) -> DashboardSummary:
         """
-        Synthesize the dashboard score and the main summary metrics.
+        Synthesise the dashboard score and the main summary metrics.
 
         :param sigma_status_text: Human-readable sigma status
         :return: Dashboard summary record

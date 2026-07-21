@@ -7,7 +7,7 @@ from typing import Tuple
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_float, coerce_psse_int, coerce_psse_str
 
 
 class RawVscDCLine(RawObject):
@@ -115,55 +115,55 @@ class RawVscDCLine(RawObject):
     def __init__(self):
         RawObject.__init__(self, "VSC DC line")
 
-        self.O1 = 0
-        self.F1 = 0.0
-        self.O2 = 0
-        self.F2 = 0.0
-        self.O3 = 0
-        self.F3 = 0.0
-        self.O4 = 0
-        self.F4 = 0.0
+        self._O1: int = 0
+        self._F1: float = 0.0
+        self._O2: int = 0
+        self._F2: float = 0.0
+        self._O3: int = 0
+        self._F3: float = 0.0
+        self._O4: int = 0
+        self._F4: float = 0.0
 
-        self.NAME = ""
-        self.MDC = 1
-        self.RDC = 0
+        self._NAME: str = ""
+        self._MDC: int = 1
+        self._RDC: float = 0.0
 
-        self.IBUS1 = 0
-        self.TYPE1 = 1
-        self.MODE1 = 1
-        self.DCSET1 = 0
-        self.ACSET1 = 1.0
-        self.ALOSS1 = 0
-        self.BLOSS1 = 0
-        self.MINLOSS1 = 0
-        self.SMAX1 = 0
-        self.IMAX1 = 0
-        self.PWF1 = 0
-        self.MAXQ1 = 0
-        self.MINQ1 = 0
-        self.REMOT1 = 0  # not in PSS 35
+        self._IBUS1: int = 0
+        self._TYPE1: int = 1
+        self._MODE1: int = 1
+        self._DCSET1: float = 0.0
+        self._ACSET1: float = 1.0
+        self._ALOSS1: float = 0.0
+        self._BLOSS1: float = 0.0
+        self._MINLOSS1: int = 0
+        self._SMAX1: float = 0.0
+        self._IMAX1: float = 0.0
+        self._PWF1: float = 0.0
+        self._MAXQ1: float = 0.0
+        self._MINQ1: float = 0.0
+        self._REMOT1: int = 0
 
-        self.VSREG1 = 0  # from PSSe 35
-        self.NREG1 = 0  # from PSSe 35
-        self.RMPCT1 = 0
+        self._VSREG1: int = 0
+        self._NREG1: int = 0
+        self._RMPCT1: float = 0.0
 
-        self.IBUS2 = 0
-        self.TYPE2 = 0
-        self.MODE2 = 0
-        self.DCSET2 = 0
-        self.ACSET2 = 0
-        self.ALOSS2 = 0
-        self.BLOSS2 = 0
-        self.MINLOSS2 = 0
-        self.SMAX2 = 0
-        self.IMAX2 = 0
-        self.PWF2 = 0
-        self.MAXQ2 = 0
-        self.MINQ2 = 0
-        self.REMOT2 = 0  # not in PSSe 35
-        self.VSREG2 = 0  # from PSSe 35
-        self.NREG2 = 0  # from PSSe 35
-        self.RMPCT2 = 100.0
+        self._IBUS2: int = 0
+        self._TYPE2: int = 0
+        self._MODE2: int = 0
+        self._DCSET2: float = 0.0
+        self._ACSET2: float = 0.0
+        self._ALOSS2: float = 0.0
+        self._BLOSS2: float = 0.0
+        self._MINLOSS2: int = 0
+        self._SMAX2: float = 0.0
+        self._IMAX2: float = 0.0
+        self._PWF2: float = 0.0
+        self._MAXQ2: float = 0.0
+        self._MINQ2: float = 0.0
+        self._REMOT2: int = 0
+        self._VSREG2: int = 0
+        self._NREG2: int = 0
+        self._RMPCT2: float = 100.0
 
         # --------------------------------------------------------------------------------------------------------------
 
@@ -186,3 +186,362 @@ class RawVscDCLine(RawObject):
         """
         return "{0}_{1}_1".format(self.IBUS1, self.IBUS2)
 
+    @property
+    def O1(self) -> int:
+        return self._O1
+
+    @O1.setter
+    def O1(self, value: int | str | None) -> None:
+        self._O1 = coerce_psse_int(value=value, current_value=self._O1)
+
+    @property
+    def F1(self) -> float:
+        return self._F1
+
+    @F1.setter
+    def F1(self, value: float | int | str | None) -> None:
+        self._F1 = coerce_psse_float(value=value, current_value=self._F1)
+
+    @property
+    def O2(self) -> int:
+        return self._O2
+
+    @O2.setter
+    def O2(self, value: int | str | None) -> None:
+        self._O2 = coerce_psse_int(value=value, current_value=self._O2)
+
+    @property
+    def F2(self) -> float:
+        return self._F2
+
+    @F2.setter
+    def F2(self, value: float | int | str | None) -> None:
+        self._F2 = coerce_psse_float(value=value, current_value=self._F2)
+
+    @property
+    def O3(self) -> int:
+        return self._O3
+
+    @O3.setter
+    def O3(self, value: int | str | None) -> None:
+        self._O3 = coerce_psse_int(value=value, current_value=self._O3)
+
+    @property
+    def F3(self) -> float:
+        return self._F3
+
+    @F3.setter
+    def F3(self, value: float | int | str | None) -> None:
+        self._F3 = coerce_psse_float(value=value, current_value=self._F3)
+
+    @property
+    def O4(self) -> int:
+        return self._O4
+
+    @O4.setter
+    def O4(self, value: int | str | None) -> None:
+        self._O4 = coerce_psse_int(value=value, current_value=self._O4)
+
+    @property
+    def F4(self) -> float:
+        return self._F4
+
+    @F4.setter
+    def F4(self, value: float | int | str | None) -> None:
+        self._F4 = coerce_psse_float(value=value, current_value=self._F4)
+
+    @property
+    def NAME(self) -> str:
+        return self._NAME
+
+    @NAME.setter
+    def NAME(self, value: str | int | float | None) -> None:
+        self._NAME = coerce_psse_str(value=value, current_value=self._NAME)
+
+    @property
+    def MDC(self) -> int:
+        return self._MDC
+
+    @MDC.setter
+    def MDC(self, value: int | str | None) -> None:
+        self._MDC = coerce_psse_int(value=value, current_value=self._MDC)
+
+    @property
+    def RDC(self) -> float:
+        return self._RDC
+
+    @RDC.setter
+    def RDC(self, value: float | int | str | None) -> None:
+        self._RDC = coerce_psse_float(value=value, current_value=self._RDC)
+
+    @property
+    def IBUS1(self) -> int:
+        return self._IBUS1
+
+    @IBUS1.setter
+    def IBUS1(self, value: int | str | None) -> None:
+        self._IBUS1 = coerce_psse_int(value=value, current_value=self._IBUS1)
+
+    @property
+    def TYPE1(self) -> int:
+        return self._TYPE1
+
+    @TYPE1.setter
+    def TYPE1(self, value: int | str | None) -> None:
+        self._TYPE1 = coerce_psse_int(value=value, current_value=self._TYPE1)
+
+    @property
+    def MODE1(self) -> int:
+        return self._MODE1
+
+    @MODE1.setter
+    def MODE1(self, value: int | str | None) -> None:
+        self._MODE1 = coerce_psse_int(value=value, current_value=self._MODE1)
+
+    @property
+    def DCSET1(self) -> float:
+        return self._DCSET1
+
+    @DCSET1.setter
+    def DCSET1(self, value: float | int | str | None) -> None:
+        self._DCSET1 = coerce_psse_float(value=value, current_value=self._DCSET1)
+
+    @property
+    def ACSET1(self) -> float:
+        return self._ACSET1
+
+    @ACSET1.setter
+    def ACSET1(self, value: float | int | str | None) -> None:
+        self._ACSET1 = coerce_psse_float(value=value, current_value=self._ACSET1)
+
+    @property
+    def ALOSS1(self) -> float:
+        return self._ALOSS1
+
+    @ALOSS1.setter
+    def ALOSS1(self, value: float | int | str | None) -> None:
+        self._ALOSS1 = coerce_psse_float(value=value, current_value=self._ALOSS1)
+
+    @property
+    def BLOSS1(self) -> float:
+        return self._BLOSS1
+
+    @BLOSS1.setter
+    def BLOSS1(self, value: float | int | str | None) -> None:
+        self._BLOSS1 = coerce_psse_float(value=value, current_value=self._BLOSS1)
+
+    @property
+    def MINLOSS1(self) -> int:
+        return self._MINLOSS1
+
+    @MINLOSS1.setter
+    def MINLOSS1(self, value: int | str | None) -> None:
+        self._MINLOSS1 = coerce_psse_int(value=value, current_value=self._MINLOSS1)
+
+    @property
+    def SMAX1(self) -> float:
+        return self._SMAX1
+
+    @SMAX1.setter
+    def SMAX1(self, value: float | int | str | None) -> None:
+        self._SMAX1 = coerce_psse_float(value=value, current_value=self._SMAX1)
+
+    @property
+    def IMAX1(self) -> float:
+        return self._IMAX1
+
+    @IMAX1.setter
+    def IMAX1(self, value: float | int | str | None) -> None:
+        self._IMAX1 = coerce_psse_float(value=value, current_value=self._IMAX1)
+
+    @property
+    def PWF1(self) -> float:
+        return self._PWF1
+
+    @PWF1.setter
+    def PWF1(self, value: float | int | str | None) -> None:
+        self._PWF1 = coerce_psse_float(value=value, current_value=self._PWF1)
+
+    @property
+    def MAXQ1(self) -> float:
+        return self._MAXQ1
+
+    @MAXQ1.setter
+    def MAXQ1(self, value: float | int | str | None) -> None:
+        self._MAXQ1 = coerce_psse_float(value=value, current_value=self._MAXQ1)
+
+    @property
+    def MINQ1(self) -> float:
+        return self._MINQ1
+
+    @MINQ1.setter
+    def MINQ1(self, value: float | int | str | None) -> None:
+        self._MINQ1 = coerce_psse_float(value=value, current_value=self._MINQ1)
+
+    @property
+    def REMOT1(self) -> int:
+        return self._REMOT1
+
+    @REMOT1.setter
+    def REMOT1(self, value: int | str | None) -> None:
+        self._REMOT1 = coerce_psse_int(value=value, current_value=self._REMOT1)
+
+    @property
+    def VSREG1(self) -> int:
+        return self._VSREG1
+
+    @VSREG1.setter
+    def VSREG1(self, value: int | str | None) -> None:
+        self._VSREG1 = coerce_psse_int(value=value, current_value=self._VSREG1)
+
+    @property
+    def NREG1(self) -> int:
+        return self._NREG1
+
+    @NREG1.setter
+    def NREG1(self, value: int | str | None) -> None:
+        self._NREG1 = coerce_psse_int(value=value, current_value=self._NREG1)
+
+    @property
+    def RMPCT1(self) -> float:
+        return self._RMPCT1
+
+    @RMPCT1.setter
+    def RMPCT1(self, value: float | int | str | None) -> None:
+        self._RMPCT1 = coerce_psse_float(value=value, current_value=self._RMPCT1)
+
+    @property
+    def IBUS2(self) -> int:
+        return self._IBUS2
+
+    @IBUS2.setter
+    def IBUS2(self, value: int | str | None) -> None:
+        self._IBUS2 = coerce_psse_int(value=value, current_value=self._IBUS2)
+
+    @property
+    def TYPE2(self) -> int:
+        return self._TYPE2
+
+    @TYPE2.setter
+    def TYPE2(self, value: int | str | None) -> None:
+        self._TYPE2 = coerce_psse_int(value=value, current_value=self._TYPE2)
+
+    @property
+    def MODE2(self) -> int:
+        return self._MODE2
+
+    @MODE2.setter
+    def MODE2(self, value: int | str | None) -> None:
+        self._MODE2 = coerce_psse_int(value=value, current_value=self._MODE2)
+
+    @property
+    def DCSET2(self) -> float:
+        return self._DCSET2
+
+    @DCSET2.setter
+    def DCSET2(self, value: float | int | str | None) -> None:
+        self._DCSET2 = coerce_psse_float(value=value, current_value=self._DCSET2)
+
+    @property
+    def ACSET2(self) -> float:
+        return self._ACSET2
+
+    @ACSET2.setter
+    def ACSET2(self, value: float | int | str | None) -> None:
+        self._ACSET2 = coerce_psse_float(value=value, current_value=self._ACSET2)
+
+    @property
+    def ALOSS2(self) -> float:
+        return self._ALOSS2
+
+    @ALOSS2.setter
+    def ALOSS2(self, value: float | int | str | None) -> None:
+        self._ALOSS2 = coerce_psse_float(value=value, current_value=self._ALOSS2)
+
+    @property
+    def BLOSS2(self) -> float:
+        return self._BLOSS2
+
+    @BLOSS2.setter
+    def BLOSS2(self, value: float | int | str | None) -> None:
+        self._BLOSS2 = coerce_psse_float(value=value, current_value=self._BLOSS2)
+
+    @property
+    def MINLOSS2(self) -> int:
+        return self._MINLOSS2
+
+    @MINLOSS2.setter
+    def MINLOSS2(self, value: int | str | None) -> None:
+        self._MINLOSS2 = coerce_psse_int(value=value, current_value=self._MINLOSS2)
+
+    @property
+    def SMAX2(self) -> float:
+        return self._SMAX2
+
+    @SMAX2.setter
+    def SMAX2(self, value: float | int | str | None) -> None:
+        self._SMAX2 = coerce_psse_float(value=value, current_value=self._SMAX2)
+
+    @property
+    def IMAX2(self) -> float:
+        return self._IMAX2
+
+    @IMAX2.setter
+    def IMAX2(self, value: float | int | str | None) -> None:
+        self._IMAX2 = coerce_psse_float(value=value, current_value=self._IMAX2)
+
+    @property
+    def PWF2(self) -> float:
+        return self._PWF2
+
+    @PWF2.setter
+    def PWF2(self, value: float | int | str | None) -> None:
+        self._PWF2 = coerce_psse_float(value=value, current_value=self._PWF2)
+
+    @property
+    def MAXQ2(self) -> float:
+        return self._MAXQ2
+
+    @MAXQ2.setter
+    def MAXQ2(self, value: float | int | str | None) -> None:
+        self._MAXQ2 = coerce_psse_float(value=value, current_value=self._MAXQ2)
+
+    @property
+    def MINQ2(self) -> float:
+        return self._MINQ2
+
+    @MINQ2.setter
+    def MINQ2(self, value: float | int | str | None) -> None:
+        self._MINQ2 = coerce_psse_float(value=value, current_value=self._MINQ2)
+
+    @property
+    def REMOT2(self) -> int:
+        return self._REMOT2
+
+    @REMOT2.setter
+    def REMOT2(self, value: int | str | None) -> None:
+        self._REMOT2 = coerce_psse_int(value=value, current_value=self._REMOT2)
+
+    @property
+    def VSREG2(self) -> int:
+        return self._VSREG2
+
+    @VSREG2.setter
+    def VSREG2(self, value: int | str | None) -> None:
+        self._VSREG2 = coerce_psse_int(value=value, current_value=self._VSREG2)
+
+    @property
+    def NREG2(self) -> int:
+        return self._NREG2
+
+    @NREG2.setter
+    def NREG2(self, value: int | str | None) -> None:
+        self._NREG2 = coerce_psse_int(value=value, current_value=self._NREG2)
+
+    @property
+    def RMPCT2(self) -> float:
+        return self._RMPCT2
+
+    @RMPCT2.setter
+    def RMPCT2(self, value: float | int | str | None) -> None:
+        self._RMPCT2 = coerce_psse_float(value=value, current_value=self._RMPCT2)

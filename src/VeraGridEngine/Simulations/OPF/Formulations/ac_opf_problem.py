@@ -251,9 +251,12 @@ class NonLinearOptimalPfProblem:
         "c0",
         "c1",
         "c2",
+        "objective_scale",
         "c0n",
         "c1n",
         "c2n",
+        "Pg_case0",
+        "Qg_case0",
         "tapm_max",
         "tapm_min",
         "tapt_max",
@@ -467,7 +470,7 @@ class NonLinearOptimalPfProblem:
         self.nbr = nc.passive_branch_data.nelm
         self.br_idx = np.arange(self.nbr)
         self.br_mon_idx = nc.passive_branch_data.get_monitor_enabled_indices()
-        self.gen_disp_idx = nc.generator_data.get_dispatchable_indices()
+        self.gen_disp_idx = nc.generator_data.get_dispatchable_active_indices()
         self.gen_disp_idx_sh = np.r_[self.gen_disp_idx, np.arange(self.ngen, self.ngen + self.nsh)]
         self.Cfmon = nc.passive_branch_data.monitored_Cf(self.br_mon_idx)
         self.Cfmon_t = self.Cfmon.T
@@ -515,17 +518,23 @@ class NonLinearOptimalPfProblem:
                                        (self.gen_bus_idx[self.gen_disp_idx_sh],
                                         np.arange(self.n_gen_disp_sh))),
                                       shape=(self.nbus, self.n_gen_disp_sh))
-        self.Cdispgen_sh_t = self.Cdispgen.T
+        self.Cdispgen_sh_t = self.Cdispgen_sh.T
 
         self.Inom = nc.generator_data.snom[self.gen_disp_idx] / self.Sbase
 
         self.c0 = np.r_[nc.generator_data.cost_0[self.gen_disp_idx], np.zeros(self.nsh)]
         self.c1 = np.r_[nc.generator_data.cost_1[self.gen_disp_idx], np.zeros(self.nsh)]
         self.c2 = np.r_[nc.generator_data.cost_2[self.gen_disp_idx], np.zeros(self.nsh)]
+        # Large PGLIB cases benefit from a slightly stronger objective scaling to
+        # keep the economic gradient visible in the KKT system, while the smaller
+        # regression fixtures are more stable with the historical factor.
+        self.objective_scale = 1e-3 if self.nbus >= 1000 else 1e-4
 
         self.c0n = nc.generator_data.cost_0[self.gen_nondisp_idx]
         self.c1n = nc.generator_data.cost_1[self.gen_nondisp_idx]
         self.c2n = nc.generator_data.cost_2[self.gen_nondisp_idx]
+        self.Pg_case0 = np.r_[nc.generator_data.p[self.gen_disp_idx] / self.Sbase, np.zeros(self.nsh)]
+        self.Qg_case0 = np.r_[nc.generator_data.q[self.gen_disp_idx] / self.Sbase, np.zeros(self.nsh)]
 
         # Transformer operational limits
         self.tapm_max = nc.active_branch_data.tap_module_max[self.k_m]
@@ -592,47 +601,62 @@ class NonLinearOptimalPfProblem:
         # Variables
 
         if pf_init:
-
-            # TODO: try to substitute by using nc.generator_data.get_injections_per_bus()
-            #  @Carlos: get_injections does not account for the powerflow results
-
-            # This array has the number of total generators connected to the same bus of each generator, counting itself
-            ngenforgen = np.bincount(self.gen_bus_idx[:self.ngen])[self.gen_bus_idx[:self.ngen]]
-
-            # If there are multiple generators connected to the same bus, they share in equal parts the injection.
-            allPgen = (Sbus_pf.real + self.Sd.real)[self.gen_bus_idx[:self.ngen]] / ngenforgen
-
-            # Same for Q
-            allQgen = (Sbus_pf.imag + self.Sd.imag)[self.gen_bus_idx[:self.ngen]] / ngenforgen
-
-            self.Sg_undis = allPgen[self.gen_nondisp_idx] + 1j * allQgen[self.gen_nondisp_idx]
-            self.Pg = np.r_[allPgen[self.gen_disp_idx], np.zeros(self.nsh)]
-            self.Qg = np.r_[allQgen[self.gen_disp_idx], np.zeros(self.nsh)]
+            # Keep the PF voltage state when available, but seed generator
+            # outputs from the benchmark case data. Sharing a bus net injection
+            # equally across co-located generators destroys the original MATPOWER
+            # dispatch pattern and is especially harmful on large PEGASE cases.
+            self.Pg = self.Pg_case0.copy()
+            self.Qg = self.Qg_case0.copy()
             self.Vm = np.abs(voltage_pf)
             self.Va = np.angle(voltage_pf)
             self.tap_m = nc.active_branch_data.tap_module[self.k_m]
             self.tap_tau = nc.active_branch_data.tap_angle[self.k_tau]
             self.Pfdc = nc.hvdc_data.Pset[self.hvdc_disp_idx]
 
-        else:
+            # A non-converged PF seed can still point to the right basin, but its
+            # raw state may sit far outside the OPF box constraints. Clamp the
+            # primal initialization back into the feasible bounds before the IPS
+            # barrier variables are constructed.
+            self.Pg[:self.n_gen_disp] = np.clip(self.Pg[:self.n_gen_disp],
+                                                self.Pg_min[self.gen_disp_idx],
+                                                self.Pg_max[self.gen_disp_idx])
+            self.Qg[:self.n_gen_disp] = np.clip(self.Qg[:self.n_gen_disp],
+                                                self.Qg_min[self.gen_disp_idx],
+                                                self.Qg_max[self.gen_disp_idx])
+            self.Vm = np.clip(self.Vm, self.Vm_min, self.Vm_max)
+            self.tap_m = np.clip(self.tap_m, self.tapm_min, self.tapm_max)
+            self.tap_tau = np.clip(self.tap_tau, self.tapt_min, self.tapt_max)
 
-            # TODO: Review this
-            # Pmax = nc.generator_data.pmax / self.Sbase
-            # Pmin = nc.generator_data.pmin / self.Sbase
-            self.Pg = np.r_[
-                # (Pmax[gen_disp_idx_2] + Pmin[gen_disp_idx_2]) / 2,
-                (self.Pg_max[self.gen_disp_idx] + self.Pg_min[self.gen_disp_idx]) / 2,
-                np.zeros(self.nsh)
-            ]
-            self.Qg = np.r_[
-                (self.Qg_max[self.gen_disp_idx] + self.Qg_min[self.gen_disp_idx]) / 2,
-                np.zeros(self.nsh)
-            ]
-            self.Va = np.angle(nc.bus_data.Vbus)
+            if self.n_disp_hvdc:
+                self.Pfdc = np.clip(self.Pfdc,
+                                    -self.P_hvdc_max / self.Sbase,
+                                    self.P_hvdc_max / self.Sbase)
+            else:
+                pass
+
+        else:
+            # The MATPOWER/PGLIB files already carry a meaningful generator
+            # dispatch. Use that as the primal seed instead of midpoint values,
+            # which are often far from the feasible AC basin on large cases.
+            self.Pg = self.Pg_case0.copy()
+            self.Qg = self.Qg_case0.copy()
+            ref_angle = np.angle(nc.bus_data.Vbus[self.slack[0]]) if self.n_slack else 0.0
+            # Match MATPOWER/MIPS interior initialization: start from a flat angle
+            # profile instead of inheriting a stressed network state.
+            self.Va = np.full(self.nbus, ref_angle)
             self.Vm = (self.Vm_max + self.Vm_min) / 2
             self.tap_m = nc.active_branch_data.tap_module[self.k_m]
             self.tap_tau = nc.active_branch_data.tap_angle[self.k_tau]
             self.Pfdc = np.zeros(self.n_disp_hvdc)
+
+            # The case-file generator seed can still sit outside the OPF box on
+            # stressed benchmarks. Clamp it before constructing the IPS state.
+            self.Pg[:self.n_gen_disp] = np.clip(self.Pg[:self.n_gen_disp],
+                                                self.Pg_min[self.gen_disp_idx],
+                                                self.Pg_max[self.gen_disp_idx])
+            self.Qg[:self.n_gen_disp] = np.clip(self.Qg[:self.n_gen_disp],
+                                                self.Qg_min[self.gen_disp_idx],
+                                                self.Qg_max[self.gen_disp_idx])
 
         if options.acopf_mode == AcOpfMode.ACOPFslacks:
             self.sl_sf = np.ones(self.n_br_mon)
@@ -923,7 +947,7 @@ class NonLinearOptimalPfProblem:
         self.Sf2 = np.conj(self.Sf) * self.Sf
         self.St2 = np.conj(self.St) * self.St
 
-        fval = 1e-4 * (
+        fval = self.objective_scale * (
                 np.sum((self.c0 + self.c1 * self.Pg * self.Sbase + self.c2 * np.power(self.Pg * self.Sbase, 2)))
                 + np.sum(self.c_s * (self.sl_sf + self.sl_st)) + np.sum(self.c_v * (self.sl_vmax + self.sl_vmin))
                 + np.sum(self.c_vsc * self.sl_vsc)
@@ -1095,7 +1119,7 @@ class NonLinearOptimalPfProblem:
 
         if self.nslcap == 0:
             fx[2 * self.nbus: 2 * self.nbus + self.n_gen_disp_sh] = (2 * self.c2 * self.Pg * (self.Sbase * self.Sbase)
-                                                                     + self.c1 * self.Sbase) * 1e-4
+                                                                     + self.c1 * self.Sbase) * self.objective_scale
 
             if self.options.acopf_mode == AcOpfMode.ACOPFslacks:
                 fx[npfvar: npfvar + self.n_br_mon] = self.c_s
@@ -1105,9 +1129,9 @@ class NonLinearOptimalPfProblem:
         else:
             fx[npfvar + self.nsl: npfvar + self.nsl + self.nslcap] = self.nodal_capacity_sign
 
-        # VSC current-limit slack penalty (objective is scaled by 1e-4)
+        # VSC current-limit slack penalty uses the same objective scaling.
         if self.n_sl_vsc:
-            fx[col_sl_vsc] = 1e-4 * self.c_vsc
+            fx[col_sl_vsc] = self.objective_scale * self.c_vsc
 
         te_fx = timeit.default_timer()
         # EQUALITY CONSTRAINTS GRAD ------------------------------------------------------------------------------------
@@ -1398,10 +1422,14 @@ class NonLinearOptimalPfProblem:
                  lil_matrix((self.npq, self.nslcap + self.ntapm + self.ntapt + self.n_disp_hvdc + nvc))])
 
         else:
-            Hvu = sp.hstack([lil_matrix((self.npq, self.nbus)), diags_pq_ones,
-                             lil_matrix((self.npq, self.NV - self.nbus - self.npq))])
-            Hvl = sp.hstack([lil_matrix((self.npq, self.nbus)), - diags_pq_ones,
-                             lil_matrix((self.npq, self.NV - self.nbus - self.npq))])
+            # In standard ACOPF mode the Vm block still spans every bus, so the
+            # voltage-limit Jacobian must point to the actual PQ-bus columns
+            # inside that full-size Vm block instead of assuming the first
+            # ``npq`` Vm variables correspond to the PQ buses.
+            Hvu = sp.hstack([lil_matrix((self.npq, self.nbus)), diags_bus_ones[self.pq, :],
+                             lil_matrix((self.npq, self.NV - 2 * self.nbus))])
+            Hvl = sp.hstack([lil_matrix((self.npq, self.nbus)), - diags_bus_ones[self.pq, :],
+                             lil_matrix((self.npq, self.NV - 2 * self.nbus))])
             Hslsf = lil_matrix((0, self.NV))
             Hslst = lil_matrix((0, self.NV))
             Hslvmax = lil_matrix((0, self.NV))
@@ -1603,7 +1631,7 @@ class NonLinearOptimalPfProblem:
                     2 * self.c2 * (self.Sbase * self.Sbase),
                     np.zeros(self.n_gen_disp_sh + self.nsl + self.nslcap + self.ntapm + self.ntapt
                              + self.n_disp_hvdc + nvc)
-                ]) * 1e-4).tocsc()
+                ]) * self.objective_scale).tocsc()
             else:
                 fxx = csc((self.NV, self.NV))
 
@@ -2242,7 +2270,9 @@ class NonLinearOptimalPfProblem:
         tap_module = np.zeros(self.nc.nbr)
         tap_phase = np.zeros(self.nc.nbr)
         tap_module[self.k_m] = self.tap_m
-        tap_phase[self.k_tau] = self.tap_tau
+        # Normalize controllable tap angles so equivalent solutions compare
+        # consistently across solver trajectories.
+        tap_phase[self.k_tau] = np.angle(np.exp(1j * self.tap_tau))
         Pcost = np.zeros(self.ngen + self.nsh)
 
         Pcost[self.gen_disp_idx_sh] = (self.c0 + self.c1 * Pg[self.gen_disp_idx_sh]

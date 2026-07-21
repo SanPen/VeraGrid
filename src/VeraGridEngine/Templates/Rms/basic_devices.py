@@ -12,6 +12,7 @@ from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType, P
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.block_helpers import tf_to_block
+from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
 
 def get_pll_transform_rms(vfactory: VarFactory, name: str = "Pll_transform_rms") -> RmsModelTemplate:
     """
@@ -358,6 +359,287 @@ def get_gfl_electrical_block(vfactory: VarFactory, name: str = "gfl_electrical_e
 
     return templ
 
+
+def get_gfl_converter_line_rms_block(vfactory: VarFactory, name: str = "gfl_converter_line") -> RmsModelTemplate:
+    """
+    Line between converter internal AC bus (from) and grid bus (to).
+    """
+    templ = get_line_rms_template(vfactory=vfactory, name=name)
+    block = templ.block
+
+    vfactory.add_shared_ref_to_var(block.in_vars[0], "Vm_c_reference")
+    vfactory.add_shared_ref_to_var(block.in_vars[1], "Va_c_reference")
+    vfactory.add_shared_ref_to_var(block.in_vars[2], "Vm_g_reference")
+    vfactory.add_shared_ref_to_var(block.in_vars[3], "Va_g_reference")
+
+    vfactory.add_shared_ref_to_var(block.out_vars[0], "Pf_line_reference")
+    vfactory.add_shared_ref_to_var(block.out_vars[1], "Pt_line_reference")
+    vfactory.add_shared_ref_to_var(block.out_vars[2], "Qf_line_reference")
+    vfactory.add_shared_ref_to_var(block.out_vars[3], "Qt_line_reference")
+
+    block.name = name
+
+    return templ
+
+
+def get_gfl_converter_bus_block(vfactory: VarFactory, name: str = "gfl_converter_bus") -> RmsModelTemplate:
+    """
+    Define the internal converter AC bus from its dq voltage in the PLL frame.
+    """
+    templ = RmsModelTemplate(name=name)
+    templ.tpe = DeviceType.NoDevice
+
+    Vm_c = vfactory.add_var("Vm_c", shared_reference="Vm_c_reference")
+    Va_c = vfactory.add_var("Va_c", shared_reference="Va_c_reference")
+    theta = vfactory.add_var("theta_c", shared_reference="theta_reference")
+
+    v_d_c = vfactory.add_var("v_d_c_bus", shared_reference="v_d_c_reference")
+    v_q_c = vfactory.add_var("v_q_c_bus", shared_reference="v_q_c_reference")
+
+    block = Block(
+        algebraic_eqs=[
+            v_d_c - Vm_c * sym.sin(Va_c - theta),
+            v_q_c - Vm_c * sym.cos(Va_c - theta),
+        ],
+        algebraic_vars=[Vm_c, Va_c],
+        init_eqs={
+            Vm_c: sym.sqrt(v_d_c ** 2 + v_q_c ** 2),
+            Va_c: theta + sym.atan(v_d_c / (v_q_c + vfactory.add_const(1e-11))),
+        },
+        in_vars=[v_d_c, v_q_c, theta],
+        out_vars=[Vm_c, Va_c],
+        name=name,
+    )
+
+    templ.block = block
+
+    return templ
+
+
+def get_gfl_voltage_control_electrical_block(vfactory: VarFactory,
+                                             name: str = "gfl_voltage_control_electrical") -> RmsModelTemplate:
+    """
+    Electrical voltage-control constraints separated from the line model.
+    """
+    templ = RmsModelTemplate(name=name)
+    templ.tpe = DeviceType.NoDevice
+
+    v_d_c = vfactory.add_var("v_d_c_ctrl", shared_reference="v_d_c_reference")
+    v_q_c = vfactory.add_var("v_q_c_ctrl", shared_reference="v_q_c_reference")
+
+    v_d_g = vfactory.add_var("v_d_g_ctrl", shared_reference="vd_reference")
+    v_q_g = vfactory.add_var("v_q_g_ctrl", shared_reference="vq_reference")
+    omega = vfactory.add_var("omega_ctrl", shared_reference="omega_reference")
+
+    vd_hat = vfactory.add_var("vd_hat_ctrl", shared_reference="vd_hat_reference")
+    vq_hat = vfactory.add_var("vq_hat_ctrl", shared_reference="vq_hat_reference")
+
+    i_d = vfactory.add_var("i_d_ctrl", shared_reference="i_d_reference")
+    i_q = vfactory.add_var("i_q_ctrl", shared_reference="i_q_reference")
+
+    L = vfactory.add_var("L")
+
+    block = Block(
+        algebraic_eqs=[
+            v_d_c - (vd_hat + v_d_g - L * omega * i_q),
+            v_q_c - (vq_hat + v_q_g + L * omega * i_d),
+        ],
+        algebraic_vars=[v_d_c, v_q_c],
+        event_dict={
+            L: vfactory.add_const(0.05),
+        },
+        in_vars=[vd_hat, vq_hat, v_d_g, v_q_g, omega, i_d, i_q],
+        out_vars=[v_d_c, v_q_c],
+        init_eqs={
+            v_d_c: vd_hat + v_d_g - L * omega * i_q,
+            v_q_c: vq_hat + v_q_g + L * omega * i_d,
+        },
+        api_obj_mapping={
+            ParamPowerFlowReferenceType.X1: L,
+        },
+        name=name,
+    )
+
+    templ.block = block
+
+    return templ
+
+
+def get_gfl_line_current_measurement_block(vfactory: VarFactory,
+                                           name: str = "gfl_line_current_measurement") -> RmsModelTemplate:
+    """
+    Derive dq current feedback from the grid-side line power.
+    """
+    templ = RmsModelTemplate(name=name)
+    templ.tpe = DeviceType.NoDevice
+
+    Pt_line = vfactory.add_var("Pt_line", shared_reference="Pt_line_reference")
+    Qt_line = vfactory.add_var("Qt_line", shared_reference="Qt_line_reference")
+
+    v_d_g = vfactory.add_var("v_d_g_power", shared_reference="vd_reference")
+    v_q_g = vfactory.add_var("v_q_g_power", shared_reference="vq_reference")
+
+    i_d = vfactory.add_var("i_d", shared_reference="i_d_reference")
+    i_q = vfactory.add_var("i_q", shared_reference="i_q_reference")
+
+    eps = vfactory.add_const(1e-11)
+    v2 = v_d_g ** 2 + v_q_g ** 2 + eps
+    P = -Pt_line
+    Q = -Qt_line
+
+    block = Block(
+        algebraic_eqs=[
+            i_d - (P * v_d_g + Q * v_q_g) / v2,
+            i_q - (P * v_q_g - Q * v_d_g) / v2,
+        ],
+        algebraic_vars=[i_d, i_q],
+        in_vars=[Pt_line, Qt_line, v_d_g, v_q_g],
+        out_vars=[i_d, i_q],
+        init_eqs={
+            i_d: (P * v_d_g + Q * v_q_g) / v2,
+            i_q: (P * v_q_g - Q * v_d_g) / v2,
+        },
+        name=name,
+    )
+
+    templ.block = block
+
+    return templ
+
+
+def get_pi_power_controller_from_line(vfactory: VarFactory, name: str = "power_ctrl_line") -> RmsModelTemplate:
+    """
+    Power controller using converter power directly from line Pt/Qt.
+    """
+    templ = RmsModelTemplate(name=name)
+    templ.tpe = DeviceType.NoDevice
+
+    Kp_pol = vfactory.add_var('Kp_pol')
+    Ki_pol = vfactory.add_var('Ki_pol')
+    Ki_vdc = vfactory.add_var('ki_vdc')
+    Kp_vdc = vfactory.add_var('Kp_vdc')
+    Vdc_ref = vfactory.add_var('Vdc_ref')
+
+    Pt_line = vfactory.add_var('Pt_line_ctrl', shared_reference='Pt_line_reference')
+    Qt_line = vfactory.add_var('Qt_line_ctrl', shared_reference='Qt_line_reference')
+    i_q_ref = vfactory.add_var('i_q_ref', shared_reference='i_q_ref_reference')
+    i_d_ref = vfactory.add_var('i_d_ref', shared_reference='i_d_ref_reference')
+    v_dc = vfactory.add_var('v_dc', shared_reference='v_dc_reference')
+
+    P_ref = vfactory.add_var('P_ref', shared_reference='P_ref_reference')
+    Q_ref = vfactory.add_var('Q_ref', shared_reference='Q_ref_reference')
+
+    event_dict = {
+        Kp_pol: vfactory.add_const(0.05),
+        Ki_pol: vfactory.add_const(1.0),
+        Ki_vdc: vfactory.add_const(0.1),
+        Kp_vdc: vfactory.add_const(0.01),
+        Vdc_ref: v_dc,
+        P_ref: -Pt_line,
+        Q_ref: -Qt_line,
+    }
+
+    control_block_1, _ = tf_to_block(vfactory,
+                                     num=[Ki_pol, Kp_pol],
+                                     den=[0, 1],
+                                     x=P_ref + Pt_line,
+                                     y=i_q_ref,
+                                     name='Pac_ctrl_line'
+                                     )
+
+    control_block_2, _ = tf_to_block(vfactory,
+                                     num=[Ki_pol, Kp_pol],
+                                     den=[0, 1],
+                                     x=Q_ref + Qt_line,
+                                     y=i_d_ref,
+                                     name='Qac_ctrl_line'
+                                     )
+
+    control_block_1.in_vars = [Pt_line, P_ref]
+    control_block_2.in_vars = [Qt_line, Q_ref]
+    control_block_1.event_dict = event_dict
+    control_block_2.event_dict = event_dict
+
+    block = Block(
+        children=[control_block_1, control_block_2],
+        in_vars=[Pt_line, Qt_line],
+        out_vars=[control_block_1.out_vars[0], control_block_2.out_vars[0]],
+        name=name,
+    )
+
+    templ.block = block
+
+    return templ
+
+
+def get_gfl_losses_from_line_block(vfactory: VarFactory, name: str = "gfl_losses_line") -> RmsModelTemplate:
+    """
+    Losses/output block using line Pt/Qt directly.
+    """
+    templ = RmsModelTemplate(name=name)
+    templ.tpe = DeviceType.NoDevice
+
+    i_d = vfactory.add_var('id', shared_reference='i_d_reference')
+    i_q = vfactory.add_var('iq', shared_reference='i_q_reference')
+    Pt_line = vfactory.add_var('Pt_line_losses', shared_reference='Pt_line_reference')
+    Qt_line = vfactory.add_var('Qt_line_losses', shared_reference='Qt_line_reference')
+
+    Pt_vsc = vfactory.add_var('Pt_vsc', reference=VarPowerFlowReferenceType.Pt,
+                              shared_reference='Pt_vsc_reference')
+    Qt_vsc = vfactory.add_var('Qt_vsc', reference=VarPowerFlowReferenceType.Qt,
+                              shared_reference='Qt_vsc_reference')
+    Pf_vsc = vfactory.add_var('Pf_vsc', shared_reference='Pf_vsc_reference')
+
+    bt = vfactory.add_var('bt')
+    gt = vfactory.add_var('gt')
+    Qf = vfactory.add_var('Qf')
+    a0 = vfactory.add_var('a0')
+    a1 = vfactory.add_var('a1')
+    a2 = vfactory.add_var('a2')
+
+    api_obj_mapping = {
+        ParamPowerFlowReferenceType.alpha1: a0,
+        ParamPowerFlowReferenceType.alpha2: a1,
+        ParamPowerFlowReferenceType.alpha3: a2,
+    }
+
+    event_dict = {
+        Qf: vfactory.add_const(0.0),
+        bt: vfactory.add_const(0.0),
+        gt: vfactory.add_const(0.1),
+        a0: vfactory.add_const(0.0),
+        a1: vfactory.add_const(0.0),
+        a2: vfactory.add_const(0.0),
+    }
+
+    external_mapping = {
+        VarPowerFlowReferenceType.Pt: Pt_vsc,
+        VarPowerFlowReferenceType.Qt: Qt_vsc,
+        VarPowerFlowReferenceType.Pf: Pf_vsc,
+        VarPowerFlowReferenceType.Qf: Qf,
+    }
+
+    Im = sym.sqrt(i_d ** 2 + i_q ** 2 + vfactory.add_const(1e-11))
+
+    block = Block(
+        algebraic_eqs=[
+            Pf_vsc - Pt_line - (a0 + a1 * Im + a2 * Im ** 2),
+            Pt_vsc - Pt_line,
+            Qt_vsc - Qt_line,
+        ],
+        algebraic_vars=[Pt_vsc, Qt_vsc, Pf_vsc],
+        event_dict=event_dict,
+        external_mapping=external_mapping,
+        in_vars=[i_d, i_q, Pt_line, Qt_line],
+        out_vars=[Pt_vsc, Qt_vsc, Pf_vsc],
+        api_obj_mapping=api_obj_mapping,
+        name=name,
+    )
+
+    templ.block = block
+
+    return templ
+
 def get_gfl_current_limiter_block(vfactory: VarFactory, name: str = "electrical") -> RmsModelTemplate:
     """
     Gfl electrical equations block
@@ -501,14 +783,10 @@ def get_gfl_converter_rms(vfactory: VarFactory, name: str = "current_ctrl_iq") -
     inputs = [Vm, Va, v_dc]
 
     pll_block = get_pll_transform_rms(vfactory).block
-
     pi_current_controller = get_pi_current_controller(vfactory).block
     pi_power_controller = get_pi_power_controller(vfactory).block
-
     electrical_eqs_block = get_gfl_electrical_block(vfactory).block
-
     current_limiter_block = get_gfl_current_limiter_block(vfactory).block
-
     losses_block = get_gfl_losses_block(vfactory).block
 
     out_vars = losses_block.out_vars
@@ -520,6 +798,65 @@ def get_gfl_converter_rms(vfactory: VarFactory, name: str = "current_ctrl_iq") -
     block.children = [pll_block, pi_current_controller, pi_power_controller, electrical_eqs_block, current_limiter_block, losses_block]
     block.in_vars = inputs
     block.out_vars = out_vars
+    templ.block = block
+
+    return templ
+
+
+def get_gfl_converter_rms_electrical(vfactory: VarFactory,
+                                     name: str = "gfl_converter_rms_electrical") -> RmsModelTemplate:
+    """
+    GFL converter using a separate RMS line for the electrical connection.
+
+    The line is oriented from converter internal AC bus (c) to grid bus (g).
+    """
+    templ = RmsModelTemplate(name=name)
+    templ.tpe = DeviceType.NoDevice
+
+    Vm = vfactory.add_var("Vm", reference=VarPowerFlowReferenceType.Vm,
+                          shared_reference="Vm_g_reference")
+    Va = vfactory.add_var("Va", reference=VarPowerFlowReferenceType.Va,
+                          shared_reference="Va_g_reference")
+    v_dc = vfactory.add_var("v_dc", shared_reference="v_dc_reference")
+
+    inputs = [Vm, Va, v_dc]
+
+    pll_block = get_pll_transform_rms(vfactory).block
+    pi_current_controller = get_pi_current_controller(vfactory).block
+    pi_power_controller = get_pi_power_controller_from_line(vfactory).block
+    converter_bus_block = get_gfl_converter_bus_block(vfactory).block
+    line_block = get_gfl_converter_line_rms_block(vfactory).block
+    line_current_measurement_block = get_gfl_line_current_measurement_block(vfactory).block
+    voltage_control_block = get_gfl_voltage_control_electrical_block(vfactory).block
+    current_limiter_block = get_gfl_current_limiter_block(vfactory).block
+    losses_block = get_gfl_losses_from_line_block(vfactory).block
+
+    # PLL operates on the grid-side voltage.
+    vfactory.add_connections(pll_block.in_vars, [Vm, Va])
+
+    block = Block()
+    block.name = name
+    block.children = [
+        pll_block,
+        pi_current_controller,
+        pi_power_controller,
+        voltage_control_block,
+        converter_bus_block,
+        line_block,
+        line_current_measurement_block,
+        current_limiter_block,
+        losses_block,
+    ]
+    block.in_vars = inputs
+    block.out_vars = losses_block.out_vars
+    block.external_mapping = {
+        VarPowerFlowReferenceType.Vm: Vm,
+        VarPowerFlowReferenceType.Va: Va,
+        VarPowerFlowReferenceType.Pt: losses_block.out_vars[0],
+        VarPowerFlowReferenceType.Qt: losses_block.out_vars[1],
+        VarPowerFlowReferenceType.Pf: losses_block.out_vars[2],
+    }
+
     templ.block = block
 
     return templ

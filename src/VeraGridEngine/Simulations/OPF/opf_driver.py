@@ -146,7 +146,8 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
                 contingency_groups_used=self.options.contingency_groups_used,
                 ramp_constraints=False,
                 consider_time_up_down=False,
-                area_spinning_reserve=False,
+                area_spinning_reserve=self.options.area_spinning_reserve,
+                quadratic_costs=self.options.quadratic_costs,
                 lodf_threshold=self.options.lodf_tolerance,
                 inter_aggregation_info=self.options.inter_aggregation_info,
                 energy_0=None,
@@ -170,6 +171,7 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
 
             self.results.generator_power = opf_vars.gen_vars.p[0, :]
             self.results.generator_shedding = opf_vars.gen_vars.shedding[0, :]
+            self.results.generator_reserve = opf_vars.gen_vars.reserve[0, :]
 
             self.results.Sf = opf_vars.branch_vars.flows[0, :]
             self.results.St = -opf_vars.branch_vars.flows[0, :]
@@ -234,6 +236,7 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
 
             self.results.generator_power = gen_dispatch[0, :]
             self.results.generator_shedding = ndg_curtailment_per_gen[0, :]
+            self.results.generator_reserve = np.zeros_like(self.results.generator_power)
 
             self.results.battery_power = batt_dispatch[0, :]
             #self.results.battery_energy = batt_energy[0, :]

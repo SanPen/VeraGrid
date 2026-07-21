@@ -8,7 +8,7 @@ from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
 import VeraGridEngine.Devices as dev
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_int
 
 
 class RawInductionMachine(RawObject):
@@ -164,5 +164,5 @@ class RawInductionMachine(RawObject):
         return self.STAT
 
     @STATUS.setter
-    def STATUS(self, value):
-        self.STAT = value
+    def STATUS(self, value: int | str | None) -> None:
+        self.STAT = coerce_psse_int(value=value, current_value=self.STAT)

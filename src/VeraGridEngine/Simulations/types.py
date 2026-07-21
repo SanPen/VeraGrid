@@ -42,6 +42,8 @@ from VeraGridEngine.Simulations.NTC.ntc_driver import (
     OptimalNetTransferCapacityDriver, OptimalNetTransferCapacityResults)
 from VeraGridEngine.Simulations.NTC.ntc_ts_driver import (OptimalNetTransferCapacityTimeSeriesDriver,
                                                           OptimalNetTransferCapacityTimeSeriesResults)
+from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_driver import (NodalCapacityDriver,
+                                                                            NodalCapacityResults)
 from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_ts_driver import (NodalCapacityTimeSeriesDriver,
                                                                                NodalCapacityTimeSeriesResults)
 from VeraGridEngine.Simulations.Topology.node_groups_driver import NodeGroupsDriver
@@ -83,6 +85,7 @@ DRIVER_OBJECTS = Union[
     InputsAnalysisDriver,
     InvestmentsEvaluationDriver,
     CatalogueOptimizationDriver,
+    NodalCapacityDriver,
     NodalCapacityTimeSeriesDriver,
     ReliabilityStudyDriver,
     RmsSimulationDriver,
@@ -115,6 +118,7 @@ RESULTS_OBJECTS = Union[
     NodeGroupsResults,
     InputsAnalysisResults,
     InvestmentsEvaluationResults,
+    NodalCapacityResults,
     NodalCapacityTimeSeriesResults,
     ReliabilityResults,
     StateEstimationResults,

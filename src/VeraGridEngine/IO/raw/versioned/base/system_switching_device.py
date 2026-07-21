@@ -7,7 +7,7 @@ from typing import Tuple
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_str
 
 
 class RawSystemSwitchingDevice(RawObject):
@@ -80,5 +80,5 @@ class RawSystemSwitchingDevice(RawObject):
         return self.CKT
 
     @CKTID.setter
-    def CKTID(self, value):
-        self.CKT = value
+    def CKTID(self, value: str | int | float | None) -> None:
+        self.CKT = coerce_psse_str(value=value, current_value=self.CKT)

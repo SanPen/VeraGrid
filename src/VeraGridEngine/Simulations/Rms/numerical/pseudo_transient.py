@@ -55,8 +55,10 @@ class  PseudoTransient:
         self.linear_solve_state_weight = float(os.getenv("VERAGRID_PSEUDO_LINEAR_STATE_WEIGHT", "1.0"))
         self.linear_solve_algebraic_weight = float(os.getenv("VERAGRID_PSEUDO_LINEAR_ALGEBRAIC_WEIGHT", "10.0"))
         self.use_state_tau_scaling = os.getenv("VERAGRID_PSEUDO_STATE_TAU_SCALING", "1").lower() in {"1", "true", "yes", "on"}
+        self.use_state_tau_dtau_scale = os.getenv("VERAGRID_PSEUDO_STATE_TAU_DTAU_SCALE", "0").lower() in {"1", "true", "yes", "on"}
         self.state_tau_min = float(os.getenv("VERAGRID_PSEUDO_STATE_TAU_MIN", str(dtau_min)))
-        self.state_tau_max = float(os.getenv("VERAGRID_PSEUDO_STATE_TAU_MAX", str(dtau_max)))
+        state_tau_max_default = "inf" if self.use_state_tau_dtau_scale else str(dtau_max)
+        self.state_tau_max = float(os.getenv("VERAGRID_PSEUDO_STATE_TAU_MAX", state_tau_max_default))
         self.state_tau_eps = float(os.getenv("VERAGRID_PSEUDO_STATE_TAU_EPS", "1e-12"))
         self.allow_lsqr_fallback = os.getenv("PSEUDO_ALLOW_LSQR", "1").lower() in {"1", "true", "yes", "on"}
         self.use_svd_diagnostics = os.getenv("VERAGRID_PSEUDO_SVD_DIAGNOSTICS", "0").lower() in {"1", "true", "yes", "on"}
@@ -67,9 +69,8 @@ class  PseudoTransient:
         self.dtau_stall_ratio = float(os.getenv("VERAGRID_PSEUDO_DTAU_STALL_RATIO", "1.02"))
         self.dtau_stall_steps = int(os.getenv("VERAGRID_PSEUDO_DTAU_STALL_STEPS", "5"))
         self.dtau_stall_boost = float(os.getenv("VERAGRID_PSEUDO_DTAU_STALL_BOOST", "2.0"))
-        self.dtau_max_reset_steps = int(os.getenv("VERAGRID_PSEUDO_DTAU_MAX_RESET_STEPS", "5"))
         self.fixed_var_uids = set(fixed_var_uids or [])
-        uid2idx = getattr(self.problem, "uid2idx_vars", {})
+        uid2idx = self.problem.uid2idx_vars
         self._fixed_var_indices = sorted([uid2idx[uid] for uid in self.fixed_var_uids if uid in uid2idx])
         self.debug_check_x_new = debug_check_x_new
         self.debug_x_new_abs_max = float(debug_x_new_abs_max)
@@ -542,14 +543,28 @@ class  PseudoTransient:
                                 rhs: Vec,
                                 J_solve: sp.csc_matrix,
                                 rhs_solve: Vec,
-                                context: str) -> None:
-        if not self.use_svd_diagnostics:
+                                context: str,
+                                force: bool = False) -> None:
+        def emit(msg: str) -> None:
+            if force:
+                print(f"[PseudoTransient]{msg}", file=sys.stderr)
+            else:
+                self._dbg(msg)
+
+        if not force and not self.use_svd_diagnostics:
             return
-        if self._svd_report_count >= self.svd_diagnostics_limit:
+        if not force and self._svd_report_count >= self.svd_diagnostics_limit:
             return
         if J_solve.shape[0] == 0 or J_solve.shape[1] == 0 or J_solve.shape[0] > 240 or J_solve.shape[1] > 240:
+            if force:
+                emit(f"[SVD] {context}: skipped, solve matrix shape={J_solve.shape} outside diagnostic limit")
             return
         if rhs_solve.size != J_solve.shape[0] or not np.all(np.isfinite(rhs_solve)):
+            if force:
+                emit(
+                    f"[SVD] {context}: skipped, rhs size/finite check failed "
+                    f"(rhs_size={rhs_solve.size}, matrix_rows={J_solve.shape[0]})"
+                )
             return
 
         self._svd_report_count += 1
@@ -571,7 +586,7 @@ class  PseudoTransient:
             preview_s = [f"{val:.3e}" for val in s[:min(6, s.size)]]
             tail_s = [f"{val:.3e}" for val in s[max(0, s.size - 6):]]
 
-            self._dbg(
+            emit(
                 f"[SVD] {context}: shape={A.shape}, rank={rank}, sigma_max={smax:.3e}, "
                 f"sigma_min={smin:.3e}, cond~={cond:.3e}, weighted_lstsq_res={residual_norm:.3e}, "
                 f"weighted_res_frac={residual_frac:.3e}, sigma_head={preview_s}, sigma_tail={tail_s}"
@@ -581,7 +596,21 @@ class  PseudoTransient:
                 v_min = vh[min(rank, vh.shape[0] - 1), :] if rank < vh.shape[0] else vh[-1, :]
                 dom = np.argsort(np.abs(v_min))[::-1][:8]
                 dom_vars = [f"{self._var_index_name(int(j))}: {v_min[int(j)]:+.3e}" for j in dom]
-                self._dbg(f"[SVD] {context}: weak right-singular variables={dom_vars}")
+                emit(f"[SVD] {context}: weak right-singular variables={dom_vars}")
+
+            if u.size > 0 and s.size > 0:
+                n_weak = min(3, s.size, u.shape[1])
+                for sv_idx in range(s.size - n_weak, s.size):
+                    left_vec = u[:, sv_idx]
+                    dom_rows = np.argsort(np.abs(left_vec))[::-1][:8]
+                    row_labels = [
+                        f"{self._rhs_index_equation_begin(int(i))}: {left_vec[int(i)]:+.3e}, rhs={rhs_solve[int(i)]:+.3e}"
+                        for i in dom_rows
+                    ]
+                    emit(
+                        f"[SVD] {context}: weak equation rows sigma[{sv_idx}]={s[sv_idx]:.3e}, "
+                        f"dominant_rows={row_labels}"
+                    )
 
             left_null_start = rank
             if u.shape[1] > left_null_start:
@@ -596,7 +625,7 @@ class  PseudoTransient:
                             f"{self._rhs_index_equation_begin(int(i))}: {left_vec[int(i)]:+.3e}"
                             for i in dom_rows
                         ]
-                        self._dbg(
+                        emit(
                             f"[SVD] {context}: left-null coeff={coeff:+.3e}, "
                             f"dominant_rows={row_labels}"
                         )
@@ -611,12 +640,12 @@ class  PseudoTransient:
                 r0 = A0 @ delta0 - b0
                 r0_norm = float(np.linalg.norm(r0))
                 b0_norm = float(np.linalg.norm(b0))
-                self._dbg(
+                emit(
                     f"[SVD] {context}: unweighted_lstsq_res={r0_norm:.3e}, "
                     f"unweighted_res_frac={r0_norm / max(b0_norm, 1e-30):.3e}"
                 )
         except Exception as exc:
-            self._dbg(f"[SVD] {context}: diagnostics failed ({exc})")
+            emit(f"[SVD] {context}: diagnostics failed ({exc})")
 
     def _rhs_implicit(self,
                       x: Vec,
@@ -737,15 +766,16 @@ class  PseudoTransient:
             self.state_tau = np.full(n_states, h, dtype=float)
         return self.state_tau
 
-    def _update_state_tau_from_derivative(self, f_state: Vec, step_idx: int) -> None:
+    def _update_state_tau_from_derivative(self, f_state: Vec, dtau: float, step_idx: int) -> None:
         if not self.use_state_tau_scaling:
             return
         n_states = int(self.problem.get_states_number())
         if n_states <= 0 or f_state.size < n_states:
             return
 
-        tau = 1.0 / (np.abs(f_state[:n_states]) + self.state_tau_eps)
-        tau = np.clip(tau, self.state_tau_min, self.state_tau_max)
+        numerator = abs(dtau) if self.use_state_tau_dtau_scale else 1.0
+        tau = numerator / (0.01+ np.abs(f_state[:n_states]) + self.state_tau_eps)
+        tau = np.clip(tau, self.state_tau_min, 1e10)
         if self.state_tau.size != n_states or np.any(tau != self.state_tau):
             self.state_tau = tau
             if self.verbose and (step_idx <= 5 or step_idx % 25 == 0):
@@ -883,12 +913,13 @@ class  PseudoTransient:
         :param h: simulation step
         :return [f_state_update, f_algeb]
         """
-        f_algeb = self.problem.rhs_algebraic(x,  dx)
+        f_algeb = self.problem.rhs_algebraic(x,  0*dx)
         if self.problem.get_states_number() > 0:
-            f_state = self.problem.rhs_state(x, dx)
+            f_state = self.problem.rhs_state(x, 0*dx)
             n_states = self.problem.get_states_number()
             tau = self._state_tau_vector(n_states, h)
             f_state_update = (x[:n_states] - xn[:n_states]) / tau - f_state
+            f_state_update = -f_state
             return np.r_[f_state_update, f_algeb]
 
         else:
@@ -983,6 +1014,20 @@ class  PseudoTransient:
             axs_state_eq[-1].set_xlabel("Step index")
         plt.show()
 
+    def _report_failure_svd_diagnostics(self, x: Vec, xn: Vec, dx: Vec, dtau: float, context: str) -> None:
+        try:
+            rhs = self._rhs_pseudo_transient(x, xn, dx, dtau)
+            if not np.all(np.isfinite(rhs)):
+                print(f"[PseudoTransient][SVD] {context}: skipped, non-finite rhs", file=sys.stderr)
+                return
+
+            J = self._jacobian_pseudo_transient(x, dx, dtau)
+            solve_weights = self._build_linear_solve_weights(rhs.size)
+            J_solve, rhs_solve = self._apply_linear_solve_weights(J, rhs, solve_weights)
+            self._report_svd_diagnostics(J, rhs, J_solve, rhs_solve, context=context, force=True)
+        except Exception as exc:
+            print(f"[PseudoTransient][SVD] {context}: diagnostics failed ({exc})", file=sys.stderr)
+
     def _report_rhs_offenders(self,
                               x: Vec,
                               xn: Vec,
@@ -1049,6 +1094,7 @@ class  PseudoTransient:
         dtau_max = self.dtau_max
         dtau_min = self.dtau_min
         dx0 = np.zeros(self.problem.get_diff_var_number())
+        dx = dx0.copy()
         y = np.tile(x0, (5, 1))
         step_idx = 0
         x_new = x0.copy()
@@ -1064,7 +1110,6 @@ class  PseudoTransient:
         residual = 10
         old_residual = 10
         dtau_stall_streak = 0
-        dtau_max_streak = 0
         rhs_weights: np.ndarray | None = None
 
         # history containers
@@ -1093,7 +1138,7 @@ class  PseudoTransient:
                     xn = y[-1].copy()
 
                 if self.problem.get_states_number() > 0:
-                    self._update_state_tau_from_derivative(self.problem.rhs_state(x_new, dx), step_idx=step_idx)
+                    self._update_state_tau_from_derivative(self.problem.rhs_state(x_new, dx), dtau=dtau, step_idx=step_idx)
                 rhs  = self._rhs_pseudo_transient(x_new, xn, dx, dtau)
                 rhs2 = rhs
                 if rhs_weights is None or rhs_weights.size != rhs.size:
@@ -1225,7 +1270,7 @@ class  PseudoTransient:
                     dx = self.problem.get_dx(xn, xlast, dx, dtau)
                     dx_error = np.linalg.norm(dx)
                     f_state_tau = self.problem.rhs_state(x_new, dx)
-                    self._update_state_tau_from_derivative(f_state_tau, step_idx=step_idx)
+                    self._update_state_tau_from_derivative(f_state_tau, dtau=dtau, step_idx=step_idx)
                     rhs = self._rhs_pseudo_transient(x_new, xn, dx, dtau)
                     residual = self._weighted_norm(rhs, rhs_weights)
 
@@ -1284,24 +1329,8 @@ class  PseudoTransient:
                     else:
                         dtau = -min(dtau_max, max(dtau_min, -dtau * beta))
 
-                    dtau_is_capped = abs(dtau) >= 0.999 * dtau_max
-                    if dtau_is_capped:
+                    if abs(dtau) >= 0.999 * dtau_max:
                         self._dbg(f"adaptive dtau capped at dtau_max={dtau_max:.3e}")
-
-                    if dtau_is_capped and 1.0 <= beta_raw < max(self.dtau_stall_ratio, 1.0) and residual > self.tol:
-                        dtau_max_streak += 1
-                    else:
-                        dtau_max_streak = 0
-
-                    if self.dtau_max_reset_steps > 0 and dtau_max_streak >= self.dtau_max_reset_steps:
-                        reset_dtau = max(dtau_min, min(abs(self.dtau0), dtau_max))
-                        dtau = reset_dtau if dtau_prev >= 0 else -reset_dtau
-                        dtau_stall_streak = 0
-                        dtau_max_streak = 0
-                        self._dbg(
-                            f"adaptive dtau max reset: reset_dtau={dtau:.3e}, "
-                            f"residual={residual:.3e}, ratio={beta_raw:.3e}"
-                        )
                     self._dbg(f"adaptive dtau: new={dtau:.3e}")
 
                     old_residual = residual
@@ -1316,6 +1345,13 @@ class  PseudoTransient:
                     )
                     break
         except Exception:
+            self._report_failure_svd_diagnostics(
+                x=x_new,
+                xn=xn,
+                dx=dx,
+                dtau=dtau,
+                context=f"failed run exception at step={step_idx} try={tries}",
+            )
             if plot:
                 self._plot_diagnostics(dtau_hist, dx_error_hist, residual_hist, x_hist, state_eq_hist)
             raise
@@ -1327,6 +1363,13 @@ class  PseudoTransient:
             f"x_inf={np.linalg.norm(x_new, np.inf):.3e}"
         )
         if residual > self.tol:
+            self._report_failure_svd_diagnostics(
+                x=x_new,
+                xn=xn,
+                dx=dx,
+                dtau=dtau,
+                context=f"failed run final step={step_idx} residual={residual:.3e}",
+            )
             self._report_rhs_offenders(x=x_new, xn=xn, dx=dx, dtau=dtau)
 
         init_guess = dict()

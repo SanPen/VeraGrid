@@ -71,6 +71,7 @@ package_data = {
         'VeraGrid.svg',
         'VeraGrid.ico',
     ],
+    'VeraGrid': ['LICENSE.txt', 'setup.py'],
 }
 
 dependencies = ["numpy>=2.2.0,<3",

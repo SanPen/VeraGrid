@@ -8,7 +8,7 @@ from typing import Tuple
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol, Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_float, coerce_psse_int, coerce_psse_str
 
 
 class RawTwoTerminalDCLine(RawObject):
@@ -122,56 +122,56 @@ class RawTwoTerminalDCLine(RawObject):
     def __init__(self):
         RawObject.__init__(self, "Two-terminal DC line")
 
-        self.NAME = ""
-        self.MDC = 0
-        self.RDC = 0
-        self.SETVL = 0
-        self.VSCHD = 0
-        self.VCMOD = 0
-        self.RCOMP = 0
-        self.DELTI = 0
-        self.METER = "I"
-        self.DCVMIN = 0
-        self.CCCITMX = 20
-        self.CCCACC = 1.0
+        self._NAME: str = ""
+        self._MDC: int = 0
+        self._RDC: float = 0.0
+        self._SETVL: float = 0.0
+        self._VSCHD: float = 0.0
+        self._VCMOD: float = 0.0
+        self._RCOMP: float = 0.0
+        self._DELTI: float = 0.0
+        self._METER: str = "I"
+        self._DCVMIN: float = 0.0
+        self._CCCITMX: int = 20
+        self._CCCACC: float = 1.0
 
-        self.IPR = 0
-        self.NBR = 0
-        self.ANMXR = 0
-        self.ANMNR = 0
-        self.RCR = 0
-        self.XCR = 0
-        self.EBASR = 0
-        self.TRR = 1.0
-        self.TAPR = 0
-        self.TMXR = 1.5
-        self.TMNR = 0.51
-        self.STPR = 0.00625
-        self.ICR = 0
-        self.NDR = 0
-        self.IFR = 0
-        self.ITR = 0
-        self.IDR = '1'
-        self.XCAPR = 0
+        self._IPR: int = 0
+        self._NBR: int = 0
+        self._ANMXR: float = 0.0
+        self._ANMNR: float = 0.0
+        self._RCR: float = 0.0
+        self._XCR: float = 0.0
+        self._EBASR: float = 0.0
+        self._TRR: float = 1.0
+        self._TAPR: float = 0.0
+        self._TMXR: float = 1.5
+        self._TMNR: float = 0.51
+        self._STPR: float = 0.00625
+        self._ICR: int = 0
+        self._NDR: int = 0
+        self._IFR: int = 0
+        self._ITR: int = 0
+        self._IDR: str = '1'
+        self._XCAPR: float = 0.0
 
-        self.IPI = 0
-        self.NBI = 0
-        self.ANMXI = 0
-        self.ANMNI = 0
-        self.RCI = 0
-        self.XCI = 0
-        self.EBASI = 0
-        self.TRI = 1.0
-        self.TAPI = 0
-        self.TMXI = 1.5
-        self.TMNI = 0.51
-        self.STPI = 0.00625
-        self.ICI = 0
-        self.NDI = 0
-        self.IFI = 0
-        self.ITI = 0
-        self.IDI = '1'
-        self.XCAPI = 0
+        self._IPI: int = 0
+        self._NBI: int = 0
+        self._ANMXI: float = 0.0
+        self._ANMNI: float = 0.0
+        self._RCI: float = 0.0
+        self._XCI: float = 0.0
+        self._EBASI: float = 0.0
+        self._TRI: float = 1.0
+        self._TAPI: float = 0.0
+        self._TMXI: float = 1.5
+        self._TMNI: float = 0.51
+        self._STPI: float = 0.00625
+        self._ICI: int = 0
+        self._NDI: int = 0
+        self._IFI: int = 0
+        self._ITI: int = 0
+        self._IDI: str = '1'
+        self._XCAPI: float = 0.0
 
     def parse(self, data, version, logger: Logger):
         raise NotImplementedError(f"{self.__class__.__name__}.parse must be implemented in a version-specific subclass")
@@ -188,3 +188,386 @@ class RawTwoTerminalDCLine(RawObject):
         """
         return "{0}_{1}_1".format(self.IPR, self.IPI)
 
+    @property
+    def NAME(self) -> str:
+        return self._NAME
+
+    @NAME.setter
+    def NAME(self, value: str | int | float | None) -> None:
+        self._NAME = coerce_psse_str(value=value, current_value=self._NAME)
+
+    @property
+    def MDC(self) -> int:
+        return self._MDC
+
+    @MDC.setter
+    def MDC(self, value: int | str | None) -> None:
+        self._MDC = coerce_psse_int(value=value, current_value=self._MDC)
+
+    @property
+    def RDC(self) -> float:
+        return self._RDC
+
+    @RDC.setter
+    def RDC(self, value: float | int | str | None) -> None:
+        self._RDC = coerce_psse_float(value=value, current_value=self._RDC)
+
+    @property
+    def SETVL(self) -> float:
+        return self._SETVL
+
+    @SETVL.setter
+    def SETVL(self, value: float | int | str | None) -> None:
+        self._SETVL = coerce_psse_float(value=value, current_value=self._SETVL)
+
+    @property
+    def VSCHD(self) -> float:
+        return self._VSCHD
+
+    @VSCHD.setter
+    def VSCHD(self, value: float | int | str | None) -> None:
+        self._VSCHD = coerce_psse_float(value=value, current_value=self._VSCHD)
+
+    @property
+    def VCMOD(self) -> float:
+        return self._VCMOD
+
+    @VCMOD.setter
+    def VCMOD(self, value: float | int | str | None) -> None:
+        self._VCMOD = coerce_psse_float(value=value, current_value=self._VCMOD)
+
+    @property
+    def RCOMP(self) -> float:
+        return self._RCOMP
+
+    @RCOMP.setter
+    def RCOMP(self, value: float | int | str | None) -> None:
+        self._RCOMP = coerce_psse_float(value=value, current_value=self._RCOMP)
+
+    @property
+    def DELTI(self) -> float:
+        return self._DELTI
+
+    @DELTI.setter
+    def DELTI(self, value: float | int | str | None) -> None:
+        self._DELTI = coerce_psse_float(value=value, current_value=self._DELTI)
+
+    @property
+    def METER(self) -> str:
+        return self._METER
+
+    @METER.setter
+    def METER(self, value: str | int | float | None) -> None:
+        self._METER = coerce_psse_str(value=value, current_value=self._METER)
+
+    @property
+    def DCVMIN(self) -> float:
+        return self._DCVMIN
+
+    @DCVMIN.setter
+    def DCVMIN(self, value: float | int | str | None) -> None:
+        self._DCVMIN = coerce_psse_float(value=value, current_value=self._DCVMIN)
+
+    @property
+    def CCCITMX(self) -> int:
+        return self._CCCITMX
+
+    @CCCITMX.setter
+    def CCCITMX(self, value: int | str | None) -> None:
+        self._CCCITMX = coerce_psse_int(value=value, current_value=self._CCCITMX)
+
+    @property
+    def CCCACC(self) -> float:
+        return self._CCCACC
+
+    @CCCACC.setter
+    def CCCACC(self, value: float | int | str | None) -> None:
+        self._CCCACC = coerce_psse_float(value=value, current_value=self._CCCACC)
+
+    @property
+    def IPR(self) -> int:
+        return self._IPR
+
+    @IPR.setter
+    def IPR(self, value: int | str | None) -> None:
+        self._IPR = coerce_psse_int(value=value, current_value=self._IPR)
+
+    @property
+    def NBR(self) -> int:
+        return self._NBR
+
+    @NBR.setter
+    def NBR(self, value: int | str | None) -> None:
+        self._NBR = coerce_psse_int(value=value, current_value=self._NBR)
+
+    @property
+    def ANMXR(self) -> float:
+        return self._ANMXR
+
+    @ANMXR.setter
+    def ANMXR(self, value: float | int | str | None) -> None:
+        self._ANMXR = coerce_psse_float(value=value, current_value=self._ANMXR)
+
+    @property
+    def ANMNR(self) -> float:
+        return self._ANMNR
+
+    @ANMNR.setter
+    def ANMNR(self, value: float | int | str | None) -> None:
+        self._ANMNR = coerce_psse_float(value=value, current_value=self._ANMNR)
+
+    @property
+    def RCR(self) -> float:
+        return self._RCR
+
+    @RCR.setter
+    def RCR(self, value: float | int | str | None) -> None:
+        self._RCR = coerce_psse_float(value=value, current_value=self._RCR)
+
+    @property
+    def XCR(self) -> float:
+        return self._XCR
+
+    @XCR.setter
+    def XCR(self, value: float | int | str | None) -> None:
+        self._XCR = coerce_psse_float(value=value, current_value=self._XCR)
+
+    @property
+    def EBASR(self) -> float:
+        return self._EBASR
+
+    @EBASR.setter
+    def EBASR(self, value: float | int | str | None) -> None:
+        self._EBASR = coerce_psse_float(value=value, current_value=self._EBASR)
+
+    @property
+    def TRR(self) -> float:
+        return self._TRR
+
+    @TRR.setter
+    def TRR(self, value: float | int | str | None) -> None:
+        self._TRR = coerce_psse_float(value=value, current_value=self._TRR)
+
+    @property
+    def TAPR(self) -> float:
+        return self._TAPR
+
+    @TAPR.setter
+    def TAPR(self, value: float | int | str | None) -> None:
+        self._TAPR = coerce_psse_float(value=value, current_value=self._TAPR)
+
+    @property
+    def TMXR(self) -> float:
+        return self._TMXR
+
+    @TMXR.setter
+    def TMXR(self, value: float | int | str | None) -> None:
+        self._TMXR = coerce_psse_float(value=value, current_value=self._TMXR)
+
+    @property
+    def TMNR(self) -> float:
+        return self._TMNR
+
+    @TMNR.setter
+    def TMNR(self, value: float | int | str | None) -> None:
+        self._TMNR = coerce_psse_float(value=value, current_value=self._TMNR)
+
+    @property
+    def STPR(self) -> float:
+        return self._STPR
+
+    @STPR.setter
+    def STPR(self, value: float | int | str | None) -> None:
+        self._STPR = coerce_psse_float(value=value, current_value=self._STPR)
+
+    @property
+    def ICR(self) -> int:
+        return self._ICR
+
+    @ICR.setter
+    def ICR(self, value: int | str | None) -> None:
+        self._ICR = coerce_psse_int(value=value, current_value=self._ICR)
+
+    @property
+    def NDR(self) -> int:
+        return self._NDR
+
+    @NDR.setter
+    def NDR(self, value: int | str | None) -> None:
+        self._NDR = coerce_psse_int(value=value, current_value=self._NDR)
+
+    @property
+    def IFR(self) -> int:
+        return self._IFR
+
+    @IFR.setter
+    def IFR(self, value: int | str | None) -> None:
+        self._IFR = coerce_psse_int(value=value, current_value=self._IFR)
+
+    @property
+    def ITR(self) -> int:
+        return self._ITR
+
+    @ITR.setter
+    def ITR(self, value: int | str | None) -> None:
+        self._ITR = coerce_psse_int(value=value, current_value=self._ITR)
+
+    @property
+    def IDR(self) -> str:
+        return self._IDR
+
+    @IDR.setter
+    def IDR(self, value: str | int | float | None) -> None:
+        self._IDR = coerce_psse_str(value=value, current_value=self._IDR)
+
+    @property
+    def XCAPR(self) -> float:
+        return self._XCAPR
+
+    @XCAPR.setter
+    def XCAPR(self, value: float | int | str | None) -> None:
+        self._XCAPR = coerce_psse_float(value=value, current_value=self._XCAPR)
+
+    @property
+    def IPI(self) -> int:
+        return self._IPI
+
+    @IPI.setter
+    def IPI(self, value: int | str | None) -> None:
+        self._IPI = coerce_psse_int(value=value, current_value=self._IPI)
+
+    @property
+    def NBI(self) -> int:
+        return self._NBI
+
+    @NBI.setter
+    def NBI(self, value: int | str | None) -> None:
+        self._NBI = coerce_psse_int(value=value, current_value=self._NBI)
+
+    @property
+    def ANMXI(self) -> float:
+        return self._ANMXI
+
+    @ANMXI.setter
+    def ANMXI(self, value: float | int | str | None) -> None:
+        self._ANMXI = coerce_psse_float(value=value, current_value=self._ANMXI)
+
+    @property
+    def ANMNI(self) -> float:
+        return self._ANMNI
+
+    @ANMNI.setter
+    def ANMNI(self, value: float | int | str | None) -> None:
+        self._ANMNI = coerce_psse_float(value=value, current_value=self._ANMNI)
+
+    @property
+    def RCI(self) -> float:
+        return self._RCI
+
+    @RCI.setter
+    def RCI(self, value: float | int | str | None) -> None:
+        self._RCI = coerce_psse_float(value=value, current_value=self._RCI)
+
+    @property
+    def XCI(self) -> float:
+        return self._XCI
+
+    @XCI.setter
+    def XCI(self, value: float | int | str | None) -> None:
+        self._XCI = coerce_psse_float(value=value, current_value=self._XCI)
+
+    @property
+    def EBASI(self) -> float:
+        return self._EBASI
+
+    @EBASI.setter
+    def EBASI(self, value: float | int | str | None) -> None:
+        self._EBASI = coerce_psse_float(value=value, current_value=self._EBASI)
+
+    @property
+    def TRI(self) -> float:
+        return self._TRI
+
+    @TRI.setter
+    def TRI(self, value: float | int | str | None) -> None:
+        self._TRI = coerce_psse_float(value=value, current_value=self._TRI)
+
+    @property
+    def TAPI(self) -> float:
+        return self._TAPI
+
+    @TAPI.setter
+    def TAPI(self, value: float | int | str | None) -> None:
+        self._TAPI = coerce_psse_float(value=value, current_value=self._TAPI)
+
+    @property
+    def TMXI(self) -> float:
+        return self._TMXI
+
+    @TMXI.setter
+    def TMXI(self, value: float | int | str | None) -> None:
+        self._TMXI = coerce_psse_float(value=value, current_value=self._TMXI)
+
+    @property
+    def TMNI(self) -> float:
+        return self._TMNI
+
+    @TMNI.setter
+    def TMNI(self, value: float | int | str | None) -> None:
+        self._TMNI = coerce_psse_float(value=value, current_value=self._TMNI)
+
+    @property
+    def STPI(self) -> float:
+        return self._STPI
+
+    @STPI.setter
+    def STPI(self, value: float | int | str | None) -> None:
+        self._STPI = coerce_psse_float(value=value, current_value=self._STPI)
+
+    @property
+    def ICI(self) -> int:
+        return self._ICI
+
+    @ICI.setter
+    def ICI(self, value: int | str | None) -> None:
+        self._ICI = coerce_psse_int(value=value, current_value=self._ICI)
+
+    @property
+    def NDI(self) -> int:
+        return self._NDI
+
+    @NDI.setter
+    def NDI(self, value: int | str | None) -> None:
+        self._NDI = coerce_psse_int(value=value, current_value=self._NDI)
+
+    @property
+    def IFI(self) -> int:
+        return self._IFI
+
+    @IFI.setter
+    def IFI(self, value: int | str | None) -> None:
+        self._IFI = coerce_psse_int(value=value, current_value=self._IFI)
+
+    @property
+    def ITI(self) -> int:
+        return self._ITI
+
+    @ITI.setter
+    def ITI(self, value: int | str | None) -> None:
+        self._ITI = coerce_psse_int(value=value, current_value=self._ITI)
+
+    @property
+    def IDI(self) -> str:
+        return self._IDI
+
+    @IDI.setter
+    def IDI(self, value: str | int | float | None) -> None:
+        self._IDI = coerce_psse_str(value=value, current_value=self._IDI)
+
+    @property
+    def XCAPI(self) -> float:
+        return self._XCAPI
+
+    @XCAPI.setter
+    def XCAPI(self, value: float | int | str | None) -> None:
+        self._XCAPI = coerce_psse_float(value=value, current_value=self._XCAPI)

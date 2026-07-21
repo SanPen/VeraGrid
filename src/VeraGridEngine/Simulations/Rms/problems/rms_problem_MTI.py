@@ -1306,13 +1306,25 @@ class RmsProblemMTI(RmsProblemPhasor):
 
     def _build_inequality_variable_positions(self) -> None:
         self._ineq_var_positions = []
+        self._ineq_bool_positions = []
+        bool_param_indices = list(self.get_mti_boolean_parameter_indices)
+        bool_uid_to_position = {
+            getattr(self._variable_parameters[int(param_idx)], "uid", None): int(k)
+            for k, param_idx in enumerate(bool_param_indices)
+            if 0 <= int(param_idx) < len(self._variable_parameters)
+        }
         for ineq in self._mti_inequalities_raw:
             pos = []
+            bool_pos = []
             for v in get_expression_vars(ineq):
                 idx = self.uid2idx_vars.get(v.uid, None)
                 if idx is not None:
                     pos.append(int(idx))
+                bpos = bool_uid_to_position.get(v.uid, None)
+                if bpos is not None:
+                    bool_pos.append(int(bpos))
             self._ineq_var_positions.append(np.asarray(sorted(set(pos)), dtype=int))
+            self._ineq_bool_positions.append(np.asarray(sorted(set(bool_pos)), dtype=int))
 
     def get_event_local_boolean_candidates(self, ineq_idx: int, z_prev: Vec) -> list[np.ndarray]:
         """
@@ -1355,10 +1367,16 @@ class RmsProblemMTI(RmsProblemPhasor):
             if len(set(np.asarray(bool_vars, dtype=int).tolist()) & touched_var_set) > 0:
                 direct_positions.append(k)
 
-        if len(direct_positions) > 0:
-            local_positions = direct_positions
+        ineq_bool_positions = getattr(self, "_ineq_bool_positions", [])
+        if ineq_idx < len(ineq_bool_positions):
+            direct_ineq_positions = [int(i) for i in np.asarray(ineq_bool_positions[ineq_idx], dtype=int)]
         else:
-            local_positions = []
+            direct_ineq_positions = []
+
+        if len(direct_positions) > 0:
+            local_positions = sorted(set(direct_positions) | set(direct_ineq_positions))
+        else:
+            local_positions = direct_ineq_positions
 
         subset_ids = set()
         touched_cols = {

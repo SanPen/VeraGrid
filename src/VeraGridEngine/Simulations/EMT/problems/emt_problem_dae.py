@@ -5538,6 +5538,18 @@ class EmtProblemDae(EmtProblemTemplate):
         st_sum: complex = 0.0 + 0.0j
         from_phase_currents: Dict[str, complex] = dict()
         to_phase_currents: Dict[str, complex] = dict()
+        series_phase_currents_inst: Dict[str, float] = dict()
+        series_phase_current_derivatives_inst: Dict[str, float] = dict()
+        z_series: complex = 0.0 + 0.0j
+
+        if not is_vsc:
+            try:
+                line_device = self.grid.lines[branch_index]
+                z_series = complex(float(line_device.R), float(line_device.X))
+            except Exception:
+                z_series = 0.0 + 0.0j
+        else:
+            pass
         from_phase_currents_inst: Dict[str, float] = dict()
         to_phase_currents_inst: Dict[str, float] = dict()
 
@@ -5863,6 +5875,22 @@ class EmtProblemDae(EmtProblemTemplate):
         st_sum: complex = 0.0 + 0.0j
         from_phase_currents: Dict[str, complex] = dict()
         to_phase_currents: Dict[str, complex] = dict()
+        series_phase_currents_inst: Dict[str, float] = dict()
+        series_phase_current_derivatives_inst: Dict[str, float] = dict()
+        z_series: complex = 0.0 + 0.0j
+        b_shunt: float = 0.0
+        omega_base: float = 2.0 * np.pi * self.grid.fBase
+
+        if not is_vsc:
+            try:
+                line_device = self.grid.lines[branch_index]
+                z_series = complex(float(line_device.R), float(line_device.X))
+                b_shunt = float(line_device.B)
+            except Exception:
+                z_series = 0.0 + 0.0j
+                b_shunt = 0.0
+        else:
+            pass
 
         for ph in phases:
             sf_key: Optional[VarPowerFlowReferenceType] = sf_key_dict[ph]
@@ -5919,20 +5947,25 @@ class EmtProblemDae(EmtProblemTemplate):
                     if abs(vt_ph) <= 1e-12:
                         i_t = 0.0 + 0.0j
                     else:
-                        i_t = np.conj(st_total / vt_ph)
-                        # i_t = np.conj(st_phase_total / vt_ph)
+                        i_t = np.conj(st_phase_total / vt_ph)
                 else:
-                    if abs(vf_ph) <= 1e-12:
-                        i_f = 0.0 + 0.0j
+                    if abs(z_series) > 1.0e-15:
+                        i_ser = (vf_ph - vt_ph) / z_series
+                        i_cap_f = 1j * (b_shunt / 2.0) * vf_ph
+                        i_cap_t = 1j * (b_shunt / 2.0) * vt_ph
+                        g_damp = 1.0e-5
+                        i_f = i_ser + i_cap_f + g_damp * vf_ph
+                        i_t = -i_ser + i_cap_t + g_damp * vt_ph
                     else:
-                        i_f = np.conj(sf_total / vf_ph)
-                        # i_f = np.conj(sf_phase_total / vf_ph)
+                        if abs(vf_ph) <= 1e-12:
+                            i_f = 0.0 + 0.0j
+                        else:
+                            i_f = np.conj(sf_phase_total / vf_ph)
 
-                    if abs(vt_ph) <= 1e-12:
-                        i_t = 0.0 + 0.0j
-                    else:
-                        i_t = np.conj(st_total / vt_ph)
-                        # i_t = np.conj(st_phase_total / vt_ph)
+                        if abs(vt_ph) <= 1e-12:
+                            i_t = 0.0 + 0.0j
+                        else:
+                            i_t = np.conj(st_phase_total / vt_ph)
 
                 i_f0: float = np.sqrt(2.0) * np.imag(i_f)
                 i_t0: float = np.sqrt(2.0) * np.imag(i_t)
@@ -5940,11 +5973,18 @@ class EmtProblemDae(EmtProblemTemplate):
                 if ph in {"A", "B", "C"}:
                     from_phase_currents[ph] = complex(i_f)
                     to_phase_currents[ph] = complex(i_t)
+                    if not is_vsc and abs(z_series) > 1.0e-15:
+                        i_ser = (vf_ph - vt_ph) / z_series
+                        series_phase_currents_inst[ph] = float(np.sqrt(2.0) * np.imag(i_ser))
+                        series_phase_current_derivatives_inst[ph] = float(omega_base * np.sqrt(2.0) * np.real(i_ser))
+                    else:
+                        pass
                 else:
                     pass
 
-                self.set_if_exists(mdl=mdl, key=if_key, value=float(i_f0), persist_after_native_init=False)
-                self.set_if_exists(mdl=mdl, key=it_key, value=float(i_t0), persist_after_native_init=False)
+                preserve_current_seed = bool((not is_vsc) and abs(z_series) > 1.0e-15)
+                self.set_if_exists(mdl=mdl, key=if_key, value=float(i_f0), persist_after_native_init=preserve_current_seed)
+                self.set_if_exists(mdl=mdl, key=it_key, value=float(i_t0), persist_after_native_init=preserve_current_seed)
             else:
                 pass
 
@@ -5996,6 +6036,28 @@ class EmtProblemDae(EmtProblemTemplate):
             self.set_if_exists(mdl=mdl, key=VarPowerFlowReferenceType.Qf, value=float(np.imag(sf_sum)))
             self.set_if_exists(mdl=mdl, key=VarPowerFlowReferenceType.Pt, value=float(np.real(st_sum)))
             self.set_if_exists(mdl=mdl, key=VarPowerFlowReferenceType.Qt, value=float(np.imag(st_sum)))
+
+            for phase_name in ("A", "B", "C"):
+                i_ser_var: Optional[Var] = _find_internal_var_by_prefix(mdl, f"i_ser_")
+                if i_ser_var is None:
+                    pass
+                else:
+                    # Locate the phase-specific PI-line series state. The cloned
+                    # block name is not guaranteed to match the variable suffix.
+                    for candidate_list in (mdl.state_vars, mdl.algebraic_vars):
+                        for candidate_var in candidate_list:
+                            if candidate_var.name.startswith("i_ser_") and candidate_var.name.endswith(f"_{phase_name}"):
+                                value_float: float = float(series_phase_currents_inst.get(phase_name, 0.0))
+                                self._temp_init_guess[candidate_var.uid] = value_float
+                                self._temp_post_init_guess[candidate_var.uid] = value_float
+                                if candidate_var.diff_var is not None:
+                                    diff_value_float: float = float(series_phase_current_derivatives_inst.get(phase_name, 0.0))
+                                    self._temp_diff_init_guess[candidate_var.diff_var.uid] = diff_value_float
+                                    self._temp_post_diff_init_guess[candidate_var.diff_var.uid] = diff_value_float
+                                else:
+                                    pass
+                            else:
+                                pass
 
         if is_vsc and vsc_index >= 0:
             if self.power_flow_results is not None:

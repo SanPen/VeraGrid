@@ -3140,7 +3140,7 @@ def convert_dgs_staticgen_to_gen(elmgenstat: ElmGenstat,
 
     # Slack/reference machine indicator (PowerFactory exports ip_ctrl=1 on the slack generator)
     if int(elmgenstat.ip_ctrl) == 1:
-        bus.is_slack = True
+        bus.set_is_slack_at(t=None, val=True)
 
     generator_name = _get_non_empty_name(elmgenstat.loc_name, f"{_ref_id(elmgenstat.ID)}")
     generator_name = _get_parallel_device_name(generator_name, parallel_index, parallel_count)
@@ -3236,7 +3236,7 @@ def convert_dgs_to_static_gen(elmgenstat: ElmGenstat,
 
     # Slack/reference machine indicator (PowerFactory exports ip_ctrl=1 on the slack generator)
     if int(elmgenstat.ip_ctrl) == 1:
-        bus.is_slack = True
+        bus.set_is_slack_at(t=None, val=True)
 
     generator_name = _get_non_empty_name(elmgenstat.loc_name, f"StaticGen_{_ref_id(elmgenstat.ID)}")
     generator_name = _get_parallel_device_name(generator_name, parallel_index, parallel_count)
@@ -3412,7 +3412,7 @@ def convert_dgs_external_grid_to_generator(elmxnet: ElmXnet,
     )
 
     if bustype == 'SL':
-        bus.is_slack = True
+        bus.set_is_slack_at(t=None, val=True)
 
     elif bustype == 'PV':
         gen.Vset = elmxnet.usetp
@@ -3459,7 +3459,7 @@ def convert_dgs_to_external_grid(elmxnet: ElmXnet,
     )
 
     if bustype == 'SL':
-        bus.is_slack = True
+        bus.set_is_slack_at(t=None, val=True)
         xgrid.mode = ExternalGridMode.VD
         xgrid.Vm = elmxnet.usetp
         xgrid.Va = math.radians(float(elmxnet.phiini))
@@ -4067,7 +4067,7 @@ def convert_dgs_to_generator(elmsym: ElmSym,
 
     # Slack/reference machine indicator (PowerFactory exports ip_ctrl=1 on the slack generator)
     if int(elmsym.ip_ctrl) == 1:
-        bus.is_slack = True
+        bus.set_is_slack_at(t=None, val=True)
 
     # Resolve type
     typsym = typsym_dict.get(elmsym.typ_id, None)

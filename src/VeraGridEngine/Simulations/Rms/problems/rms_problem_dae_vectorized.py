@@ -548,8 +548,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                                                             problem_mapping=self._static_parameters_values_mapping,
                                                             logger=None)
 
-                Vmf, Vaf = get_bus_rms_algebraic_vars(elm.bus_from.rms_model)
-
+                _, Vmf, Vaf = get_bus_rms_algebraic_vars(elm.bus_from.rms_model)
 
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
                 register_rms_fmu_cs_device(self, elm, elm.rms_model)
@@ -1958,7 +1957,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
             # we add bus variables for vectorization
             class_idx = self._class_n_vars.get(mdl.uid, 0)
             if elm in self.grid.get_branches_iter():
-                Vmf, Vaf = get_bus_rms_algebraic_vars(elm.bus_from.rms_model)
+                _, Vmf, Vaf = get_bus_rms_algebraic_vars(elm.bus_from.rms_model)
                 self._compiler_names_dict_vect[mdl.uid][Vmf.uid] = f"{self.VARS_NAME}[{class_idx}]"
                 self._alias_names_dict_vect[mdl.uid][Vmf.uid] = f"{self.VARS_NAME}_{class_idx}"
                 self._uid2idx_vars_vec[mdl.uid][Vmf.uid] = class_idx
@@ -1973,7 +1972,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                 self._class_n_vars[mdl.uid] = class_idx + 1
 
                 class_idx = self._class_n_vars.get(mdl.uid, 0)
-                Vmt, Vat = get_bus_rms_algebraic_vars(elm.bus_to.rms_model)
+                _, Vmt, Vat = get_bus_rms_algebraic_vars(elm.bus_to.rms_model)
                 self._compiler_names_dict_vect[mdl.uid][Vmt.uid] = f"{self.VARS_NAME}[{class_idx}]"
                 self._alias_names_dict_vect[mdl.uid][Vmt.uid] = f"{self.VARS_NAME}_{class_idx}"
                 self._uid2idx_vars_vec[mdl.uid][Vmt.uid] = class_idx
@@ -1988,7 +1987,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                 self._class_n_vars[mdl.uid] = class_idx + 1
 
             if elm in self.grid.get_injection_devices_iter():
-                Vm, Va = get_bus_rms_algebraic_vars(elm.bus.rms_model)
+                _, Vm, Va = get_bus_rms_algebraic_vars(elm.bus.rms_model)
                 class_idx = self._class_n_vars.get(mdl.uid, 0)
                 self._compiler_names_dict_vect[mdl.uid][Vm.uid] =f"{self.VARS_NAME}[{class_idx}]"
                 self._alias_names_dict_vect[mdl.uid][Vm.uid] = f"{self.VARS_NAME}_{class_idx}"

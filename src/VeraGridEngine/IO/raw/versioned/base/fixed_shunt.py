@@ -8,7 +8,7 @@ from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
 import VeraGridEngine.Devices as dev
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_float, coerce_psse_int, coerce_psse_str
 
 
 class RawFixedShunt(RawObject):
@@ -27,11 +27,11 @@ class RawFixedShunt(RawObject):
     def __init__(self):
         RawObject.__init__(self, "Fixed shunt")
 
-        self.I = 0
-        self.ID = ""
-        self.STATUS = 1
-        self.GL = 0.0
-        self.BL = 0.0
+        self._I: int = 0
+        self._ID: str = ""
+        self._STATUS: int = 1
+        self._GL: float = 0.0
+        self._BL: float = 0.0
 
     def parse(self, data, version, logger: Logger):
         raise NotImplementedError(f"{self.__class__.__name__}.parse must be implemented in a version-specific subclass")
@@ -48,3 +48,42 @@ class RawFixedShunt(RawObject):
         """
         return "{0}_{1}".format(self.I, self.ID)
 
+    @property
+    def I(self) -> int:
+        return self._I
+
+    @I.setter
+    def I(self, value: int | str | None) -> None:
+        self._I = coerce_psse_int(value=value, current_value=self._I)
+
+    @property
+    def ID(self) -> str:
+        return self._ID
+
+    @ID.setter
+    def ID(self, value: str | int | float | None) -> None:
+        self._ID = coerce_psse_str(value=value, current_value=self._ID)
+
+    @property
+    def STATUS(self) -> int:
+        return self._STATUS
+
+    @STATUS.setter
+    def STATUS(self, value: int | str | None) -> None:
+        self._STATUS = coerce_psse_int(value=value, current_value=self._STATUS)
+
+    @property
+    def GL(self) -> float:
+        return self._GL
+
+    @GL.setter
+    def GL(self, value: float | int | str | None) -> None:
+        self._GL = coerce_psse_float(value=value, current_value=self._GL)
+
+    @property
+    def BL(self) -> float:
+        return self._BL
+
+    @BL.setter
+    def BL(self, value: float | int | str | None) -> None:
+        self._BL = coerce_psse_float(value=value, current_value=self._BL)

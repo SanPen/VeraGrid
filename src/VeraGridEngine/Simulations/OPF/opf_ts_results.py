@@ -74,6 +74,7 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
         ResultsProperty(name='generator_reactive_power', tpe=Mat, old_names=list(), expandable=True),
         ResultsProperty(name='generator_shedding', tpe=Mat, old_names=list(), expandable=True),
         ResultsProperty(name='generator_cost', tpe=Mat, old_names=list(), expandable=True),
+        ResultsProperty(name='generator_reserve', tpe=Mat, old_names=list(), expandable=True),
         ResultsProperty(name='generator_producing', tpe=Mat, old_names=list(), expandable=True),
         ResultsProperty(name='generator_starting_up', tpe=Mat, old_names=list(), expandable=True),
         ResultsProperty(name='generator_shutting_down', tpe=Mat, old_names=list(), expandable=True),
@@ -133,6 +134,7 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
         "generator_reactive_power",
         "generator_shedding",
         "generator_cost",
+        "generator_reserve",
         "generator_producing",
         "generator_starting_up",
         "generator_shutting_down",
@@ -206,6 +208,7 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
                                                                                    ResultTypes.GeneratorReactivePower,
                                                                                    ResultTypes.GeneratorShedding,
                                                                                    ResultTypes.GeneratorCost,
+                                                                                   ResultTypes.GeneratorReserve,
                                                                                    ResultTypes.GeneratorProducing,
                                                                                    ResultTypes.GeneratorStartingUp,
                                                                                    ResultTypes.GeneratorShuttingDown,
@@ -324,6 +327,7 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
         self.generator_reactive_power = np.zeros((nt, ngen), dtype=float)
         self.generator_shedding = np.zeros((nt, ngen), dtype=float)
         self.generator_cost = np.zeros((nt, ngen), dtype=float)
+        self.generator_reserve = np.zeros((nt, ngen), dtype=float)
         self.generator_producing = np.zeros((nt, ngen), dtype=bool)
         self.generator_starting_up = np.zeros((nt, ngen), dtype=bool)
         self.generator_shutting_down = np.zeros((nt, ngen), dtype=bool)
@@ -719,6 +723,18 @@ class OptimalPowerFlowTimeSeriesResults(ResultsTemplate):
                                 ylabel='(Currency)',
                                 xlabel='',
                                 units='(Currency)')
+
+        elif result_type == ResultTypes.GeneratorReserve:
+
+            return ResultsTable(data=self.generator_reserve,
+                                index=pd.to_datetime(self.time_array),
+                                idx_device_type=DeviceType.TimeDevice,
+                                columns=self.generator_names,
+                                cols_device_type=DeviceType.GeneratorDevice,
+                                title=str(result_type.value),
+                                ylabel='(MW)',
+                                xlabel='',
+                                units='(MW)')
 
         elif result_type == ResultTypes.GeneratorProducing:
 

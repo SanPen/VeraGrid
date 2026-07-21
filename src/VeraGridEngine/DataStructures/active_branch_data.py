@@ -8,6 +8,7 @@ from __future__ import annotations
 import numpy as np
 from VeraGridEngine.Utils.Sparse.sparse_array import SparseObjectArray
 from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, Logger
+from VeraGridEngine.Utils.compare import compare_arr
 
 
 class ActiveBranchData:
@@ -152,3 +153,10 @@ class ActiveBranchData:
         :return:
         """
         return self.tap_module * np.exp(1.0j * self.tap_angle)
+
+    def compare(self, other: "ActiveBranchData", tol: float, logger: Logger) -> None:
+        """
+        Compare active-branch fields used by NumericalCircuit.compare().
+        """
+        compare_arr(self.tap_module, other.tap_module, tol, 'BranchData', 'tap_module', logger)
+        compare_arr(self.tap_angle, other.tap_angle, tol, 'BranchData', 'tap_angle', logger)

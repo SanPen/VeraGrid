@@ -7,7 +7,7 @@ from typing import Tuple
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_float, coerce_psse_int, coerce_psse_str
 
 
 class RawNode(RawObject):
@@ -30,13 +30,13 @@ class RawNode(RawObject):
     def __init__(self):
         RawObject.__init__(self, "node")
 
-        self.ISUB: int = 0
-        self.NI: int = 0
-        self.NAME: str = ''
-        self.I: int = 0
-        self.STATUS: int = 0
-        self.VM: float = 0.0
-        self.VA: float = 0.0
+        self._ISUB: int = 0
+        self._NI: int = 0
+        self._NAME: str = ''
+        self._I: int = 0
+        self._STATUS: int = 0
+        self._VM: float = 0.0
+        self._VA: float = 0.0
 
     def parse(self, data, version, logger: Logger):
         raise NotImplementedError(f"{self.__class__.__name__}.parse must be implemented in a version-specific subclass")
@@ -48,3 +48,59 @@ class RawNode(RawObject):
 
     def get_id(self) -> str:
         return "{0}_{1}".format(self.ISUB, self.NI)
+
+    @property
+    def ISUB(self) -> int:
+        return self._ISUB
+
+    @ISUB.setter
+    def ISUB(self, value: int | str | None) -> None:
+        self._ISUB = coerce_psse_int(value=value, current_value=self._ISUB)
+
+    @property
+    def NI(self) -> int:
+        return self._NI
+
+    @NI.setter
+    def NI(self, value: int | str | None) -> None:
+        self._NI = coerce_psse_int(value=value, current_value=self._NI)
+
+    @property
+    def NAME(self) -> str:
+        return self._NAME
+
+    @NAME.setter
+    def NAME(self, value: str | int | float | None) -> None:
+        self._NAME = coerce_psse_str(value=value, current_value=self._NAME)
+
+    @property
+    def I(self) -> int:
+        return self._I
+
+    @I.setter
+    def I(self, value: int | str | None) -> None:
+        self._I = coerce_psse_int(value=value, current_value=self._I)
+
+    @property
+    def STATUS(self) -> int:
+        return self._STATUS
+
+    @STATUS.setter
+    def STATUS(self, value: int | str | None) -> None:
+        self._STATUS = coerce_psse_int(value=value, current_value=self._STATUS)
+
+    @property
+    def VM(self) -> float:
+        return self._VM
+
+    @VM.setter
+    def VM(self, value: float | int | str | None) -> None:
+        self._VM = coerce_psse_float(value=value, current_value=self._VM)
+
+    @property
+    def VA(self) -> float:
+        return self._VA
+
+    @VA.setter
+    def VA(self, value: float | int | str | None) -> None:
+        self._VA = coerce_psse_float(value=value, current_value=self._VA)

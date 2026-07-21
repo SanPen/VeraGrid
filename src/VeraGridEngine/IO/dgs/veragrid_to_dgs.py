@@ -398,7 +398,7 @@ def convert_bus(bus: dev.Bus, new_id: str, t: int | None = None) -> ElmTerm:
     elm_term.vtarget = float(bus.Vm0)
     elm_term.outserv = 0 if bus.get_active_at(t) else 1
 
-    if bus.is_slack:
+    if bus.get_is_slack_at(t):
         elm_term.bustp = "SL"
     else:
         pass
@@ -627,7 +627,10 @@ def convert_generator(gen: dev.Generator, tpe_new_id: str, new_id: str, bus_v_co
     e.q_min = gen.get_Qmin_at(t) / Sbase
     e.q_max = gen.get_Qmax_at(t) / Sbase
     e.usetp = gen.get_Vset_at(t)
-    e.ip_ctrl = 1 if gen.bus.is_slack else 0
+    if gen.bus is not None:
+        e.ip_ctrl = 1 if gen.bus.get_is_slack_at(t) else 0
+    else:
+        e.ip_ctrl = 0
     e.typ_id = tpe.ID
     e.Pmin_uc = gen.get_Pmin_at(t)
     e.Pmax_uc = gen.get_Pmax_at(t)

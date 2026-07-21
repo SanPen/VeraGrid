@@ -256,12 +256,13 @@ def _build_editor(api_object: ALL_DEV_TYPES) -> DynamicBlockEditorGUI:
     _get_app()
     editor: DynamicBlockEditorGUI = DynamicBlockEditorGUI(
         var_factory=VarFactory(),
-        block=Block(),
+        current_block=Block(),
         api_object=api_object,
+        current_theme="Light",
         circuit=MultiCircuit(),
         mode=DynamicSimulationMode.EMT,
         templates_list=list(),
-        main_editor=False,
+        is_root_editor=False,
         modal=False,
     )
     return editor

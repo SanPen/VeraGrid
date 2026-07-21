@@ -11,6 +11,7 @@ from PySide6 import QtCore, QtGui, QtWidgets
 
 from VeraGrid.Gui.DynamicModelEditor.detachable_editor_tabs_widget import DetachableEditorTabWidget
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_tab import DynamicEditorTab
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace import Ui_DynamicEditorWorkspaceWindow
 from VeraGrid.Gui.Icons.icon_associations import device_type_icons
 from VeraGrid.Gui.gui_functions import add_menu_entry
@@ -27,9 +28,9 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
     """
 
     def __init__(
-        self,
-        session: DynamicEditorWorkspaceSession,
-        parent: QtWidgets.QWidget | None = None,
+            self,
+            session: DynamicEditorWorkspaceSession,
+            parent: QtWidgets.QWidget | None = None,
     ) -> None:
         """
         Initialize one dynamic-editor workspace window.
@@ -139,10 +140,10 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
         self.session.note_page_activated(page)
 
     def open_entry(
-        self,
-        entry: DynamicEditorEntry,
-        preferred_mode: DynamicSimulationMode | None = None,
-        target_workspace: "DynamicEditorWorkspaceWindow | None" = None,
+            self,
+            entry: DynamicEditorEntry,
+            preferred_mode: DynamicSimulationMode | None = None,
+            target_workspace: "DynamicEditorWorkspaceWindow | None" = None,
     ) -> DynamicBlockEditorGUI:
         """
         Open one editor entry in this workspace session.
@@ -161,11 +162,11 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
         )
 
     def open_dynamic_editor_for(
-        self,
-        api_object: Any,
-        circuit: Any,
-        preferred_mode: DynamicSimulationMode | None = None,
-        target_workspace: "DynamicEditorWorkspaceWindow | None" = None,
+            self,
+            api_object: Any,
+            circuit: Any,
+            preferred_mode: DynamicSimulationMode | None = None,
+            target_workspace: "DynamicEditorWorkspaceWindow | None" = None,
     ) -> DynamicBlockEditorGUI | None:
         """
         Open the dynamic editor for one API object in this workspace session.
@@ -209,6 +210,8 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
         :return: Active block editor or ``None``.
         """
         page = self.current_page()
+        if isinstance(page, DynamicEditorTab):
+            return page.editor
         if isinstance(page, DynamicBlockEditorGUI):
             return page
         return None
@@ -383,8 +386,8 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
             self.ui.treeView.scrollTo(index)
 
     def _first_visible_tree_entry_index(
-        self,
-        parent: QtCore.QModelIndex = QtCore.QModelIndex(),
+            self,
+            parent: QtCore.QModelIndex = QtCore.QModelIndex(),
     ) -> QtCore.QModelIndex:
         """
         Return the first visible device-entry index under one tree node.
@@ -594,11 +597,11 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
         self._refresh_window_title()
 
     def add_editor_page(
-        self,
-        page: DynamicBlockEditorGUI,
-        tab_title: str,
-        activate: bool = True,
-        insert_index: int = -1,
+            self,
+            page: DynamicBlockEditorGUI,
+            tab_title: str,
+            activate: bool = True,
+            insert_index: int = -1,
     ) -> None:
         """
         Insert one editor page into the tab widget.
@@ -628,7 +631,7 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
         """
         return self.editor_tabs.indexOf(page)
 
-    def page_at(self, index: int) -> DynamicBlockEditorGUI | None:
+    def page_at(self, index: int) -> DynamicBlockEditorGUI | DynamicEditorTab | None:
         """
         Return the page at one tab index.
 
@@ -638,18 +641,18 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
         if index < 0 or index >= self.editor_tabs.count():
             return None
         page = self.editor_tabs.widget(index)
-        if isinstance(page, DynamicBlockEditorGUI):
+        if isinstance(page, (DynamicBlockEditorGUI, DynamicEditorTab)):
             return page
         else:
             return None
 
-    def pages_iter(self) -> Iterator[DynamicBlockEditorGUI]:
+    def pages_iter(self):
         for index in range(self.editor_tabs.count()):
             page = self.editor_tabs.widget(index)
-            if isinstance(page, DynamicBlockEditorGUI):
+            if isinstance(page, (DynamicBlockEditorGUI, DynamicEditorTab)):
                 yield page
 
-    def current_page(self) -> DynamicBlockEditorGUI | None:
+    def current_page(self) -> DynamicBlockEditorGUI | DynamicEditorTab | None:
         """
         Return the currently selected tab page.
 
@@ -657,7 +660,7 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
         """
         return self.page_at(self.editor_tabs.currentIndex())
 
-    def remove_page(self, page: DynamicBlockEditorGUI) -> None:
+    def remove_page(self, page: DynamicBlockEditorGUI | DynamicEditorTab) -> None:
         """
         Remove one page from the tab widget.
 
@@ -762,4 +765,3 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
         """
         for page in self.pages_iter():
             page.set_light_mode()
-

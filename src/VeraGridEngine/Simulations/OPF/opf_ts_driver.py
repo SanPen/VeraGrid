@@ -38,11 +38,13 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
                  clustering_results: Union[ClusteringResults, None] = None,
                  engine: EngineType = EngineType.VeraGrid):
         """
-        OptimalPowerFlowTimeSeriesDriver class constructor
-        :param grid: MultiCircuit Object
-        :param options: OPF options (optional)
-        :param time_indices: array of time indices to simulate (optional)
-        :param engine: Calculation engine to use (if available) (optional)
+        Initialize the OPF time-series driver.
+
+        :param grid: Multi-circuit model to simulate.
+        :param options: OPF options.
+        :param time_indices: Time indices to simulate.
+        :param clustering_results: Optional clustering results.
+        :param engine: Calculation engine to use.
         """
         TimeSeriesDriverTemplate.__init__(self,
                                           grid=grid,
@@ -85,21 +87,25 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
     @property
     def pf_options(self) -> PowerFlowOptions:
         """
-        Get the PowerFlow options provides with the OpfOptions
-        :return: PowerFlowOptions
+        Return the embedded power-flow options.
+
+        :return: Power flow options.
         """
         return self.options.power_flow_options
 
     def get_steps(self):
         """
-        Get time steps list of strings
+        Return the formatted time-step labels.
+
+        :return: List of time labels.
         """
         return [l.strftime('%d-%m-%Y %H:%M') for l in pd.to_datetime(self.grid.time_profile)]
 
     def run_linear_opf(self):
         """
+        Run the linear OPF over the configured time range.
 
-        :return:
+        :return: ``None``.
         """
         # DC optimal power flow
         opf_vars, model = run_linear_opf_ts(
@@ -114,6 +120,7 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
             ramp_constraints=self.options.consider_ramps,
             consider_time_up_down=self.options.consider_time_up_down,
             area_spinning_reserve=self.options.area_spinning_reserve,
+            quadratic_costs=self.options.quadratic_costs,
             lodf_threshold=self.options.lodf_tolerance,
             inter_aggregation_info=self.options.inter_aggregation_info,
             use_glsk_as_cost=self.options.use_glsk_as_cost,
@@ -139,11 +146,12 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
         self.results.generator_power = opf_vars.gen_vars.p
         self.results.generator_shedding = opf_vars.gen_vars.shedding
         self.results.generator_cost = opf_vars.gen_vars.cost
+        self.results.generator_reserve = opf_vars.gen_vars.reserve
         # self.results.generator_fuel = opf_vars.gen_vars.fuel
         # self.results.generator_emissions = opf_vars.gen_vars.emissions
         self.results.generator_producing = opf_vars.gen_vars.producing
         self.results.generator_starting_up = opf_vars.gen_vars.starting_up
-        self.results.generator_shutting_down = opf_vars.gen_vars.shedding
+        self.results.generator_shutting_down = opf_vars.gen_vars.shutting_down
         self.results.generator_invested = opf_vars.gen_vars.invested
 
         self.results.Sf = opf_vars.branch_vars.flows
@@ -182,8 +190,14 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
             self.results.report_text = model.model_as_string()
 
     def run_linear_opf_indices(self, time_indices: IntVec, energy_0: Vec, fluid_level_0: Vec):
+        """
+        Run the linear OPF for one time chunk.
 
-        # run an opf for the group interval only if the group is within the start:end boundaries
+        :param time_indices: Time indices to solve.
+        :param energy_0: Initial battery energies for the chunk.
+        :param fluid_level_0: Initial fluid levels for the chunk.
+        :return: Linear model instance.
+        """
         # DC optimal power flow
         opf_vars, model = run_linear_opf_ts(
             grid=self.grid,
@@ -197,6 +211,7 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
             ramp_constraints=self.options.consider_ramps,
             consider_time_up_down=self.options.consider_time_up_down,
             area_spinning_reserve=self.options.area_spinning_reserve,
+            quadratic_costs=self.options.quadratic_costs,
             lodf_threshold=self.options.lodf_tolerance,
             inter_aggregation_info=self.options.inter_aggregation_info,
             energy_0=energy_0,
@@ -222,9 +237,10 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
         self.results.generator_power[time_indices, :] = opf_vars.gen_vars.p
         self.results.generator_shedding[time_indices, :] = opf_vars.gen_vars.shedding
         self.results.generator_cost[time_indices, :] = opf_vars.gen_vars.cost
+        self.results.generator_reserve[time_indices, :] = opf_vars.gen_vars.reserve
         self.results.generator_producing[time_indices, :] = opf_vars.gen_vars.producing
         self.results.generator_starting_up[time_indices, :] = opf_vars.gen_vars.starting_up
-        self.results.generator_shutting_down[time_indices, :] = opf_vars.gen_vars.shedding
+        self.results.generator_shutting_down[time_indices, :] = opf_vars.gen_vars.shutting_down
         self.results.generator_invested[time_indices, :] = opf_vars.gen_vars.invested
 
         self.results.Sf[time_indices, :] = opf_vars.branch_vars.flows
@@ -264,8 +280,9 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
     def run_greedy_dispatch(self):
         """
+        Run greedy dispatch over the configured time range.
 
-        :return:
+        :return: ``None``.
         """
         # AC optimal power flow
         (load_profile, gen_dispatch,
@@ -315,9 +332,10 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
     def run_greedy_dispatch_indices(self, time_indices: IntVec):
         """
+        Run greedy dispatch for one time chunk.
 
-        :param time_indices:
-        :return:
+        :param time_indices: Time indices to solve.
+        :return: ``None``.
         """
         # Greedy dispatch
         (load_profile, gen_dispatch,
@@ -366,8 +384,9 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
     def run_non_linear_opf(self):
         """
+        Run the nonlinear OPF over the configured time range.
 
-        :return:
+        :return: ``None``.
         """
         self.report_progress(0.0)
         for it, t in enumerate(self.time_indices):
@@ -426,9 +445,10 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
     def run_nonlinear_opf_indices(self, time_indices: IntVec):
         """
+        Run the nonlinear OPF for one time chunk.
 
-        :param time_indices:
-        :return:
+        :param time_indices: Time indices to solve.
+        :return: ``None``.
         """
         self.report_progress(0.0)
         for it, t in enumerate(time_indices):
@@ -477,10 +497,11 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
     def opf(self, remote=False, batteries_energy_0=None):
         """
-        Run a power flow for every circuit
-        :param remote: is this function being called from the time series?
-        :param batteries_energy_0: initial state of the batteries, if None the default values are taken
-        :return: OptimalPowerFlowResults object
+        Run the configured OPF solver across the selected time range.
+
+        :param remote: Whether the call comes from another driver.
+        :param batteries_energy_0: Optional initial battery energies.
+        :return: OPF time-series results.
         """
 
         if not remote:
@@ -511,7 +532,9 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
     def opf_by_groups(self) -> None:
         """
-        Run the OPF by groups
+        Run the OPF by grouped chunks.
+
+        :return: ``None``.
         """
 
         self.report_progress(0.0)
@@ -580,7 +603,10 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
     def add_report(self, eps: float = 1e-6) -> None:
         """
-        Add a report of the results (in-place)
+        Append warnings to the logger from the computed results.
+
+        :param eps: Numerical tolerance for reporting.
+        :return: ``None``.
         """
         if self.progress_text:
             self.report_text("Creating report")
@@ -636,8 +662,9 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
     def run(self):
         """
+        Execute the configured OPF time-series study.
 
-        :return:
+        :return: ``None``.
         """
 
         self.tic()

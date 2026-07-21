@@ -876,6 +876,18 @@ def convert_bus(elm: dev.Bus, n_time: int,
                  time_indices=time_indices,
                  n_time=n_time,
                  default_val=elm.active)
+    fill_profile(gslv_profile=bus.Vm0,
+                 gc_profile=elm.Vm0_prof,
+                 use_time_series=use_time_series,
+                 time_indices=time_indices,
+                 n_time=n_time,
+                 default_val=elm.Vm0)
+    fill_profile(gslv_profile=bus.Va0,
+                 gc_profile=elm.Va0_prof,
+                 use_time_series=use_time_series,
+                 time_indices=time_indices,
+                 n_time=n_time,
+                 default_val=elm.Va0)
 
     return bus
 

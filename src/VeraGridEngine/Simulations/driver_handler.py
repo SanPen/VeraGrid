@@ -38,6 +38,7 @@ from VeraGridEngine.Simulations.LinearFactors.linear_analysis_ts_driver import (
 from VeraGridEngine.Simulations.NTC.ntc_driver import OptimalNetTransferCapacityDriver
 from VeraGridEngine.Simulations.NTC.ntc_options import OptimalNetTransferCapacityOptions
 from VeraGridEngine.Simulations.NTC.ntc_ts_driver import OptimalNetTransferCapacityTimeSeriesDriver
+from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_driver import NodalCapacityDriver
 from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_ts_driver import (NodalCapacityTimeSeriesDriver)
 from VeraGridEngine.Simulations.OPF.opf_driver import OptimalPowerFlowDriver
 from VeraGridEngine.Simulations.OPF.opf_ts_driver import (OptimalPowerFlowTimeSeriesDriver)
@@ -131,6 +132,10 @@ def create_driver(grid: MultiCircuit,
                                                options=None,
                                                time_indices=time_indices,
                                                clustering_results=None)
+
+    elif driver_tpe == SimulationTypes.NodalCapacity_run:
+        drv = NodalCapacityDriver(grid=grid,
+                                  options=None)
 
     elif driver_tpe == SimulationTypes.NodalCapacityTimeSeries_run:
         drv = NodalCapacityTimeSeriesDriver(grid=grid,

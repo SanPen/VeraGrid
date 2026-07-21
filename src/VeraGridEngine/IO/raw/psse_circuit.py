@@ -9,7 +9,11 @@ from typing import List, Dict, Tuple
 
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.IO.raw.psse_property import PsseProperty
-from VeraGridEngine.IO.raw.raw_types import RawAreaLike, RawBranchLike, RawBusLike, RawEquipmentTerminalLike, RawFACTSLike, RawFixedShuntLike, RawGeneratorLike, RawGneDeviceLike, RawImpedanceCorrectionTableLike, RawInductionMachineLike, RawInterAreaLike, RawLoadLike, RawMultiLineSectionLike, RawNodeLike, RawOwnerLike, RawSubstationLike, RawSubstationSwitchingDeviceLike, RawSwitchedShuntLike, RawSystemSwitchingDeviceLike, RawTransformerLike, RawTwoTerminalDCLineLike, RawVscDCLineLike, RawZoneLike
+from VeraGridEngine.IO.raw.raw_types import RawAreaLike, RawBranchLike, RawBusLike, RawEquipmentTerminalLike, \
+    RawFACTSLike, RawFixedShuntLike, RawGeneratorLike, RawGneDeviceLike, RawImpedanceCorrectionTableLike, \
+    RawInductionMachineLike, RawInterAreaLike, RawLoadLike, RawMultiLineSectionLike, RawNodeLike, RawOwnerLike, \
+    RawSubstationLike, RawSubstationSwitchingDeviceLike, RawSwitchedShuntLike, RawSystemSwitchingDeviceLike, \
+    RawTransformerLike, RawTwoTerminalDCLineLike, RawVscDCLineLike, RawZoneLike
 from VeraGridEngine.IO.raw.versioned.base.multi_section_line import RawMultiLineSection
 from VeraGridEngine.IO.raw.versioned.base.area import RawArea
 from VeraGridEngine.IO.raw.versioned.base.branch import RawBranch
@@ -37,7 +41,6 @@ from VeraGridEngine.IO.base.base_circuit import BaseCircuit
 from VeraGridEngine.basic_structures import Logger
 
 
-
 class PsseCircuit(RawObject, BaseCircuit):
     LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
         PsseProperty(property_name='areas', rawx_key='area', class_type=RawArea),
@@ -57,7 +60,8 @@ class PsseCircuit(RawObject, BaseCircuit):
         PsseProperty(property_name='switched_shunts', rawx_key='swshunt', class_type=RawSwitchedShunt),
         PsseProperty(property_name='substations', rawx_key='sub', class_type=RawSubstation),
         PsseProperty(property_name='nodes', rawx_key='subnode', class_type=RawNode),
-        PsseProperty(property_name='substation_switching_devices', rawx_key='subswd', class_type=RawSubstationSwitchingDevice),
+        PsseProperty(property_name='substation_switching_devices', rawx_key='subswd',
+                     class_type=RawSubstationSwitchingDevice),
         PsseProperty(property_name='equipment_terminals', rawx_key='subterm', class_type=RawEquipmentTerminal),
         PsseProperty(property_name='switches', rawx_key='sysswd', class_type=RawSystemSwitchingDevice),
         PsseProperty(property_name='gne', rawx_key='gne', class_type=RawGneDevice),
@@ -174,8 +178,8 @@ class PsseCircuit(RawObject, BaseCircuit):
 
                 if uuid_ in global_index:
                     found_elm = global_index[uuid_]
-                    logger.add_error(msg="Global UUID5 duplicate", device=id_,
-                                     device_class=prop.rawx_key, value=uuid_,
-                                     comment="Found {}:{}".format(found_elm.class_name, found_elm.get_id()))
+                    logger.add_info(msg="Global UUID5 duplicate", device=id_,
+                                    device_class=prop.rawx_key, value=uuid_,
+                                    comment="Found {}:{}".format(found_elm.class_name, found_elm.get_id()))
                 else:
                     global_index[uuid_] = elm

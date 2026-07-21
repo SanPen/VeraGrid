@@ -1200,8 +1200,33 @@ def add_linear_battery_formulation(local_t: int,
                                       + dt * (elm.discharge_efficiency * p_pos - elm.charge_efficiency * p_neg)),
                                  name=join("batt_energy_", [local_t, k], "_"))
                 else:
-                    # set the initial energy value
-                    batt_vars.e[local_t, k] = energy_0[k] / Sbase
+                    # Tie the first modeled interval to the provided initial energy.
+                    #
+                    # local_t is the row inside the current optimization chunk. When local_t == 0
+                    # we still need to distinguish between:
+                    # - the true start of the whole simulation (global_t == 0), and
+                    # - the first row of a later chunk (global_t > 0).
+                    #
+                    # In the second case, the battery state comes from the previous chunk, so the
+                    # interval duration must come from the full time series at global_t/global_t-1.
+                    # In the first case there is no previous timestamp, so we use the first known
+                    # spacing in the time series as the duration of interval 0.
+                    #
+                    # For a single-point run there is no spacing information, so we use 1 hour.
+                    if global_t > 0:
+                        # First local row of a later chunk: local_t has no previous row, so use
+                        # the previous timestamp from the full simulation timeline instead.
+                        dt = (time_array[global_t] - time_array[global_t - 1]).seconds / 3600.0
+                    elif len(time_array) > 1:
+                        # True start of the full simulation: there is no previous timestamp, so
+                        # use the first available spacing to define interval 0.
+                        dt = (time_array[1] - time_array[0]).seconds / 3600.0
+                    else:
+                        # Single-point run: no time spacing exists, fall back to 1 hour.
+                        dt = 1.0
+                    prob.add_cst(cst=(batt_vars.e[local_t, k] == energy_0[k] / Sbase
+                                      + dt * (elm.discharge_efficiency * p_pos - elm.charge_efficiency * p_neg)),
+                                 name=join("batt_energy_", [local_t, k], "_"))
 
             else:
 

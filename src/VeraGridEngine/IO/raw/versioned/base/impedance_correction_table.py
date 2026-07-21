@@ -8,7 +8,7 @@ from typing import List, Tuple
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_int
 
 
 class RawImpedanceCorrectionTable(RawObject):
@@ -20,7 +20,7 @@ class RawImpedanceCorrectionTable(RawObject):
     def __init__(self) -> None:
         RawObject.__init__(self, "Impedance Correction Table")
 
-        self.I: int = -1
+        self._I: int = -1
 
         self.T: List[int] = list()
         self.F_re: List[float] = list()
@@ -40,3 +40,10 @@ class RawImpedanceCorrectionTable(RawObject):
     def get_seed(self):
         return "_CA_{}".format(self.I)
 
+    @property
+    def I(self) -> int:
+        return self._I
+
+    @I.setter
+    def I(self, value: int | str | None) -> None:
+        self._I = coerce_psse_int(value=value, current_value=self._I)

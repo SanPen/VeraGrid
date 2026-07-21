@@ -30,8 +30,8 @@ def get_load_phasor_current_rms_template(vfactory: VarFactory, name:str = '') ->
 
     # Phasor inputs: Vr, Vi
     inputs = [
-        vfactory.add_var("Vr"),
-        vfactory.add_var("Vi")
+        vfactory.add_var("Vr", VarPowerFlowReferenceType.Vr),
+        vfactory.add_var("Vi", VarPowerFlowReferenceType.Vi)
     ]
 
     # Constant power set-points (injection convention)

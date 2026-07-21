@@ -542,7 +542,7 @@ def build_bus_aggregate(circuit: MultiCircuit,
     else:
         aggregate.status = 1
 
-    if bus.is_slack:
+    if bus.get_is_slack_at(t=t_idx):
         aggregate.node_type = 3
     else:
         aggregate.node_type = 0

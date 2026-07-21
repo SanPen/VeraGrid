@@ -7,7 +7,7 @@ from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
 import numpy as np
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_float
 
 
 class RawTransformer(RawObject):
@@ -431,72 +431,72 @@ class RawTransformer(RawObject):
         return self.RATE1_1
 
     @RATA1.setter
-    def RATA1(self, value):
-        self.RATE1_1 = value
+    def RATA1(self, value: float | int | str | None) -> None:
+        self.RATE1_1 = coerce_psse_float(value=value, current_value=self.RATE1_1)
 
     @property
     def RATB1(self):
         return self.RATE1_2
 
     @RATB1.setter
-    def RATB1(self, value):
-        self.RATE1_2 = value
+    def RATB1(self, value: float | int | str | None) -> None:
+        self.RATE1_2 = coerce_psse_float(value=value, current_value=self.RATE1_2)
 
     @property
     def RATC1(self):
         return self.RATE1_3
 
     @RATC1.setter
-    def RATC1(self, value):
-        self.RATE1_3 = value
+    def RATC1(self, value: float | int | str | None) -> None:
+        self.RATE1_3 = coerce_psse_float(value=value, current_value=self.RATE1_3)
 
     @property
     def RATA2(self):
         return self.RATE2_1
 
     @RATA2.setter
-    def RATA2(self, value):
-        self.RATE2_1 = value
+    def RATA2(self, value: float | int | str | None) -> None:
+        self.RATE2_1 = coerce_psse_float(value=value, current_value=self.RATE2_1)
 
     @property
     def RATB2(self):
         return self.RATE2_2
 
     @RATB2.setter
-    def RATB2(self, value):
-        self.RATE2_2 = value
+    def RATB2(self, value: float | int | str | None) -> None:
+        self.RATE2_2 = coerce_psse_float(value=value, current_value=self.RATE2_2)
 
     @property
     def RATC2(self):
         return self.RATE2_3
 
     @RATC2.setter
-    def RATC2(self, value):
-        self.RATE2_3 = value
+    def RATC2(self, value: float | int | str | None) -> None:
+        self.RATE2_3 = coerce_psse_float(value=value, current_value=self.RATE2_3)
 
     @property
     def RATA3(self):
         return self.RATE3_1
 
     @RATA3.setter
-    def RATA3(self, value):
-        self.RATE3_1 = value
+    def RATA3(self, value: float | int | str | None) -> None:
+        self.RATE3_1 = coerce_psse_float(value=value, current_value=self.RATE3_1)
 
     @property
     def RATB3(self):
         return self.RATE3_2
 
     @RATB3.setter
-    def RATB3(self, value):
-        self.RATE3_2 = value
+    def RATB3(self, value: float | int | str | None) -> None:
+        self.RATE3_2 = coerce_psse_float(value=value, current_value=self.RATE3_2)
 
     @property
     def RATC3(self):
         return self.RATE3_3
 
     @RATC3.setter
-    def RATC3(self, value):
-        self.RATE3_3 = value
+    def RATC3(self, value: float | int | str | None) -> None:
+        self.RATE3_3 = coerce_psse_float(value=value, current_value=self.RATE3_3)
 
     def set_winding_record(self,
                            winding_index: int,

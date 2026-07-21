@@ -5,7 +5,7 @@
 from typing import Tuple
 
 from VeraGridEngine.IO.raw.psse_object import RawObject
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_int, coerce_psse_str
 from VeraGridEngine.basic_structures import Logger
 
 
@@ -37,13 +37,13 @@ class RawEquipmentTerminal(RawObject):
         """
         RawObject.__init__(self, 'Equipment terminal')
 
-        self.ISUB: int = 0
-        self.NI: int = 0
-        self.TYPE: str = ''
-        self.EQID: str = ''
-        self.IBUS: int = 0
-        self.JBUS: int = 0
-        self.KBUS: int = 0
+        self._ISUB: int = 0
+        self._NI: int = 0
+        self._TYPE: str = ''
+        self._EQID: str = ''
+        self._IBUS: int = 0
+        self._JBUS: int = 0
+        self._KBUS: int = 0
 
     def parse(self, data, version, logger: Logger) -> None:
         """
@@ -74,3 +74,59 @@ class RawEquipmentTerminal(RawObject):
         :return: Identifier string.
         """
         return f"{self.ISUB}_{self.NI}_{self.TYPE}_{self.EQID}_{self.IBUS}_{self.JBUS}_{self.KBUS}"
+
+    @property
+    def ISUB(self) -> int:
+        return self._ISUB
+
+    @ISUB.setter
+    def ISUB(self, value: int | str | None) -> None:
+        self._ISUB = coerce_psse_int(value=value, current_value=self._ISUB)
+
+    @property
+    def NI(self) -> int:
+        return self._NI
+
+    @NI.setter
+    def NI(self, value: int | str | None) -> None:
+        self._NI = coerce_psse_int(value=value, current_value=self._NI)
+
+    @property
+    def TYPE(self) -> str:
+        return self._TYPE
+
+    @TYPE.setter
+    def TYPE(self, value: str | int | float | None) -> None:
+        self._TYPE = coerce_psse_str(value=value, current_value=self._TYPE)
+
+    @property
+    def EQID(self) -> str:
+        return self._EQID
+
+    @EQID.setter
+    def EQID(self, value: str | int | float | None) -> None:
+        self._EQID = coerce_psse_str(value=value, current_value=self._EQID)
+
+    @property
+    def IBUS(self) -> int:
+        return self._IBUS
+
+    @IBUS.setter
+    def IBUS(self, value: int | str | None) -> None:
+        self._IBUS = coerce_psse_int(value=value, current_value=self._IBUS)
+
+    @property
+    def JBUS(self) -> int:
+        return self._JBUS
+
+    @JBUS.setter
+    def JBUS(self, value: int | str | None) -> None:
+        self._JBUS = coerce_psse_int(value=value, current_value=self._JBUS)
+
+    @property
+    def KBUS(self) -> int:
+        return self._KBUS
+
+    @KBUS.setter
+    def KBUS(self, value: int | str | None) -> None:
+        self._KBUS = coerce_psse_int(value=value, current_value=self._KBUS)

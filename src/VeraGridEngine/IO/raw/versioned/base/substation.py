@@ -8,7 +8,7 @@ from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol, Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
 import VeraGridEngine.Devices as dev
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_float, coerce_psse_int, coerce_psse_str
 
 
 class RawSubstation(RawObject):
@@ -28,11 +28,11 @@ class RawSubstation(RawObject):
     def __init__(self):
         RawObject.__init__(self, "Substation")
 
-        self.IS: int = 0
-        self.NAME: str = ""
-        self.LATI: float = 0.0
-        self.LONG: float = 0.0
-        self.SGR: float = 0.0
+        self._IS: int = 0
+        self._NAME: str = ""
+        self._LATI: float = 0.0
+        self._LONG: float = 0.0
+        self._SGR: float = 0.0
 
     def parse(self, data, version, logger: Logger):
         raise NotImplementedError(f"{self.__class__.__name__}.parse must be implemented in a version-specific subclass")
@@ -45,3 +45,42 @@ class RawSubstation(RawObject):
     def get_id(self) -> str:
         return str(self.IS)
 
+    @property
+    def IS(self) -> int:
+        return self._IS
+
+    @IS.setter
+    def IS(self, value: int | str | None) -> None:
+        self._IS = coerce_psse_int(value=value, current_value=self._IS)
+
+    @property
+    def NAME(self) -> str:
+        return self._NAME
+
+    @NAME.setter
+    def NAME(self, value: str | int | float | None) -> None:
+        self._NAME = coerce_psse_str(value=value, current_value=self._NAME)
+
+    @property
+    def LATI(self) -> float:
+        return self._LATI
+
+    @LATI.setter
+    def LATI(self, value: float | int | str | None) -> None:
+        self._LATI = coerce_psse_float(value=value, current_value=self._LATI)
+
+    @property
+    def LONG(self) -> float:
+        return self._LONG
+
+    @LONG.setter
+    def LONG(self, value: float | int | str | None) -> None:
+        self._LONG = coerce_psse_float(value=value, current_value=self._LONG)
+
+    @property
+    def SGR(self) -> float:
+        return self._SGR
+
+    @SGR.setter
+    def SGR(self, value: float | int | str | None) -> None:
+        self._SGR = coerce_psse_float(value=value, current_value=self._SGR)

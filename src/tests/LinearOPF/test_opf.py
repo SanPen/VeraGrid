@@ -5,6 +5,296 @@
 
 import os
 from VeraGridEngine.api import *
+from VeraGridEngine.Simulations.OPF.Formulations.linear_opf_ts import build_area_spinning_reserve_requirement_matrix
+
+
+VALENTINA_GEN_COSTS = {
+    "Gen 04": 40.0,
+    "Gen 05": 80.0,
+}
+VALENTINA_GEN_LIMITS = {
+    "Gen 04": {"ramp_up": 18.0, "ramp_down": 18.0, "min_time_up": 24.0, "min_time_down": 24.0},
+    "Gen 05": {"ramp_up": 200.0, "ramp_down": 200.0, "min_time_up": 2.0, "min_time_down": 2.0},
+}
+VALENTINA_LOAD_COST = 12000.0
+
+
+def _valentina_case():
+    fname = os.path.join('data', 'grids', 'New.England_solar_case_OPF.gridcal')
+    grid = FileOpen(fname).open()
+    nt = len(grid.get_all_time_indices())
+
+    for gen in grid.get_generators():
+        if gen.name in VALENTINA_GEN_COSTS:
+            gen.Cost = VALENTINA_GEN_COSTS[gen.name]
+            gen.Cost_prof = np.full(nt, VALENTINA_GEN_COSTS[gen.name], dtype=float)
+        if gen.name in VALENTINA_GEN_LIMITS:
+            limits = VALENTINA_GEN_LIMITS[gen.name]
+            gen.ramp_up = limits["ramp_up"]
+            gen.ramp_down = limits["ramp_down"]
+            gen.min_time_up = limits["min_time_up"]
+            gen.min_time_down = limits["min_time_down"]
+
+    for load in grid.get_loads():
+        load.Cost = VALENTINA_LOAD_COST
+        load.Cost_prof = np.full(nt, VALENTINA_LOAD_COST, dtype=float)
+
+    return grid
+
+
+def _run_valentina_case(dispatch_mode):
+    grid = _valentina_case()
+
+    opf_options = OptimalPowerFlowOptions(verbose=0,
+                                          dispatch_mode=dispatch_mode,
+                                          solver=SolverType.LINEAR_OPF,
+                                          power_flow_options=PowerFlowOptions(),
+                                          time_grouping=TimeGrouping.NoGrouping,
+                                          mip_solver=MIPSolvers.HIGHS,
+                                          mip_framework=MIPFramework.PuLP,
+                                          consider_ramps=True,
+                                          consider_time_up_down=True)
+
+    driver = OptimalPowerFlowTimeSeriesDriver(grid=grid,
+                                              options=opf_options,
+                                              time_indices=grid.get_all_time_indices())
+    driver.run()
+
+    return driver
+
+
+def _collect_ramp_violations(driver, limits_by_name, eps: float = 1e-6):
+    gen_names = list(driver.results.generator_names)
+    power = np.asarray(driver.results.generator_power, dtype=float)
+    violations = list()
+
+    for gen_name, limits in limits_by_name.items():
+        idx = gen_names.index(gen_name)
+        for t in range(1, power.shape[0]):
+            delta = power[t, idx] - power[t - 1, idx]
+            if delta > limits["ramp_up"] + eps:
+                violations.append((gen_name, "up", t, float(delta), limits["ramp_up"]))
+            if -delta > limits["ramp_down"] + eps:
+                violations.append((gen_name, "down", t, float(-delta), limits["ramp_down"]))
+
+    return violations
+
+
+def _run_lengths(status):
+    values = np.asarray(status, dtype=int)
+    lengths = list()
+    start = 0
+    while start < len(values):
+        end = start + 1
+        while end < len(values) and values[end] == values[start]:
+            end += 1
+        lengths.append((values[start], end - start))
+        start = end
+    return lengths
+
+
+def test_generator_data_groups_dispatchable_active_indices_per_area():
+    grid = MultiCircuit()
+
+    area_1 = Area(name="Area 1")
+    area_2 = Area(name="Area 2")
+    grid.add_area(area_1)
+    grid.add_area(area_2)
+
+    bus_1 = grid.add_bus(Bus(name="bus1", Vnom=10, area=area_1))
+    bus_2 = grid.add_bus(Bus(name="bus2", Vnom=10, area=area_1))
+    bus_3 = grid.add_bus(Bus(name="bus3", Vnom=10, area=area_2))
+
+    grid.add_generator(bus=bus_1, api_obj=Generator(name="g1", enabled_dispatch=True, Pmax=10.0))
+    grid.add_generator(bus=bus_2, api_obj=Generator(name="g2", enabled_dispatch=False, Pmax=10.0))
+    grid.add_generator(bus=bus_3, api_obj=Generator(name="g3", enabled_dispatch=True, Pmax=10.0))
+
+    nc = compile_numerical_circuit_at(circuit=grid,
+                                      t_idx=None,
+                                      bus_dict={bus: i for i, bus in enumerate(grid.buses)},
+                                      areas_dict={area: i for i, area in enumerate(grid.areas)},
+                                      logger=Logger())
+
+    area_generator_indices = nc.generator_data.get_dispatchable_active_indices_per_area(
+        bus_area_indices=grid.get_bus_area_indices(),
+        area_count=len(grid.areas)
+    )
+
+    assert len(area_generator_indices) == 2
+    assert np.array_equal(area_generator_indices[0], np.array([0], dtype=int))
+    assert np.array_equal(area_generator_indices[1], np.array([2], dtype=int))
+
+
+def test_area_spinning_reserve_requirement_matrix_uses_snapshot_and_profile():
+    grid = MultiCircuit()
+    grid.create_profiles(steps=2, step_length=1, step_unit="h")
+
+    area_1 = Area(name="Area 1", spinning_reserve_requirement=15.0)
+    area_2 = Area(name="Area 2", spinning_reserve_requirement=3.0)
+    area_2.spinning_reserve_requirement_prof = np.array([5.0, 7.0], dtype=float)
+    grid.add_area(area_1)
+    grid.add_area(area_2)
+
+    matrix = build_area_spinning_reserve_requirement_matrix(grid=grid, time_indices=[None, 0, 1])
+
+    expected = np.array([
+        [15.0, 3.0],
+        [15.0, 5.0],
+        [15.0, 7.0],
+    ])
+
+    assert np.allclose(matrix, expected)
+
+
+def test_opf_area_spinning_reserve_changes_dispatch_under_unit_commitment():
+    grid = MultiCircuit()
+    grid.create_profiles(steps=1, step_length=1, step_unit="h")
+
+    area = Area(name="Area 1", spinning_reserve_requirement=30.0)
+    area.spinning_reserve_requirement_prof = np.array([30.0], dtype=float)
+    grid.add_area(area)
+
+    bus = grid.add_bus(Bus(name="bus1", Vnom=10, area=area))
+    load = grid.add_load(bus=bus, api_obj=Load(name="load1", Cost=10000.0))
+    load.P_prof = np.array([100.0], dtype=float)
+
+    cheap = grid.add_generator(bus=bus, api_obj=Generator(name="cheap", enabled_dispatch=True,
+                                                          Cost=10.0, Pmax=100.0, Pmin=0.0))
+    expensive = grid.add_generator(bus=bus, api_obj=Generator(name="expensive", enabled_dispatch=True,
+                                                              Cost=50.0, Pmax=100.0, Pmin=20.0))
+    cheap.Cost_prof = np.array([10.0], dtype=float)
+    expensive.Cost_prof = np.array([50.0], dtype=float)
+
+    opf_options = OptimalPowerFlowOptions(
+        verbose=0,
+        dispatch_mode=OpfDispatchMode.UnitCommitment,
+        solver=SolverType.LINEAR_OPF,
+        zonal_grouping=ZonalGrouping.NoGrouping,
+        area_spinning_reserve=True,
+        mip_solver=MIPSolvers.HIGHS,
+        mip_framework=MIPFramework.PuLP,
+        report_formulation=True,
+    )
+
+    driver = OptimalPowerFlowTimeSeriesDriver(grid=grid, options=opf_options)
+    driver.run()
+
+    assert driver.logger.error_count() == 0
+    assert driver.results.generator_producing[0, 1]
+    assert driver.results.generator_power[0, 1] >= 20.0 - 1e-6
+    assert driver.results.generator_power[0, 0] <= 80.0 + 1e-6
+    assert "area_spinning_reserve_0_0" in driver.results.report_text
+    assert "gen_reserve_headroom_0_0_0" in driver.results.report_text
+
+
+def test_opf_area_spinning_reserve_integrates_on_ieee39_grid():
+    fname = os.path.join('data', 'grids', 'IEEE39_1W.gridcal')
+    main_circuit = FileOpen(fname).open()
+    nt = len(main_circuit.get_all_time_indices())
+
+    if len(main_circuit.areas) == 0:
+        main_circuit.add_area(Area(name="Area 1"))
+
+    reserve_area = main_circuit.areas[0]
+    reserve_area.spinning_reserve_requirement = 50.0
+    reserve_area.spinning_reserve_requirement_prof = np.full(nt, 50.0, dtype=float)
+
+    for bus in main_circuit.buses:
+        bus.area = reserve_area
+
+    opf_options = OptimalPowerFlowOptions(
+        verbose=0,
+        solver=SolverType.LINEAR_OPF,
+        time_grouping=TimeGrouping.NoGrouping,
+        mip_solver=MIPSolvers.HIGHS,
+        area_spinning_reserve=True,
+        report_formulation=True,
+    )
+
+    opf_ts = OptimalPowerFlowTimeSeriesDriver(
+        grid=main_circuit,
+        options=opf_options,
+        time_indices=np.array([main_circuit.get_all_time_indices()[0]], dtype=int)
+    )
+    opf_ts.run()
+
+    assert opf_ts.logger.error_count() == 0
+    assert "area_spinning_reserve_0_0" in opf_ts.results.report_text
+
+
+def _build_area_spinning_reserve_result_case(steps: int) -> MultiCircuit:
+    """
+    Build a compact one-area case to validate generator reserve results.
+
+    :param steps: Number of time steps.
+    :return: Configured grid.
+    """
+    grid = MultiCircuit()
+    grid.create_profiles(steps=steps, step_length=1, step_unit="h")
+
+    area = Area(name="Area 1", spinning_reserve_requirement=30.0)
+    area.spinning_reserve_requirement_prof = np.full(steps, 30.0, dtype=float)
+    grid.add_area(area)
+
+    bus = grid.add_bus(Bus(name="bus1", Vnom=10, area=area))
+    load = grid.add_load(bus=bus, api_obj=Load(name="load1", Cost=10000.0))
+    load.P_prof = np.full(steps, 100.0, dtype=float)
+
+    cheap = grid.add_generator(bus=bus, api_obj=Generator(name="cheap", enabled_dispatch=True,
+                                                          Cost=10.0, Pmax=150.0, Pmin=0.0))
+    expensive = grid.add_generator(bus=bus, api_obj=Generator(name="expensive", enabled_dispatch=True,
+                                                              Cost=50.0, Pmax=100.0, Pmin=0.0))
+    cheap.Cost_prof = np.full(steps, 10.0, dtype=float)
+    expensive.Cost_prof = np.full(steps, 50.0, dtype=float)
+
+    return grid
+
+
+def test_opf_snapshot_exposes_generator_reserve_results():
+    grid = _build_area_spinning_reserve_result_case(steps=1)
+
+    opf_options = OptimalPowerFlowOptions(
+        verbose=0,
+        solver=SolverType.LINEAR_OPF,
+        zonal_grouping=ZonalGrouping.NoGrouping,
+        area_spinning_reserve=True,
+        mip_solver=MIPSolvers.HIGHS,
+    )
+
+    driver = OptimalPowerFlowDriver(grid=grid, options=opf_options)
+    driver.run()
+
+    total_reserve = np.sum(driver.results.generator_reserve)
+
+    assert driver.logger.error_count() == 0
+    assert driver.results.generator_reserve.shape == (2,)
+    assert total_reserve >= 30.0 - 1e-6
+
+
+def test_opf_ts_grouped_exposes_generator_reserve_results():
+    grid = _build_area_spinning_reserve_result_case(steps=48)
+
+    opf_options = OptimalPowerFlowOptions(
+        verbose=0,
+        solver=SolverType.LINEAR_OPF,
+        zonal_grouping=ZonalGrouping.NoGrouping,
+        time_grouping=TimeGrouping.Daily,
+        area_spinning_reserve=True,
+        mip_solver=MIPSolvers.HIGHS,
+    )
+
+    driver = OptimalPowerFlowTimeSeriesDriver(
+        grid=grid,
+        options=opf_options,
+        time_indices=grid.get_all_time_indices()
+    )
+    driver.run()
+
+    reserve_by_time = np.sum(driver.results.generator_reserve, axis=1)
+
+    assert driver.logger.error_count() == 0
+    assert driver.results.generator_reserve.shape == (48, 2)
+    assert np.all(reserve_by_time >= 30.0 - 1e-6)
 
 
 def test_opf():
@@ -478,6 +768,58 @@ def test_opf_battery_energy_sign():
     assert (e[1:][discharging] < e[:-1][discharging]).all()
 
 
+def test_opf_battery_respects_initial_soc_on_first_step():
+    """
+    Regression test for the reported "Baterias2.veragrid" battery bug.
+
+    Reported behavior before the fix:
+    - the battery starts at its minimum allowed state of charge
+      (soc_0 == min_soc, so it is already at the energy floor)
+    - the linear OPF time series still dispatches the battery to discharge
+      at the first time step
+    - battery_energy[0] stays pinned at the initial value instead of dropping
+      according to the discharged power
+
+    Root cause before the fix:
+    - the battery energy transition equation was enforced only for t > 0
+    - for t == 0, the model simply assigned battery_energy[0] = energy_0
+      and did not link battery_power[0] to battery_energy[0]
+    - that let the optimizer inject power in the first interval "for free"
+      from the point of view of the energy balance
+
+    What this test checks:
+    - load the real user-reported case copied into the test fixtures
+    - run the linear OPF time series
+    - inspect the first battery, first time step
+    - assert that the battery does not discharge at t = 0
+    - assert that the reported first-step energy is not below the initial
+      stored energy implied by soc_0
+
+    Why these assertions are enough:
+    - if the battery starts exactly at min_soc, any positive discharge at the
+      first step would require energy below the lower bound once the energy
+      equation is enforced
+    - therefore a correct formulation must make battery_power[0] non-positive
+      (idle or charging) for this fixture
+    """
+    fname = os.path.join('data', 'grids', 'Baterias2.veragrid')
+    grid = FileOpen(fname).open()
+
+    opf_options = OptimalPowerFlowOptions(verbose=0,
+                                          solver=SolverType.LINEAR_OPF,
+                                          zonal_grouping=ZonalGrouping.NoGrouping)
+    driver = OptimalPowerFlowTimeSeriesDriver(grid=grid, options=opf_options)
+    driver.run()
+
+    p0 = driver.results.battery_power[0, 0]
+    e0 = driver.results.battery_energy[0, 0]
+    batt = grid.batteries[0]
+    e_init = batt.Enom * batt.soc_0
+
+    assert p0 <= 1e-6
+    assert e0 >= e_init - 1e-6
+
+
 def test_opf_load_shedding():
     """
     This test, checks that a load is shed appropriately because of a generator constraint
@@ -579,6 +921,154 @@ def test_opf_load_not_shedding_because_of_line():
     assert np.allclose(driver.results.overloads[:, 0], -expected_overload)
 
 
+def _run_single_generator_cost_case(cost_1: float, cost_2: float, quadratic_costs: bool):
+    """
+    Run a one-step single-generator case to inspect the generated formulation.
+    """
+    grid = MultiCircuit()
+    grid.create_profiles(steps=1, step_length=1, step_unit="h")
+
+    bus = grid.add_bus(Bus(name="bus1", Vnom=10))
+    load = grid.add_load(bus=bus, api_obj=Load(name="load1", Cost=10000.0))
+    load.P_prof = np.array([10.0])
+
+    gen = grid.add_generator(bus=bus, api_obj=Generator(name="gen1", enabled_dispatch=True,
+                                                        Cost=cost_1, Pmax=20.0, Pmin=0.0))
+    gen.Cost2 = cost_2
+    gen.Cost2_prof = np.array([cost_2], dtype=float)
+
+    opf_options = OptimalPowerFlowOptions(
+        verbose=0,
+        solver=SolverType.LINEAR_OPF,
+        zonal_grouping=ZonalGrouping.NoGrouping,
+        quadratic_costs=quadratic_costs,
+        report_formulation=True,
+    )
+
+    driver = OptimalPowerFlowTimeSeriesDriver(grid=grid, options=opf_options)
+    driver.run()
+    return driver
+
+
+def test_opf_quadratic_costs_add_piecewise_blocks_when_enabled():
+    driver = _run_single_generator_cost_case(cost_1=10.0, cost_2=2.0, quadratic_costs=True)
+
+    assert driver.logger.error_count() == 0
+    assert "gen_quad_block_0_0_0" in driver.results.report_text
+    assert "gen_quad_balance_0_0" in driver.results.report_text
+
+
+def test_opf_quadratic_costs_skip_piecewise_blocks_when_cost2_is_zero():
+    driver = _run_single_generator_cost_case(cost_1=10.0, cost_2=0.0, quadratic_costs=True)
+
+    assert driver.logger.error_count() == 0
+    assert "gen_quad_block_0_0_0" not in driver.results.report_text
+    assert "gen_quad_balance_0_0" not in driver.results.report_text
+
+
+def test_opf_quadratic_costs_integrate_on_ieee39_grid():
+    fname = os.path.join('data', 'grids', 'IEEE39_1W.gridcal')
+    main_circuit = FileOpen(fname).open()
+    nt = len(main_circuit.get_all_time_indices())
+
+    first_generator = main_circuit.generators[0]
+    first_generator.Cost = 10.0
+    first_generator.Cost_prof = np.full(nt, 10.0, dtype=float)
+    first_generator.Cost2 = 0.5
+    first_generator.Cost2_prof = np.full(nt, 0.5, dtype=float)
+
+    opf_options = OptimalPowerFlowOptions(
+        verbose=0,
+        solver=SolverType.LINEAR_OPF,
+        time_grouping=TimeGrouping.NoGrouping,
+        mip_solver=MIPSolvers.HIGHS,
+        quadratic_costs=True,
+        report_formulation=True,
+    )
+
+    opf_ts = OptimalPowerFlowTimeSeriesDriver(
+        grid=main_circuit,
+        options=opf_options,
+        time_indices=np.array([main_circuit.get_all_time_indices()[0]], dtype=int)
+    )
+    opf_ts.run()
+
+    assert opf_ts.logger.error_count() == 0
+    assert f"gen_quad_balance_0_{0}" in opf_ts.results.report_text
+    assert f"gen_quad_block_0_{0}_0" in opf_ts.results.report_text
+
+
+def test_opf_quadratic_costs_skip_piecewise_blocks_on_ieee39_when_cost2_is_zero():
+    fname = os.path.join('data', 'grids', 'IEEE39_1W.gridcal')
+    main_circuit = FileOpen(fname).open()
+    nt = len(main_circuit.get_all_time_indices())
+
+    first_generator = main_circuit.generators[0]
+    first_generator.Cost = 10.0
+    first_generator.Cost_prof = np.full(nt, 10.0, dtype=float)
+    first_generator.Cost2 = 0.0
+    first_generator.Cost2_prof = np.full(nt, 0.0, dtype=float)
+
+    opf_options = OptimalPowerFlowOptions(
+        verbose=0,
+        solver=SolverType.LINEAR_OPF,
+        time_grouping=TimeGrouping.NoGrouping,
+        mip_solver=MIPSolvers.HIGHS,
+        quadratic_costs=True,
+        report_formulation=True,
+    )
+
+    opf_ts = OptimalPowerFlowTimeSeriesDriver(
+        grid=main_circuit,
+        options=opf_options,
+        time_indices=np.array([main_circuit.get_all_time_indices()[0]], dtype=int)
+    )
+    opf_ts.run()
+
+    assert opf_ts.logger.error_count() == 0
+    assert f"gen_quad_balance_0_{0}" not in opf_ts.results.report_text
+    assert f"gen_quad_block_0_{0}_0" not in opf_ts.results.report_text
+
+
+def test_opf_quadratic_costs_integrate_with_unit_commitment():
+    fname = os.path.join('data', 'grids', 'New England_solar_case_OPF.gridcal')
+    main_circuit = FileOpen(fname).open()
+    nt = len(main_circuit.get_all_time_indices())
+
+    first_generator = main_circuit.generators[0]
+    first_generator.Cost = 10.0
+    first_generator.Cost_prof = np.full(nt, 10.0, dtype=float)
+    first_generator.Cost2 = 0.5
+    first_generator.Cost2_prof = np.full(nt, 0.5, dtype=float)
+
+    opf_options = OptimalPowerFlowOptions(
+        verbose=0,
+        dispatch_mode=OpfDispatchMode.UnitCommitment,
+        solver=SolverType.LINEAR_OPF,
+        power_flow_options=PowerFlowOptions(SolverType.NR,
+                                            verbose=0,
+                                            control_q=False,
+                                            retry_with_other_methods=False),
+        time_grouping=TimeGrouping.NoGrouping,
+        mip_solver=MIPSolvers.HIGHS,
+        mip_framework=MIPFramework.PuLP,
+        quadratic_costs=True,
+        report_formulation=True,
+    )
+
+    opf_ts = OptimalPowerFlowTimeSeriesDriver(
+        grid=main_circuit,
+        options=opf_options,
+        time_indices=np.array([main_circuit.get_all_time_indices()[0]], dtype=int)
+    )
+    opf_ts.run()
+
+    assert opf_ts.logger.error_count() == 0
+    assert f"gen_quad_balance_0_{0}" in opf_ts.results.report_text
+    assert f"gen_quad_block_cap_0_{0}_0" in opf_ts.results.report_text
+    assert f"gen_producing_0_{0}" in opf_ts.results.report_text
+
+
 def test_opf_unit_commitment():
     fname = os.path.join('data', 'grids', 'New England_solar_case_OPF.gridcal')
 
@@ -605,6 +1095,30 @@ def test_opf_unit_commitment():
     opf_ts.run()
 
     print()
+
+
+def test_valentina_case_respects_ramps():
+    driver = _run_valentina_case(OpfDispatchMode.Normal)
+
+    assert driver.logger.error_count() == 0
+    assert np.allclose(driver.results.load_shedding, 0.0)
+    assert _collect_ramp_violations(driver, VALENTINA_GEN_LIMITS) == []
+
+
+def test_valentina_case_unit_commitment_respects_min_up_down():
+    driver = _run_valentina_case(OpfDispatchMode.UnitCommitment)
+
+    gen_names = list(driver.results.generator_names)
+    gen05_status = driver.results.generator_producing[:, gen_names.index("Gen 05")]
+    gen04_status = driver.results.generator_producing[:, gen_names.index("Gen 04")]
+    gen05_internal_blocks = _run_lengths(gen05_status)[1:-1]
+
+    assert driver.logger.error_count() == 0
+    assert np.allclose(driver.results.load_shedding, 0.0)
+    assert _collect_ramp_violations(driver, VALENTINA_GEN_LIMITS) == []
+    assert all(length >= 2 for state, length in gen05_internal_blocks if state == 1)
+    assert all(length >= 2 for state, length in gen05_internal_blocks if state == 0)
+    assert np.all(np.asarray(gen04_status, dtype=int) == 1)
 
 
 if __name__ == '__main__':

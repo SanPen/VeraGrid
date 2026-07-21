@@ -378,6 +378,7 @@ def get_at(snapshot_val: GCPROP_TYPES | float | int,
         return profile[t]
 
 
+
 class EditableDeviceMeta(type):
     """
     Metaclass that pre-builds inherited class schema declarations.

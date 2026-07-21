@@ -6,7 +6,7 @@ from typing import List, Any, Tuple
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_float, coerce_psse_int, coerce_psse_str
 
 
 class RawBus(RawObject):
@@ -30,19 +30,19 @@ class RawBus(RawObject):
     def __init__(self):
         RawObject.__init__(self, "Bus")
 
-        self.I = 1
-        self.NAME = ""
-        self.BASKV = 0.0
-        self.IDE = 1
-        self.AREA = 0
-        self.ZONE = 0
-        self.OWNER = 1
-        self.VM = 1.0
-        self.VA = 0.0
-        self.NVHI = 1.05
-        self.NVLO = 0.95
-        self.EVHI = 1.1
-        self.EVLO = 0.9
+        self._I: int = 1
+        self._NAME: str = ""
+        self._BASKV: float = 0.0
+        self._IDE: int = 1
+        self._AREA: int = 0
+        self._ZONE: int = 0
+        self._OWNER: int = 1
+        self._VM: float = 1.0
+        self._VA: float = 0.0
+        self._NVHI: float = 1.05
+        self._NVLO: float = 0.95
+        self._EVHI: float = 1.1
+        self._EVLO: float = 0.9
         self.GL = 0.0
         self.BL = 0.0
 
@@ -58,3 +58,106 @@ class RawBus(RawObject):
     def get_id(self) -> str:
         return str(self.I)
 
+    @property
+    def I(self) -> int:
+        return self._I
+
+    @I.setter
+    def I(self, value: int | str | None) -> None:
+        self._I = coerce_psse_int(value=value, current_value=self._I)
+
+    @property
+    def NAME(self) -> str:
+        return self._NAME
+
+    @NAME.setter
+    def NAME(self, value: str | int | float | None) -> None:
+        self._NAME = coerce_psse_str(value=value, current_value=self._NAME)
+
+    @property
+    def BASKV(self) -> float:
+        return self._BASKV
+
+    @BASKV.setter
+    def BASKV(self, value: float | int | str | None) -> None:
+        self._BASKV = coerce_psse_float(value=value, current_value=self._BASKV)
+
+    @property
+    def IDE(self) -> int:
+        return self._IDE
+
+    @IDE.setter
+    def IDE(self, value: int | str | None) -> None:
+        self._IDE = coerce_psse_int(value=value, current_value=self._IDE)
+
+    @property
+    def AREA(self) -> int:
+        return self._AREA
+
+    @AREA.setter
+    def AREA(self, value: int | str | None) -> None:
+        self._AREA = coerce_psse_int(value=value, current_value=self._AREA)
+
+    @property
+    def ZONE(self) -> int:
+        return self._ZONE
+
+    @ZONE.setter
+    def ZONE(self, value: int | str | None) -> None:
+        self._ZONE = coerce_psse_int(value=value, current_value=self._ZONE)
+
+    @property
+    def OWNER(self) -> int:
+        return self._OWNER
+
+    @OWNER.setter
+    def OWNER(self, value: int | str | None) -> None:
+        self._OWNER = coerce_psse_int(value=value, current_value=self._OWNER)
+
+    @property
+    def VM(self) -> float:
+        return self._VM
+
+    @VM.setter
+    def VM(self, value: float | int | str | None) -> None:
+        self._VM = coerce_psse_float(value=value, current_value=self._VM)
+
+    @property
+    def VA(self) -> float:
+        return self._VA
+
+    @VA.setter
+    def VA(self, value: float | int | str | None) -> None:
+        self._VA = coerce_psse_float(value=value, current_value=self._VA)
+
+    @property
+    def NVHI(self) -> float:
+        return self._NVHI
+
+    @NVHI.setter
+    def NVHI(self, value: float | int | str | None) -> None:
+        self._NVHI = coerce_psse_float(value=value, current_value=self._NVHI)
+
+    @property
+    def NVLO(self) -> float:
+        return self._NVLO
+
+    @NVLO.setter
+    def NVLO(self, value: float | int | str | None) -> None:
+        self._NVLO = coerce_psse_float(value=value, current_value=self._NVLO)
+
+    @property
+    def EVHI(self) -> float:
+        return self._EVHI
+
+    @EVHI.setter
+    def EVHI(self, value: float | int | str | None) -> None:
+        self._EVHI = coerce_psse_float(value=value, current_value=self._EVHI)
+
+    @property
+    def EVLO(self) -> float:
+        return self._EVLO
+
+    @EVLO.setter
+    def EVLO(self, value: float | int | str | None) -> None:
+        self._EVLO = coerce_psse_float(value=value, current_value=self._EVLO)

@@ -9,17 +9,18 @@
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
+                            QMetaObject, QObject, QPoint, QRect,
+                            QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
-    QCursor, QFont, QFontDatabase, QGradient,
-    QIcon, QImage, QKeySequence, QLinearGradient,
-    QPainter, QPalette, QPixmap, QRadialGradient,
-    QTransform)
+                           QCursor, QFont, QFontDatabase, QGradient,
+                           QIcon, QImage, QKeySequence, QLinearGradient,
+                           QPainter, QPalette, QPixmap, QRadialGradient,
+                           QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QHeaderView,
-    QLineEdit, QMainWindow, QSizePolicy, QSplitter,
-    QToolBar, QTreeView, QVBoxLayout, QWidget)
+                               QLineEdit, QMainWindow, QSizePolicy, QSplitter,
+                               QToolBar, QTreeView, QVBoxLayout, QWidget)
 from VeraGrid.Gui.Icons.icons_rc import *
+
 
 class Ui_DynamicEditorWorkspaceWindow(object):
     def setupUi(self, DynamicEditorWorkspaceWindow):
@@ -96,7 +97,6 @@ class Ui_DynamicEditorWorkspaceWindow(object):
 
         self.horizontalLayout_2.addWidget(self.searchInTreeLineEdit)
 
-
         self.verticalLayout_2.addWidget(self.frame_2)
 
         self.treeView = QTreeView(self.treeFrame)
@@ -143,24 +143,30 @@ class Ui_DynamicEditorWorkspaceWindow(object):
         self.retranslateUi(DynamicEditorWorkspaceWindow)
 
         QMetaObject.connectSlotsByName(DynamicEditorWorkspaceWindow)
+
     # setupUi
 
     def retranslateUi(self, DynamicEditorWorkspaceWindow):
-        DynamicEditorWorkspaceWindow.setWindowTitle(QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"Dynamic Editor Workspace", None))
-        self.block_editor_actionCheckModel.setText(QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"CheckModel", None))
-#if QT_CONFIG(tooltip)
-        self.block_editor_actionCheckModel.setToolTip(QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"Inspect model", None))
-#endif // QT_CONFIG(tooltip)
+        DynamicEditorWorkspaceWindow.setWindowTitle(
+            QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"Dynamic Editor Workspace", None))
+        self.block_editor_actionCheckModel.setText(
+            QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"CheckModel", None))
+        # if QT_CONFIG(tooltip)
+        self.block_editor_actionCheckModel.setToolTip(
+            QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"Inspect model", None))
+        # endif // QT_CONFIG(tooltip)
         self.actionCenter.setText(QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"Center", None))
         self.actionZoom_in.setText(QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"Zoom in", None))
         self.actionZoom_out.setText(QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"Zoom out", None))
         self.action_delete_all.setText(QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"Delete all", None))
-#if QT_CONFIG(tooltip)
-        self.action_delete_all.setToolTip(QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"Delete all blocks to start from scratch.", None))
-#endif // QT_CONFIG(tooltip)
+        # if QT_CONFIG(tooltip)
+        self.action_delete_all.setToolTip(
+            QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"Delete all blocks to start from scratch.",
+                                       None))
+        # endif // QT_CONFIG(tooltip)
         self.actionValidate.setText(QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"Validate", None))
         self.actionview_tree.setText(QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"view tree", None))
-        self.searchInTreeLineEdit.setPlaceholderText(QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"Type to search the device", None))
+        self.searchInTreeLineEdit.setPlaceholderText(
+            QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"Type to search the device", None))
         self.toolBar.setWindowTitle(QCoreApplication.translate("DynamicEditorWorkspaceWindow", u"toolBar", None))
     # retranslateUi
-

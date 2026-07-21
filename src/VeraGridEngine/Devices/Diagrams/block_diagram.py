@@ -195,7 +195,7 @@ class BlockDiagram:
                    device_uid_to: int,
                    port_number_from: int,
                    port_number_to: int,
-                   color: str,
+                   color: str | None = None,
                    elbow_points: List[Tuple[float, float]] = None):
         """
         :param connectionitem_uid:

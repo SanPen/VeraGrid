@@ -23,10 +23,10 @@
       </size>
      </property>
      <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+      <enum>QFrame::Shape::NoFrame</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Shadow::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_6">
       <property name="leftMargin">
@@ -47,7 +47,7 @@
          <string>Add</string>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="../../Icons/icons.qrc">
           <normaloff>:/Icons/icons/plus.png</normaloff>:/Icons/icons/plus.png</iconset>
         </property>
        </widget>
@@ -58,7 +58,7 @@
          <string>Clear</string>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="../../Icons/icons.qrc">
           <normaloff>:/Icons/icons/delete3.png</normaloff>:/Icons/icons/delete3.png</iconset>
         </property>
        </widget>
@@ -66,7 +66,7 @@
       <item>
        <spacer name="horizontalSpacer_5">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
         <property name="sizeHint" stdset="0">
          <size>
@@ -82,10 +82,10 @@
    <item>
     <widget class="QFrame" name="frame_5">
      <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+      <enum>QFrame::Shape::NoFrame</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Shadow::Raised</enum>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <property name="leftMargin">
@@ -97,19 +97,19 @@
       <item>
        <widget class="QTableView" name="modelsTableView">
         <property name="sizeAdjustPolicy">
-         <enum>QAbstractScrollArea::AdjustToContents</enum>
+         <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
         </property>
         <property name="dragDropMode">
-         <enum>QAbstractItemView::InternalMove</enum>
+         <enum>QAbstractItemView::DragDropMode::InternalMove</enum>
         </property>
         <property name="defaultDropAction">
-         <enum>Qt::MoveAction</enum>
+         <enum>Qt::DropAction::MoveAction</enum>
         </property>
         <property name="alternatingRowColors">
          <bool>true</bool>
         </property>
         <property name="selectionBehavior">
-         <enum>QAbstractItemView::SelectRows</enum>
+         <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
         </property>
        </widget>
       </item>
@@ -125,10 +125,10 @@
       </size>
      </property>
      <property name="frameShape">
-      <enum>QFrame::NoFrame</enum>
+      <enum>QFrame::Shape::NoFrame</enum>
      </property>
      <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+      <enum>QFrame::Shadow::Raised</enum>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_8">
       <property name="leftMargin">
@@ -144,6 +144,16 @@
        <number>0</number>
       </property>
       <item>
+       <widget class="QProgressBar" name="progressBar">
+        <property name="value">
+         <number>0</number>
+        </property>
+        <property name="invertedAppearance">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QCheckBox" name="matchUsingCodeCheckBox">
         <property name="toolTip">
          <string>If checked, the objects are match using the code property, otherwise the idtag property is used</string>
@@ -154,25 +164,12 @@
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer_6">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>814</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
        <widget class="QPushButton" name="acceptModelsButton">
         <property name="text">
          <string>Accept</string>
         </property>
         <property name="icon">
-         <iconset resource="icons.qrc">
+         <iconset resource="../../Icons/icons.qrc">
           <normaloff>:/Icons/icons/gear.png</normaloff>:/Icons/icons/gear.png</iconset>
         </property>
        </widget>
@@ -183,7 +180,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="../../Icons/icons.qrc"/>
  </resources>
  <connections/>
 </ui>

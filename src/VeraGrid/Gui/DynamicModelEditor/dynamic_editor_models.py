@@ -6,11 +6,11 @@ import uuid
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set
 
-from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtWidgets
 from PySide6.QtCore import Signal
 from PySide6.QtGui import QColor
-from PySide6.QtWidgets import QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout, QHBoxLayout, QLabel, \
-    QLineEdit, QListWidget, QListWidgetItem, QPlainTextEdit, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget
+from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout, QHBoxLayout, QLabel,
+    QLineEdit, QListWidget, QListWidgetItem, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
 
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Diagrams.block_diagram import BlockDiagram
@@ -27,7 +27,8 @@ from VeraGrid.Gui.gui_functions import ComboDelegate, TextDelegate
 from VeraGrid.Gui.wrappable_table_model import WrappableTableModel
 from VeraGridEngine.enumerations import DeviceType, DynamicSimulationMode, DynamicTableModelMode, \
     ParamPowerFlowReferenceType, VarPowerFlowReferenceType
-from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_library import is_supported_library_payload
+from VeraGrid.Gui.DynamicModelEditor.dynamic_latex_renderer import LatexEquationDelegate
+from VeraGridEngine.Utils.Symbolic.latex_printer import symbolic_to_latex
 
 
 def _new_uid() -> int:
@@ -40,6 +41,12 @@ def _new_uid() -> int:
 
 
 def build_variables_rows(block: Block | None, rows: List["BlockParameterRow"]) -> None:
+    """
+
+    :param block:
+    :param rows:
+    :return:
+    """
     if block is not None:
         build_block_variables_rows(block, rows)
         if block.children:
@@ -49,6 +56,12 @@ def build_variables_rows(block: Block | None, rows: List["BlockParameterRow"]) -
 
 
 def build_block_variables_rows(block: Block, rows: List["BlockParameterRow"]) -> None:
+    """
+
+    :param block:
+    :param rows:
+    :return:
+    """
     var: Var
     for var in block.state_vars:
         init_eq: Expr | None = block.init_eqs.get(var)
@@ -78,6 +91,13 @@ def build_block_variables_rows(block: Block, rows: List["BlockParameterRow"]) ->
 
 
 def build_parameters_rows(table_model: Any, block: Block | None, rows: List["BlockParameterRow"]) -> None:
+    """
+
+    :param table_model:
+    :param block:
+    :param rows:
+    :return:
+    """
     if block is not None:
         build_block_parameters_rows(table_model, block, rows)
         if block.children:
@@ -87,6 +107,13 @@ def build_parameters_rows(table_model: Any, block: Block | None, rows: List["Blo
 
 
 def build_block_parameters_rows(table_model: Any, blk: Block, rows: List["BlockParameterRow"]) -> None:
+    """
+
+    :param table_model:
+    :param blk:
+    :param rows:
+    :return:
+    """
     var: Var
     expr: Expr
 
@@ -167,6 +194,14 @@ def update_source_dict(block: Block | None,
                        row: "BlockParameterRow",
                        value: Any,
                        old_expr: Any = None) -> None:
+    """
+
+    :param block:
+    :param row:
+    :param value:
+    :param old_expr:
+    :return:
+    """
     if block is not None:
         update_param_value(block, row, value, old_expr)
         if block.children:
@@ -176,6 +211,12 @@ def update_source_dict(block: Block | None,
 
 
 def _parse_symbolic_editor_value(block: Block | None, value: Any) -> Any:
+    """
+
+    :param block:
+    :param value:
+    :return:
+    """
     if isinstance(value, Expr):
         return value
     elif isinstance(value, (int, float)):
@@ -191,6 +232,14 @@ def _parse_symbolic_editor_value(block: Block | None, value: Any) -> Any:
 
 
 def update_param_value(blk: Block, row: "BlockParameterRow", value: Any, old_expr: Any = None) -> None:
+    """
+
+    :param blk:
+    :param row:
+    :param value:
+    :param old_expr:
+    :return:
+    """
     if row.kind == BlockParameterKind.EVENT_PARAMETER:
         if row.key_var is not None:
             blk.event_dict[row.key_var] = value
@@ -217,6 +266,12 @@ def update_param_value(blk: Block, row: "BlockParameterRow", value: Any, old_exp
 
 
 def build_equations_rows(block: Block | None, rows: List["BlockParameterRow"]) -> None:
+    """
+
+    :param block:
+    :param rows:
+    :return:
+    """
     if block is not None:
         build_block_equations_rows(block, rows)
         if block.children:
@@ -226,6 +281,12 @@ def build_equations_rows(block: Block | None, rows: List["BlockParameterRow"]) -
 
 
 def build_block_equations_rows(blk: Block, rows: List["BlockParameterRow"]) -> None:
+    """
+
+    :param blk:
+    :param rows:
+    :return:
+    """
     index: int
     expr: Expr
 
@@ -283,6 +344,19 @@ class BlockParameterRow:
                  item_index: int | None = None,
                  init_eq: Expr | None = None,
                  source_dict_name: str | None = None):
+        """
+
+        :param name:
+        :param kind:
+        :param key_var:
+        :param value:
+        :param editable_name:
+        :param editable_value:
+        :param value_type:
+        :param item_index:
+        :param init_eq:
+        :param source_dict_name:
+        """
         self.name: str = name
         self.kind: BlockParameterKind = kind
         self.key_var: Var | None = key_var
@@ -301,10 +375,18 @@ class BlockParameterRow:
 
     @property
     def is_section(self) -> bool:
+        """
+
+        :return:
+        """
         return self.kind == BlockParameterKind.SECTION
 
     @property
     def opens_expression_editor(self) -> bool:
+        """
+
+        :return:
+        """
         return self.kind in {
             BlockParameterKind.STATE_EQUATION,
             BlockParameterKind.ALGEBRAIC_EQUATION,
@@ -315,6 +397,11 @@ class BlockParameterRow:
 
 
 def build_block_parameter_display_value(value: Any) -> Any:
+    """
+
+    :param value:
+    :return:
+    """
     if isinstance(value, Expr):
         return symbolic_to_string(value)
     else:
@@ -322,6 +409,11 @@ def build_block_parameter_display_value(value: Any) -> Any:
 
 
 def refresh_block_parameter_row_cache(row: BlockParameterRow) -> None:
+    """
+
+    :param row:
+    :return:
+    """
     row.display_value = build_block_parameter_display_value(row.value)
 
     if row.init_eq is not None:
@@ -331,6 +423,11 @@ def refresh_block_parameter_row_cache(row: BlockParameterRow) -> None:
 
 
 def refresh_row_search_cache(row: BlockParameterRow) -> None:
+    """
+
+    :param row:
+    :return:
+    """
     parts: list[str] = list([str(row.name or "")])
     if row.value is not None:
         parts.append(str(row.value))
@@ -388,6 +485,11 @@ class BlockValueDelegate(QtWidgets.QStyledItemDelegate):
 
     @staticmethod
     def _make_float_editor(parent: QtWidgets.QWidget) -> QDoubleSpinBox:
+        """
+
+        :param parent:
+        :return:
+        """
         editor = QDoubleSpinBox(parent)
         editor.setDecimals(8)
         editor.setMinimum(-1e200)
@@ -395,6 +497,12 @@ class BlockValueDelegate(QtWidgets.QStyledItemDelegate):
         return editor
 
     def setEditorData(self, editor: QtWidgets.QWidget, index: QtCore.QModelIndex) -> None:
+        """
+
+        :param editor:
+        :param index:
+        :return:
+        """
         value = index.model().data(index, QtCore.Qt.ItemDataRole.EditRole)
         if isinstance(editor, QDoubleSpinBox):
             try:
@@ -408,6 +516,13 @@ class BlockValueDelegate(QtWidgets.QStyledItemDelegate):
                      editor: QtWidgets.QWidget,
                      model: QtCore.QAbstractItemModel,
                      index: QtCore.QModelIndex) -> None:
+        """
+
+        :param editor:
+        :param model:
+        :param index:
+        :return:
+        """
         if isinstance(editor, QDoubleSpinBox):
             model.setData(index, editor.value(), QtCore.Qt.ItemDataRole.EditRole)
         elif isinstance(editor, QLineEdit):
@@ -432,6 +547,13 @@ class EditParameterDialog(QDialog):
                  devices_static_params_mapping: Dict[DeviceType, List[ParamPowerFlowReferenceType]],
                  current_kind: BlockParameterKind,
                  parent: Optional[QtWidgets.QWidget] = None):
+        """
+
+        :param api_object:
+        :param devices_static_params_mapping:
+        :param current_kind:
+        :param parent:
+        """
         super().__init__(parent)
         self.setWindowTitle("Edit Parameter Type")
         self.resize(360, 200)
@@ -490,19 +612,39 @@ class EditParameterDialog(QDialog):
         self.update_visibility()
 
     def get_category(self) -> str:
+        """
+
+        :return:
+        """
         kind: BlockParameterKind = self.category_combo.currentData()
         return self._KIND_TO_STRING.get(kind, "")
 
     def get_category_kind(self) -> BlockParameterKind:
+        """
+
+        :return:
+        """
         return self.category_combo.currentData()
 
     def get_parameter_value(self) -> float:
+        """
+
+        :return:
+        """
         return float(self.parameter_value_spin.value())
 
     def get_static_variable(self) -> ParamPowerFlowReferenceType | None:
+        """
+
+        :return:
+        """
         return self.static_variable_combo.currentData()
 
     def update_visibility(self) -> None:
+        """
+
+        :return:
+        """
         kind: BlockParameterKind = self.get_category_kind()
         is_event_or_mode: bool = kind in {BlockParameterKind.EVENT_PARAMETER, BlockParameterKind.MODE_PARAMETER}
         is_parameter: bool = kind == BlockParameterKind.FIXED_PARAMETER
@@ -526,6 +668,7 @@ class EditParameterDialog(QDialog):
 
 class WrappableBlockTableModel(WrappableTableModel):
     block_updated = Signal(object)
+    latex_invalidation_requested = Signal(str)
 
     def __init__(self,
                  var_factory: VarFactory,
@@ -533,7 +676,7 @@ class WrappableBlockTableModel(WrappableTableModel):
                  parameter_editable_role: int,
                  block_search_role: int,
                  api_object: ALL_DEV_TYPES = None,
-                 parent: Optional[QtCore.QObject] = None):
+                 parent: Optional[QtWidgets.QTableView] = None):
         """
 
         :param var_factory:
@@ -546,7 +689,7 @@ class WrappableBlockTableModel(WrappableTableModel):
         super().__init__(parent)
         self._table_view = parent
         self.var_factory = var_factory
-        self.api_object: ALL_DEV_TYPES = api_object
+        self.api_object: ALL_DEV_TYPES | None = api_object
         self.block: Block | None = None
         self.rows: List[BlockParameterRow] = list()
         self.mode = DynamicTableModelMode.VARIABLES
@@ -633,6 +776,12 @@ class WrappableBlockTableModel(WrappableTableModel):
                 return row.kind.value
             elif col == 1:
                 if self.mode == DynamicTableModelMode.EQUATIONS:
+                    if role == QtCore.Qt.ItemDataRole.DisplayRole and isinstance(row.value, Expr):
+                        try:
+                            from VeraGridEngine.Utils.Symbolic.latex_printer import symbolic_to_latex
+                            return symbolic_to_latex(row.value)
+                        except Exception:
+                            return row.display_value
                     return row.display_value
                 else:
                     return row.name
@@ -646,6 +795,8 @@ class WrappableBlockTableModel(WrappableTableModel):
                         return row.display_value
                 else:
                     return None
+            else:
+                return None
         elif role == self._parameter_value_type_role and col == self._value_column:
             if self.mode == DynamicTableModelMode.VARIABLES:
                 return "float" if row.value_type == float else "text"
@@ -684,6 +835,8 @@ class WrappableBlockTableModel(WrappableTableModel):
         if col == 1:
             if self.mode == DynamicTableModelMode.EQUATIONS:
                 old_expr = row.value
+                old_latex = symbolic_to_latex(old_expr) if isinstance(old_expr, Expr) else None
+
                 try:
                     namespace = self.symbol_namespace
                     if namespace is None and self.block is not None:
@@ -695,9 +848,12 @@ class WrappableBlockTableModel(WrappableTableModel):
                     update_source_dict(self.block, row, row.value, old_expr)
                     self.dataChanged.emit(index, index, [role])
                     self.block_updated.emit(self.block.uid)
+                    if old_latex is not None:
+                        self.latex_invalidation_requested.emit(old_latex)
                     return True
-                except Exception:
+                except Exception:  # TODO: Except what? why should there be an exception here?
                     return False
+
             if row.key_var is not None:
                 row.key_var.name = value
             row.name = value
@@ -815,7 +971,7 @@ class WrappableBlockTableModel(WrappableTableModel):
             delegate = BlockValueDelegate(view)
             view.setItemDelegateForColumn(2, delegate)
         elif self.mode == DynamicTableModelMode.EQUATIONS:
-            delegate = BlockValueDelegate(view)
+            delegate = LatexEquationDelegate(view)
             view.setItemDelegateForColumn(1, delegate)
         else:
             pass
@@ -911,6 +1067,11 @@ class WrappableBlockTableModel(WrappableTableModel):
 
 class InspectModel(QWidget):
     def __init__(self, block: Block, parent=None):
+        """
+
+        :param block:
+        :param parent:
+        """
         super().__init__(parent)
 
         self.block = block
@@ -956,6 +1117,12 @@ class InspectModel(QWidget):
         self.refresh_lists(self.block)
 
     def refresh_lists(self, model=None, clear=True):
+        """
+
+        :param model:
+        :param clear:
+        :return:
+        """
         if model is None:
             model = self.block
 
@@ -995,11 +1162,14 @@ class InspectModel(QWidget):
         for submodel in model.children:
             self.refresh_lists(submodel, clear=False)
 
-# this class in cynamic_editor_library
-
 
 class BlockTableFilterProxyModel(QtCore.QSortFilterProxyModel):
     def __init__(self, search_role: int, parent: QtCore.QObject | None = None):
+        """
+
+        :param search_role:
+        :param parent:
+        """
         super().__init__(parent)
         self.setFilterCaseSensitivity(QtCore.Qt.CaseSensitivity.CaseInsensitive)
         self.setFilterRole(search_role)
@@ -1007,10 +1177,21 @@ class BlockTableFilterProxyModel(QtCore.QSortFilterProxyModel):
 
 
 def clone_block_for_editing(block: Block) -> Block:
+    """
+
+    :param block:
+    :return:
+    """
     return copy.deepcopy(block)
 
 
 def remap_serialized_uids(data: Any, uid_map: Dict[int, int]) -> Any:
+    """
+
+    :param data:
+    :param uid_map:
+    :return:
+    """
     if isinstance(data, dict):
         remapped_data: Dict[str, Any] = dict()
         key: str
@@ -1034,6 +1215,12 @@ def remap_serialized_uids(data: Any, uid_map: Dict[int, int]) -> Any:
 
 
 def clone_template_diagram(diagram: BlockDiagram, uid_map: Dict[int, int]) -> BlockDiagram:
+    """
+
+    :param diagram:
+    :param uid_map:
+    :return:
+    """
     cloned_diagram: BlockDiagram = BlockDiagram()
     node: Any
     con: Any
@@ -1156,7 +1343,8 @@ def _initialize_editor_assigned_emt_bus_model(bus: Bus,
                                               api_object: Any,
                                               circuit: MultiCircuit | None,
                                               var_factory: VarFactory,
-                                              editor_interface_refs: set[VarPowerFlowReferenceType] | None = None) -> None:
+                                              editor_interface_refs: set[
+                                                                         VarPowerFlowReferenceType] | None = None) -> None:
     if bus.emt_model.empty():
         if editor_interface_refs is not None:
             mask: list[bool] | None = None
@@ -1243,7 +1431,8 @@ def initialize_connected_bus_models_for_editor_assignment(api_object: Any,
                                                           circuit: MultiCircuit | None,
                                                           var_factory: VarFactory,
                                                           mode: DynamicSimulationMode,
-                                                          editor_interface_refs: set[VarPowerFlowReferenceType] | None = None) -> None:
+                                                          editor_interface_refs: set[
+                                                                                     VarPowerFlowReferenceType] | None = None) -> None:
     if isinstance(api_object, InjectionParent):
         bus: Bus | None = api_object.bus
         if bus is None:

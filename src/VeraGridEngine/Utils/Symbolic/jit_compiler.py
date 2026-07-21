@@ -596,7 +596,7 @@ def _compile_to_file(full_source: str, func_name: str) -> Callable:
     """
     import sys
 
-    header = "import numpy as np\nimport math\nfrom VeraGridEngine.Utils.Symbolic.symbolic import heaviside_num as _heaviside\n\n"
+    header = "import numpy as np\nimport math\nfrom numpy import nan\nfrom VeraGridEngine.Utils.Symbolic.symbolic import heaviside_num as _heaviside\n\n"
     full_content = header + full_source
 
     repo_root = Path(__file__).resolve().parents[4]
@@ -890,7 +890,7 @@ class DiscretizationMethod(ABC):
     __slots__ = ()
 
     @abstractmethod
-    def discretize(self, state_idx: int, h_var: str = 'h') -> str:
+    def discretize(self, state_idx: int, h_var: str = 'h', history_idx: int | None = None) -> str:
         pass
 
     @abstractmethod
@@ -901,8 +901,9 @@ class DiscretizationMethod(ABC):
 class TrapezoidalMethod(DiscretizationMethod):
     __slots__ = ()
 
-    def discretize(self, state_idx: int, h_var: str = 'h') -> str:
-        return f"((2.0/{h_var}) * (states[{state_idx}] - history[{state_idx}]) - d_history[{state_idx}])"
+    def discretize(self, state_idx: int, h_var: str = 'h', history_idx: int | None = None) -> str:
+        diff_idx = state_idx if history_idx is None else history_idx
+        return f"((2.0/{h_var}) * (states[{state_idx}] - history[{state_idx}]) - d_history[{diff_idx}])"
 
     def discretize_dot(self, state_idx: int, h_var: str = 'h', seeds_var: str = 'seeds') -> str:
         return f"((2.0/{h_var}) * ({seeds_var}[{state_idx}]))"
@@ -911,7 +912,7 @@ class TrapezoidalMethod(DiscretizationMethod):
 class BackwardEulerMethod(DiscretizationMethod):
     __slots__ = ()
 
-    def discretize(self, state_idx: int, h_var: str = 'h') -> str:
+    def discretize(self, state_idx: int, h_var: str = 'h', history_idx: int | None = None) -> str:
         return f"((states[{state_idx}] - history[{state_idx}]) / {h_var})"
 
     def discretize_dot(self, state_idx: int, h_var: str = 'h', seeds_var: str = 'seeds') -> str:
@@ -921,7 +922,7 @@ class BackwardEulerMethod(DiscretizationMethod):
 class BDF2Method(DiscretizationMethod):
     __slots__ = ()
 
-    def discretize(self, state_idx: int, h_var: str = 'h') -> str:
+    def discretize(self, state_idx: int, h_var: str = 'h', history_idx: int | None = None) -> str:
         return f"((1.5*states[{state_idx}] - 2.0*history[{state_idx}] + 0.5*history2[{state_idx}]) / {h_var})"
 
     def discretize_dot(self, state_idx: int, h_var: str = 'h', seeds_var: str = 'seeds') -> str:
@@ -931,7 +932,7 @@ class ContinuousMethod(DiscretizationMethod):
     """Strategy for continuous systems (RMS Small Signal). Does not discretize."""
     __slots__ = ()
 
-    def discretize(self, state_idx: int, h_var: str = 'h') -> str:
+    def discretize(self, state_idx: int, h_var: str = 'h', history_idx: int | None = None) -> str:
         return f"dx[{state_idx}]"
 
     def discretize_dot(self, state_idx: int, h_var: str = 'h', seeds_var: str = 'seeds') -> str:
@@ -1076,14 +1077,16 @@ class SubexpressionAnalyzer:
 # ==============================================================================
 
 class SymbolicToPythonVisitor:
-    __slots__ = ['var_map', 'param_map', 'method', 'cse_map', 'analyzer', 'in_cse_def', '_str_cache']
+    __slots__ = ['var_map', 'param_map', 'method', 'diff_var_map', 'cse_map', 'analyzer', 'in_cse_def', '_str_cache']
 
     OP_PRECEDENCE = {'+': 10, '-': 10, '*': 20, '/': 20, '**': 30}
 
-    def __init__(self, var_map: Dict[int, int], param_map: Dict[int, int], method: DiscretizationMethod) -> None:
+    def __init__(self, var_map: Dict[int, int], param_map: Dict[int, int], method: DiscretizationMethod,
+                 diff_var_map: Dict[int, int] | None = None) -> None:
         self.var_map = var_map
         self.param_map = param_map or dict()
         self.method = method
+        self.diff_var_map = diff_var_map or dict()
         self.cse_map: Dict[str, str] = dict()
         self.analyzer = None
         self.in_cse_def = False
@@ -1259,7 +1262,8 @@ class SymbolicToPythonVisitor:
             if base_uid not in self.var_map:
                 raise ValueError(f"Base var '{node.base_var.name}' (UID: {base_uid})"
                                  f" for DiffVar does not exist in states.")
-            term = self.method.discretize(self.var_map[base_uid])
+            state_idx = self.var_map[base_uid]
+            term = self.method.discretize(state_idx, history_idx=self.diff_var_map.get(base_uid, state_idx))
         return f"({term})" if prec > 10 else term
 
     def visit_func(self, node: Func, _precedence: int) -> str:
@@ -1284,9 +1288,10 @@ class ADVisitor(SymbolicToPythonVisitor):
                  var_map: Dict[int, int],
                  param_map: Dict[int, int],
                  method: DiscretizationMethod,
+                 diff_var_map: Dict[int, int] | None = None,
                  seeds_var: str = 'seeds',
                  active_indices: set | None = None) -> None:
-        super().__init__(var_map, param_map, method)
+        super().__init__(var_map, param_map, method, diff_var_map=diff_var_map)
         self.seeds_var = seeds_var
         self.active_indices = active_indices
         self.cse_has_dot: Set[str] = set()
@@ -1407,7 +1412,8 @@ class ADVisitor(SymbolicToPythonVisitor):
                 val = f"((states[{i}] - history[{i}]) / h)"
                 dot = "0.0" if seed == "0.0" else ("(1.0/h)" if seed == "1.0" else f"({seed}/h)")
             elif isinstance(self.method, TrapezoidalMethod):
-                val = f"((2.0/h)*(states[{i}] - history[{i}]) - d_history[{i}])"
+                diff_idx = self.diff_var_map.get(base_uid, i)
+                val = f"((2.0/h)*(states[{i}] - history[{i}]) - d_history[{diff_idx}])"
                 dot = "0.0" if seed == "0.0" else ("(2.0/h)" if seed == "1.0" else f"(2.0*{seed}/h)")
             elif isinstance(self.method, BDF2Method):
                 val = f"((1.5*states[{i}] - 2.0*history[{i}] + 0.5*history2[{i}]) / h)"
@@ -1541,7 +1547,7 @@ class ADVisitor(SymbolicToPythonVisitor):
 class EquationCompiler:
     """Main interface for compiling symbolic equations into executable functions."""
 
-    __slots__ = ['variables_objs', 'parameters_objs', 'strategy', 'var_map', 'param_map', 'visitor']
+    __slots__ = ['variables_objs', 'parameters_objs', 'diff_vars_objs', 'strategy', 'var_map', 'param_map', 'diff_var_map', 'visitor']
 
     METHODS = {
         DynamicIntegrationMethod.DaeTrapezoidal: TrapezoidalMethod(),
@@ -1553,9 +1559,11 @@ class EquationCompiler:
     def __init__(self,
                  variables: List[Var],
                  parameters: List[Var] | None = None,
+                 diff_vars: List[Var] | None = None,
                  method: DynamicIntegrationMethod = DynamicIntegrationMethod.DaeTrapezoidal) -> None:
         self.variables_objs = variables
         self.parameters_objs = parameters if parameters is not None else list()
+        self.diff_vars_objs = diff_vars if diff_vars is not None else list()
 
         if method not in self.METHODS:
             raise ValueError(f"Method '{method}' Unknown. Options: {list(self.METHODS.keys())}")
@@ -1564,8 +1572,13 @@ class EquationCompiler:
 
         self.var_map = {v.uid: i for i, v in enumerate(self.variables_objs)}
         self.param_map = {p.uid: i for i, p in enumerate(self.parameters_objs)}
+        self.diff_var_map = {
+            diff_var.base_var.uid: i
+            for i, diff_var in enumerate(self.diff_vars_objs)
+            if getattr(diff_var, 'base_var', None) is not None
+        }
 
-        self.visitor = SymbolicToPythonVisitor(self.var_map, self.param_map, self.strategy)
+        self.visitor = SymbolicToPythonVisitor(self.var_map, self.param_map, self.strategy, diff_var_map=self.diff_var_map)
 
     def compile(self, equations: List[Expr], func_name: str = "step_fn", use_cse: bool = True,
                 offset: int = 0, inplace: bool = False) -> Callable:
@@ -1646,7 +1659,8 @@ class EquationCompiler:
     def compile_ad_kernel(self, equations: List[Expr], func_name: str = "ad_step", use_cse: bool = True,
                           active_indices: set | None = None) -> Callable:
 
-        adv = ADVisitor(self.var_map, self.param_map, self.strategy, seeds_var='seeds', active_indices=active_indices)
+        adv = ADVisitor(self.var_map, self.param_map, self.strategy, diff_var_map=self.diff_var_map,
+                        seeds_var='seeds', active_indices=active_indices)
         cache_key: str = _build_equation_compiler_ad_cache_key(
             equations,
             self.var_map,
@@ -2116,6 +2130,7 @@ class EagerEquationCompiler(EquationCompiler):
             self.var_map,
             self.param_map,
             self.strategy,
+            diff_var_map=self.diff_var_map,
             seeds_var='seeds',
             active_indices=active_indices,
         )

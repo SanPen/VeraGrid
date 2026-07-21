@@ -9,6 +9,84 @@ from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.base.base_property import BaseProperty
 
 
+def coerce_psse_int(value: int | str | None, current_value: int) -> int:
+    """
+    Coerce a PSSE integer field while preserving the current default on invalid input.
+
+    :param value: Candidate PSSE value.
+    :param current_value: Current field value used as fallback.
+    :return: Parsed integer or the current value when parsing is not possible.
+    """
+    parsed_value: int = current_value
+
+    # PSSE files may leave optional numeric fields blank, so blank values keep the current default.
+    if isinstance(value, str):
+        stripped_value: str = value.strip()
+        if stripped_value == "":
+            parsed_value = current_value
+        else:
+            try:
+                # Some PSSE writers emit integer fields as "1.0", so float parsing is the tolerant path.
+                parsed_value = int(float(stripped_value))
+            except ValueError:
+                parsed_value = current_value
+    elif value is None:
+        parsed_value = current_value
+    else:
+        parsed_value = int(value)
+
+    return parsed_value
+
+
+def coerce_psse_float(value: float | int | str | None, current_value: float) -> float:
+    """
+    Coerce a PSSE floating-point field while preserving the current default on invalid input.
+
+    :param value: Candidate PSSE value.
+    :param current_value: Current field value used as fallback.
+    :return: Parsed float or the current value when parsing is not possible.
+    """
+    parsed_value: float = current_value
+
+    # PSSE files may leave optional numeric fields blank, so blank values keep the current default.
+    if isinstance(value, str):
+        stripped_value: str = value.strip()
+        if stripped_value == "":
+            parsed_value = current_value
+        else:
+            try:
+                parsed_value = float(stripped_value)
+            except ValueError:
+                parsed_value = current_value
+    elif value is None:
+        parsed_value = current_value
+    else:
+        parsed_value = float(value)
+
+    return parsed_value
+
+
+def coerce_psse_str(value: str | int | float | None, current_value: str) -> str:
+    """
+    Coerce a PSSE string field.
+
+    :param value: Candidate PSSE value.
+    :param current_value: Current field value used as fallback when the value is missing.
+    :return: String representation of the value or the current value when the value is missing.
+    """
+    parsed_value: str = current_value
+
+    # String fields should stay editable, but a missing value should not erase an existing default.
+    if value is None:
+        parsed_value = current_value
+    elif isinstance(value, str):
+        parsed_value = value
+    else:
+        parsed_value = str(value)
+
+    return parsed_value
+
+
 class PsseProperty(BaseProperty):
     """
     Psse Property

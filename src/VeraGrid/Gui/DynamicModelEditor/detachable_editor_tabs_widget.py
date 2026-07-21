@@ -8,9 +8,9 @@ from __future__ import annotations
 from typing import Any
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtWidgets import (QAbstractItemView, QComboBox, QDialogButtonBox,
-                             QGroupBox, QHBoxLayout, QLabel,
-                             QLineEdit, QPushButton, QSizePolicy, QSpacerItem,
-                             QTableWidget, QTableWidgetItem, QVBoxLayout)
+                               QGroupBox, QHBoxLayout, QLabel,
+                               QLineEdit, QPushButton, QSizePolicy, QSpacerItem,
+                               QTableWidget, QTableWidgetItem, QVBoxLayout)
 from typing import Optional
 from VeraGrid.Session.dynamic_editor_entries import DynamicEditorEntry
 from VeraGridEngine.enumerations import DynamicSimulationMode
@@ -160,8 +160,8 @@ class DynamicEditorPickerDialog(QtWidgets.QDialog):
                 entry
                 for entry in self._entries
                 if needle in entry.display_name.lower()
-                or needle in entry.type_label.lower()
-                or needle in " ".join(mode.name.lower() for mode in entry.available_modes)
+                   or needle in entry.type_label.lower()
+                   or needle in " ".join(mode.name.lower() for mode in entry.available_modes)
             ]
         else:
             self._filtered_entries = list(self._entries)
@@ -170,7 +170,8 @@ class DynamicEditorPickerDialog(QtWidgets.QDialog):
         for row, entry in enumerate(self._filtered_entries):
             self.entriesTableWidget.setItem(row, 0, QtWidgets.QTableWidgetItem(entry.display_name))
             self.entriesTableWidget.setItem(row, 1, QtWidgets.QTableWidgetItem(entry.type_label))
-            self.entriesTableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(" / ".join(mode.name for mode in entry.available_modes)))
+            self.entriesTableWidget.setItem(row, 2, QtWidgets.QTableWidgetItem(
+                " / ".join(mode.name for mode in entry.available_modes)))
 
         if len(self._filtered_entries) > 0:
             self.entriesTableWidget.selectRow(0)
@@ -219,7 +220,6 @@ class DynamicEditorPickerDialog(QtWidgets.QDialog):
         if self._selected_entry is None or self._selected_mode is None:
             return None
         return self._selected_entry, self._selected_mode
-
 
 
 class DynamicEditorAddButton(QtWidgets.QToolButton):
@@ -298,9 +298,9 @@ class DetachableEditorTabBar(QtWidgets.QTabBar):
 
     def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
         if (
-            self._drag_start_pos is None
-            or self._drag_index < 0
-            or not (event.buttons() & QtCore.Qt.MouseButton.LeftButton)
+                self._drag_start_pos is None
+                or self._drag_index < 0
+                or not (event.buttons() & QtCore.Qt.MouseButton.LeftButton)
         ):
             super().mouseMoveEvent(event)
             return

@@ -81,11 +81,11 @@ def _build_pf_consistent_bindings(name: str) -> Dict[str, float]:
     e_B: float = Epk_init * np.sin(theta - two_pi_over_3)
     e_C: float = Epk_init * np.sin(theta + two_pi_over_3)
 
-    # Average 3-ph active / reactive power for balanced sinusoidal
-    # steady state. Signs match the runtime ``Pe_expr`` and ``Qe_expr``:
-    # ``Pe = -(3/2)·Vpk·Ipk·cos(phi)`` and ``Qe = +(3/2)·Vpk·Ipk·sin(phi)``.
-    Pe: float = -1.5 * Vpk * Ipk * np.cos(phi)
-    Qe: float = 1.5 * Vpk * Ipk * np.sin(phi)
+    # Average 3-ph active / reactive power for balanced sinusoidal steady
+    # state. The runtime equations divide abc instantaneous sums by 3, so
+    # ``Pe = -(1/2)·Vpk·Ipk·cos(phi)`` and ``Qe = +(1/2)·Vpk·Ipk·sin(phi)``.
+    Pe: float = -0.5 * Vpk * Ipk * np.cos(phi)
+    Qe: float = 0.5 * Vpk * Ipk * np.sin(phi)
 
     return {
         "v_A": v_A,

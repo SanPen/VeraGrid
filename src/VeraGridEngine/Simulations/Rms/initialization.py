@@ -885,13 +885,8 @@ def init_pseudo_transient(mdl: Block,
         fixed_var_uids=[],
     )
     
-    # Build initial guess: random baseline, then overwrite with known init_guess values.
+    # Build initial guess without using existing init equations/guesses.
     x0 = np.random.rand(problem.get_all_vars_number())
-    for local_idx, var in enumerate(local_vars):
-        if local_idx >= len(x0):
-            continue
-        if var.uid in init_guess and init_guess[var.uid] is not None:
-            x0[local_idx] = float(init_guess[var.uid])
 
     # Start rotor angles close to the network reference for pseudo-transient.
     # This is only a seed; delta remains a solved state afterwards.

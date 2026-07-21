@@ -16,7 +16,7 @@ from VeraGrid.Gui.gui_functions import (IntDelegate, ComboDelegate, TextDelegate
                                         ComplexDelegate, SequenceDelegate, WindingTypeDelegate)
 from VeraGrid.Gui.wrappable_table_model import WrappableTableModel
 from VeraGridEngine.Templates.template_definition import TemplateProp, TEMPLATEPROP_TYPES
-from VeraGridEngine.enumerations import WindingType
+from VeraGridEngine.enumerations import WindingType, V_I_CurveSequenceType, WaveformSequenceType
 
 
 class DialogInpModel(WrappableTableModel):
@@ -105,8 +105,12 @@ class DialogInpModel(WrappableTableModel):
                 delegate = WindingTypeDelegate(self.parent)
                 F(i, delegate)
 
-            elif origin is Sequence or origin is list:
-                delegate = SequenceDelegate(self.parent)
+            elif tpe is V_I_CurveSequenceType:
+                delegate = SequenceDelegate(self.parent, V_I_CurveSequenceType)
+                F(i, delegate)
+
+            elif tpe is WaveformSequenceType:
+                delegate = SequenceDelegate(self.parent, WaveformSequenceType)
                 F(i, delegate)
 
             elif tpe is None:
@@ -190,7 +194,8 @@ class DialogInpModel(WrappableTableModel):
                     return ""
                 return str(val)
 
-            return val
+            if role == QtCore.Qt.ItemDataRole.EditRole:
+                return val
 
         return None
 

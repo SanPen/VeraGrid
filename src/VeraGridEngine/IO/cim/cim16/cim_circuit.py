@@ -40,6 +40,7 @@ class CIMCircuit:
                            'VoltageLevel': cimdev.VoltageLevel,
                            'CurrentLimit': cimdev.CurrentLimit,
                            'VoltageLimit': cimdev.VoltageLimit,
+                           'EnergySource': cimdev.EnergySource,
                            'EquivalentInjection': cimdev.EquivalentInjection,
                            'EquivalentNetwork': cimdev.EquivalentNetwork,
                            'ControlArea': cimdev.ControlArea,
@@ -52,6 +53,7 @@ class CIMCircuit:
                            'PowerTransformer': cimdev.PowerTransformer,
                            # 'Winding': cimdev.Winding,
                            'EnergyConsumer': cimdev.EnergyConsumer,
+                           'EnergyConsumerPhase': cimdev.EnergyConsumerPhase,
                            'EnergyArea': cimdev.EnergyArea,
                            'ConformLoad': cimdev.ConformLoad,
                            'NonConformLoad': cimdev.NonConformLoad,
@@ -61,12 +63,15 @@ class CIMCircuit:
                            'RatioTapChanger': cimdev.RatioTapChanger,
                            'GeneratingUnit': cimdev.GeneratingUnit,
                            'SynchronousMachine': cimdev.SynchronousMachine,
+                           'SynchronousMachinePhase': cimdev.SynchronousMachinePhase,
                            'HydroPump': cimdev.HydroPump,
                            'RotatingMachine': cimdev.RotatingMachine,
                            'HydroGenerationUnit': cimdev.HydroGeneratingUnit,  # todo: should this exist?
                            'HydroGeneratingUnit': cimdev.HydroGeneratingUnit,
                            'HydroPowerPlant': cimdev.HydroPowerPlant,
+                           'ShuntCompensator': cimdev.LinearShuntCompensator,
                            'LinearShuntCompensator': cimdev.LinearShuntCompensator,
+                           'LinearShuntCompensatorPhase': cimdev.LinearShuntCompensatorPhase,
                            'NuclearGeneratingUnit': cimdev.NuclearGeneratingUnit,
                            'RatioTapChangerTable': cimdev.RatioTapChangerTable,
                            'RatioTapChangerTablePoint': cimdev.RatioTapChangerTablePoint,
@@ -159,8 +164,12 @@ class CIMCircuit:
                             value2 = chunks[-1]
                             try:
                                 enum_val = cim_prop.class_type(value2)
+                            except (TypeError, ValueError):
+                                enum_val = cim_prop.class_type.argparse(value2)
+
+                            if isinstance(enum_val, cim_prop.class_type):
                                 setattr(element, property_name, enum_val)
-                            except TypeError as e:
+                            else:
                                 self.logger.add_error(msg='Could not convert Enum',
                                                       device="{0}.{1}.{2}".format(element.rdfid, class_name, property_name),
                                                       value=value2 + " (value)",

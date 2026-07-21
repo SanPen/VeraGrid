@@ -16,6 +16,7 @@ from VeraGridEngine.Devices.Substation.busbar import BusBar
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
 from VeraGridEngine.Devices.Profiles import ProfileBool, ProfileFloat
 from VeraGridEngine.Devices.Parents.editable_device import get_at, GCProp
+from VeraGridEngine.basic_structures import BoolVec
 
 
 class Bus(DynamicBusDevice):
@@ -29,6 +30,8 @@ class Bus(DynamicBusDevice):
         '_Vmax',
         '_Vm0',
         '_Va0',
+        '_Vm0_prof',
+        '_Va0_prof',
         '_Vmin_prof',
         '_Vmax_prof',
         '_angle_min',
@@ -44,6 +47,7 @@ class Bus(DynamicBusDevice):
         '_voltage_level',
         '_bus_type',
         '_is_slack',
+        '_is_slack_prof',
         '_is_dc',
         '_x',
         '_y',
@@ -70,7 +74,7 @@ class Bus(DynamicBusDevice):
             units='',
             tpe=bool,
             definition='Force the bus to be of slack type.',
-            profile_name='',
+            profile_name='is_slack_prof',
             cat=[PrpCat.TP, PrpCat.PF, PrpCat.PF3],
         ),
         GCProp(
@@ -109,7 +113,7 @@ class Bus(DynamicBusDevice):
             units='p.u.',
             tpe=float,
             definition='Voltage module guess.',
-            profile_name='',
+            profile_name='Vm0_prof',
             cat=[PrpCat.PF],
         ),
         GCProp(
@@ -117,7 +121,7 @@ class Bus(DynamicBusDevice):
             units='rad.',
             tpe=float,
             definition='Voltage angle guess.',
-            profile_name='',
+            profile_name='Va0_prof',
             cat=[PrpCat.PF],
         ),
         GCProp(
@@ -348,30 +352,32 @@ class Bus(DynamicBusDevice):
                                   build_status=build_status)
 
         self._active = bool(active)
-        self._active_prof = ProfileBool(default_value=self.active)
+        self._active_prof = ProfileBool(default_value=self._active)
 
         # Nominal voltage (kV)
-        self.Vnom = float(Vnom)
+        self._Vnom = float(Vnom)
 
         # minimum voltage limit
-        self.Vmin = float(vmin)
-        self._Vmin_prof = ProfileFloat(default_value=vmin)
+        self._Vmin = float(vmin)
+        self._Vmin_prof = ProfileFloat(default_value=self._Vmin)
 
-        self.Vm_cost = 1.0
+        self._Vm_cost = 1.0
 
         # maximum voltage limit
-        self.Vmax = float(vmax)
-        self._Vmax_prof = ProfileFloat(default_value=vmax)
+        self._Vmax = float(vmax)
+        self._Vmax_prof = ProfileFloat(default_value=self._Vmax)
 
-        self.Vm0 = float(Vm0)
+        self._Vm0 = float(Vm0)
+        self._Vm0_prof = ProfileFloat(default_value=self._Vm0)
 
-        self.Va0 = float(Va0)
+        self._Va0 = float(Va0)
+        self._Va0_prof = ProfileFloat(default_value=self._Va0)
 
-        self.angle_min = float(angle_min)
+        self._angle_min = float(angle_min)
 
-        self.angle_max = float(angle_max)
+        self._angle_max = float(angle_max)
 
-        self.angle_cost = 0
+        self._angle_cost = 0
 
         # summation of lower reactive power limits connected
         self.Qmin_sum = 0
@@ -416,6 +422,7 @@ class Bus(DynamicBusDevice):
 
         # Flag to determine if the bus is a slack bus or not
         self._is_slack = bool(is_slack)
+        self._is_slack_prof = ProfileBool(default_value=self._is_slack)
 
         # determined if this bus is an AC or DC bus
         self._is_dc = bool(is_dc)
@@ -424,12 +431,12 @@ class Bus(DynamicBusDevice):
         self._is_grounded = bool(is_grounded)
 
         # position and dimensions
-        self.x = float(xpos)
-        self.y = float(ypos)
-        self.h = float(height)
-        self.w = float(width)
-        self.longitude = float(longitude)
-        self.latitude = float(latitude)
+        self._x = float(xpos)
+        self._y = float(ypos)
+        self._h = float(height)
+        self._w = float(width)
+        self._longitude = float(longitude)
+        self._latitude = float(latitude)
 
         self.color = color if color is not None else "#000000"
 
@@ -506,6 +513,54 @@ class Bus(DynamicBusDevice):
         return get_at(self.Vmax, self.Vmax_prof, t)
 
     @property
+    def Vm0_prof(self) -> ProfileFloat:
+        """
+        Vm0 profile
+        :return: Profile
+        """
+        return self._Vm0_prof
+
+    @Vm0_prof.setter
+    def Vm0_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
+            self._Vm0_prof = val
+        elif isinstance(val, np.ndarray):
+            self._Vm0_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into a Vm0_prof')
+
+    def get_Vm0_at(self, t: int | None) -> float:
+        """
+        :param t:
+        :return:
+        """
+        return get_at(self.Vm0, self.Vm0_prof, t)
+
+    @property
+    def Va0_prof(self) -> ProfileFloat:
+        """
+        Va0 profile
+        :return: Profile
+        """
+        return self._Va0_prof
+
+    @Va0_prof.setter
+    def Va0_prof(self, val: Union[ProfileFloat, np.ndarray]):
+        if isinstance(val, ProfileFloat):
+            self._Va0_prof = val
+        elif isinstance(val, np.ndarray):
+            self._Va0_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into a Va0_prof')
+
+    def get_Va0_at(self, t: int | None) -> float:
+        """
+        :param t:
+        :return:
+        """
+        return get_at(self.Va0, self.Va0_prof, t)
+
+    @property
     def voltage_level(self) -> Union[VoltageLevel, None]:
         """
         voltage_level getter
@@ -529,7 +584,7 @@ class Bus(DynamicBusDevice):
             raise Exception(f'{type(val)} not supported to be set into a '
                             f'voltage_level of type Union[VoltageLevel, None]')
 
-    def determine_bus_type(self) -> BusMode:
+    def determine_snapshot_bus_type(self) -> BusMode:
         """
         Infer the bus type from the devices attached to it
         @return: BusMode
@@ -543,6 +598,17 @@ class Bus(DynamicBusDevice):
             return BusMode.Slack_tpe
 
         return BusMode.PQ_tpe
+
+    @property
+    def bus_type(self) -> BusMode:
+        return self._bus_type
+
+    @bus_type.setter
+    def bus_type(self, val: BusMode):
+        if isinstance(val, BusMode):
+            self._bus_type = val
+        else:
+            raise Exception(f"Invalid bus_type value={val}")
 
     def get_country(self) -> Country | None:
         """
@@ -678,14 +744,15 @@ class Bus(DynamicBusDevice):
         else:
             return None
 
-    def get_voltage_guess(self, use_stored_guess=False) -> complex:
+    def get_voltage_guess_at(self, t_idx: int | None, use_stored_guess=False) -> complex:
         """
         Determine the voltage initial guess
+        :param t_idx: time step
         :param use_stored_guess: use the stored guess or get one from the devices
         :return: voltage guess
         """
         if use_stored_guess:
-            return self.Vm0 * np.exp(1j * self.Va0)
+            return self.get_Vm0_at(t_idx) * np.exp(1j * self.get_Va0_at(t_idx))
         else:
             return complex(1, 0)
 
@@ -827,6 +894,48 @@ class Bus(DynamicBusDevice):
         :return: None
         """
         self._is_slack = bool(val)
+
+        if self.auto_update_enabled:
+            # This is to ease out the difficulty imposed by being able to update the slack
+            self.is_slack_prof.fill(self.is_slack)
+
+    @property
+    def is_slack_prof(self) -> ProfileBool:
+        """
+        Get ``is_slack``.
+
+        :return: bool
+        """
+        return self._is_slack_prof
+
+    @is_slack_prof.setter
+    def is_slack_prof(self, val: ProfileBool | BoolVec) -> None:
+        """
+        Set ``is_slack``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        if isinstance(val, ProfileBool):
+            self._is_slack_prof = val
+        elif isinstance(val, np.ndarray):
+            self._is_slack_prof.set(arr=val)
+        else:
+            raise Exception(str(type(val)) + 'not supported to be set into a active_prof')
+
+    def get_is_slack_at(self, t: int | None) -> bool:
+        """
+        :param t:
+        :return:
+        """
+        return get_at(self.is_slack, self.is_slack_prof, t)
+
+    def set_is_slack_at(self, t: int | None, val: bool):
+
+        if t is None:
+            self.is_slack = val
+        else:
+            self.is_slack_prof[t] = val
 
     @property
     def is_dc(self) -> bool:

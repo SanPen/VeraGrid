@@ -660,7 +660,7 @@ def short_circuit_abc(nc: NumericalCircuit,
         U = Vpf[gen_idx[i] + idx4]
         Y = Ygen[np.ix_(gen_idx[i] + idx4, gen_idx[i] + idx4)]
         I = np.conj(S[np.ix_(gen_idx[i] + idx4)] / U)
-        E = U + np.linalg.solve(Y.toarray(), I)
+        E = U + spsolve(Y, I)
         Inorton_i = Y @ E
         Inorton[np.ix_(gen_idx[i] + idx3)] = Inorton_i
 

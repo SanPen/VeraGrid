@@ -18,8 +18,22 @@ from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.basic_structures import Logger
 
 try:
-    from pandapower import from_pickle, from_sqlite, from_json, from_excel
+    alias_map = {
+        "Inf": np.inf,
+        "bool": np.bool_,
+        "int": int,
+        "float": float,
+        "complex": complex,
+        "object": object,
+        "str": str,
+    }
+    for alias_name, alias_value in alias_map.items():
+        if alias_name not in np.__dict__:
+            setattr(np, alias_name, alias_value)
+
+    from pandapower import from_pickle, from_sqlite, from_json, from_excel, create_empty_network
     from pandapower.auxiliary import pandapowerNet
+    from pandapower.io_utils import PPJSONDecoder
 
     PANDAPOWER_AVAILABLE = True
 
@@ -44,17 +58,35 @@ def is_pandapower_pickle(file_path):
         return False
 
 
-def is_pandapower_json(file_path):
+def is_pandapower_json(file_path: str) -> bool:
     """
-    Check if a file is pandapower JSON
-    :param file_path:
-    :return:
+    Check if a file is pandapower JSON.
+
+    :param file_path: Path to the candidate JSON file.
+    :returns: ``True`` when the JSON has pandapower markers or can be loaded by pandapower.
     """
+    try:
+        with open(file_path, "r", encoding="utf-8") as file_pointer:
+            data = json.load(file_pointer)
+    except (OSError, json.JSONDecodeError):
+        data = None
+
+    if isinstance(data, dict):
+        module_name = data.get("_module", None)
+        class_name = data.get("_class", None)
+
+        # pandapower JSON exports carry explicit top-level markers.
+        if module_name == "pandapower.auxiliary" and class_name == "pandapowerNet":
+            return True
+        else:
+            pass
+    else:
+        pass
+
     if PANDAPOWER_AVAILABLE:
         try:
-            with open(file_path, "r") as f:
-                data = json.load(f)
-            return isinstance(data, dict) and all(key in data for key in ["bus", "line", "load", "ext_grid"])
+            net = from_json(file_path)
+            return isinstance(net, pandapowerNet)
         except Exception:
             return False
     else:
@@ -78,6 +110,71 @@ def is_pandapower_sqlite(file_path):
             return False
     else:
         return False
+
+
+def tolerant_from_pandapower_sqlite(file_path: str):
+    """
+    Load a pandapower SQLite file while tolerating tables that the installed
+    pandapower version does not know yet.
+    """
+    try:
+        return from_sqlite(file_path)
+    except KeyError:
+        with sqlite3.connect(file_path) as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+            dodfs = dict()
+            for table_name, in cursor.fetchall():
+                table = pd.read_sql_query(f"SELECT * FROM '{table_name}'", conn, index_col="index")
+                table.index.name = None
+                dodfs[table_name] = table
+
+        net = create_empty_network()
+
+        for item, table in dodfs.items():
+            if item == "dtypes":
+                continue
+            elif item == "parameters":
+                for column in table.columns:
+                    net[column] = table.at[0, column]
+                    if column == "name" and pd.isnull(net[column]):
+                        net[column] = ""
+                continue
+            elif item in ["line_geodata", "bus_geodata"] and item in net:
+                table = table.rename_axis(net[item].index.name)
+            elif item.endswith("_std_types"):
+                if item.startswith("fuse"):
+                    for column in table.columns:
+                        table[column] = table[column].apply(
+                            lambda value: json.loads(value) if isinstance(value, str) and value.startswith("[") else value
+                        )
+                net["std_types"][item[:-10]] = table.T.to_dict()
+                continue
+            elif item.endswith("_profiles"):
+                if "profiles" not in net.keys():
+                    net["profiles"] = dict()
+                table = table.rename_axis(None)
+                net["profiles"][item[:-9]] = table
+                continue
+            elif item == "user_pf_options":
+                net["user_pf_options"] = {column: value for column, value in zip(table.columns, table.values[0])}
+                continue
+            else:
+                for json_column in ("object", "recycle"):
+                    if json_column in table.columns:
+                        table[json_column] = table[json_column].apply(
+                            lambda value: json.loads(value, cls=PPJSONDecoder)
+                        )
+                if not isinstance(table.index, pd.MultiIndex) and item in net:
+                    table = table.rename_axis(net[item].index.name)
+
+            net[item] = table
+            try:
+                net[item].set_index(net[item].index.astype(np.int64), inplace=True)
+            except (TypeError, ValueError):
+                pass
+
+        return net
 
 
 def is_pandapower_file(file_path: str):
@@ -112,7 +209,7 @@ class Panda2VeraGrid:
                 if file_or_net.endswith(".p"):
                     self.panda_net: pandapowerNet = from_pickle(file_or_net)
                 elif file_or_net.endswith(".sqlite"):
-                    self.panda_net: pandapowerNet = from_sqlite(file_or_net)
+                    self.panda_net: pandapowerNet = tolerant_from_pandapower_sqlite(file_or_net)
                 elif file_or_net.endswith(".json"):
                     self.panda_net: pandapowerNet = from_json(file_or_net)
                 elif file_or_net.endswith(".xlsx"):

@@ -41,6 +41,7 @@ from VeraGridEngine.enumerations import (DeviceType, AvailableTransferMode, Solv
                                          ContingencyFilteringMethods, InvestmentsEvaluationObjectives,
                                          ReliabilityMode, OpfDispatchMode, DynamicIntegrationMethod,
                                          RmsInitializationMethod, EmtInitializationMethod, EmtSolverTypes,
+                                         MethodShortCircuit,
                                          DynamicSimulationMode)
 
 
@@ -346,7 +347,7 @@ class SimulationsMain(TimeEventsMain):
         self.ui.actionCatalogue_element_optimization.triggered.connect(self.catalogue_element_optimization)
 
         self.ui.actionUse_clustering.triggered.connect(self.activate_clustering)
-        self.ui.actionNodal_capacity.triggered.connect(self.run_nodal_capacity)
+        self.ui.actionNodal_capacity.triggered.connect(self.nodal_capacity_dispatcher)
 
         # combobox change
         self.ui.engineComboBox.currentIndexChanged.connect(self.modify_ui_options_according_to_the_engine)
@@ -1049,7 +1050,7 @@ class SimulationsMain(TimeEventsMain):
         ops = sim.RmsOptions(
             time_step=self.ui.rms_h_spinBox.value(),
             simulation_time=self.ui.rms_sim_time_spinBox.value(),
-            tolerance=self.ui.tolerance_rms_spinBox.value(),
+            tolerance=1.0 / (10.0 ** self.ui.tolerance_rms_spinBox.value()),
             integration_method=self.ui.rms_integration_method_comboBox.currentData(),
             initialization_method=self.ui.rms_initialization_method_comboBox.currentData(),
         )
@@ -1076,7 +1077,7 @@ class SimulationsMain(TimeEventsMain):
         ops = sim.EmtOptions(
             time_step=self.ui.emt_h_spinBox.value(),
             simulation_time=self.ui.emt_sim_time_spinBox.value(),
-            tolerance=self.ui.tolerance_emt_spinBox.value(),
+            tolerance=1.0 / (10.0 ** self.ui.tolerance_emt_spinBox.value()),
             integration_method=self.ui.emt_integration_method_comboBox.currentData(),
             initialization_method=self.ui.emt_initialization_method_comboBox.currentData(),
             solver_type=self.ui.emt_solver_type_comboBox.currentData(),
@@ -1221,6 +1222,24 @@ class SimulationsMain(TimeEventsMain):
                 self.run_opf_time_series()
             else:
                 self.run_opf()
+
+    def nodal_capacity_dispatcher(self):
+        """
+        Dispatch the nodal capacity action
+        :return:
+        """
+        if self.server_driver.is_running():
+            if self.ts_flag():
+                instruction = RemoteInstruction(operation=SimulationTypes.NodalCapacityTimeSeries_run)
+            else:
+                instruction = RemoteInstruction(operation=SimulationTypes.NodalCapacity_run)
+
+            self.run_remote(instruction=instruction)
+        else:
+            if self.ts_flag():
+                self.run_nodal_capacity_time_series()
+            else:
+                self.run_nodal_capacity()
 
     def atc_dispatcher(self):
         """
@@ -1498,7 +1517,8 @@ class SimulationsMain(TimeEventsMain):
 
                 self.add_simulation(SimulationTypes.PowerFlow_run)
 
-                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                self.ui.progress_label.setText(
+                    QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # get the power flow options from the GUI
@@ -1506,7 +1526,8 @@ class SimulationsMain(TimeEventsMain):
 
                 opf_results = self.get_opf_results(use_opf=self.ui.actionOpf_to_Power_flow.isChecked())
 
-                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Running power flow..."))
+                self.ui.progress_label.setText(
+                    QtCore.QCoreApplication.translate("SimulationsMain", "Running power flow..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # set power flow object instance
@@ -1539,7 +1560,8 @@ class SimulationsMain(TimeEventsMain):
 
                 self.add_simulation(SimulationTypes.PowerFlow_run)
 
-                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                self.ui.progress_label.setText(
+                    QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # get the power flow options from the GUI
@@ -1547,7 +1569,8 @@ class SimulationsMain(TimeEventsMain):
 
                 opf_results = self.get_opf_results(use_opf=self.ui.actionOpf_to_Power_flow.isChecked())
 
-                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Running power flow..."))
+                self.ui.progress_label.setText(
+                    QtCore.QCoreApplication.translate("SimulationsMain", "Running power flow..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # set power flow object instance
@@ -1607,7 +1630,8 @@ class SimulationsMain(TimeEventsMain):
 
                 self.add_simulation(SimulationTypes.PowerFlow3ph_run)
 
-                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                self.ui.progress_label.setText(
+                    QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # get the power flow options from the GUI
@@ -1615,7 +1639,8 @@ class SimulationsMain(TimeEventsMain):
 
                 opf_results = self.get_opf_results(use_opf=self.ui.actionOpf_to_Power_flow.isChecked())
 
-                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Running power flow..."))
+                self.ui.progress_label.setText(
+                    QtCore.QCoreApplication.translate("SimulationsMain", "Running power flow..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # set power flow object instance
@@ -1676,7 +1701,8 @@ class SimulationsMain(TimeEventsMain):
 
                     self.add_simulation(SimulationTypes.PowerFlowTimeSeries3ph_run)
 
-                    self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                    self.ui.progress_label.setText(
+                        QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                     QtGui.QGuiApplication.processEvents()
 
                     opf_time_series_results = self.get_opf_ts_results(
@@ -1685,11 +1711,11 @@ class SimulationsMain(TimeEventsMain):
                     options = self.get_selected_power_flow_options()
 
                     drv = sim.PowerFlowTimeSeriesDriver3Ph(grid=self.circuit,
-                                                          options=options,
-                                                          time_indices=self.get_time_indices(),
-                                                          opf_time_series_results=opf_time_series_results,
-                                                          clustering_results=self.get_clustering_results(),
-                                                          engine=self.get_preferred_engine())
+                                                           options=options,
+                                                           time_indices=self.get_time_indices(),
+                                                           opf_time_series_results=opf_time_series_results,
+                                                           clustering_results=self.get_clustering_results(),
+                                                           engine=self.get_preferred_engine())
 
                     self.session.run(drv,
                                      post_func=self.post_power_flow_time_series_3ph,
@@ -1756,7 +1782,8 @@ class SimulationsMain(TimeEventsMain):
 
                 self.add_simulation(SimulationTypes.StateEstimation_run)
 
-                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                self.ui.progress_label.setText(
+                    QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 # get the power flow options from the GUI
@@ -1818,11 +1845,23 @@ class SimulationsMain(TimeEventsMain):
                 _, pf_results = self.session.power_flow
                 _, pf_results3ph = self.session.power_flow_3ph
 
-                if pf_results is not None:
+                if self.circuit.get_short_circuit_event_number() == 0:
+                    warning_msg('You need to define short circuits in the Database.'
+                                + '\nAdd them by right click on a bus and selecting on the context menu.')
+                else:
+                    methods = {event.method for event in self.circuit.short_circuit_event}
+                    needs_pf = any(method in (MethodShortCircuit.sequences, MethodShortCircuit.sequences_vsc)
+                                   for method in methods)
+                    needs_pf_3ph = MethodShortCircuit.phases in methods
 
-                    if self.circuit.get_short_circuit_event_number() == 0:
-                        warning_msg('You need to define short circuits in the Database.'
-                                    + '\nAdd them by right click on a bus and selecting on the context menu.')
+                    missing = list()
+                    if needs_pf and pf_results is None:
+                        missing.append('Run a power flow simulation first.')
+                    if needs_pf_3ph and pf_results3ph is None:
+                        missing.append('Run a 3-phase power flow simulation first.')
+
+                    if missing:
+                        info_msg('\n'.join(missing) + '\nThe results are needed to initialize this simulation.')
                     else:
                         self.add_simulation(SimulationTypes.ShortCircuit_run)
 
@@ -1847,10 +1886,6 @@ class SimulationsMain(TimeEventsMain):
                                          post_func=self.post_short_circuit,
                                          prog_func=self.ui.progressBar.setValue,
                                          text_func=self.ui.progress_label.setText)
-
-                else:
-                    info_msg('Run a power flow simulation first.\n'
-                             'The results are needed to initialize this simulation.')
             else:
                 warning_msg('Another short circuit is being executed now...')
         else:
@@ -2477,7 +2512,8 @@ class SimulationsMain(TimeEventsMain):
                         # lock the UI
                         self.LOCK()
 
-                        self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                        self.ui.progress_label.setText(
+                            QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                         QtGui.QGuiApplication.processEvents()
 
                         #  compose the base power
@@ -2581,7 +2617,8 @@ class SimulationsMain(TimeEventsMain):
 
                     self.add_simulation(SimulationTypes.PowerFlowTimeSeries_run)
 
-                    self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                    self.ui.progress_label.setText(
+                        QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                     QtGui.QGuiApplication.processEvents()
 
                     opf_time_series_results = self.get_opf_ts_results(
@@ -2650,7 +2687,8 @@ class SimulationsMain(TimeEventsMain):
 
                     self.add_simulation(SimulationTypes.StochasticPowerFlow)
 
-                    self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                    self.ui.progress_label.setText(
+                        QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                     QtGui.QGuiApplication.processEvents()
 
                     pf_options = self.get_selected_power_flow_options()
@@ -2755,6 +2793,7 @@ class SimulationsMain(TimeEventsMain):
         generate_report = self.ui.addOptimalPowerFlowReportCheckBox.isChecked()
         robust = self.ui.fixOpfCheckBox.isChecked()
         use_glsk_as_cost = self.ui.useGslkAsCostsOpfCheckBox.isChecked()
+        quadratic_costs = self.ui.quadraticCostsOpfCheckBox.isChecked()
         add_losses_approximation = self.ui.approximateLossesOpfCheckBox.isChecked()
         _, pf_results = self.session.power_flow
 
@@ -2785,6 +2824,7 @@ class SimulationsMain(TimeEventsMain):
         if pf_results is not None:
             acopf_v0 = pf_results.voltage
             acopf_S0 = pf_results.Sbus
+            acopf_pf_converged = bool(pf_results.converged)
         else:
             if ips_init_with_pf and solver == SolverType.NONLINEAR_OPF:
                 self.show_warning_toast("Run a power flow first")
@@ -2792,6 +2832,7 @@ class SimulationsMain(TimeEventsMain):
 
             acopf_v0 = None
             acopf_S0 = None
+            acopf_pf_converged = False
 
         verbose = self.ui.ips_verbose_spinBox.value()
 
@@ -2815,6 +2856,7 @@ class SimulationsMain(TimeEventsMain):
             report_formulation=report_formulation,
             generate_report=generate_report,
             use_glsk_as_cost=use_glsk_as_cost,
+            quadratic_costs=quadratic_costs,
             add_losses_approximation=add_losses_approximation,
             ips_method=ips_method,
             ips_tolerance=ips_tolerance,
@@ -2824,6 +2866,7 @@ class SimulationsMain(TimeEventsMain):
             ips_control_q_limits=ips_control_q_limits,
             acopf_v0=acopf_v0,
             acopf_S0=acopf_S0,
+            acopf_pf_converged=acopf_pf_converged,
             robust=robust,
             verbose=verbose,
             mip_framework=mip_framework
@@ -2903,7 +2946,8 @@ class SimulationsMain(TimeEventsMain):
                         self.LOCK()
 
                         # Compile the grid
-                        self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                        self.ui.progress_label.setText(
+                            QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                         QtGui.QGuiApplication.processEvents()
 
                         # get the power flow options from the GUI
@@ -3612,14 +3656,46 @@ class SimulationsMain(TimeEventsMain):
         capacity_nodes_idx = np.array([bus_dict[b] for _, b, _ in sel_buses])
 
         method = self.ui.nodal_capacity_method_comboBox.currentData()
+        nodal_capacity_sign = self.ui.nodal_capacity_sense_SpinBox.value()
 
         opt = sim.NodalCapacityOptions(opf_options=self.get_opf_options(),
                                        capacity_nodes_idx=capacity_nodes_idx,
+                                       nodal_capacity_sign=nodal_capacity_sign,
                                        method=method)
 
         return opt
 
     def run_nodal_capacity(self):
+        """
+        Nodal capacity snapshot run
+        """
+        if self.circuit.valid_for_simulation():
+
+            if not self.session.is_this_running(SimulationTypes.NodalCapacity_run):
+
+                options = self.get_nodal_capacity_options()
+                if len(options.capacity_nodes_idx) == 0:
+                    error_msg(text="For this simulation, you need to select some buses from the interface",
+                              title="Nodal hosting capacity")
+                    return
+
+                self.remove_simulation(SimulationTypes.NodalCapacity_run)
+                self.ui.progress_label.setText('Running nodal hosting capacity...')
+                QtGui.QGuiApplication.processEvents()
+                self.LOCK()
+
+                drv = sim.NodalCapacityDriver(grid=self.circuit,
+                                              options=options,
+                                              engine=self.get_preferred_engine())
+
+                self.session.run(drv,
+                                 post_func=self.post_nodal_capacity,
+                                 prog_func=self.ui.progressBar.setValue,
+                                 text_func=self.ui.progress_label.setText)
+            else:
+                self.show_warning_toast('Another nodal capacity study is being run...')
+
+    def run_nodal_capacity_time_series(self):
         """
         OPF Time Series run
         """
@@ -3648,7 +3724,7 @@ class SimulationsMain(TimeEventsMain):
                 self.LOCK()
 
                 # Compile the grid
-                self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                self.ui.progress_label.setText(self.tr("Compiling the grid..."))
                 QtGui.QGuiApplication.processEvents()
 
                 if options is not None:
@@ -3662,7 +3738,7 @@ class SimulationsMain(TimeEventsMain):
                     drv.engine = self.get_preferred_engine()
 
                     self.session.run(drv,
-                                     post_func=self.post_nodal_capacity,
+                                     post_func=self.post_nodal_capacity_time_series,
                                      prog_func=self.ui.progressBar.setValue,
                                      text_func=self.ui.progress_label.setText)
 
@@ -3674,23 +3750,33 @@ class SimulationsMain(TimeEventsMain):
 
     def post_nodal_capacity(self):
         """
-        Post OPF Time Series
+        Post nodal capacity
+        """
+        _, results = self.session.nodal_capacity_optimization
+
+        if results is not None:
+            self.remove_simulation(SimulationTypes.NodalCapacity_run)
+            self.update_available_results()
+            self.colour_diagrams()
+
+        if not self.session.is_anything_running():
+            self.UNLOCK()
+
+    def post_nodal_capacity_time_series(self):
+        """
+        Post nodal capacity time series
         """
 
         _, results = self.session.nodal_capacity_optimization_ts
 
         if results is not None:
-
-            # expand the clusters
             results.expand_clustered_results()
-
-            # delete from the current simulations
             self.remove_simulation(SimulationTypes.NodalCapacityTimeSeries_run)
+            self.update_available_results()
+            self.colour_diagrams()
 
-            if results is not None:
-                self.update_available_results()
-
-                self.colour_diagrams()
+        if not self.session.is_anything_running():
+            self.UNLOCK()
 
         else:
             pass
@@ -3714,7 +3800,8 @@ class SimulationsMain(TimeEventsMain):
                     self.LOCK()
 
                     # Compile the grid
-                    self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                    self.ui.progress_label.setText(
+                        QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                     QtGui.QGuiApplication.processEvents()
 
                     pf_options = self.get_selected_power_flow_options()
@@ -3769,7 +3856,6 @@ class SimulationsMain(TimeEventsMain):
 
         _, pf_results = self.session.power_flow
 
-
         rms_options = self.get_selected_rms_simulation_options()
         if rms_options.simulation_time > 0.0:
 
@@ -3796,7 +3882,6 @@ class SimulationsMain(TimeEventsMain):
                          'The results are needed to initialize this simulation.')
         else:
             info_msg('The simulation time is 0. Change it to a proper time in settings.')
-
 
     def post_rms(self) -> None:
         """
@@ -3921,8 +4006,6 @@ class SimulationsMain(TimeEventsMain):
 
         else:
             info_msg('The simulation time is 0. Change it to a proper time in settings.')
-
-
 
         # if self.circuit.valid_for_simulation():
         #
@@ -4146,7 +4229,8 @@ class SimulationsMain(TimeEventsMain):
                         self.LOCK()
 
                         # Compile the grid
-                        self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                        self.ui.progress_label.setText(
+                            QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                         QtGui.QGuiApplication.processEvents()
 
                         # get the small signal stability analysis simulation options from the GUI
@@ -4191,11 +4275,11 @@ class SimulationsMain(TimeEventsMain):
             self.show_info_toast("Small-signal stability analysis RMS has finished correctly!")
 
         else:
-            warning_msg('There are no Small-Signal Stability analysis RMS results.', 'Small-Signal Stability analysis RMS')
+            warning_msg('There are no Small-Signal Stability analysis RMS results.',
+                        'Small-Signal Stability analysis RMS')
 
         if not self.session.is_anything_running():
             self.UNLOCK()
-
 
     def run_emt_small_signal_stability(self):
         """
@@ -4225,7 +4309,8 @@ class SimulationsMain(TimeEventsMain):
                         self.LOCK()
 
                         # Compile the grid
-                        self.ui.progress_label.setText(QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
+                        self.ui.progress_label.setText(
+                            QtCore.QCoreApplication.translate("SimulationsMain", "Compiling the grid..."))
                         QtGui.QGuiApplication.processEvents()
 
                         # get the small-signal stability analysis simulation options from the GUI
@@ -4269,11 +4354,11 @@ class SimulationsMain(TimeEventsMain):
             self.show_info_toast("Small-Signal stability analysis EMT has finished correctly!")
 
         else:
-            warning_msg('There are no Small-Signal Stability analysis EMT results.', 'Small-Signal Stability analysis EMT')
+            warning_msg('There are no Small-Signal Stability analysis EMT results.',
+                        'Small-Signal Stability analysis EMT')
 
         if not self.session.is_anything_running():
             self.UNLOCK()
-
 
     def update_available_mip_solvers(self):
         """
@@ -4309,7 +4394,7 @@ class SimulationsMain(TimeEventsMain):
         current_diagram = self.get_selected_diagram_widget()
 
         # Check if the active diagram is NOT a MapWidget
-        if current_diagram is None: # Before it was "if not isinstance(current_diagram, MapWidget):" but it did not work
+        if current_diagram is None:  # Before it was "if not isinstance(current_diagram, MapWidget):" but it did not work
             self.map_warning = MapWarningDialog(parent=self)
             self.map_warning.exec()
             return

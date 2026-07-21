@@ -7,8 +7,9 @@ from typing import Tuple
 import numpy as np
 from scipy.sparse import csc_matrix, coo_matrix
 import VeraGridEngine.Topology.topology as tp
-from VeraGridEngine.basic_structures import CxVec, Vec, IntVec, BoolVec, StrVec
+from VeraGridEngine.basic_structures import CxVec, Vec, IntVec, BoolVec, StrVec, Logger
 from VeraGridEngine.enumerations import GeneratorControlMode
+from VeraGridEngine.Utils.compare import compare_arr
 
 
 class GeneratorData:
@@ -289,6 +290,16 @@ class GeneratorData:
 
         return data
 
+    def compare(self, other: "GeneratorData", tol: float, logger: Logger) -> None:
+        """
+        Compare generator fields used by NumericalCircuit.compare().
+        """
+        compare_arr(self.active, other.active, tol, 'GenData', 'active', logger)
+        compare_arr(self.p, other.p, tol, 'GenData', 'P', logger)
+        compare_arr(self.v, other.v, tol, 'GenData', 'Vset', logger)
+        compare_arr(self.qmin, other.qmin, tol, 'GenData', 'Qmin', logger)
+        compare_arr(self.qmax, other.qmax, tol, 'GenData', 'Qmax', logger)
+
     def get_injections(self) -> CxVec:
         """
         Compute the active and reactive power of non-controlled generators (assuming all)
@@ -460,7 +471,42 @@ class GeneratorData:
         for i in self.bus_idx:
             if i in bus_indices:
                 res.append(i)
+            else:
+                pass
         return np.array(res)
+
+    def get_dispatchable_active_indices_per_area(self,
+                                                 bus_area_indices: IntVec,
+                                                 area_count: int) -> list[IntVec]:
+        """
+        Get the active dispatchable generator indices grouped by area.
+
+        :param bus_area_indices: Area index of each bus. A value of ``-1`` means
+                                 that the bus does not belong to any area.
+        :param area_count: Number of declared areas.
+        :return: List where position ``a`` stores the generator-index array for area ``a``.
+        """
+        area_generators: list[list[int]] = list()
+        for _ in range(area_count):
+            area_generators.append(list())
+
+        for gen_idx in range(self.nelm):
+            if self.active[gen_idx] and self.dispatchable[gen_idx]:
+                bus_idx = self.bus_idx[gen_idx]
+                area_idx = bus_area_indices[bus_idx]
+
+                if 0 <= area_idx < area_count:
+                    area_generators[area_idx].append(gen_idx)
+                else:
+                    pass
+            else:
+                pass
+
+        grouped_indices: list[IntVec] = list()
+        for generator_indices in area_generators:
+            grouped_indices.append(np.array(generator_indices, dtype=int))
+
+        return grouped_indices
 
     def get_C_bus_elm(self) -> csc_matrix:
         """

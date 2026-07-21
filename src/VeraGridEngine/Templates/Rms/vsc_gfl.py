@@ -560,6 +560,7 @@ def build_gfl_converter_model(vfactory: VarFactory, inputs,
     # Add all control blocks
     for ctrl_block in control_blocks:
         gfl_block.add(ctrl_block)
+    gfl_block.add(current_limiter_block)
     gfl_block.add(control_block_id)
     gfl_block.add(control_block_iq)
 

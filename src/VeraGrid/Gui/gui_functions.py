@@ -16,7 +16,7 @@ from VeraGridEngine.IO.cim.cgmes.cgmes_circuit import CgmesCircuit, CGMES_ASSETS
 from VeraGridEngine.IO.cim.cgmes.base import Base as CgmesBase
 from VeraGridEngine.Devices.Branches.line_locations import LineLocations
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
-from VeraGridEngine.enumerations import SimulationTypes, WindingType
+from VeraGridEngine.enumerations import SimulationTypes, WindingType, WaveformSequenceType, V_I_CurveSequenceType
 from VeraGrid.Gui.font_config import MENU_FONT_SIZE
 
 if TYPE_CHECKING:
@@ -1156,6 +1156,7 @@ def get_simulation_tree_icons() -> Dict[str, str]:
         SimulationTypes.ContinuationPowerFlow_run.value: ':/Icons/icons/continuation_power_flow.png',
         SimulationTypes.ClusteringAnalysis_run.value: ':/Icons/icons/clustering.png',
         SimulationTypes.InvestmentsEvaluation_run.value: ':/Icons/icons/expansion_planning.png',
+        SimulationTypes.NodalCapacity_run.value: ':/Icons/icons/nodal_capacity.png',
         SimulationTypes.NodalCapacityTimeSeries_run.value: ':/Icons/icons/nodal_capacity.png',
         SimulationTypes.OPF_NTC_run.value: ':/Icons/icons/ntc_opf.png',
         SimulationTypes.OPF_NTC_TS_run.value: ':/Icons/icons/ntc_opf_ts.png',
@@ -1588,10 +1589,11 @@ class WaveformPoint:
         return f"WaveformPoint({self.time}, {self.value})"
 
 
-class WaveformEditorDialog(QtWidgets.QDialog):
-    def __init__(self, parent=None):
+class SequenceEditorDialog(QtWidgets.QDialog):
+    def __init__(self, parent, sequence_type: WaveformSequenceType | V_I_CurveSequenceType ):
         super().__init__(parent)
-        self.setWindowTitle("Waveform editor")
+        self.sequence_type = sequence_type
+        self.setWindowTitle("Sequence editor")
         self.setMinimumSize(600, 500)
 
         layout = QtWidgets.QVBoxLayout(self)
@@ -1614,7 +1616,10 @@ class WaveformEditorDialog(QtWidgets.QDialog):
         layout.addLayout(button_layout)
 
         self.table = QtWidgets.QTableWidget(0, 2)
-        self.table.setHorizontalHeaderLabels(["time", "value"])
+        if self.sequence_type is V_I_CurveSequenceType:
+            self.table.setHorizontalHeaderLabels(["Voltage", "Current"])
+        elif self.sequence_type is WaveformSequenceType:
+            self.table.setHorizontalHeaderLabels(["time", "value"])
         self.table.horizontalHeader().setStretchLastSection(True)
         self.table.setSelectionBehavior(QtWidgets.QTableWidget.SelectionBehavior.SelectRows)
         layout.addWidget(self.table)
@@ -1696,25 +1701,65 @@ class WaveformEditorDialog(QtWidgets.QDialog):
         if self.canvas is None:
             return
 
-        times = []
-        values = []
+        values_0 = []
+        values_1 = []
         for row in range(self.table.rowCount()):
-            t_item = self.table.item(row, 0)
-            v_item = self.table.item(row, 1)
-            if t_item is not None and v_item is not None:
+            item_0 = self.table.item(row, 0)
+            item_1 = self.table.item(row, 1)
+            if item_0 is not None and item_1 is not None:
                 try:
-                    times.append(float(t_item.text()))
-                    values.append(float(v_item.text()))
+                    values_0.append(float(item_0.text()))
+                    values_1.append(float(item_1.text()))
                 except ValueError:
                     pass
 
         self.ax.clear()
-        if times:
-            self.ax.plot(times, values, "o-")
-            self.ax.set_xlabel("time")
-            self.ax.set_ylabel("value")
+        if values_0:
+            self.ax.plot(values_0, values_1, "o-")
+            if self.sequence_type is V_I_CurveSequenceType:
+                self.ax.set_xlabel("voltage")
+                self.ax.set_ylabel("current")
+            elif self.sequence_type is WaveformSequenceType:
+                self.ax.set_xlabel("time")
+                self.ax.set_ylabel("value")
             self.ax.grid(True)
         self.canvas.draw_idle()
+
+    def accept(self) -> None:
+        if self.sequence_type is WaveformSequenceType:
+            row_count = self.table.rowCount()
+            if row_count < 2:
+                QtWidgets.QMessageBox.warning(
+                    self,
+                    "Invalid waveform",
+                    "Arbitrary source waveform requires at least two points.",
+                )
+                return
+
+            prev_x: float | None = None
+            for row in range(row_count):
+                item = self.table.item(row, 0)
+                if item is None:
+                    continue
+                try:
+                    x = float(item.text())
+                except ValueError:
+                    QtWidgets.QMessageBox.warning(
+                        self,
+                        "Invalid waveform",
+                        f"Non-numeric value in column 0 at row {row + 1}.",
+                    )
+                    return
+                if prev_x is not None and x <= prev_x:
+                    QtWidgets.QMessageBox.warning(
+                        self,
+                        "Invalid waveform",
+                        "Arbitrary source waveform times must be strictly increasing.",
+                    )
+                    return
+                prev_x = x
+
+        super().accept()
 
     def set_points(self, points):
         self.table.setRowCount(0)
@@ -1742,8 +1787,9 @@ class WaveformEditorDialog(QtWidgets.QDialog):
 
 class SequenceDelegate(QtWidgets.QStyledItemDelegate):
 
-    def __init__(self, parent):
+    def __init__(self, parent, sequence_type: WaveformSequenceType | V_I_CurveSequenceType):
         QtWidgets.QStyledItemDelegate.__init__(self, parent)
+        self.sequence_type: WaveformSequenceType | V_I_CurveSequenceType = sequence_type
 
     def paint(self, painter, option, index):
         painter.save()
@@ -1753,9 +1799,9 @@ class SequenceDelegate(QtWidgets.QStyledItemDelegate):
 
         val = index.model().data(index, QtCore.Qt.ItemDataRole.EditRole)
         if val is not None and len(val) > 0:
-            btn_option.text = f"Edit waveform ({len(val)} pts)"
+            btn_option.text = f"Edit  ({len(val)} points)"
         else:
-            btn_option.text = "Edit waveform"
+            btn_option.text = "Edit points"
 
         QtWidgets.QApplication.style().drawControl(
             QtWidgets.QStyle.CE_PushButton, btn_option, painter
@@ -1767,7 +1813,7 @@ class SequenceDelegate(QtWidgets.QStyledItemDelegate):
         if event.type() == QtCore.QEvent.Type.MouseButtonRelease:
             if not (index.flags() & QtCore.Qt.ItemFlag.ItemIsEditable):
                 return False
-            dialog = WaveformEditorDialog(self.parent())
+            dialog = SequenceEditorDialog(self.parent(), self.sequence_type)
             current = index.model().data(index, QtCore.Qt.ItemDataRole.EditRole)
             if current is not None:
                 dialog.set_points(current)

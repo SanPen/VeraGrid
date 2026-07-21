@@ -7,7 +7,7 @@ from typing import Tuple
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_float, coerce_psse_int, coerce_psse_str
 
 
 class RawSwitchedShunt(RawObject):
@@ -104,8 +104,8 @@ class RawSwitchedShunt(RawObject):
     def __init__(self):
         RawObject.__init__(self, "Switched shunt")
 
-        self.I = 0
-        self.ID = ''
+        self._I: int = 0
+        self._ID: str = ''
         '''
         MODSW:
         0 - locked
@@ -116,45 +116,45 @@ class RawSwitchedShunt(RawObject):
         5 - discrete adjustment, local admittance control (WTF?)
         6 - discrete adjustment, reactive power control for FACTS (see RMIDNT)
         '''
-        self.MODSW = 0
-        self.ADJM = 0
-        self.STAT = 0
-        self.VSWHI = 1
-        self.VSWLO = 1
-        self.SWREM = 0
-        self.SWREG = 0
-        self.NREG = 0
-        self.RMPCT = 1
-        self.RMIDNT = ''
-        self.BINIT = 0
-        self.NAME = ''
+        self._MODSW: int = 0
+        self._ADJM: int = 0
+        self._STAT: int = 0
+        self._VSWHI: float = 1.0
+        self._VSWLO: float = 1.0
+        self._SWREM: int = 0
+        self._SWREG: int = 0
+        self._NREG: int = 0
+        self._RMPCT: float = 1.0
+        self._RMIDNT: str = ''
+        self._BINIT: float = 0.0
+        self._NAME: str = ''
 
-        self.S1 = 0
-        self.S2 = 0
-        self.S3 = 0
-        self.S4 = 0
-        self.S5 = 0
-        self.S6 = 0
-        self.S7 = 0
-        self.S8 = 0
+        self._S1: int = 0
+        self._S2: int = 0
+        self._S3: int = 0
+        self._S4: int = 0
+        self._S5: int = 0
+        self._S6: int = 0
+        self._S7: int = 0
+        self._S8: int = 0
 
-        self.N1 = 0
-        self.N2 = 0
-        self.N3 = 0
-        self.N4 = 0
-        self.N5 = 0
-        self.N6 = 0
-        self.N7 = 0
-        self.N8 = 0
+        self._N1: int = 0
+        self._N2: int = 0
+        self._N3: int = 0
+        self._N4: int = 0
+        self._N5: int = 0
+        self._N6: int = 0
+        self._N7: int = 0
+        self._N8: int = 0
 
-        self.B1 = 0.0
-        self.B2 = 0.0
-        self.B3 = 0.0
-        self.B4 = 0.0
-        self.B5 = 0.0
-        self.B6 = 0.0
-        self.B7 = 0.0
-        self.B8 = 0.0
+        self._B1: float = 0.0
+        self._B2: float = 0.0
+        self._B3: float = 0.0
+        self._B4: float = 0.0
+        self._B5: float = 0.0
+        self._B6: float = 0.0
+        self._B7: float = 0.0
+        self._B8: float = 0.0
 
     def set_block_status(self, index: int, value: int) -> None:
         if index == 1:
@@ -280,3 +280,307 @@ class RawSwitchedShunt(RawObject):
         :return: 
         """
         return "{0}_{1}".format(self.I, self.ID)
+
+    @property
+    def I(self) -> int:
+        return self._I
+
+    @I.setter
+    def I(self, value: int | str | None) -> None:
+        self._I = coerce_psse_int(value=value, current_value=self._I)
+
+    @property
+    def ID(self) -> str:
+        return self._ID
+
+    @ID.setter
+    def ID(self, value: str | int | float | None) -> None:
+        self._ID = coerce_psse_str(value=value, current_value=self._ID)
+
+    @property
+    def MODSW(self) -> int:
+        return self._MODSW
+
+    @MODSW.setter
+    def MODSW(self, value: int | str | None) -> None:
+        self._MODSW = coerce_psse_int(value=value, current_value=self._MODSW)
+
+    @property
+    def ADJM(self) -> int:
+        return self._ADJM
+
+    @ADJM.setter
+    def ADJM(self, value: int | str | None) -> None:
+        self._ADJM = coerce_psse_int(value=value, current_value=self._ADJM)
+
+    @property
+    def STAT(self) -> int:
+        return self._STAT
+
+    @STAT.setter
+    def STAT(self, value: int | str | None) -> None:
+        self._STAT = coerce_psse_int(value=value, current_value=self._STAT)
+
+    @property
+    def VSWHI(self) -> float:
+        return self._VSWHI
+
+    @VSWHI.setter
+    def VSWHI(self, value: float | int | str | None) -> None:
+        self._VSWHI = coerce_psse_float(value=value, current_value=self._VSWHI)
+
+    @property
+    def VSWLO(self) -> float:
+        return self._VSWLO
+
+    @VSWLO.setter
+    def VSWLO(self, value: float | int | str | None) -> None:
+        self._VSWLO = coerce_psse_float(value=value, current_value=self._VSWLO)
+
+    @property
+    def SWREG(self) -> int:
+        return self._SWREG
+
+    @SWREG.setter
+    def SWREG(self, value: int | str | None) -> None:
+        self._SWREG = coerce_psse_int(value=value, current_value=self._SWREG)
+
+    @property
+    def SWREM(self) -> int:
+        return self._SWREM
+
+    @SWREM.setter
+    def SWREM(self, value: int | str | None) -> None:
+        self._SWREM = coerce_psse_int(value=value, current_value=self._SWREM)
+
+    @property
+    def NREG(self) -> int:
+        return self._NREG
+
+    @NREG.setter
+    def NREG(self, value: int | str | None) -> None:
+        self._NREG = coerce_psse_int(value=value, current_value=self._NREG)
+
+    @property
+    def RMPCT(self) -> float:
+        return self._RMPCT
+
+    @RMPCT.setter
+    def RMPCT(self, value: float | int | str | None) -> None:
+        self._RMPCT = coerce_psse_float(value=value, current_value=self._RMPCT)
+
+    @property
+    def RMIDNT(self) -> str:
+        return self._RMIDNT
+
+    @RMIDNT.setter
+    def RMIDNT(self, value: str | int | float | None) -> None:
+        self._RMIDNT = coerce_psse_str(value=value, current_value=self._RMIDNT)
+
+    @property
+    def BINIT(self) -> float:
+        return self._BINIT
+
+    @BINIT.setter
+    def BINIT(self, value: float | int | str | None) -> None:
+        self._BINIT = coerce_psse_float(value=value, current_value=self._BINIT)
+
+    @property
+    def NAME(self) -> str:
+        return self._NAME
+
+    @NAME.setter
+    def NAME(self, value: str | int | float | None) -> None:
+        self._NAME = coerce_psse_str(value=value, current_value=self._NAME)
+
+    @property
+    def S1(self) -> int:
+        return self._S1
+
+    @S1.setter
+    def S1(self, value: int | str | None) -> None:
+        self._S1 = coerce_psse_int(value=value, current_value=self._S1)
+
+    @property
+    def S2(self) -> int:
+        return self._S2
+
+    @S2.setter
+    def S2(self, value: int | str | None) -> None:
+        self._S2 = coerce_psse_int(value=value, current_value=self._S2)
+
+    @property
+    def S3(self) -> int:
+        return self._S3
+
+    @S3.setter
+    def S3(self, value: int | str | None) -> None:
+        self._S3 = coerce_psse_int(value=value, current_value=self._S3)
+
+    @property
+    def S4(self) -> int:
+        return self._S4
+
+    @S4.setter
+    def S4(self, value: int | str | None) -> None:
+        self._S4 = coerce_psse_int(value=value, current_value=self._S4)
+
+    @property
+    def S5(self) -> int:
+        return self._S5
+
+    @S5.setter
+    def S5(self, value: int | str | None) -> None:
+        self._S5 = coerce_psse_int(value=value, current_value=self._S5)
+
+    @property
+    def S6(self) -> int:
+        return self._S6
+
+    @S6.setter
+    def S6(self, value: int | str | None) -> None:
+        self._S6 = coerce_psse_int(value=value, current_value=self._S6)
+
+    @property
+    def S7(self) -> int:
+        return self._S7
+
+    @S7.setter
+    def S7(self, value: int | str | None) -> None:
+        self._S7 = coerce_psse_int(value=value, current_value=self._S7)
+
+    @property
+    def S8(self) -> int:
+        return self._S8
+
+    @S8.setter
+    def S8(self, value: int | str | None) -> None:
+        self._S8 = coerce_psse_int(value=value, current_value=self._S8)
+
+    @property
+    def N1(self) -> int:
+        return self._N1
+
+    @N1.setter
+    def N1(self, value: int | str | None) -> None:
+        self._N1 = coerce_psse_int(value=value, current_value=self._N1)
+
+    @property
+    def N2(self) -> int:
+        return self._N2
+
+    @N2.setter
+    def N2(self, value: int | str | None) -> None:
+        self._N2 = coerce_psse_int(value=value, current_value=self._N2)
+
+    @property
+    def N3(self) -> int:
+        return self._N3
+
+    @N3.setter
+    def N3(self, value: int | str | None) -> None:
+        self._N3 = coerce_psse_int(value=value, current_value=self._N3)
+
+    @property
+    def N4(self) -> int:
+        return self._N4
+
+    @N4.setter
+    def N4(self, value: int | str | None) -> None:
+        self._N4 = coerce_psse_int(value=value, current_value=self._N4)
+
+    @property
+    def N5(self) -> int:
+        return self._N5
+
+    @N5.setter
+    def N5(self, value: int | str | None) -> None:
+        self._N5 = coerce_psse_int(value=value, current_value=self._N5)
+
+    @property
+    def N6(self) -> int:
+        return self._N6
+
+    @N6.setter
+    def N6(self, value: int | str | None) -> None:
+        self._N6 = coerce_psse_int(value=value, current_value=self._N6)
+
+    @property
+    def N7(self) -> int:
+        return self._N7
+
+    @N7.setter
+    def N7(self, value: int | str | None) -> None:
+        self._N7 = coerce_psse_int(value=value, current_value=self._N7)
+
+    @property
+    def N8(self) -> int:
+        return self._N8
+
+    @N8.setter
+    def N8(self, value: int | str | None) -> None:
+        self._N8 = coerce_psse_int(value=value, current_value=self._N8)
+
+    @property
+    def B1(self) -> float:
+        return self._B1
+
+    @B1.setter
+    def B1(self, value: float | int | str | None) -> None:
+        self._B1 = coerce_psse_float(value=value, current_value=self._B1)
+
+    @property
+    def B2(self) -> float:
+        return self._B2
+
+    @B2.setter
+    def B2(self, value: float | int | str | None) -> None:
+        self._B2 = coerce_psse_float(value=value, current_value=self._B2)
+
+    @property
+    def B3(self) -> float:
+        return self._B3
+
+    @B3.setter
+    def B3(self, value: float | int | str | None) -> None:
+        self._B3 = coerce_psse_float(value=value, current_value=self._B3)
+
+    @property
+    def B4(self) -> float:
+        return self._B4
+
+    @B4.setter
+    def B4(self, value: float | int | str | None) -> None:
+        self._B4 = coerce_psse_float(value=value, current_value=self._B4)
+
+    @property
+    def B5(self) -> float:
+        return self._B5
+
+    @B5.setter
+    def B5(self, value: float | int | str | None) -> None:
+        self._B5 = coerce_psse_float(value=value, current_value=self._B5)
+
+    @property
+    def B6(self) -> float:
+        return self._B6
+
+    @B6.setter
+    def B6(self, value: float | int | str | None) -> None:
+        self._B6 = coerce_psse_float(value=value, current_value=self._B6)
+
+    @property
+    def B7(self) -> float:
+        return self._B7
+
+    @B7.setter
+    def B7(self, value: float | int | str | None) -> None:
+        self._B7 = coerce_psse_float(value=value, current_value=self._B7)
+
+    @property
+    def B8(self) -> float:
+        return self._B8
+
+    @B8.setter
+    def B8(self, value: float | int | str | None) -> None:
+        self._B8 = coerce_psse_float(value=value, current_value=self._B8)

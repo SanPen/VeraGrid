@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Sequence
+from typing import Dict, List, Sequence, Type
 
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
@@ -14,7 +14,7 @@ from VeraGridEngine.Utils.Symbolic.block import Expr, Var
 from VeraGridEngine.Utils.Symbolic import symbolic as sym
 from VeraGridEngine.Utils.Symbolic.symbolic import CmpOp
 from VeraGridEngine.Utils.Symbolic.symbolic import Comparison
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType, WaveformSequenceType
 from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
 from VeraGridEngine.basic_structures import Vec
 
@@ -183,7 +183,7 @@ class ArbitraryWaveformCurrentSourceEmtTemplate(TemplateDefinition):
                 TemplateProp(name="phA", units="", descr="Whether phase A is active.", tpe=bool, value=True),
                 TemplateProp(name="phB", units="", descr="Whether phase B is active.", tpe=bool, value=False),
                 TemplateProp(name="phC", units="", descr="Whether phase C is active.", tpe=bool, value=False),
-                TemplateProp(name="waveform", units="", descr="waveform points (value, time)", tpe=Sequence[Vec], value=None),
+                TemplateProp(name="waveform", units="", descr="waveform points (value, time)", tpe= WaveformSequenceType, value=((0.0, 0.0), (0.02, 1), (0.04, 0.0))),
                 TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str, value="arbitrary_waveform_current_source_emt"),
             ]
         )
@@ -288,7 +288,7 @@ class ArbitraryWaveformVoltageSourceEmtTemplate(TemplateDefinition):
                 TemplateProp(name="phA", units="", descr="Whether phase A is active.", tpe=bool, value=True),
                 TemplateProp(name="phB", units="", descr="Whether phase B is active.", tpe=bool, value=False),
                 TemplateProp(name="phC", units="", descr="Whether phase C is active.", tpe=bool, value=False),
-                TemplateProp(name="waveform", units="", descr="waveform points (value, time)", tpe=Sequence[Vec], value=None),
+                TemplateProp(name="waveform", units="", descr="waveform points (value, time)", tpe=WaveformSequenceType, value=((0.0, 0.0), (0.02, 1), (0.04, 0.0))),
                 TemplateProp(name="source_conductance_value", units="Siemens", descr="Norton conductance.", tpe=float, value=100.0),
                 TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str, value="arbitrary_waveform_voltage_source_emt"),
             ]

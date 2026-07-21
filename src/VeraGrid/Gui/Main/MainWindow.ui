@@ -1299,6 +1299,18 @@
                 </property>
                 <item>
                  <widget class="QTreeView" name="dataStructuresTreeView">
+                  <property name="minimumSize">
+                   <size>
+                    <width>230</width>
+                    <height>0</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>16777215</height>
+                   </size>
+                  </property>
                   <property name="animated">
                    <bool>true</bool>
                   </property>
@@ -2425,7 +2437,7 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>98</width>
+                 <width>86</width>
                  <height>88</height>
                 </rect>
                </property>
@@ -5302,21 +5314,21 @@
                <string>Linear settings</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_18">
-               <item row="3" column="1" colspan="2">
-                <widget class="QComboBox" name="opf_time_grouping_comboBox">
+               <item row="4" column="0">
+                <widget class="QLabel" name="label_103">
                  <property name="font">
                   <font>
                    <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the time grouping to possibly shorten the solution time.&lt;/p&gt;&lt;p&gt;This splits the time series by week, month, etc. and the subproblems are solved sequentially.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <property name="text">
+                  <string>Zone grouping</string>
                  </property>
                 </widget>
                </item>
-               <item row="10" column="0" colspan="3">
-                <widget class="QCheckBox" name="opfSpinningReserveCheckBox">
+               <item row="0" column="1" colspan="2">
+                <widget class="QComboBox" name="opfDispatchModeComboBox">
                  <property name="font">
                   <font>
                    <pointsize>10</pointsize>
@@ -5324,26 +5336,20 @@
                   </font>
                  </property>
                  <property name="toolTip">
-                  <string>Consider per-area generation spinning reserve</string>
-                 </property>
-                 <property name="text">
-                  <string>Spinning reserve</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select how the generation dispatch should behave&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                 </widget>
                </item>
-               <item row="13" column="0" colspan="3">
-                <widget class="QCheckBox" name="useGslkAsCostsOpfCheckBox">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_9">
                  <property name="font">
                   <font>
                    <pointsize>10</pointsize>
                    <bold>false</bold>
                   </font>
                  </property>
-                 <property name="toolTip">
-                  <string>Instead of using the generation, loads cost for dispatching, use the GLSK (Generation, Load Shift Keys)</string>
-                 </property>
                  <property name="text">
-                  <string>Use GSLK as costs</string>
+                  <string>Dispatch mode</string>
                  </property>
                 </widget>
                </item>
@@ -5357,6 +5363,39 @@
                  </property>
                  <property name="text">
                   <string>MIP framework</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="2">
+                <widget class="QComboBox" name="mip_solver_comboBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                   <bold>false</bold>
+                  </font>
+                 </property>
+                 <property name="toolTip">
+                  <string>Choose the external mixed integer programming solver</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_4">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                   <bold>false</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Time grouping</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="7" column="0" colspan="2">
+                <widget class="QLabel" name="label_132">
+                 <property name="text">
+                  <string/>
                  </property>
                 </widget>
                </item>
@@ -5386,27 +5425,7 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_4">
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Time grouping</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="0" colspan="2">
-                <widget class="QLabel" name="label_132">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item row="19" column="0">
+               <item row="20" column="0">
                 <spacer name="verticalSpacer_18">
                  <property name="orientation">
                   <enum>Qt::Orientation::Vertical</enum>
@@ -5419,8 +5438,8 @@
                  </property>
                 </spacer>
                </item>
-               <item row="9" column="0" colspan="3">
-                <widget class="QCheckBox" name="opfConsiderUpDownTimeCheckBox">
+               <item row="3" column="1" colspan="2">
+                <widget class="QComboBox" name="opf_time_grouping_comboBox">
                  <property name="font">
                   <font>
                    <pointsize>10</pointsize>
@@ -5428,178 +5447,211 @@
                   </font>
                  </property>
                  <property name="toolTip">
-                  <string>Consider generation minimum up/down time</string>
-                 </property>
-                 <property name="text">
-                  <string>Consider min up/down time</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="14" column="0" colspan="3">
-                <widget class="QCheckBox" name="approximateLossesOpfCheckBox">
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="toolTip">
-                  <string>When checked, the branch losses will be aproximated by a factor r * rate / (V^2)</string>
-                 </property>
-                 <property name="text">
-                  <string>Approximate losses</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1" colspan="2">
-                <widget class="QComboBox" name="opfDispatchModeComboBox">
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select how the generation dispatch should behave&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="12" column="0">
-                <widget class="QLabel" name="label_104">
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Contingency tolerance</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="12" column="1" colspan="2">
-                <widget class="QDoubleSpinBox" name="opfContingencyToleranceSpinBox">
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="toolTip">
-                  <string>LODF matrix tolerance choosing contingencies</string>
-                 </property>
-                 <property name="decimals">
-                  <number>4</number>
-                 </property>
-                 <property name="singleStep">
-                  <double>0.010000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.050000000000000</double>
-                 </property>
-                </widget>
-               </item>
-               <item row="11" column="0" colspan="3">
-                <widget class="QCheckBox" name="considerContingenciesOpfCheckBox">
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="toolTip">
-                  <string>Consider the contingencies when dispatching</string>
-                 </property>
-                 <property name="text">
-                  <string>Compute contingencies</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="18" column="0" colspan="3">
-                <widget class="QCheckBox" name="save_mip_checkBox">
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The program will save the MIP formulation and be displayed in the text tab of the results&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                 </property>
-                 <property name="text">
-                  <string>Report MIP formulation</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="15" column="0" colspan="3">
-                <widget class="QCheckBox" name="fixOpfCheckBox">
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="toolTip">
-                  <string>Fix infeasible problems and rey with the relaxed problem. Applies to OPF and NTC</string>
-                 </property>
-                 <property name="text">
-                  <string>Fix infeasibilities and retry</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the time grouping to possibly shorten the solution time.&lt;/p&gt;&lt;p&gt;This splits the time series by week, month, etc. and the subproblems are solved sequentially.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                 </widget>
                </item>
                <item row="8" column="0" colspan="3">
-                <widget class="QCheckBox" name="opfConsiderRampsCheckBox">
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
+                <widget class="QFrame" name="frame_60">
+                 <property name="frameShape">
+                  <enum>QFrame::Shape::NoFrame</enum>
                  </property>
-                 <property name="toolTip">
-                  <string>Consider generation ramps</string>
+                 <property name="frameShadow">
+                  <enum>QFrame::Shadow::Raised</enum>
                  </property>
-                 <property name="text">
-                  <string>Consider ramps</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_9">
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Dispatch mode</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="2">
-                <widget class="QComboBox" name="mip_solver_comboBox">
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="toolTip">
-                  <string>Choose the external mixed integer programming solver</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="label_103">
-                 <property name="font">
-                  <font>
-                   <pointsize>10</pointsize>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Zone grouping</string>
-                 </property>
+                 <layout class="QGridLayout" name="gridLayout_3">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item row="2" column="0" colspan="2">
+                   <widget class="QCheckBox" name="opfSpinningReserveCheckBox">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string>Consider per-area generation spinning reserve</string>
+                    </property>
+                    <property name="text">
+                     <string>Spinning reserve</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0" colspan="2">
+                   <widget class="QCheckBox" name="opfConsiderUpDownTimeCheckBox">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string>Consider generation minimum up/down time</string>
+                    </property>
+                    <property name="text">
+                     <string>Consider min up/down time</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="0" colspan="2">
+                   <widget class="QCheckBox" name="considerContingenciesOpfCheckBox">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string>Consider the contingencies when dispatching</string>
+                    </property>
+                    <property name="text">
+                     <string>Compute contingencies</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="1">
+                   <widget class="QDoubleSpinBox" name="opfContingencyToleranceSpinBox">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string>LODF matrix tolerance choosing contingencies</string>
+                    </property>
+                    <property name="decimals">
+                     <number>4</number>
+                    </property>
+                    <property name="singleStep">
+                     <double>0.010000000000000</double>
+                    </property>
+                    <property name="value">
+                     <double>0.050000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="0" colspan="2">
+                   <widget class="QCheckBox" name="opfConsiderRampsCheckBox">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string>Consider generation ramps</string>
+                    </property>
+                    <property name="text">
+                     <string>Consider ramps</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="0">
+                   <widget class="QLabel" name="label_104">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Contingency tolerance</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="2">
+                   <widget class="QCheckBox" name="quadraticCostsOpfCheckBox">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When checked, the generation costs will use the quadratic coefficients cost, which will trigger a more complex formulation to approximate the quadratic thermal generation curve. Otherwise a linear model is used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
+                    <property name="text">
+                     <string>Use quadratic costs</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="2">
+                   <widget class="QCheckBox" name="useGslkAsCostsOpfCheckBox">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string>Instead of using the generation, loads cost for dispatching, use the GLSK (Generation, Load Shift Keys)</string>
+                    </property>
+                    <property name="text">
+                     <string>Use GSLK as costs</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="2">
+                   <widget class="QCheckBox" name="approximateLossesOpfCheckBox">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string>When checked, the branch losses will be aproximated by a factor r * rate / (V^2)</string>
+                    </property>
+                    <property name="text">
+                     <string>Approximate losses</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="2">
+                   <widget class="QCheckBox" name="fixOpfCheckBox">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string>Fix infeasible problems and rey with the relaxed problem. Applies to OPF and NTC</string>
+                    </property>
+                    <property name="text">
+                     <string>Fix infeasibilities and retry</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="2">
+                   <widget class="QCheckBox" name="save_mip_checkBox">
+                    <property name="font">
+                     <font>
+                      <pointsize>10</pointsize>
+                      <bold>false</bold>
+                     </font>
+                    </property>
+                    <property name="toolTip">
+                     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The program will save the MIP formulation and be displayed in the text tab of the results&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                    </property>
+                    <property name="text">
+                     <string>Report MIP formulation</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
               </layout>

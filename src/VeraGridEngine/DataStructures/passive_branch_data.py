@@ -8,6 +8,7 @@ import numpy as np
 
 from VeraGridEngine.DataStructures.branch_parent_data import BranchParentData
 from VeraGridEngine.Utils.Sparse.sparse_array import SparseObjectArray
+from VeraGridEngine.Utils.compare import compare_arr
 from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, Logger
 
 
@@ -181,3 +182,16 @@ class PassiveBranchData(BranchParentData):
         # handle """superconductor branches"""
         if self.R[k] == 0.0 and self.X[k] == 0.0:
             self.reducible[k] = 1
+
+    def compare(self, other: "PassiveBranchData", tol: float, logger: Logger) -> None:
+        """
+        Compare passive-branch fields used by NumericalCircuit.compare().
+        """
+        super().compare(other=other, tol=tol, logger=logger)
+        compare_arr(self.R, other.R, tol, 'BranchData', 'r', logger)
+        compare_arr(self.X, other.X, tol, 'BranchData', 'x', logger)
+        compare_arr(self.G, other.G, tol, 'BranchData', 'g', logger)
+        compare_arr(self.B, other.B, tol, 'BranchData', 'b', logger)
+        compare_arr(self.G0, other.G0, tol, 'BranchData', 'g0', logger)
+        compare_arr(self.virtual_tap_f, other.virtual_tap_f, tol, 'BranchData', 'vtap_f', logger)
+        compare_arr(self.virtual_tap_t, other.virtual_tap_t, tol, 'BranchData', 'vtap_t', logger)

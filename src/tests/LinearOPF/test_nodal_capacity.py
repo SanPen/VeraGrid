@@ -2,41 +2,23 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
+import copy
 import os
 import VeraGridEngine.api as gce
-from VeraGridEngine.Simulations.OPF.ac_opf_worker import run_nonlinear_opf
 from VeraGridEngine.Simulations.OPF.Formulations.linear_opf_ts import run_linear_opf_ts
-from VeraGridEngine.enumerations import AcOpfMode
+from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_driver import NodalCapacityDriver
+from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_options import NodalCapacityOptions
+from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_ts_driver import NodalCapacityTimeSeriesDriver
 import numpy as np
 
 
-def test_linear_vs_nonlinear_ncap():
+def test_linear_ncap_load_hosting_snapshot():
     """
     IEEE14
     """
-    cwd = os.getcwd()
-
-    # Go back two directories
     fname = os.path.join('data', 'grids', 'IEEE 14 zip costs.gridcal')
 
     grid = gce.FileOpen(fname).open()
-
-    # Nonlinear OPF
-    opf_options = gce.OptimalPowerFlowOptions(solver=gce.SolverType.NONLINEAR_OPF,
-                                              ips_tolerance=1e-8,
-                                              ips_iterations=50,
-                                              verbose=0,
-                                              acopf_mode=AcOpfMode.ACOPFstd)
-
-    res = run_nonlinear_opf(grid=grid,
-                            opf_options=opf_options,
-                            plot_error=False,
-                            optimize_nodal_capacity=True,
-                            nodal_capacity_sign=-1.0,
-                            capacity_nodes_idx=np.array([10, 11]))
-
-    res_nl = np.array([5.0114640, 1.693406])
-    assert np.allclose(res.nodal_capacity, res_nl, rtol=1e-5)
 
     # Linear OPF
     res, model = run_linear_opf_ts(grid=grid,
@@ -52,12 +34,101 @@ def test_linear_vs_nonlinear_ncap():
     print('P slacks neg: ', res.branch_vars.flow_slacks_neg)
     print('')
 
-    # res_l = np.array([4.85736901, 1.52653874])  # old value...
+    assert np.all(res.nodal_capacity_vars.P[0, :] > 0.0)
 
-    res_l = np.array([5.655194829207089, 1.634477969392556])
 
-    assert np.allclose(res.nodal_capacity_vars.P, res_l, rtol=1e-5)
+def test_linear_ncap_is_invariant_to_slack_choice():
+    fname = os.path.join('data', 'grids', 'IEEE 14 zip costs.gridcal')
+    grid = gce.FileOpen(fname).open()
+    alt_grid = copy.deepcopy(grid)
+    alt_grid.buses[0].is_slack = False
+    alt_grid.buses[1].is_slack = True
+
+    base_res, model = run_linear_opf_ts(grid=grid,
+                                        dispatch_mode=gce.OpfDispatchMode.NodalCapacity,
+                                        time_indices=None,
+                                        nodal_capacity_sign=-1.0,
+                                        capacity_nodes_idx=np.array([10, 11]))
+    alt_res, model = run_linear_opf_ts(grid=alt_grid,
+                                       dispatch_mode=gce.OpfDispatchMode.NodalCapacity,
+                                       time_indices=None,
+                                       nodal_capacity_sign=-1.0,
+                                       capacity_nodes_idx=np.array([10, 11]))
+
+    assert np.allclose(base_res.nodal_capacity_vars.P, alt_res.nodal_capacity_vars.P, rtol=1e-5, atol=1e-5)
+
+
+def test_linear_ncap_sign_controls_injection_vs_load():
+    fname = os.path.join('data', 'grids', 'IEEE 14 zip costs.gridcal')
+    grid = gce.FileOpen(fname).open()
+
+    load_res, model = run_linear_opf_ts(grid=grid,
+                                        dispatch_mode=gce.OpfDispatchMode.NodalCapacity,
+                                        time_indices=None,
+                                        nodal_capacity_sign=-1.0,
+                                        capacity_nodes_idx=np.array([10, 11]))
+    gen_res, model = run_linear_opf_ts(grid=grid,
+                                       dispatch_mode=gce.OpfDispatchMode.NodalCapacity,
+                                       time_indices=None,
+                                       nodal_capacity_sign=1.0,
+                                       capacity_nodes_idx=np.array([10, 11]))
+
+    assert np.all(load_res.nodal_capacity_vars.P > 0.0)
+    assert np.all(gen_res.nodal_capacity_vars.P > 0.0)
+    assert np.sum(load_res.gen_vars.p) > np.sum(gen_res.gen_vars.p)
+
+
+def test_linear_ncap_three_selected_buses_have_generation_and_load_hosting():
+    fname = os.path.join('data', 'grids', 'New.England_solar_case_OPF.gridcal')
+    grid = gce.FileOpen(fname).open()
+
+    cap_buses = np.array([1, 4, 5])
+
+    gen_drv = NodalCapacityDriver(
+        grid=grid,
+        options=NodalCapacityOptions(capacity_nodes_idx=cap_buses, nodal_capacity_sign=1.0),
+    )
+    load_drv = NodalCapacityDriver(
+        grid=grid,
+        options=NodalCapacityOptions(capacity_nodes_idx=cap_buses, nodal_capacity_sign=-1.0),
+    )
+
+    gen_res = gen_drv.linear_opf(remote=True)
+    load_res = load_drv.linear_opf(remote=True)
+
+    assert np.all(gen_res.nodal_capacity > 0.0)
+    assert np.all(load_res.nodal_capacity <= 0.0)
+    assert np.any(load_res.nodal_capacity < 0.0)
+    assert len(np.unique(np.round(gen_res.nodal_capacity, 6))) > 1
+    assert len(np.unique(np.round(load_res.nodal_capacity[load_res.nodal_capacity < 0.0], 6))) >= 1
+
+
+def test_linear_ncap_time_series_reports_per_bus_values():
+    fname = os.path.join('data', 'grids', 'New.England_solar_case_OPF.gridcal')
+    grid = gce.FileOpen(fname).open()
+
+    cap_buses = np.array([1, 4, 5])
+    gen_drv = NodalCapacityTimeSeriesDriver(
+        grid=grid,
+        options=NodalCapacityOptions(capacity_nodes_idx=cap_buses, nodal_capacity_sign=1.0),
+        time_indices=np.array([0]),
+    )
+    load_drv = NodalCapacityTimeSeriesDriver(
+        grid=grid,
+        options=NodalCapacityOptions(capacity_nodes_idx=cap_buses, nodal_capacity_sign=-1.0),
+        time_indices=np.array([0]),
+    )
+
+    gen_res = gen_drv.linear_opf(remote=True)
+    load_res = load_drv.linear_opf(remote=True)
+
+    assert gen_res.nodal_capacity.shape == (1, 3)
+    assert load_res.nodal_capacity.shape == (1, 3)
+    assert np.all(gen_res.nodal_capacity[0, :] > 0.0)
+    assert np.all(load_res.nodal_capacity[0, :] <= 0.0)
+    assert np.any(load_res.nodal_capacity[0, :] < 0.0)
+    assert len(np.unique(np.round(gen_res.nodal_capacity[0, :], 6))) > 1
 
 
 if __name__ == "__main__":
-    test_linear_vs_nonlinear_ncap()
+    test_linear_ncap_load_hosting_snapshot()

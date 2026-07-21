@@ -175,7 +175,8 @@ class FixableErrorOutOfRange:
                  property_name: str,
                  value: float,
                  lower_limit: float,
-                 upper_limit: float):
+                 upper_limit: float,
+                 keep_sign: bool = False):
         """
 
         :param grid_element:
@@ -189,6 +190,7 @@ class FixableErrorOutOfRange:
         self.value: float = value
         self.lower_limit: float = lower_limit
         self.upper_limit: float = upper_limit
+        self.keep_sign = keep_sign
 
     def fix(self, logger: Logger = Logger(), fix_ts=False):
         """
@@ -197,27 +199,36 @@ class FixableErrorOutOfRange:
         :param fix_ts:
         :return:
         """
+        sign = self.value / abs(self.value)
         if self.value < self.lower_limit:
-            self.grid_element.set_snapshot_value(property_name=self.property_name, value=self.lower_limit)
+            self.grid_element.set_snapshot_value(
+                property_name=self.property_name,
+                value=sign * self.lower_limit if self.keep_sign else self.lower_limit
+            )
             logger.add_info("Fixed " + self.property_name, device=self.grid_element.idtag, value=self.value)
 
         elif self.value > self.upper_limit:
-            self.grid_element.set_snapshot_value(property_name=self.property_name, value=self.upper_limit)
+            self.grid_element.set_snapshot_value(
+                property_name=self.property_name,
+                value=sign * self.upper_limit if self.keep_sign else self.upper_limit
+            )
             logger.add_info("Fixed " + self.property_name, device=self.grid_element.idtag, value=self.value)
 
         # fix the associated time series
         gc_prop = self.grid_element.registered_properties.get(self.property_name, None)
-        if fix_ts and gc_prop.has_profile():
-            profile = self.grid_element.get_profile_by_prop(prop=gc_prop)
-            for i in range(profile.size()):
-                value = profile[i]
-                if value < self.lower_limit:
-                    profile[i] = self.lower_limit
-                    logger.add_info("Fixed " + self.property_name, device=self.grid_element.idtag, value=value)
+        if gc_prop is not None:
+            if fix_ts and gc_prop.has_profile():
+                profile = self.grid_element.get_profile_by_prop(prop=gc_prop)
+                if profile is not None:
+                    for i in range(profile.size()):
+                        value = profile[i]
+                        if value < self.lower_limit:
+                            profile[i] = self.lower_limit
+                            logger.add_info("Fixed " + self.property_name, device=self.grid_element.idtag, value=value)
 
-                elif value > self.upper_limit:
-                    profile[i] = self.upper_limit
-                    logger.add_info("Fixed " + self.property_name, device=self.grid_element.idtag, value=value)
+                        elif value > self.upper_limit:
+                            profile[i] = self.upper_limit
+                            logger.add_info("Fixed " + self.property_name, device=self.grid_element.idtag, value=value)
 
 
 class FixableErrorRangeFlip:
@@ -752,7 +763,7 @@ def analyze_transformers(elements: List[Transformer2W],
                                                              upper_limit=elm.Sn))
 
         # check the reactance
-        if elm.X < branch_x_threshold:
+        if abs(elm.X) < branch_x_threshold:
             logger.add(object_type=object_type.value,
                        element_name=elm.name,
                        element_index=i,
@@ -766,7 +777,8 @@ def analyze_transformers(elements: List[Transformer2W],
                                                          property_name='X',
                                                          value=elm.X,
                                                          lower_limit=branch_x_threshold,
-                                                         upper_limit=1e20))
+                                                         upper_limit=1e20,
+                                                         keep_sign=True))
 
 
 def analyze_buses(elements: List[Bus],

@@ -24,7 +24,8 @@ case from:
 import numpy as np
 
 from VeraGridEngine.enumerations import ConverterControlType
-from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import voltage_pdc_droop
+from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import (voltage_pdc_droop,
+                                                                                    voltage_pdc_droop_neg)
 import VeraGridEngine.api as gce
 
 
@@ -43,7 +44,7 @@ def test_voltage_pdc_droop_function() -> None:
     # Linear region: Pdc = Pdc* - Pdroop * (Vdc* - Vdc)
     for u in (0.95, 0.99, 1.0, 1.02, 1.08):
         expected = (Pdc_setpoint * S_base - P_droop * (u_setpoint - u)) / S_base
-        got = voltage_pdc_droop(ut=complex(u, 0.0),
+        got = voltage_pdc_droop(ut=complex(u, 0.0), un=complex(0.0, 0.0),
                                 u_setpoint_min=0.9, u_setpoint_max=1.1,
                                 u_setpoint=u_setpoint, Pdc_setpoint=Pdc_setpoint,
                                 S_r=S_r, droop=droop,
@@ -52,7 +53,7 @@ def test_voltage_pdc_droop_function() -> None:
 
     # At nominal voltage the droop term vanishes and the converter outputs
     # exactly its dispatch setpoint.
-    got = voltage_pdc_droop(ut=complex(1.0, 0.0),
+    got = voltage_pdc_droop(ut=complex(1.0, 0.0), un=complex(0.0, 0.0),
                             u_setpoint_min=0.9, u_setpoint_max=1.1,
                             u_setpoint=1.0, Pdc_setpoint=50.0,
                             S_r=S_r, droop=droop,
@@ -60,10 +61,10 @@ def test_voltage_pdc_droop_function() -> None:
     assert np.isclose(got, 50.0, atol=1e-9)
 
     # Voltage clamping: below u_min and above u_max the voltage saturates
-    p_low = voltage_pdc_droop(ut=complex(0.5, 0.0), u_setpoint_min=0.9, u_setpoint_max=1.1,
+    p_low = voltage_pdc_droop(ut=complex(0.5, 0.0), un=complex(0.0, 0.0), u_setpoint_min=0.9, u_setpoint_max=1.1,
                               u_setpoint=1.0, Pdc_setpoint=0.0, S_r=S_r, droop=droop,
                               P_min=-9999.0, P_max=9999.0, S_base=S_base)
-    p_at_min = voltage_pdc_droop(ut=complex(0.9, 0.0), u_setpoint_min=0.9, u_setpoint_max=1.1,
+    p_at_min = voltage_pdc_droop(ut=complex(0.9, 0.0), un=complex(0.0, 0.0), u_setpoint_min=0.9, u_setpoint_max=1.1,
                                  u_setpoint=1.0, Pdc_setpoint=0.0, S_r=S_r, droop=droop,
                                  P_min=-9999.0, P_max=9999.0, S_base=S_base)
     assert np.isclose(p_low, p_at_min, atol=1e-9)
@@ -71,15 +72,28 @@ def test_voltage_pdc_droop_function() -> None:
     # Power clamping. With the Pdc = Pdc* - Pdroop*(Vdc* - Vdc) law:
     #  - voltage below setpoint pushes Pdc towards -inf  -> clamps at P_min
     #  - voltage above setpoint pushes Pdc towards +inf  -> clamps at P_max
-    p_min_clamp = voltage_pdc_droop(ut=complex(0.9, 0.0), u_setpoint_min=0.9, u_setpoint_max=1.1,
+    p_min_clamp = voltage_pdc_droop(ut=complex(0.9, 0.0), un=complex(0.0, 0.0), u_setpoint_min=0.9, u_setpoint_max=1.1,
                                     u_setpoint=1.0, Pdc_setpoint=0.0, S_r=S_r, droop=droop,
                                     P_min=-50.0, P_max=50.0, S_base=S_base)
     assert np.isclose(p_min_clamp, -50.0 / S_base, atol=1e-9)
 
-    p_max_clamp = voltage_pdc_droop(ut=complex(1.1, 0.0), u_setpoint_min=0.9, u_setpoint_max=1.1,
+    p_max_clamp = voltage_pdc_droop(ut=complex(1.1, 0.0), un=complex(0.0, 0.0), u_setpoint_min=0.9, u_setpoint_max=1.1,
                                     u_setpoint=1.0, Pdc_setpoint=0.0, S_r=S_r, droop=droop,
                                     P_min=-50.0, P_max=50.0, S_base=S_base)
     assert np.isclose(p_max_clamp, 50.0 / S_base, atol=1e-9)
+
+    # A converter with ut = -u against a return at 0 must
+    # produce the same droop power as the positive pole with ut = +u
+    for u in (0.95, 1.0, 1.08):
+        p_pos = voltage_pdc_droop(ut=complex(u, 0.0), un=complex(0.0, 0.0),
+                                  u_setpoint_min=0.9, u_setpoint_max=1.1,
+                                  u_setpoint=1.0, Pdc_setpoint=0.0, S_r=S_r, droop=droop,
+                                  P_min=-9999.0, P_max=9999.0, S_base=S_base)
+        p_neg = voltage_pdc_droop_neg(ut=complex(-u, 0.0), un=complex(0.0, 0.0),
+                                      u_setpoint_min=0.9, u_setpoint_max=1.1,
+                                      u_setpoint=1.0, Pdc_setpoint=0.0, S_r=S_r, droop=droop,
+                                      P_min=-9999.0, P_max=9999.0, S_base=S_base)
+        assert np.isclose(p_pos, p_neg, atol=1e-9)
 
 
 def _build_case_study():
@@ -207,6 +221,7 @@ def test_pdc_vdroop_case_study() -> None:
         vsc = grid.vsc_devices[k]
         expected_pu = voltage_pdc_droop(
             ut=res.voltage[dc_bus],
+            un=complex(0.0, 0.0),
             u_setpoint_min=vsc.control2_droop_val_min,
             u_setpoint_max=vsc.control2_droop_val_max,
             u_setpoint=vsc.control2_droop_val,

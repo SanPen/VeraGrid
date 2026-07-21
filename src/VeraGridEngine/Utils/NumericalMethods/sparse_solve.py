@@ -59,6 +59,18 @@ if preferred_type not in available_sparse_solvers:
 # print('Using', preferred_type)
 
 
+def get_available_sparse_solvers() -> list[SparseSolver]:
+    """
+    Return a copy of the sparse solvers that are available in the current runtime.
+
+    :return: List of available sparse solver enum values.
+    """
+    solver_types: list[SparseSolver] = list()
+    for solver_type in available_sparse_solvers:
+        solver_types.append(solver_type)
+    return solver_types
+
+
 def get_sparse_type(solver_type: SparseSolver = preferred_type):
     """
     GEt sparse matrix type matching the selected sparse linear systems solver
@@ -155,4 +167,3 @@ def get_linear_solver(solver_type: SparseSolver = preferred_type) -> Callable[[c
 
     else:
         return scipy_spsolve
-

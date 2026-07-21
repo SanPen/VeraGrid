@@ -306,7 +306,8 @@ def classify_emt_injection_phase_wire_from_refs(
         else:
             output_names.append(f"{wire_description} output")
 
-    phase_total_port_count: int = len(phase_to_inputs.get(phase_name, list())) + len(phase_to_outputs.get(phase_name, list()))
+    phase_total_port_count: int = len(phase_to_inputs.get(phase_name, list())) + len(
+        phase_to_outputs.get(phase_name, list()))
     return format_emt_phase_connectivity_detail(
         phase_name=phase_name,
         input_names=input_names,
@@ -376,7 +377,8 @@ def classify_emt_branch_phase_wire_from_refs(
         else:
             output_names.append(f"{wire_description} output")
 
-    phase_total_port_count: int = len(phase_to_inputs.get(phase_name, list())) + len(phase_to_outputs.get(phase_name, list()))
+    phase_total_port_count: int = len(phase_to_inputs.get(phase_name, list())) + len(
+        phase_to_outputs.get(phase_name, list()))
     return format_emt_phase_connectivity_detail(
         phase_name=phase_name,
         input_names=input_names,

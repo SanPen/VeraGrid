@@ -2342,20 +2342,311 @@ def dInjhvdc_dVa_csc(nhvdc, nbus, i_u_va, hvdc_droop, F_hvdc, T_hvdc) -> CSC:
 
         # Compute the derivative for the from-side
         dInjhvdc_dVaf = -hvdc_droop[k]
-        dInjhvdc_dVat = +hvdc_droop[k] 
+        dInjhvdc_dVat = +hvdc_droop[k]
 
-        # Populate COO format arrays
-        Tx[nnz] = dInjhvdc_dVaf
-        Ti[nnz] = k  # Row index corresponds to the current HVDC system
-        Tj[nnz] = j_lookup[F_hvdc[k]]  # Column index corresponds to the from-bus
-        nnz += 1
+        # Populate COO format arrays, only where the bus variable is an unknown
+        if j_lookup[F_hvdc[k]] >= 0:
+            Tx[nnz] = dInjhvdc_dVaf
+            Ti[nnz] = k  # Row index corresponds to the current HVDC system
+            Tj[nnz] = j_lookup[F_hvdc[k]]  # Column index corresponds to the from-bus
+            nnz += 1
 
-        Tx[nnz] = dInjhvdc_dVat
-        Ti[nnz] = k  # Row index corresponds to the current HVDC system
-        Tj[nnz] = j_lookup[T_hvdc[k]]  # Column index corresponds to the from-bus
-        nnz += 1
+        if j_lookup[T_hvdc[k]] >= 0:
+            Tx[nnz] = dInjhvdc_dVat
+            Ti[nnz] = k  # Row index corresponds to the current HVDC system
+            Tj[nnz] = j_lookup[T_hvdc[k]]  # Column index corresponds to the to-bus
+            nnz += 1
 
     # Convert to CSC
     mat.fill_from_coo(Ti, Tj, Tx, nnz)
 
+    return mat
+
+
+@njit()
+def dLossvsc_dVm_curr_csc(nvsc: int, nbus: int, i_u_vm: IntVec, alpha2: Vec, alpha3: Vec,
+                          Vm: Vec, Pt: Vec, Qt: Vec, T: IntVec,
+                          Ifp: Vec, Va: Vec, Fdcp: IntVec, Fdcn: IntVec) -> CSC:
+    """
+    d/dVm block of the VSC loss equation in the current-based DC formulation:
+        loss = PLoss_IEC(It) - Pt - Vdcp * Ifp + Vdcn * Ifp
+    with It = sqrt(Pt^2 + Qt^2) / Vm[T] and Vdc = Vm * cos(Va) the signed DC voltage.
+    Per VSC k there are up to three entries:
+        d/dVm[T]    = -(alpha2 * It / Vm[T] + 2 * alpha3 * It^2 / Vm[T])
+        d/dVm[Fdcp] = -Ifp * cos(Va[Fdcp])
+        d/dVm[Fdcn] = +Ifp * cos(Va[Fdcn])   (only when the negative pole exists)
+    :param nvsc: number of VSCs (rows)
+    :param nbus: number of buses
+    :param i_u_vm: unknown Vm bus indices (column space)
+    :param alpha2: linear loss coefficient per VSC
+    :param alpha3: quadratic loss coefficient per VSC
+    :param Vm: voltage magnitudes
+    :param Pt: VSC AC active power
+    :param Qt: VSC AC reactive power
+    :param T: VSC AC bus indices
+    :param Ifp: VSC positive pole currents
+    :param Va: voltage angles (0 or pi at DC buses as it gives the DC V sign)
+    :param Fdcp: VSC positive pole bus indices
+    :param Fdcn: VSC negative pole bus indices (-1 if not present)
+    :return: CSC block
+    """
+    n_cols = len(i_u_vm)
+    max_nnz = 3 * nvsc
+    mat = CSC(nvsc, n_cols, max_nnz, False)
+    Tx = np.empty(max_nnz, dtype=np.float64)
+    Ti = np.empty(max_nnz, dtype=np.int32)
+    Tj = np.empty(max_nnz, dtype=np.int32)
+    nnz = 0
+
+    j_lookup = make_lookup(nbus, i_u_vm)
+
+    for kidx in range(nvsc):
+        # AC side loss polynomial term
+        t = T[kidx]
+        if j_lookup[t] >= 0:
+            Vm_t = Vm[t]
+            pq = Pt[kidx] * Pt[kidx] + Qt[kidx] * Qt[kidx]
+            pq_sqrt = np.sqrt(pq) + 1e-20
+            Tx[nnz] = - (alpha2[kidx] * pq_sqrt / (Vm_t * Vm_t) + 2 * alpha3[kidx] * pq / (Vm_t * Vm_t * Vm_t))
+            Ti[nnz] = kidx
+            Tj[nnz] = j_lookup[t]
+            nnz += 1
+
+        # DC side -Udc * Ifp term, positive pole
+        fp = Fdcp[kidx]
+        if j_lookup[fp] >= 0:
+            Tx[nnz] = -Ifp[kidx] * np.cos(Va[fp])
+            Ti[nnz] = kidx
+            Tj[nnz] = j_lookup[fp]
+            nnz += 1
+
+        # DC side -Udc * Ifp term, negative or return pole
+        fn = Fdcn[kidx]
+        if fn > -1:
+            if j_lookup[fn] >= 0:
+                Tx[nnz] = Ifp[kidx] * np.cos(Va[fn])
+                Ti[nnz] = kidx
+                Tj[nnz] = j_lookup[fn]
+                nnz += 1
+
+    mat.fill_from_coo(Ti, Tj, Tx, nnz)
+    return mat
+
+
+@njit()
+def dLossvsc_dIfp_csc(nvsc: int, u_vsc_ifp: IntVec, Udc: Vec) -> CSC:
+    """
+    d/dIfp block of the VSC loss equation: loss = PLoss_IEC - Pt - Udc * Ifp,
+    hence d(loss_k)/dIfp_k = -Udc_k.
+    :param nvsc: number of VSCs (rows)
+    :param u_vsc_ifp: VSC indices whose Ifp is an unknown (column space)
+    :param Udc: signed pole-to-return DC voltage per VSC (V difference)
+    :return: CSC block
+    """
+    n_cols = len(u_vsc_ifp)
+    mat = CSC(nvsc, n_cols, n_cols, False)
+    Tx = np.empty(n_cols, dtype=np.float64)
+    Ti = np.empty(n_cols, dtype=np.int32)
+    Tj = np.empty(n_cols, dtype=np.int32)
+    nnz = 0
+    for c in range(n_cols):
+        k = u_vsc_ifp[c]
+        Tx[nnz] = -Udc[k]
+        Ti[nnz] = k
+        Tj[nnz] = c
+        nnz += 1
+    mat.fill_from_coo(Ti, Tj, Tx, nnz)
+    return mat
+
+
+@njit()
+def dUdcIfp_dVm_csc(n_eq: int, nbus: int, i_u_vm: IntVec, k_sel: IntVec, factor: Vec,
+                    Va: Vec, Fdcp: IntVec, Fdcn: IntVec) -> CSC:
+    """
+    d/dVm block of the equations of the shape Udc * Ifp - g(Udc) = 0 
+    with Udc = Vm[Fdcp] * cos(Va[Fdcp]) - Vm[Fdcn] * cos(Va[Fdcn]), i.e. V diff
+    The whole voltage sensitivity collapses to a per-equation factor:
+        d/dVm[Fdcp] = +factor * cos(Va[Fdcp])
+        d/dVm[Fdcn] = -factor * cos(Va[Fdcn])
+    where factor = Ifp for fixed Pdc
+          factor = Ifp - s * dg/du for the droop
+    (s is the pole polarity sign of the measured droop voltage)
+    :param n_eq: number of equations
+    :param nbus: number of buses
+    :param i_u_vm: unknown Vm bus indices
+    :param k_sel: VSC index of each equation
+    :param factor: voltage sensitivity factor per equation
+    :param Va: voltage angles (0 or pi at DC buses)
+    :param Fdcp: VSC positive pole bus indices
+    :param Fdcn: VSC negative pole bus indices (-1 if not present)
+    :return: CSC block
+    """
+    j_lookup = make_lookup(nbus, i_u_vm)
+    max_nnz = 2 * n_eq
+    mat = CSC(n_eq, len(i_u_vm), max_nnz, False)
+    Tx = np.empty(max_nnz, dtype=np.float64)
+    Ti = np.empty(max_nnz, dtype=np.int32)
+    Tj = np.empty(max_nnz, dtype=np.int32)
+    nnz = 0
+    for i in range(n_eq):
+        k = k_sel[i]
+        fp = Fdcp[k]
+        if j_lookup[fp] >= 0:
+            Tx[nnz] = factor[i] * np.cos(Va[fp])
+            Ti[nnz] = i
+            Tj[nnz] = j_lookup[fp]
+            nnz += 1
+        fn = Fdcn[k]
+        if fn > -1:
+            if j_lookup[fn] >= 0:
+                Tx[nnz] = -factor[i] * np.cos(Va[fn])
+                Ti[nnz] = i
+                Tj[nnz] = j_lookup[fn]
+                nnz += 1
+    mat.fill_from_coo(Ti, Tj, Tx, nnz)
+    return mat
+
+
+@njit()
+def dUdcIfp_dIfp_csc(n_eq: int, nvsc: int, k_sel: IntVec, u_vsc_ifp: IntVec, Udc: Vec) -> CSC:
+    """
+    d/dIfp block of the equations of the shape Udc * Ifp - g(Udc) = 0
+        d/dIfp = Udc for the equation's own converter, zero elsewhere.
+    :param n_eq: number of equations
+    :param nvsc: total number of VSCs
+    :param k_sel: VSC index of each equation
+    :param u_vsc_ifp: VSC indices whose Ifp is an unknown
+    :param Udc: signed pole-to-return DC voltage per VSC
+    :return: CSC block
+    """
+    col_lookup = make_lookup(nvsc, u_vsc_ifp)
+    mat = CSC(n_eq, len(u_vsc_ifp), n_eq, False)
+    Tx = np.empty(n_eq, dtype=np.float64)
+    Ti = np.empty(n_eq, dtype=np.int32)
+    Tj = np.empty(n_eq, dtype=np.int32)
+    nnz = 0
+    for i in range(n_eq):
+        k = k_sel[i]
+        c = col_lookup[k]
+        if c >= 0:
+            Tx[nnz] = Udc[k]
+            Ti[nnz] = i
+            Tj[nnz] = c
+            nnz += 1
+    mat.fill_from_coo(Ti, Tj, Tx, nnz)
+    return mat
+
+
+@njit()
+def dIdc_dVm_csc(nbus: int, i_u_vm: IntVec, dc_rows: IntVec,
+                 Yp: IntVec, Yi: IntVec, Yx: CxVec,
+                 Va: Vec, Vdc: Vec, S0r: Vec, Y0r: Vec) -> CSC:
+    """
+    d/dVm block of the DC bus current balance:
+        r_i = Re(Ybus @ V)_i + Iconv_i - (Re(S0_i) / Vdc_i + Re(I0_i) + Vdc_i * Re(Y0_i))
+    with Vdc = Vm * cos(Va), that is, DC voltage with signs. The entries are:
+        dr_i/dVm_j = Re(Y_ij) * cos(Va_j)                              (network term)
+        dr_i/dVm_i += (Re(S0_i) / Vdc_i^2 - Re(Y0_i)) * cos(Va_i)     (injection term)
+    :param nbus: number of buses
+    :param i_u_vm: unknown Vm bus indices
+    :param dc_rows: non-grounded DC bus indices
+    :param Yp: Ybus CSC column pointers
+    :param Yi: Ybus CSC row indices
+    :param Yx: Ybus CSC values
+    :param Va: voltage angles (0 or pi at DC buses)
+    :param Vdc: signed DC voltage per bus (Vm * cos(Va))
+    :param S0r: real part of the base power injections per bus [pu]
+    :param Y0r: real part of the base admittance injections per bus [pu]
+    :return: CSC block
+    """
+    row_lookup = make_lookup(nbus, dc_rows)
+    n_rows = len(dc_rows)
+    n_cols = len(i_u_vm)
+
+    # count worst-case entries: the Ybus columns of the unknown buses plus one diagonal
+    max_nnz = 0
+    for c in range(n_cols):
+        j = i_u_vm[c]
+        max_nnz += (Yp[j + 1] - Yp[j]) + 1
+
+    mat = CSC(n_rows, n_cols, max_nnz, False)
+    Tx = np.empty(max_nnz, dtype=np.float64)
+    Ti = np.empty(max_nnz, dtype=np.int32)
+    Tj = np.empty(max_nnz, dtype=np.int32)
+    nnz = 0
+
+    for c in range(n_cols):
+        j = i_u_vm[c]
+        cos_j = np.cos(Va[j])
+        found_diag = False
+        for p in range(Yp[j], Yp[j + 1]):
+            i = Yi[p]
+            r = row_lookup[i]
+            if r >= 0:
+                val = Yx[p].real * cos_j
+                if i == j:
+                    # add the load/generation injection sensitivity on the diagonal
+                    val += (S0r[i] / (Vdc[i] * Vdc[i]) - Y0r[i]) * cos_j
+                    found_diag = True
+                Tx[nnz] = val
+                Ti[nnz] = r
+                Tj[nnz] = c
+                nnz += 1
+            else:
+                pass
+        if not found_diag:
+            # the bus has no structural Ybus diagonal but may still carry an injection
+            r = row_lookup[j]
+            if r >= 0:
+                Tx[nnz] = (S0r[j] / (Vdc[j] * Vdc[j]) - Y0r[j]) * cos_j
+                Ti[nnz] = r
+                Tj[nnz] = c
+                nnz += 1
+            else:
+                pass
+        else:
+            pass
+
+    mat.fill_from_coo(Ti, Tj, Tx, nnz)
+    return mat
+
+
+@njit()
+def dIdc_dIfp_csc(nbus: int, dc_rows: IntVec, u_vsc_ifp: IntVec, Fdcp: IntVec, Fdcn: IntVec) -> CSC:
+    """
+    d/dIfp block of the DC bus current balance. Each converter injects +Ifp at its
+    positive pole bus and -Ifp at its return/negative pole bus so:
+        dr[Fdcp]/dIfp = +1 and dr[Fdcn]/dIfp = -1
+    :param nbus: number of buses
+    :param dc_rows: non-grounded DC bus indices
+    :param u_vsc_ifp: VSC indices whose Ifp is an unknown
+    :param Fdcp: VSC positive pole bus indices
+    :param Fdcn: VSC negative pole bus indices (-1 if not present)
+    :return: CSC block
+    """
+    row_lookup = make_lookup(nbus, dc_rows)
+    n_cols = len(u_vsc_ifp)
+    max_nnz = 2 * n_cols
+    mat = CSC(len(dc_rows), n_cols, max_nnz, False)
+    Tx = np.empty(max_nnz, dtype=np.float64)
+    Ti = np.empty(max_nnz, dtype=np.int32)
+    Tj = np.empty(max_nnz, dtype=np.int32)
+    nnz = 0
+    for c in range(n_cols):
+        k = u_vsc_ifp[c]
+        rp = row_lookup[Fdcp[k]]
+        if rp >= 0:
+            Tx[nnz] = 1.0
+            Ti[nnz] = rp
+            Tj[nnz] = c
+            nnz += 1
+        fn = Fdcn[k]
+        if fn > -1:
+            rn = row_lookup[fn]
+            if rn >= 0:
+                Tx[nnz] = -1.0
+                Ti[nnz] = rn
+                Tj[nnz] = c
+                nnz += 1
+    mat.fill_from_coo(Ti, Tj, Tx, nnz)
     return mat

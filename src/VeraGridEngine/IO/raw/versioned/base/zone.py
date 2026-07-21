@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import List, Tuple
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_int, coerce_psse_str
 
 
 class RawZone(RawObject):
@@ -20,8 +20,8 @@ class RawZone(RawObject):
     def __init__(self):
         RawObject.__init__(self, "Zone")
 
-        self.I = -1
-        self.ZONAME = ''
+        self._I: int = -1
+        self._ZONAME: str = ''
 
     def parse(self, data: List[List[str | int | float]], version: int, logger: Logger):
         raise NotImplementedError(f"{self.__class__.__name__}.parse must be implemented in a version-specific subclass")
@@ -37,3 +37,18 @@ class RawZone(RawObject):
     def get_seed(self):
         return "_ZN_{0}".format(self.get_id())
 
+    @property
+    def I(self) -> int:
+        return self._I
+
+    @I.setter
+    def I(self, value: int | str | None) -> None:
+        self._I = coerce_psse_int(value=value, current_value=self._I)
+
+    @property
+    def ZONAME(self) -> str:
+        return self._ZONAME
+
+    @ZONAME.setter
+    def ZONAME(self, value: str | int | float | None) -> None:
+        self._ZONAME = coerce_psse_str(value=value, current_value=self._ZONAME)

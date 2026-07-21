@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Sequence
+from typing import Sequence, Type
 
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
@@ -12,7 +12,42 @@ from VeraGridEngine.Templates.Emt.load_RLC_emt_template import _build_external_m
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_ground_emt_template
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import CmpOp, Comparison, Const, Expr, Var
-from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
+from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType, V_I_CurveSequenceType
+from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
+from VeraGridEngine.basic_structures import Vec
+
+
+class NonLinearResistorEmtTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        """
+
+        :param vf: variable factory.
+        """
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="V-I curve", units="", descr="V-I curve (voltage, current)", tpe=V_I_CurveSequenceType,
+                             value=((0.0, 0.0), (0.02, 1), (0.04, 0.0))),
+                TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str,
+                             value="non_linear_resistor_emt"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+
+        v_i_points: Sequence[Vec] = self.get_value("V-I curve")
+        name: str = self.get_value("name")
+
+        voltage_points = list()
+        current_points = list()
+        for point in v_i_points:
+            voltage_points.append(point[0])
+            current_points.append(point[1])
+
+        return get_nonlinear_resistor_emt_template(
+            self.vf, voltage_points, current_points, name
+        )
 
 
 def get_nonlinear_resistor_emt_template(

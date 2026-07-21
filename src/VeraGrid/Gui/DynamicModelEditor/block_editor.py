@@ -9,18 +9,19 @@
 ################################################################################
 
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
+                            QMetaObject, QObject, QPoint, QRect,
+                            QSize, QTime, QUrl, Qt)
 from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
+                           QFont, QFontDatabase, QGradient, QIcon,
+                           QImage, QKeySequence, QLinearGradient, QPainter,
+                           QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QFrame, QGraphicsView, QHBoxLayout,
-    QHeaderView, QLabel, QLineEdit, QMainWindow,
-    QPushButton, QSizePolicy, QSpacerItem, QSplitter,
-    QTableView, QToolBox, QTreeView, QVBoxLayout,
-    QWidget)
+                               QHeaderView, QLabel, QLineEdit, QMainWindow,
+                               QPushButton, QSizePolicy, QSpacerItem, QSplitter,
+                               QTableView, QToolBox, QTreeView, QVBoxLayout,
+                               QWidget)
 from VeraGrid.Gui.Icons.icons_rc import *
+
 
 class Ui_BlockEditorWindow(object):
     def setupUi(self, BlockEditorWindow):
@@ -81,7 +82,6 @@ class Ui_BlockEditorWindow(object):
         self.librarySearchLineEdit.setObjectName(u"librarySearchLineEdit")
 
         self.horizontalLayout_5.addWidget(self.librarySearchLineEdit)
-
 
         self.verticalLayout_13.addWidget(self.libraryHeaderFrame)
 
@@ -158,13 +158,11 @@ class Ui_BlockEditorWindow(object):
 
         self.horizontalLayout.addWidget(self.doItButton)
 
-
         self.verticalLayout_6.addWidget(self.frame_4)
 
         self.splitter.addWidget(self.frame)
 
         self.verticalLayout_2.addWidget(self.splitter)
-
 
         self.verticalLayout.addWidget(self.frame_3)
 
@@ -174,18 +172,22 @@ class Ui_BlockEditorWindow(object):
 
         self.toolBox.setCurrentIndex(0)
 
-
         QMetaObject.connectSlotsByName(BlockEditorWindow)
+
     # setupUi
 
     def retranslateUi(self, BlockEditorWindow):
         BlockEditorWindow.setWindowTitle(QCoreApplication.translate("BlockEditorWindow", u"BlockEditorWindow", None))
-        self.librarySearchLineEdit.setPlaceholderText(QCoreApplication.translate("BlockEditorWindow", u"Search basic blocks", None))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.page_7), QCoreApplication.translate("BlockEditorWindow", u"Library", None))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.page), QCoreApplication.translate("BlockEditorWindow", u"Variables", None))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.page_2), QCoreApplication.translate("BlockEditorWindow", u"Parameters", None))
-        self.toolBox.setItemText(self.toolBox.indexOf(self.page_3), QCoreApplication.translate("BlockEditorWindow", u"Equations", None))
+        self.librarySearchLineEdit.setPlaceholderText(
+            QCoreApplication.translate("BlockEditorWindow", u"Search basic blocks", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_7),
+                                 QCoreApplication.translate("BlockEditorWindow", u"Library", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page),
+                                 QCoreApplication.translate("BlockEditorWindow", u"Variables", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_2),
+                                 QCoreApplication.translate("BlockEditorWindow", u"Parameters", None))
+        self.toolBox.setItemText(self.toolBox.indexOf(self.page_3),
+                                 QCoreApplication.translate("BlockEditorWindow", u"Equations", None))
         self.deviceLabel.setText("")
         self.doItButton.setText("")
     # retranslateUi
-

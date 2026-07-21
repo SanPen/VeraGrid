@@ -6,7 +6,7 @@ from typing import List, Tuple
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_float, coerce_psse_int, coerce_psse_str
 
 
 class RawArea(RawObject):
@@ -25,11 +25,11 @@ class RawArea(RawObject):
     def __init__(self):
         RawObject.__init__(self, "Area")
 
-        self.I: int = -1
-        self.ISW: int = 0
-        self.PDES: float = 0.0
-        self.PTOL: float = 0.0
-        self.ARNAME: str = ''
+        self._I: int = -1
+        self._ISW: int = 0
+        self._PDES: float = 0.0
+        self._PTOL: float = 0.0
+        self._ARNAME: str = ''
 
     def parse(self, data: List[List[str | int | float]], version: int, logger: Logger):
         raise NotImplementedError(f"{self.__class__.__name__}.parse must be implemented in a version-specific subclass")
@@ -45,3 +45,42 @@ class RawArea(RawObject):
     def get_seed(self) -> str:
         return "_CA_{}".format(self.I)
 
+    @property
+    def I(self) -> int:
+        return self._I
+
+    @I.setter
+    def I(self, value: int | str | None) -> None:
+        self._I = coerce_psse_int(value=value, current_value=self._I)
+
+    @property
+    def ISW(self) -> int:
+        return self._ISW
+
+    @ISW.setter
+    def ISW(self, value: int | str | None) -> None:
+        self._ISW = coerce_psse_int(value=value, current_value=self._ISW)
+
+    @property
+    def PDES(self) -> float:
+        return self._PDES
+
+    @PDES.setter
+    def PDES(self, value: float | int | str | None) -> None:
+        self._PDES = coerce_psse_float(value=value, current_value=self._PDES)
+
+    @property
+    def PTOL(self) -> float:
+        return self._PTOL
+
+    @PTOL.setter
+    def PTOL(self, value: float | int | str | None) -> None:
+        self._PTOL = coerce_psse_float(value=value, current_value=self._PTOL)
+
+    @property
+    def ARNAME(self) -> str:
+        return self._ARNAME
+
+    @ARNAME.setter
+    def ARNAME(self, value: str | int | float | None) -> None:
+        self._ARNAME = coerce_psse_str(value=value, current_value=self._ARNAME)

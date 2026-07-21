@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 import numpy as np
 from VeraGridEngine.Utils.NumericalMethods.common import find_closest_number
+from VeraGridEngine.Simulations.OPF.NumericalMethods.newton_raphson_ips_fx import max_abs
 
 
 def test_find_closest_number():
@@ -130,3 +131,9 @@ def test_find_closest_number():
 
     assert idx == 29
     assert val == arr[29]
+
+
+def test_opf_max_abs_uses_absolute_value():
+    x = np.array([-5.0, 3.0, -4.0])
+
+    assert max_abs(x) == 5.0

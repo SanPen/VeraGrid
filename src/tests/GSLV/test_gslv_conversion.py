@@ -219,6 +219,29 @@ def test_controllable_shunt_conversion_preserves_step_arrays():
     assert converted.control_mode == pg.ShuntControlMode.Discrete
 
 
+def test_bus_voltage_guess_profiles_are_exported_to_gslv():
+    if not GSLV_AVAILABLE:
+        return
+
+    grid = vg.MultiCircuit()
+    bus = vg.Bus(name="Bus", Vm0=1.01, Va0=0.02)
+    bus.active_prof = np.array([True, True, True], dtype=bool)
+    bus.Vm0_prof = np.array([1.01, 1.02, 1.03], dtype=float)
+    bus.Va0_prof = np.array([0.02, 0.03, 0.04], dtype=float)
+    grid.add_bus(obj=bus)
+    grid.time_profile = np.array([0, 1, 2])
+
+    grid_gslv, _ = to_gslv(circuit=grid,
+                           use_time_series=True,
+                           time_indices=None,
+                           override_branch_controls=False,
+                           opf_results=None)
+
+    converted = grid_gslv.buses[0]
+    assert converted.Vm0.to_list() == [1.01, 1.02, 1.03]
+    assert converted.Va0.to_list() == [0.02, 0.03, 0.04]
+
+
 def test_power_flow_ts_ny_activs():
     if not GSLV_AVAILABLE:
         return

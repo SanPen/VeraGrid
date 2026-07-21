@@ -529,7 +529,11 @@ class RmsProblemPhasor(RmsProblemTemplate):
                             Vbus.real * Ir_val + Vbus.imag * Ii_val,
                             Vbus.imag * Ir_val - Vbus.real * Ii_val
                         )
-                    elif elm.device_type == DeviceType.GeneratorDevice and elm.bus.is_slack and remaining_slack_gen[bus_index] > 0:
+
+                    elif (elm.device_type == DeviceType.GeneratorDevice
+                          and elm.bus.is_slack
+                          and remaining_slack_gen[bus_index] > 0):
+
                         Ir_val = residual_r[bus_index] / remaining_slack_gen[bus_index]
                         Ii_val = residual_i[bus_index] / remaining_slack_gen[bus_index]
                         remaining_slack_gen[bus_index] -= 1

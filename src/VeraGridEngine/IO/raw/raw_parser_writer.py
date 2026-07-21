@@ -5,12 +5,12 @@
 
 from __future__ import annotations
 
-import chardet
 import re
 import datetime
 from typing import List, AnyStr, Dict
 
 from VeraGridEngine.IO.raw.raw_writer_comment_map import comment_version_map
+from VeraGridEngine.Utils.charatcter_detection import detect_character_encoding
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.IO.raw.psse_circuit import PsseCircuit
 from VeraGridEngine.IO.raw.versioned.v29.area import RawAreaV29
@@ -308,8 +308,7 @@ def read_and_split(file_name: str, text_func=None, progress_func=None) -> (List[
     if progress_func is not None:
         progress_func(0)
 
-    # make a guess of the file encoding
-    detection = chardet.detect(open(file_name, "rb").read())
+    detected_encoding: str = detect_character_encoding(source=file_name)
 
     # open the text file into a variable
 
@@ -319,7 +318,9 @@ def read_and_split(file_name: str, text_func=None, progress_func=None) -> (List[
     sections_dict: Dict[str, List[List[str | float | int] | str]] = dict()
     sections_dict["bus"] = list()
     sep = ","
-    with open(file_name, 'r', encoding=detection['encoding']) as my_file:
+    # Reuse the shared detector so the guessed encoding is validated before the
+    # parser starts iterating through the RAW records.
+    with open(file_name, 'r', encoding=detected_encoding) as my_file:
         i = 0
         block_category = "bus"
         for line_ in my_file:

@@ -252,6 +252,7 @@ class ConfigurationMain(ResultsMain):
             [
                 ApplicationLanguage.SYSTEM,
                 ApplicationLanguage.ENGLISH,
+                ApplicationLanguage.KOREAN,
                 ApplicationLanguage.SPANISH,
                 ApplicationLanguage.CATALAN,
                 ApplicationLanguage.BASQUE,
@@ -528,6 +529,7 @@ class ConfigurationMain(ResultsMain):
                 "robust_mip": self.ui.fixOpfCheckBox,
                 "save_mip": self.ui.save_mip_checkBox,
                 "use_glsk_as_cost": self.ui.useGslkAsCostsOpfCheckBox,
+                "quadratic_costs": self.ui.quadraticCostsOpfCheckBox,
                 "add_losses_approximation": self.ui.approximateLossesOpfCheckBox,
                 "ips_method": self.ui.ips_method_comboBox,
                 "ips_tolerance": self.ui.ips_tolerance_spinBox,

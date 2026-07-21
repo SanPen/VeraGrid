@@ -5,7 +5,8 @@
 
 import numpy as np
 import VeraGridEngine.Topology.topology as tp
-from VeraGridEngine.basic_structures import Vec, CxVec, IntVec, StrVec, BoolVec
+from VeraGridEngine.basic_structures import Vec, CxVec, IntVec, StrVec, BoolVec, Logger
+from VeraGridEngine.Utils.compare import compare_arr
 
 
 class LoadData:
@@ -249,3 +250,12 @@ class LoadData:
         :return: array with the bus indices
         """
         return self.bus_idx
+
+    def compare(self, other: "LoadData", tol: float, logger: Logger) -> None:
+        """
+        Compare load fields used by NumericalCircuit.compare().
+        """
+        compare_arr(self.active, other.active, tol, 'LoadData', 'active', logger)
+        compare_arr(self.S, other.S, tol, 'LoadData', 'S', logger)
+        compare_arr(self.I, other.I, tol, 'LoadData', 'I', logger)
+        compare_arr(self.Y, other.Y, tol, 'LoadData', 'Y', logger)

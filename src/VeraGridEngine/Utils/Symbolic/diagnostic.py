@@ -82,6 +82,7 @@ class NewtonDiagnosticsConfig:
         "backtracking_beta",
         "backtracking_min_alpha",
         "backtracking_max_iter",
+        "max_newton_step_inf",
         "log_level",
     )
 
@@ -100,6 +101,7 @@ class NewtonDiagnosticsConfig:
         backtracking_beta: float = 0.5,
         backtracking_min_alpha: float = 1e-4,
         backtracking_max_iter: int = 6,
+        max_newton_step_inf: Optional[float] = None,
         log_level: int = logging.WARNING,
     ) -> None:
         self.step_norm_explode = step_norm_explode
@@ -115,6 +117,7 @@ class NewtonDiagnosticsConfig:
         self.backtracking_beta = backtracking_beta
         self.backtracking_min_alpha = backtracking_min_alpha
         self.backtracking_max_iter = backtracking_max_iter
+        self.max_newton_step_inf = max_newton_step_inf
         self.log_level = log_level
 
 

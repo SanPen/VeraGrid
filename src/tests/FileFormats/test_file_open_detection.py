@@ -1,4 +1,7 @@
+from pathlib import Path
+
 from VeraGridEngine.IO.file_open import determine_file_type
+from VeraGridEngine.IO.others.pandapower_parser import PANDAPOWER_AVAILABLE
 from VeraGridEngine.enumerations import FileType
 
 
@@ -24,3 +27,11 @@ def test_determine_file_type_detects_eurostag_files() -> None:
     assert determine_file_type("case1.dta") == FileType.Eurostag
     assert determine_file_type(["case1.ech", "case1.dta"]) == FileType.Eurostag
     assert determine_file_type(["case1.ech", "case1.dta", "case1.lf"]) == FileType.Eurostag
+
+
+def test_determine_file_type_detects_pandapower_json_fixture() -> None:
+    if not PANDAPOWER_AVAILABLE:
+        return
+
+    fixture = Path(__file__).resolve().parents[1] / "data" / "grids" / "state-estimation" / "finalized.json"
+    assert determine_file_type(str(fixture)) == FileType.PandaPower

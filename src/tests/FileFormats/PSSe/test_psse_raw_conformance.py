@@ -12,9 +12,20 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.IO.raw.versioned.v34.switched_shunt import RawSwitchedShuntV34
 from VeraGridEngine.IO.raw.versioned.v35.switched_shunt import RawSwitchedShuntV35
 from VeraGridEngine.IO.raw.versioned.v36.switched_shunt import RawSwitchedShuntV36
+from VeraGridEngine.IO.raw.versioned.base.area import RawArea
+from VeraGridEngine.IO.raw.versioned.base.bus import RawBus
+from VeraGridEngine.IO.raw.versioned.base.facts import RawFACTS
+from VeraGridEngine.IO.raw.versioned.base.generator import RawGenerator
+from VeraGridEngine.IO.raw.versioned.base.gne_device import RawGneDevice
+from VeraGridEngine.IO.raw.versioned.base.multi_section_line import RawMultiLineSection
+from VeraGridEngine.IO.raw.versioned.base.switched_shunt import RawSwitchedShunt
+from VeraGridEngine.IO.raw.versioned.base.two_terminal_dc_line import RawTwoTerminalDCLine
+from VeraGridEngine.IO.raw.versioned.base.vsc_dc_line import RawVscDCLine
 from VeraGridEngine.IO.raw.versioned.v34.system_switching_device import RawSystemSwitchingDeviceV34
 from VeraGridEngine.IO.raw.versioned.v35.system_switching_device import RawSystemSwitchingDeviceV35
 from VeraGridEngine.IO.raw.versioned.v36.system_switching_device import RawSystemSwitchingDeviceV36
+from VeraGridEngine.IO.raw.versioned.v35.equipment_terminal import RawEquipmentTerminalV35
+from VeraGridEngine.IO.raw.versioned.v35.substation_switching_device import RawSubstationSwitchingDeviceV35
 from VeraGridEngine.IO.raw.versioned.v29.transformer import RawTransformerV29 as RawTransformer
 from VeraGridEngine.IO.raw.versioned.v33.branch import RawBranchV33
 from VeraGridEngine.IO.raw.versioned.v35.node import RawNodeV35
@@ -721,6 +732,175 @@ def test_psse33_branch_writer_uses_rateabc_field_order() -> None:
     assert branch.RATE1 == 100.0
     assert branch.RATE2 == 110.0
     assert branch.RATE3 == 120.0
+
+
+def test_psse35_branch_import_defaults_string_len_to_one(tmp_path: Path) -> None:
+    """String PSSE branch LEN fields must import as one instead of crashing."""
+
+    raw_text: str = "\n".join(
+        [
+            "0,100.0,35,0,0,60.0",
+            "Branch length case",
+            "Branch length case 2",
+            "GENERAL, THRSHZ=0.0001",
+            "0 / END OF SYSTEM-WIDE DATA, BEGIN BUS DATA",
+            "101,'BUS101',230.0,3,1,1,1,1.0,0.0,1.1,0.9,1.1,0.9",
+            "102,'BUS102',230.0,1,1,1,1,1.0,0.0,1.1,0.9,1.1,0.9",
+            "0 / END OF BUS DATA, BEGIN BRANCH DATA",
+            "101,102,'1',0.01,0.05,0.001,'',100.0,110.0,120.0,0.0,0.0,0.0,0.0,1,1,,1,1.0",
+            "0 / END OF BRANCH DATA",
+            "Q",
+        ]
+    )
+    raw_path: Path = tmp_path / "psse35_blank_branch_len.raw"
+    raw_path.write_text(raw_text, encoding="utf-8")
+
+    psse_circuit = read_raw(str(raw_path), logger=Logger())
+    circuit = psse_to_veragrid(psse_circuit, logger=Logger())
+
+    assert len(psse_circuit.branches) == 1
+    assert psse_circuit.branches[0].LEN == 1.0
+    assert len(circuit.lines) == 1
+    assert circuit.lines[0].length == 1.0
+
+
+def test_branch_setters_coerce_declared_types() -> None:
+    """Branch setters must coerce declared types and preserve defaults on blank values."""
+
+    branch = RawBranchV33()
+    branch.I = "7"
+    branch.CKT = 9
+    branch.R = 0.25
+    branch.R = ""
+    branch.ST = "0"
+    branch.LEN = ""
+
+    assert branch.I == 7
+    assert branch.CKT == "9"
+    assert branch.R == 0.25
+    assert branch.ST == 0
+    assert branch.LEN == 1.0
+
+
+def test_other_base_alias_setters_coerce_declared_types() -> None:
+    """Base alias setters must coerce through the shared PSSE helper functions."""
+
+    transformer = RawTransformerV35()
+    switch = RawSystemSwitchingDeviceV35()
+    machine = RawInductionMachineV35()
+
+    transformer.RATA1 = 12.5
+    transformer.RATA1 = ""
+    switch.CKTID = 7
+    machine.STATUS = "0"
+
+    assert transformer.RATA1 == 12.5
+    assert transformer.RATE1_1 == 12.5
+    assert switch.CKTID == "7"
+    assert switch.CKT == "7"
+    assert machine.STATUS == 0
+    assert machine.STAT == 0
+
+
+def test_small_base_object_setters_coerce_declared_types() -> None:
+    """Small base RAW objects must keep typed defaults through explicit setters."""
+
+    area = RawArea()
+    bus = RawBus()
+    load = RawLoadV36()
+    terminal = RawEquipmentTerminalV35()
+    station_switch = RawSubstationSwitchingDeviceV35()
+    section = RawMultiLineSection()
+
+    area.PDES = ""
+    area.ARNAME = 9
+    bus.I = "11"
+    bus.VM = ""
+    load.PL = ""
+    load.LOADTYPE = 4
+    terminal.TYPE = 3
+    terminal.IBUS = "101"
+    station_switch.X = ""
+    station_switch.NAME = 12
+    section.ID = ""
+    section.DUM3 = "8"
+
+    assert area.PDES == 0.0
+    assert area.ARNAME == "9"
+    assert bus.I == 11
+    assert bus.VM == 1.0
+    assert load.PL == 0.0
+    assert load.LOADTYPE == "4"
+    assert terminal.TYPE == "3"
+    assert terminal.IBUS == 101
+    assert station_switch.X == 0.0001
+    assert station_switch.NAME == "12"
+    assert section.ID == 0.0
+    assert section.DUM3 == 8
+
+
+def test_medium_base_object_setters_coerce_declared_types() -> None:
+    """Medium base RAW objects must keep typed defaults through explicit setters."""
+
+    facts = RawFACTS()
+    generator = RawGenerator()
+
+    facts.MODE = "2"
+    facts.PDES = ""
+    facts.MNAME = 5
+    generator.ID = 7
+    generator.PG = ""
+    generator.O2 = "9"
+    generator.WPF = ""
+
+    assert facts.MODE == 2
+    assert facts.PDES == 0.0
+    assert facts.MNAME == "5"
+    assert generator.ID == "7"
+    assert generator.PG == 0.0
+    assert generator.O2 == 9
+    assert generator.WPF == 0.0
+
+
+def test_large_base_object_setters_coerce_declared_types() -> None:
+    """Large base RAW objects must keep typed defaults through explicit setters."""
+
+    gne = RawGneDevice()
+    shunt = RawSwitchedShunt()
+    vsc = RawVscDCLine()
+    dc_line = RawTwoTerminalDCLine()
+
+    gne.NTERM = "3"
+    gne.REAL4 = ""
+    gne.CHAR2 = 8
+    shunt.MODSW = "4"
+    shunt.BINIT = ""
+    shunt.S3 = "1"
+    shunt.B6 = "2.5"
+    vsc.NAME = 6
+    vsc.RDC = ""
+    vsc.TYPE2 = "2"
+    vsc.RMPCT2 = ""
+    dc_line.METER = 5
+    dc_line.CCCITMX = ""
+    dc_line.TRR = ""
+    dc_line.IDR = 4
+
+    assert gne.NTERM == 3
+    assert gne.REAL4 == 0.0
+    assert gne.CHAR2 == "8"
+    assert shunt.MODSW == 4
+    assert shunt.BINIT == 0.0
+    assert shunt.S3 == 1
+    assert shunt.B6 == 2.5
+    assert vsc.NAME == "6"
+    assert vsc.RDC == 0.0
+    assert vsc.TYPE2 == 2
+    assert vsc.RMPCT2 == 100.0
+    assert dc_line.METER == "5"
+    assert dc_line.CCCITMX == 20
+    assert dc_line.TRR == 1.0
+    assert dc_line.IDR == "4"
 
 
 def test_psse35_node_writer_omits_isub_from_raw_record() -> None:

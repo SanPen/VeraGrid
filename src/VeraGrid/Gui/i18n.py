@@ -20,6 +20,7 @@ class ApplicationLanguage(Enum):
     SYSTEM = "system"
     ENGLISH = "en"
     JAPANESE = "ja_JP"
+    KOREAN = "ko_KR"
     BASQUE = "eu_ES"
     GALICIAN = "gl_ES"
     ARABIC = "ar"
@@ -384,6 +385,7 @@ def get_language_display_text(
         endonyms: dict[ApplicationLanguage, str] = {
             ApplicationLanguage.ENGLISH: "English",
             ApplicationLanguage.JAPANESE: "日本語",
+            ApplicationLanguage.KOREAN: "한국어",
             ApplicationLanguage.BASQUE: "Euskara",
             ApplicationLanguage.GALICIAN: "Galego",
             ApplicationLanguage.ARABIC: "عربي",
@@ -418,46 +420,49 @@ def get_language_flag_icon_path(language: ApplicationLanguage) -> str:
             if language == ApplicationLanguage.JAPANESE:
                 return ":/Icons/icons/flag_ja.png"
             else:
-                if language == ApplicationLanguage.BASQUE:
-                    return ":/Icons/icons/flag_eu.png"
+                if language == ApplicationLanguage.KOREAN:
+                    return ":/Icons/icons/flag_ko.png"
                 else:
-                    if language == ApplicationLanguage.GALICIAN:
-                        return ":/Icons/icons/flag_gl.png"
+                    if language == ApplicationLanguage.BASQUE:
+                        return ":/Icons/icons/flag_eu.png"
                     else:
-                        if language == ApplicationLanguage.ARABIC:
-                            return ":/Icons/icons/flag_ar.png"
+                        if language == ApplicationLanguage.GALICIAN:
+                            return ":/Icons/icons/flag_gl.png"
                         else:
-                            if language == ApplicationLanguage.ITALIAN:
-                                return ":/Icons/icons/flag_it.png"
+                            if language == ApplicationLanguage.ARABIC:
+                                return ":/Icons/icons/flag_ar.png"
                             else:
-                                if language == ApplicationLanguage.GREEK:
-                                    return ":/Icons/icons/flag_el.png"
+                                if language == ApplicationLanguage.ITALIAN:
+                                    return ":/Icons/icons/flag_it.png"
                                 else:
-                                    if language == ApplicationLanguage.DUTCH:
-                                        return ":/Icons/icons/flag_nl.png"
+                                    if language == ApplicationLanguage.GREEK:
+                                        return ":/Icons/icons/flag_el.png"
                                     else:
-                                        if language == ApplicationLanguage.CATALAN:
-                                            return ":/Icons/icons/flag_ca.png"
+                                        if language == ApplicationLanguage.DUTCH:
+                                            return ":/Icons/icons/flag_nl.png"
                                         else:
-                                            if language == ApplicationLanguage.CHINESE:
-                                                return ":/Icons/icons/flag_zh.png"
+                                            if language == ApplicationLanguage.CATALAN:
+                                                return ":/Icons/icons/flag_ca.png"
                                             else:
-                                                if language == ApplicationLanguage.HINDI:
-                                                    return ":/Icons/icons/flag_hi.png"
+                                                if language == ApplicationLanguage.CHINESE:
+                                                    return ":/Icons/icons/flag_zh.png"
                                                 else:
-                                                    if language == ApplicationLanguage.CANTONESE:
-                                                        return ":/Icons/icons/flag_zh.png"
+                                                    if language == ApplicationLanguage.HINDI:
+                                                        return ":/Icons/icons/flag_hi.png"
                                                     else:
-                                                        if language == ApplicationLanguage.GERMAN:
-                                                            return ":/Icons/icons/flag_de.png"
+                                                        if language == ApplicationLanguage.CANTONESE:
+                                                            return ":/Icons/icons/flag_zh.png"
                                                         else:
-                                                            if language == ApplicationLanguage.FRENCH:
-                                                                return ":/Icons/icons/flag_fr.png"
+                                                            if language == ApplicationLanguage.GERMAN:
+                                                                return ":/Icons/icons/flag_de.png"
                                                             else:
-                                                                if language == ApplicationLanguage.PORTUGUESE:
-                                                                    return ":/Icons/icons/flag_pt.png"
+                                                                if language == ApplicationLanguage.FRENCH:
+                                                                    return ":/Icons/icons/flag_fr.png"
                                                                 else:
-                                                                    return ":/Icons/icons/flag_es.png"
+                                                                    if language == ApplicationLanguage.PORTUGUESE:
+                                                                        return ":/Icons/icons/flag_pt.png"
+                                                                    else:
+                                                                        return ":/Icons/icons/flag_es.png"
 
 
 def load_translator(prefix: str, directory: str, candidates: list[str]) -> QTranslator | None:
@@ -703,6 +708,7 @@ def language_from_name(name_text: str | None) -> ApplicationLanguage:
         ApplicationLanguage.SYSTEM: "System default",
         ApplicationLanguage.ENGLISH: "English",
         ApplicationLanguage.JAPANESE: "Japanese",
+        ApplicationLanguage.KOREAN: "Korean",
         ApplicationLanguage.BASQUE: "Basque",
         ApplicationLanguage.GALICIAN: "Galician",
         ApplicationLanguage.ARABIC: "Arabic",

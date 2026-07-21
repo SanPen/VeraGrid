@@ -2152,7 +2152,7 @@ def get_gcdev_buses(cgmes_model: CgmesCircuit,
         for slack_tp_uuid in slack_tp_uuid_set:
             slack_bus = calc_node_dict.get(slack_tp_uuid, None)
             if slack_bus is not None:
-                slack_bus.is_slack = True
+                slack_bus.set_is_slack_at(t=None, val=True)
                 matched_slack_uuid_set.add(slack_tp_uuid)
 
         if len(slack_tp_uuid_set) > 0 and len(matched_slack_uuid_set) == 0:

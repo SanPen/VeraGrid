@@ -5,8 +5,9 @@
 from typing import Dict
 import numba as nb
 import numpy as np
-from VeraGridEngine.basic_structures import CxVec, Vec, IntVec, BoolVec, StrVec
+from VeraGridEngine.basic_structures import CxVec, Vec, IntVec, BoolVec, StrVec, Logger
 from VeraGridEngine.enumerations import BusMode
+from VeraGridEngine.Utils.compare import compare_arr
 
 
 @nb.njit(cache=True, inline="always")
@@ -247,6 +248,15 @@ class BusData:
         :return:
         """
         return {idtag_val: i for i, idtag_val in enumerate(self.idtag)}
+
+    def compare(self, other: "BusData", tol: float, logger: Logger) -> None:
+        """
+        Compare bus data arrays used by NumericalCircuit.compare().
+        """
+        compare_arr(self.active, other.active, tol, 'BusData', 'active', logger)
+        compare_arr(self.Vbus.real, other.Vbus.real, tol, 'BusData', 'V0', logger)
+        compare_arr(self.installed_power, other.installed_power, tol, 'BusData', 'installed power', logger)
+        compare_arr(self.bus_types, other.bus_types, tol, 'BusData', 'bus_types', logger)
 
     def propagate_controls(self, chosen_idx: int, other_idx: IntVec) -> None:
         """

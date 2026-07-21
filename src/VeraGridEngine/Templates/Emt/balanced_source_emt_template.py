@@ -131,7 +131,12 @@ def get_balanced_3ph_current_source_emt_template(vf: VarFactory,
     ]
     templ.block.out_vars = [i_a, i_b, i_c]
     templ.block.external_mapping = _build_external_mapping(v_a, v_b, v_c, i_a, i_b, i_c)
-    templ.block.init_eqs = {theta_var: sym.Const(0.0), i_a: offset_var, i_b: offset_var, i_c: offset_var}
+    templ.block.init_eqs = {
+        theta_var: sym.Const(0.0),
+        i_a: offset_var + amplitude_var * sym.sin(_phase_angle_expression(theta_var, phase_a_deg_var, 0.0)),
+        i_b: offset_var + amplitude_var * sym.sin(_phase_angle_expression(theta_var, phase_a_deg_var, -120.0)),
+        i_c: offset_var + amplitude_var * sym.sin(_phase_angle_expression(theta_var, phase_a_deg_var, 120.0)),
+    }
     return templ
 
 
@@ -211,7 +216,12 @@ def get_controlled_balanced_3ph_current_source_emt_template(vf: VarFactory,
     ]
     templ.block.out_vars = [i_a, i_b, i_c]
     templ.block.external_mapping = _build_external_mapping(v_a, v_b, v_c, i_a, i_b, i_c)
-    templ.block.init_eqs = {theta_var: sym.Const(0.0), i_a: offset_var, i_b: offset_var, i_c: offset_var}
+    templ.block.init_eqs = {
+        theta_var: sym.Const(0.0),
+        i_a: offset_var + i_amp_cmd * sym.sin(_phase_angle_expression(theta_var, phase_a_deg_var, 0.0)),
+        i_b: offset_var + i_amp_cmd * sym.sin(_phase_angle_expression(theta_var, phase_a_deg_var, -120.0)),
+        i_c: offset_var + i_amp_cmd * sym.sin(_phase_angle_expression(theta_var, phase_a_deg_var, 120.0)),
+    }
     return templ
 
 
@@ -306,7 +316,12 @@ def get_balanced_3ph_voltage_source_emt_template(vf: VarFactory,
     ]
     templ.block.out_vars = [i_a, i_b, i_c]
     templ.block.external_mapping = _build_external_mapping(v_a, v_b, v_c, i_a, i_b, i_c)
-    templ.block.init_eqs = {theta_var: sym.Const(0.0), i_a: conductance_var * (offset_var - v_a), i_b: conductance_var * (offset_var - v_b), i_c: conductance_var * (offset_var - v_c)}
+    templ.block.init_eqs = {
+        theta_var: sym.Const(0.0),
+        i_a: conductance_var * (v_src_a - v_a),
+        i_b: conductance_var * (v_src_b - v_b),
+        i_c: conductance_var * (v_src_c - v_c),
+    }
     return templ
 
 
@@ -396,5 +411,10 @@ def get_controlled_balanced_3ph_voltage_source_emt_template(vf: VarFactory,
     ]
     templ.block.out_vars = [i_a, i_b, i_c]
     templ.block.external_mapping = _build_external_mapping(v_a, v_b, v_c, i_a, i_b, i_c)
-    templ.block.init_eqs = {theta_var: sym.Const(0.0), i_a: conductance_var * (offset_var - v_a), i_b: conductance_var * (offset_var - v_b), i_c: conductance_var * (offset_var - v_c)}
+    templ.block.init_eqs = {
+        theta_var: sym.Const(0.0),
+        i_a: conductance_var * (v_src_a - v_a),
+        i_b: conductance_var * (v_src_b - v_b),
+        i_c: conductance_var * (v_src_c - v_c),
+    }
     return templ

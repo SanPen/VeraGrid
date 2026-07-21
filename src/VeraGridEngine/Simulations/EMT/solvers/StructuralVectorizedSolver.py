@@ -847,11 +847,13 @@ class Predictor:
     """
     Computes an explicit predictor for the Newton initial guess x_iter.
     """
-    __slots__ = ['n_states']
+    __slots__ = ['n_states', 'algebraic_derivative_by_index']
 
     def __init__(self,
-                 n_states: int) -> None:
+                 n_states: int,
+                 algebraic_derivative_by_index: Dict[int, float] | None = None) -> None:
         self.n_states = n_states
+        self.algebraic_derivative_by_index = dict() if algebraic_derivative_by_index is None else algebraic_derivative_by_index
 
     def predict(self,
                 x_iter: Vec,
@@ -896,6 +898,8 @@ class Predictor:
         """
         ns = self.n_states
         x_iter[:ns] = x_prev[:ns] + h * dx_prev[:ns]
+        for idx, derivative in self.algebraic_derivative_by_index.items():
+            x_iter[idx] = x_prev[idx] + h * derivative
         return x_iter
 
 class EquationGroup:
@@ -944,7 +948,7 @@ class EquationGroup:
 
 class SparseADJacobian:
     __slots__ = [
-        'verbose', 'equations', 'variables', 'parameters', 'method', 'dtype',
+        'verbose', 'equations', 'variables', 'parameters', 'diff_vars', 'method', 'dtype',
         'n_rows', 'n_cols', 'var_map', 'col_rows', 'J', 'colors', 'n_colors',
         'color_groups', 'color_ptr', 'color_cols', 'col_ptr', 'row_idx', 'data_idx',
         '_compiler', '_ad_kernel', '_master_dispatcher', '_seed_matrix', '_jvp_work_buffer', '_data_buffer'
@@ -954,6 +958,7 @@ class SparseADJacobian:
             equations: List[Expr],
             variables: List[Var],
             parameters: List[Var],
+            diff_vars: List[Var],
             method: DynamicIntegrationMethod,
             use_cse: bool = True,
             dtype: Any = np.float64,
@@ -963,6 +968,7 @@ class SparseADJacobian:
         self.equations = equations
         self.variables = variables
         self.parameters = parameters
+        self.diff_vars = diff_vars
         self.method = method
         self.dtype = dtype
 
@@ -1070,7 +1076,7 @@ class SparseADJacobian:
         self.col_ptr, self.row_idx, self.data_idx = col_ptr, row_idx, data_idx
 
         # Compile the generic eager AD kernel once and reuse it across graph colors.
-        self._compiler = EagerEquationCompiler(variables=variables, parameters=parameters, method=method)
+        self._compiler = EagerEquationCompiler(variables=variables, parameters=parameters, diff_vars=diff_vars, method=method)
         k_name = f"advec_step_generic_{method.name}_{self.n_rows}_{self.n_cols}"
         py_ad, signature_tpe = self._compiler.compile_ad_kernel(
             equations,
@@ -1188,7 +1194,8 @@ class StructuralVectorizedSolver:
         'jit_jacobians_ad', 'vectorized_ready', '_last_sim_loop_time', '_newton_diag_config', '_vectorized_warmup_done',
         '_predictor', '_runtime_param_count', '_static_parameter_buffer', '_full_parameter_buffer', '_residual_buffer',
         '_trial_state_buffer', '_trial_residual_buffer', '_trial_residual_evaluator',
-        '_backend_build_stats', '_last_runtime_stats', '_sparse_solver_backend_provider', '_sparse_factorization_manager', '_cancel_checker', '_progress_signal'
+        '_backend_build_stats', '_last_runtime_stats', '_sparse_solver_backend_provider', '_sparse_factorization_manager', '_cancel_checker', '_progress_signal',
+        '_diff_base_var_indices'
     ]
 
     def __init__(self,
@@ -1226,7 +1233,7 @@ class StructuralVectorizedSolver:
         self.t_end = t_end
         self.h = h
         self.method = method
-        self.pred_method = pred_method
+        self.pred_method = DynamicIntegrationMethod.OdeEuler if pred_method is None else pred_method
         self.dense_threshold = dense_threshold
         self.verbose = verbose
         self.newton_max_iter: int = int(newton_max_iter)
@@ -1257,6 +1264,11 @@ class StructuralVectorizedSolver:
         self._n_diff = len(self._diff_vars)
 
         self.uid2idx_vars = {v.uid: i for i, v in enumerate(self.sorted_vars)}
+        self._diff_base_var_indices = np.full(self._n_diff, -1, dtype=np.int64)
+        for diff_idx, diff_var in enumerate(self._diff_vars):
+            base_var = getattr(diff_var, "base_var", None)
+            if base_var is not None:
+                self._diff_base_var_indices[diff_idx] = self.uid2idx_vars.get(base_var.uid, -1)
 
         self._event_parameters = self.problem.get_variable_parameters()
         self._parameters = self.problem.get_constant_parameters()
@@ -1266,7 +1278,16 @@ class StructuralVectorizedSolver:
         self.vectorized_ready = False
         self._last_sim_loop_time = 0.0
         self._vectorized_warmup_done = False
-        self._predictor = Predictor(n_states=self._n_state)
+        algebraic_predictor_derivatives = getattr(problem, "algebraic_predictor_derivatives", {})
+        algebraic_derivative_by_index: Dict[int, float] = {}
+        for var_uid, derivative in algebraic_predictor_derivatives.items():
+            var_idx = self.uid2idx_vars.get(var_uid, None)
+            if var_idx is not None and var_idx >= self._n_state:
+                algebraic_derivative_by_index[var_idx] = float(derivative)
+        self._predictor = Predictor(
+            n_states=self._n_state,
+            algebraic_derivative_by_index=algebraic_derivative_by_index,
+        )
         self._runtime_param_count: int = len(self._event_parameters)
         self._static_parameter_buffer: Vec = np.asarray(
             [float(constant.value) for constant in self._parameters_values],
@@ -1399,7 +1420,7 @@ class StructuralVectorizedSolver:
         all_params.extend(self._event_parameters)
         all_params.extend(self._parameters)
 
-        vec_compiler = EagerEquationCompiler(self.sorted_vars, all_params, method=method)
+        vec_compiler = EagerEquationCompiler(self.sorted_vars, all_params, diff_vars=self._diff_vars, method=method)
 
         residual_compile_t0: float = time.perf_counter()
 
@@ -1461,7 +1482,7 @@ class StructuralVectorizedSolver:
 
         if method not in self.jit_jacobians_ad:
             self.jit_jacobians_ad[method] = SparseADJacobian(
-                full_eq_list, self.sorted_vars, all_params, method, verbose=self.verbose
+                full_eq_list, self.sorted_vars, all_params, self._diff_vars, method, verbose=self.verbose
             )
 
         self.vec_jacobian = self.jit_jacobians_ad[method]
@@ -1717,7 +1738,11 @@ class StructuralVectorizedSolver:
                         pass
 
                 # PREDICTOR
-                if i == 0 and is_first_local_step and method == DynamicIntegrationMethod.DaeTrapezoidal:
+                if (
+                    i == 0
+                    and is_first_local_step
+                    and method in {DynamicIntegrationMethod.DaeBackEuler, DynamicIntegrationMethod.DaeTrapezoidal}
+                ):
                     self._predictor.predict(
                         x_iter=x_iter,
                         x_prev=x_prev,
@@ -1815,6 +1840,12 @@ class StructuralVectorizedSolver:
                             assert sparse_factor_manager is not None
                             delta = sparse_factor_manager.solve(-res_global)
 
+                    max_step_inf = getattr(diag_cfg, "max_newton_step_inf", None)
+                    if max_step_inf is not None and max_step_inf > 0.0:
+                        step_inf = float(np.max(np.abs(delta))) if delta.size > 0 else 0.0
+                        if step_inf > max_step_inf:
+                            delta *= float(max_step_inf) / step_inf
+
                     if diag_cfg.enable_backtracking:
                         self._trial_residual_evaluator.set_context(
                             residual_evaluator=residual_evaluator,
@@ -1845,10 +1876,17 @@ class StructuralVectorizedSolver:
                         well_initialized = False
 
                 if method == DynamicIntegrationMethod.DaeTrapezoidal:
-                    dx_prev[:self._n_state] = (
-                            (2.0 / h_eff) * (x_iter[:self._n_state] - x_prev[:self._n_state])
-                            - dx_prev[:self._n_state]
-                    )
+                    if self._n_diff == 0:
+                        dx_prev[:self._n_state] = (
+                                (2.0 / h_eff) * (x_iter[:self._n_state] - x_prev[:self._n_state])
+                                - dx_prev[:self._n_state]
+                        )
+                    else:
+                        for diff_idx, base_idx in enumerate(self._diff_base_var_indices):
+                            if base_idx >= 0:
+                                dx_prev[diff_idx] = (2.0 / h_eff) * (x_iter[base_idx] - x_prev[base_idx]) - dx_prev[diff_idx]
+                            else:
+                                pass
                 elif method == DynamicIntegrationMethod.DaeBDF2:
                     x_prev2[:] = x_prev
                     dx_prev[:self._n_state] = (

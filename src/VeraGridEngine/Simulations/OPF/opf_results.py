@@ -54,6 +54,7 @@ class OptimalPowerFlowResults(ResultsTemplate):
         ResultsProperty(name='generator_power', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='generator_reactive_power', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='generator_shedding', tpe=Vec, old_names=list(), expandable=False),
+        ResultsProperty(name='generator_reserve', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='battery_power', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='shunt_like_reactive_power', tpe=Vec, old_names=list(), expandable=False),
         ResultsProperty(name='fluid_node_p2x_flow', tpe=Vec, old_names=list(), expandable=False),
@@ -115,6 +116,7 @@ class OptimalPowerFlowResults(ResultsTemplate):
         "generator_shedding",
         "generator_power",
         "generator_reactive_power",
+        "generator_reserve",
         "shunt_like_reactive_power",
         "battery_power",
         "fluid_node_p2x_flow",
@@ -179,7 +181,8 @@ class OptimalPowerFlowResults(ResultsTemplate):
 
                                                     ResultTypes.GeneratorResults: [ResultTypes.GeneratorPower,
                                                                                    ResultTypes.GeneratorReactivePower,
-                                                                                   ResultTypes.GeneratorShedding],
+                                                                                   ResultTypes.GeneratorShedding,
+                                                                                   ResultTypes.GeneratorReserve],
 
                                                     ResultTypes.ShuntResults: [ResultTypes.ShuntReactivePower],
 
@@ -274,6 +277,7 @@ class OptimalPowerFlowResults(ResultsTemplate):
         self.generator_shedding = np.zeros(ngen, dtype=float)
         self.generator_power = np.zeros(ngen, dtype=float)
         self.generator_reactive_power = np.zeros(ngen, dtype=float)
+        self.generator_reserve = np.zeros(ngen, dtype=float)
 
         self.shunt_like_reactive_power = np.zeros(nsh, dtype=float)
 
@@ -631,6 +635,18 @@ class OptimalPowerFlowResults(ResultsTemplate):
                                 ylabel='(MVAr)',
                                 xlabel='',
                                 units='(MVAr)')
+
+        elif result_type == ResultTypes.GeneratorReserve:
+
+            return ResultsTable(data=self.generator_reserve,
+                                index=self.generator_names,
+                                idx_device_type=DeviceType.GeneratorDevice,
+                                columns=[result_type.value],
+                                cols_device_type=DeviceType.NoDevice,
+                                title=str(result_type.value),
+                                ylabel='(MW)',
+                                xlabel='',
+                                units='(MW)')
 
         elif result_type == ResultTypes.BatteryPower:
 

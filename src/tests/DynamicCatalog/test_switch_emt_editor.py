@@ -32,12 +32,13 @@ def _build_editor() -> DynamicBlockEditorGUI:
     _get_app()
     editor = DynamicBlockEditorGUI(
         var_factory=VarFactory(),
-        block=Block(),
+        current_block=Block(),
         api_object=_ApiStub(),
+        current_theme="Light",
         circuit=MultiCircuit(),
         mode=DynamicSimulationMode.EMT,
         templates_list=list(),
-        main_editor=False,
+        is_root_editor=False,
         modal=False,
     )
     editor.show()
@@ -81,35 +82,47 @@ def _build_editor() -> DynamicBlockEditorGUI:
 #     editor.close()
 
 
-def test_modal_created_block_supports_nested_editor_open(override_attrs) -> None:
-    editor = _build_editor()
-    block = Block(name="nested_test_block")
-    block_item = editor.create_template_block_item(type("_Template", (), {"name": "nested_test_block", "block": block})(), 10.0, 20.0)
+class _NavigationDelegateStub:
+    """Captures navigation requests for testing."""
 
-    assert block_item is not None
+    __slots__ = ("calls",)
 
-    override_attrs.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "show", lambda self: None)
-    override_attrs.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "raise_", lambda self: None)
-    override_attrs.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "activateWindow", lambda self: None)
-    editor.open_block_subeditor(block_item)
-    assert getattr(block_item, "editor_window", None) is not None
+    def __init__(self) -> None:
+        self.calls: list[Block] = list()
 
-    editor.has_unapplied_changes = False
-    editor.close()
+    def navigate_to_block(self, block: Block) -> None:
+        self.calls.append(block)
 
 
-def test_scene_edit_dispatch_opens_editor_for_modal_created_block(override_attrs) -> None:
+def test_scene_edit_dispatch_navigates_via_delegate(override_attrs) -> None:
     editor = _build_editor()
     block = Block(name="dispatch_edit_block")
     block_item = editor.create_template_block_item(type("_Template", (), {"name": "dispatch_edit_block", "block": block})(), 10.0, 20.0)
 
     assert block_item is not None
 
-    override_attrs.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "show", lambda self: None)
-    override_attrs.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "raise_", lambda self: None)
-    override_attrs.setattr(dynamic_block_editor_module.DynamicBlockEditorGUI, "activateWindow", lambda self: None)
+    delegate = _NavigationDelegateStub()
+    editor.set_navigation_delegate(delegate)
+
     editor.edit_scene_item(block_item)
-    assert getattr(block_item, "editor_window", None) is not None
+
+    assert len(delegate.calls) == 1
+    assert delegate.calls[0] is block_item.subsys
+
+    editor.has_unapplied_changes = False
+    editor.close()
+
+
+def test_edit_scene_item_ignores_navigation_without_delegate() -> None:
+    editor = _build_editor()
+    block = Block(name="no_delegate_block")
+    block_item = editor.create_template_block_item(type("_Template", (), {"name": "no_delegate_block", "block": block})(), 10.0, 20.0)
+
+    assert block_item is not None
+    assert editor._navigation_delegate is None
+
+    # Should not raise when no delegate is set
+    editor.edit_scene_item(block_item)
 
     editor.has_unapplied_changes = False
     editor.close()

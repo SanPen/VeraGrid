@@ -7,7 +7,7 @@ from typing import Tuple
 from VeraGridEngine.IO.base.units import Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.IO.raw.psse_property import PsseProperty
+from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_float, coerce_psse_int, coerce_psse_str
 
 
 class RawInterArea(RawObject):
@@ -25,11 +25,11 @@ class RawInterArea(RawObject):
     def __init__(self):
         RawObject.__init__(self, "Inter area")
 
-        self.I = -1
-        self.ARNAME = ''
-        self.ISW = 0
-        self.PDES = 0
-        self.PTOL = 0
+        self._I: int = -1
+        self._ARNAME: str = ''
+        self._ISW: int = 0
+        self._PDES: float = 0.0
+        self._PTOL: float = 0.0
 
     def parse(self, data, version, logger: Logger):
         raise NotImplementedError(f"{self.__class__.__name__}.parse must be implemented in a version-specific subclass")
@@ -42,3 +42,42 @@ class RawInterArea(RawObject):
     def get_id(self) -> str:
         return str(self.I)
 
+    @property
+    def I(self) -> int:
+        return self._I
+
+    @I.setter
+    def I(self, value: int | str | None) -> None:
+        self._I = coerce_psse_int(value=value, current_value=self._I)
+
+    @property
+    def ARNAME(self) -> str:
+        return self._ARNAME
+
+    @ARNAME.setter
+    def ARNAME(self, value: str | int | float | None) -> None:
+        self._ARNAME = coerce_psse_str(value=value, current_value=self._ARNAME)
+
+    @property
+    def ISW(self) -> int:
+        return self._ISW
+
+    @ISW.setter
+    def ISW(self, value: int | str | None) -> None:
+        self._ISW = coerce_psse_int(value=value, current_value=self._ISW)
+
+    @property
+    def PDES(self) -> float:
+        return self._PDES
+
+    @PDES.setter
+    def PDES(self, value: float | int | str | None) -> None:
+        self._PDES = coerce_psse_float(value=value, current_value=self._PDES)
+
+    @property
+    def PTOL(self) -> float:
+        return self._PTOL
+
+    @PTOL.setter
+    def PTOL(self, value: float | int | str | None) -> None:
+        self._PTOL = coerce_psse_float(value=value, current_value=self._PTOL)

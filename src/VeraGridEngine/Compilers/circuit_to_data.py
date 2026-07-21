@@ -116,6 +116,48 @@ def set_bus_control_voltage(i: int,
                          expected_value=bus_data.Vbus[i])
 
 
+def normalize_upper_bound(lower: float,
+                          upper: float,
+                          logger: Logger,
+                          device_name: str,
+                          device_class: str,
+                          lower_name: str,
+                          upper_name: str) -> tuple[float, float]:
+    """
+    Normalize a scalar box constraint so the upper bound is never below the lower bound.
+
+    :param lower: Lower bound candidate.
+    :param upper: Upper bound candidate.
+    :param logger: Logger used to report the correction.
+    :param device_name: Device name for the log entry.
+    :param device_class: Device class for the log entry.
+    :param lower_name: Human-readable lower-bound field name.
+    :param upper_name: Human-readable upper-bound field name.
+    :return: Tuple ``(lower, upper)`` with ``upper >= lower`` enforced.
+    """
+    lower_value: float = float(lower)
+    upper_value: float = float(upper)
+
+    # The LP/MIP formulations assume valid boxes. If the source data reverses the interval, clamp
+    # the upper bound to the lower bound so the box degenerates to one feasible point instead of
+    # becoming invalid and crashing the optimization model.
+    if upper_value < lower_value:
+        logger.add_warning(
+            msg=f"Invalid bounds corrected: {upper_name} < {lower_name}",
+            device=device_name,
+            value=upper_value,
+            expected_value=lower_value,
+            device_class=device_class,
+            comment=f"Setting {upper_name} = {lower_name}",
+            device_property=upper_name,
+        )
+        upper_value = lower_value
+    else:
+        pass
+
+    return lower_value, upper_value
+
+
 def set_bus_control_voltage_vsc(i: int,
                                 j: int,
                                 remote_control: bool,
@@ -291,7 +333,8 @@ def get_bus_data(bus_data: BusData,
                  areas_dict: Dict[Area, int],
                  t_idx: int | None,
                  use_stored_guess=False,
-                 consider_grounded_buses: bool = False) -> None:
+                 consider_grounded_buses: bool = False,
+                 logger: Logger = Logger()) -> None:
     """
 
     :param bus_data: BusData
@@ -300,6 +343,7 @@ def get_bus_data(bus_data: BusData,
     :param t_idx:
     :param use_stored_guess:
     :param consider_grounded_buses:
+    :param logger:
     :return:
     """
 
@@ -313,7 +357,7 @@ def get_bus_data(bus_data: BusData,
         bus_data.idtag[i] = bus.idtag
         bus_data.Vnom[i] = bus.Vnom
         bus_data.cost_v[i] = bus.Vm_cost
-        bus_data.Vbus[i] = bus.get_voltage_guess(use_stored_guess=use_stored_guess)
+        bus_data.Vbus[i] = bus.get_voltage_guess_at(t_idx=t_idx, use_stored_guess=use_stored_guess)
         bus_data.is_dc[i] = bus.is_dc
 
         # Grounded buses go to zero
@@ -323,10 +367,19 @@ def get_bus_data(bus_data: BusData,
         else:
             bus_data.is_grounded[i] = False
 
-        bus_data.angle_min[i] = bus.angle_min
-        bus_data.angle_max[i] = bus.angle_max
+        angle_min, angle_max = normalize_upper_bound(
+            lower=bus.angle_min,
+            upper=bus.angle_max,
+            logger=logger,
+            device_name=bus.name,
+            device_class=str(bus.device_type.value),
+            lower_name="angle_min",
+            upper_name="angle_max",
+        )
+        bus_data.angle_min[i] = angle_min
+        bus_data.angle_max[i] = angle_max
 
-        if bus.is_slack:
+        if bus.get_is_slack_at(t=t_idx):
             # bus_data.bus_types[i] = BusMode.Slack_tpe.value  # VD
             bus_data.set_bus_mode(i, BusMode.Slack_tpe)
 
@@ -955,7 +1008,7 @@ def get_shunt_data(
                                         bus_name=elm.bus.name,
                                         bus_data=bus_data,
                                         bus_voltage_used=bus_voltage_used,
-                                        candidate_Vm=elm.Vset,
+                                        candidate_Vm=elm.get_Vset_at(t_idx),
                                         logger=logger)
 
             if elm.use_kw:
@@ -1056,8 +1109,17 @@ def fill_generator_parent(
     data.v[k] = elm.get_Vset_at(t_idx)
     data.k_droop[k] = elm.k_droop
     data.dead_band[k] = elm.dead_band
-    data.pmax[k] = elm.get_Pmax_at(t_idx)
-    data.pmin[k] = elm.get_Pmin_at(t_idx)
+    pmin, pmax = normalize_upper_bound(
+        lower=elm.get_Pmin_at(t_idx),
+        upper=elm.get_Pmax_at(t_idx),
+        logger=logger,
+        device_name=elm.name,
+        device_class=str(elm.device_type.value),
+        lower_name="Pmin",
+        upper_name="Pmax",
+    )
+    data.pmax[k] = pmax
+    data.pmin[k] = pmin
 
     if elm.use_reactive_power_curve:
         data.qmin[k] = elm.q_curve.get_qmin(data.p[k])
@@ -1091,7 +1153,7 @@ def fill_generator_parent(
                                     bus_name=elm.bus.name,
                                     bus_data=bus_data,
                                     bus_voltage_used=bus_voltage_used,
-                                    candidate_Vm=elm.Vset,
+                                    candidate_Vm=elm.get_Vset_at(t_idx),
                                     logger=logger)
             # we pick this value to initialize
             data.q[k] = elm.get_Q_at(t_idx)
@@ -1238,11 +1300,29 @@ def get_battery_data(
                               fill_three_phase=fill_three_phase)
 
         data.enom[k] = elm.Enom
-        data.min_soc[k] = elm.min_soc
-        data.max_soc[k] = elm.max_soc
+        min_soc, max_soc = normalize_upper_bound(
+            lower=elm.min_soc,
+            upper=elm.max_soc,
+            logger=logger,
+            device_name=elm.name,
+            device_class=str(elm.device_type.value),
+            lower_name="min_soc",
+            upper_name="max_soc",
+        )
+        data.min_soc[k] = min_soc
+        data.max_soc[k] = max_soc
         data.soc_0[k] = elm.soc_0
-        data.e_min[k] = elm.Enom * elm.min_soc
-        data.e_max[k] = elm.Enom * elm.max_soc
+        e_min, e_max = normalize_upper_bound(
+            lower=elm.Enom * data.min_soc[k],
+            upper=elm.Enom * data.max_soc[k],
+            logger=logger,
+            device_name=elm.name,
+            device_class=str(elm.device_type.value),
+            lower_name="Emin",
+            upper_name="Emax",
+        )
+        data.e_min[k] = e_min
+        data.e_max[k] = e_max
         data.discharge_efficiency[k] = elm.discharge_efficiency
         data.charge_efficiency[k] = elm.charge_efficiency
 
@@ -1384,10 +1464,29 @@ def fill_controllable_branch(
         ctrl_data.tap_module[ii] = elm.get_tap_module_at(t_idx)
 
     ctrl_data.is_controlled[ii] = 1
-    ctrl_data.tap_module_min[ii] = elm.tap_module_min
-    ctrl_data.tap_module_max[ii] = elm.tap_module_max
-    ctrl_data.tap_angle_min[ii] = elm.tap_phase_min
-    ctrl_data.tap_angle_max[ii] = elm.tap_phase_max
+    tap_module_min, tap_module_max = normalize_upper_bound(
+        lower=elm.tap_module_min,
+        upper=elm.tap_module_max,
+        logger=logger,
+        device_name=elm.name,
+        device_class=str(elm.device_type.value),
+        lower_name="tap_module_min",
+        upper_name="tap_module_max",
+    )
+    ctrl_data.tap_module_min[ii] = tap_module_min
+    ctrl_data.tap_module_max[ii] = tap_module_max
+
+    tap_angle_min, tap_angle_max = normalize_upper_bound(
+        lower=elm.tap_phase_min,
+        upper=elm.tap_phase_max,
+        logger=logger,
+        device_name=elm.name,
+        device_class=str(elm.device_type.value),
+        lower_name="tap_angle_min",
+        upper_name="tap_angle_max",
+    )
+    ctrl_data.tap_angle_min[ii] = tap_angle_min
+    ctrl_data.tap_angle_max[ii] = tap_angle_max
 
     if ctrl_data.tap_module_control_mode[ii] != TapModuleControl.fixed.idx():
         ctrl_data.any_pf_control = True
@@ -2110,12 +2209,14 @@ def get_hvdc_data(data: HvdcData,
 
 def get_fluid_node_data(data: FluidNodeData,
                         circuit: MultiCircuit,
-                        t_idx: int | None = None) -> Dict[str, int]:
+                        t_idx: int | None = None,
+                        logger: Logger = Logger()) -> Dict[str, int]:
     """
 
     :param data:
     :param circuit:
     :param t_idx:
+    :param logger:
     :return:
     """
     plant_dict: Dict[str, int] = dict()
@@ -2127,14 +2228,32 @@ def get_fluid_node_data(data: FluidNodeData,
         data.idtag[k] = elm.idtag
 
         # Convert input data in hm3 to m3
-        data.min_level[k] = 1e6 * elm.min_level
-        data.max_level[k] = 1e6 * elm.max_level
+        min_level, max_level = normalize_upper_bound(
+            lower=1e6 * elm.min_level,
+            upper=1e6 * elm.max_level,
+            logger=logger,
+            device_name=elm.name,
+            device_class=str(elm.device_type.value),
+            lower_name="min_level",
+            upper_name="max_level",
+        )
+        data.min_level[k] = min_level
+        data.max_level[k] = max_level
         data.initial_level[k] = 1e6 * elm.initial_level
 
         data.inflow[k] = elm.get_inflow_at(t_idx)
         data.spillage_cost[k] = elm.get_spillage_cost_at(t_idx)
-        data.max_soc[k] = elm.get_max_soc_at(t_idx)
-        data.min_soc[k] = elm.get_min_soc_at(t_idx)
+        min_soc, max_soc = normalize_upper_bound(
+            lower=elm.get_min_soc_at(t_idx),
+            upper=elm.get_max_soc_at(t_idx),
+            logger=logger,
+            device_name=elm.name,
+            device_class=str(elm.device_type.value),
+            lower_name="min_soc",
+            upper_name="max_soc",
+        )
+        data.max_soc[k] = max_soc
+        data.min_soc[k] = min_soc
 
     return plant_dict
 
@@ -2218,12 +2337,14 @@ def get_fluid_p2x_data(data: FluidP2XData,
 
 def get_fluid_path_data(data: FluidPathData,
                         circuit: MultiCircuit,
-                        plant_dict: Dict[str, int]) -> FluidPathData:
+                        plant_dict: Dict[str, int],
+                        logger: Logger = Logger()) -> FluidPathData:
     """
 
     :param data: FluidPathData
     :param circuit:
     :param plant_dict:
+    :param logger:
     :return:
     """
 
@@ -2235,8 +2356,17 @@ def get_fluid_path_data(data: FluidPathData,
         data.source_idx[k] = plant_dict[elm.source.idtag]
         data.target_idx[k] = plant_dict[elm.target.idtag]
 
-        data.min_flow[k] = elm.min_flow
-        data.max_flow[k] = elm.max_flow
+        min_flow, max_flow = normalize_upper_bound(
+            lower=elm.min_flow,
+            upper=elm.max_flow,
+            logger=logger,
+            device_name=elm.name,
+            device_class=str(elm.device_type.value),
+            lower_name="min_flow",
+            upper_name="max_flow",
+        )
+        data.min_flow[k] = min_flow
+        data.max_flow[k] = max_flow
 
     return data
 
@@ -2315,7 +2445,8 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
         t_idx=t_idx,
         areas_dict=areas_dict,
         use_stored_guess=use_stored_guess,
-        consider_grounded_buses=consider_grounded_buses
+        consider_grounded_buses=consider_grounded_buses,
+        logger=logger,
     )
 
     gen_dict = get_generator_data(
@@ -2416,7 +2547,8 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
         plant_dict = get_fluid_node_data(
             data=nc.fluid_node_data,
             circuit=circuit,
-            t_idx=t_idx
+            t_idx=t_idx,
+            logger=logger,
         )
 
         get_fluid_turbine_data(
@@ -2443,7 +2575,8 @@ def compile_numerical_circuit_at(circuit: MultiCircuit,
         get_fluid_path_data(
             data=nc.fluid_path_data,
             circuit=circuit,
-            plant_dict=plant_dict
+            plant_dict=plant_dict,
+            logger=logger,
         )
 
     if fill_gep:

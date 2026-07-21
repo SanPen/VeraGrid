@@ -10,6 +10,7 @@ from typing import Any, List, Dict, Tuple, TYPE_CHECKING
 from PySide6 import QtCore, QtWidgets
 
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_tab import DynamicEditorTab
 from VeraGrid.Session.dynamic_editor_entries import DynamicEditorEntry
 from VeraGrid.Session.dynamic_editor_entries import build_dynamic_editor_entry
 from VeraGrid.Session.dynamic_editor_entries import get_block_for_entry
@@ -57,13 +58,14 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
         """
         super().__init__()
         self._open_workspaces: List[DynamicEditorWorkspaceWindow] = list()
-        self._session_pages: Dict[str, DynamicBlockEditorGUI] = dict()
+        self._session_pages: Dict[str, DynamicEditorTab] = dict()
         self._last_mode_by_key_base: Dict[str, DynamicSimulationMode] = dict()
         self._last_active_workspace: DynamicEditorWorkspaceWindow | None = None
-        self._pending_drag_page: DynamicBlockEditorGUI | None = None
+        self._pending_drag_page: DynamicEditorTab | DynamicBlockEditorGUI | None = None
         self._pending_drag_workspace: DynamicEditorWorkspaceWindow | None = None
         self._retained_workspaces: List[DynamicEditorWorkspaceWindow] = list()
-        self._retained_pages: List[DynamicBlockEditorGUI] = list()
+        self._retained_pages: List[DynamicEditorTab | DynamicBlockEditorGUI] = list()
+        self.current_theme: str = ""
 
     def register_workspace(self, workspace: "DynamicEditorWorkspaceWindow") -> None:
         """
@@ -133,7 +135,7 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
         self._retained_workspaces.clear()
         self._retained_pages.clear()
 
-    def workspace_for_page(self, page: DynamicBlockEditorGUI) -> "DynamicEditorWorkspaceWindow | None":
+    def workspace_for_page(self, page: DynamicBlockEditorGUI | DynamicEditorTab) -> "DynamicEditorWorkspaceWindow | None":
         """
         Locate the workspace that currently owns one editor page.
 
@@ -149,7 +151,7 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
 
         return None
 
-    def note_page_activated(self, page: DynamicBlockEditorGUI) -> None:
+    def note_page_activated(self, page: DynamicBlockEditorGUI | DynamicEditorTab) -> None:
         """
         Record the active page so reopen operations reuse the right mode and window.
 
@@ -165,7 +167,7 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
             self._last_active_workspace = workspace
 
     @staticmethod
-    def build_page_tab_title(page: DynamicBlockEditorGUI) -> str:
+    def build_page_tab_title(page: DynamicBlockEditorGUI | DynamicEditorTab) -> str:
         """
         Build the tab title shown for one page, including dirty-state marker.
 
@@ -227,26 +229,24 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
             return DynamicSimulationMode.RMS
         return entry.available_modes[0]
 
-    def create_page(self, entry: DynamicEditorEntry, mode: DynamicSimulationMode) -> "DynamicBlockEditorGUI":
+    def create_page(self, entry: DynamicEditorEntry, mode: DynamicSimulationMode) -> "DynamicEditorTab":
         """
-        Instantiate one embedded block editor for the requested entry and mode.
+        Instantiate one embedded editor tab for the requested entry and mode.
 
         :param entry: Entry being edited.
         :param mode: Dynamic mode to open.
-        :return: Newly created embedded editor page.
+        :return: Newly created editor tab.
         """
-        from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
+        from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_tab import DynamicEditorTab
 
-        page = DynamicBlockEditorGUI(
+        page = DynamicEditorTab(
             var_factory=entry.circuit.var_factory,
             block=get_block_for_entry(entry, mode),
             api_object=entry.api_object,
             mode=mode,
             templates_list=get_templates_for_entry(entry, mode),
             circuit=entry.circuit,
-            main_editor=True,
-            modal=False,
-            workspace_embedded=True,
+            current_theme = self.current_theme
         )
         page.set_dynamic_editor_entry(entry)
         self.connect_page_signals(page)
@@ -256,14 +256,14 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
     def open_entry(self,
                    entry: DynamicEditorEntry,
                    preferred_mode: DynamicSimulationMode | None = None,
-                   target_workspace: "DynamicEditorWorkspaceWindow | None" = None) -> "DynamicBlockEditorGUI":
+                   target_workspace: "DynamicEditorWorkspaceWindow | None" = None) -> "DynamicEditorTab":
         """
         Open one entry in the session, reusing an existing page when possible.
 
         :param entry: Entry to open.
         :param preferred_mode: Explicit requested mode, if any.
         :param target_workspace: Preferred destination workspace.
-        :return: Open editor page for the requested entry.
+        :return: Open editor tab for the requested entry.
         """
         mode = self.resolve_mode(entry, preferred_mode)
         session_key = entry.session_key(mode)
@@ -296,7 +296,7 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
             circuit: Any,
             preferred_mode: DynamicSimulationMode | None = None,
             target_workspace: "DynamicEditorWorkspaceWindow | None" = None
-    ) -> "DynamicBlockEditorGUI | None":
+    ) -> "DynamicEditorTab | None":
         """
         Build and open the dynamic-editor entry for one API object.
 
@@ -304,14 +304,14 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
         :param circuit: Circuit that owns the device.
         :param preferred_mode: Explicit requested mode, if any.
         :param target_workspace: Preferred destination workspace.
-        :return: Open editor page or ``None`` when no dynamic editor exists.
+        :return: Open editor tab or ``None`` when no dynamic editor exists.
         """
         entry = build_dynamic_editor_entry(api_object, circuit)
         if entry is None:
             return None
         return self.open_entry(entry, preferred_mode=preferred_mode, target_workspace=target_workspace)
 
-    def unregister_page(self, page: DynamicBlockEditorGUI) -> None:
+    def unregister_page(self, page: DynamicBlockEditorGUI | DynamicEditorTab) -> None:
         """
         Forget one page in the session registries.
 
@@ -362,6 +362,7 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
         Set the dark mode
         :return:
         """
+        self.current_theme = "Dark"
         for ws in self._open_workspaces:
             ws.set_dark_mode()
 
@@ -370,5 +371,6 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
                 Set the dark mode
                 :return:
                 """
+        self.current_theme = "Light"
         for ws in self._open_workspaces:
             ws.set_light_mode()

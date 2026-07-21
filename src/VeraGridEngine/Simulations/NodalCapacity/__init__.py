@@ -4,5 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_options import NodalCapacityOptions
+from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_results import NodalCapacityResults
+from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_driver import NodalCapacityDriver
 from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_ts_results import NodalCapacityTimeSeriesResults
 from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_ts_driver import NodalCapacityTimeSeriesDriver

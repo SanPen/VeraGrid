@@ -10,6 +10,7 @@ import pandas as pd
 import scipy.sparse as sp
 from VeraGridEngine.basic_structures import Vec, IntVec, StrVec, BoolVec, Logger
 from typing import List, Tuple, Set
+from VeraGridEngine.Utils.compare import compare_arr
 
 
 class BranchParentData:
@@ -301,3 +302,12 @@ class BranchParentData:
             names3[i] = self.names[i]
 
         return names3
+
+    def compare(self, other: "BranchParentData", tol: float, logger: Logger) -> None:
+        """
+        Compare branch-parent fields shared by branch-like structures.
+        """
+        compare_arr(self.F, other.F, tol, 'BranchData', 'F', logger)
+        compare_arr(self.T, other.T, tol, 'BranchData', 'T', logger)
+        compare_arr(self.active, other.active, tol, 'BranchData', 'active', logger)
+        compare_arr(self.rates, other.rates, tol, 'BranchData', 'rates', logger)

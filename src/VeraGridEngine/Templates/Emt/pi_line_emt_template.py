@@ -237,9 +237,11 @@ def get_pi_line_emt_template(vf: VarFactory,
     # -----------------------------
     # Create model vars
     # -----------------------------
-    i_ser = [vf.add_var(name=f"i_ser_{ph_label}") for ph_label in active_ph]
-    q_f = [vf.add_var(name=f"q_f_{ph_label}") for ph_label in active_ph]
-    q_t = [vf.add_var(name=f"q_t_{ph_label}") for ph_label in active_ph]
+    i_ser = [vf.add_var(name=f"i_ser_{name}_{ph_label}") for ph_label in active_ph]
+    q_f = [vf.add_var(name=f"q_f_{name}_{ph_label}") for ph_label in active_ph]
+    q_t = [vf.add_var(name=f"q_t_{name}_{ph_label}") for ph_label in active_ph]
+    d_vf_vars = [vf.add_var(name=f"d_vf_{ph_label}_{name}") for ph_label in active_ph]
+    d_vt_vars = [vf.add_var(name=f"d_vt_{ph_label}_{name}") for ph_label in active_ph]
 
     di_ser = [vf.add_diff_var(name=f"di_ser_{ph_label}", base_var=i_ser[k]) for k, ph_label  in enumerate(active_ph)]
     dq_f = [vf.add_diff_var(name=f"dq_f_{ph_label}", base_var=q_f[k]) for k, ph_label  in enumerate(active_ph)]
@@ -329,6 +331,15 @@ def get_pi_line_emt_template(vf: VarFactory,
 
     templ.block.external_mapping = mapping
 
+    d_vf_keys = dict({"N": VarPowerFlowReferenceType.d_v_N_f, "A": VarPowerFlowReferenceType.d_v_A_f, "B": VarPowerFlowReferenceType.d_v_B_f, "C": VarPowerFlowReferenceType.d_v_C_f})
+    d_vt_keys = dict({"N": VarPowerFlowReferenceType.d_v_N_t, "A": VarPowerFlowReferenceType.d_v_A_t, "B": VarPowerFlowReferenceType.d_v_B_t, "C": VarPowerFlowReferenceType.d_v_C_t})
+
+    for k, phase_label in enumerate(active_ph):
+        templ.block.external_mapping[d_vf_keys[phase_label]] = d_vf_vars[k]
+        templ.block.external_mapping[d_vt_keys[phase_label]] = d_vt_vars[k]
+        templ.block.event_dict[d_vf_vars[k]] = vf.add_const(None)
+        templ.block.event_dict[d_vt_vars[k]] = vf.add_const(None)
+
     # -----------------------------
     # Init equations
     # -----------------------------
@@ -345,7 +356,9 @@ def get_pi_line_emt_template(vf: VarFactory,
         init_eqs[q_t[a]] = rhs_t
 
     for a in range(m):
-        init_eqs[i_ser[a]] = if_act[a] - i_cap_f[a]
+        i_ser_from = if_act[a] - i_cap_f[a] - G_damp * vf_vars[a]
+        i_ser_to = -it_act[a] + i_cap_t[a] + G_damp * vt_vars[a]
+        init_eqs[i_ser[a]] = 0.5 * (i_ser_from + i_ser_to)
 
     templ.block.init_eqs = init_eqs
 
@@ -370,18 +383,14 @@ def get_pi_line_emt_template(vf: VarFactory,
         diff_init_eqs[dq_t[a]] = i_cap_t[a]
 
     for a in range(m):
-        # -----------------------------
-        # Initialize capacitor currents without terminal voltage derivatives.
-        # The helper d_vf/d_vt symbols are not bound by the EMT assembler during
-        # explicit initialization, so referencing them here leaves the explicit
-        # initializer without values for those UIDs.
-        #
-        # Using zero capacitor current preserves the previous startup state used
-        # by the fallback initialization path and keeps the template self-contained
-        # for explicit initialization.
-        # -----------------------------
-        init_eqs[i_cap_f[a]] = c0
-        init_eqs[i_cap_t[a]] = c0
+        rhs_i_cap_f = c0
+        rhs_i_cap_t = c0
+        for b in range(m):
+            C_ab = C_red[a][b]
+            rhs_i_cap_f += C_ab * d_vf_vars[b]
+            rhs_i_cap_t += C_ab * d_vt_vars[b]
+        init_eqs[i_cap_f[a]] = rhs_i_cap_f
+        init_eqs[i_cap_t[a]] = rhs_i_cap_t
 
     templ.block.diff_init_eqs = diff_init_eqs
 

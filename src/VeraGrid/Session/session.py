@@ -53,6 +53,8 @@ from VeraGridEngine.Simulations.NTC.ntc_driver import (OptimalNetTransferCapacit
 from VeraGridEngine.Simulations.NTC.ntc_ts_driver import (
     OptimalNetTransferCapacityTimeSeriesResults,
 )
+from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_driver import (NodalCapacityDriver,
+                                                                            NodalCapacityResults)
 from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_ts_driver import (NodalCapacityTimeSeriesDriver,
                                                                                NodalCapacityTimeSeriesResults)
 from VeraGridEngine.Simulations.Reliability.reliability_driver import ReliabilityStudyDriver, ReliabilityResults
@@ -690,6 +692,15 @@ class SimulationSession:
         :return:
         """
         drv, results = self.get_driver_results(SimulationTypes.NodalCapacityTimeSeries_run)
+        return drv, results
+
+    @property
+    def nodal_capacity_optimization(self) -> Tuple[NodalCapacityDriver, NodalCapacityResults]:
+        """
+
+        :return:
+        """
+        drv, results = self.get_driver_results(SimulationTypes.NodalCapacity_run)
         return drv, results
 
     @property

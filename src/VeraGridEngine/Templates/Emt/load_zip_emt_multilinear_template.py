@@ -3,7 +3,13 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-"""Multilinear EMT ZIP-load template."""
+"""Auxiliary algebraic EMT ZIP-load template.
+
+The runtime equations expose powers, square roots, and divisions through
+auxiliary algebraic constraints.  This is useful for symbolic/tensor processing,
+but the reciprocal-voltage constraint makes the formulation auxiliary rational
+rather than purely multilinear in the strict polynomial sense.
+"""
 
 from __future__ import annotations
 
@@ -34,11 +40,16 @@ def get_load_ZIP_emt_multilinear_template(
     connection_type: ShuntConnectionType | None = None,
     name: str = "ZIP_Load_EMT_3ph_ml",
 ) -> EmtModelTemplate:
-    """Build a ZIP load whose runtime equations avoid powers and variable division.
+    """Build a ZIP load whose runtime equations avoid direct powers and division.
 
-    The non-multilinear voltage magnitude, square, and reciprocal terms are represented
-    with duplicate auxiliary variables. Initialization equations still use the direct
-    analytic expressions to seed those auxiliaries.
+    The voltage magnitude, square, ZIP powers, and reciprocal-current terms are
+    represented with auxiliary variables and algebraic constraints.  The current
+    calculation still uses a reciprocal auxiliary variable constrained by
+    ``V2_inv * (V2 + eps) = 1``, so the runtime model matches the TeX auxiliary
+    rational algebraic form, not a strictly multilinear polynomial form.
+
+    Initialization equations still use direct analytic expressions to seed the
+    auxiliaries.
     """
     bus_active_phases: List[str] = _get_active_phases(phA=phA, phB=phB, phC=phC)
     core_ph_a: bool = phA

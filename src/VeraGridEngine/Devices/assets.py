@@ -644,7 +644,10 @@ class Assets:
         t0 = dateslib.datetime(year=year, month=1, day=1)
         self.re_index_time2(t0=t0, step_size=hours_per_step, step_unit='h')
 
-    def re_index_time2(self, t0, step_size, step_unit):
+    def re_index_time2(self,
+                       t0: dateslib.datetime = dateslib.datetime.now(),
+                       step_size: int = 1,
+                       step_unit: str = "h"):
         """
         Generate sequential time steps to correct the time_profile
         :param t0: base time
@@ -698,6 +701,17 @@ class Assets:
             elements = self.get_elements_by_type(device_type=tpe)
             for elm in elements:
                 elm.ensure_profiles_exist(index, set_profile_default_as_snapshot=True)
+
+    def format_profiles2(self, nt: int) -> None:
+        """
+        Format the profiles in place using a simple number of time steps.
+        :param nt: number of time steps
+        :return: None
+        """
+        now = dateslib.datetime.now()
+        dt0 = dateslib.datetime(year=now.year, month=1, day=1)
+        dates = pd.DatetimeIndex([dt0 + dateslib.timedelta(hours=1) for i in range(nt)])
+        self.format_profiles(index=dates)
 
     def set_time_profile(self, unix_data: IntVec):
         """

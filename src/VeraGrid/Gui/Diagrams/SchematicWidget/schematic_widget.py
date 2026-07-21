@@ -421,6 +421,27 @@ def _get_injection_result_index(device_name: str,
         return fallback_index
 
 
+def _get_branch_result_index(branch_index: int,
+                             phase_index: int,
+                             values: Vec | CxVec | None,
+                             is_three_phase: bool) -> int:
+    """
+    Resolve the right index for branch-like result arrays.
+
+    Three-phase flows are flattened per phase, but some companion arrays such as
+    transformer taps are still stored once per branch.
+    """
+    if values is None or not is_three_phase:
+        return branch_index
+
+    if len(values) % 3 == 0 and len(values) > branch_index:
+        branch_count = len(values) // 3
+        if branch_count > branch_index:
+            return 3 * branch_index + phase_index
+
+    return branch_index
+
+
 def _has_single_phase_explicit_injection_results(gen_p: Vec | None,
                                                  gen_q: Vec | None,
                                                  battery_p: Vec | None,
@@ -4123,9 +4144,11 @@ class SchematicWidget(BaseDiagramWidget):
                             tooltip += f'\nLoss {pname}:\t{losses[k]:10.4f} [MVA]'
                         if branch.device_type == DeviceType.Transformer2WDevice:
                             if ma is not None:
-                                tooltip += f'\nPf {pname}:\t{ma[k]:10.4f}'
+                                ma_idx = _get_branch_result_index(i, ph_idx, ma, is_three_phase=True)
+                                tooltip += f'\ntap module {pname}:\t{ma[ma_idx]:10.4f}'
                             if tau is not None:
-                                tooltip += f'\nPf {pname}:\t{tau[k]:10.4f} [rad]'
+                                tau_idx = _get_branch_result_index(i, ph_idx, tau, is_three_phase=True)
+                                tooltip += f'\ntap angle {pname}:\t{tau[tau_idx]:10.4f} [rad]'
                         tooltip += "\n"
                     sf_norm = max(sf_abs[k_idx]) / max(max_flow, 1e-20)
                     arrow_sf = Sf[k_idx].sum()

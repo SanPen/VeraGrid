@@ -726,7 +726,7 @@ def data_to_grid_object(data: Dict[str, pd.DataFrame],
         # apply the slack values to the buses structure if the element is marked as slack
         if external['bustp'].values[i] == b'SL':
             # create the slack entry on buses
-            bus_obj.is_slack = True
+            bus_obj.set_is_slack_at(t=None, val=True)
 
         elif external['bustp'].values[i] == b'PV':
 

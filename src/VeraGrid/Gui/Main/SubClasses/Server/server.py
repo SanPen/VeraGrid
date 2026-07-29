@@ -136,8 +136,21 @@ class ServerMain(BaseMainGui):
         """
         if not self.server_driver.is_running():
             if self.server_driver.logger.has_logs():
-                self.show_error_toast(message=self.tr("Could not connect to the server :/"))
+                error_message: str = self.server_driver.get_last_error_message().strip()
+
+                if len(error_message) > 0:
+                    toast_message: str = self.tr("Could not connect to the server: {error}").format(
+                        error=error_message
+                    )
+                else:
+                    toast_message = self.tr("Could not connect to the server :/")
+
+                self.show_error_toast(message=toast_message, duration=5000)
                 self.ui.actionEnable_server_mode.setChecked(False)
+            else:
+                pass
+        else:
+            pass
 
     def server_connected(self):
         """

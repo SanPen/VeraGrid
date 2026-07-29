@@ -45,7 +45,7 @@ from VeraGridEngine.IO.fmu.importer.experimental_me import (
     register_rms_fmu_me_device,
 )
 
-from VeraGridEngine.Devices.Dynamic.static_parameter_mapping import (
+from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_rms import (
     assign_static_api_object_mapping_for_device,
 )
 
@@ -2056,11 +2056,11 @@ class RmsProblemDaeVec(RmsProblemTemplate):
             self._n_vars += 1
 
         for ep, const in mdl.parameters.items():
-            if ep.name == "g":
-                print("")
-            if ep.uid in self._uid2idx_params:
-                raise ValueError(f"Parameter '{ep.name}' (uid={ep.uid}) is already registered in the system. "
-                                 f"Previous device may have created a duplicate parameter.")
+            # if ep.name == "g":
+            #     print("")
+            # if ep.uid in self._uid2idx_params:
+            #     raise ValueError(f"Parameter '{ep.name}' (uid={ep.uid}) is already registered in the system. "
+            #                      f"Previous device may have created a duplicate parameter.")
             if equiv_class_uid:
 
                 class_idx = self._class_n_params.get(equiv_class_uid, 0)

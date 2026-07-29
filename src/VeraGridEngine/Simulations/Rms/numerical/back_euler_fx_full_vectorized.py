@@ -6,13 +6,14 @@ import numpy as np
 import time
 import scipy.sparse as sp
 from scipy.sparse import csc_matrix
+from collections.abc import Callable
 
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_vectorized import RmsProblemDaeVec
 from VeraGridEngine.Utils.Sparse.csc import pack_4_by_4_scipy
 from VeraGridEngine.basic_structures import Vec, Mat
 
 
-class BackEulerImplicitIntegrationVec:
+class BackEulerImplicitIntegrationFullVec:
 
     def __init__(self,
                  problem: RmsProblemDaeVec,
@@ -20,7 +21,8 @@ class BackEulerImplicitIntegrationVec:
                  t_end: float,
                  h: float,
                  max_iter: int,
-                 tolerance: float = 1e-7):
+                 tolerance: float = 1e-7,
+                 cancel_checker: Callable[[], bool] | None = None) -> None:
         """
         Initializes an object to solve a given DAE (Differential-Algebraic Equation) problem using numerical
         methods. This constructor sets up the time grid and prepares storage for results.
@@ -49,6 +51,17 @@ class BackEulerImplicitIntegrationVec:
         self.t: Vec = np.empty(self.steps + 1)
         self.y: Mat = np.empty((self.steps + 1, self.problem.get_all_vars_number()))
         self.tol = tolerance
+        self._cancel_checker: Callable[[], bool] | None = cancel_checker
+        self._state_identity: sp.csc_matrix | None = None
+        if self.problem.get_states_number() > 0:
+            self._state_identity = sp.eye(
+                m=self.problem.get_states_number(),
+                n=self.problem.get_states_number(),
+                format="csc",
+            )
+        self._jacobian_may_reuse_residual_gather: bool = False
+        self._residual_gather_x_reference: Vec | None = None
+        self._residual_gather_dx_reference: Vec | None = None
 
     def _rhs_implicit_vec(self,
                       x: Vec,
@@ -66,6 +79,9 @@ class BackEulerImplicitIntegrationVec:
         _t0 = time.time()
         self.problem.update_input_matrices_by_model(x, dx)
         self._timings["rhs_gather_time"] += time.time() - _t0
+        self._jacobian_may_reuse_residual_gather = False
+        self._residual_gather_x_reference = None
+        self._residual_gather_dx_reference = None
 
         _t0 = time.time()
         f_algeb = self.problem.rhs_algebraic_vec(x, dx)
@@ -76,9 +92,15 @@ class BackEulerImplicitIntegrationVec:
             f_state = self.problem.rhs_state_vec()
             self._timings["rhs_state_eval_time"] += time.time() - _t0
             f_state_update = x[:self.problem.get_states_number()] - xn[:self.problem.get_states_number()] - h * f_state
+            self._jacobian_may_reuse_residual_gather = True
+            self._residual_gather_x_reference = x
+            self._residual_gather_dx_reference = dx
             return np.r_[f_state_update, f_algeb]
 
         else:
+            self._jacobian_may_reuse_residual_gather = True
+            self._residual_gather_x_reference = x
+            self._residual_gather_dx_reference = dx
             return f_algeb
 
     def _jacobian_implicit(self,
@@ -101,9 +123,19 @@ class BackEulerImplicitIntegrationVec:
                  |            |           |    |            |    |            |
         """
 
-        _t0 = time.time()
-        self.problem.update_input_matrices_by_model(x, dx)
-        self._timings["jac_gather_time"] += time.time() - _t0
+        reuse_residual_gather = (
+            self._jacobian_may_reuse_residual_gather
+            and x is self._residual_gather_x_reference
+            and dx is self._residual_gather_dx_reference
+        )
+        self._jacobian_may_reuse_residual_gather = False
+        self._residual_gather_x_reference = None
+        self._residual_gather_dx_reference = None
+
+        if not reuse_residual_gather:
+            _t0 = time.time()
+            self.problem.update_input_matrices_by_model(x, dx)
+            self._timings["jac_gather_time"] += time.time() - _t0
 
         # returns only j22 if no states, returns J if states
         if self.problem.get_states_number() == 0:
@@ -125,8 +157,7 @@ class BackEulerImplicitIntegrationVec:
         j22_val: csc_matrix = self.problem.get_j22_vec(x, dx, h)
         self._timings["jac_j22_time"] += time.time() - t0
 
-        I = sp.eye(m=self.problem.get_states_number(), n=self.problem.get_states_number())
-        j11: sp.csc_matrix = (I - h * j11_val).tocsc()
+        j11: sp.csc_matrix = (self._state_identity - h * j11_val).tocsc()
         j12: sp.csc_matrix = - h * j12_val
         j21: sp.csc_matrix = j21_val
         j22: sp.csc_matrix = j22_val
@@ -187,6 +218,9 @@ class BackEulerImplicitIntegrationVec:
 
         try:
             for step_idx in range(self.steps):
+                if self._cancel_checker is not None and self._cancel_checker():
+                    return self.t[:step_idx + 1].copy(), self.y[:step_idx + 1, :].copy(), well_initialized, converged
+
                 self.problem.report_progress2(step_idx, self.steps)
 
                 t_current_macro: float = self.t[step_idx]
@@ -255,19 +289,8 @@ class BackEulerImplicitIntegrationVec:
                         residual = np.linalg.norm(rhs, np.inf)
                         substep_converged = residual < tol
 
-                        if step_idx in [99, 100, 101, 110, 120, 130, 140, 150, 200, 250, 300] and n_iter == 0:
-                            vp = self.problem._variable_parameters_values
-                            print(f"  step={step_idx} t={t_local_prev:.4f} vp={vp}", flush=True)
-                        if step_idx > 0 and n_iter == 0:
-                            n_bal = 2 * len(self.problem.grid.buses)
-                            bal_rhs = rhs[-n_bal:] if n_bal > 0 else np.array([])
-                            bal_norm = np.linalg.norm(bal_rhs, np.inf) if len(bal_rhs) > 0 else 0.0
-                            print(f"  step={step_idx} t={t_local_prev:.4f} res={residual:.2e} bal_norm={bal_norm:.2e} rhs_nonzero={(np.abs(rhs)>1e-10).sum()}", flush=True)
-
                         if step_idx == 0 and is_first_local_step:
                             if substep_converged:
-                                print("System well initialized.")
-                                print(f"x is {x_new}")
                                 pass
                             else:
                                 well_initialized = False
@@ -277,15 +300,6 @@ class BackEulerImplicitIntegrationVec:
                                     value=residual,
                                     expected_value=tol,
                                 )
-                                print(f"System requires iterative initialization. Initial DAE residual is {residual}.")
-                                print(f"rhs is {rhs}")
-                                non_zero_indexes = np.where(np.abs(rhs) > 1e-7)[0]
-                                all_eq = self.problem._state_eqs + self.problem._algebraic_eqs
-                                print("eqs are")
-                                for i in non_zero_indexes:
-                                    eq = all_eq[i]
-                                    print(f"eq {eq} with error {rhs[i]}")
-                                print("RMS simulation continues iterative initialization after the diagnostic. Check the logger for details.")
                                 # Continue with Newton iterations after reporting the initialization residual.
 
 
@@ -343,11 +357,6 @@ class BackEulerImplicitIntegrationVec:
                         t_local_prev = t_curr
                         is_first_local_step = False
                     else:
-                        if step_idx == 0:
-                            print(f"Iterative initialization stopped at iter {n_iter} with residual {residual}")
-                        else:
-                            print(f"Failed to converge at step {step_idx} and n_iter is {n_iter}")
-                            print(f"Residual is {residual}")
                         converged = False
                         break
 
@@ -355,8 +364,6 @@ class BackEulerImplicitIntegrationVec:
                     break
 
                 lag_update_start = time.time()
-                print(f'converged is {True} at step {step_idx} with {n_iter} iterations')
-
                 self.y[step_idx + 1, :] = x_prev
                 self.t[step_idx + 1] = t_macro_target
 
@@ -368,19 +375,5 @@ class BackEulerImplicitIntegrationVec:
                 self.problem.close_fmu_cs_devices()
             if has_fmu_me:
                 self.problem.close_fmu_me_devices()
-
-        total = sum(timings.values())
-        print("\n--- Solver timing breakdown (Vec) ---")
-        for k, v in timings.items():
-            print(f"  {k:25s}: {v:8.4f} s  ({v/total*100:5.1f}%)")
-        print(f"  {'TOTAL':25s}: {total:8.4f} s")
-
-        if self.problem._prof_timings is not None:
-            print("\n--- Problem-level timing breakdown (Vec) ---")
-            pt = self.problem._prof_timings
-            ptotal = sum(pt.values())
-            for k, v in sorted(pt.items()):
-                print(f"  {k:35s}: {v:8.4f} s  ({v/ptotal*100:5.1f}%)")
-            print(f"  {'TOTAL':35s}: {ptotal:8.4f} s")
 
         return self.t, self.y, well_initialized, converged

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from PySide6.QtGui import QPen
 from PySide6.QtWidgets import (QMenu)
 from VeraGridEngine.Devices.Fluid.fluid_p2x import FluidP2x
-from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE,  Circle
+from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, FluidP2xSymbol
 from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 
@@ -35,16 +35,22 @@ class FluidP2xGraphicItem(InjectionTemplateGraphicItem):
                                               w=40,
                                               h=40)
 
-        self.set_glyph(
-            glyph=Circle(self, 40, 40, "P2X", self.update_nexus)
-        )
+        self.set_glyph(glyph=FluidP2xSymbol(self, 40, 40))
 
-    def recolour_mode(self):
+    def recolour_mode(self) -> None:
         """
         Change the colour according to the system theme
         """
-        self.color = ACTIVE['color']
-        self.style = ACTIVE['style']
+        if self.api_object is not None:
+            if self.api_object.active:
+                self.color = ACTIVE['color']
+                self.style = ACTIVE['style']
+            else:
+                self.color = DEACTIVATED['color']
+                self.style = DEACTIVATED['style']
+        else:
+            self.color = ACTIVE['color']
+            self.style = ACTIVE['style']
 
         pen = QPen(self.color, self.width, self.style)
         self.glyph.setPen(pen)

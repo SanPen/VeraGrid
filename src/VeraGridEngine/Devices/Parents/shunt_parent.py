@@ -578,9 +578,9 @@ class ShuntParent(InjectionParent):
         np.fill_diagonal(yabc, diag)
 
         self.ysh.values = yabc
-        self.ysh.phA = 1
-        self.ysh.phB = 1
-        self.ysh.phC = 1
+        self.ysh.phA = True
+        self.ysh.phB = True
+        self.ysh.phC = True
 
     # Scalar property accessors coerce assignments to the declared schema types.
 

@@ -14,6 +14,7 @@ import VeraGridEngine.Devices as dev
 import VeraGridEngine.IO.matpower.legacy.matpower_branch_definitions as matpower_branches
 import VeraGridEngine.IO.matpower.legacy.matpower_bus_definitions as matpower_buses
 import VeraGridEngine.IO.matpower.legacy.matpower_gen_definitions as matpower_gen
+from VeraGridEngine.IO.matpower.matpower_utils import parse_matlab_float
 from VeraGridEngine.IO.matpower.veragrid_to_matpower import build_matpower_case_dict
 
 
@@ -79,7 +80,7 @@ def txt2mat(txt: str, line_splitter=';', to_float=True):
         # fill-in the data
         for j, val in enumerate(vec):
             if to_float:
-                arr[i, j] = float(val)
+                arr[i, j] = parse_matlab_float(val)
             else:
                 arr[i, j] = val.strip().replace("'", "")
 

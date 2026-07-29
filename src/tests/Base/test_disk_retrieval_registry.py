@@ -19,6 +19,94 @@ from VeraGridEngine.IO.veragrid.zip_interface import load_session_driver_objects
 GRID_FOLDER = Path(__file__).resolve().parents[1] / "data" / "grids"
 
 
+class FakeSignal:
+    """
+    Minimal signal object used to capture thread connections in session tests.
+    """
+
+    __slots__ = ("callbacks",)
+
+    def __init__(self) -> None:
+        """
+        Build the fake signal.
+
+        :return: None.
+        """
+        self.callbacks: list[object] = list()
+
+    def connect(self, callback: object) -> None:
+        """
+        Record one connected callback.
+
+        :param callback: Connected callback.
+        :return: None.
+        """
+        self.callbacks.append(callback)
+
+
+class FakeThread:
+    """
+    Minimal thread used to exercise session replacement logic.
+    """
+
+    __slots__ = ("driver", "progress_signal", "progress_text", "done_signal", "started", "terminated")
+
+    def __init__(self, driver: object) -> None:
+        """
+        Build the fake thread.
+
+        :param driver: Driver stored by the session.
+        :return: None.
+        """
+        self.driver: object = driver
+        self.progress_signal: FakeSignal = FakeSignal()
+        self.progress_text: FakeSignal = FakeSignal()
+        self.done_signal: FakeSignal = FakeSignal()
+        self.started: bool = False
+        self.terminated: bool = False
+
+    def isRunning(self) -> bool:
+        """
+        Report whether the fake thread is already running.
+
+        :return: Running state.
+        """
+        return self.started
+
+    def terminate(self) -> None:
+        """
+        Mark the fake thread as terminated.
+
+        :return: None.
+        """
+        self.terminated = True
+
+    def start(self) -> None:
+        """
+        Mark the fake thread as started.
+
+        :return: None.
+        """
+        self.started = True
+
+
+class FakeDriver:
+    """
+    Minimal driver used to trigger session replacement code paths.
+    """
+
+    __slots__ = ("tpe",)
+
+    def __init__(self, driver_tpe: SimulationTypes) -> None:
+        """
+        Build the fake driver.
+
+        :param driver_tpe: Simulation type exposed to the session.
+        :return: None.
+        """
+        self.tpe: SimulationTypes = driver_tpe
+
+
 @pytest.mark.parametrize(
     "driver_tpe",
     [
@@ -349,3 +437,30 @@ def test_ntc_results_register_from_disk_data(tmp_path: Path) -> None:
     )
 
     assert session.exists(SimulationTypes.OPF_NTC_run)
+
+
+def test_session_run_replaces_existing_driver_without_registered_thread(monkeypatch: pytest.MonkeyPatch) -> None:
+    """
+    Re-running one study must tolerate sessions that kept a driver but lost its live thread entry.
+
+    :param monkeypatch: Pytest monkeypatch fixture.
+    :return: None.
+    """
+    session = SimulationSession()
+    previous_driver = FakeDriver(driver_tpe=SimulationTypes.PowerFlow_run)
+    next_driver = FakeDriver(driver_tpe=SimulationTypes.PowerFlow_run)
+    session.drivers[SimulationTypes.PowerFlow_run] = previous_driver
+
+    monkeypatch.setattr("VeraGrid.Session.session.GcThread", FakeThread)
+
+    session.run(
+        driver=next_driver,
+        post_func=lambda: None,
+        prog_func=lambda _value: None,
+        text_func=lambda _text: None,
+    )
+
+    assert session.drivers[SimulationTypes.PowerFlow_run] is next_driver
+    assert SimulationTypes.PowerFlow_run in session.threads
+    assert isinstance(session.threads[SimulationTypes.PowerFlow_run], FakeThread)
+    assert session.threads[SimulationTypes.PowerFlow_run].started is True

@@ -1,8 +1,10 @@
 __pycache__
+__pycache_jit__
 .pytest_cache
 *.swp
 /doc/build
 /doc/_build
+/doc/_static
 
 
 /**/.idea/*
@@ -11,6 +13,9 @@ __pycache__
 .idea/*
 .idea/inspectionProfiles
 .idea/workspace.xml
+
+.claude/
+CLAUDE.md
 
 /build
 /dist
@@ -31,3 +36,11 @@ demo_5_node.json
 .idea/dictionaries/*.xml
 .DS_Store
 /src/tests/data/output/raw_to_cgmes_export_results/
+.idea/workspace.xml
+.idea/workspace.xml
+.vscode
+.opencode
+
+.aider*
+.env
+profile.pstat

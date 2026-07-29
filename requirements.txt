@@ -37,3 +37,4 @@ opencv-python>=4.10.0.84
 packaging>=25.0
 brotli>=1.2.0
 fmpy>=0.3.22
+psycopg>=3.3.4

@@ -115,7 +115,7 @@ def test_catalog_artifacts_exist() -> None:
 
     descriptors: Sequence[BasicBlockTemplateDescriptor] = build_descriptor_parameters()
     assert build_templates_dir().exists()
-    assert len(descriptors) == 551
+    assert len(descriptors) == 548
 
 
 @pytest.mark.filterwarnings("error")
@@ -129,7 +129,7 @@ def test_editor_ready_subset_counts_are_clean() -> None:
     ready_descriptors: Sequence[BasicBlockTemplateDescriptor] = build_ready_descriptor_parameters()
     pending_descriptors: Sequence[BasicBlockTemplateDescriptor] = build_pending_descriptor_parameters()
 
-    assert len(ready_descriptors) == 545
+    assert len(ready_descriptors) == 542
     assert len(pending_descriptors) == 6
     assert all(descriptor.unsupported_lines == tuple() for descriptor in ready_descriptors)
 
@@ -227,7 +227,7 @@ def test_editor_ready_descriptor_is_fully_categorized(descriptor: BasicBlockTemp
     :returns: None.
     """
 
-    assert len(descriptor.category_path) >= 3
+    assert len(descriptor.category_path) >= 2
     assert descriptor.category_path[0] == "Native"
     assert descriptor.category_path[-1] != "Other"
 

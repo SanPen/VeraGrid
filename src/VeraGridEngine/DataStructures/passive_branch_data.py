@@ -9,7 +9,7 @@ import numpy as np
 from VeraGridEngine.DataStructures.branch_parent_data import BranchParentData
 from VeraGridEngine.Utils.Sparse.sparse_array import SparseObjectArray
 from VeraGridEngine.Utils.compare import compare_arr
-from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, Logger
+from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, BoolVec, Logger
 
 
 class PassiveBranchData(BranchParentData):
@@ -55,10 +55,10 @@ class PassiveBranchData(BranchParentData):
         self.Ytf3 = np.zeros((self.nelm * 4, 4), dtype=complex)
         self.Ytt3 = np.zeros((self.nelm * 4, 4), dtype=complex)
 
-        self.phN: IntVec = np.zeros(self.nelm, dtype=int)
-        self.phA: IntVec = np.zeros(self.nelm, dtype=int)
-        self.phB: IntVec = np.zeros(self.nelm, dtype=int)
-        self.phC: IntVec = np.zeros(self.nelm, dtype=int)
+        self.phN: BoolVec = np.zeros(self.nelm, dtype=bool)
+        self.phA: BoolVec = np.zeros(self.nelm, dtype=bool)
+        self.phB: BoolVec = np.zeros(self.nelm, dtype=bool)
+        self.phC: BoolVec = np.zeros(self.nelm, dtype=bool)
 
     def size(self) -> int:
         """

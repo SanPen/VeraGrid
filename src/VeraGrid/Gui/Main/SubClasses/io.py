@@ -6,6 +6,7 @@
 import gc
 import os
 import pathlib
+import tempfile
 from typing import Union, List, Callable
 from PySide6 import QtWidgets, QtGui
 
@@ -27,20 +28,19 @@ from VeraGrid.Gui.FileDialogues.DgsDialogue.dgs_import import DgsImportDialogue
 from VeraGrid.Gui.FileDialogues.MatpowerDialogue.matpower_export import MatpowerExportDialogue
 from VeraGrid.Gui.FileDialogues.UcteDialogue.ucte_export import UcteExportDialogue
 from VeraGrid.Gui.Main.SubClasses.Model.scenarios import ScenariosMain
+from VeraGrid.Gui.FileDialogues.ServerFileDialog import ServerFileDialogue
 from VeraGrid.Gui.FileDialogues.CGMESDialogue.cgmes_export import CgmesExportDialogue
 from VeraGrid.Gui.FileDialogues.PsseDialogue.psse_export import PsseExportDialogue
 from VeraGrid.Gui.FileDialogues.PsseDialogue.psse_import import PsseImportDialogue
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.Devices.multiverse import MultiVerse, ScenarioNode
 from VeraGridEngine.Compilers.circuit_to_pgm import PGM_AVAILABLE
 from VeraGridEngine.IO.file_save import FileSavingOptions
-from VeraGridEngine.IO.file_open import determine_file_type
+from VeraGridEngine.IO.file_open import determine_file_type, FileOpen
 from VeraGridEngine.enumerations import SimulationTypes, FileType
 from VeraGridEngine.IO.veragrid.contingency_parser import import_contingencies_from_json, export_contingencies_json_file
-from VeraGridEngine.IO.veragrid.remote import RemoteInstruction
 from VeraGridEngine.IO.veragrid.catalogue import save_catalogue, load_catalogue
 from VeraGridEngine.Utils.ThirdParty.gslv.gslv_activation import install_gslv_license
-from VeraGrid.templates import (get_cables_catalogue, get_transformer_catalogue, get_wires_catalogue,
-                                get_sequence_lines_catalogue)
 from VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue import CatalogueElementsSelectionDialogue
 
 
@@ -78,6 +78,13 @@ class IoMain(ScenariosMain):
         self.dgs_export_dialogue: DgsExportDialogue | None = None
         self.matpower_export_dialogue: MatpowerExportDialogue | None = None
         self.ucte_export_dialogue: UcteExportDialogue | None = None
+        self.server_file_dialogue: ServerFileDialogue | None = None
+        self.remote_database_file_idtag: str = ""
+        self.remote_database_model_idtag: str = ""
+        self.remote_database_file_name: str = ""
+        self.remote_database_baseline_multiverse: MultiVerse | None = None
+        self._pending_remote_database_context: dict[str, object] | None = None
+        self._temporary_remote_download_paths: list[str] = list()
 
         # actions
         self.ui.actionNew_project.triggered.connect(self.new_project)
@@ -297,7 +304,10 @@ class IoMain(ScenariosMain):
 
         :return: None.
         """
-        if ('file_save' not in self.stuff_running_now) and ('file_open' not in self.stuff_running_now):
+        if self.server_driver.is_running():
+            self.open_server_file_dialogue()
+        elif ('file_save' not in self.stuff_running_now) and ('file_open' not in self.stuff_running_now):
+            self.clear_remote_database_context()
             if self.circuit.valid_for_simulation() > 0:
                 quit_msg = self.tr("Are you sure that you want to quit the current grid and open a new one?"
                                    "\n If the process is cancelled the grid will remain.")
@@ -315,6 +325,338 @@ class IoMain(ScenariosMain):
 
         else:
             warning_msg(self.tr('There is a file being processed now.'))
+
+    def open_server_file_dialogue(self) -> None:
+        """
+        Open the server-side file browser dialogue.
+
+        :return: None.
+        """
+        self.server_file_dialogue = ServerFileDialogue(parent=self, app=self)
+        self.server_file_dialogue.exec()
+
+    def clear_remote_database_context(self) -> None:
+        """
+        Forget the current remote database selection context.
+
+        :return: None.
+        """
+        self.remote_database_file_idtag = ""
+        self.remote_database_model_idtag = ""
+        self.remote_database_file_name = ""
+        self.remote_database_baseline_multiverse = None
+        self._pending_remote_database_context = None
+
+    @staticmethod
+    def _load_multiverse_from_path(file_name: str) -> MultiVerse:
+        """
+        Load one VeraGrid archive synchronously and require a multiverse payload.
+
+        :param file_name: VeraGrid archive path.
+        :return: Parsed multiverse instance.
+        """
+        file_handler = FileOpen(file_name=file_name)
+        file_handler.open()
+
+        if file_handler.multiverse is None:
+            raise ValueError("Remote database file did not contain a multiverse payload")
+
+        return file_handler.multiverse
+
+    @staticmethod
+    def _iter_multiverse_nodes(node: ScenarioNode) -> list[ScenarioNode]:
+        """
+        Flatten one scenario subtree into a node list.
+
+        :param node: Root node to walk.
+        :return: Depth-first list of nodes.
+        """
+        data = [node]
+
+        child: ScenarioNode
+        for child in node.children:
+            data.extend(IoMain._iter_multiverse_nodes(child))
+
+        return data
+
+    @staticmethod
+    def _find_multiverse_node_by_model_idtag(multiverse: MultiVerse, model_idtag: str) -> ScenarioNode | None:
+        """
+        Find one multiverse node by its model idtag.
+
+        :param multiverse: MultiVerse to search.
+        :param model_idtag: Model identifier.
+        :return: Matching scenario node or ``None``.
+        """
+        if len(model_idtag.strip()) == 0:
+            return multiverse.current_node
+
+        root_node: ScenarioNode
+        for root_node in multiverse.root_nodes:
+            node: ScenarioNode
+            for node in IoMain._iter_multiverse_nodes(root_node):
+                if node.circuit.idtag == model_idtag:
+                    return node
+                else:
+                    pass
+
+        return None
+
+    @staticmethod
+    def _are_circuits_equal(circuit_a: MultiCircuit, circuit_b: MultiCircuit) -> bool:
+        """
+        Compare two circuits for semantic equality.
+
+        :param circuit_a: First circuit.
+        :param circuit_b: Second circuit.
+        :return: ``True`` when they match.
+        """
+        equal, _logger = circuit_a.compare_circuits(grid2=circuit_b)
+        return equal
+
+    def _download_remote_multiverse(self, file_idtag: str) -> MultiVerse:
+        """
+        Download one full remote database file and parse it as a multiverse.
+
+        :param file_idtag: Remote file identifier.
+        :return: Parsed multiverse snapshot.
+        """
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".veragrid") as tmp_file:
+            temp_path: str = tmp_file.name
+
+        try:
+            self.server_driver.download_database_file(
+                file_idtag=file_idtag,
+                target_path=temp_path,
+                model_idtag="",
+                base_only=False,
+            )
+            return self._load_multiverse_from_path(file_name=temp_path)
+        finally:
+            if os.path.exists(temp_path):
+                os.unlink(temp_path)
+            else:
+                pass
+
+    def _store_remote_model_into_multiverse(self,
+                                            multiverse: MultiVerse,
+                                            model_idtag: str,
+                                            circuit: MultiCircuit) -> None:
+        """
+        Replace one model inside a remote multiverse snapshot.
+
+        :param multiverse: Target multiverse.
+        :param model_idtag: Model identifier to replace.
+        :param circuit: New full composed circuit for that model.
+        :return: None.
+        """
+        node = self._find_multiverse_node_by_model_idtag(multiverse=multiverse, model_idtag=model_idtag)
+
+        if node is None:
+            raise ValueError(f"Remote model '{model_idtag}' was not found in the selected file")
+
+        multiverse._store_composed_node_data(node=node, composed=circuit.copy())
+        multiverse._set_active_node(node)
+
+    def load_remote_database_entry(self,
+                                   file_idtag: str,
+                                   file_name: str,
+                                   model_idtag: str = "",
+                                   base_only: bool = False) -> None:
+        """
+        Download one remote database entry and route it through the normal open workflow.
+
+        :param file_idtag: Remote file identifier.
+        :param file_name: Remote file name.
+        :param model_idtag: Optional remote model identifier.
+        :param base_only: Download only the base model when ``True``.
+        :return: None.
+        """
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".veragrid") as tmp_file:
+            temp_path: str = tmp_file.name
+
+        baseline_multiverse: MultiVerse | None = None
+
+        if len(model_idtag.strip()) == 0 and not base_only:
+            baseline_temp_path = temp_path
+        else:
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".veragrid") as baseline_tmp_file:
+                baseline_temp_path = baseline_tmp_file.name
+
+        self.server_driver.download_database_file(
+            file_idtag=file_idtag,
+            target_path=temp_path,
+            model_idtag=model_idtag,
+            base_only=base_only,
+        )
+
+        if baseline_temp_path != temp_path:
+            self.server_driver.download_database_file(
+                file_idtag=file_idtag,
+                target_path=baseline_temp_path,
+                model_idtag="",
+                base_only=False,
+            )
+        else:
+            pass
+
+        try:
+            baseline_multiverse = self._load_multiverse_from_path(file_name=baseline_temp_path)
+        finally:
+            if baseline_temp_path != temp_path and os.path.exists(baseline_temp_path):
+                os.unlink(baseline_temp_path)
+            else:
+                pass
+
+        self._temporary_remote_download_paths.append(temp_path)
+        self._pending_remote_database_context = {
+            "file_idtag": file_idtag,
+            "file_name": file_name,
+            "model_idtag": model_idtag,
+            "base_only": base_only,
+            "baseline_multiverse": baseline_multiverse,
+        }
+        self.open_file_now(filenames=temp_path)
+
+    def save_remote_database_entry(self, file_idtag: str, file_name: str, model_idtag: str = "") -> None:
+        """
+        Save the current project back into one remote database file or model.
+
+        :param file_idtag: Remote file identifier.
+        :param file_name: Remote file name.
+        :param model_idtag: Optional remote model identifier.
+        :return: None.
+        """
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".veragrid") as tmp_file:
+            temp_path: str = tmp_file.name
+
+        try:
+            self.circuit.comments = self.ui.comments_textEdit.toPlainText()
+            options = self.get_file_save_options()
+
+            if len(model_idtag.strip()) == 0:
+                saver = filedrv.FileSave(
+                    circuit=self.circuit,
+                    multiverse=self.multiverse,
+                    file_name=temp_path,
+                    options=options,
+                )
+                saver.save()
+            else:
+                if self.remote_database_baseline_multiverse is None:
+                    raise ValueError("No remote baseline is loaded for model-level save")
+
+                baseline_node = self._find_multiverse_node_by_model_idtag(
+                    multiverse=self.remote_database_baseline_multiverse,
+                    model_idtag=model_idtag,
+                )
+                if baseline_node is None:
+                    raise ValueError(f"Loaded baseline model '{model_idtag}' was not found")
+
+                latest_remote_multiverse = self._download_remote_multiverse(file_idtag=file_idtag)
+                latest_remote_node = self._find_multiverse_node_by_model_idtag(
+                    multiverse=latest_remote_multiverse,
+                    model_idtag=model_idtag,
+                )
+                if latest_remote_node is None:
+                    raise ValueError(f"Current remote model '{model_idtag}' was not found")
+
+                baseline_circuit = self.remote_database_baseline_multiverse.checkout(baseline_node)
+                latest_remote_circuit = latest_remote_multiverse.checkout(latest_remote_node)
+                merged_circuit = self.circuit.copy()
+
+                if not self._are_circuits_equal(circuit_a=baseline_circuit, circuit_b=latest_remote_circuit):
+                    merge_dialogue = GridMergeDialogue(
+                        parent=self,
+                        grid=latest_remote_circuit.copy(),
+                        diff=merged_circuit,
+                    )
+                    merge_dialogue.exec()
+
+                    if not merge_dialogue.merged_grid:
+                        self.show_info_toast(self.tr("Server save cancelled."))
+                        return
+
+                    merged_circuit = merge_dialogue.grid
+
+                self._store_remote_model_into_multiverse(
+                    multiverse=latest_remote_multiverse,
+                    model_idtag=model_idtag,
+                    circuit=merged_circuit,
+                )
+                latest_remote_multiverse.commit_current()
+
+                saver = filedrv.FileSave(
+                    circuit=latest_remote_multiverse.current_model,
+                    multiverse=latest_remote_multiverse,
+                    file_name=temp_path,
+                    options=options,
+                )
+                saver.save()
+                self.remote_database_baseline_multiverse = latest_remote_multiverse
+
+            self.server_driver.replace_database_file(
+                file_idtag=file_idtag,
+                source_path=temp_path,
+                upload_file_name=file_name,
+            )
+            self.remote_database_file_idtag = file_idtag
+            self.remote_database_file_name = file_name
+            self.remote_database_model_idtag = model_idtag
+            self.show_info_toast(self.tr("Server file saved."))
+        finally:
+            if os.path.exists(temp_path):
+                os.unlink(temp_path)
+            else:
+                pass
+
+    def delete_remote_database_file(self, file_idtag: str) -> None:
+        """
+        Delete one remote database file and clear the local remote context if needed.
+
+        :param file_idtag: Remote file identifier.
+        :return: None.
+        """
+        self.server_driver.delete_database_file(file_idtag=file_idtag)
+
+        if self.remote_database_file_idtag == file_idtag:
+            self.clear_remote_database_context()
+        else:
+            pass
+
+        self.show_info_toast(self.tr("Server file deleted."))
+
+    def delete_remote_database_model(self, file_idtag: str, model_idtag: str) -> None:
+        """
+        Delete one remote model and clear the local remote context if needed.
+
+        :param file_idtag: Remote file identifier.
+        :param model_idtag: Remote model identifier.
+        :return: None.
+        """
+        self.server_driver.delete_database_model(file_idtag=file_idtag, model_idtag=model_idtag)
+
+        if self.remote_database_file_idtag == file_idtag and self.remote_database_model_idtag == model_idtag:
+            self.remote_database_model_idtag = ""
+        else:
+            pass
+
+        self.show_info_toast(self.tr("Server model deleted."))
+
+    def cleanup_temporary_remote_downloads(self) -> None:
+        """
+        Remove every temporary file downloaded from the remote database API.
+
+        :return: None.
+        """
+        temp_path: str
+        for temp_path in self._temporary_remote_download_paths:
+            if os.path.exists(temp_path):
+                os.unlink(temp_path)
+            else:
+                pass
+
+        self._temporary_remote_download_paths = list()
 
     def open_file_threaded(self,
                            post_function: Callable[[], None] | None = None,
@@ -363,15 +705,21 @@ class IoMain(ScenariosMain):
             extensions such as ``.xml`` or ``.zip`` open one selector dialogue.
         :return: None.
         """
-        if len(filenames) > 0:
+        normalized_filenames: List[str]
+        if isinstance(filenames, str):
+            normalized_filenames = [filenames]
+        else:
+            normalized_filenames = filenames
 
-            for f_name in filenames:
+        if len(normalized_filenames) > 0:
+
+            for f_name in normalized_filenames:
                 if not os.path.exists(f_name):
                     error_msg(text=self.tr("The file does not exist :( \n {file_name}").format(file_name=f_name),
                               title=self.tr("File opening"))
                     return
 
-            self.file_name = filenames[0]
+            self.file_name = normalized_filenames[0]
 
             # store the working directory
             self.project_directory = os.path.dirname(self.file_name)
@@ -381,7 +729,7 @@ class IoMain(ScenariosMain):
 
             options = filedrv.FileOpenOptions()
 
-            file_name = filenames if len(filenames) > 1 else filenames[0]
+            file_name = normalized_filenames if len(normalized_filenames) > 1 else normalized_filenames[0]
 
             # try to determine the file type
             options.file_type = determine_file_type(file_name)
@@ -542,6 +890,18 @@ class IoMain(ScenariosMain):
                         dlg = LogsDialogue(self.tr('Open file logger'), self.open_file_thread_object.logger)
                         dlg.exec()
 
+                if self._pending_remote_database_context is not None:
+                    self.remote_database_file_idtag = str(self._pending_remote_database_context["file_idtag"])
+                    self.remote_database_file_name = str(self._pending_remote_database_context["file_name"])
+                    self.remote_database_model_idtag = str(self._pending_remote_database_context["model_idtag"])
+                    baseline_multiverse = self._pending_remote_database_context.get("baseline_multiverse", None)
+                    if isinstance(baseline_multiverse, MultiVerse):
+                        self.remote_database_baseline_multiverse = baseline_multiverse
+                    else:
+                        self.remote_database_baseline_multiverse = None
+                else:
+                    pass
+
             else:
                 warning_msg(text=self.tr('Error while loading the file(s)'))
                 # else, show the logger if it is necessary
@@ -555,6 +915,8 @@ class IoMain(ScenariosMain):
                 if isinstance(diagram, SchematicWidget):
                     diagram.center_nodes()
 
+        self._pending_remote_database_context = None
+        self.cleanup_temporary_remote_downloads()
         self.collect_memory()
         self.setup_time_sliders()
         self.get_circuit_snapshot_datetime()
@@ -739,9 +1101,7 @@ class IoMain(ScenariosMain):
         """
 
         if self.server_driver.is_running():
-            instruction = RemoteInstruction(operation=SimulationTypes.NoSim)
-            self.server_driver.send_job(grid=self.circuit, instruction=instruction)
-
+            self.open_server_file_dialogue()
         else:
             # declare the allowed file types
             files_types = self.tr("VeraGrid zip (*.veragrid)")

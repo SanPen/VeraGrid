@@ -20,6 +20,7 @@ class ShortCircuitEvent(PointerDeviceParent):
         '_method',
         '_phases',
         '_active',
+        '_constz',
         '_r_fault',
         '_x_fault',
     )
@@ -54,6 +55,13 @@ class ShortCircuitEvent(PointerDeviceParent):
             cat=[PrpCat.REL],
         ),
         GCProp(
+            prop_name='constz',
+            units='',
+            tpe=bool,
+            definition='If true the constant power and current loads are linearised.',
+            cat=[PrpCat.REL],
+        ),
+        GCProp(
             prop_name='r_fault',
             units='p.u.',
             tpe=float,
@@ -77,6 +85,7 @@ class ShortCircuitEvent(PointerDeviceParent):
                  name="Fault",
                  code='',
                  active: bool = True,
+                 constz: bool = True,
                  fault_type: FaultType = FaultType.LLLG,
                  method: MethodShortCircuit = MethodShortCircuit.sequences,
                  phases: PhasesShortCircuit = PhasesShortCircuit.abc,
@@ -90,6 +99,7 @@ class ShortCircuitEvent(PointerDeviceParent):
         :param name: String. Contingency name
         :param code: String. Contingency code name
         :param active: If true the investment activates when applied, otherwise is deactivated
+        :param constz: If true the constant power and current loads are linearised.
         :param fault_type: The short-circuit type to be simulated, for instance, SLG means single-line to ground
         :param method: The method used to perform the short-cicuit analysis
         :param phases: The phases involved in the short-circuit, only needed if method = phases
@@ -110,6 +120,7 @@ class ShortCircuitEvent(PointerDeviceParent):
         self._method: MethodShortCircuit = method
         self._phases: PhasesShortCircuit = phases
         self.active: bool = active
+        self.constz: bool = constz
         # short circuit impedance
         self._r_fault = float(r_fault)
         self._x_fault = float(x_fault)
@@ -188,6 +199,25 @@ class ShortCircuitEvent(PointerDeviceParent):
         :return: None
         """
         self._active = bool(val)
+
+    @property
+    def constz(self) -> bool:
+        """
+        Get ``constz``.
+
+        :return: bool
+        """
+        return self._constz
+
+    @constz.setter
+    def constz(self, val: bool) -> None:
+        """
+        Set ``constz``.
+
+        :param val: Value to assign.
+        :return: None
+        """
+        self._constz = bool(val)
 
     @property
     def r_fault(self) -> float:

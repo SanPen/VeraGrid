@@ -24,7 +24,7 @@ from VeraGridEngine.basic_structures import IntVec
 from VeraGridEngine.enumerations import EngineType, SimulationTypes
 
 if TYPE_CHECKING:
-    from VeraGridEngine.Simulations.PowerFlow.power_flow_ts_results import PowerFlowTimeSeriesResults
+    from VeraGridEngine.Simulations.OPF.opf_ts_results import OptimalPowerFlowTimeSeriesResults
 
 
 class PowerFlowTimeSeriesDriver3Ph(TimeSeriesDriverTemplate):
@@ -45,7 +45,7 @@ class PowerFlowTimeSeriesDriver3Ph(TimeSeriesDriverTemplate):
         grid: MultiCircuit,
         options: Union[PowerFlowOptions, None] = None,
         time_indices: Union[IntVec, None] = None,
-        opf_time_series_results: Union["PowerFlowTimeSeriesResults", None] = None,
+        opf_time_series_results: Union[OptimalPowerFlowTimeSeriesResults, None] = None,
         clustering_results: Union[ClusteringResults, None] = None,
         engine: EngineType = EngineType.VeraGrid,
     ) -> None:
@@ -69,7 +69,7 @@ class PowerFlowTimeSeriesDriver3Ph(TimeSeriesDriverTemplate):
         )
 
         self.options: PowerFlowOptions = PowerFlowOptions() if options is None else options
-        self.opf_time_series_results: Union["PowerFlowTimeSeriesResults", None] = opf_time_series_results
+        self.opf_time_series_results: OptimalPowerFlowTimeSeriesResults | None = opf_time_series_results
 
         bus_names: np.ndarray = self.grid.get_bus_names()
         branch_names: np.ndarray = self.grid.get_branch_names(add_hvdc=False, add_vsc=False, add_switch=True)

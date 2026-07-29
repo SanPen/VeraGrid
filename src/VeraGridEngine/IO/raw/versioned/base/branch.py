@@ -2,7 +2,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
-from typing import Tuple
+from typing import Sequence, Tuple
 
 from VeraGridEngine.IO.base.units import UnitMultiplier, UnitSymbol, Unit
 from VeraGridEngine.IO.raw.psse_object import RawObject
@@ -127,6 +127,28 @@ class RawBranch(RawObject):
 
     def get_seed(self):
         return "_BR_{}".format(self.get_id())
+
+    def parse_ownership_fields(self, values: Sequence[int | float | str | None]) -> None:
+        """
+        Assign up to four owner/fraction pairs from a parsed RAW record tail.
+
+        :param values: Sequence with ``O1, F1`` through ``O4, F4`` values
+        :return: None
+        """
+        # PSSe may emit one to four owner/fraction pairs.
+        # Pad the missing pairs so the object always ends in a fully explicit state.
+        normalized_values = list()
+        for value in values:
+            normalized_values.append(value)
+
+        if len(normalized_values) > 8:
+            normalized_values = normalized_values[:8]
+        else:
+            missing_values = 8 - len(normalized_values)
+            normalized_values.extend([0 for _ in range(missing_values)])
+
+        (self.O1, self.F1, self.O2, self.F2,
+         self.O3, self.F3, self.O4, self.F4) = normalized_values
 
     @property
     def I(self):

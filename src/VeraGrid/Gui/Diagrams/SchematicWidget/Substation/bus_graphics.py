@@ -1018,18 +1018,18 @@ class BusGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         """
         Enable 3-phase short circuit
         """
-        self.w = ShortCircuitSelector()
-        self.w.exec()
+        selector = ShortCircuitSelector()
+        selector.exec()
 
-        if self.w.was_accepted:
-            z_pu: complex = self.w.get_impedance_pu(Sbase=self.editor.circuit.Sbase,
-                                                    Vbase=self.api_object.Vnom)
+        if selector.was_accepted:
+            z_pu: complex = selector.get_impedance_pu(Sbase=self.editor.circuit.Sbase,
+                                                      Vbase=self.api_object.Vnom)
             sc = ShortCircuitEvent(
-                name=f"{self.api_object.name} {self.w.fault.value}",
+                name=f"{self.api_object.name} {selector.fault.value}",
                 device=self.api_object,
-                fault_type=self.w.fault,
-                method=self.w.method,
-                phases=self.w.phases,
+                fault_type=selector.fault,
+                method=selector.method,
+                phases=selector.phases,
                 r_fault=z_pu.real,
                 x_fault=z_pu.imag
             )

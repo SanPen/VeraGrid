@@ -280,7 +280,7 @@ def get_all_uids_from_block_composition_dict(block_composition_dict: Dict[int, L
     return [uid for uids in block_composition_dict.values() for uid in uids]
 
 
-class RmsProblemDaeVec(RmsProblemTemplate):
+class RmsProblemDaeFullVec(RmsProblemTemplate):
     """
     DAE (Differential-Algebraic Equation) class to store and manage.
 
@@ -307,7 +307,9 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                  options: RmsOptions,
                  pf_results: PowerFlowResults,
                  progress_signal: DummySignal | None = None,
-                 progress_text: DummySignal | None = None, ):
+                 progress_text: DummySignal | None = None,
+                 cancel_checker=False
+                 ):
         """
 
         :param grid:
@@ -354,6 +356,8 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         self._dx_gather_idx: Dict[int, np.ndarray] = dict()
         self._vp_gather_idx: Dict[int, np.ndarray] = dict()
         self._cp_gather_idx: Dict[int, np.ndarray] = dict()
+        self._rhs_state_scatter_idx: Dict[int, np.ndarray] = dict()
+        self._rhs_algeb_scatter_idx: Dict[int, np.ndarray] = dict()
 
         # Jacobian vectorization: per-type column offsets for global assembly
         self._jac_state_col_off: Dict[int, np.ndarray] = dict()
@@ -415,6 +419,8 @@ class RmsProblemDaeVec(RmsProblemTemplate):
 
         self._jbalance_fn: Callable[[Vec, Vec, Vec, Vec, float], sp.csc_matrix] | None = None
         self._jbalance_state_fn: Callable[[Vec, Vec, Vec, Vec, float], sp.csc_matrix] | None = None
+        self._jbalance_state_template: sp.csc_matrix | None = None
+        self._jbalance_template: sp.csc_matrix | None = None
         # function pointers
         self._derivative_fn: SymbolicDerivative | None = None
         self._event_params_fn: SymbolicParamsVector | None = None
@@ -1404,7 +1410,7 @@ class RmsProblemDaeVec(RmsProblemTemplate):
 
         # Build global Jacobian templates for Vec assembly
         self._build_global_jacobian_templates()
-        self._precompute_j22_triplet_mappings()
+        self._precompute_balance_jacobian_templates()
 
         # we mark the problem as ready for simulation
         self.set_initialize_flag()
@@ -1513,82 +1519,39 @@ class RmsProblemDaeVec(RmsProblemTemplate):
 
             self._jac_global_data[block_name] = (csc, scatter_map)
 
-    def _precompute_j22_triplet_mappings(self):
+    def _precompute_balance_jacobian_templates(self) -> None:
         n_states = self.get_states_number()
-        n_buses = len(self.grid.buses)
+        n_algebraic = self._n_algebraic
+        n_balance = len(self._balance_equations)
 
-        for model_type, fn in self._j22_fn_by_types.items():
-            if fn is None:
-                continue
-            indices, indptr, n_rows_type, n_cols_type = fn.get_sparsity()
-            nnz_type = len(indices)
-            if nnz_type == 0:
-                continue
+        if n_balance == 0:
+            return
 
-            model_uids = [model_type] + self.equivalence_dict.get(model_type, [])
-            n_inst = len(model_uids)
+        n_device_eqs = n_algebraic - n_balance
 
-            n_bal_p = sum(1 for v in self._balance_eqs_p_equiv_class_dict.get(model_type, []) if v != 0)
-            n_bal_q = sum(1 for v in self._balance_eqs_q_equiv_class_dict.get(model_type, []) if v != 0)
-            n_bal_type = n_bal_p + n_bal_q
-            n_model_rows = n_rows_type - n_bal_type
+        if self._jbalance_state_fn is not None:
+            indices, indptr, n_rows_bal, n_cols_bal = self._jbalance_state_fn.get_sparsity()
+            if len(indices) > 0:
+                col_counts = np.diff(indptr)
+                cols = np.repeat(np.arange(n_cols_bal, dtype=np.int32), col_counts)
+                rows = np.asarray(indices, dtype=np.int32) + n_device_eqs
+                data = np.zeros(len(rows), dtype=np.float64)
+                self._jbalance_state_template = sp.csc_matrix(
+                    (data, rows, np.concatenate(([0], np.cumsum(col_counts, dtype=np.int32)))),
+                    shape=(n_algebraic, n_states),
+                )
 
-            # Column mapping
-            wrt_vars = self._algebraic_vars_equiv_class_dict.get(model_type, [])
-            uid2pos = self._uid2idx_vars_vec.get(model_type, {})
-            x_gather = self._x_gather_idx.get(model_type)
-            if x_gather is None:
-                continue
-            col_idx = np.zeros((n_cols_type, n_inst), dtype=np.intp)
-            for lc, var in enumerate(wrt_vars):
-                local_pos = uid2pos.get(var.uid, 0)
-                col_idx[lc, :] = x_gather[local_pos, :n_inst]
-                col_idx[lc, :] -= n_states
-
-            col_counts = np.diff(indptr)
-            local_cols = np.repeat(np.arange(n_cols_type, dtype=np.intp), col_counts)
-            j22_cols = col_idx[local_cols, :]
-
-            # Row mapping
-            rows_map = np.zeros((n_rows_type, n_inst), dtype=np.intp)
-            for j, uid in enumerate(model_uids):
-                row_off = self._model_algebraic_eq_start_idx.get(uid, 0)
-                rows_map[:n_model_rows, j] = row_off + np.arange(n_model_rows)
-
-            if n_bal_type > 0:
-                n_device_eqs = self._n_algebraic - 2 * n_buses
-                p_list = [v for v in self._balance_eqs_p_equiv_class_dict.get(model_type, []) if v != 0]
-                q_list = [v for v in self._balance_eqs_q_equiv_class_dict.get(model_type, []) if v != 0]
-
-                for b, var in enumerate(p_list):
-                    if var.ref == VarPowerFlowReferenceType.P:
-                        buses = self.mdl_index2bus.get(model_type, [])
-                    elif var.ref == VarPowerFlowReferenceType.Pf:
-                        buses = self.mdl_index2busfrom.get(model_type, [])
-                    elif var.ref == VarPowerFlowReferenceType.Pt:
-                        buses = self.mdl_index2busto.get(model_type, [])
-                    else:
-                        continue
-                    for j in range(min(n_inst, len(buses))):
-                        rows_map[n_model_rows + b, j] = n_device_eqs + 2 * buses[j] + 1
-
-                for b, var in enumerate(q_list):
-                    if var.ref == VarPowerFlowReferenceType.Q:
-                        buses = self.mdl_index2bus.get(model_type, [])
-                    elif var.ref == VarPowerFlowReferenceType.Qf:
-                        buses = self.mdl_index2busfrom.get(model_type, [])
-                    elif var.ref == VarPowerFlowReferenceType.Qt:
-                        buses = self.mdl_index2busto.get(model_type, [])
-                    else:
-                        continue
-                    for j in range(min(n_inst, len(buses))):
-                        rows_map[n_model_rows + n_bal_p + b, j] = n_device_eqs + 2 * buses[j]
-
-            local_rows_arr = np.asarray(indices, dtype=np.intp)
-            j22_rows = rows_map[local_rows_arr, :]
-
-            self._j22_global_rows[model_type] = j22_rows
-            self._j22_global_cols[model_type] = j22_cols
+        if self._jbalance_fn is not None:
+            indices, indptr, n_rows_bal, n_cols_bal = self._jbalance_fn.get_sparsity()
+            if len(indices) > 0:
+                col_counts = np.diff(indptr)
+                cols = np.repeat(np.arange(n_cols_bal, dtype=np.int32), col_counts)
+                rows = np.asarray(indices, dtype=np.int32) + n_device_eqs
+                data = np.zeros(len(rows), dtype=np.float64)
+                self._jbalance_template = sp.csc_matrix(
+                    (data, rows, np.concatenate(([0], np.cumsum(col_counts, dtype=np.int32)))),
+                    shape=(n_algebraic, n_algebraic),
+                )
 
     def get_next_forced_event_time(self, t_prev: float, t_target: float) -> Optional[float]:
         t_mode = _get_next_forced_mode_event_time(self._scheduled_mode_events, t_prev, t_target)
@@ -2677,7 +2640,8 @@ class RmsProblemDaeVec(RmsProblemTemplate):
     ########### vectorized functions ##########################
 
     def _precompute_gather_indices(self) -> None:
-        for model_type in self._rhs_state_fn_by_types.keys():
+        model_types = self._rhs_algeb_fn_by_types.keys()
+        for model_type in model_types:
             var_equiv_lists = self.variables_equivalence_dict.get(model_type, [])
             var_equiv: Dict[int, List[int]] = {}
             for eq_list in var_equiv_lists:
@@ -2725,9 +2689,25 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                         idx_cp[cp_pos, i] = self._uid2idx_params[uid]
                 self._cp_gather_idx[model_type] = idx_cp
 
+            n_state_eqs = len(self._state_eqs_equiv_class_dict.get(model_type, []))
+            if n_state_eqs:
+                idx_rhs_state = np.zeros((n_state_eqs, n_inst), dtype=np.intp)
+                for inst_idx, uid in enumerate([model_type] + self.equivalence_dict.get(model_type, [])):
+                    start = self._model_state_eq_start_idx[uid]
+                    idx_rhs_state[:, inst_idx] = start + np.arange(n_state_eqs, dtype=np.intp)
+                self._rhs_state_scatter_idx[model_type] = idx_rhs_state
+
+            n_algeb_eqs = len(self._algebraic_eqs_equiv_class_dict.get(model_type, []))
+            if n_algeb_eqs:
+                idx_rhs_algeb = np.zeros((n_algeb_eqs, n_inst), dtype=np.intp)
+                for inst_idx, uid in enumerate([model_type] + self.equivalence_dict.get(model_type, [])):
+                    start = self._model_algebraic_eq_start_idx[uid]
+                    idx_rhs_algeb[:, inst_idx] = start + np.arange(n_algeb_eqs, dtype=np.intp)
+                self._rhs_algeb_scatter_idx[model_type] = idx_rhs_algeb
+
     def update_input_matrices_by_model(self, x: Vec, dx: Vec):
         _t0 = time.time()
-        for model_type in self._rhs_state_fn_by_types.keys():
+        for model_type in self._rhs_algeb_fn_by_types.keys():
             self._input_matrices_by_model[model_type][0] = x[self._x_gather_idx[model_type]]
             dx_gather = self._dx_gather_idx.get(model_type)
             if dx_gather is not None:
@@ -2760,12 +2740,9 @@ class RmsProblemDaeVec(RmsProblemTemplate):
                 _t1 = time.time()
                 if rhs_state.ndim == 1:
                     rhs_state = rhs_state.reshape(-1, 1)
-                # fill complete_rhs_state
-                model_uids = [model_type] + self.equivalence_dict.get(model_type, [])
-                n_eqs = rhs_state.shape[0]
-                for inst_idx, uid in enumerate(model_uids):
-                    start = self._model_state_eq_start_idx[uid]
-                    complete_rhs_state[start:start + n_eqs] = rhs_state[:, inst_idx]
+                scatter_idx = self._rhs_state_scatter_idx.get(model_type)
+                if scatter_idx is not None:
+                    complete_rhs_state[scatter_idx] = rhs_state
                 if not hasattr(self, '_prof_timings'):
                     self._prof_timings = {}
                 self._prof_timings['rhs_state_filler_total'] = self._prof_timings.get('rhs_state_filler_total', 0.0) + _t1 - _t0
@@ -2775,10 +2752,10 @@ class RmsProblemDaeVec(RmsProblemTemplate):
 
     def rhs_algebraic_vec(self, x: Vec, dx: Vec) -> Vec:
         n = len(self.grid.buses)
-        self.P_vec = np.zeros(n, dtype=object)
-        self.P_used_vec: BoolVec = np.zeros(n, dtype=bool)
-        self.Q_vec = np.zeros(n, dtype=object)
-        self.Q_used_vec: BoolVec = np.zeros(n, dtype=bool)
+        self.P_vec[:] = 0.0
+        self.P_used_vec[:] = False
+        self.Q_vec[:] = 0.0
+        self.Q_used_vec[:] = False
 
         # here we need to iterate through equivalence_dict and build rhs for every model and then
         # fill the complete rhs
@@ -2795,42 +2772,54 @@ class RmsProblemDaeVec(RmsProblemTemplate):
             _t1 = time.time()
             if rhs_algeb.ndim == 1:
                 rhs_algeb = rhs_algeb.reshape(-1, 1)
-            model_uids = [model_type] + self.equivalence_dict.get(model_type, [])
-            n_eqs = rhs_algeb.shape[0]
-            for inst_idx, uid in enumerate(model_uids):
-                start = self._model_algebraic_eq_start_idx[uid]
-                complete_rhs_algeb[start:start + n_eqs] = rhs_algeb[:, inst_idx]
+            scatter_idx = self._rhs_algeb_scatter_idx.get(model_type)
+            if scatter_idx is not None:
+                complete_rhs_algeb[scatter_idx] = rhs_algeb
             if not hasattr(self, '_prof_timings'):
                 self._prof_timings = {}
             self._prof_timings['rhs_algeb_filler_total'] = self._prof_timings.get('rhs_algeb_filler_total', 0.0) + _t1 - _t0
             self._prof_timings['rhs_algeb_scatter_total'] = self._prof_timings.get('rhs_algeb_scatter_total', 0.0) + time.time() - _t1
 
-            # energy balance equations vectorized:
+            # Only root device-equivalence classes contribute to the network
+            # power balance. Internal sub-block classes can have algebraic RHS
+            # functions too, but they do not own bus mappings and therefore
+            # must be skipped here.
             if model_type in self.line_model_types:
+                bus_from_list = self.mdl_index2busfrom.get(model_type)
+                bus_to_list = self.mdl_index2busto.get(model_type)
+
+                if bus_from_list is None or bus_to_list is None:
+                    continue
+
                 Pf_value_array = rhs_algeb[-4]
                 Pt_value_array = rhs_algeb[-3]
                 Qf_value_array = rhs_algeb[-2]
                 Qt_value_array = rhs_algeb[-1]
                 for i, value in enumerate(Pf_value_array):
-                    bus_num = self.mdl_index2busfrom[model_type][i]
+                    bus_num = bus_from_list[i]
                     setP(self.P_vec, self.P_used_vec, bus_num, value)
                 for i, value in enumerate(Pt_value_array):
-                    bus_num = self.mdl_index2busto[model_type][i]
+                    bus_num = bus_to_list[i]
                     setP(self.P_vec, self.P_used_vec, bus_num, value)
                 for i, value in enumerate(Qf_value_array):
-                    bus_num = self.mdl_index2busfrom[model_type][i]
+                    bus_num = bus_from_list[i]
                     setQ(self.Q_vec, self.Q_used_vec, bus_num, value)
                 for i, value in enumerate(Qt_value_array):
-                    bus_num = self.mdl_index2busto[model_type][i]
+                    bus_num = bus_to_list[i]
                     setQ(self.Q_vec, self.Q_used_vec, bus_num, value)
             else:
+                bus_list = self.mdl_index2bus.get(model_type)
+
+                if bus_list is None:
+                    continue
+
                 P_value_array = rhs_algeb[-2]
                 Q_value_array = rhs_algeb[-1]
                 for i, value in enumerate(P_value_array):
-                    bus_num = self.mdl_index2bus[model_type][i]
+                    bus_num = bus_list[i]
                     setP(self.P_vec, self.P_used_vec, bus_num, value)
                 for i, value in enumerate(Q_value_array):
-                    bus_num = self.mdl_index2bus[model_type][i]
+                    bus_num = bus_list[i]
                     setQ(self.Q_vec, self.Q_used_vec, bus_num, value)
 
         rhs_energy_balance = np.empty(2 * n)
@@ -2891,15 +2880,11 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         if not self._jac_global_data.get("j21"):
             raise ValueError("J21 templates not built")
         j21 = self._fill_jacobian_block("j21", "_j21_fn_by_types", h)
-        if self._jbalance_state_fn is not None and len(self._balance_equations) > 0:
+        if self._jbalance_state_fn is not None and self._jbalance_state_template is not None:
             j_bal = self._jbalance_state_fn(x, dx, self._variable_parameters_values, self._constant_params, h)
             if j_bal.nnz > 0:
-                n_states = self.get_states_number()
-                n_algeb = self._n_algebraic
-                n_bal = j_bal.shape[0]
-                n_device = n_algeb - n_bal
-                top = sp.csc_matrix((n_device, n_states), dtype=np.float64)
-                j_bal_padded = sp.vstack([top, j_bal]).tocsc()
+                j_bal_padded = self._jbalance_state_template.copy()
+                j_bal_padded.data[:] = j_bal.data
                 j21 = (j21 + j_bal_padded).tocsc()
         return j21
 
@@ -2915,52 +2900,17 @@ class RmsProblemDaeVec(RmsProblemTemplate):
         return bal_block
 
     def get_j22_vec(self, x: Vec, dx: Vec, h: float) -> sp.csc_matrix:
-        all_rows = []
-        all_cols = []
-        all_vals = []
+        if self._jac_global_data.get("j22"):
+            j22 = self._fill_jacobian_block("j22", "_j22_fn_by_types", h)
+        else:
+            j22 = sp.csc_matrix((self._n_algebraic, self._n_algebraic), dtype=np.float64)
 
-        for model_type, fn in self._j22_fn_by_types.items():
-            if fn is None:
-                continue
-            if model_type not in self._j22_global_rows:
-                continue
-            gr = self._j22_global_rows[model_type]
-            if gr.size == 0:
-                continue
-
-            data_out = fn(
-                self._input_matrices_by_model[model_type][0],
-                self._input_matrices_by_model[model_type][1],
-                self._input_matrices_by_model[model_type][2],
-                self._input_matrices_by_model[model_type][3],
-                h,
-            )
-            if data_out.ndim == 1:
-                data_out = data_out.reshape(-1, 1)
-
-            all_rows.append(gr.ravel())
-            all_cols.append(self._j22_global_cols[model_type].ravel())
-            all_vals.append(data_out.ravel())
-
-        if not all_rows:
-            n_algeb = self._n_algebraic
-            if self._jbalance_fn is not None and len(self._balance_equations) > 0:
-                j_bal = self._jbalance_fn(x, dx, self._variable_parameters_values, self._constant_params, h)
-                if j_bal.nnz > 0:
-                    return self._add_balance_equations_to_j22(j_bal, n_algeb)
-            return sp.csc_matrix((n_algeb, n_algeb), dtype=np.float64)
-
-        rows = np.concatenate(all_rows)
-        cols = np.concatenate(all_cols)
-        vals = np.concatenate(all_vals)
-
-        j22 = sp.coo_matrix((vals, (rows, cols)),
-                            shape=(self._n_algebraic, self._n_algebraic)).tocsc()
-
-        if self._jbalance_fn is not None and len(self._balance_equations) > 0:
+        if self._jbalance_fn is not None and self._jbalance_template is not None:
             j_bal = self._jbalance_fn(x, dx, self._variable_parameters_values, self._constant_params, h)
             if j_bal.nnz > 0:
-                j22 = self._add_balance_equations_to_j22(j_bal, self._n_algebraic, j22)
+                j_bal_padded = self._jbalance_template.copy()
+                j_bal_padded.data[:] = j_bal.data
+                j22 = (j22 + j_bal_padded).tocsc()
 
         return j22
 

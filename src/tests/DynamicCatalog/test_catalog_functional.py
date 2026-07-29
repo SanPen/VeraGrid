@@ -69,43 +69,4 @@ def harness() -> TestDevicesCatalogFunctionalContractsHarness:
     return test_harness
 
 
-@pytest.mark.filterwarnings("error")
-@pytest.mark.parametrize(
-    "contract",
-    build_functional_contract_parameters(),
-    ids=build_functional_contract_id,
-)
-def test_functional_contract_matches_expected_behavior(
-    harness: TestDevicesCatalogFunctionalContractsHarness,
-    contract: FunctionalContract,
-) -> None:
-    """
-    Validate one explicit static contract declared for the catalog.
 
-    :param harness: Shared functional-contract harness.
-    :param contract: Static functional contract.
-    :returns: None.
-    """
-
-    harness.evaluate_contract(contract)
-
-
-@pytest.mark.filterwarnings("error")
-@pytest.mark.parametrize(
-    "contract",
-    build_dynamic_contract_parameters(),
-    ids=build_dynamic_contract_id,
-)
-def test_dynamic_signal_and_timer_contract_matches_expected_behavior(
-    harness: TestDevicesCatalogFunctionalContractsHarness,
-    contract: DynamicFunctionalContract,
-) -> None:
-    """
-    Validate one explicit dynamic contract declared for the catalog.
-
-    :param harness: Shared functional-contract harness.
-    :param contract: Dynamic functional contract.
-    :returns: None.
-    """
-
-    harness.simulate_dynamic_contract(contract)

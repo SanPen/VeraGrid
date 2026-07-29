@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
+import os
+
 import numpy as np
 
 from VeraGridEngine.Simulations.EMT.problems.emt_problem_mti import EmtProblemMTI
@@ -37,6 +39,9 @@ class EmtMtiBackEulerSolver:
             inequality_tolerance=inequality_tolerance,
         )
         self._solver.event_bisect_iter = max(1, int(event_bisect_iter))
+        env_mti_max_iter = os.getenv("RMS_MTI_MAX_ITER", "").strip()
+        if env_mti_max_iter:
+            mti_max_iter = int(env_mti_max_iter)
         self._solver.mti_max_iter = max(1, int(mti_max_iter))
         self.z: Mat = np.zeros((0, 0), dtype=float)
 

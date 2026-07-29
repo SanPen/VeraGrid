@@ -1494,7 +1494,7 @@ I0: float = 0.5, Sbase: float = 100,
         trafo4w.Pfe = Pfe
         trafo4w.I0 = I0
 
-            
+
 
 
 def _apply_tr4_winding_tap_data(
@@ -2994,7 +2994,7 @@ def _get_scale_factor(scale0: float, logger: Logger, name: str) -> float:
     return s
 
 
-def _extract_load_pq(elmlod: ElmLod, logger: Logger) -> Tuple[float, float]:
+def _extract_load_pq(elmlod: ElmLod, logger: Logger) -> Tuple[float, float, float, float, float, float, float, float]:
     """
     Extract load pq.
 
@@ -3004,33 +3004,54 @@ def _extract_load_pq(elmlod: ElmLod, logger: Logger) -> Tuple[float, float]:
     """
     name = elmlod.loc_name or _ref_id(elmlod.ID) or "Load"
 
-    # Primary: direct P/Q
-    p = elmlod.plini
-    q = elmlod.qlini
+    if elmlod.i_sym == 1:
 
-    # Fallback: S + cos(phi)
-    if p == 0.0 and q == 0.0:
-        s = elmlod.slini
-        cosphi = elmlod.coslini
+        # Apply scaling
+        scale = _get_scale_factor(scale0=elmlod.scale0, logger=logger, name=name)
 
-        if s != 0.0 and cosphi != 0.0:
-            cosphi = max(min(cosphi, 1.0), -1.0)
-            p = s * cosphi
-            sinphi = math.sqrt(max(0.0, 1.0 - cosphi * cosphi))
-            q = s * sinphi
-            logger.add_warning(
-                f"P/Q not provided, derived from slini/coslini.",
-                device=name,
-                device_class="ElmLod",
-                value=q,
-            )
+        # Active Power [MW]
+        pa = elmlod.plinir * scale
+        pb = elmlod.plinis * scale
+        pc = elmlod.plinit * scale
+        p = pa + pb + pc
 
-    # Apply scaling
-    scale = _get_scale_factor(scale0=elmlod.scale0, logger=logger, name=name)
-    p *= scale
-    q *= scale
+        # Reactive Power [MVAr]
+        qa = elmlod.qlinir * scale
+        qb = elmlod.qlinis * scale
+        qc = elmlod.qlinit * scale
+        q = qa + qb + qc
 
-    return p, q
+    else:
+        # Primary: direct P/Q
+        p = elmlod.plini
+        q = elmlod.qlini
+
+        # Fallback: S + cos(phi)
+        if p == 0.0 and q == 0.0:
+            s = elmlod.slini
+            cosphi = elmlod.coslini
+
+            if s != 0.0 and cosphi != 0.0:
+                cosphi = max(min(cosphi, 1.0), -1.0)
+                p = s * cosphi
+                sinphi = math.sqrt(max(0.0, 1.0 - cosphi * cosphi))
+                q = s * sinphi
+                logger.add_warning(
+                    f"P/Q not provided, derived from slini/coslini.",
+                    device=name,
+                    device_class="ElmLod",
+                    value=q,
+                )
+
+        # Apply scaling
+        scale = _get_scale_factor(scale0=elmlod.scale0, logger=logger, name=name)
+        p *= scale
+        q *= scale
+
+        pa, pb, pc = 0.0, 0.0, 0.0 # Balanced active power
+        qa, qb, qc = 0.0, 0.0, 0.0  # Balanced reactive power
+
+    return p, pa, pb, pc, q, qa, qb, qc
 
 
 def convert_dgs_ward_equivalent_to_load(elmvac: ElmVac,
@@ -3099,14 +3120,21 @@ def convert_dgs_to_load(elmlod: ElmLod,
                             cubics_by_objid=cubics_by_objid,
                             bus_by_term_id=bus_by_term_id)
 
-    p_mw, q_mvar = _extract_load_pq(elmlod=elmlod, logger=logger)
+    p_mw, pa_mw, pb_mw, pc_mw, q_mvar, qa_mvar, qb_mvar, qc_mvar = _extract_load_pq(elmlod=elmlod, logger=logger)
 
     load = dev.Load(
         name=elmlod.loc_name or f"Load_{_ref_id(elmlod.ID)}",
         P=p_mw,
+        P1=pa_mw,
+        P2=pb_mw,
+        P3=pc_mw,
         Q=q_mvar,
+        Q1=qa_mvar,
+        Q2=qb_mvar,
+        Q3=qc_mvar,
         active=not bool(elmlod.outserv)
     )
+    # Add the connection type
 
     return bus, load
 
@@ -3285,7 +3313,7 @@ def convert_dgs_staticgen_to_vsc(elmgenstat: ElmGenstat,
                      is_dc=True,
                      is_slack=True,
                      xpos=ac_bus.x,
-                     ypos=ac_bus.y - 200, )
+                     ypos=ac_bus.y - 200)
 
     vsc_name = _get_non_empty_name(elmgenstat.loc_name, f"VSC_{_ref_id(elmgenstat.ID)}")
     vsc_name = _get_parallel_device_name(vsc_name, parallel_index, parallel_count)
@@ -4149,8 +4177,8 @@ def convert_dgs_to_generator(elmsym: ElmSym,
 
     # Optional sequence data from type (best-effort, may not exist in all exports)
     if typsym is not None:
-        r1 = typsym.rstr
-        x1 = typsym.xd
+        r1 = typsym.rstr * baseMVA / snom
+        x1 = typsym.xstr * baseMVA / snom
 
         if r1 != 0.0 or x1 != 0.0:
             gen.R1 = float(r1)
@@ -4505,7 +4533,8 @@ def _add_elmgenstat_devices(dgs_grid: DgsCircuit,
                     parallel_count=parallel_count
                 )
                 grid.add_generator(bus=bus, api_obj=gen)
-            elif elmgenstat.cCategory == 'Storage':
+
+            elif elmgenstat.cCategory == 'Storage' and elmgenstat.av_mode == 'constq':
                 bus, battery = convert_dgs_staticgen_to_battery(
                     elmgenstat=elmgenstat,
                     stacubic_dict=stacubic_dict,
@@ -4517,6 +4546,21 @@ def _add_elmgenstat_devices(dgs_grid: DgsCircuit,
                     parallel_count=parallel_count
                 )
                 grid.add_battery(bus=bus, api_obj=battery)
+
+            elif elmgenstat.cCategory == 'Storage' and elmgenstat.av_mode == 'vdroop':
+                dc_bus, vsc = convert_dgs_staticgen_to_vsc(
+                    elmgenstat=elmgenstat,
+                    stacubic_dict=stacubic_dict,
+                    buses=grid.buses,
+                    logger=logger,
+                    cubics_by_objid=cubics_by_objid,
+                    bus_by_term_id=bus_by_term_id,
+                    parallel_index=parallel_index,
+                    parallel_count=parallel_count
+                )
+                grid.add_bus(dc_bus)
+                grid.add_vsc(vsc)
+
             elif elmgenstat.av_mode == 'constv':
                 bus, gen = convert_dgs_staticgen_to_gen(
                     elmgenstat=elmgenstat,

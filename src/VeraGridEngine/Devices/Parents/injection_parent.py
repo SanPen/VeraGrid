@@ -3,6 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
+
 from typing import Union, List, TYPE_CHECKING, Tuple
 import numpy as np
 
@@ -46,7 +47,10 @@ class InjectionParent(DynamicDevice):
         '_use_kw',
         '_bus_pos',
         '_conn',
-
+        "_phN",
+        "_phA",
+        "_phB",
+        "_phC",
         'color',
     )
 
@@ -174,6 +178,39 @@ class InjectionParent(DynamicDevice):
         ),
 
         GCProp(
+            prop_name='phN',
+            units='',
+            tpe=bool,
+            definition='Is the neutral connected?',
+            cat=[PrpCat.SC, PrpCat.PF3, PrpCat.EMT],
+            display=False,
+        ),
+
+        GCProp(
+            prop_name='phA',
+            units='',
+            tpe=bool,
+            definition='Is phase A connected?',
+            cat=[PrpCat.SC, PrpCat.PF3, PrpCat.EMT],
+        ),
+
+        GCProp(
+            prop_name='phB',
+            units='',
+            tpe=bool,
+            definition='Is phase B connected?',
+            cat=[PrpCat.SC, PrpCat.PF3, PrpCat.EMT],
+        ),
+
+        GCProp(
+            prop_name='phC',
+            units='',
+            tpe=bool,
+            definition='Is phase C connected?',
+            cat=[PrpCat.SC, PrpCat.PF3, PrpCat.EMT],
+        ),
+
+        GCProp(
             prop_name='bus_pos',
             units='',
             tpe=int,
@@ -253,6 +290,11 @@ class InjectionParent(DynamicDevice):
         self._use_kw: bool = False
 
         self._conn: ShuntConnectionType = ShuntConnectionType.GroundedStar
+
+        self._phN: bool = False
+        self._phA: bool = True
+        self._phB: bool = True
+        self._phC: bool = True
 
         self.bus_pos: int = 0
 
@@ -383,6 +425,12 @@ class InjectionParent(DynamicDevice):
     def conn(self, val: ShuntConnectionType):
         if isinstance(val, ShuntConnectionType):
             self._conn = val
+
+            if self.auto_update_enabled:
+                if self._conn == ShuntConnectionType.NeutralStar:
+                    self.phN = True
+                else:
+                    self.phN = False
 
     def get_S_with_sign(self) -> complex:
         """
@@ -682,3 +730,55 @@ class InjectionParent(DynamicDevice):
         :return: None
         """
         self._bus_pos = int(val)
+
+    @property
+    def phN(self) -> bool:
+        """
+
+        :return:
+        """
+        return self._phN
+
+    @phN.setter
+    def phN(self, val: bool):
+        if isinstance(val, bool):
+            self._phN = val
+        else:
+            raise ValueError(f'{val} is not an bool')
+
+    @property
+    def phA(self) -> bool:
+        """
+
+        :return:
+        """
+        return self._phA
+
+    @phA.setter
+    def phA(self, val: bool):
+        if isinstance(val, bool):
+            self._phA = val
+        else:
+            raise ValueError(f'{val} is not an bool')
+
+    @property
+    def phB(self) -> bool:
+        return self._phB
+
+    @phB.setter
+    def phB(self, val: bool):
+        if isinstance(val, bool):
+            self._phB = val
+        else:
+            raise ValueError(f'{val} is not an bool')
+
+    @property
+    def phC(self) -> bool:
+        return self._phC
+
+    @phC.setter
+    def phC(self, val: bool):
+        if isinstance(val, bool):
+            self._phC = val
+        else:
+            raise ValueError(f'{val} is not an bool')

@@ -185,7 +185,7 @@ class LoadDeviceEditor(TemplateDeviceEditor):
 
                 self.properties_model.set_time_index(time_index=self._get_current_time_index())
                 self.refresh_profile_table()
-                info_msg("Load profile applied", "Load editor")
+                self.show_info_toast("Load profile applied")
             else:
                 warning_msg("Wrong load profile length", "Load editor")
 

@@ -15,11 +15,11 @@ class JmartiLineEmtTemplate(TemplateDefinition):
 
     def __init__(self, vf):
         super().__init__(vf, params=[
-            TemplateProp(name="phN", units="", descr="True if the line has neutral, else False.", tpe=bool),
-            TemplateProp(name="phA", units="", descr="True if phase A is active, else False.", tpe=bool),
-            TemplateProp(name="phB", units="", descr="True if phase B is active, else False.", tpe=bool),
-            TemplateProp(name="phC", units="", descr="True if phase C is active, else False.", tpe=bool),
-            TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str),
+            TemplateProp(name="phN", units="", descr="True if the line has neutral, else False.", tpe=bool, value=False),
+            TemplateProp(name="phA", units="", descr="True if phase A is active, else False.", tpe=bool, value=True),
+            TemplateProp(name="phB", units="", descr="True if phase B is active, else False.", tpe=bool, value=True),
+            TemplateProp(name="phC", units="", descr="True if phase C is active, else False.", tpe=bool, value=True),
+            TemplateProp(name="name", units="", descr="Name of the emt model.", tpe=str, value = "jmarti line"),
         ])
 
     def eval(self) -> EmtModelTemplate:

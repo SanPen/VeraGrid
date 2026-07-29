@@ -114,7 +114,8 @@ class Generator(InjectionParent):
         'freq',
         '_must_run',
         '_must_run_prof',
-        'tpe'
+        'tpe',
+        'is_static_generator',
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
@@ -461,6 +462,13 @@ class Generator(InjectionParent):
             definition='Machine type of the generator.',
             cat=[PrpCat.PF, PrpCat.TP],
         ),
+        GCProp(
+            prop_name='is_static_generator',
+            units='',
+            tpe=bool,
+            definition='Use the static generator short-circuit model.',
+            cat=[PrpCat.SC],
+        ),
     )
 
     def __init__(self,
@@ -514,7 +522,8 @@ class Generator(InjectionParent):
                  min_time_down=0.0,
                  ramp_up=1e20,
                  ramp_down=1e20,
-                 tpe: GeneratorType = GeneratorType.Synchronous):
+                 tpe: GeneratorType = GeneratorType.Synchronous,
+                 is_static_generator: bool = False):
         """
 
         :param name: Name of the generator
@@ -559,6 +568,7 @@ class Generator(InjectionParent):
         :param build_status:
         :param must_run:
         :param tpe: Machine type of the generator, as it can be synchronous or asynchronous
+        :param is_static_generator: Treat this generator as a static generator for short-circuit studies
         """
         InjectionParent.__init__(self,
                                  name=name,
@@ -699,6 +709,7 @@ class Generator(InjectionParent):
         self.freq = freq
 
         self.tpe: GeneratorType = tpe
+        self.is_static_generator = bool(is_static_generator)
 
     @property
     def P(self) -> float:

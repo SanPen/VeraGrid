@@ -12,7 +12,7 @@ from VeraGridEngine.IO.matpower.devices.generator import MatpowerGenerator
 from VeraGridEngine.IO.matpower.devices.bus_dc import MatAcDcBus
 from VeraGridEngine.IO.matpower.devices.branch_dc import MatAcDcBranch
 from VeraGridEngine.IO.matpower.devices.converter_dc import MatAcDcConverter
-from VeraGridEngine.IO.matpower.matpower_utils import txt2mat, find_between
+from VeraGridEngine.IO.matpower.matpower_utils import txt2mat, find_between, parse_matlab_float
 from VeraGridEngine.basic_structures import Logger
 
 
@@ -61,7 +61,12 @@ class MatpowerCircuit:
 
             if key == "baseMVA":
                 v = find_between(chunk, '=', ';')
-                self.Sbase = float(v)
+
+                try:
+                    self.Sbase = parse_matlab_float(v)
+                except ValueError as e:
+                    self.logger.add_error(msg=str(e))
+                    self.Sbase = 100.0
 
             elif key == "bus":
                 buses_found = True

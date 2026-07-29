@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Union
 from PySide6.QtWidgets import QMenu
 from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
-from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
+from VeraGrid.Gui.DeviceEditors.device_editor_factory import build_device_editor_dialog
 from VeraGrid.Gui.Diagrams.SchematicWidget.terminal_item import BarTerminalItem, RoundTerminalItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.line_graphics_template import LineGraphicTemplateItem
 from VeraGridEngine.Devices.Branches.hvdc_line import HvdcLine
@@ -53,7 +53,7 @@ class HvdcGraphicItem(LineGraphicTemplateItem):
 
         :return: ``True`` when the editor was opened.
         """
-        dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=self.editor.circuit)
+        dialog = build_device_editor_dialog(api_object=self.api_object, circuit=self.editor.circuit)
         dialog.exec()
         return True
 

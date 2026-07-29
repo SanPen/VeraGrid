@@ -176,6 +176,7 @@ class ServerDriver(QThread):
 
         self.__cancel__ = False
         self.__pause__ = False
+        self.last_error_message: str = ""
 
     def set_values(self, url: str, port: int, pwd: str, sleep_time: int = 2,
                    secure: bool = False,
@@ -197,6 +198,7 @@ class ServerDriver(QThread):
         self.status_func: Callable[[str], None] = status_func
         self.__running__ = False
         self.logger = Logger()
+        self.last_error_message = ""
 
     def report_status(self, txt: str):
         """
@@ -220,6 +222,17 @@ class ServerDriver(QThread):
     def get_certificate_path(self):
 
         return self._certificate_path
+
+    def get_request_verify_argument(self) -> str | bool:
+        """
+        Resolve the TLS verification argument for one requests call.
+
+        :return: Certificate path when TLS is enabled, ``False`` otherwise.
+        """
+        if self.secure:
+            return self._certificate_path
+        else:
+            return False
 
     def is_running(self) -> bool:
         """
@@ -253,7 +266,7 @@ class ServerDriver(QThread):
         try:
             response = requests.get(f"{self.base_url()}/",
                                     headers={"API-Key": self.pwd},
-                                    verify=self._certificate_path,
+                                    verify=self.get_request_verify_argument(),
                                     timeout=2)
 
             # Check if the request was successful
@@ -261,20 +274,175 @@ class ServerDriver(QThread):
                 # Print the response body
                 # print("Response Body:", response.json())
                 self.__running__ = True
+                self.last_error_message = ""
                 return True
             else:
                 # Print error message
-                self.logger.add_error(msg=f"Response error", value=response.text)
-                print(response.text)
+                self.last_error_message = f"Response error: {response.status_code} {response.text}"
+                self.logger.add_error(msg="Response error", value=self.last_error_message)
+                self.report_status(self.last_error_message)
                 return False
-        except ConnectionError as e:
-            self.logger.add_error(msg=f"Connection error", value=str(e))
-            print(str(e))
+        except requests.exceptions.RequestException as e:
+            self.last_error_message = str(e)
+            self.logger.add_error(msg="Connection error", value=self.last_error_message)
+            self.report_status(self.last_error_message)
             return False
-        except Exception as e:
-            self.logger.add_error(msg=f"General exception error", value=str(e))
-            print(str(e))
-            return False
+
+    def get_request_headers(self) -> Dict[str, str]:
+        """
+        Build the common API-key headers for one server request.
+
+        :return: Request headers.
+        """
+        return {"API-Key": self.pwd}
+
+    def get_last_error_message(self) -> str:
+        """
+        Return the last server connection or synchronization error text.
+
+        :return: Last error text, or an empty string when none is stored.
+        """
+        return self.last_error_message
+
+    def list_database_files_tree(self) -> List[Dict[str, Any]]:
+        """
+        List the stored database files and their nested models.
+
+        :return: JSON-like file tree payload.
+        """
+        response = requests.get(
+            url=f"{self.base_url()}/api/db/files",
+            headers=self.get_request_headers(),
+            verify=self.get_request_verify_argument(),
+            timeout=20,
+        )
+        response.raise_for_status()
+        payload: Any = response.json()
+
+        if isinstance(payload, list):
+            return payload
+        else:
+            raise ValueError("Unexpected database file tree response")
+
+    def download_database_file(self,
+                               file_idtag: str,
+                               target_path: str,
+                               model_idtag: str = "",
+                               base_only: bool = False) -> None:
+        """
+        Download one stored file or model into one local VeraGrid archive.
+
+        :param file_idtag: File identifier.
+        :param target_path: Local output file path.
+        :param model_idtag: Optional model identifier.
+        :param base_only: Download only the base model when ``True``.
+        :return: None.
+        """
+        params: Dict[str, Union[str, bool]] = dict()
+
+        if len(model_idtag.strip()) > 0:
+            params["model_idtag"] = model_idtag.strip()
+        else:
+            pass
+
+        if base_only:
+            params["base_only"] = True
+        else:
+            pass
+
+        response = requests.get(
+            url=f"{self.base_url()}/api/db/files/{file_idtag}/download",
+            headers=self.get_request_headers(),
+            params=params,
+            stream=True,
+            verify=self.get_request_verify_argument(),
+            timeout=300,
+        )
+        response.raise_for_status()
+
+        with open(target_path, "wb") as file_pointer:
+            chunk: bytes
+            for chunk in response.iter_content(chunk_size=1024 * 1024):
+                if len(chunk) > 0:
+                    file_pointer.write(chunk)
+                else:
+                    pass
+
+    def replace_database_file(self,
+                              file_idtag: str,
+                              source_path: str,
+                              upload_file_name: str) -> Dict[str, Any]:
+        """
+        Replace one stored file contents from one local VeraGrid archive.
+
+        :param file_idtag: File identifier.
+        :param source_path: Local archive path.
+        :param upload_file_name: Human-readable file name to persist.
+        :return: JSON response payload.
+        """
+        with open(source_path, "rb") as file_pointer:
+            response = requests.post(
+                url=f"{self.base_url()}/api/db/files/{file_idtag}/replace",
+                headers={
+                    "API-Key": self.pwd,
+                    "Content-Type": "application/octet-stream",
+                    "X-VeraGrid-File-Name": upload_file_name,
+                },
+                data=file_pointer,
+                verify=self.get_request_verify_argument(),
+                timeout=300,
+            )
+
+        response.raise_for_status()
+        payload: Any = response.json()
+
+        if isinstance(payload, dict):
+            return payload
+        else:
+            raise ValueError("Unexpected replace-file response")
+
+    def delete_database_file(self, file_idtag: str) -> Dict[str, Any]:
+        """
+        Delete one stored file.
+
+        :param file_idtag: File identifier.
+        :return: JSON response payload.
+        """
+        response = requests.delete(
+            url=f"{self.base_url()}/api/db/files/{file_idtag}",
+            headers=self.get_request_headers(),
+            verify=self.get_request_verify_argument(),
+            timeout=20,
+        )
+        response.raise_for_status()
+        payload: Any = response.json()
+
+        if isinstance(payload, dict):
+            return payload
+        else:
+            raise ValueError("Unexpected delete-file response")
+
+    def delete_database_model(self, file_idtag: str, model_idtag: str) -> Dict[str, Any]:
+        """
+        Delete one stored model.
+
+        :param file_idtag: File identifier.
+        :param model_idtag: Model identifier.
+        :return: JSON response payload.
+        """
+        response = requests.delete(
+            url=f"{self.base_url()}/api/db/files/{file_idtag}/models/{model_idtag}",
+            headers=self.get_request_headers(),
+            verify=self.get_request_verify_argument(),
+            timeout=20,
+        )
+        response.raise_for_status()
+        payload: Any = response.json()
+
+        if isinstance(payload, dict):
+            return payload
+        else:
+            raise ValueError("Unexpected delete-model response")
 
     def get_jobs(self) -> bool:
         """
@@ -415,21 +583,39 @@ class ServerDriver(QThread):
         self.__cancel__ = False
         self.__pause__ = False
 
-        self.report_status("Trying to connect")
-        self._loaded_certificate = False  # set to false, so that we force re-download
-        ok = self.server_connect()
+        try:
+            self.report_status("Trying to connect")
+            self._loaded_certificate = False  # set to false, so that we force re-download
+            ok = self.server_connect()
 
-        if ok:
+            if ok:
 
-            # get the running jobs
-            self.get_jobs()
+                # get the running jobs
+                self.get_jobs()
 
-            self.report_status("Sync")
-            self.connected_signal.emit()
+                self.report_status("Sync")
+                self.connected_signal.emit()
 
-        else:
-            # bad connection
-            self.report_status("Could not connect")
+            else:
+                # bad connection
+                if len(self.last_error_message) == 0:
+                    self.report_status("Could not connect")
+                else:
+                    pass
+                self.__running__ = False
+                self.done_signal.emit()
+                return None
+        except requests.exceptions.RequestException as e:
+            self.last_error_message = str(e)
+            self.logger.add_error(msg="Connection error", value=self.last_error_message)
+            self.report_status(self.last_error_message)
+            self.__running__ = False
+            self.done_signal.emit()
+            return None
+        except Exception as e:
+            self.last_error_message = str(e)
+            self.logger.add_error(msg="Unexpected server error", value=self.last_error_message)
+            self.report_status(self.last_error_message)
             self.__running__ = False
             self.done_signal.emit()
             return None

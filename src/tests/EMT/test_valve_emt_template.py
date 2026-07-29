@@ -1227,8 +1227,8 @@ def test_dc_line_runtime_case_responds_to_load_step() -> None:
         problem=problem,
         param_full_idx=load_power_idx_full,
         step_time_s=1.5e-3,
-        initial_value_pu=0.30,
-        final_value_pu=0.45,
+        initial_value_pu=0.0,
+        final_value_pu=0.4,
     )
 
     simulation_output = solver.simulate(boundary_updater=boundary_updater)

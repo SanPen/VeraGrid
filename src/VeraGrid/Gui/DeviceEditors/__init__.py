@@ -6,6 +6,7 @@ from VeraGrid.Gui.DeviceEditors.ControllableShuntEditor.controllable_shunt_devic
     ControllableShuntDeviceEditor,
     ControllableShuntDeviceEditorDialog,
 )
+from VeraGrid.Gui.DeviceEditors.device_editor_factory import build_device_editor_dialog
 from VeraGrid.Gui.DeviceEditors.DcLineEditor.dc_line_editor import DcLineEditor
 from VeraGrid.Gui.DeviceEditors.DcLineEditor.dc_line_device_editor import DcLineDeviceEditor, DcLineDeviceEditorDialog
 from VeraGrid.Gui.DeviceEditors.GeneratorEditor.generator_editor import GeneratorEditor, GeneratorEditorDialog, GeneratorQCurveEditor
@@ -30,6 +31,7 @@ __all__ = [
     "ControllableShuntStepsEditorWidget",
     "ControllableShuntDeviceEditor",
     "ControllableShuntDeviceEditorDialog",
+    "build_device_editor_dialog",
     "DcLineEditor",
     "DcLineDeviceEditor",
     "DcLineDeviceEditorDialog",

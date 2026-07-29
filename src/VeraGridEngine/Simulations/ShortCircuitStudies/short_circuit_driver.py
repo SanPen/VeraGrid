@@ -9,7 +9,7 @@ import numpy as np
 
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.basic_structures import CxVec
+from VeraGridEngine.basic_structures import CxVec, Vec
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowResults, PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowResults3Ph
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
@@ -384,9 +384,12 @@ class ShortCircuitDriver(DriverTemplate):
                                  V_pf: CxVec,
                                  S_pf: CxVec,
                                  St_vsc_pf: CxVec,
+                                 Pfp_vsc_pf: Vec | None,
+                                 Pfn_vsc_pf: Vec | None,
                                  Z_fault: CxVec,
                                  fault_bus: int,
                                  options: PowerFlowOptions,
+                                 constz: bool,
                                  logger: Logger):
 
         adm = nc.get_admittance_matrices()
@@ -397,9 +400,12 @@ class ShortCircuitDriver(DriverTemplate):
                                      V_pf=V_pf,
                                      S_pf=S_pf,
                                      St_vsc_pf=St_vsc_pf,
+                                     Pfp_vsc_pf=Pfp_vsc_pf,
+                                     Pfn_vsc_pf=Pfn_vsc_pf,
                                      Z_fault=Z_fault,
                                      fault_bus=fault_bus,
                                      options=options,
+                                     constz=constz,
                                      logger=logger)
 
         # if we get here, no short circuit was done, so declare empty results and exit --------------------------------
@@ -468,6 +474,10 @@ class ShortCircuitDriver(DriverTemplate):
             apply_temperature=self.pf_options.apply_temperature_correction,
             branch_tolerance_mode=self.pf_options.branch_impedance_tolerance_mode,
             opf_results=self.opf_results,
+            use_stored_guess=self.pf_options.use_stored_guess,
+            control_taps_modules=self.pf_options.control_taps_modules,
+            control_taps_phase=self.pf_options.control_taps_phase,
+            control_remote_voltage=self.pf_options.control_remote_voltage,
             logger=self.logger,
             fill_three_phase=True
         )
@@ -501,11 +511,15 @@ class ShortCircuitDriver(DriverTemplate):
                 bus_idx = bus_dict.get(sc_definition.device, None)
 
                 if bus_idx is not None:
+                    if nc.topology_performed:
+                        fault_bus_idx = int(nc.get_reduction_bus_mapping()[bus_idx])
+                    else:
+                        fault_bus_idx = bus_idx
 
                     # Compose the fault admittance
                     n = len(grid.buses)
                     Zf = np.zeros(n, dtype=complex)
-                    Zf[bus_idx] = sc_definition.get_fault_impedance()
+                    Zf[fault_bus_idx] = sc_definition.get_fault_impedance()
 
                     for i, island in enumerate(calculation_inputs):
 
@@ -513,12 +527,8 @@ class ShortCircuitDriver(DriverTemplate):
                         # for the calculation we need the bus index in the island scheme.
                         # Hence, we need to convert it, and if the global bus index is not
                         # in the island, do not perform any calculation
-                        # reverse_bus_index = {b: i for i, b in enumerate(island.bus_data.original_idx)}
-                        #
-                        # island_bus_index = reverse_bus_index.get(self.options.bus_index, None)
-
-                        bus_dict2 = island.bus_data.get_idtag_dict()
-                        island_bus_index = bus_dict2.get(sc_definition.device_idtag, None)
+                        reverse_bus_index = {b: i for i, b in enumerate(island.bus_data.original_idx)}
+                        island_bus_index = reverse_bus_index.get(fault_bus_idx, None)
 
                         if island_bus_index is not None:
 
@@ -551,9 +561,12 @@ class ShortCircuitDriver(DriverTemplate):
                                         V_pf=self.pf_results.voltage[island.bus_data.original_idx],
                                         S_pf=self.pf_results.Sbus[island.bus_data.original_idx],
                                         St_vsc_pf=self.pf_results.St_vsc[island.vsc_data.original_idx],
+                                        Pfp_vsc_pf=self.pf_results.Pfp_vsc[island.vsc_data.original_idx],
+                                        Pfn_vsc_pf=self.pf_results.Pfn_vsc[island.vsc_data.original_idx],
                                         Z_fault=Zf[island.bus_data.original_idx],
                                         fault_bus=island_bus_index,
                                         options=self.pf_options,
+                                        constz=sc_definition.constz,
                                         logger=self.logger
                                     )
 

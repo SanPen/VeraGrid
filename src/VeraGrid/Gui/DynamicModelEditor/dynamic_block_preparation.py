@@ -4,15 +4,19 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from __future__ import annotations
+from typing import Dict, Tuple
 
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.equation_decomposer import EquationDecomposer
+from VeraGridEngine.Devices.Dynamic import VarFactory
+from VeraGridEngine.Devices.Diagrams.block_diagram import BlockDiagram
+from VeraGridEngine.enumerations import BlockType
 
 
 def prepare_block_for_editing(
         block: Block,
-        var_factory: object,
-) -> Block:
+        var_factory: VarFactory,
+) -> Tuple[Block, Dict[int, BlockType]]:
     """
     Prepare a block for display in the editor **without cloning it**.
 
@@ -26,12 +30,13 @@ def prepare_block_for_editing(
     :param var_factory: The ``VarFactory`` used during decomposition.
     :return: The same *block* reference after in-place preparation.
     """
+    block2blocktype = dict()
     if not block.children and not block.empty() and block.is_eq_decomposable():
-        decompose_block_in_place(block, var_factory)
-    return block
+        block2blocktype= decompose_block_in_place(block, var_factory)
+    return block, block2blocktype
 
 
-def decompose_block_in_place(block: Block, var_factory: object) -> None:
+def decompose_block_in_place(block: Block, var_factory: VarFactory) -> Dict[int, BlockType]:
     """
     Decompose the equations of *block* in place and generate its diagram.
 
@@ -43,7 +48,7 @@ def decompose_block_in_place(block: Block, var_factory: object) -> None:
     :return: None.
     """
     decomposer = EquationDecomposer(var_factory)
-    decomposed = decomposer.decompose(block)
+    decomposed, block2blocktype = decomposer.decompose(block)
     preserved_uid = block.uid
     block.name = decomposed.name
     block.is_decomposable = decomposed.is_decomposable
@@ -68,5 +73,7 @@ def decompose_block_in_place(block: Block, var_factory: object) -> None:
     block.var_mapping = decomposed.var_mapping
     block.event_dict = decomposed.event_dict
     block.mode_dict = decomposed.mode_dict
-    block.diagram = decomposed.diagram
     block.uid = preserved_uid
+    block.diagram = BlockDiagram()
+
+    return block2blocktype

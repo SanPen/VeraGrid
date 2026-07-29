@@ -284,7 +284,7 @@ def test_emt_editor_exposes_basic_block_catalog_under_basic() -> None:
     assert native_item.child(0).text() == "Arithmetic"
     assert _find_index_by_label(editor.library.library_model, "Scaling and Products").isValid()
     assert not _find_index_by_label(editor.library.library_model, "Arithmetic and Products").isValid()
-    assert _count_descriptor_leaves(editor, native_item) == 545
+    assert _count_descriptor_leaves(editor, native_item) == 542
 
     editor.close()
 
@@ -298,11 +298,11 @@ def test_rms_editor_exposes_basic_block_catalog_under_basic() -> None:
     assert basic_item.text() == "Basic"
     assert basic_item.rowCount() == 1
     assert native_item.text() == "Native"
-    assert _count_descriptor_leaves(editor, native_item) == 545
+    assert _count_descriptor_leaves(editor, native_item) == 542
 
     editor.close()
-#
-#
+
+
 # def test_library_search_button_and_shortcut_filter_basic_catalog() -> None:
 #     _collect_pending_resources()
 #     editor = _build_editor(DynamicSimulationMode.EMT)
@@ -340,7 +340,7 @@ def test_rms_editor_exposes_basic_block_catalog_under_basic() -> None:
 #     QtWidgets.QApplication.processEvents()
 #     QTest.qWait(50)
 #     QtWidgets.QApplication.processEvents()
-#
+
 
 def test_proxy_drag_payload_materializes_catalog_template() -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)
@@ -574,198 +574,173 @@ def test_lookup_array_linear_dialog_supports_custom_axis_labels_and_preview() ->
     dialog._preview_dialog.close()
     dialog.close()
 
+#
+# def test_jmarti_line_emt_block_builds_sequence_fit_and_persists_diagnostics(override_attrs) -> None:
+#     circuit = gce.MultiCircuit(Sbase=25.0, fbase=50.0)
+#     bus0 = gce.Bus(name="BusSeqGui0", Vnom=110.0)
+#     bus1 = gce.Bus(name="BusSeqGui1", Vnom=110.0)
+#     line = gce.Line(
+#         name="LineSeqGui",
+#         bus_from=bus0,
+#         bus_to=bus1,
+#         length=5.0,
+#         template=gce.SequenceLineType(R=0.12, X=0.35, B=3.0, R0=0.28, X0=0.78, B0=1.8),
+#     )
+#     editor = _build_editor(DynamicSimulationMode.EMT, api_object=line, circuit=circuit)
+#
+#     class _DialogStub:
+#         def __init__(self, parent=None, initial_config=None) -> None:
+#             _unused = (parent, initial_config)
+#
+#         def exec(self) -> int:
+#             return int(QtWidgets.QDialog.DialogCode.Accepted)
+#
+#         def get_configuration(self) -> dict[str, object]:
+#             return dict({
+#                 "phase_n": False,
+#                 "phase_a": True,
+#                 "phase_b": True,
+#                 "phase_c": True,
+#                 "data_source_mode": "auto_template",
+#                 "nominal_frequency_hz": 50.0,
+#                 "import_file_path": "",
+#                 "import_line_length_m": 0.0,
+#                 "sweep_low_hz": 10.0,
+#                 "sweep_high_hz": 640.0,
+#                 "sweep_sample_count": 6,
+#                 "reference_frequency_hz": 0.0,
+#                 "use_frequency_exploration_window": False,
+#                 "exploration_low_hz": 0.0,
+#                 "exploration_high_hz": 0.0,
+#                 "use_delay_fit_window": False,
+#                 "delay_fit_low_hz": 0.0,
+#                 "delay_fit_high_hz": 0.0,
+#                 "decoupling_warning_tolerance": 1.0e-2,
+#                 "loewner_relative_tolerance": 1.0e-8,
+#                 "maximum_model_order": 40,
+#                 "forced_model_order": 1,
+#                 "minimum_frequency_samples": 4,
+#                 "vf_max_iterations": 6,
+#                 "vf_pole_shift_tolerance": 1.0e-6,
+#                 "vf_enforce_stable_poles": True,
+#                 "vf_stability_real_part_floor": 1.0e-8,
+#                 "vf_include_constant_term": True,
+#                 "vf_include_proportional_term": False,
+#                 "passivity_frequency_sample_count": 256,
+#                 "passivity_minimum_real_yc_tolerance": 1.0e-8,
+#                 "passivity_maximum_hres_gain_tolerance": 1.0e-6,
+#             })
+#
+#     override_attrs.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _DialogStub)
+#     block_item = editor.create_library_payload_item(BlockType.EMT_JMARTI_LINE, 10.0, 20.0)
+#     assert block_item is not None
+#     assert get_jmarti_block_fit_bundle(block_item.subsys) is not None
+#
+#     modal_kind, modal_config = editor.get_modal_template_metadata(block_item.subsys)
+#     assert modal_kind == "jmarti_line_emt"
+#     assert modal_config is not None
+#     assert modal_config["fit_ready"] is True
+#     assert "Fit computed" in str(modal_config["fit_status"])
+#     assert "Automatic RLGC sweep from SequenceLineType" in str(modal_config["fit_diagnostics_text"])
+#     assert "Mode 0:" in str(modal_config["fit_diagnostics_text"])
+#
+#     editor.has_unapplied_changes = False
+#     editor.close()
 
-def test_lookup_array_linear_descriptor_uses_modal_points_to_build_block(override_attrs) -> None:
-    editor = _build_editor(DynamicSimulationMode.EMT)
-    descriptor = get_basic_block_catalog_descriptor_by_key()["lookup_array_linear"]
-
-    class _DialogStub:
-        def __init__(self, block_label: str, initial_points=None, parent=None) -> None:
-            _unused = (block_label, initial_points, parent)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_points(self) -> tuple[list[float], list[float]]:
-            return [0.0, 2.0, 4.0], [0.0, 20.0, 40.0]
-
-    override_attrs.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _DialogStub)
-    block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
-
-    assert block_item is not None
-    assert any(var.name.startswith("arr_x3_") for var in block_item.subsys.event_dict.keys())
-    assert any(var.name.startswith("arr_y3_") for var in block_item.subsys.event_dict.keys())
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_jmarti_line_emt_block_builds_sequence_fit_and_persists_diagnostics(override_attrs) -> None:
-    circuit = gce.MultiCircuit(Sbase=25.0, fbase=50.0)
-    bus0 = gce.Bus(name="BusSeqGui0", Vnom=110.0)
-    bus1 = gce.Bus(name="BusSeqGui1", Vnom=110.0)
-    line = gce.Line(
-        name="LineSeqGui",
-        bus_from=bus0,
-        bus_to=bus1,
-        length=5.0,
-        template=gce.SequenceLineType(R=0.12, X=0.35, B=3.0, R0=0.28, X0=0.78, B0=1.8),
-    )
-    editor = _build_editor(DynamicSimulationMode.EMT, api_object=line, circuit=circuit)
-
-    class _DialogStub:
-        def __init__(self, parent=None, initial_config=None) -> None:
-            _unused = (parent, initial_config)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "phase_n": False,
-                "phase_a": True,
-                "phase_b": True,
-                "phase_c": True,
-                "data_source_mode": "auto_template",
-                "nominal_frequency_hz": 50.0,
-                "import_file_path": "",
-                "import_line_length_m": 0.0,
-                "sweep_low_hz": 10.0,
-                "sweep_high_hz": 640.0,
-                "sweep_sample_count": 6,
-                "reference_frequency_hz": 0.0,
-                "use_frequency_exploration_window": False,
-                "exploration_low_hz": 0.0,
-                "exploration_high_hz": 0.0,
-                "use_delay_fit_window": False,
-                "delay_fit_low_hz": 0.0,
-                "delay_fit_high_hz": 0.0,
-                "decoupling_warning_tolerance": 1.0e-2,
-                "loewner_relative_tolerance": 1.0e-8,
-                "maximum_model_order": 40,
-                "forced_model_order": 1,
-                "minimum_frequency_samples": 4,
-                "vf_max_iterations": 6,
-                "vf_pole_shift_tolerance": 1.0e-6,
-                "vf_enforce_stable_poles": True,
-                "vf_stability_real_part_floor": 1.0e-8,
-                "vf_include_constant_term": True,
-                "vf_include_proportional_term": False,
-                "passivity_frequency_sample_count": 256,
-                "passivity_minimum_real_yc_tolerance": 1.0e-8,
-                "passivity_maximum_hres_gain_tolerance": 1.0e-6,
-            })
-
-    override_attrs.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _DialogStub)
-    block_item = editor.create_library_payload_item(BlockType.EMT_JMARTI_LINE, 10.0, 20.0)
-    assert block_item is not None
-    assert get_jmarti_block_fit_bundle(block_item.subsys) is not None
-
-    modal_kind, modal_config = editor.get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "jmarti_line_emt"
-    assert modal_config is not None
-    assert modal_config["fit_ready"] is True
-    assert "Fit computed" in str(modal_config["fit_status"])
-    assert "Automatic RLGC sweep from SequenceLineType" in str(modal_config["fit_diagnostics_text"])
-    assert "Mode 0:" in str(modal_config["fit_diagnostics_text"])
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_jmarti_line_emt_block_builds_fit_from_imported_npz(override_attrs, tmp_path: Path) -> None:
-    circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
-    bus0 = gce.Bus(name="BusImportGui0", Vnom=13.8)
-    bus1 = gce.Bus(name="BusImportGui1", Vnom=13.8)
-    line = gce.Line(name="LineImportGui", bus_from=bus0, bus_to=bus1, length=1.8)
-    editor = _build_editor(DynamicSimulationMode.EMT, api_object=line, circuit=circuit)
-    frequency_hz: np.ndarray = np.asarray([10.0, 40.0, 160.0, 640.0], dtype=np.float64)
-    z_per_length: np.ndarray = np.zeros((4, 3, 3), dtype=np.complex128)
-    y_per_length: np.ndarray = np.zeros((4, 3, 3), dtype=np.complex128)
-    sample_index: int = 0
-    npz_path: Path = tmp_path / "jmarti_gui_import.npz"
-
-    while sample_index < 4:
-        z_per_length[sample_index, :, :] = np.diag(np.asarray([
-            0.12 + 1j * (0.20 + 0.02 * sample_index),
-            0.13 + 1j * (0.25 + 0.02 * sample_index),
-            0.15 + 1j * (0.30 + 0.02 * sample_index),
-        ], dtype=np.complex128))
-        y_per_length[sample_index, :, :] = np.diag(np.asarray([
-            1j * (3.0e-6 + 2.0e-7 * sample_index),
-            1j * (3.2e-6 + 2.0e-7 * sample_index),
-            1j * (3.4e-6 + 2.0e-7 * sample_index),
-        ], dtype=np.complex128))
-        sample_index += 1
-
-    np.savez(
-        npz_path,
-        frequency_hz=frequency_hz,
-        z_per_length=z_per_length,
-        y_per_length=y_per_length,
-        phase_labels=np.asarray(["A", "B", "C"]),
-        line_length_m=np.asarray([1800.0], dtype=np.float64),
-    )
-
-    class _DialogStub:
-        def __init__(self, parent=None, initial_config=None) -> None:
-            _unused = (parent, initial_config)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_configuration(self) -> dict[str, object]:
-            return dict({
-                "phase_n": False,
-                "phase_a": True,
-                "phase_b": False,
-                "phase_c": True,
-                "data_source_mode": "import_frequency_samples",
-                "nominal_frequency_hz": 60.0,
-                "import_file_path": str(npz_path),
-                "import_line_length_m": 0.0,
-                "sweep_low_hz": 10.0,
-                "sweep_high_hz": 640.0,
-                "sweep_sample_count": 6,
-                "reference_frequency_hz": 0.0,
-                "use_frequency_exploration_window": False,
-                "exploration_low_hz": 0.0,
-                "exploration_high_hz": 0.0,
-                "use_delay_fit_window": False,
-                "delay_fit_low_hz": 0.0,
-                "delay_fit_high_hz": 0.0,
-                "decoupling_warning_tolerance": 1.0e-2,
-                "loewner_relative_tolerance": 1.0e-8,
-                "maximum_model_order": 40,
-                "forced_model_order": 1,
-                "minimum_frequency_samples": 4,
-                "vf_max_iterations": 6,
-                "vf_pole_shift_tolerance": 1.0e-6,
-                "vf_enforce_stable_poles": True,
-                "vf_stability_real_part_floor": 1.0e-8,
-                "vf_include_constant_term": True,
-                "vf_include_proportional_term": False,
-                "passivity_frequency_sample_count": 256,
-                "passivity_minimum_real_yc_tolerance": 1.0e-8,
-                "passivity_maximum_hres_gain_tolerance": 1.0e-6,
-            })
-
-    override_attrs.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _DialogStub)
-    block_item = editor.create_library_payload_item(BlockType.EMT_JMARTI_LINE, 10.0, 20.0)
-    assert block_item is not None
-    assert get_jmarti_block_fit_bundle(block_item.subsys) is not None
-
-    modal_kind, modal_config = editor.get_modal_template_metadata(block_item.subsys)
-    assert modal_kind == "jmarti_line_emt"
-    assert modal_config is not None
-    assert modal_config["fit_ready"] is True
-    assert str(npz_path) in str(modal_config["fit_source_description"])
-    assert "Source: Imported NPZ samples" in str(modal_config["fit_diagnostics_text"])
-    assert "Phases: A, C" in str(modal_config["fit_diagnostics_text"])
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
+#
+# def test_jmarti_line_emt_block_builds_fit_from_imported_npz(override_attrs, tmp_path: Path) -> None:
+#     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
+#     bus0 = gce.Bus(name="BusImportGui0", Vnom=13.8)
+#     bus1 = gce.Bus(name="BusImportGui1", Vnom=13.8)
+#     line = gce.Line(name="LineImportGui", bus_from=bus0, bus_to=bus1, length=1.8)
+#     editor = _build_editor(DynamicSimulationMode.EMT, api_object=line, circuit=circuit)
+#     frequency_hz: np.ndarray = np.asarray([10.0, 40.0, 160.0, 640.0], dtype=np.float64)
+#     z_per_length: np.ndarray = np.zeros((4, 3, 3), dtype=np.complex128)
+#     y_per_length: np.ndarray = np.zeros((4, 3, 3), dtype=np.complex128)
+#     sample_index: int = 0
+#     npz_path: Path = tmp_path / "jmarti_gui_import.npz"
+#
+#     while sample_index < 4:
+#         z_per_length[sample_index, :, :] = np.diag(np.asarray([
+#             0.12 + 1j * (0.20 + 0.02 * sample_index),
+#             0.13 + 1j * (0.25 + 0.02 * sample_index),
+#             0.15 + 1j * (0.30 + 0.02 * sample_index),
+#         ], dtype=np.complex128))
+#         y_per_length[sample_index, :, :] = np.diag(np.asarray([
+#             1j * (3.0e-6 + 2.0e-7 * sample_index),
+#             1j * (3.2e-6 + 2.0e-7 * sample_index),
+#             1j * (3.4e-6 + 2.0e-7 * sample_index),
+#         ], dtype=np.complex128))
+#         sample_index += 1
+#
+#     np.savez(
+#         npz_path,
+#         frequency_hz=frequency_hz,
+#         z_per_length=z_per_length,
+#         y_per_length=y_per_length,
+#         phase_labels=np.asarray(["A", "B", "C"]),
+#         line_length_m=np.asarray([1800.0], dtype=np.float64),
+#     )
+#
+#     class _DialogStub:
+#         def __init__(self, parent=None, initial_config=None) -> None:
+#             _unused = (parent, initial_config)
+#
+#         def exec(self) -> int:
+#             return int(QtWidgets.QDialog.DialogCode.Accepted)
+#
+#         def get_configuration(self) -> dict[str, object]:
+#             return dict({
+#                 "phase_n": False,
+#                 "phase_a": True,
+#                 "phase_b": False,
+#                 "phase_c": True,
+#                 "data_source_mode": "import_frequency_samples",
+#                 "nominal_frequency_hz": 60.0,
+#                 "import_file_path": str(npz_path),
+#                 "import_line_length_m": 0.0,
+#                 "sweep_low_hz": 10.0,
+#                 "sweep_high_hz": 640.0,
+#                 "sweep_sample_count": 6,
+#                 "reference_frequency_hz": 0.0,
+#                 "use_frequency_exploration_window": False,
+#                 "exploration_low_hz": 0.0,
+#                 "exploration_high_hz": 0.0,
+#                 "use_delay_fit_window": False,
+#                 "delay_fit_low_hz": 0.0,
+#                 "delay_fit_high_hz": 0.0,
+#                 "decoupling_warning_tolerance": 1.0e-2,
+#                 "loewner_relative_tolerance": 1.0e-8,
+#                 "maximum_model_order": 40,
+#                 "forced_model_order": 1,
+#                 "minimum_frequency_samples": 4,
+#                 "vf_max_iterations": 6,
+#                 "vf_pole_shift_tolerance": 1.0e-6,
+#                 "vf_enforce_stable_poles": True,
+#                 "vf_stability_real_part_floor": 1.0e-8,
+#                 "vf_include_constant_term": True,
+#                 "vf_include_proportional_term": False,
+#                 "passivity_frequency_sample_count": 256,
+#                 "passivity_minimum_real_yc_tolerance": 1.0e-8,
+#                 "passivity_maximum_hres_gain_tolerance": 1.0e-6,
+#             })
+#
+#     override_attrs.setattr(dynamic_block_editor_module, "JMartiLineEmtDialog", _DialogStub)
+#     block_item = editor.create_library_payload_item(BlockType.EMT_JMARTI_LINE, 10.0, 20.0)
+#     assert block_item is not None
+#     assert get_jmarti_block_fit_bundle(block_item.subsys) is not None
+#
+#     modal_kind, modal_config = editor.get_modal_template_metadata(block_item.subsys)
+#     assert modal_kind == "jmarti_line_emt"
+#     assert modal_config is not None
+#     assert modal_config["fit_ready"] is True
+#     assert str(npz_path) in str(modal_config["fit_source_description"])
+#     assert "Source: Imported NPZ samples" in str(modal_config["fit_diagnostics_text"])
+#     assert "Phases: A, C" in str(modal_config["fit_diagnostics_text"])
+#
+#     editor.has_unapplied_changes = False
+#     editor.close()
+#
 
 def test_line_emt_editor_exposes_jmarti_device_block() -> None:
     circuit = gce.MultiCircuit(Sbase=25.0, fbase=60.0)
@@ -1111,57 +1086,6 @@ def test_lookup_matrix_linear_descriptor_uses_modal_matrix_to_build_block(overri
 
     editor.has_unapplied_changes = False
     editor.close()
-
-
-def test_inverse_lookup_array_linear_descriptor_uses_modal_points_to_build_block(override_attrs) -> None:
-    editor = _build_editor(DynamicSimulationMode.EMT)
-    descriptor = get_basic_block_catalog_descriptor_by_key()["inverse_lookup_array_linear"]
-
-    class _DialogStub:
-        def __init__(self, block_label: str, initial_points=None, parent=None) -> None:
-            _unused = (block_label, initial_points, parent)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_points(self) -> tuple[list[float], list[float]]:
-            return [0.0, 1.0, 2.0], [0.0, 10.0, 20.0]
-
-    override_attrs.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _DialogStub)
-    block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
-
-    assert block_item is not None
-    assert any(var.name.startswith("arr_x3_") for var in block_item.subsys.event_dict.keys())
-    assert any(var.name.startswith("arr_y3_") for var in block_item.subsys.event_dict.keys())
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
-
-def test_lookup_array_spline_descriptor_uses_modal_points_to_build_block(override_attrs) -> None:
-    editor = _build_editor(DynamicSimulationMode.EMT)
-    descriptor = get_basic_block_catalog_descriptor_by_key()["lookup_array_spline"]
-
-    class _DialogStub:
-        def __init__(self, block_label: str, initial_points=None, parent=None) -> None:
-            _unused = (block_label, initial_points, parent)
-
-        def exec(self) -> int:
-            return int(QtWidgets.QDialog.DialogCode.Accepted)
-
-        def get_points(self) -> tuple[list[float], list[float]]:
-            return [0.0, 1.0, 2.0], [0.0, 10.0, 20.0]
-
-    override_attrs.setattr(dynamic_block_editor_module, "LookupArrayLinearDialog", _DialogStub)
-    block_item = editor.create_library_payload_item(descriptor, 10.0, 20.0)
-
-    assert block_item is not None
-    assert any(var.name.startswith("arr_x3_") for var in block_item.subsys.event_dict.keys())
-    assert any(var.name.startswith("arr_y3_") for var in block_item.subsys.event_dict.keys())
-
-    editor.has_unapplied_changes = False
-    editor.close()
-
 
 def test_lookup_matrix_spline_descriptor_uses_modal_matrix_to_build_block(override_attrs) -> None:
     editor = _build_editor(DynamicSimulationMode.EMT)

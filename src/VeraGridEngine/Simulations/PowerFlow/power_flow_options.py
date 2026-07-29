@@ -38,6 +38,7 @@ class PowerFlowOptions(OptionsTemplate):
         GCProp(key="backtracking_parameter", tpe=float),
         GCProp(key="use_stored_guess", tpe=bool),
         GCProp(key="initialize_angles", tpe=bool),
+        GCProp(key="use_autodiff_jacobian", tpe=bool),
         GCProp(key="generate_report", tpe=bool),
     )
 
@@ -62,6 +63,7 @@ class PowerFlowOptions(OptionsTemplate):
                  backtracking_parameter: float = 0.05,
                  use_stored_guess: bool = False,
                  initialize_angles: bool = False,
+                 use_autodiff_jacobian: bool = False,
                  generate_report: bool = False,
                  controls_start_tolerance: float = 1e-2,):
         """
@@ -81,6 +83,7 @@ class PowerFlowOptions(OptionsTemplate):
         :param backtracking_parameter: parameter used to correct the "bad" iterations, typically 0.5
         :param use_stored_guess: Use the existing solution from the Bus class (Vm0, Va0)
         :param initialize_angles: Use a linear power flow to initialize the voltage guess
+        :param use_autodiff_jacobian: Use finite-difference Jacobian in the full AC/DC formulation
         :param generate_report: Generate the power flow report after the solution?
         :param controls_start_tolerance: Residual threshold from which the iterative solvers start applying control updates
         """
@@ -127,5 +130,7 @@ class PowerFlowOptions(OptionsTemplate):
         self.use_stored_guess = use_stored_guess
 
         self.initialize_angles = initialize_angles
+
+        self.use_autodiff_jacobian = use_autodiff_jacobian
 
         self.generate_report = generate_report

@@ -6,7 +6,8 @@ import pytest
 from PySide6 import QtWidgets
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import BlockItem, DynamicBlockEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_graphics import BlockItem
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import register_saved_emt_model_vars_for_device
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import connect_bus_variables_emt
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES

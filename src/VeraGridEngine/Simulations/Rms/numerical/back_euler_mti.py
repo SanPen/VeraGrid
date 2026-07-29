@@ -59,6 +59,8 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
         self.debug_newton = os.getenv("RMS_MTI_DEBUG_NEWTON", "0").strip() in ("1", "true", "True", "yes", "on")
         self.debug_residuals = os.getenv("RMS_MTI_DEBUG_RESIDUALS", "0").strip() in ("1", "true", "True", "yes", "on")
         self.compare = os.getenv("RMS_MTI_COMPARE", "0").strip() in ("1", "true", "True", "yes", "on")
+        self.iteration_summary = os.getenv("RMS_MTI_ITER_SUMMARY", "0").strip() in ("1", "true", "True", "yes", "on")
+        self._iteration_stats: dict[str, int] = {}
         try:
             # 0 means: no candidate cap (toolbox-like all-candidates check)
             self.debug_max_cands = int(os.getenv("RMS_MTI_DEBUG_MAX_CANDS", "0"))
@@ -74,6 +76,9 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
             "1", "true", "True", "yes", "on"
         )
         self.use_subproblem_line_search = os.getenv("RMS_MTI_SUBPROBLEM_LINE_SEARCH", "0").strip() in (
+            "1", "true", "True", "yes", "on"
+        )
+        self.use_full_fixed_z_mti_rows = os.getenv("RMS_MTI_FULL_FIXED_Z_ROWS", "0").strip() in (
             "1", "true", "True", "yes", "on"
         )
         self._debug_x0_ref: Vec | None = None
@@ -99,6 +104,10 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
             self.event_bisect_iter = max(1, int(os.getenv("RMS_MTI_EVENT_BISECT_ITER", "20")))
         except Exception:
             self.event_bisect_iter = 20
+
+    def _count_iteration_stat(self, name: str, amount: int = 1) -> None:
+        if self.iteration_summary:
+            self._iteration_stats[name] = self._iteration_stats.get(name, 0) + int(amount)
 
     def _runtime_parameter_values(self) -> Vec | None:
         """Return the problem runtime-parameter vector for RMS or EMT problems."""
@@ -167,6 +176,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
 
     def _jacobian_implicit(self, x: Vec, dx: Vec, h: float) -> sp.csc_matrix:
         """Prefer a full MTI Jacobian hook, otherwise use the RMS block Jacobian path."""
+        self._count_iteration_stat("full_jacobian_builds")
         jac_fn = getattr(self.problem, "jacobian_mti_equalities", None)
         if jac_fn is not None:
             jac = jac_fn(x, dx, h)
@@ -272,13 +282,23 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
             except Exception as ex:
                 print(f"     symbolic-check-failed: {ex}")
 
-    def _newton_step(self, x_new: Vec, x_prev: Vec, dx: Vec, h_eff: float) -> tuple[Vec, float]:
-        rhs = self.problem.compute_mti_equalities(x_new, dx, x_prev, h_eff)
+    def _newton_step(
+        self,
+        x_new: Vec,
+        x_prev: Vec,
+        dx: Vec,
+        h_eff: float,
+        rhs: Vec | None = None,
+        residual: float | None = None,
+    ) -> tuple[Vec, float]:
+        if rhs is None:
+            rhs = self.problem.compute_mti_equalities(x_new, dx, x_prev, h_eff)
         if rhs.size == 0:
             return x_new, 0.0
         if not np.all(np.isfinite(rhs)):
             return x_new, np.inf
-        residual = float(np.linalg.norm(rhs, np.inf))
+        if residual is None:
+            residual = float(np.linalg.norm(rhs, np.inf))
         if residual < self.tol:
             return x_new, residual
 
@@ -312,6 +332,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
         dx_out = dx_last.copy()
 
         for it in range(int(self.mti_max_iter)):
+            self._count_iteration_stat("continuous_fixed_z_iterations")
             it_t0 = time.perf_counter()
             if force_zero_dx:
                 dx = np.zeros_like(dx_last)
@@ -346,7 +367,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                     print(f"[MTI-NEWTON] converged in {it + 1} iterations")
                 return True, x_new, dx, residual
 
-            x_new, _ = self._newton_step(x_new=x_new, x_prev=x_prev, dx=dx, h_eff=h_eff)
+            x_new, _ = self._newton_step(x_new=x_new, x_prev=x_prev, dx=dx, h_eff=h_eff, rhs=rhs, residual=residual)
             if not np.all(np.isfinite(x_new)):
                 return False, x_new, dx, np.inf
             dx_out = dx.copy()
@@ -371,14 +392,19 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
         h_eff: float,
         force_zero_dx: bool = False,
     ) -> tuple[bool, Vec, Vec, float]:
-        ok_mti, x_mti, dx_mti, res_mti = self._solve_full_fixed_z_mti_rows(
-            x_prev=x_prev,
-            dx_last=dx_last,
-            h_eff=h_eff,
-            force_zero_dx=force_zero_dx,
-        )
-        if ok_mti:
-            return True, x_mti, dx_mti, res_mti
+        ok_mti = False
+        x_mti = np.asarray(x_prev, dtype=float).copy()
+        dx_mti = np.asarray(dx_last, dtype=float).copy()
+        res_mti = np.inf
+        if self.use_full_fixed_z_mti_rows:
+            ok_mti, x_mti, dx_mti, res_mti = self._solve_full_fixed_z_mti_rows(
+                x_prev=x_prev,
+                dx_last=dx_last,
+                h_eff=h_eff,
+                force_zero_dx=force_zero_dx,
+            )
+            if ok_mti:
+                return True, x_mti, dx_mti, res_mti
 
         seeds = [x_prev.copy()]
 
@@ -824,6 +850,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
         dx_out = dx_last.copy()
 
         for _ in range(self.mti_max_iter):
+            self._count_iteration_stat("plain_dae_iterations")
             if force_zero_dx:
                 dx = np.zeros_like(dx_last)
             else:
@@ -1008,6 +1035,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
             )
         for eq0, var0 in explicit_pairs:
             for it in range(self.mti_max_iter):
+                self._count_iteration_stat("subproblem_explicit_iterations")
                 dx = np.zeros_like(dx_last) if force_zero_dx else self.problem.get_dx(x_new, x_prev, dx_last, h_eff)
                 rhs_full = self.problem.compute_mti_equalities(x_new, dx, x_prev, h_eff)
                 if rhs_full.size == 0 or not np.all(np.isfinite(rhs_full)):
@@ -1080,6 +1108,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
                 return ok_lsq, x_lsq, dx_lsq, res_lsq
 
         for it in range(self.mti_max_iter):
+            self._count_iteration_stat("subproblem_implicit_iterations")
             dx = np.zeros_like(dx_last) if force_zero_dx else self.problem.get_dx(x_new, x_prev, dx_last, h_eff)
             rhs_full = self.problem.compute_mti_equalities(x_new, dx, x_prev, h_eff)
             if rhs_full.size == 0 or not np.all(np.isfinite(rhs_full)):
@@ -1173,6 +1202,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
         dx_eval = dx_last.copy()
 
         for it in range(self.mti_max_iter):
+            self._count_iteration_stat("subproblem_direct_xp_iterations")
             x_eval, dx_eval = self.problem.mti_direct_apply(w, x_ref, dx_ref, var_idx)
             rhs_full = self.problem.compute_mti_direct_equalities(x_eval, dx_eval)
             if rhs_full.size == 0 or not np.all(np.isfinite(rhs_full)):
@@ -1465,6 +1495,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
     def simulate(self):
         converged = False
         well_initialized = True
+        self._iteration_stats = {}
 
         self._timings = {
             "jacobian_time": 0.0,
@@ -1775,4 +1806,8 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
             else:
                 z_prev = np.zeros(0, dtype=float)
 
+        if self.iteration_summary:
+            print(f"[MTI-ITER] mti_max_iter={int(self.mti_max_iter)} event_bisect_iter={int(self.event_bisect_iter)}")
+            for name in sorted(self._iteration_stats):
+                print(f"[MTI-ITER] {name}={self._iteration_stats[name]}")
         return self.t[: last_completed_idx + 1], self.y[: last_completed_idx + 1, :], well_initialized, converged

@@ -11,9 +11,9 @@ class RawBranchV29(RawBranch):
 
     def parse(self, data, version, logger: Logger):
         self.version = version
-        var = [self.O1, self.F1, self.O2, self.F2, self.O3, self.F3, self.O4, self.F4]
         (self.I, self.J, self.CKT, self.R, self.X, self.B, self.RATEA, self.RATEB, self.RATEC,
-         self.GI, self.BI, self.GJ, self.BJ, self.ST, self.LEN, *var) = data[0]
+         self.GI, self.BI, self.GJ, self.BJ, self.ST, self.LEN, *owners) = data[0]
+        self.parse_ownership_fields(owners)
 
     def get_raw_line(self, version):
         return self.format_raw_line(["I", "J", "CKT", "R", "X", "B",

@@ -71,6 +71,7 @@ class ControllableShuntDeviceEditor(TemplateDeviceEditor):
         if applied_ok:
             self.properties_model.set_time_index(time_index=self._get_current_time_index())
             self.refresh_profile_table()
+            self.show_info_toast("Shunt steps applied")
         else:
             pass
 

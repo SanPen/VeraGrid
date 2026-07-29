@@ -6,6 +6,7 @@ import os
 import sys
 import uvicorn
 import argparse
+from pathlib import Path
 
 PACKAGE_PARENT = '..'
 SCRIPT_DIR = os.path.dirname(os.path.realpath(os.path.join(os.getcwd(), os.path.expanduser(__file__))))
@@ -17,11 +18,32 @@ from VeraGridServer.generate_ssl_key import generate_ssl_certificate, get_my_ip
 from VeraGridServer.__version__ import __VeraGridServer_VERSION__
 
 
+def resolve_server_runtime_file_path(file_name: str) -> str:
+    """
+    Resolve one server runtime file path relative to the server package directory.
+
+    :param file_name: Candidate file path from the CLI or caller.
+    :return: Absolute filesystem path.
+    """
+    base_directory: Path = Path(__file__).resolve().parent
+    requested_path: Path = Path(file_name)
+
+    # Relative TLS file names must live next to the server package so the
+    # runtime can generate and reuse them consistently from any cwd.
+    if requested_path.is_absolute():
+        return str(requested_path)
+    else:
+        return str(base_directory / requested_path)
+
+
 def start_server(key_file_name: str = "key.pem", cert_file_name: str = "cert.pem",
                  port: int = 8000, domain="localhost",
                  master_host: str = "", master_port: int = 0,
                  username: str = "", password: str = "", is_master: bool = True,
-                 secure: bool = True):
+                 secure: bool = True,
+                 db_host: str = "", db_port: int = 0,
+                 db_name: str = "", db_user: str = "", db_password: str = "",
+                 db_schema: str = "veragrid"):
     """
     Start server function
     :param key_file_name: name of the key file that the server generates
@@ -34,10 +56,18 @@ def start_server(key_file_name: str = "key.pem", cert_file_name: str = "cert.pem
     :param password: Password to authenticate with
     :param is_master: Whether the server is master or not
     :param secure: Whether the server is secure or not (if it looks for the certificates or not)
+    :param db_host: PostgreSQL host name.
+    :param db_port: PostgreSQL port number.
+    :param db_name: PostgreSQL database name.
+    :param db_user: PostgreSQL user name.
+    :param db_password: PostgreSQL password.
+    :param db_schema: PostgreSQL schema name.
     """
 
     # find out my IP
     host = get_my_ip()
+    resolved_key_file_name: str = resolve_server_runtime_file_path(file_name=key_file_name)
+    resolved_cert_file_name: str = resolve_server_runtime_file_path(file_name=cert_file_name)
 
     print(f"""
 ┓┏      ┏┓  • ┓┏┓({__VeraGridServer_VERSION__} Alpha) 
@@ -50,8 +80,8 @@ def start_server(key_file_name: str = "key.pem", cert_file_name: str = "cert.pem
         generate_ssl_certificate(
             ip=host,
             domain=domain,
-            key_file_name=key_file_name,
-            cert_file_name=cert_file_name
+            key_file_name=resolved_key_file_name,
+            cert_file_name=resolved_cert_file_name
         )
 
     # extra attributed on launch
@@ -62,10 +92,16 @@ def start_server(key_file_name: str = "key.pem", cert_file_name: str = "cert.pem
     settings.this_port = port
     settings.this_username = username
     settings.this_password = password
+    settings.db_host = db_host
+    settings.db_port = db_port
+    settings.db_name = db_name
+    settings.db_user = db_user
+    settings.db_password = db_password
+    settings.db_schema = db_schema
 
     if secure:
         uvicorn.run(app,
-                    host=host, port=port, ssl_keyfile=key_file_name, ssl_certfile=cert_file_name)
+                    host=host, port=port, ssl_keyfile=resolved_key_file_name, ssl_certfile=resolved_cert_file_name)
     else:
         uvicorn.run(app,
                     host=host, port=port)
@@ -102,6 +138,12 @@ if __name__ == "__main__":
     parser.add_argument("--master_port", type=int, default=80, help="Port of the master instance")
     parser.add_argument("--user", type=str, default="", help="username")
     parser.add_argument("--pwd", type=str, default="", help="Password")
+    parser.add_argument("--db_host", type=str, default="", help="PostgreSQL host")
+    parser.add_argument("--db_port", type=int, default=0, help="PostgreSQL port")
+    parser.add_argument("--db_name", type=str, default="", help="PostgreSQL database name")
+    parser.add_argument("--db_user", type=str, default="", help="PostgreSQL user")
+    parser.add_argument("--db_password", type=str, default="", help="PostgreSQL password")
+    parser.add_argument("--db_schema", type=str, default="veragrid", help="PostgreSQL schema name")
 
     # Parse arguments
     args = parser.parse_args()
@@ -119,4 +161,10 @@ if __name__ == "__main__":
                  secure=args.secure,
                  is_master=args.master,
                  username=args.user,
-                 password=args.pwd)
+                 password=args.pwd,
+                 db_host=args.db_host,
+                 db_port=args.db_port,
+                 db_name=args.db_name,
+                 db_user=args.db_user,
+                 db_password=args.db_password,
+                 db_schema=args.db_schema)

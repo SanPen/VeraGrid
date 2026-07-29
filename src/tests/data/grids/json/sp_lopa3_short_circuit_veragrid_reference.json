@@ -1,0 +1,932 @@
+{
+  "metadata": {
+    "description": "Subset of PowerFactory_Test sc_results_tensor.json for one SPEN TOP50 bus. The test compares the saved VeraGrid slice for the full 0.9 to 0.1 fault resistance sweep.",
+    "source_json": "PowerFactory_Test/spen_top50_sc_study_outputs/sc_results_tensor.json",
+    "source_fault_bus_csv": "PowerFactory_Test/spen_top50_sc_study_outputs/sc_results_tensor_fault_bus.csv",
+    "source_changed_wtg_csv": "PowerFactory_Test/spen_top50_sc_study_outputs/sc_results_tensor_changed_wtg.csv",
+    "bus": "LOPA3-",
+    "top50_rank": 23,
+    "vnom_kv": 33.0,
+    "target_voltage_axis_pu": [
+      0.9,
+      0.8,
+      0.7,
+      0.6,
+      0.5,
+      0.4,
+      0.3,
+      0.2,
+      0.1
+    ],
+    "software": "veragrid",
+    "changed_power_tol_mw_mvar": 0.001,
+    "fault": "3-phase fault with Xf=0; Rf is listed in ohm and converted to p.u. with Vnom^2/Sbase before running VeraGrid."
+  },
+  "data": {
+    "LOPA3-": {
+      "0.9": {
+        "target_voltage_pu": 0.9,
+        "rf_ohm": 7.30692109636816,
+        "x_f_ohm": 0.0,
+        "veragrid": {
+          "fault_bus": {
+            "voltage_pu": 0.896589457988739,
+            "voltage_angle_deg": -39.13050079345703,
+            "current_ka": 2.3378278233946075,
+            "current_angle_deg": -39.13050079345703
+          },
+          "changed_wind_generators": {
+            "EMW_GALA3-_W2": {
+              "base_p_mw": 7.600000000000133,
+              "base_q_mvar": 7.539108226595204e-13,
+              "p_mw": 7.599999904632568,
+              "q_mvar": 3.2869648933410645,
+              "delta_p_mw": -9.536756451211659e-08,
+              "delta_q_mvar": 3.2869648933403104,
+              "terminal_voltage_pu": 0.944605827331543,
+              "terminal_voltage_angle_deg": -32.319557189941406,
+              "current_ka": 0.15336397,
+              "current_angle_deg": -55.70781707763672
+            },
+            "WTG_LOPA0G_1": {
+              "base_p_mw": 15.200000000000005,
+              "base_q_mvar": -3.4129307335842416,
+              "p_mw": 15.199999809265137,
+              "q_mvar": 1.3705508708953857,
+              "delta_p_mw": -1.9073486789977778e-07,
+              "delta_q_mvar": 4.783481604479627,
+              "terminal_voltage_pu": 0.9101889729499817,
+              "terminal_voltage_angle_deg": -37.63029479980469,
+              "current_ka": 14.030096,
+              "current_angle_deg": -42.7825927734375
+            }
+          }
+        }
+      },
+      "0.8": {
+        "target_voltage_pu": 0.8,
+        "rf_ohm": 4.127583203388873,
+        "x_f_ohm": 0.0,
+        "veragrid": {
+          "fault_bus": {
+            "voltage_pu": 0.7948293685913086,
+            "voltage_angle_deg": -52.0346794128418,
+            "current_ka": 3.668862043724545,
+            "current_angle_deg": -52.0346794128418
+          },
+          "changed_wind_generators": {
+            "EMW_GALA3-_W2": {
+              "base_p_mw": 7.600000000000133,
+              "base_q_mvar": 7.539108226595204e-13,
+              "p_mw": 7.599999904632568,
+              "q_mvar": 15.031556129455566,
+              "delta_p_mw": -9.536756451211659e-08,
+              "delta_q_mvar": 15.031556129454813,
+              "terminal_voltage_pu": 0.8762304782867432,
+              "terminal_voltage_angle_deg": -39.82719802856445,
+              "current_ka": 0.3363122,
+              "current_angle_deg": -103.00588989257812
+            },
+            "WTG_DUNE0G_1": {
+              "base_p_mw": 11.899999999999986,
+              "base_q_mvar": 1.4899060789684277,
+              "p_mw": 11.899999618530273,
+              "q_mvar": 1.554003357887268,
+              "delta_p_mw": -3.8146971270691665e-07,
+              "delta_q_mvar": 0.06409727891884032,
+              "terminal_voltage_pu": 0.9676023721694946,
+              "terminal_voltage_angle_deg": -20.660728454589844,
+              "current_ka": 10.377965,
+              "current_angle_deg": -28.100797653198242
+            },
+            "WTG_KEIH0G_1": {
+              "base_p_mw": 1.8000000000000005,
+              "base_q_mvar": 0.3159250755090247,
+              "p_mw": 1.7999999523162842,
+              "q_mvar": 0.3271464705467224,
+              "delta_p_mw": -4.768371630881063e-08,
+              "delta_q_mvar": 0.011221395037697701,
+              "terminal_voltage_pu": 0.967249870300293,
+              "terminal_voltage_angle_deg": -21.021717071533203,
+              "current_ka": 1.5826361,
+              "current_angle_deg": -31.32267189025879
+            },
+            "WTG_LOPA0G_1": {
+              "base_p_mw": 15.200000000000005,
+              "base_q_mvar": -3.4129307335842416,
+              "p_mw": 15.199999809265137,
+              "q_mvar": 7.265367031097412,
+              "delta_p_mw": -1.9073486789977778e-07,
+              "delta_q_mvar": 10.678297764681654,
+              "terminal_voltage_pu": 0.8177981376647949,
+              "terminal_voltage_angle_deg": -50.18777847290039,
+              "current_ka": 17.237328,
+              "current_angle_deg": -75.73486328125
+            },
+            "WTG_POGB0G": {
+              "base_p_mw": 3.799999999999979,
+              "base_q_mvar": -1.6162346553010565,
+              "p_mw": 3.799999952316284,
+              "q_mvar": -1.5847452878952026,
+              "delta_p_mw": -4.768369477048395e-08,
+              "delta_q_mvar": 0.03148936740585384,
+              "terminal_voltage_pu": 0.9532891511917114,
+              "terminal_voltage_angle_deg": -20.805269241333008,
+              "current_ka": 3.6138377,
+              "current_angle_deg": 1.8327317237854004
+            },
+            "WTG_TODD0G_1": {
+              "base_p_mw": 10.999999999999918,
+              "base_q_mvar": -1.7742435992266707,
+              "p_mw": 11.0,
+              "q_mvar": -1.6682134866714478,
+              "delta_p_mw": 8.171241461241152e-14,
+              "delta_q_mvar": 0.10603011255522299,
+              "terminal_voltage_pu": 0.9699533581733704,
+              "terminal_voltage_angle_deg": -20.952335357666016,
+              "current_ka": 9.597758,
+              "current_angle_deg": -12.32880973815918
+            }
+          }
+        }
+      },
+      "0.7": {
+        "target_voltage_pu": 0.7,
+        "rf_ohm": 2.8302914355299724,
+        "x_f_ohm": 0.0,
+        "veragrid": {
+          "fault_bus": {
+            "voltage_pu": 0.694330632686615,
+            "voltage_angle_deg": -62.34989929199219,
+            "current_ka": 4.6739975599842,
+            "current_angle_deg": -62.34989929199219
+          },
+          "changed_wind_generators": {
+            "EMW_BERW3-_W2": {
+              "base_p_mw": 43.10000000000002,
+              "base_q_mvar": 2.491062911502695e-13,
+              "p_mw": 43.099998474121094,
+              "q_mvar": 1.704122543334961,
+              "delta_p_mw": -1.5258789289873675e-06,
+              "delta_q_mvar": 1.7041225433347118,
+              "terminal_voltage_pu": 0.9297462701797485,
+              "terminal_voltage_angle_deg": -20.607677459716797,
+              "current_ka": 0.8116662,
+              "current_angle_deg": -22.871902465820312
+            },
+            "EMW_ECCL3-_W2": {
+              "base_p_mw": 12.700000000000008,
+              "base_q_mvar": 5.422745585903499e-13,
+              "p_mw": 12.699999809265137,
+              "q_mvar": 3.028001546859741,
+              "delta_p_mw": -1.9073487145249146e-07,
+              "delta_q_mvar": 3.028001546859199,
+              "terminal_voltage_pu": 0.947873055934906,
+              "terminal_voltage_angle_deg": -24.276350021362305,
+              "current_ka": 0.2409822,
+              "current_angle_deg": -37.68674087524414
+            },
+            "EMW_GALA3-_W2": {
+              "base_p_mw": 7.600000000000133,
+              "base_q_mvar": 7.539108226595204e-13,
+              "p_mw": 7.599999904632568,
+              "q_mvar": 25.152263641357422,
+              "delta_p_mw": -9.536756451211659e-08,
+              "delta_q_mvar": 25.15226364135667,
+              "terminal_voltage_pu": 0.8059665560722351,
+              "terminal_voltage_angle_deg": -45.018978118896484,
+              "current_ka": 0.57037127,
+              "current_angle_deg": -118.20626831054688
+            },
+            "WTG_DUNE0G_1": {
+              "base_p_mw": 11.899999999999986,
+              "base_q_mvar": 1.4899060789684277,
+              "p_mw": 11.899999618530273,
+              "q_mvar": 2.6274495124816895,
+              "delta_p_mw": -3.8146971270691665e-07,
+              "delta_q_mvar": 1.1375434335132617,
+              "terminal_voltage_pu": 0.950180172920227,
+              "terminal_voltage_angle_deg": -21.130611419677734,
+              "current_ka": 10.731669,
+              "current_angle_deg": -33.581417083740234
+            },
+            "WTG_KEIH0G_1": {
+              "base_p_mw": 1.8000000000000005,
+              "base_q_mvar": 0.3159250755090247,
+              "p_mw": 1.7999999523162842,
+              "q_mvar": 0.5133137106895447,
+              "delta_p_mw": -4.768371630881063e-08,
+              "delta_q_mvar": 0.19738863518051997,
+              "terminal_voltage_pu": 0.9495858550071716,
+              "terminal_voltage_angle_deg": -21.501609802246094,
+              "current_ka": 1.6493262,
+              "current_angle_deg": -37.41839599609375
+            },
+            "WTG_LOPA0G_1": {
+              "base_p_mw": 15.200000000000005,
+              "base_q_mvar": -3.4129307335842416,
+              "p_mw": 15.199999809265137,
+              "q_mvar": 11.678816795349121,
+              "delta_p_mw": -1.9073486789977778e-07,
+              "delta_q_mvar": 15.091747528933363,
+              "terminal_voltage_pu": 0.7263885140419006,
+              "terminal_voltage_angle_deg": -60.0047607421875,
+              "current_ka": 22.080631,
+              "current_angle_deg": -97.54138946533203
+            },
+            "WTG_POGB0G": {
+              "base_p_mw": 3.799999999999979,
+              "base_q_mvar": -1.6162346553010565,
+              "p_mw": 3.799999952316284,
+              "q_mvar": -1.255403757095337,
+              "delta_p_mw": -4.768369477048395e-08,
+              "delta_q_mvar": 0.36083089820571956,
+              "terminal_voltage_pu": 0.9351397156715393,
+              "terminal_voltage_angle_deg": -21.277759552001953,
+              "current_ka": 3.580893,
+              "current_angle_deg": -2.995786190032959
+            },
+            "WTG_TODD0G_1": {
+              "base_p_mw": 10.999999999999918,
+              "base_q_mvar": -1.7742435992266707,
+              "p_mw": 11.0,
+              "q_mvar": -0.6132010221481323,
+              "delta_p_mw": 8.171241461241152e-14,
+              "delta_q_mvar": 1.1610425770785384,
+              "terminal_voltage_pu": 0.951848030090332,
+              "terminal_voltage_angle_deg": -21.43586540222168,
+              "current_ka": 9.684766,
+              "current_angle_deg": -18.245182037353516
+            }
+          }
+        }
+      },
+      "0.6": {
+        "target_voltage_pu": 0.6,
+        "rf_ohm": 2.068683647350602,
+        "x_f_ohm": 0.0,
+        "veragrid": {
+          "fault_bus": {
+            "voltage_pu": 0.5952262878417969,
+            "voltage_angle_deg": -71.070556640625,
+            "current_ka": 5.482029073170652,
+            "current_angle_deg": -71.070556640625
+          },
+          "changed_wind_generators": {
+            "EMW_BERW3-_W2": {
+              "base_p_mw": 43.10000000000002,
+              "base_q_mvar": 2.491062911502695e-13,
+              "p_mw": 43.099998474121094,
+              "q_mvar": 4.29610538482666,
+              "delta_p_mw": -1.5258789289873675e-06,
+              "delta_q_mvar": 4.2961053848264115,
+              "terminal_voltage_pu": 0.9164952635765076,
+              "terminal_voltage_angle_deg": -20.624271392822266,
+              "current_ka": 0.82683593,
+              "current_angle_deg": -26.31657600402832
+            },
+            "EMW_ECCL3-_W2": {
+              "base_p_mw": 12.700000000000008,
+              "base_q_mvar": 5.422745585903499e-13,
+              "p_mw": 12.699999809265137,
+              "q_mvar": 6.178329944610596,
+              "delta_p_mw": -1.9073487145249146e-07,
+              "delta_q_mvar": 6.178329944610053,
+              "terminal_voltage_pu": 0.9306520819664001,
+              "terminal_voltage_angle_deg": -24.50642967224121,
+              "current_ka": 0.26550204,
+              "current_angle_deg": -50.448551177978516
+            },
+            "EMW_GALA3-_W2": {
+              "base_p_mw": 7.600000000000133,
+              "base_q_mvar": 7.539108226595204e-13,
+              "p_mw": 7.599999904632568,
+              "q_mvar": 33.23632049560547,
+              "delta_p_mw": -9.536756451211659e-08,
+              "delta_q_mvar": 33.236320495604716,
+              "terminal_voltage_pu": 0.7363089323043823,
+              "terminal_voltage_angle_deg": -48.452613830566406,
+              "current_ka": 0.81011295,
+              "current_angle_deg": -125.5724868774414
+            },
+            "WTG_DUNE0G_1": {
+              "base_p_mw": 11.899999999999986,
+              "base_q_mvar": 1.4899060789684277,
+              "p_mw": 11.899999618530273,
+              "q_mvar": 3.547800064086914,
+              "delta_p_mw": -3.8146971270691665e-07,
+              "delta_q_mvar": 2.0578939851184863,
+              "terminal_voltage_pu": 0.9347065091133118,
+              "terminal_voltage_angle_deg": -21.06333351135254,
+              "current_ka": 11.11611,
+              "current_angle_deg": -37.664466857910156
+            },
+            "WTG_KEIH0G_1": {
+              "base_p_mw": 1.8000000000000005,
+              "base_q_mvar": 0.3159250755090247,
+              "p_mw": 1.7999999523162842,
+              "q_mvar": 0.672844648361206,
+              "delta_p_mw": -4.768371630881063e-08,
+              "delta_q_mvar": 0.35691957285218134,
+              "terminal_voltage_pu": 0.9338974952697754,
+              "terminal_voltage_angle_deg": -21.44377326965332,
+              "current_ka": 1.7217268,
+              "current_angle_deg": -41.93964767456055
+            },
+            "WTG_LOPA0G_1": {
+              "base_p_mw": 15.200000000000005,
+              "base_q_mvar": -3.4129307335842416,
+              "p_mw": 15.199999809265137,
+              "q_mvar": 14.65556812286377,
+              "delta_p_mw": -1.9073486789977778e-07,
+              "delta_q_mvar": 18.06849885644801,
+              "terminal_voltage_pu": 0.6359906792640686,
+              "terminal_voltage_angle_deg": -67.977294921875,
+              "current_ka": 27.77935,
+              "current_angle_deg": -111.93258666992188
+            },
+            "WTG_POGB0G": {
+              "base_p_mw": 3.799999999999979,
+              "base_q_mvar": -1.6162346553010565,
+              "p_mw": 3.799999952316284,
+              "q_mvar": -0.9734992384910583,
+              "delta_p_mw": -4.768369477048395e-08,
+              "delta_q_mvar": 0.6427354168099981,
+              "terminal_voltage_pu": 0.9190122485160828,
+              "terminal_voltage_angle_deg": -21.212854385375977,
+              "current_ka": 3.5715427,
+              "current_angle_deg": -6.843623161315918
+            },
+            "WTG_TODD0G_1": {
+              "base_p_mw": 10.999999999999918,
+              "base_q_mvar": -1.7742435992266707,
+              "p_mw": 11.0,
+              "q_mvar": 0.29028359055519104,
+              "delta_p_mw": 8.171241461241152e-14,
+              "delta_q_mvar": 2.064527189781862,
+              "terminal_voltage_pu": 0.9357642531394958,
+              "terminal_voltage_angle_deg": -21.38130760192871,
+              "current_ka": 9.839379,
+              "current_angle_deg": -22.892961502075195
+            }
+          }
+        }
+      },
+      "0.5": {
+        "target_voltage_pu": 0.5,
+        "rf_ohm": 1.5347080648566955,
+        "x_f_ohm": 0.0,
+        "veragrid": {
+          "fault_bus": {
+            "voltage_pu": 0.4968402683734894,
+            "voltage_angle_deg": -78.67306518554688,
+            "current_ka": 6.167999429678726,
+            "current_angle_deg": -78.67306518554688
+          },
+          "changed_wind_generators": {
+            "EMW_BERW3-_W2": {
+              "base_p_mw": 43.10000000000002,
+              "base_q_mvar": 2.491062911502695e-13,
+              "p_mw": 43.099998474121094,
+              "q_mvar": 6.499637126922607,
+              "delta_p_mw": -1.5258789289873675e-06,
+              "delta_q_mvar": 6.499637126922359,
+              "terminal_voltage_pu": 0.9049133658409119,
+              "terminal_voltage_angle_deg": -20.269426345825195,
+              "current_ka": 0.84271103,
+              "current_angle_deg": -28.84522247314453
+            },
+            "EMW_ECCL3-_W2": {
+              "base_p_mw": 12.700000000000008,
+              "base_q_mvar": 5.422745585903499e-13,
+              "p_mw": 12.699999809265137,
+              "q_mvar": 8.889410972595215,
+              "delta_p_mw": -1.9073487145249146e-07,
+              "delta_q_mvar": 8.889410972594673,
+              "terminal_voltage_pu": 0.9152847528457642,
+              "terminal_voltage_angle_deg": -24.28368377685547,
+              "current_ka": 0.296317,
+              "current_angle_deg": -59.273921966552734
+            },
+            "EMW_GALA3-_W2": {
+              "base_p_mw": 7.600000000000133,
+              "base_q_mvar": 7.539108226595204e-13,
+              "p_mw": 7.599999904632568,
+              "q_mvar": 39.2247428894043,
+              "delta_p_mw": -9.536756451211659e-08,
+              "delta_q_mvar": 39.224742889403544,
+              "terminal_voltage_pu": 0.6687238812446594,
+              "terminal_voltage_angle_deg": -50.27363586425781,
+              "current_ka": 1.0453011,
+              "current_angle_deg": -129.30813598632812
+            },
+            "WTG_DUNE0G_1": {
+              "base_p_mw": 11.899999999999986,
+              "base_q_mvar": 1.4899060789684277,
+              "p_mw": 11.899999618530273,
+              "q_mvar": 4.31552791595459,
+              "delta_p_mw": -3.8146971270691665e-07,
+              "delta_q_mvar": 2.825621836986162,
+              "terminal_voltage_pu": 0.9213799834251404,
+              "terminal_voltage_angle_deg": -20.59908103942871,
+              "current_ka": 11.495519,
+              "current_angle_deg": -40.5322265625
+            },
+            "WTG_KEIH0G_1": {
+              "base_p_mw": 1.8000000000000005,
+              "base_q_mvar": 0.3159250755090247,
+              "p_mw": 1.7999999523162842,
+              "q_mvar": 0.8058540225028992,
+              "delta_p_mw": -4.768371630881063e-08,
+              "delta_q_mvar": 0.48992894699387446,
+              "terminal_voltage_pu": 0.9203862547874451,
+              "terminal_voltage_angle_deg": -20.988109588623047,
+              "current_ka": 1.7929224,
+              "current_angle_deg": -45.10601043701172
+            },
+            "WTG_LOPA0G_1": {
+              "base_p_mw": 15.200000000000005,
+              "base_q_mvar": -3.4129307335842416,
+              "p_mw": 15.199999809265137,
+              "q_mvar": 16.25006866455078,
+              "delta_p_mw": -1.9073486789977778e-07,
+              "delta_q_mvar": 19.66299939813502,
+              "terminal_voltage_pu": 0.5458049774169922,
+              "terminal_voltage_angle_deg": -74.37678527832031,
+              "current_ka": 34.11154,
+              "current_angle_deg": -121.2890853881836
+            },
+            "WTG_POGB0G": {
+              "base_p_mw": 3.799999999999979,
+              "base_q_mvar": -1.6162346553010565,
+              "p_mw": 3.799999952316284,
+              "q_mvar": -0.738713264465332,
+              "delta_p_mw": -4.768369477048395e-08,
+              "delta_q_mvar": 0.8775213908357244,
+              "terminal_voltage_pu": 0.9051163196563721,
+              "terminal_voltage_angle_deg": -20.750690460205078,
+              "current_ka": 3.5786924,
+              "current_angle_deg": -9.749700546264648
+            },
+            "WTG_TODD0G_1": {
+              "base_p_mw": 10.999999999999918,
+              "base_q_mvar": -1.7742435992266707,
+              "p_mw": 11.0,
+              "q_mvar": 1.0431050062179565,
+              "delta_p_mw": 8.171241461241152e-14,
+              "delta_q_mvar": 2.8173486054446273,
+              "terminal_voltage_pu": 0.9219096899032593,
+              "terminal_voltage_angle_deg": -20.928503036499023,
+              "current_ka": 10.028559,
+              "current_angle_deg": -26.345531463623047
+            }
+          }
+        }
+      },
+      "0.4": {
+        "target_voltage_pu": 0.4,
+        "rf_ohm": 1.1177463090320718,
+        "x_f_ohm": 0.0,
+        "veragrid": {
+          "fault_bus": {
+            "voltage_pu": 0.3983345925807953,
+            "voltage_angle_deg": -85.31834411621094,
+            "current_ka": 6.789817348586106,
+            "current_angle_deg": -85.31834411621094
+          },
+          "changed_wind_generators": {
+            "EMW_BERW3-_W2": {
+              "base_p_mw": 43.10000000000002,
+              "base_q_mvar": 2.491062911502695e-13,
+              "p_mw": 43.099998474121094,
+              "q_mvar": 8.278568267822266,
+              "delta_p_mw": -1.5258789289873675e-06,
+              "delta_q_mvar": 8.278568267822017,
+              "terminal_voltage_pu": 0.8953337073326111,
+              "terminal_voltage_angle_deg": -19.62525177001953,
+              "current_ka": 0.85760033,
+              "current_angle_deg": -30.49809455871582
+            },
+            "EMW_ECCL3-_W2": {
+              "base_p_mw": 12.700000000000008,
+              "base_q_mvar": 5.422745585903499e-13,
+              "p_mw": 12.699999809265137,
+              "q_mvar": 11.110320091247559,
+              "delta_p_mw": -1.9073487145249146e-07,
+              "delta_q_mvar": 11.110320091247017,
+              "terminal_voltage_pu": 0.9022774696350098,
+              "terminal_voltage_angle_deg": -23.69222640991211,
+              "current_ka": 0.327191,
+              "current_angle_deg": -64.8725814819336
+            },
+            "EMW_GALA3-_W2": {
+              "base_p_mw": 7.600000000000133,
+              "base_q_mvar": 7.539108226595204e-13,
+              "p_mw": 7.599999904632568,
+              "q_mvar": 43.20462417602539,
+              "delta_p_mw": -9.536756451211659e-08,
+              "delta_q_mvar": 43.20462417602464,
+              "terminal_voltage_pu": 0.6048570275306702,
+              "terminal_voltage_angle_deg": -50.34925079345703,
+              "current_ka": 1.2688794,
+              "current_angle_deg": -130.37257385253906
+            },
+            "WTG_DUNE0G_1": {
+              "base_p_mw": 11.899999999999986,
+              "base_q_mvar": 1.4899060789684277,
+              "p_mw": 11.899999618530273,
+              "q_mvar": 4.922386646270752,
+              "delta_p_mw": -3.8146971270691665e-07,
+              "delta_q_mvar": 3.432480567302324,
+              "terminal_voltage_pu": 0.9105510711669922,
+              "terminal_voltage_angle_deg": -19.8299617767334,
+              "current_ka": 11.83397,
+              "current_angle_deg": -42.30219268798828
+            },
+            "WTG_KEIH0G_1": {
+              "base_p_mw": 1.8000000000000005,
+              "base_q_mvar": 0.3159250755090247,
+              "p_mw": 1.7999999523162842,
+              "q_mvar": 0.9109459519386292,
+              "delta_p_mw": -4.768371630881063e-08,
+              "delta_q_mvar": 0.5950208764296044,
+              "terminal_voltage_pu": 0.9094074368476868,
+              "terminal_voltage_angle_deg": -20.22629737854004,
+              "current_ka": 1.8561776,
+              "current_angle_deg": -47.069400787353516
+            },
+            "WTG_LOPA0G_1": {
+              "base_p_mw": 15.200000000000005,
+              "base_q_mvar": -3.4129307335842416,
+              "p_mw": 15.199999809265137,
+              "q_mvar": 16.465662002563477,
+              "delta_p_mw": -1.9073486789977778e-07,
+              "delta_q_mvar": 19.878592736147716,
+              "terminal_voltage_pu": 0.45461827516555786,
+              "terminal_voltage_angle_deg": -78.88208770751953,
+              "current_ka": 41.244267,
+              "current_angle_deg": -126.17095184326172
+            },
+            "WTG_POGB0G": {
+              "base_p_mw": 3.799999999999979,
+              "base_q_mvar": -1.6162346553010565,
+              "p_mw": 3.799999952316284,
+              "q_mvar": -0.5533881187438965,
+              "delta_p_mw": -4.768369477048395e-08,
+              "delta_q_mvar": 1.06284653655716,
+              "terminal_voltage_pu": 0.8938204050064087,
+              "terminal_voltage_angle_deg": -19.983293533325195,
+              "current_ka": 3.5948493,
+              "current_angle_deg": -11.697643280029297
+            },
+            "WTG_TODD0G_1": {
+              "base_p_mw": 10.999999999999918,
+              "base_q_mvar": -1.7742435992266707,
+              "p_mw": 11.0,
+              "q_mvar": 1.6375863552093506,
+              "delta_p_mw": 8.171241461241152e-14,
+              "delta_q_mvar": 3.4118299544360213,
+              "terminal_voltage_pu": 0.9106500148773193,
+              "terminal_voltage_angle_deg": -20.169034957885742,
+              "current_ka": 10.218602,
+              "current_angle_deg": -28.636552810668945
+            }
+          }
+        }
+      },
+      "0.3": {
+        "target_voltage_pu": 0.3,
+        "rf_ohm": 0.783857306890786,
+        "x_f_ohm": 0.0,
+        "veragrid": {
+          "fault_bus": {
+            "voltage_pu": 0.30186232924461365,
+            "voltage_angle_deg": -89.91088104248047,
+            "current_ka": 7.3371132118203555,
+            "current_angle_deg": -89.91088104248047
+          },
+          "changed_wind_generators": {
+            "EMW_BERW3-_W2": {
+              "base_p_mw": 43.10000000000002,
+              "base_q_mvar": 2.491062911502695e-13,
+              "p_mw": 43.099998474121094,
+              "q_mvar": 9.509766578674316,
+              "delta_p_mw": -1.5258789289873675e-06,
+              "delta_q_mvar": 9.509766578674068,
+              "terminal_voltage_pu": 0.8885754942893982,
+              "terminal_voltage_angle_deg": -18.75637435913086,
+              "current_ka": 0.8690218,
+              "current_angle_deg": -31.198993682861328
+            },
+            "EMW_ECCL3-_W2": {
+              "base_p_mw": 12.700000000000008,
+              "base_q_mvar": 5.422745585903499e-13,
+              "p_mw": 12.699999809265137,
+              "q_mvar": 12.691357612609863,
+              "delta_p_mw": -1.9073487145249146e-07,
+              "delta_q_mvar": 12.691357612609321,
+              "terminal_voltage_pu": 0.8927668333053589,
+              "terminal_voltage_angle_deg": -22.78812599182129,
+              "current_ka": 0.35185066,
+              "current_angle_deg": -67.76862335205078
+            },
+            "EMW_GALA3-_W2": {
+              "base_p_mw": 7.600000000000133,
+              "base_q_mvar": 7.539108226595204e-13,
+              "p_mw": 7.599999904632568,
+              "q_mvar": 45.31816864013672,
+              "delta_p_mw": -9.536756451211659e-08,
+              "delta_q_mvar": 45.318168640135966,
+              "terminal_voltage_pu": 0.5500839352607727,
+              "terminal_voltage_angle_deg": -48.1781120300293,
+              "current_ka": 1.461476,
+              "current_angle_deg": -128.6580047607422
+            },
+            "WTG_DUNE0G_1": {
+              "base_p_mw": 11.899999999999986,
+              "base_q_mvar": 1.4899060789684277,
+              "p_mw": 11.899999618530273,
+              "q_mvar": 5.328214168548584,
+              "delta_p_mw": -3.8146971270691665e-07,
+              "delta_q_mvar": 3.8383080895801562,
+              "terminal_voltage_pu": 0.9031532406806946,
+              "terminal_voltage_angle_deg": -18.834362030029297,
+              "current_ka": 12.079616,
+              "current_angle_deg": -42.95476531982422
+            },
+            "WTG_KEIH0G_1": {
+              "base_p_mw": 1.8000000000000005,
+              "base_q_mvar": 0.3159250755090247,
+              "p_mw": 1.7999999523162842,
+              "q_mvar": 0.9811998605728149,
+              "delta_p_mw": -4.768371630881063e-08,
+              "delta_q_mvar": 0.6652747850637902,
+              "terminal_voltage_pu": 0.901907205581665,
+              "terminal_voltage_angle_deg": -19.23586654663086,
+              "current_ka": 1.9019338,
+              "current_angle_deg": -47.831153869628906
+            },
+            "WTG_LOPA0G_1": {
+              "base_p_mw": 15.200000000000005,
+              "base_q_mvar": -3.4129307335842416,
+              "p_mw": 14.476273536682129,
+              "q_mvar": 13.11636734008789,
+              "delta_p_mw": -0.7237264633178757,
+              "delta_q_mvar": 16.52929807367213,
+              "terminal_voltage_pu": 0.35589399933815,
+              "terminal_voltage_angle_deg": -79.4452896118164,
+              "current_ka": 45.927704,
+              "current_angle_deg": -121.62374114990234
+            },
+            "WTG_POGB0G": {
+              "base_p_mw": 3.799999999999979,
+              "base_q_mvar": -1.6162346553010565,
+              "p_mw": 3.799999952316284,
+              "q_mvar": -0.4295962154865265,
+              "delta_p_mw": -4.768369477048395e-08,
+              "delta_q_mvar": 1.18663843981453,
+              "terminal_voltage_pu": 0.8861011266708374,
+              "terminal_voltage_angle_deg": -18.988880157470703,
+              "current_ka": 3.6111732,
+              "current_angle_deg": -12.538886070251465
+            },
+            "WTG_TODD0G_1": {
+              "base_p_mw": 10.999999999999918,
+              "base_q_mvar": -1.7742435992266707,
+              "p_mw": 11.0,
+              "q_mvar": 2.0348196029663086,
+              "delta_p_mw": 8.171241461241152e-14,
+              "delta_q_mvar": 3.8090632021929793,
+              "terminal_voltage_pu": 0.9029569029808044,
+              "terminal_voltage_angle_deg": -19.18021583557129,
+              "current_ka": 10.366262,
+              "current_angle_deg": -29.6605224609375
+            }
+          }
+        }
+      },
+      "0.2": {
+        "target_voltage_pu": 0.2,
+        "rf_ohm": 0.5030910359707988,
+        "x_f_ohm": 0.0,
+        "veragrid": {
+          "fault_bus": {
+            "voltage_pu": 0.20465800166130066,
+            "voltage_angle_deg": -92.856689453125,
+            "current_ka": 7.750602473084215,
+            "current_angle_deg": -92.856689453125
+          },
+          "changed_wind_generators": {
+            "EMW_BERW3-_W2": {
+              "base_p_mw": 43.10000000000002,
+              "base_q_mvar": 2.491062911502695e-13,
+              "p_mw": 43.099998474121094,
+              "q_mvar": 10.361902236938477,
+              "delta_p_mw": -1.5258789289873675e-06,
+              "delta_q_mvar": 10.361902236938228,
+              "terminal_voltage_pu": 0.8838335275650024,
+              "terminal_voltage_angle_deg": -17.72504425048828,
+              "current_ka": 0.87747335,
+              "current_angle_deg": -31.243274688720703
+            },
+            "EMW_ECCL3-_W2": {
+              "base_p_mw": 12.700000000000008,
+              "base_q_mvar": 5.422745585903499e-13,
+              "p_mw": 12.699999809265137,
+              "q_mvar": 13.829532623291016,
+              "delta_p_mw": -1.9073487145249146e-07,
+              "delta_q_mvar": 13.829532623290474,
+              "terminal_voltage_pu": 0.8857816457748413,
+              "terminal_voltage_angle_deg": -21.655221939086914,
+              "current_ka": 0.3708571,
+              "current_angle_deg": -69.09320068359375
+            },
+            "EMW_GALA3-_W2": {
+              "base_p_mw": 7.600000000000133,
+              "base_q_mvar": 7.539108226595204e-13,
+              "p_mw": 7.599999904632568,
+              "q_mvar": 46.17182159423828,
+              "delta_p_mw": -9.536756451211659e-08,
+              "delta_q_mvar": 46.17182159423753,
+              "terminal_voltage_pu": 0.5034527778625488,
+              "terminal_voltage_angle_deg": -43.8635139465332,
+              "current_ka": 1.6261059,
+              "current_angle_deg": -124.51629638671875
+            },
+            "WTG_DUNE0G_1": {
+              "base_p_mw": 11.899999999999986,
+              "base_q_mvar": 1.4899060789684277,
+              "p_mw": 11.899999618530273,
+              "q_mvar": 5.59474515914917,
+              "delta_p_mw": -3.8146971270691665e-07,
+              "delta_q_mvar": 4.104839080180742,
+              "terminal_voltage_pu": 0.8982226848602295,
+              "terminal_voltage_angle_deg": -17.676509857177734,
+              "current_ka": 12.249484,
+              "current_angle_deg": -42.85691833496094
+            },
+            "WTG_KEIH0G_1": {
+              "base_p_mw": 1.8000000000000005,
+              "base_q_mvar": 0.3159250755090247,
+              "p_mw": 1.7999999523162842,
+              "q_mvar": 1.0273282527923584,
+              "delta_p_mw": -4.768371630881063e-08,
+              "delta_q_mvar": 0.7114031772833337,
+              "terminal_voltage_pu": 0.8969085216522217,
+              "terminal_voltage_angle_deg": -18.081541061401367,
+              "current_ka": 1.9334998,
+              "current_angle_deg": -47.79657745361328
+            },
+            "WTG_LOPA0G_1": {
+              "base_p_mw": 15.200000000000005,
+              "base_q_mvar": -3.4129307335842416,
+              "p_mw": 10.929686546325684,
+              "q_mvar": 8.096216201782227,
+              "delta_p_mw": -4.270313453674321,
+              "delta_q_mvar": 11.509146935366468,
+              "terminal_voltage_pu": 0.24780459702014923,
+              "terminal_voltage_angle_deg": -75.81741333007812,
+              "current_ka": 45.927704,
+              "current_angle_deg": -112.3467788696289
+            },
+            "WTG_POGB0G": {
+              "base_p_mw": 3.799999999999979,
+              "base_q_mvar": -1.6162346553010565,
+              "p_mw": 3.799999952316284,
+              "q_mvar": -0.3483605682849884,
+              "delta_p_mw": -4.768369477048395e-08,
+              "delta_q_mvar": 1.267874087016068,
+              "terminal_voltage_pu": 0.8809552192687988,
+              "terminal_voltage_angle_deg": -17.83182716369629,
+              "current_ka": 3.6244106,
+              "current_angle_deg": -12.593944549560547
+            },
+            "WTG_TODD0G_1": {
+              "base_p_mw": 10.999999999999918,
+              "base_q_mvar": -1.7742435992266707,
+              "p_mw": 11.0,
+              "q_mvar": 2.2955589294433594,
+              "delta_p_mw": 8.171241461241152e-14,
+              "delta_q_mvar": 4.06980252867003,
+              "terminal_voltage_pu": 0.8978291153907776,
+              "terminal_voltage_angle_deg": -18.0269718170166,
+              "current_ka": 10.472396,
+              "current_angle_deg": -29.81468963623047
+            }
+          }
+        }
+      },
+      "0.1": {
+        "target_voltage_pu": 0.1,
+        "rf_ohm": 0.25,
+        "x_f_ohm": 0.0,
+        "veragrid": {
+          "fault_bus": {
+            "voltage_pu": 0.10348803550004959,
+            "voltage_angle_deg": -91.66313934326172,
+            "current_ka": 7.886847560309412,
+            "current_angle_deg": -91.66313934326172
+          },
+          "changed_wind_generators": {
+            "EMW_BERW3-_W2": {
+              "base_p_mw": 43.10000000000002,
+              "base_q_mvar": 2.491062911502695e-13,
+              "p_mw": 43.099998474121094,
+              "q_mvar": 10.910290718078613,
+              "delta_p_mw": -1.5258789289873675e-06,
+              "delta_q_mvar": 10.910290718078365,
+              "terminal_voltage_pu": 0.8807529807090759,
+              "terminal_voltage_angle_deg": -16.514972686767578,
+              "current_ka": 0.88315225,
+              "current_angle_deg": -30.720361709594727
+            },
+            "EMW_ECCL3-_W2": {
+              "base_p_mw": 12.700000000000008,
+              "base_q_mvar": 5.422745585903499e-13,
+              "p_mw": 12.699999809265137,
+              "q_mvar": 14.61715316772461,
+              "delta_p_mw": -1.9073487145249146e-07,
+              "delta_q_mvar": 14.617153167724068,
+              "terminal_voltage_pu": 0.8808763027191162,
+              "terminal_voltage_angle_deg": -20.278976440429688,
+              "current_ka": 0.38458988,
+              "current_angle_deg": -69.29348754882812
+            },
+            "EMW_GALA3-_W2": {
+              "base_p_mw": 7.600000000000133,
+              "base_q_mvar": 7.539108226595204e-13,
+              "p_mw": 7.599999904632568,
+              "q_mvar": 46.22927474975586,
+              "delta_p_mw": -9.536756451211659e-08,
+              "delta_q_mvar": 46.229274749755106,
+              "terminal_voltage_pu": 0.4662795066833496,
+              "terminal_voltage_angle_deg": -37.01008987426758,
+              "current_ka": 1.7578713,
+              "current_angle_deg": -117.67427825927734
+            },
+            "WTG_DUNE0G_1": {
+              "base_p_mw": 11.899999999999986,
+              "base_q_mvar": 1.4899060789684277,
+              "p_mw": 11.899999618530273,
+              "q_mvar": 5.747651100158691,
+              "delta_p_mw": -3.8146971270691665e-07,
+              "delta_q_mvar": 4.257745021190264,
+              "terminal_voltage_pu": 0.895367443561554,
+              "terminal_voltage_angle_deg": -16.338144302368164,
+              "current_ka": 12.35002,
+              "current_angle_deg": -42.118492126464844
+            },
+            "WTG_KEIH0G_1": {
+              "base_p_mw": 1.8000000000000005,
+              "base_q_mvar": 0.3159250755090247,
+              "p_mw": 1.7999999523162842,
+              "q_mvar": 1.053787350654602,
+              "delta_p_mw": -4.768371630881063e-08,
+              "delta_q_mvar": 0.7378622751455773,
+              "terminal_voltage_pu": 0.8940137028694153,
+              "terminal_voltage_angle_deg": -16.74525260925293,
+              "current_ka": 1.952154,
+              "current_angle_deg": -47.091552734375
+            },
+            "WTG_LOPA0G_1": {
+              "base_p_mw": 15.200000000000005,
+              "base_q_mvar": -3.4129307335842416,
+              "p_mw": 4.879970073699951,
+              "q_mvar": 1.4670394659042358,
+              "delta_p_mw": -10.320029926300053,
+              "delta_q_mvar": 4.879970199488477,
+              "terminal_voltage_pu": 0.10507113486528397,
+              "terminal_voltage_angle_deg": -53.04310607910156,
+              "current_ka": 40.579998,
+              "current_angle_deg": -69.77517700195312
+            },
+            "WTG_POGB0G": {
+              "base_p_mw": 3.799999999999979,
+              "base_q_mvar": -1.6162346553010565,
+              "p_mw": 3.799999952316284,
+              "q_mvar": -0.3017809987068176,
+              "delta_p_mw": -4.768369477048395e-08,
+              "delta_q_mvar": 1.3144536565942389,
+              "terminal_voltage_pu": 0.8779748678207397,
+              "terminal_voltage_angle_deg": -16.493925094604492,
+              "current_ka": 3.6329298,
+              "current_angle_deg": -11.953251838684082
+            },
+            "WTG_TODD0G_1": {
+              "base_p_mw": 10.999999999999918,
+              "base_q_mvar": -1.7742435992266707,
+              "p_mw": 11.0,
+              "q_mvar": 2.4450876712799072,
+              "delta_p_mw": 8.171241461241152e-14,
+              "delta_q_mvar": 4.2193312705065775,
+              "terminal_voltage_pu": 0.8948594331741333,
+              "terminal_voltage_angle_deg": -16.691307067871094,
+              "current_ka": 10.5366,
+              "current_angle_deg": -29.223308563232422
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -83,6 +83,8 @@ class BlockDiagramConnection:
     port_number_to: int
     color: str
     elbow_points: List[Tuple[float, float]] = None
+    route_style: str = "RETICULAR"
+    locked: bool = False
     
     def __post_init__(self):
         if self.elbow_points is None:
@@ -98,7 +100,9 @@ class BlockDiagramConnection:
                 'port_number_from': self.port_number_from,
                 'port_number_to': self.port_number_to,
                 'color': self.color,
-                'elbow_points': self.elbow_points}
+                'elbow_points': self.elbow_points,
+                'route_style': self.route_style,
+                'locked': self.locked}
 
     def copy(self):
         return BlockDiagramConnection(
@@ -107,7 +111,9 @@ class BlockDiagramConnection:
             port_number_from=self.port_number_from,
             port_number_to=self.port_number_to,
             color=self.color,
-            elbow_points=list(self.elbow_points)
+            elbow_points=list(self.elbow_points),
+            route_style=self.route_style,
+            locked=self.locked,
         )
 
 
@@ -196,7 +202,9 @@ class BlockDiagram:
                    port_number_from: int,
                    port_number_to: int,
                    color: str | None = None,
-                   elbow_points: List[Tuple[float, float]] = None):
+                   elbow_points: List[Tuple[float, float]] = None,
+                   route_style: str = "RETICULAR",
+                   locked: bool = False):
         """
         :param connectionitem_uid:
         :param device_uid_from:
@@ -214,7 +222,9 @@ class BlockDiagram:
             port_number_from=port_number_from,
             port_number_to=port_number_to,
             color=color,
-            elbow_points=elbow_points if elbow_points is not None else []
+            elbow_points=elbow_points if elbow_points is not None else [],
+            route_style=route_style,
+            locked=locked,
         )
 
     def get_node_data_dict(self) -> Dict[int, Dict[str, Any]]:
@@ -297,8 +307,9 @@ class BlockDiagram:
                 port_number_from=con['port_number_from'],
                 port_number_to=con['port_number_to'],
                 color=con['color'],
-                elbow_points=con.get('elbow_points', [])
+                elbow_points=con.get('elbow_points', []),
+                route_style=con.get('route_style', 'RETICULAR'),
+                locked=bool(con.get('locked', False)),
             ))
-
 
 

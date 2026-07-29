@@ -53,6 +53,8 @@ class MatpowerGenerator:
         Parses a single row of generator data and assigns values to the instance attributes.
         :param row: List of values corresponding to a MATPOWER generator row.
         """
+        row_size = len(row)
+
         # Assign values explicitly
         self.gen_bus = int(row[0])           # Bus number
         self.pg = float(row[1])             # Real power output (MW)
@@ -65,28 +67,77 @@ class MatpowerGenerator:
         self.pmax = float(row[8])           # Maximum real power output
         self.pmin = float(row[9])           # Minimum real power output
 
-        if len(row) > 10:
+        # MATPOWER expects columns through APF, but some external case files
+        # omit trailing generator columns. Preserve constructor defaults for
+        # any missing tail fields instead of indexing past the row.
+        if row_size > 10:
             self.pc1 = float(row[10])           # Lower real power output of PQ capability curve
-            self.pc2 = float(row[11])           # Upper real power output of PQ capability curve
-            self.qc1min = float(row[12])        # Minimum reactive power at Pc1
-            self.qc1max = float(row[13])        # Maximum reactive power at Pc1
-            self.qc2min = float(row[14])        # Minimum reactive power at Pc2
-            self.qc2max = float(row[15])        # Maximum reactive power at Pc2
-            self.ramp_agc = float(row[16])      # Ramp rate for load following/AGC
-            self.ramp_10 = float(row[17])       # Ramp rate for 10-minute reserves
-            self.ramp_30 = float(row[18])       # Ramp rate for 30-minute reserves
-            self.ramp_q = float(row[19])        # Ramp rate for reactive power
-            self.apf = float(row[20])           # Area participation factor
+        else:
+            pass
 
-        if len(row) > 21:
+        if row_size > 11:
+            self.pc2 = float(row[11])           # Upper real power output of PQ capability curve
+        else:
+            pass
+
+        if row_size > 12:
+            self.qc1min = float(row[12])        # Minimum reactive power at Pc1
+        else:
+            pass
+
+        if row_size > 13:
+            self.qc1max = float(row[13])        # Maximum reactive power at Pc1
+        else:
+            pass
+
+        if row_size > 14:
+            self.qc2min = float(row[14])        # Minimum reactive power at Pc2
+        else:
+            pass
+
+        if row_size > 15:
+            self.qc2max = float(row[15])        # Maximum reactive power at Pc2
+        else:
+            pass
+
+        if row_size > 16:
+            self.ramp_agc = float(row[16])      # Ramp rate for load following/AGC
+        else:
+            pass
+
+        if row_size > 17:
+            self.ramp_10 = float(row[17])       # Ramp rate for 10-minute reserves
+        else:
+            pass
+
+        if row_size > 18:
+            self.ramp_30 = float(row[18])       # Ramp rate for 30-minute reserves
+        else:
+            pass
+
+        if row_size > 19:
+            self.ramp_q = float(row[19])        # Ramp rate for reactive power
+        else:
+            pass
+
+        if row_size > 20:
+            self.apf = float(row[20])           # Area participation factor
+        else:
+            pass
+
+        if row_size > 21:
             self.mu_pmax = float(row[21])       # Kuhn-Tucker multiplier on upper Pg limit
             self.mu_pmin = float(row[22])       # Kuhn-Tucker multiplier on lower Pg limit
             self.mu_qmax = float(row[23])       # Kuhn-Tucker multiplier on upper Qg limit
             self.mu_qmin = float(row[24])       # Kuhn-Tucker multiplier on lower Qg limit
+        else:
+            pass
 
-        if len(row) > 25:
+        if row_size > 25:
             self.dispatchable_gen = int(row[25])  # Dispatchable generator flag
             self.fix_power_gen = int(row[26])     # Fixed power generation flag
+        else:
+            pass
 
 
     def parse_cost(self, row, logger):

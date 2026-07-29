@@ -218,6 +218,7 @@ class BaseMainGui(QMainWindow):
         self.stuff_running_now: List[SimulationTypes] = list()
 
         self.session: SimulationSession = SimulationSession(name='GUI session')
+
         self.dynamic_editor_workspace_session: DynamicEditorWorkspaceSession = DynamicEditorWorkspaceSession()
 
         self._file_name = ''
@@ -533,12 +534,12 @@ class BaseMainGui(QMainWindow):
         return workspace
 
     def open_dynamic_editor(
-        self,
-        api_object,
-        circuit,
-        preferred_mode: DynamicSimulationMode | None = None,
-        target_workspace: DynamicEditorWorkspaceWindow | None = None,
-        show_tree: bool = False,
+            self,
+            api_object,
+            circuit,
+            preferred_mode: DynamicSimulationMode | None = None,
+            target_workspace: DynamicEditorWorkspaceWindow | None = None,
+            show_tree: bool = False,
     ) -> DynamicBlockEditorGUI | None:
         """
         Open one dynamic editor in this main GUI workspace session.
@@ -1132,8 +1133,8 @@ class BaseMainGui(QMainWindow):
                 self.refresh_ai_context_if_available()
                 self.ai_backend_state = self.ai_chat_dialogue.get_backend_state()
                 if (
-                    self.ai_backend_state.provider_tpe == ProviderType.LOCAL_LLAMA_CPP
-                    and len(self.ai_backend_state.base_url.strip()) == 0
+                        self.ai_backend_state.provider_tpe == ProviderType.LOCAL_LLAMA_CPP
+                        and len(self.ai_backend_state.base_url.strip()) == 0
                 ):
                     default_state: AiBackendState = self.build_default_ai_backend_state()
                     self.ai_backend_state = default_state

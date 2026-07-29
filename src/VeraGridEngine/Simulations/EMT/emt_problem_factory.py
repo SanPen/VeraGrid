@@ -17,6 +17,7 @@ from VeraGridEngine.Simulations.driver_template import DummySignal
 EMT_PROBLEM_CLASS_MAP = {
     EmtProblemTypes.CurrentBalance: EmtProblemDae,
     EmtProblemTypes.Multilinear: EmtProblemMultilinear,
+
 }
 
 

@@ -722,7 +722,12 @@ class SchematicDiagram(BaseDiagram):
         dock_record.offset = float(dock_record.offset)
 
         if dock_record.order is None and owner_device is not None:
-            dock_record.order = api_object.get_bus_pos(owner_device)
+            if owner_device.device_type == DeviceType.BusDevice or owner_device.device_type == DeviceType.BusBarDevice:
+                # Bus-connected injections keep their electrical slot order.
+                dock_record.order = api_object.get_bus_pos(owner_device)
+            else:
+                # Fluid-node children do not expose bus ordering, so keep one stable default slot.
+                dock_record.order = 0
         elif dock_record.order is None:
             dock_record.order = 0
         else:

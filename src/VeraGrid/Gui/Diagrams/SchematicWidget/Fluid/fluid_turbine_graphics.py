@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from PySide6.QtGui import QPen
 from PySide6.QtWidgets import (QMenu)
 from VeraGridEngine.Devices.Fluid.fluid_turbine import FluidTurbine
-from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, Circle
+from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED, FluidTurbineSymbol
 from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
 from VeraGrid.Gui.Diagrams.SchematicWidget.Injections.injections_template_graphics import InjectionTemplateGraphicItem
 
@@ -35,9 +35,7 @@ class FluidTurbineGraphicItem(InjectionTemplateGraphicItem):
                                               w=40,
                                               h=40)
 
-        self.set_glyph(
-            glyph=Circle(self, 40, 40, "T", self.update_nexus)
-        )
+        self.set_glyph(glyph=FluidTurbineSymbol(self, 40, 40))
 
     def recolour_mode(self) -> None:
         """

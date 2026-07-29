@@ -1,7 +1,9 @@
-import pytest
-from PySide6 import QtCore, QtGui, QtWidgets
+import sys
 from pathlib import Path
 import xml.etree.ElementTree as ET
+
+import pytest
+from PySide6 import QtCore, QtGui, QtWidgets
 
 from VeraGrid.Gui.ShortCircuitEditor.short_circuit_selector import ShortCircuitSelector
 from VeraGrid.Gui.AboutDialogue.about_dialogue import translate_about_dialog
@@ -120,6 +122,34 @@ def test_short_circuit_selector_uses_combo_data_not_display_text(qt_app: object)
     assert isinstance(fault, FaultType)
     assert isinstance(method, MethodShortCircuit)
     assert isinstance(phase, PhasesShortCircuit)
+
+
+def test_short_circuit_selector_rebuilds_method_combo_without_transient_none(qt_app: object,
+                                                                             monkeypatch: pytest.MonkeyPatch) -> None:
+    """
+    Rebuilding the method combo should not emit a transient selection with no enum data.
+    """
+    _unused_app: object = qt_app
+    errors: list[BaseException] = list()
+
+    def collect_qt_slot_exception(exc_type: type[BaseException],
+                                  exc_value: BaseException,
+                                  traceback: object) -> None:
+        """
+        Collect exceptions raised from Qt signal handlers.
+        """
+        del exc_type
+        del traceback
+        errors.append(exc_value)
+
+    monkeypatch.setattr(sys, "excepthook", collect_qt_slot_exception)
+
+    dialog = ShortCircuitSelector()
+    dialog.ui.cb_fault.setCurrentIndex(1)
+    QtWidgets.QApplication.processEvents()
+
+    assert errors == []
+    assert isinstance(dialog.ui.cb_method.currentData(), MethodShortCircuit)
 
 
 def test_install_translators_loads_spanish_catalog(qt_app: object) -> None:

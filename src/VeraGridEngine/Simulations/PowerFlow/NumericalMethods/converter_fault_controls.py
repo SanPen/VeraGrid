@@ -55,6 +55,8 @@ def reec_d(u,
            Vpf,
            Qpf,
            Ppf,
+           vblkl,
+           vblkh,
            ):
 
     Vt = u  # Input 0
@@ -64,8 +66,6 @@ def reec_d(u,
     Pref_WGO = Ppf  # Input 14
 
     # Current Blocking
-    vblkl = 0.65 # Voltage below which the converter is blocked in [pu]
-    vblkh = 1.2 # Voltage above which the converter is blocked in [pu]
     is_blocked = float((Vt >= vblkh) or (Vt <= vblkl))
 
     # Reactive Current Injection
@@ -155,7 +155,7 @@ def genstat(ur, ui, iq_ref, id_ref, Sn, is_blocked):
 
         return Pref, Qref
 
-def wecc_wt_type_4b(V_measured, Vpf, St_vsc_pf, S_base_vg, S_rated_vsc):
+def wecc_wt_type_4b(V_measured, Vpf, St_vsc_pf, S_base_vg, S_rated_vsc, vblkl, vblkh=1.2):
 
     Vt = abs(V_measured) # Absolute value of the converter's voltage [pu]
     Vt_r = np.real(V_measured) # Real component of the converter's voltage [pu]
@@ -167,7 +167,9 @@ def wecc_wt_type_4b(V_measured, Vpf, St_vsc_pf, S_base_vg, S_rated_vsc):
     Iqcmd, Ipcmd, is_blocked = reec_d(u=Vt,
                                       Vpf=Vpf,
                                       Qpf=Qpf,
-                                      Ppf=Ppf)
+                                      Ppf=Ppf,
+                                      vblkl=vblkl,
+                                      vblkh=vblkh)
 
     iq_ref, id_ref = regc_c(Iqcmd=Iqcmd, # Current reference from REEC_D [pu]
                             Ipcmd=Ipcmd, # Current reference from REEC_D [pu]

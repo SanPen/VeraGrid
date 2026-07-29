@@ -305,7 +305,7 @@ class TimeSeriesLinearOptimalPowerFlowInvestmentProblem(BlackBoxProblemTemplate)
     def __init__(self,
                  grid: MultiCircuit,
                  opf_options: OptimalPowerFlowOptions | None,
-                 time_indices: IntVec,
+                 time_indices: IntVec | None,
                  clustering_results: ClusteringResults | None = None,
                  engine: EngineType = EngineType.VeraGrid) -> None:
         """

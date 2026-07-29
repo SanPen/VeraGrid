@@ -1330,6 +1330,17 @@ class V_I_CurveSequenceType(Enum):
         Squence points type
     """
 
+class X_Y_SequenceType(Enum):
+    """
+        Squence points type
+    """
+
+class X_Y_Z_Matrix(Enum):
+    """
+        Squence points type
+    """
+
+
 
 
 class WindingType(str, Enum):
@@ -3342,6 +3353,7 @@ class RmsProblemTypes(Enum):
     Tensygrid       = "Tensygrid"
     PowerBalance    = "RmsProblemDae"
     PowerBalanceVectorized = "RmsProblemDaeVectorized"
+    PowerBalanceFullVectorized = "RmsProblemDaeFullVectorized"
     CurrentBalance  = "RmsProblemPhasor"
     Multilinear     = "RmsProblemMultilinear"
 
@@ -4328,10 +4340,55 @@ class BlockType(Enum):
     CONST = "CONST"
     GAIN = "GAIN"
     SUM = "SUM"
-    SUBSTR = "SUBSTR"
-    PRODUCT = "PRODUCT"
     DIVIDE = "Divide"
+    PRODUCT = "PRODUCT"
     ABS = "Abs"
+    INTEGRATOR = "Integrator"
+    POWER = "Power"
+    SIN = "Sin"
+    COS = "Cos"
+    TAN = "Tan"
+    EXP = "Exp"
+    LOG = "Log"
+    LOG10 = "Log10"
+    SQRT = "Sqrt"
+    ASIN = "Asin"
+    ACOS = "Acos"
+    ATAN = "Atan"
+    SINH = "Sinh"
+    COSH = "Cosh"
+    TANH = "Tanh"
+    FLOOR = "Floor"
+    CEIL = "Ceil"
+    ROUND = "Round"
+    REAL = "Real"
+    IMAG = "Imag"
+    CONJ = "Conj"
+    ANGLE = "Angle"
+    HEAVISIDE = "Heaviside"
+    RAND = "Rand"
+    ATAN2 = "Atan2"
+    MIN = "Min"
+    MAX = "Max"
+
+    NOTYPE = "Notype"
+
+    # common basic arrays and matrices
+
+    INVERSE_LOOKUP_ARRAY = "INVERSE_LOOKUP_ARRAY"
+    INVERSE_LOOKUP_ARRAY_OBJECT = "INVERSE_LOOKUP_ARRAY_OBJECT"
+    INVERSE_LOOKUP_ARRAY_LINEAR_NOCLIPPING = "INVERSE_LOOKUP_ARRAY_LINEAR_NOCLIPPING"
+    LOOKUP_ARRAY_LINEAR = "LOOKUP_ARRAY_LINEAR"
+    LOOKUP_ARRAY_SPLINE = "LOOKUP_ARRAY_SPLINE"
+    LOOKUP_ARRAY_LINEAR_FIXED = "LOOKUP_ARRAY_LINEAR_FIXED"
+    LOOKUP_ARRAY_LINEAR_VARIABLE = "LOOKUP_ARRAY_LINEAR_VARIABLE"
+    LOOKUP_ARRAY_OBJECT_LINEAR_NOCLIPPING = "LOOKUP_ARRAY_OBJECT_LINEAR_NOCLIPPING"
+    LOOKUP_ARRAY_OBJECT = "LOOKUP_ARRAY_OBJECT"
+    LOOKUP_ARRAY_OBJECT_SPLINE = "LOOKUP_MATRIX_LINEAR"
+    LOOKUP_MATRIX_LINEAR = "LOOKUP_MATRIX_LINEAR"
+    LOOKUP_MATRIX_SPLINE = "LOOKUP_MATRIX_SPLINE"
+    LOOKUP_MATRIX_LINEAR_OBJECT = "LOOKUP_MATRIX_LINEAR_OBJECT"
+    LOOKUP_MATRIX_SPLINE_OBJECT = "LOOKUP_MATRIX_SPLINE_OBJECT"
 
     # RMS
     GENRAW = "GENRAW"
@@ -4465,6 +4522,7 @@ class ProceduralLogicType(Enum):
     StartupHandover = "startup_handover"
     ValveState = "valve_state"
     ThreePhaseCarrierPwm = "three_phase_carrier_pwm"
+    ThreePhaseCarrierSampledModulation = "three_phase_carrier_sampled_modulation"
 
     def __str__(self) -> str:
         return str(self.value)
@@ -4559,3 +4617,10 @@ class DynamicTableModelMode(Enum):
     VARIABLES = "variables"
     PARAMETERS = "parameters"
     EQUATIONS = "equations"
+
+class DynEditorGraphicsModes(Enum):
+    """
+    Modes to definr editor colouring
+    """
+    DARK = "Dark"
+    LIGHT = "Light"

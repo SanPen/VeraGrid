@@ -382,10 +382,15 @@ def build_basic_library_branch() -> Dict[str, Any]:
             LibraryLeafSpec("Const", BlockType.CONST),
             LibraryLeafSpec("Gain", BlockType.GAIN),
             LibraryLeafSpec("Sum", BlockType.SUM),
-            LibraryLeafSpec("Substr", BlockType.SUBSTR),
             LibraryLeafSpec("Product", BlockType.PRODUCT),
-            LibraryLeafSpec("Divide", BlockType.DIVIDE),
             LibraryLeafSpec("Abs", BlockType.ABS),
+        ],
+        "Arrays and matrices": [
+            LibraryLeafSpec("Inverse Lookup array (linear)", BlockType.INVERSE_LOOKUP_ARRAY),
+            LibraryLeafSpec("Lookup array (linear)", BlockType.LOOKUP_ARRAY_LINEAR),
+            LibraryLeafSpec("Lookup array (spline)", BlockType.LOOKUP_ARRAY_SPLINE),
+            LibraryLeafSpec("Lookup matrix (linear)", BlockType.LOOKUP_MATRIX_LINEAR),
+            LibraryLeafSpec("Lookup matrix (spline)", BlockType.LOOKUP_MATRIX_SPLINE),
         ],
     }
 

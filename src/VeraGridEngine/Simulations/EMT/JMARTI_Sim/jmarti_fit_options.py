@@ -40,6 +40,7 @@ class JMartiFitOptions(OptionsTemplate):
         '_passivity_frequency_sample_count',
         '_passivity_minimum_real_yc_tolerance',
         '_passivity_maximum_hres_gain_tolerance',
+        'import_line_length'
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
@@ -64,6 +65,7 @@ class JMartiFitOptions(OptionsTemplate):
         GCProp(key='passivity_frequency_sample_count', tpe=int),
         GCProp(key='passivity_minimum_real_yc_tolerance', tpe=float),
         GCProp(key='passivity_maximum_hres_gain_tolerance', tpe=float),
+        GCProp(key='import_line_length', tpe=float),
     )
 
     def __init__(self,
@@ -87,7 +89,8 @@ class JMartiFitOptions(OptionsTemplate):
                  vf_include_proportional_term: bool = False,
                  passivity_frequency_sample_count: int = 1024,
                  passivity_minimum_real_yc_tolerance: float = 1.0e-8,
-                 passivity_maximum_hres_gain_tolerance: float = 1.0e-6) -> None:
+                 passivity_maximum_hres_gain_tolerance: float = 1.0e-6,
+                 import_line_length: float = 0.0) -> None:
         """
         Initialize the JMARTI fitting options.
 
@@ -137,6 +140,7 @@ class JMartiFitOptions(OptionsTemplate):
         self._passivity_frequency_sample_count: int = 1024
         self._passivity_minimum_real_yc_tolerance: float = 1.0e-8
         self._passivity_maximum_hres_gain_tolerance: float = 1.0e-6
+        self.import_line_length: float = 0.0
 
         self.set_reference_frequency_hz(reference_frequency_hz)
         self.set_use_frequency_exploration_window(use_frequency_exploration_window)
@@ -159,6 +163,7 @@ class JMartiFitOptions(OptionsTemplate):
         self.set_passivity_frequency_sample_count(passivity_frequency_sample_count)
         self.set_passivity_minimum_real_yc_tolerance(passivity_minimum_real_yc_tolerance)
         self.set_passivity_maximum_hres_gain_tolerance(passivity_maximum_hres_gain_tolerance)
+
 
     def get_reference_frequency_hz(self) -> float:
         """

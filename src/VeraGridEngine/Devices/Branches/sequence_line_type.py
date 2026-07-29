@@ -342,10 +342,10 @@ class SequenceLineType(DynamicDevice):
         except np.linalg.LinAlgError:
             adm.values[1:4, 1:4] = np.linalg.pinv(z_abc)
 
-        adm.phN = 0
-        adm.phA = 1
-        adm.phB = 1
-        adm.phC = 1
+        adm.phN = False
+        adm.phA = True
+        adm.phB = True
+        adm.phC = True
 
         return adm
 
@@ -370,10 +370,10 @@ class SequenceLineType(DynamicDevice):
         adm = AdmittanceMatrix(size=4)
         adm.values[1:4, 1:4] = y_abc
 
-        adm.phN = 0
-        adm.phA = 1
-        adm.phB = 1
-        adm.phC = 1
+        adm.phN = False
+        adm.phA = True
+        adm.phB = True
+        adm.phC = True
 
         return adm
 

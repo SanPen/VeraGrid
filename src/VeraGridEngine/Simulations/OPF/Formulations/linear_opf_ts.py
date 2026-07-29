@@ -41,6 +41,54 @@ from VeraGridEngine.Simulations.LinearFactors.linear_analysis import (LinearAnal
                                                                       LinearMultiContingencies)
 
 
+def get_hydro_power_to_flow_coeff(flow_rate: float,
+                                  efficiency: float,
+                                  rated_power: float,
+                                  sbase: float,
+                                  logger: Logger,
+                                  device_label: str) -> float:
+    """
+    Build one safe power-to-flow conversion coefficient for hydro-like devices.
+
+    :param flow_rate: Device maximum flow rate.
+    :param efficiency: Device efficiency factor.
+    :param rated_power: Absolute generator power magnitude used in the conversion.
+    :param sbase: System base power.
+    :param logger: Simulation logger.
+    :param device_label: Device family label for diagnostics.
+    :return: Finite coefficient or ``0.0`` for invalid data.
+    """
+    if not np.isfinite(flow_rate) or flow_rate < 0.0:
+        logger.add_error(msg=f'Invalid {device_label} flow rate for hydro OPF coefficient',
+                         value=flow_rate)
+        return 0.0
+    else:
+        pass
+
+    if not np.isfinite(efficiency) or efficiency <= 0.0:
+        logger.add_error(msg=f'Invalid {device_label} efficiency for hydro OPF coefficient',
+                         value=efficiency)
+        return 0.0
+    else:
+        pass
+
+    if not np.isfinite(rated_power) or rated_power <= 0.0:
+        logger.add_error(msg=f'Invalid {device_label} generator power bound for hydro OPF coefficient',
+                         value=rated_power)
+        return 0.0
+    else:
+        pass
+
+    if not np.isfinite(sbase) or sbase <= 0.0:
+        logger.add_error(msg='Invalid system base power for hydro OPF coefficient',
+                         value=sbase)
+        return 0.0
+    else:
+        pass
+
+    return flow_rate / (rated_power / sbase * efficiency)
+
+
 class BusVars:
     """
     Struct to store the bus related vars
@@ -2700,7 +2748,13 @@ def add_hydro_formulation(t: Union[int, None],
         plant_idx = turbine_data.plant_idx[m]
 
         # flow [m3/s] = pgen [pu] * max_flow [m3/s] / (Pgen_max [MW] / Sbase [MW] * eff)
-        coeff = turbine_data.max_flow_rate[m] / (generator_data.pmax[gen_idx] / Sbase * turbine_data.efficiency[m])
+        # Convert electrical output into water flow, or clamp to zero when the device data is invalid.
+        coeff = get_hydro_power_to_flow_coeff(flow_rate=float(turbine_data.max_flow_rate[m]),
+                                              efficiency=float(turbine_data.efficiency[m]),
+                                              rated_power=float(generator_data.pmax[gen_idx]),
+                                              sbase=Sbase,
+                                              logger=logger,
+                                              device_label='turbine')
         turbine_flow = (generator_vars.p[t, gen_idx] * coeff)
         # node_vars.flow_out[t, plant_idx] = turbine_flow  # assume only 1 turbine connected
 
@@ -2723,7 +2777,13 @@ def add_hydro_formulation(t: Union[int, None],
         # flow [m3/s] = pcons [pu] * max_flow [m3/s] * eff / (Pcons_min [MW] / Sbase [MW])
         # invert the efficiency compared to a turbine
         # pmin instead of pmax because the sign should be inverted (consuming instead of generating)
-        coeff = pump_data.max_flow_rate[m] * pump_data.efficiency[m] / (abs(generator_data.pmin[gen_idx]) / Sbase)
+        # Convert electrical consumption into pumped flow, or clamp to zero when the device data is invalid.
+        coeff = get_hydro_power_to_flow_coeff(flow_rate=float(pump_data.max_flow_rate[m]),
+                                              efficiency=1.0 / float(pump_data.efficiency[m]),
+                                              rated_power=abs(float(generator_data.pmin[gen_idx])),
+                                              sbase=Sbase,
+                                              logger=logger,
+                                              device_label='pump')
         pump_flow = (generator_vars.p[t, gen_idx] * coeff)
         # node_vars.flow_in[t, plant_idx] = pump_flow  # assume only 1 pump connected
 
@@ -2744,7 +2804,13 @@ def add_hydro_formulation(t: Union[int, None],
         # flow[m3/s] = pcons [pu] * max_flow [m3/s] * eff / (Pcons_max [MW] / Sbase [MW])
         # invert the efficiency compared to a turbine
         # pmin instead of pmax because the sign should be inverted (consuming instead of generating)
-        coeff = p2x_data.max_flow_rate[m] * p2x_data.efficiency[m] / (abs(generator_data.pmin[gen_idx]) / Sbase)
+        # Convert electrical consumption into process flow, or clamp to zero when the device data is invalid.
+        coeff = get_hydro_power_to_flow_coeff(flow_rate=float(p2x_data.max_flow_rate[m]),
+                                              efficiency=1.0 / float(p2x_data.efficiency[m]),
+                                              rated_power=abs(float(generator_data.pmin[gen_idx])),
+                                              sbase=Sbase,
+                                              logger=logger,
+                                              device_label='p2x')
         p2x_flow = (generator_vars.p[t, gen_idx] * coeff)
 
         # if t > 0:

@@ -109,8 +109,15 @@ class FileOpenThread(QThread):
                                 options=self.options)
 
         if self.options.crash_on_errors:
-            self.circuit = file_handler.open(text_func=self.progress_text.emit,
+            try:
+                self.circuit = file_handler.open(text_func=self.progress_text.emit,
                                              progress_func=self.progress_signal.emit)
+            except FileNotFoundError as e:
+                self.valid = False
+                self.logger.add_error(msg=str(e))
+                self.progress_text.emit('Error loading')
+                self.done_signal.emit()
+                return
         else:
             try:
                 self.circuit = file_handler.open(text_func=self.progress_text.emit,

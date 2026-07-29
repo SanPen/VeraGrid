@@ -92,7 +92,7 @@ class AvailableTransferCapacityTimeSeriesResults(ResultsTemplate):
 
         :return:
         """
-        self.report_headers = [
+        self.report_headers = np.array([
             'Time',
             'Branch',
             'Base flow',
@@ -107,7 +107,7 @@ class AvailableTransferCapacityTimeSeriesResults(ResultsTemplate):
             'ATC',
             'Base exchange flow',
             'NTC'
-        ]
+        ])
 
         self.report = np.empty((len(self.raw_report), len(self.report_headers)), dtype=object)
 
@@ -216,7 +216,7 @@ class AvailableTransferCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
     def __init__(self,
                  grid: MultiCircuit,
                  options: AvailableTransferCapacityOptions | None,
-                 time_indices: IntVec,
+                 time_indices: IntVec | None,
                  clustering_results: Union[ClusteringResults, None] = None):
 
         """

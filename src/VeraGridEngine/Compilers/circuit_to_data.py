@@ -633,6 +633,7 @@ def get_load_data(data: LoadData,
             data.idtag[ii] = elm.idtag
             data.original_idx[ii] = ii
             data.scalable[ii] = elm.scalable
+            data.is_static_generator[ii] = True
 
             data.S[ii] -= elm.get_S_at(t_idx)
             data.active[ii] = elm.get_active_at(t_idx)
@@ -1105,6 +1106,8 @@ def fill_generator_parent(
 
     data.p[k] = elm.get_P_at(t_idx)
     data.active[k] = elm.get_active_at(t_idx)
+    if hasattr(data, 'is_static_generator'):
+        data.is_static_generator[k] = elm.is_static_generator
 
     data.v[k] = elm.get_Vset_at(t_idx)
     data.k_droop[k] = elm.k_droop

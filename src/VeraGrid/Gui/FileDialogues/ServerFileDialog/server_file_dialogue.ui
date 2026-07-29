@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ServerFileDialog</class>
+ <widget class="QDialog" name="ServerFileDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1040</width>
+    <height>720</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Server Files</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../../Icons/icons.qrc">
+    <normaloff>:/Icons/icons/server.png</normaloff>:/Icons/icons/server.png</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QToolBar" name="toolBar">
+     <property name="iconSize">
+      <size>
+       <width>24</width>
+       <height>24</height>
+      </size>
+     </property>
+     <property name="toolButtonStyle">
+      <enum>Qt::ToolButtonTextBesideIcon</enum>
+     </property>
+     <addaction name="actionRefresh"/>
+     <addaction name="separator"/>
+     <addaction name="actionLoadFile"/>
+     <addaction name="actionLoadBase"/>
+     <addaction name="actionLoadModel"/>
+     <addaction name="separator"/>
+     <addaction name="actionSaveCurrent"/>
+     <addaction name="separator"/>
+     <addaction name="actionDeleteSelected"/>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSplitter" name="mainSplitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QTreeView" name="filesTreeView">
+      <property name="minimumSize">
+       <size>
+        <width>640</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="alternatingRowColors">
+       <bool>true</bool>
+      </property>
+      <property name="uniformRowHeights">
+       <bool>true</bool>
+      </property>
+      <property name="itemsExpandable">
+       <bool>true</bool>
+      </property>
+      <property name="rootIsDecorated">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QWidget" name="detailWidget">
+      <property name="minimumSize">
+       <size>
+        <width>280</width>
+        <height>0</height>
+       </size>
+      </property>
+      <layout class="QVBoxLayout" name="detailLayout">
+       <property name="leftMargin">
+        <number>0</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <property name="rightMargin">
+        <number>0</number>
+       </property>
+       <property name="bottomMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="selectionGroupBox">
+         <property name="title">
+          <string>Selection</string>
+         </property>
+         <layout class="QFormLayout" name="formLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="kindTitleLabel">
+            <property name="text">
+             <string>Type</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="kindValueLabel">
+            <property name="text">
+             <string>-</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="fileNameTitleLabel">
+            <property name="text">
+             <string>File name</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="fileNameValueLabel">
+            <property name="text">
+             <string>-</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="fileIdTitleLabel">
+            <property name="text">
+             <string>File idtag</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="fileIdValueLabel">
+            <property name="text">
+             <string>-</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="modelNameTitleLabel">
+            <property name="text">
+             <string>Model name</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QLabel" name="modelNameValueLabel">
+            <property name="text">
+             <string>-</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="modelIdTitleLabel">
+            <property name="text">
+             <string>Model idtag</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1">
+           <widget class="QLabel" name="modelIdValueLabel">
+            <property name="text">
+             <string>-</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="ownerTitleLabel">
+            <property name="text">
+             <string>Owner user</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="ownerValueLabel">
+            <property name="text">
+             <string>-</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="createdTitleLabel">
+            <property name="text">
+             <string>Created at</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLabel" name="createdValueLabel">
+            <property name="text">
+             <string>-</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="helpGroupBox">
+         <property name="title">
+          <string>Actions</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QLabel" name="helpLabel">
+            <property name="text">
+             <string>Delete removes the selected file or the selected model branch from the server database after confirmation.</string>
+            </property>
+            <property name="wordWrap">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+  <action name="actionRefresh">
+   <property name="icon">
+    <iconset resource="../../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/sync.png</normaloff>:/Icons/icons/sync.png</iconset>
+   </property>
+   <property name="text">
+    <string>Refresh</string>
+   </property>
+   <property name="toolTip">
+    <string>Reload the server file tree</string>
+   </property>
+  </action>
+  <action name="actionLoadFile">
+   <property name="icon">
+    <iconset resource="../../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/server.png</normaloff>:/Icons/icons/server.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load File</string>
+   </property>
+   <property name="toolTip">
+    <string>Load the full selected multiverse</string>
+   </property>
+  </action>
+  <action name="actionLoadBase">
+   <property name="icon">
+    <iconset resource="../../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/grid_icon.png</normaloff>:/Icons/icons/grid_icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load Base Model</string>
+   </property>
+   <property name="toolTip">
+    <string>Load only the selected file base model</string>
+   </property>
+  </action>
+  <action name="actionLoadModel">
+   <property name="icon">
+    <iconset resource="../../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/schematic.png</normaloff>:/Icons/icons/schematic.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load Selected Model</string>
+   </property>
+   <property name="toolTip">
+    <string>Load the selected scenario branch as one flat circuit</string>
+   </property>
+  </action>
+  <action name="actionSaveCurrent">
+   <property name="icon">
+    <iconset resource="../../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/save.png</normaloff>:/Icons/icons/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save Current Project</string>
+   </property>
+   <property name="toolTip">
+    <string>Upload the current project into the selected server file or model</string>
+   </property>
+  </action>
+  <action name="actionDeleteSelected">
+   <property name="icon">
+    <iconset resource="../../Icons/icons.qrc">
+     <normaloff>:/Icons/icons/delete_db.png</normaloff>:/Icons/icons/delete_db.png</iconset>
+   </property>
+   <property name="text">
+    <string>Delete Selected</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete the selected file or model from the server database</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../../Icons/icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -203,24 +203,33 @@ class ShortCircuitSelector(QtWidgets.QDialog):
         fault = self._current_fault()
 
         # -------- UPDATE PHASES --------
-        if self._current_method() == MethodShortCircuit.sequences:
+        current_method = self._current_method()
+
+        if current_method == MethodShortCircuit.sequences:
             self.ui.cb_phases.setVisible(False)
             self.ui.phases_label.setVisible(False)
         else:
             self.ui.cb_phases.setVisible(True)
             self.ui.phases_label.setVisible(True)
             allowed_phases = valid_phases_for_fault(fault)
-            current_phase = self._current_phase()
+            try:
+                current_phase = self._current_phase()
+            except TypeError:
+                current_phase = allowed_phases[0]
 
-            self.ui.cb_phases.clear()
-            for p in allowed_phases:
-                self.ui.cb_phases.addItem(self.tr(p.value), p)
+            previous_signals_blocked = self.ui.cb_phases.blockSignals(True)
+            try:
+                self.ui.cb_phases.clear()
+                for p in allowed_phases:
+                    self.ui.cb_phases.addItem(self.tr(p.value), p)
 
-            current_phase_index = self.ui.cb_phases.findData(current_phase)
-            if current_phase_index >= 0:
-                self.ui.cb_phases.setCurrentIndex(current_phase_index)
-            else:
-                pass
+                current_phase_index = self.ui.cb_phases.findData(current_phase)
+                if current_phase_index >= 0:
+                    self.ui.cb_phases.setCurrentIndex(current_phase_index)
+                else:
+                    self.ui.cb_phases.setCurrentIndex(0)
+            finally:
+                self.ui.cb_phases.blockSignals(previous_signals_blocked)
 
     def update_logic(self):
         """Update available method and phase options based on the fault type."""
@@ -229,17 +238,25 @@ class ShortCircuitSelector(QtWidgets.QDialog):
 
         # -------- UPDATE METHOD --------
         allowed_methods = valid_methods_for_fault(fault)
+        try:
+            current_method = self._current_method()
+        except TypeError:
+            current_method = allowed_methods[0]
+
+        previous_signals_blocked = self.ui.cb_method.blockSignals(True)
+        try:
+            self.ui.cb_method.clear()
+            for m in allowed_methods:
+                self.ui.cb_method.addItem(self.tr(m.value), m)
+
+            current_method_index = self.ui.cb_method.findData(current_method)
+            if current_method_index >= 0:
+                self.ui.cb_method.setCurrentIndex(current_method_index)
+            else:
+                self.ui.cb_method.setCurrentIndex(0)
+        finally:
+            self.ui.cb_method.blockSignals(previous_signals_blocked)
         current_method = self._current_method()
-
-        self.ui.cb_method.clear()
-        for m in allowed_methods:
-            self.ui.cb_method.addItem(self.tr(m.value), m)
-
-        current_method_index = self.ui.cb_method.findData(current_method)
-        if current_method_index >= 0:
-            self.ui.cb_method.setCurrentIndex(current_method_index)
-        else:
-            pass
 
         # -------- UPDATE PHASES --------
         if current_method == MethodShortCircuit.sequences:
@@ -249,17 +266,24 @@ class ShortCircuitSelector(QtWidgets.QDialog):
             self.ui.cb_phases.setVisible(True)
             self.ui.phases_label.setVisible(True)
             allowed_phases = valid_phases_for_fault(fault)
-            current_phase = self._current_phase()
+            try:
+                current_phase = self._current_phase()
+            except TypeError:
+                current_phase = allowed_phases[0]
 
-            self.ui.cb_phases.clear()
-            for p in allowed_phases:
-                self.ui.cb_phases.addItem(self.tr(p.value), p)
+            previous_signals_blocked = self.ui.cb_phases.blockSignals(True)
+            try:
+                self.ui.cb_phases.clear()
+                for p in allowed_phases:
+                    self.ui.cb_phases.addItem(self.tr(p.value), p)
 
-            current_phase_index = self.ui.cb_phases.findData(current_phase)
-            if current_phase_index >= 0:
-                self.ui.cb_phases.setCurrentIndex(current_phase_index)
-            else:
-                pass
+                current_phase_index = self.ui.cb_phases.findData(current_phase)
+                if current_phase_index >= 0:
+                    self.ui.cb_phases.setCurrentIndex(current_phase_index)
+                else:
+                    self.ui.cb_phases.setCurrentIndex(0)
+            finally:
+                self.ui.cb_phases.blockSignals(previous_signals_blocked)
 
         self.fault = self._current_fault()
         self.method = self._current_method()

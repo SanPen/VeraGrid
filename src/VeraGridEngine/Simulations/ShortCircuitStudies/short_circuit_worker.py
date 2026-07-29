@@ -11,8 +11,11 @@ from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit import short_circuit_3p, short_circuit_unbalance
 from VeraGridEngine.Topology.admittance_matrices import compute_admittances
 from VeraGridEngine.Simulations.ShortCircuitStudies.short_circuit_results import ShortCircuitResults
-from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import polar_to_rect
-from VeraGridEngine.enumerations import FaultType, PhasesShortCircuit, ConverterControlType
+from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import (
+    compute_asynchronous_generator_q,
+    polar_to_rect,
+)
+from VeraGridEngine.enumerations import FaultType, MethodShortCircuit, PhasesShortCircuit, ConverterControlType, GeneratorType
 from VeraGridEngine.basic_structures import CxVec, Vec, IntVec
 from VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph import (compute_ybus,
                                                                                            compute_current_loads,
@@ -754,9 +757,12 @@ def short_circuit_vsc(nc: NumericalCircuit,
                       V_pf: CxVec,
                       S_pf: CxVec,
                       St_vsc_pf: CxVec,
+                      Pfp_vsc_pf: Vec | None,
+                      Pfn_vsc_pf: Vec | None,
                       Z_fault: CxVec,
                       fault_bus: int,
                       options: PowerFlowOptions,
+                      constz: bool,
                       logger: Logger):
     if logger is None:
         logger = Logger()
@@ -813,28 +819,112 @@ def short_circuit_vsc(nc: NumericalCircuit,
 
         nbus = nc.nbus
 
-        # S0_linear = np.zeros(shape=nbus, dtype=complex)
-        S0_non_gen = S0 - nc.generator_data.get_injections_per_bus() / nc.Sbase
-        S0_gen = S_pf / nc.Sbase - S0_non_gen - I0 - Y0
-
         Yfault = np.zeros(shape=nbus, dtype=complex)
         Yfault[fault_bus] = 1 / Z_fault[fault_bus]
 
         Ygen = np.zeros(shape=nbus, dtype=complex)
+        non_norton_gen_pf = np.zeros(shape=nbus, dtype=complex)
+        invalid_gen_linear = np.zeros(shape=nbus, dtype=complex)
+        invalid_gen_buses = set()
+        invalid_gen_scheduled = np.zeros(shape=nbus, dtype=complex)
+        dynamic_async_gen = np.zeros(len(nc.generator_data.bus_idx), dtype=bool)
+        dynamic_async_p = np.zeros(shape=nbus, dtype=complex)
+        dynamic_async_pf = np.zeros(shape=nbus, dtype=complex)
+        static_gen_from_generator_scheduled = np.zeros(shape=nbus, dtype=complex)
+        static_gen_from_generator_pf = np.zeros(shape=nbus, dtype=complex)
+        static_gen_from_generator_buses = set()
+        regular_gen_buses = set()
         gen_idx = nc.generator_data.original_idx
+        valid_gen_buses = set()
+        q_async_pf = compute_asynchronous_generator_q(V=V_pf,
+                                                      gen_bus_idx=nc.generator_data.bus_idx,
+                                                      gen_active=nc.generator_data.active,
+                                                      gen_types=nc.generator_data.tpe_int,
+                                                      Rs=nc.generator_data.Rs,
+                                                      Xs=nc.generator_data.Xs,
+                                                      Xm=nc.generator_data.Xm,
+                                                      Rr=nc.generator_data.Rr,
+                                                      Xr=nc.generator_data.Xr,
+                                                      P=nc.generator_data.p,
+                                                      Snom=nc.generator_data.snom)
         for gen_i in range(len(gen_idx)):
-            Ygen[bus_gen_idx[gen_i]] += 1 / (nc.generator_data.r1[gen_i] + 1j * nc.generator_data.x1[gen_i])
+            if not nc.generator_data.active[gen_i]:
+                continue
 
-        # Y0_linear = - np.conj(S0_non_gen / (np.conj(V_pf) * V_pf)) - I0 / V_pf - Y0 + Ygen + Yfault
-        Y0_linear = - I0 / V_pf - Y0 + Ygen + Yfault
+            gen_bus = bus_gen_idx[gen_i]
+            if nc.generator_data.is_static_generator[gen_i]:
+                static_gen_from_generator_buses.add(gen_bus)
+                static_gen_from_generator_scheduled[gen_bus] += (
+                    nc.generator_data.p[gen_i] + 1j * nc.generator_data.q[gen_i]
+                ) / nc.Sbase
+                continue
 
-        I0_linear = np.zeros(shape=nbus, dtype=complex)  # Add generator's norton
-        for gen_i in range(len(bus_gen_idx)):
-            Ugen = V_pf[bus_gen_idx[gen_i]]
-            Sgen = S0_gen[bus_gen_idx[gen_i]]
+            regular_gen_buses.add(gen_bus)
+            zgen = nc.generator_data.r1[gen_i] + 1j * nc.generator_data.x1[gen_i]
+
+            if np.isfinite(zgen) and (abs(zgen) > 1e-12 or nc.bus_data.is_dc[gen_bus]):
+                Ygen[gen_bus] += 1 / zgen
+                valid_gen_buses.add(gen_bus)
+            else:
+                invalid_gen_buses.add(gen_bus)
+                if nc.generator_data.tpe_int[gen_i] == GeneratorType.Asynchronous.idx():
+                    dynamic_async_gen[gen_i] = True
+                    dynamic_async_p[gen_bus] += nc.generator_data.p[gen_i] / nc.Sbase
+                    dynamic_async_pf[gen_bus] += (
+                        nc.generator_data.p[gen_i] + 1j * q_async_pf[gen_i]
+                    ) / nc.Sbase
+                else:
+                    invalid_gen_scheduled[gen_bus] += (
+                        nc.generator_data.p[gen_i] + 1j * nc.generator_data.q[gen_i]
+                    ) / nc.Sbase
+                logger.add_warning(
+                    msg="Generator positive-sequence impedance is missing or too small for short-circuit Norton model",
+                    device=nc.generator_data.names[gen_i],
+                    value=zgen,
+                    expected_value="|R1 + jX1| > 1e-12",
+                    device_class="Generator"
+                )
+
+        S0_non_gen = S0 - nc.generator_data.get_injections_per_bus() / nc.Sbase
+        S0_static_gen = nc.load_data.get_static_generator_injections_per_bus() / nc.Sbase
+        S0_non_static_gen = S0_non_gen - S0_static_gen
+        S0_gen = S_pf / nc.Sbase - S0_non_gen - I0 - Y0
+
+        for gen_bus in static_gen_from_generator_buses:
+            if gen_bus in regular_gen_buses:
+                static_gen_from_generator_pf[gen_bus] = static_gen_from_generator_scheduled[gen_bus]
+            else:
+                static_gen_from_generator_pf[gen_bus] = S0_gen[gen_bus]
+
+        for gen_bus in invalid_gen_buses:
+            if gen_bus in valid_gen_buses:
+                non_norton_gen_pf[gen_bus] = invalid_gen_scheduled[gen_bus] + dynamic_async_pf[gen_bus]
+                invalid_gen_linear[gen_bus] = invalid_gen_scheduled[gen_bus] + dynamic_async_p[gen_bus]
+            else:
+                non_dynamic_pf = S0_gen[gen_bus] - dynamic_async_pf[gen_bus]
+                non_norton_gen_pf[gen_bus] = S0_gen[gen_bus]
+                invalid_gen_linear[gen_bus] = non_dynamic_pf + dynamic_async_p[gen_bus]
+
+        S0_gen_valid = S0_gen - non_norton_gen_pf - static_gen_from_generator_pf
+
+        if constz:
+            static_gen_linear = S0_static_gen + static_gen_from_generator_pf
+            S0_linear = invalid_gen_linear
+            I0_linear = np.zeros(shape=nbus, dtype=complex)  # Add generator's norton
+            Y0_linear = (- np.conj((S0_non_static_gen + static_gen_linear) / (np.conj(V_pf) * V_pf))
+                         - I0 / V_pf - Y0 + Ygen + Yfault)
+
+        else:
+            S0_linear = S0_non_gen + static_gen_from_generator_pf + invalid_gen_linear
+            I0_linear = np.zeros(shape=nbus, dtype=complex)  # Add generator's norton
+            Y0_linear = - I0 / V_pf - Y0 + Ygen + Yfault
+
+        for gen_bus in valid_gen_buses:
+            Ugen = V_pf[gen_bus]
+            Sgen = S0_gen_valid[gen_bus]
             Igen = np.conj(Sgen / Ugen)
-            Egen = Ugen + Igen / Ygen[bus_gen_idx[gen_i]]
-            I0_linear[bus_gen_idx[gen_i]] += Ygen[bus_gen_idx[gen_i]] * Egen
+            Egen = Ugen + Igen / Ygen[gen_bus]
+            I0_linear[gen_bus] += Ygen[gen_bus] * Egen
 
         for vsc_i in range(len(nc.vsc_data.control1_int)):
             nc.vsc_data.control1_int[vsc_i] = ConverterControlType.Fault1.idx()
@@ -843,15 +933,19 @@ def short_circuit_vsc(nc: NumericalCircuit,
         if len(indices.vd) > 0:
 
             problem = PfAcDcWithNegativePolesSc(V0=V_pf,
-                                                S0=S0_non_gen,
+                                                S0=S0_linear,
                                                 I0=I0_linear,
                                                 Y0=Y0_linear,
                                                 St_vsc_pf=St_vsc_pf,
+                                                Pfp_vsc_pf=Pfp_vsc_pf,
+                                                Pfn_vsc_pf=Pfn_vsc_pf,
                                                 Qmin=Qmin,
                                                 Qmax=Qmax,
                                                 nc=nc,
                                                 options=options,
-                                                logger=logger)
+                                                logger=logger,
+                                                sc_async_gen_q_mask=dynamic_async_gen,
+                                                sc_async_gen_q_prefault=q_async_pf)
 
             solution = newton_raphson_fx(problem=problem,
                                          tol=options.tolerance,
@@ -859,6 +953,21 @@ def short_circuit_vsc(nc: NumericalCircuit,
                                          trust=options.trust_radius,
                                          verbose=options.verbose,
                                          logger=logger)
+
+            convergence_value = (
+                f"error={solution.norm_f:.6g}, "
+                f"iterations={solution.iterations}, "
+                f"elapsed={solution.elapsed:.6g} s"
+            )
+            if solution.converged:
+                logger.add_info(msg="Short-circuit VSC Newton-Raphson converged",
+                                device=f"Island {i}",
+                                value=convergence_value)
+            else:
+                logger.add_warning(msg="Short-circuit VSC Newton-Raphson did not converge",
+                                   device=f"Island {i}",
+                                   value=convergence_value,
+                                   expected_value=f"error <= {options.tolerance}")
 
             # merge the results from this island
             pf_results.apply_from_island(
@@ -891,7 +1000,7 @@ def short_circuit_vsc(nc: NumericalCircuit,
     sc_results.SCpower[:, 0] = pf_results.voltage[fault_bus] * pf_results.voltage[fault_bus] * Yfault[fault_bus]
     sc_results.ICurrent[:, 0] = pf_results.voltage[fault_bus] * Yfault[fault_bus]
 
-    sc_results.Sbus1[:, 0] = nc.get_power_injections_pu() * nc.Sbase  # MVA
+    sc_results.Sbus1[:, 0] = pf_results.Sbus  # MVA
     sc_results.voltage1[:, 0] = pf_results.voltage
     sc_results.Sf1[:, 0] = pf_results.Sf  # in MVA already
     sc_results.St1[:, 0] = pf_results.St  # in MVA already

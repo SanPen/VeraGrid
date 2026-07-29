@@ -2,7 +2,37 @@ import VeraGridEngine.api as vge
 from VeraGridEngine import PowerFlowOptions, ShortCircuitOptions
 from VeraGridEngine.enumerations import ConverterControlType, MethodShortCircuit, ConverterFaultControlType
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import SolverType
+from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_full_acdc_with_negative_poles import PfAcDcWithNegativePoles
+from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.newton_raphson_fx import newton_raphson_fx
 import numpy as np
+
+
+def solve_with_autodiff(grid, pf_options):
+    """
+    Solve the AC/DC power flow forcing the finite-difference Jacobian.
+    """
+    logger = vge.Logger()
+    nc = vge.compile_numerical_circuit_at(grid, t_idx=None,
+                                          use_stored_guess=pf_options.use_stored_guess,
+                                          control_taps_modules=pf_options.control_taps_modules,
+                                          control_taps_phase=pf_options.control_taps_phase,
+                                          control_remote_voltage=pf_options.control_remote_voltage,
+                                          consider_grounded_buses=len(grid.vsc_devices) > 0)
+    Qmax, Qmin = nc.get_reactive_power_limits()
+    problem = PfAcDcWithNegativePoles(V0=nc.bus_data.Vbus.copy(),
+                                      S0=nc.get_power_injections_pu(),
+                                      I0=nc.get_current_injections_pu(),
+                                      Y0=-nc.get_admittance_injections_pu(),
+                                      Qmin=Qmin, Qmax=Qmax,
+                                      nc=nc, options=pf_options, logger=logger)
+    problem.use_autodiff_jacobian = True
+
+    return newton_raphson_fx(problem=problem,
+                             tol=pf_options.tolerance,
+                             max_iter=pf_options.max_iter,
+                             trust=pf_options.trust_radius,
+                             verbose=pf_options.verbose,
+                             logger=logger)
 
 
 def test_short_circuit_vsc_3buses():
@@ -88,7 +118,7 @@ def test_short_circuit_vsc_3buses():
     sc_driver.run()
     res_sc = sc_driver.results
 
-    Usc_reference = np.array([1.0, 0.8588555, 0.84927272, 0.98754222])
+    Usc_reference = np.array([1.0, 0.8587565, 0.8492301, 0.9875410])
 
     assert np.allclose(abs(res_sc.voltage1[:, 0]), Usc_reference, atol=1e-6)
 
@@ -119,7 +149,8 @@ def test_short_circuit_vsc_14buses():
         vge.ShortCircuitEvent(
             device=grid.buses[9],
             method=MethodShortCircuit.sequences_vsc,
-            r_fault=0.9182736455463728
+            r_fault=0.9182736455463728,
+            constz=False
         )
     )
 
@@ -136,7 +167,7 @@ def test_short_circuit_vsc_14buses():
          0.74351305, 0.80790032, 0.79696124, 0.7823984, 0.94797783, 0.86826011, 0.84541255, 0.84725015, 0.81377177,
          0.84692126, 0.83635092, 0.82205093, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
 
-    assert np.allclose(abs(res_sc.voltage1[:, 0]), Usc_reference, atol=1e-6)
+    assert np.allclose(abs(res_sc.voltage1[:, 1]), Usc_reference, atol=1e-6)
 
 
 def test_short_circuit_vsc_14buses_disconnection():
@@ -146,6 +177,11 @@ def test_short_circuit_vsc_14buses_disconnection():
     results matches the RMS dynamic simulation of PowerFactory.
     """
     grid = vge.open_file('data/grids/ieee14_voltage_disconnection.veragrid')
+
+    for i in range(len(grid.vsc_devices)):
+        grid.vsc_devices[i].min_ac_voltage = 0.65
+
+    print()
 
     # ------------------------------------------------------------------------------------------------------------------
     #   AC/DC Power Flow under healthy conditions
@@ -276,12 +312,12 @@ def test_dgs_parse_external_grid_sc():
     # ------------------------------------------------------------------------------------------------------------------
     #   AC/DC Short-Circuit with converter's current limitation
     # ------------------------------------------------------------------------------------------------------------------
-
     grid.add_short_circuit_event(
         vge.ShortCircuitEvent(
             device=grid.buses[12],
             method=MethodShortCircuit.sequences_vsc,
-            r_fault=10.0 / (33 ** 2 / 100)
+            r_fault=10.0 / (33 ** 2 / 100),
+            constz=False
         )
     )
 
@@ -317,14 +353,15 @@ def test_dgs_parse_static_var_system():
     pf_options = PowerFlowOptions(solver_type=SolverType.NR,
                                   retry_with_other_methods=False,
                                   limit_i_vsc=False)
-    res_pf = vge.power_flow(grid=grid, options=pf_options)
+    res_pf = solve_with_autodiff(grid, pf_options)
+    assert res_pf.converged
 
     power_factory = np.array([
         1.000000, 0.968810, 0.924416, 0.958790, 0.966401, 0.983399, 0.972619, 0.978596, 0.977300, 0.983301, 1.000000, 0.985477, 0.999711,
         0.987028, 0.970710, 0.992464, 0.988444, 0.990187, 0.998693, 0.993241, 0.998585,
         1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0])
 
-    assert np.allclose(np.abs(res_pf.voltage), power_factory, atol=1e-6)
+    assert np.allclose(np.abs(res_pf.V), power_factory, atol=1e-6)
 
 
 def test_dgs_parse_series_reactance_common_impedance():

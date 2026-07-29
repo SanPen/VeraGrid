@@ -2279,7 +2279,16 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
         self.pen_width = route_pen.width()
         self.scale = scale
 
-        if self.api_object is not None and not self.api_object.active:
+        api_object_is_active: bool = True
+
+        if self.api_object is None:
+            pass
+        elif isinstance(self.api_object, FluidPath):
+            api_object_is_active = True
+        else:
+            api_object_is_active = bool(self.api_object.active)
+
+        if not api_object_is_active:
             inactive_color = QColor(route_pen.color())
             inactive_color.setAlpha(185)
             route_pen.setColor(inactive_color)

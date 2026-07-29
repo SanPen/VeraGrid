@@ -28,6 +28,7 @@ from VeraGridEngine.IO.raw.versioned.v35.equipment_terminal import RawEquipmentT
 from VeraGridEngine.IO.raw.versioned.v35.substation_switching_device import RawSubstationSwitchingDeviceV35
 from VeraGridEngine.IO.raw.versioned.v29.transformer import RawTransformerV29 as RawTransformer
 from VeraGridEngine.IO.raw.versioned.v33.branch import RawBranchV33
+from VeraGridEngine.IO.raw.versioned.v35.branch import RawBranchV35
 from VeraGridEngine.IO.raw.versioned.v35.node import RawNodeV35
 from VeraGridEngine.IO.raw.versioned.v35.induction_machine import RawInductionMachineV35
 from VeraGridEngine.IO.raw.versioned.v35.gne_device import RawGneDeviceV35
@@ -44,6 +45,43 @@ from VeraGridEngine.IO.raw.veragrid_to_raw import (RawNodeBreakerExportData, app
                                                    get_psse_substation_switch, veragrid_to_raw)
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.enumerations import PsseTopologyExportMode, TapModuleControl
+
+
+def test_psse35_branch_parser_keeps_ownership_fields() -> None:
+    """PSSE 35 branch parsing must preserve owner/fraction pairs from the input row."""
+
+    branch = RawBranchV35()
+    row = [101, 102, "1", 0.001, 0.01, 0.0, 100.0, 110.0, 120.0, 0.0, 0.0, 0.0, 0.0, 1, 1, 5.0,
+           42, 0.5, 18, 0.5, 0, 0.0, 0, 0.0]
+
+    # This reproduces the reported short PSSE 35 branch record that carries ownership data.
+    branch.parse([row], version=35, logger=Logger())
+
+    assert branch.O1 == 42
+    assert branch.F1 == 0.5
+    assert branch.O2 == 18
+    assert branch.F2 == 0.5
+    assert branch.O3 == 0
+    assert branch.F3 == 0.0
+    assert branch.O4 == 0
+    assert branch.F4 == 0.0
+
+
+def test_branch_ownership_helper_accepts_single_owner_pair() -> None:
+    """Branch ownership parsing must accept PSSE tails with a single owner/fraction pair."""
+
+    branch = RawBranchV35()
+
+    branch.parse_ownership_fields([42, 0.5])
+
+    assert branch.O1 == 42
+    assert branch.F1 == 0.5
+    assert branch.O2 == 0
+    assert branch.F2 == 0.0
+    assert branch.O3 == 0
+    assert branch.F3 == 0.0
+    assert branch.O4 == 0
+    assert branch.F4 == 0.0
 
 
 def test_read_raw_keeps_psse35_system_wide_records_out_of_bus_section(tmp_path: Path) -> None:

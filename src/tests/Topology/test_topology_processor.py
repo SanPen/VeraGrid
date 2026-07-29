@@ -1088,7 +1088,7 @@ def test_segmenting_by_hvdc():
 
 
 def test_switch_reduction():
-    fname = os.path.join('data', 'grids', 'DGS', 'Reduced_SPEN_v9_south_west_v3.dgs')
+    fname = os.path.join('data', 'grids', 'DGS', 'Reduced_SP_v9_south_west_v3.dgs')
 
     grid = open_file(fname)
 

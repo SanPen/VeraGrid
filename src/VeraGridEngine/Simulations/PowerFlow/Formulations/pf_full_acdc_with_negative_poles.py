@@ -3,7 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import time
-from typing import Tuple, List, Dict, Callable
+from typing import Tuple, List, Dict, Callable, Union
 import numpy as np
 from numba import njit
 from scipy.sparse import lil_matrix, isspmatrix_csc
@@ -27,9 +27,10 @@ from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions impo
                                                                                     polar_to_rect, voltage_q_droop,
                                                                                     voltage_pdc_droop,
                                                                                     asynchronous_gen_q,
-                                                                                    voltage_pdc_droop_neg)
+                                                                                    voltage_pdc_droop_neg,
+                                                                                    compute_asynchronous_generator_q_per_bus)
 from VeraGridEngine.enumerations import (TapPhaseControl, TapModuleControl, HvdcControlType, ConverterControlType,
-                                         GeneratorType)
+                                         ShuntControlMode, GeneratorType)
 from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, Logger
 
 
@@ -129,7 +130,7 @@ def adv_jacobian(nbus: int,
     :param alpha2: VSC linear loss coefficients
     :param alpha3: VSC quadratic loss coefficients
     :param hvdc_r: HVDC resistances [pu]
-    :param hvdc_droop: HVDC droop gains 
+    :param hvdc_droop: HVDC droop gains
     :param i_u_vm: buses with unknown Vm
     :param i_u_va: buses with unknown Va
     :param i_k_p: buses with P balance (AC only)
@@ -668,6 +669,9 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
         self.nc: NumericalCircuit = nc
 
         self.logger: Logger = logger
+
+        # set to True to use the finite-difference Jacobian
+        self.use_autodiff_jacobian: bool = self.options.use_autodiff_jacobian
 
         self.V0: CxVec = V0
         self.S0: CxVec = S0
@@ -2091,7 +2095,7 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
     def _pfp_droop_slopes(self) -> Vec:
         """
         Signed slope s * d(Pdc_droop)/du of the Pdc voltage-droop law [pu]
-        u = s * (Vfp - Vfn) is the voltage diff and 
+        u = s * (Vfp - Vfn) is the voltage diff and
         s = +1 on a positive pole, -1 on a negative pole
         """
         vd = self.nc.vsc_data
@@ -2212,19 +2216,18 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
         V = polar_to_rect(Vm_, Va_)
 
         # Asynchronous Generators --------------------------------------------------------------------------------------
-        Qag = np.zeros_like(self.S0, dtype=float)
-        for k, gen_type in enumerate(self.nc.generator_data.tpe_int):
-            if gen_type == GeneratorType.Asynchronous.idx():
-                Qag[self.nc.generator_data.bus_idx[k]] = asynchronous_gen_q(
-                    u=V[self.nc.generator_data.bus_idx[k]],
-                    Rs=self.nc.generator_data.Rs[k],
-                    Xs=self.nc.generator_data.Xs[k],
-                    Xm=self.nc.generator_data.Xm[k],
-                    Rr=self.nc.generator_data.Rr[k],
-                    Xr=self.nc.generator_data.Xr[k],
-                    P=self.nc.generator_data.p[k],
-                    Sr=self.nc.generator_data.snom[k]
-                )
+        Qag = compute_asynchronous_generator_q_per_bus(nbus=self.nc.bus_data.nbus,
+                                                       V=V,
+                                                       gen_bus_idx=self.nc.generator_data.bus_idx,
+                                                       gen_active=self.nc.generator_data.active,
+                                                       gen_types=self.nc.generator_data.tpe_int,
+                                                       Rs=self.nc.generator_data.Rs,
+                                                       Xs=self.nc.generator_data.Xs,
+                                                       Xm=self.nc.generator_data.Xm,
+                                                       Rr=self.nc.generator_data.Rr,
+                                                       Xr=self.nc.generator_data.Xr,
+                                                       P=self.nc.generator_data.p,
+                                                       Snom=self.nc.generator_data.snom)
 
         # Use V instead of Vm (not a device-centered axis). Thus avoid compute_zip_power()
         # We add self.Y0 despite it being zero
@@ -3045,12 +3048,15 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
 
         return self._f
 
-    def Jacobian(self, autodiff: bool = True) -> CSC:
+    def Jacobian(self, autodiff: Union[bool, None] = None) -> CSC:
         """
         Get the Jacobian of the current-based AC/DC formulation.
-        :param autodiff: use the finite-difference Jacobian (default, exact for every control) 
+        :param autodiff: use the finite-difference Jacobian
         :return: Jacobian matrix in CSC format
         """
+        if autodiff is None:
+            autodiff = self.use_autodiff_jacobian
+
         if autodiff:
             J: CSC = calc_autodiff_jacobian(func=self.compute_f,
                                             x=self.var2x(),
@@ -3068,7 +3074,7 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
             if len(self.hvdc_droop_idx) > 0:
                 hvdc_droop_redone[self.hvdc_droop_idx] = self.nc.hvdc_data.angle_droop[self.hvdc_droop_idx]
 
-            # rebuild the phasor from the current Vm/Va 
+            # rebuild the phasor from the current Vm/Va
             V: CxVec = polar_to_rect(self.Vm, self.Va)
 
             # signed DC voltages per bus and pole-to-return per converter
@@ -3229,8 +3235,11 @@ class PfAcDcWithNegativePoles(PfFormulationTemplate):
         Vdc_n_vsc = np.zeros(self.nc.vsc_data.nelm)
         has_return = Fdcn > -1
         Vdc_n_vsc[has_return] = self.Vm[Fdcn[has_return]] * np.cos(self.Va[Fdcn[has_return]])
-        Pfp_vsc = self.Ifp_vsc * Vdc_p_vsc * self.nc.Sbase
-        Pfn_vsc = -self.Ifp_vsc * Vdc_n_vsc * self.nc.Sbase
+        Pfp_vsc_pu = self.Ifp_vsc * Vdc_p_vsc
+        Pfn_vsc_pu = -self.Ifp_vsc * Vdc_n_vsc
+
+        Pfp_vsc = Pfp_vsc_pu * self.nc.Sbase
+        Pfn_vsc = Pfn_vsc_pu * self.nc.Sbase
         Vfn = np.where(Fdcn > -1, self.V[Fdcn].real, 0.0)
         Vdc_vsc = self.V[Fdcp].real - Vfn
         St_vsc = make_complex(self.Pt_vsc, self.Qt_vsc) * self.nc.Sbase

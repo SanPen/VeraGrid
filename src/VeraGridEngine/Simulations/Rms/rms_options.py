@@ -36,7 +36,6 @@ class RmsOptions(OptionsTemplate):
                  integration_method: DynamicIntegrationMethod = DynamicIntegrationMethod.DaeBackEuler,
                  initialization_method: RmsInitializationMethod = RmsInitializationMethod.Explicit,
                  problem_type: RmsProblemTypes = RmsProblemTypes.PowerBalance,
-                 vars_to_save: List[Var] | None = None,
                  use_init_values: bool = False,
                  max_iter: int = 1000,
                  verbose: int = 0):

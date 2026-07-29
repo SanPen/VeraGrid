@@ -6,7 +6,7 @@ import datetime
 _current_year_ = datetime.datetime.now().year
 
 # remember to keep a three-number version!!!
-__VeraGridEngine_VERSION__ = "6.3.8"
+__VeraGridEngine_VERSION__ = "6.4.2"
 
 url = 'https://github.com/SanPen/VeraGrid'
 

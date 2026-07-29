@@ -17,7 +17,7 @@ from VeraGridEngine.Devices.Parents.editable_device import EditableDevice
 from VeraGridEngine.Devices.types import FLUID_TYPES
 
 from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
-from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, FONT_SCALE, GenericDiagramWidget
+from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, FONT_SCALE, GenericDiagramWidget, DraggableLabelItem
 from VeraGrid.Gui.Diagrams.SchematicWidget.Branches.slot_geometry import (SchematicAttachmentSlot,
                                                                           build_explicit_slot_key,
                                                                           clamp_attachment_alignment,
@@ -81,9 +81,11 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         self.style = ACTIVE['style']
 
         # Label:
-        self.label = QtWidgets.QGraphicsTextItem(self.api_object.name if self.api_object is not None else "", self)
+        self.label = DraggableLabelItem(self)
         self.label.setDefaultTextColor(ACTIVE['text'])
+        self.label.document().setDocumentMargin(0.0)
         self.label.setScale(FONT_SCALE)
+        self.label.setPlainText(self.api_object.name if self.api_object is not None else "")
 
         # square
         self.tile = QtWidgets.QGraphicsRectItem(0, 0, 20, 20, self)
@@ -283,7 +285,7 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         x0 = 0
 
         # center label:
-        self.label.setPos(self.w + 5, -20)
+        self.label.set_anchor_position(QPointF(self.w + 5.0, -20.0))
 
         # lower
         self._terminal.setPos(x0, y0)
@@ -933,6 +935,7 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
 
         _grph = FluidTurbineGraphicItem(parent=self, api_obj=api_obj, editor=self.editor)
         self._child_graphics.append(_grph)
+        self.reset_child_to_auto_layout(child_graphic=_grph)
         if self.editor.is_loading_diagram():
             pass
         else:
@@ -952,6 +955,7 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
 
         _grph = FluidPumpGraphicItem(parent=self, api_obj=api_obj, editor=self.editor)
         self._child_graphics.append(_grph)
+        self.reset_child_to_auto_layout(child_graphic=_grph)
         if self.editor.is_loading_diagram():
             pass
         else:
@@ -971,11 +975,64 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
 
         _grph = FluidP2xGraphicItem(parent=self, api_obj=api_obj, editor=self.editor)
         self._child_graphics.append(_grph)
+        self.reset_child_to_auto_layout(child_graphic=_grph)
         if self.editor.is_loading_diagram():
             pass
         else:
             self.arrange_children()
         return _grph
+
+    def reset_child_to_auto_layout(self, child_graphic: FLUID_CHILD_GRAPHICS) -> None:
+        """
+        Reset one freshly created fluid child to automatic dock placement.
+
+        The injection template seeds a temporary graphics position during construction.
+        That position must not become persisted manual placement metadata for new
+        fluid devices, otherwise every sibling keeps the same coordinates.
+
+        :param child_graphic: Newly created child graphic.
+        :return: ``None``.
+        """
+        dock = self.editor.diagram.get_dock(child_graphic.api_object)
+        dock["side"] = str(dock.get("side", SchematicAttachmentSlot.BOTTOM.value))
+        dock["order"] = self.get_next_child_dock_order(side_key=parse_attachment_slot(dock["side"]))
+        dock["offset"] = 0.0
+        dock["auto_layout"] = True
+        dock.pop("alignment", None)
+        dock.pop("anchor_x", None)
+        dock.pop("anchor_y", None)
+        dock.pop("child_anchor_x", None)
+        dock.pop("child_anchor_y", None)
+        self.editor.diagram.set_dock(child_graphic.api_object, dock)
+
+    def get_next_child_dock_order(self, side_key: SchematicAttachmentSlot) -> int:
+        """
+        Compute the next automatic child order for one fluid-node side.
+
+        :param side_key: Dock side.
+        :return: One-based order value.
+        """
+        max_order: int = 0
+        child_graphic: FLUID_CHILD_GRAPHICS
+
+        for child_graphic in self._child_graphics:
+            if child_graphic.api_object is None:
+                pass
+            else:
+                dock = self.editor.diagram.get_dock(child_graphic.api_object)
+                child_side = parse_attachment_slot(str(dock.get("side", SchematicAttachmentSlot.BOTTOM.value)))
+
+                if child_side != side_key:
+                    pass
+                else:
+                    child_order = int(dock.get("order", 0))
+
+                    if child_order > max_order:
+                        max_order = child_order
+                    else:
+                        pass
+
+        return max_order + 1
 
     def delete_all_connections(self, ask: bool, delete_from_db: bool) -> None:
         """

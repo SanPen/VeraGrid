@@ -12,23 +12,28 @@ from PySide6.QtWidgets import QAbstractGraphicsShapeItem, QApplication, QColorDi
     QGraphicsPathItem, QGraphicsPolygonItem, QGraphicsRectItem, QGraphicsScene, QGraphicsTextItem, \
     QGraphicsView, QMenu, QWidget
 
+from PySide6.QtCore import Signal
+
 import VeraGrid.ThirdParty.darkdetect as darkdetect
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.enumerations import BlockType
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Expr, BinOp, UnOp
 from VeraGridEngine.enumerations import DynamicSimulationMode
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_routing import (
+    build_stub_point,
+    build_default_connection_route,
+    is_orthogonal_route,
+    merge_route_with_endpoints,
+    move_polyline_route_segment,
+    normalize_route_points,
+    orthogonalize_route_points,
+    path_hits_rectangles,
+    reroute_around_rectangles,
+)
 
 if TYPE_CHECKING:
     from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
-
-
-def _new_uid() -> int:
-    return uuid.uuid4().int
-
-
-def _grid_node_f_cost_sort_key(node: Any) -> float:
-    return float(node.f_cost)
 
 
 def _build_port_tooltip(direction: str, index: int, variable_name: str) -> str:
@@ -59,7 +64,7 @@ def duplicate_paired_item(original: PairedItem) -> PairedItem | None:
 
     blk_new = Block(
         # algebraic_vars=[shared_var],
-        out_vars=[shared_var],
+        out_vars=[from_items[0].subsys.in_vars[0]],
         name=original.name,
     )
 
@@ -126,6 +131,184 @@ def build_orthogonal_connection_path(start: QPointF, end: QPointF, elbow_offset:
     return path
 
 
+def _is_dynamic_block_item(item: QGraphicsItem) -> bool:
+    return item.__class__.__name__ in {
+        "GenericBlockItem",
+        "PairedItem",
+        "BlockItem",
+        "ProtectedConnectionBlockItem",
+        "UnOpItem",
+        "RoundBaseArithmeticOpItem",
+        "RectBaseArithmeticOpItem",
+    }
+
+
+def _expanded_item_scene_rect(item: QGraphicsItem, pos: QPointF, margin: float) -> QtCore.QRectF:
+    delta = pos - item.pos()
+    return item.sceneBoundingRect().translated(delta).adjusted(-margin, -margin, margin, margin)
+
+
+def _position_collides_with_blocks(item: QGraphicsItem, pos: QPointF, margin: float) -> bool:
+    scene = item.scene()
+    if scene is None:
+        return False
+
+    candidate_rect = _expanded_item_scene_rect(item, pos, margin)
+    other: QGraphicsItem
+    for other in scene.items(candidate_rect):
+        if other is item or not _is_dynamic_block_item(other):
+            continue
+        if other.parentItem() is not None:
+            continue
+        if candidate_rect.intersects(other.sceneBoundingRect().adjusted(-margin, -margin, margin, margin)):
+            return True
+    return False
+
+
+def _resolve_non_overlapping_position(item: QGraphicsItem,
+                                      proposed_pos: QPointF,
+                                      margin: float = 6.0) -> QPointF:
+    if item.scene() is None:
+        return proposed_pos
+
+    current_pos = item.pos()
+    if not _position_collides_with_blocks(item, proposed_pos, margin):
+        return proposed_pos
+
+    dx = proposed_pos.x() - current_pos.x()
+    dy = proposed_pos.y() - current_pos.y()
+    axis_candidates: List[QPointF]
+    if abs(dx) >= abs(dy):
+        axis_candidates = [
+            QPointF(proposed_pos.x(), current_pos.y()),
+            QPointF(current_pos.x(), proposed_pos.y()),
+        ]
+    else:
+        axis_candidates = [
+            QPointF(current_pos.x(), proposed_pos.y()),
+            QPointF(proposed_pos.x(), current_pos.y()),
+        ]
+
+    candidate: QPointF
+    for candidate in axis_candidates:
+        if not _position_collides_with_blocks(item, candidate, margin):
+            return candidate
+
+    last_valid = getattr(item, "_last_valid_pos", current_pos)
+    if isinstance(last_valid, QPointF) and not _position_collides_with_blocks(item, last_valid, margin):
+        return QPointF(last_valid)
+    return current_pos
+
+
+def _handle_block_item_change(item: QGraphicsItem, change: QGraphicsItem.GraphicsItemChange, value: Any) -> Any:
+    if change == QGraphicsItem.GraphicsItemChange.ItemPositionHasChanged:
+        if not _position_collides_with_blocks(item, item.pos(), 6.0):
+            item._last_valid_pos = QPointF(item.pos())
+    return value
+
+
+def _refresh_block_item_connections(item: QGraphicsItem) -> None:
+    ports = list(getattr(item, "inputs", [])) + list(getattr(item, "outputs", []))
+    port: Any
+    for port in ports:
+        connections = getattr(port, "connections", None) or []
+        conn: Any
+        for conn in connections:
+            conn.update_path()
+
+
+def _finalize_block_drop(item: QGraphicsItem, margin: float = 6.0) -> None:
+    if item.scene() is None:
+        return
+    current_pos = item.pos()
+    corrected_pos = _resolve_non_overlapping_position(item, current_pos, margin)
+    if corrected_pos != current_pos:
+        item.setPos(corrected_pos)
+        position_changed_callback = getattr(item, "position_changed_callback", None)
+        if position_changed_callback is not None:
+            position_changed_callback(corrected_pos.x(), corrected_pos.y())
+    _refresh_block_item_connections(item)
+
+
+class EditorGraphicsDefaultsDark:
+    BLOCK_BORDER: QColor = QColor("#e1f7ff")
+    BLOCK_BORDER_SELECTED: QColor = QColor("#cc6f2c")
+    BLOCK_TITLE: QColor = QColor("#e1f7ff")
+    WIRE_COLOR: QColor = QColor("#e1f7ff")
+    BLOCK_FILL: QColor = QColor("#022633")
+    PORT_LABEL_COLOR: QColor = QColor("#173042")
+    WIRE_ELBOW_OFFSET: float = 36.0
+    WIRE_TERMINAL_STUB_LENGTH: float = 18.0
+    PORT_LABEL_MAX_CHARS: int = 12
+    BLOCK_HEADER_HEIGHT: float = 30.0
+    BLOCK_PORT_ROW_HEIGHT: float = 20.0
+    BLOCK_PORT_SECTION_PADDING: float = 10.0
+    BLOCK_MIN_WIDTH: float = 160.0
+    BLOCK_MIN_HEIGHT: float = 70.0
+    BLOCK_COMPACT_MIN_WIDTH: float = 100.0
+    BLOCK_COMPACT_MIN_HEIGHT: float = 40.0
+    BLOCK_COMPACT_HEADER_HEIGHT: float = 20.0
+    BLOCK_COMPACT_PORT_ROW_HEIGHT: float = 14.0
+    BLOCK_COMPACT_PORT_SECTION_PADDING: float = 6.0
+    PORT_ITEM_COLOR: QColor = QColor("#e1f7ff")
+    VALIDATION_HICHLIGHTED_BORDER = QColor("#b42318")
+
+
+class EditorGraphicsDefaultsLight:
+    BLOCK_BORDER: QColor = QColor("#03384f")
+    BLOCK_BORDER_SELECTED: QColor = QColor("#00bbff")
+    BLOCK_TITLE: QColor = QColor("#03384f")
+    WIRE_COLOR: QColor = QColor("#03384f")
+    BLOCK_FILL: QColor = QColor("#f5fdff")
+    PORT_LABEL_COLOR: QColor = QColor("#173042")
+    WIRE_ELBOW_OFFSET: float = 36.0
+    WIRE_TERMINAL_STUB_LENGTH: float = 18.0
+    PORT_LABEL_MAX_CHARS: int = 12
+    BLOCK_HEADER_HEIGHT: float = 30.0
+    BLOCK_PORT_ROW_HEIGHT: float = 20.0
+    BLOCK_PORT_SECTION_PADDING: float = 10.0
+    BLOCK_MIN_WIDTH: float = 160.0
+    BLOCK_MIN_HEIGHT: float = 70.0
+    BLOCK_COMPACT_MIN_WIDTH: float = 100.0
+    BLOCK_COMPACT_MIN_HEIGHT: float = 40.0
+    BLOCK_COMPACT_HEADER_HEIGHT: float = 20.0
+    BLOCK_COMPACT_PORT_ROW_HEIGHT: float = 14.0
+    BLOCK_COMPACT_PORT_SECTION_PADDING: float = 6.0
+    PORT_ITEM_COLOR: QColor = QColor("#03384f")
+    VALIDATION_HICHLIGHTED_BORDER = QColor("#b42318")
+
+
+class EditorGraphicsCommonFeatures:
+    VALIDATION_HICHLIGHTED_BORDER = QColor("#b42318")
+    BLOCK_BORDER_SELECTED: QColor = QColor("#00bbff")
+    dirtyStateChanged = Signal(bool)
+    WIRE_ELBOW_OFFSET: float = 36.0
+    WIRE_TERMINAL_STUB_LENGTH: float = 18.0
+    WIRE_BLOCK_CLEARANCE: float = 18.0
+    WIRE_BLOCK_MARGIN: float = 8.0
+    PORT_LABEL_MAX_CHARS: int = 12
+    BLOCK_HEADER_HEIGHT: float = 30.0
+    BLOCK_PORT_ROW_HEIGHT: float = 20.0
+    BLOCK_PORT_SECTION_PADDING: float = 10.0
+    BLOCK_MIN_WIDTH: float = 160.0
+    BLOCK_MIN_HEIGHT: float = 70.0
+    BLOCK_COMPACT_MIN_WIDTH: float = 100.0
+    BLOCK_COMPACT_MIN_HEIGHT: float = 40.0
+    BLOCK_COMPACT_HEADER_HEIGHT: float = 20.0
+    BLOCK_COMPACT_PORT_ROW_HEIGHT: float = 14.0
+    BLOCK_COMPACT_PORT_SECTION_PADDING: float = 6.0
+    TEMPLATE_NODE_TYPE: str = "TEMPLATE"
+    INITIAL_LAYOUT_SCALE: float = 0.60
+    INITIAL_VIEW_SCALE: float = 1.3
+    LAYOUT_MARGIN: float = 40.0
+    PARAMETER_VALUE_TYPE_ROLE: int = int(QtCore.Qt.ItemDataRole.UserRole) + 500
+    PARAMETER_EDITABLE_ROLE: int = int(QtCore.Qt.ItemDataRole.UserRole) + 501
+    LIBRARY_SEARCH_TEXT_ROLE: int = int(QtCore.Qt.ItemDataRole.UserRole) + 502
+    BLOCK_SEARCH_ROLE: int = int(QtCore.Qt.ItemDataRole.UserRole) + 503
+    MODAL_TEMPLATE_KIND_ATTR: str = "_modal_template_kind"
+    MODAL_TEMPLATE_CONFIG_ATTR: str = "_modal_template_config"
+
+
 class BlockPositionChangedCallback:
     __slots__ = ("_editor", "_block_uid")
 
@@ -135,6 +318,7 @@ class BlockPositionChangedCallback:
 
     def __call__(self, x_pos: float, y_pos: float) -> None:
         self._editor.on_block_position_changed(self._block_uid, x_pos, y_pos)
+
 
 class Node:
     def __init__(self, name, data=None, parent=None):
@@ -354,7 +538,7 @@ class PortItem(QAbstractGraphicsShapeItem):
         self._validation_highlighted = val
 
         if self._validation_highlighted:
-            self.setBrush(QBrush(self.editor.VALIDATION_HICHLIGHTED_BORDER))
+            self.setBrush(QBrush(EditorGraphicsCommonFeatures.VALIDATION_HICHLIGHTED_BORDER))
         else:
             self.setBrush(self.brush())
 
@@ -408,18 +592,22 @@ class ConnectionItem(QGraphicsPathItem):
                  con_uid=None,
                  uid=None,
                  elbow_points: List[QPointF] | None = None,
+                 route_style: str = "RETICULAR",
+                 locked: bool = False,
                  editor: DynamicBlockEditorGUI | None = None):
         super().__init__()
         if editor is not None:
             self.editor: DynamicBlockEditorGUI | None = editor
         else:
             self.editor = source_port.subsystem.editor
-        self.uid: int = uid if uid is not None else _new_uid()
+        self.uid: int = uid if uid is not None else uuid.uuid4().int
         self.setZValue(-1)
         self.source_port: PortItem | BranchingItem = source_port
         self.target_port: PortItem | BranchingItem = target_port
         self.diagram = diagram
         self.con_uid = con_uid if con_uid is not None else self.uid
+        self.route_style: str = str(route_style).upper()
+        self.route_locked: bool = bool(locked)
 
         if self.source_port.connections is None:
             self.source_port.connections = list()
@@ -442,7 +630,6 @@ class ConnectionItem(QGraphicsPathItem):
         self.setAcceptedMouseButtons(Qt.MouseButton.LeftButton)
 
         self.elbow_points: List[QPointF] = elbow_points if elbow_points is not None else list()
-        self.elbows: List[ElbowItem] = list()
         self._dragging_segment: int = -1
         self._original_path_elements: List[QPointF] = list()
         self.update_path()
@@ -454,7 +641,9 @@ class ConnectionItem(QGraphicsPathItem):
                 device_uid_to=self.target_port.subsystem.subsys.uid,
                 port_number_from=self.source_port.index,
                 port_number_to=self.target_port.index,
-                elbow_points=[(pt.x(), pt.y()) for pt in self.elbow_points]
+                elbow_points=[(pt.x(), pt.y()) for pt in self.elbow_points],
+                route_style=self.route_style,
+                locked=self.route_locked,
             )
 
     def recolour_mode(self):
@@ -476,80 +665,161 @@ class ConnectionItem(QGraphicsPathItem):
             self.recolour_mode()
 
     def update_path(self) -> None:
-        path: QPainterPath = QPainterPath(self.source_port.scenePos())
+        route_points = self._sanitize_full_route(None)
+        self._rebuild_path_from_route(route_points, save=False)
 
-        if self.elbow_points:
-            pt: QPointF
-            for pt in self.elbow_points:
-                path.lineTo(pt)
+    def _sanitize_full_route(
+            self,
+            route_points: list[tuple[float, float]] | None,
+    ) -> list[tuple[float, float]]:
+        start = self.source_port.scenePos()
+        end = self.target_port.scenePos()
+        source_side = self._connection_side_for_port(self.source_port)
+        target_side = self._connection_side_for_port(self.target_port)
+        start_stub = build_stub_point(
+            (start.x(), start.y()),
+            source_side,
+            EditorGraphicsCommonFeatures.WIRE_TERMINAL_STUB_LENGTH,
+        )
+        end_stub = build_stub_point(
+            (end.x(), end.y()),
+            target_side,
+            EditorGraphicsCommonFeatures.WIRE_TERMINAL_STUB_LENGTH,
+        )
+
+        if route_points is None:
+            persisted_points = [(pt.x(), pt.y()) for pt in
+                                self.elbow_points] if self.route_locked and self.elbow_points else []
         else:
-            if self.editor is not None:
-                wire_elbou_offset = self.editor.WIRE_ELBOW_OFFSET
-            else:
-                wire_elbou_offset = self.source_port.editor.WIRE_ELBOW_OFFSET
-            path = build_orthogonal_connection_path(
-                self.source_port.scenePos(),
-                self.target_port.scenePos(),
-                wire_elbou_offset,
+            normalized_candidate = normalize_route_points(route_points)
+            persisted_points = normalized_candidate[1:-1] if len(normalized_candidate) > 2 else []
+
+        if self.route_locked and persisted_points:
+            inner_route = merge_route_with_endpoints(
+                start=start_stub,
+                end=end_stub,
+                persisted_points=persisted_points,
+            )
+            if self.route_style == "RETICULAR" and not is_orthogonal_route(inner_route):
+                inner_route = orthogonalize_route_points(inner_route)
+        else:
+            inner_route = build_default_connection_route(
+                start=start_stub,
+                end=end_stub,
+                route_style=self.route_style,
+                elbow_offset=EditorGraphicsCommonFeatures.WIRE_ELBOW_OFFSET,
             )
 
-        path.lineTo(self.target_port.scenePos())
-        self.setPath(path)
+        if not self.route_locked:
+            obstacles = self._build_obstacle_rectangles()
+            must_reroute_reticular = (
+                    self.route_style == "RETICULAR"
+                    and not is_orthogonal_route(inner_route)
+            )
+            if must_reroute_reticular or path_hits_rectangles(
+                    inner_route,
+                    obstacles,
+                    margin=EditorGraphicsCommonFeatures.WIRE_BLOCK_MARGIN,
+            ):
+                inner_route = reroute_around_rectangles(
+                    inner_route,
+                    obstacles,
+                    start_side=source_side,
+                    end_side=target_side,
+                    clearance=EditorGraphicsCommonFeatures.WIRE_BLOCK_CLEARANCE,
+                    margin=EditorGraphicsCommonFeatures.WIRE_BLOCK_MARGIN,
+                )
 
+        full_route = [(start.x(), start.y())]
+        full_route.extend(inner_route)
+        full_route.append((end.x(), end.y()))
+        return full_route
+
+    def _connection_side_for_port(self, port: PortItem | BranchingItem) -> str | None:
+        if isinstance(port, BranchingItem):
+            return None
+        parent = port.subsystem
+        if not isinstance(parent, QGraphicsRectItem):
+            return "left" if port.is_input else "right"
+
+        rect = parent.rect()
+        local = port.pos()
+        distances = {
+            "left": abs(local.x() - rect.left()),
+            "right": abs(local.x() - rect.right()),
+            "top": abs(local.y() - rect.top()),
+            "bottom": abs(local.y() - rect.bottom()),
+        }
+        return min(distances, key=distances.get)
+
+    def _build_obstacle_rectangles(self) -> list[tuple[float, float, float, float]]:
+        scene = self.scene()
+        if scene is None:
+            return []
+
+        obstacle_rects: list[tuple[float, float, float, float]] = []
+        item: QGraphicsItem
+        for item in scene.items():
+            if isinstance(
+                    item,
+                    (
+                            BlockItem,
+                            GenericBlockItem,
+                            PairedItem,
+                            RoundBaseArithmeticOpItem,
+                            RectBaseArithmeticOpItem,
+                            ProtectedConnectionBlockItem,
+                            UnOpItem,
+                    ),
+            ):
+                rect = item.sceneBoundingRect()
+                obstacle_rects.append((rect.left(), rect.top(), rect.right(), rect.bottom()))
+        return obstacle_rects
 
     def on_elbow_moved(self, index: int, new_pos: QPointF) -> None:
-        if index < 0 or index >= len(self.elbows):
-            return
-        else:
-            pass
-
-        self.elbow_points[index] = new_pos
-
-        prev_pt = self.source_port.scenePos()
-        next_pt = self.target_port.scenePos()
-
-        if index > 0:
-            prev_pt = self.elbow_points[index - 1]
-        else:
-            pass
-        if index < len(self.elbow_points) - 1:
-            next_pt = self.elbow_points[index + 1]
-        else:
-            pass
-
-        dx1 = new_pos.x() - prev_pt.x()
-        dy1 = new_pos.y() - prev_pt.y()
-        dx2 = next_pt.x() - new_pos.x()
-        dy2 = next_pt.y() - new_pos.y()
-
-        if abs(dx1) > abs(dy1):
-            self.elbow_points[index].setY(prev_pt.y())
-        else:
-            self.elbow_points[index].setX(prev_pt.x())
-
-        if index < len(self.elbow_points) - 1:
-            if abs(dx2) > abs(dy2):
-                self.elbow_points[index + 1].setY(new_pos.y())
-            else:
-                self.elbow_points[index + 1].setX(new_pos.x())
-        else:
-            pass
-
-        i: int
-        elbow: ElbowItem
-        for i, elbow in enumerate(self.elbows):
-            elbow.setPos(self.elbow_points[i])
-
-        self.update_path()
-        self._save_elbow_points()
+        return
 
     def _save_elbow_points(self) -> None:
         if self.con_uid in self.diagram.con_data:
-            self.diagram.con_data[self.con_uid].elbow_points = [
-                (pt.x(), pt.y()) for pt in self.elbow_points
-            ]
+            route_points = self.get_route_points_for_editing()
+            if len(route_points) > 2:
+                persisted_points = route_points[1:-1]
+            else:
+                persisted_points = list()
+            self.diagram.con_data[self.con_uid].elbow_points = persisted_points
+            self.diagram.con_data[self.con_uid].route_style = self.route_style
+            self.diagram.con_data[self.con_uid].locked = self.route_locked
         else:
             pass
+
+    def set_route_style(self, route_style: str) -> None:
+        self.route_style = str(route_style).upper()
+        if not self.route_locked:
+            self.elbow_points = list()
+        self.update_path()
+        self._save_elbow_points()
+
+    def set_route_locked(self, locked: bool) -> None:
+        self.route_locked = bool(locked)
+        if not self.route_locked:
+            self.elbow_points = list()
+        self.update_path()
+        self._save_elbow_points()
+
+    def get_route_points_for_editing(self) -> list[tuple[float, float]]:
+        """
+        Return the current rendered route points as a normalized point list.
+        """
+        path: QPainterPath = self.path()
+        if path.isEmpty():
+            return []
+
+        points: list[tuple[float, float]] = []
+        index: int
+        for index in range(path.elementCount()):
+            element = path.elementAt(index)
+            points.append((float(element.x), float(element.y)))
+        return normalize_route_points(points)
 
     def _segment_hit_test(self, pos: QPointF, threshold: float = 12.0) -> tuple:
         path: QPainterPath = self.path()
@@ -569,7 +839,7 @@ class ConnectionItem(QGraphicsPathItem):
         else:
             pass
 
-        for i in range(len(elements) - 1):
+        for i in range(1, len(elements) - 2):
             p1: QPointF = elements[i]
             p2: QPointF = elements[i + 1]
 
@@ -640,65 +910,50 @@ class ConnectionItem(QGraphicsPathItem):
             seg_idx: int = self._dragging_segment
             p1: QPointF = elements[seg_idx]
             p2: QPointF = elements[seg_idx + 1]
-
-            dy: float = abs(p2.y() - p1.y())
-            dx: float = abs(p2.x() - p1.x())
-
-            if dy < 1:
-                new_y: float = new_pos.y()
-                new_x: float = p1.x()
-            elif dx < 1:
-                new_x = new_pos.x()
-                new_y = p1.y()
-            else:
-                new_x = new_pos.x()
-                new_y = new_pos.y()
-
-            new_elements: List[QPointF] = [QPointF(pt) for pt in elements]
-
-            if dy < 1:
-                if seg_idx == 0:
-                    new_elements[seg_idx + 1] = QPointF(elements[seg_idx + 1].x(), new_y)
-                elif seg_idx == len(elements) - 2:
-                    new_elements[seg_idx] = QPointF(elements[seg_idx].x(), new_y)
-                else:
-                    new_elements[seg_idx] = QPointF(elements[seg_idx].x(), new_y)
-                    new_elements[seg_idx + 1] = QPointF(elements[seg_idx + 1].x(), new_y)
-            elif dx < 1:
-                if seg_idx == 0:
-                    new_elements[seg_idx + 1] = QPointF(new_x, elements[seg_idx + 1].y())
-                elif seg_idx == len(elements) - 2:
-                    new_elements[seg_idx] = QPointF(new_x, elements[seg_idx].y())
-                else:
-                    new_elements[seg_idx] = QPointF(new_x, elements[seg_idx].y())
-                    new_elements[seg_idx + 1] = QPointF(new_x, elements[seg_idx + 1].y())
-            else:
-                pass
-
-            self._rebuild_path_from_elements(new_elements)
+            delta_x = new_pos.x() - p1.x() if abs(p2.x() - p1.x()) < 1 else 0.0
+            delta_y = new_pos.y() - p1.y() if abs(p2.y() - p1.y()) < 1 else 0.0
+            moved_route = move_polyline_route_segment(
+                self.get_route_points_for_editing(),
+                segment_index=seg_idx,
+                delta_x=delta_x,
+                delta_y=delta_y,
+            )
+            self.route_locked = True
+            self._rebuild_path_from_route(self._sanitize_full_route(moved_route))
             event.accept()
             return
         else:
             pass
         super().mouseMoveEvent(event)
 
-    def _rebuild_path_from_elements(self, elements: List[QPointF]) -> None:
-        if len(elements) < 2:
+    def _rebuild_path_from_route(self, route_points: List[tuple[float, float]], save: bool = True) -> None:
+        normalized_points = normalize_route_points(route_points)
+        if len(normalized_points) < 2:
             return
-        else:
-            pass
 
-        path: QPainterPath = QPainterPath(elements[0])
-        i: int
-        for i in range(1, len(elements)):
-            path.lineTo(elements[i])
+        path = QPainterPath(QPointF(normalized_points[0][0], normalized_points[0][1]))
+        point: tuple[float, float]
+        for point in normalized_points[1:]:
+            path.lineTo(point[0], point[1])
         self.setPath(path)
 
-        if len(elements) > 2:
-            self.elbow_points = elements[1:-1]
-        else:
-            self.elbow_points = list()
-        self._save_elbow_points()
+        self.elbow_points = [QPointF(x, y) for x, y in normalized_points[1:-1]]
+        self._sync_elbow_items()
+
+        if save:
+            self._save_elbow_points()
+
+    def _sync_elbow_items(self) -> None:
+        scene = self.scene()
+        if scene is None:
+            return
+        item: QGraphicsItem
+        for item in list(scene.items()):
+            if isinstance(item, ElbowItem) and item.connection_item is self:
+                scene.removeItem(item)
+
+    def _rebuild_path_from_elements(self, elements: List[QPointF]) -> None:
+        self._rebuild_path_from_route([(pt.x(), pt.y()) for pt in elements])
 
     def mouseReleaseEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent) -> None:
         if self._dragging_segment >= 0:
@@ -871,6 +1126,7 @@ class GenericBlockItem(QGraphicsRectItem):
             QGraphicsItem.GraphicsItemFlag.ItemSendsScenePositionChanges
         )
         self.setAcceptHoverEvents(True)
+        self._last_valid_pos: QPointF = QPointF(self.pos())
 
         self.update_name_position()
 
@@ -898,8 +1154,6 @@ class GenericBlockItem(QGraphicsRectItem):
         for output_label_item in self.output_labels:
             output_label_item.setDefaultTextColor(self.editor.colors_palet.BLOCK_TITLE)
 
-
-
     def recolour(self, use_custom_color: bool = False):
         if use_custom_color:
             pass
@@ -917,6 +1171,10 @@ class GenericBlockItem(QGraphicsRectItem):
             return
 
         super().mousePressEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        super().mouseReleaseEvent(event)
+        _finalize_block_drop(self)
 
     def mouseDoubleClickEvent(self, event):
         pass
@@ -986,10 +1244,10 @@ class GenericBlockItem(QGraphicsRectItem):
         body_rect: QtCore.QRectF = outer_rect
 
         if self._validation_highlighted:
-            border_color: QColor = self.editor.VALIDATION_HICHLIGHTED_BORDER
+            border_color: QColor = EditorGraphicsCommonFeatures.VALIDATION_HICHLIGHTED_BORDER
         else:
             border_color = (
-                self.editor.BLOCK_BORDER_SELECTED
+                EditorGraphicsCommonFeatures.BLOCK_BORDER_SELECTED
                 if self.isSelected()
                 else self.pen().color()
             )
@@ -1015,13 +1273,12 @@ class GenericBlockItem(QGraphicsRectItem):
         self._validation_highlighted = val
         self.update()
 
-
     def get_minimum_block_size(self) -> tuple[float, float]:
         port_rows: int = max(len(self.inputs), len(self.outputs), 1)
         min_height: float = max(
-            self.editor.BLOCK_MIN_HEIGHT,
-            self.editor.BLOCK_HEADER_HEIGHT + self.editor.BLOCK_PORT_SECTION_PADDING +
-            port_rows * self.editor.BLOCK_PORT_ROW_HEIGHT
+            EditorGraphicsCommonFeatures.BLOCK_MIN_HEIGHT,
+            EditorGraphicsCommonFeatures.BLOCK_HEADER_HEIGHT + EditorGraphicsCommonFeatures.BLOCK_PORT_SECTION_PADDING +
+            port_rows * EditorGraphicsCommonFeatures.BLOCK_PORT_ROW_HEIGHT
         )
 
         input_label_width = 0.0
@@ -1035,7 +1292,7 @@ class GenericBlockItem(QGraphicsRectItem):
         padding = 28.0
 
         min_width = max(
-            self.editor.BLOCK_MIN_WIDTH,
+            EditorGraphicsCommonFeatures.BLOCK_MIN_WIDTH,
             input_label_width + output_label_width + padding
         )
         return min_width, min_height
@@ -1072,7 +1329,7 @@ class GenericBlockItem(QGraphicsRectItem):
                 port.setToolTip(_build_port_tooltip("Input", i, variable_name))
                 label_item = self.input_labels[i]
                 label_item.setPlainText(
-                    truncate_port_label(variable_name, self.editor.PORT_LABEL_MAX_CHARS))
+                    truncate_port_label(variable_name, EditorGraphicsCommonFeatures.PORT_LABEL_MAX_CHARS))
 
             for i, port in enumerate(self.outputs):
                 if port.base_var is None:
@@ -1083,7 +1340,7 @@ class GenericBlockItem(QGraphicsRectItem):
                 port.setToolTip(_build_port_tooltip("Output", i, variable_name))
                 label_item = self.output_labels[i]
                 label_item.setPlainText(
-                    truncate_port_label(variable_name, self.editor.PORT_LABEL_MAX_CHARS))
+                    truncate_port_label(variable_name, EditorGraphicsCommonFeatures.PORT_LABEL_MAX_CHARS))
         else:
             pass
 
@@ -1142,6 +1399,7 @@ class GenericBlockItem(QGraphicsRectItem):
                 self.resize_handle.hide()
 
     def itemChange(self, change, value):
+        value = _handle_block_item_change(self, change, value)
         if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange:
             if self.position_changed_callback is not None:
                 self.position_changed_callback(value.x(), value.y())
@@ -1197,6 +1455,7 @@ class PairedItem(QGraphicsPolygonItem):
             QGraphicsItem.GraphicsItemFlag.ItemSendsScenePositionChanges
         )
         self.setAcceptHoverEvents(True)
+        self._last_valid_pos: QPointF = QPointF(self.pos())
 
         n_inputs = len(self.subsys.in_vars)
         n_outputs = len(self.subsys.out_vars)
@@ -1290,13 +1549,12 @@ class PairedItem(QGraphicsPolygonItem):
         else:
             self.paired_items.append(paired_item)
 
-
     def paint(self,
               painter: QPainter,
               option: QtWidgets.QStyleOptionGraphicsItem,
               widget: Optional[QWidget] = None) -> None:
         polygon: QtGui.QPolygonF = self.polygon()
-        border_color: QColor = self.editor.BLOCK_BORDER_SELECTED if self.isSelected() else self.pen().color()
+        border_color: QColor = EditorGraphicsCommonFeatures.BLOCK_BORDER_SELECTED if self.isSelected() else self.pen().color()
 
         painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
         painter.setPen(QPen(border_color, 1.6))
@@ -1352,7 +1610,12 @@ class PairedItem(QGraphicsPolygonItem):
         else:
             super().contextMenuEvent(event)
 
+    def mouseReleaseEvent(self, event):
+        super().mouseReleaseEvent(event)
+        _finalize_block_drop(self)
+
     def itemChange(self, change, value):
+        value = _handle_block_item_change(self, change, value)
         if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange:
             if self.position_changed_callback is not None:
                 self.position_changed_callback(value.x(), value.y())
@@ -1417,6 +1680,7 @@ class BlockItem(QGraphicsRectItem):
             QGraphicsItem.GraphicsItemFlag.ItemSendsScenePositionChanges
         )
         self.setAcceptHoverEvents(True)
+        self._last_valid_pos: QPointF = QPointF(self.pos())
 
     def recolour_mode(self):
         self.name_item.setDefaultTextColor(self.editor.colors_palet.BLOCK_TITLE)
@@ -1460,9 +1724,9 @@ class BlockItem(QGraphicsRectItem):
 
         port_rows: int = max(len(self.inputs), len(self.outputs), 1)
         min_height: float = max(
-            self.editor.BLOCK_COMPACT_MIN_HEIGHT,
-            self.editor.BLOCK_COMPACT_HEADER_HEIGHT + self.editor.BLOCK_COMPACT_PORT_SECTION_PADDING +
-            port_rows * self.editor.BLOCK_COMPACT_PORT_ROW_HEIGHT
+            EditorGraphicsCommonFeatures.BLOCK_COMPACT_MIN_HEIGHT,
+            EditorGraphicsCommonFeatures.BLOCK_COMPACT_HEADER_HEIGHT + EditorGraphicsCommonFeatures.BLOCK_COMPACT_PORT_SECTION_PADDING +
+            port_rows * EditorGraphicsCommonFeatures.BLOCK_COMPACT_PORT_ROW_HEIGHT
         )
         name_width = len(self.name) * 5
         max_label_length = 0
@@ -1475,7 +1739,7 @@ class BlockItem(QGraphicsRectItem):
         else:
             pass
         port_width = max_label_length * 5
-        min_width = max(self.editor.BLOCK_COMPACT_MIN_WIDTH, name_width + 10, port_width + 20)
+        min_width = max(EditorGraphicsCommonFeatures.BLOCK_COMPACT_MIN_WIDTH, name_width + 10, port_width + 20)
         return min_width, min_height
 
     def resize_to_content(self) -> None:
@@ -1537,10 +1801,10 @@ class BlockItem(QGraphicsRectItem):
         radius: float = body_rect.height() / 2.0
 
         if self._validation_highlighted:
-            border_color: QColor = self.editor.VALIDATION_HICHLIGHTED_BORDER
+            border_color: QColor = EditorGraphicsCommonFeatures.VALIDATION_HICHLIGHTED_BORDER
         else:
             border_color = (
-                self.editor.BLOCK_BORDER_SELECTED
+                EditorGraphicsCommonFeatures.BLOCK_BORDER_SELECTED
                 if self.isSelected()
                 else self.pen().color()
             )
@@ -1604,7 +1868,12 @@ class BlockItem(QGraphicsRectItem):
         QApplication.restoreOverrideCursor()
         self.update()
 
+    def mouseReleaseEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent) -> None:
+        super().mouseReleaseEvent(event)
+        _finalize_block_drop(self)
+
     def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value: Any) -> Any:
+        value = _handle_block_item_change(self, change, value)
         if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange:
             if self.position_changed_callback is not None:
                 self.position_changed_callback(value.x(), value.y())
@@ -1625,6 +1894,146 @@ class BlockItem(QGraphicsRectItem):
 
 class ProtectedConnectionBlockItem(BlockItem):
     pass
+
+
+class UnOpItem(BlockItem):
+    SIZE: float = 38.0
+    RADIUS: float = 4.0
+
+    _SYMBOL_TEXT: Dict[BlockType, str] = {
+        BlockType.CONST: "k",
+        BlockType.ABS: "|x|",
+        BlockType.INTEGRATOR: "∫",
+        BlockType.POWER: "x^y",
+        BlockType.SIN: "sin",
+        BlockType.COS: "cos",
+        BlockType.TAN: "tan",
+        BlockType.EXP: "exp",
+        BlockType.LOG: "ln",
+        BlockType.LOG10: "log",
+        BlockType.SQRT: "√",
+        BlockType.ASIN: "asin",
+        BlockType.ACOS: "acos",
+        BlockType.ATAN: "atan",
+        BlockType.SINH: "sinh",
+        BlockType.COSH: "cosh",
+        BlockType.TANH: "tanh",
+        BlockType.REAL: "Re",
+        BlockType.IMAG: "Im",
+        BlockType.CONJ: "z*",
+        BlockType.ANGLE: "∠",
+    }
+
+    def __init__(self,
+                 editor: DynamicBlockEditorGUI,
+                 var_factory: VarFactory,
+                 subsys: Block,
+                 api_object,
+                 mode: DynamicSimulationMode,
+                 block_type: BlockType,
+                 name: str,
+                 position_changed_callback=None):
+        super().__init__(
+            var_factory=var_factory,
+            name=name,
+            editor=editor,
+            mode=mode,
+            api_object=api_object,
+            position_changed_callback=position_changed_callback,
+        )
+        self.subsys = subsys
+        self.block_type: BlockType = block_type
+        self.name_item.setVisible(False)
+        self.build_item()
+
+    def build_item(self) -> None:
+        if self.subsys is None:
+            return
+
+        n_inputs: int = len(self.subsys.in_vars)
+        n_outputs: int = len(self.subsys.out_vars)
+        self.inputs = [PortItem(self, self.editor, True, i, n_inputs) for i in range(n_inputs)]
+        self.outputs = [PortItem(self, self.editor, False, i, n_outputs) for i in range(n_outputs)]
+        for port_item in self.inputs:
+            port_item.recolour()
+        for port_item in self.outputs:
+            port_item.recolour()
+        self.refresh_port_metadata()
+        self.resize_to_content()
+
+    def get_minimum_block_size(self) -> tuple[float, float]:
+        return self.SIZE, self.SIZE
+
+    def resize_to_content(self) -> None:
+        self.prepareGeometryChange()
+        QGraphicsRectItem.setRect(self, 0, 0, self.SIZE, self.SIZE)
+        self.update_ports()
+
+    def update_ports(self) -> None:
+        rect = self.rect()
+        center_y = rect.height() / 2.0
+
+        if self.inputs:
+            self.inputs[0].setPos(0.0, center_y)
+        for port in self.inputs[1:]:
+            port.setPos(0.0, center_y)
+
+        if self.outputs:
+            self.outputs[0].setPos(rect.width(), center_y)
+        for port in self.outputs[1:]:
+            port.setPos(rect.width(), center_y)
+
+        for port in self.inputs + self.outputs:
+            if port.connections:
+                conn: ConnectionItem
+                for conn in port.connections:
+                    conn.update_path()
+
+    def _draw_center_symbol(self, painter: QPainter, body_rect: QtCore.QRectF) -> None:
+        painter.setPen(QPen(self.editor.colors_palet.BLOCK_TITLE, 1.2))
+
+        if self.block_type == BlockType.GAIN:
+            triangle = QtGui.QPolygonF([
+                QPointF(body_rect.left() + body_rect.width() * 0.33, body_rect.top() + body_rect.height() * 0.25),
+                QPointF(body_rect.left() + body_rect.width() * 0.33, body_rect.bottom() - body_rect.height() * 0.25),
+                QPointF(body_rect.right() - body_rect.width() * 0.25, body_rect.center().y()),
+            ])
+            painter.setBrush(Qt.BrushStyle.NoBrush)
+            painter.drawPolygon(triangle)
+            return
+
+        symbol = self._SYMBOL_TEXT.get(self.block_type, self.block_type.value)
+        font = painter.font()
+        point_size = 8.5
+        if len(symbol) >= 4:
+            point_size = 7.0
+        elif len(symbol) == 3:
+            point_size = 7.6
+        font.setPointSizeF(point_size)
+        painter.setFont(font)
+        painter.drawText(body_rect, Qt.AlignmentFlag.AlignCenter, symbol)
+
+    def paint(self,
+              painter: QPainter,
+              option: QtWidgets.QStyleOptionGraphicsItem,
+              widget: Optional[QWidget] = None) -> None:
+        rect: QtCore.QRectF = self.rect()
+        body_rect: QtCore.QRectF = rect.adjusted(2, 2, -2, -2)
+
+        if self._validation_highlighted:
+            border_color: QColor = EditorGraphicsCommonFeatures.VALIDATION_HICHLIGHTED_BORDER
+        else:
+            border_color = (
+                EditorGraphicsCommonFeatures.BLOCK_BORDER_SELECTED
+                if self.isSelected()
+                else self.pen().color()
+            )
+
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing, True)
+        painter.setBrush(self.brush())
+        painter.setPen(QPen(border_color, 1.6))
+        painter.drawRoundedRect(body_rect, self.RADIUS, self.RADIUS)
+        self._draw_center_symbol(painter, body_rect)
 
 
 class RoundBaseArithmeticOpItem(QGraphicsEllipseItem):
@@ -1673,6 +2082,7 @@ class RoundBaseArithmeticOpItem(QGraphicsEllipseItem):
             QGraphicsItem.GraphicsItemFlag.ItemSendsScenePositionChanges
         )
         self.setAcceptHoverEvents(True)
+        self._last_valid_pos: QPointF = QPointF(self.pos())
 
     def recolour_mode(self):
         for label in self.input_labels:
@@ -1756,6 +2166,31 @@ class RoundBaseArithmeticOpItem(QGraphicsEllipseItem):
         return QPointF(dx / length * self.LABEL_OUTSET,
                        dy / length * self.LABEL_OUTSET)
 
+    def refresh_port_metadata(self) -> None:
+        if self.subsys is not None:
+            i: int
+            port: PortItem
+            label_item: QGraphicsTextItem
+            variable_name: str
+            for i, port in enumerate(self.inputs):
+                if port.base_var is None:
+                    port.base_var = self.subsys.in_vars[i]
+                else:
+                    pass
+                variable_name = self.subsys.in_vars[i].name
+                port.setToolTip(_build_port_tooltip("Input", i, variable_name))
+
+            for i, port in enumerate(self.outputs):
+                if port.base_var is None:
+                    port.base_var = self.subsys.out_vars[i]
+                else:
+                    pass
+                variable_name = self.subsys.out_vars[i].name
+                port.setToolTip(_build_port_tooltip("Output", i, variable_name))
+
+        else:
+            pass
+
     def update_ports(self) -> None:
         rect = self.rect()
         cx = rect.center().x()
@@ -1809,7 +2244,12 @@ class RoundBaseArithmeticOpItem(QGraphicsEllipseItem):
         painter.setPen(self.pen())
         painter.drawEllipse(rect)
 
+    def mouseReleaseEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent) -> None:
+        super().mouseReleaseEvent(event)
+        _finalize_block_drop(self)
+
     def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value: Any) -> Any:
+        value = _handle_block_item_change(self, change, value)
         if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange:
             for port in self.inputs + self.outputs:
                 if port.connections:
@@ -1865,6 +2305,7 @@ class RectBaseArithmeticOpItem(QGraphicsRectItem):
             QGraphicsItem.GraphicsItemFlag.ItemSendsScenePositionChanges
         )
         self.setAcceptHoverEvents(True)
+        self._last_valid_pos: QPointF = QPointF(self.pos())
 
     def recolour_mode(self):
         for label in self.input_labels:
@@ -1936,6 +2377,31 @@ class RectBaseArithmeticOpItem(QGraphicsRectItem):
             for var in self.subsys.in_vars:
                 self._input_signs.append(label_map.get(var.uid, "x"))
 
+    def refresh_port_metadata(self) -> None:
+        if self.subsys is not None:
+            i: int
+            port: PortItem
+            label_item: QGraphicsTextItem
+            variable_name: str
+            for i, port in enumerate(self.inputs):
+                if port.base_var is None:
+                    port.base_var = self.subsys.in_vars[i]
+                else:
+                    pass
+                variable_name = self.subsys.in_vars[i].name
+                port.setToolTip(_build_port_tooltip("Input", i, variable_name))
+
+            for i, port in enumerate(self.outputs):
+                if port.base_var is None:
+                    port.base_var = self.subsys.out_vars[i]
+                else:
+                    pass
+                variable_name = self.subsys.out_vars[i].name
+                port.setToolTip(_build_port_tooltip("Output", i, variable_name))
+
+        else:
+            pass
+
     def update_ports(self) -> None:
         rect = self.rect()
         w = rect.width()
@@ -1969,7 +2435,12 @@ class RectBaseArithmeticOpItem(QGraphicsRectItem):
         painter.setPen(self.pen())
         painter.drawRoundedRect(rect, 6.0, 6.0)
 
+    def mouseReleaseEvent(self, event: QtWidgets.QGraphicsSceneMouseEvent) -> None:
+        super().mouseReleaseEvent(event)
+        _finalize_block_drop(self)
+
     def itemChange(self, change: QGraphicsItem.GraphicsItemChange, value: Any) -> Any:
+        value = _handle_block_item_change(self, change, value)
         if change == QGraphicsItem.GraphicsItemChange.ItemPositionChange:
             for port in self.inputs + self.outputs:
                 if port.connections:
@@ -2078,7 +2549,8 @@ class DiagramScene(QGraphicsScene):
     def get_modal_template_metadata(self, block: Block | None) -> tuple[str | None, Dict[str, Any] | None]:
         return self.editor.get_modal_template_metadata(block)
 
-    def change_item_fill_color(self, item: BlockItem | GenericBlockItem | ConnectionItem | RoundBaseArithmeticOpItem | RectBaseArithmeticOpItem | PairedItem) -> None:
+    def change_item_fill_color(self,
+                               item: BlockItem | GenericBlockItem | ConnectionItem | RoundBaseArithmeticOpItem | RectBaseArithmeticOpItem | PairedItem) -> None:
         new_color: QColor = QColorDialog.getColor()
 
         if new_color.isValid():
@@ -2122,11 +2594,23 @@ class DiagramScene(QGraphicsScene):
         else:
             pass
 
+    def set_context_connection_route_style(self, route_style: str) -> None:
+        if isinstance(self.context_item, ConnectionItem):
+            self.context_item.set_route_style(route_style)
+        else:
+            pass
+
+    def set_context_connection_route_locked(self, locked: bool) -> None:
+        if isinstance(self.context_item, ConnectionItem):
+            self.context_item.set_route_locked(locked)
+        else:
+            pass
+
     def contextMenuEvent(self, event: QtWidgets.QGraphicsSceneContextMenuEvent) -> None:
         item: QGraphicsItem
         for item in self.items(event.scenePos()):
             if isinstance(item,
-                          (GenericBlockItem, ConnectionItem, RoundBaseArithmeticOpItem, RectBaseArithmeticOpItem)):
+                          (GenericBlockItem, ConnectionItem, RoundBaseArithmeticOpItem, RectBaseArithmeticOpItem, UnOpItem)):
                 menu: QMenu = QMenu()
                 if item is not None:
                     self.context_item = item
@@ -2138,6 +2622,31 @@ class DiagramScene(QGraphicsScene):
                     color_action: QAction = QAction("Change Color", menu)
                     color_action.triggered.connect(self.recolor_context_item)
                     menu.addAction(color_action)
+
+                    if isinstance(item, ConnectionItem):
+                        route_style_menu = menu.addMenu("Route Style")
+
+                        reticular_action: QAction = QAction("Reticular", route_style_menu)
+                        reticular_action.setCheckable(True)
+                        reticular_action.setChecked(item.route_style == "RETICULAR")
+                        reticular_action.triggered.connect(
+                            lambda checked=False: self.set_context_connection_route_style("RETICULAR")
+                        )
+                        route_style_menu.addAction(reticular_action)
+
+                        straight_action: QAction = QAction("Straight", route_style_menu)
+                        straight_action.setCheckable(True)
+                        straight_action.setChecked(item.route_style == "STRAIGHT")
+                        straight_action.triggered.connect(
+                            lambda checked=False: self.set_context_connection_route_style("STRAIGHT")
+                        )
+                        route_style_menu.addAction(straight_action)
+
+                        lock_action: QAction = QAction("Lock Manual Route", menu)
+                        lock_action.setCheckable(True)
+                        lock_action.setChecked(item.route_locked)
+                        lock_action.triggered.connect(self.set_context_connection_route_locked)
+                        menu.addAction(lock_action)
 
                     menu.exec(event.screenPos())
                     self.context_item = None
@@ -2205,7 +2714,11 @@ class DiagramScene(QGraphicsScene):
             if self.source_port is not None:
                 start: QPointF = self.source_port.scenePos()
                 end: QPointF = event.scenePos()
-                path: QPainterPath = build_orthogonal_connection_path(start, end, self.editor.WIRE_ELBOW_OFFSET)
+                path: QPainterPath = build_orthogonal_connection_path(
+                    start,
+                    end,
+                    EditorGraphicsCommonFeatures.WIRE_TERMINAL_STUB_LENGTH,
+                )
                 self.temp_line.setPath(path)
             else:
                 pass
@@ -2276,7 +2789,9 @@ class DiagramScene(QGraphicsScene):
                 port_number_from=source_port.index,
                 port_number_to=target_port.index,
                 color=connection.pen().color().name(),
-                elbow_points=list()
+                elbow_points=list(),
+                route_style=connection.route_style,
+                locked=connection.route_locked,
             )
         else:
             pass

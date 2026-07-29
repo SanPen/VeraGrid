@@ -557,9 +557,9 @@ def test_existing_line_mapping_values_remain_unchanged() -> None:
     bus_from: Bus = Bus(name="from", Vnom=20.0)
     bus_to: Bus = Bus(name="to", Vnom=20.0)
     line: Line = Line(name="line", bus_from=bus_from, bus_to=bus_to, r=0.1, x=0.2, b=0.3)
-    line.ys.phA = 1
-    line.ys.phB = 1
-    line.ys.phC = 1
+    line.ys.phA = True
+    line.ys.phB = True
+    line.ys.phC = True
 
     block: Block = _make_block(
         dict({
@@ -592,9 +592,9 @@ def test_uncoupled_line_mapping_uses_direct_reactance_when_historical_slot_is_ze
     bus_from: Bus = Bus(name="from", Vnom=20.0)
     bus_to: Bus = Bus(name="to", Vnom=20.0)
     line: Line = Line(name="line_rx_only", bus_from=bus_from, bus_to=bus_to, r=0.0, x=0.2, b=0.0)
-    line.ys.phA = 1
-    line.ys.phB = 1
-    line.ys.phC = 1
+    line.ys.phA = True
+    line.ys.phB = True
+    line.ys.phC = True
 
     block: Block = _make_block(
         dict({

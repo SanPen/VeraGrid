@@ -32,6 +32,7 @@ class GeneratorData:
         self.installed_p: Vec = np.zeros(nelm, dtype=float)
 
         self.active: BoolVec = np.zeros(nelm, dtype=bool)
+        self.is_static_generator: BoolVec = np.zeros(nelm, dtype=bool)
         self.p: Vec = np.zeros(nelm, dtype=float)
 
         self.p3_star = np.zeros(self.nelm * 3, dtype=float)
@@ -118,6 +119,7 @@ class GeneratorData:
         data.installed_p = self.installed_p[elm_idx]
 
         data.active = self.active[elm_idx]
+        data.is_static_generator = self.is_static_generator[elm_idx]
         data.p = self.p[elm_idx]
         elm_idx_3 = ((elm_idx * 3)[:, np.newaxis] + np.arange(3)).flatten()
         data.p3_star = self.p3_star[elm_idx_3]
@@ -228,6 +230,7 @@ class GeneratorData:
         data.installed_p = self.installed_p.copy()
 
         data.active = self.active.copy()
+        data.is_static_generator = self.is_static_generator.copy()
         data.p = self.p.copy()
         data.p3_star = self.p3_star.copy()
         data.q = self.q.copy()

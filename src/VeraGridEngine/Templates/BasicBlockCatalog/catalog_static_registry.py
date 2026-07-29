@@ -251,8 +251,6 @@ def build_basic_block_catalog_branch_skeleton() -> dict[str, dict[str, list[obje
     branch['Waveforms and Time']['Time Sources and Timers'] = list()
     branch['Mechanical'] = dict()
     branch['Mechanical']['Drive Train'] = list()
-    branch['Lookup and Tables'] = dict()
-    branch['Lookup and Tables']['Arrays and Matrices'] = list()
     branch['Miscellaneous'] = dict()
     branch['Miscellaneous']['Other'] = list()
     return branch
@@ -323,23 +321,23 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
         )
     )
 
-    records.append(
-        BasicBlockCatalogStaticRecord(
-            template_key='inverse_lookup_array_linear',
-            typ_id='5',
-            blkdef_name='Inverse Lookup array (linear)',
-            sample_display_name='Inverse Lookup array (linear)',
-            display_label='Inverse Lookup array (linear)',
-            category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
-            inputs=('yi',),
-            outputs=('yo',),
-            states=(),
-            params=('array_K',),
-            unsupported_lines=(),
-            module_name='typ_5__inverse_lookup_array_linear',
-            module_filename='typ_5__inverse_lookup_array_linear.py',
-        )
-    )
+    # records.append(
+    #     BasicBlockCatalogStaticRecord(
+    #         template_key='inverse_lookup_array_linear',
+    #         typ_id='5',
+    #         blkdef_name='Inverse Lookup array (linear)',
+    #         sample_display_name='Inverse Lookup array (linear)',
+    #         display_label='Inverse Lookup array (linear)',
+    #         category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
+    #         inputs=('yi',),
+    #         outputs=('yo',),
+    #         states=(),
+    #         params=('array_K',),
+    #         unsupported_lines=(),
+    #         module_name='typ_5__inverse_lookup_array_linear',
+    #         module_filename='typ_5__inverse_lookup_array_linear.py',
+    #     )
+    # )
 
     records.append(
         BasicBlockCatalogStaticRecord(
@@ -348,7 +346,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             blkdef_name='Inverse Lookup array object (linear)',
             sample_display_name='Inverse Lookup array object (linear)',
             display_label='Inverse Lookup array object (linear)',
-            category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
+            category_path=('Native', 'Arrays and Matrices'),
             inputs=('yi',),
             outputs=('yo',),
             states=(),
@@ -358,25 +356,25 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             module_filename='typ_6__inverse_lookup_array_object_linear.py',
         )
     )
-
-    records.append(
-        BasicBlockCatalogStaticRecord(
-            template_key='lookup_array_linear',
-            typ_id='7',
-            blkdef_name='Lookup array (linear)',
-            sample_display_name='Lookup array (linear)',
-            display_label='Lookup array (linear)',
-            category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
-            inputs=('yi',),
-            outputs=('yo',),
-            states=(),
-            params=('array_K',),
-            unsupported_lines=(),
-            module_name='typ_7__lookup_array_linear',
-            module_filename='typ_7__lookup_array_linear.py',
-        )
-    )
-
+    #
+    # records.append(
+    #     BasicBlockCatalogStaticRecord(
+    #         template_key='lookup_array_linear',
+    #         typ_id='7',
+    #         blkdef_name='Lookup array (linear)',
+    #         sample_display_name='Lookup array (linear)',
+    #         display_label='Lookup array (linear)',
+    #         category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
+    #         inputs=('yi',),
+    #         outputs=('yo',),
+    #         states=(),
+    #         params=('array_K',),
+    #         unsupported_lines=(),
+    #         module_name='typ_7__lookup_array_linear',
+    #         module_filename='typ_7__lookup_array_linear.py',
+    #     )
+    # )
+    #
     records.append(
         BasicBlockCatalogStaticRecord(
             template_key='lookup_array_linear_noclipping',
@@ -384,7 +382,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             blkdef_name='Lookup array (linear_noclipping)',
             sample_display_name='Lookup array (linear_noclipping)',
             display_label='Lookup array (linear noclipping)',
-            category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
+            category_path=('Native', 'Arrays and Matrices'),
             inputs=('yi',),
             outputs=('yo',),
             states=(),
@@ -394,25 +392,25 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             module_filename='typ_8__lookup_array_linear_noclipping.py',
         )
     )
-
-    records.append(
-        BasicBlockCatalogStaticRecord(
-            template_key='lookup_array_spline',
-            typ_id='9',
-            blkdef_name='Lookup array (spline)',
-            sample_display_name='Lookup array (spline)',
-            display_label='Lookup array (spline)',
-            category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
-            inputs=('yi',),
-            outputs=('yo',),
-            states=(),
-            params=('array_K',),
-            unsupported_lines=(),
-            module_name='typ_9__lookup_array_spline',
-            module_filename='typ_9__lookup_array_spline.py',
-        )
-    )
-
+    #
+    # records.append(
+    #     BasicBlockCatalogStaticRecord(
+    #         template_key='lookup_array_spline',
+    #         typ_id='9',
+    #         blkdef_name='Lookup array (spline)',
+    #         sample_display_name='Lookup array (spline)',
+    #         display_label='Lookup array (spline)',
+    #         category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
+    #         inputs=('yi',),
+    #         outputs=('yo',),
+    #         states=(),
+    #         params=('array_K',),
+    #         unsupported_lines=(),
+    #         module_name='typ_9__lookup_array_spline',
+    #         module_filename='typ_9__lookup_array_spline.py',
+    #     )
+    # )
+    #
     records.append(
         BasicBlockCatalogStaticRecord(
             template_key='lookup_array_1x3_linear_fixed',
@@ -420,7 +418,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             blkdef_name='Lookup array 1x3 (linear_fixed)',
             sample_display_name='Lookup array 1x3 (linear_fixed)',
             display_label='Lookup array 1x3 (linear fixed)',
-            category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
+            category_path=('Native', 'Arrays and Matrices'),
             inputs=('yi',),
             outputs=('yo',),
             states=(),
@@ -438,7 +436,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             blkdef_name='Lookup array 1x3 (linear_variable)',
             sample_display_name='Lookup array 1x3 (linear_variable)',
             display_label='Lookup array 1x3 (linear variable)',
-            category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
+            category_path=('Native', 'Arrays and Matrices'),
             inputs=('yi', 'arr_x1', 'arr_x2', 'arr_x3', 'arr_y1', 'arr_y2', 'arr_y3'),
             outputs=('yo',),
             states=(),
@@ -456,7 +454,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             blkdef_name='Lookup array 1x4 (linear_fixed)',
             sample_display_name='Lookup array 1x4 (linear_fixed)',
             display_label='Lookup array 1x4 (linear fixed)',
-            category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
+            category_path=('Native', 'Arrays and Matrices'),
             inputs=('yi',),
             outputs=('yo',),
             states=(),
@@ -474,7 +472,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             blkdef_name='Lookup array 1x4 (linear_variable)',
             sample_display_name='Lookup array 1x4 (linear_variable)',
             display_label='Lookup array 1x4 (linear variable)',
-            category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
+            category_path=('Native', 'Arrays and Matrices'),
             inputs=('yi', 'arr_x1', 'arr_x2', 'arr_x3', 'arr_x4', 'arr_y1', 'arr_y2', 'arr_y3', 'arr_y4'),
             outputs=('yo',),
             states=(),
@@ -492,7 +490,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             blkdef_name='Lookup array object (linear)',
             sample_display_name='Lookup array object (linear)',
             display_label='Lookup array object (linear)',
-            category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
+            category_path=('Native', 'Arrays and Matrices'),
             inputs=('yi',),
             outputs=('yo',),
             states=(),
@@ -510,7 +508,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             blkdef_name='Lookup array object (linear_noclipping)',
             sample_display_name='Lookup array object (linear_noclipping)',
             display_label='Lookup array object (linear noclipping)',
-            category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
+            category_path=('Native', 'Arrays and Matrices'),
             inputs=('yi',),
             outputs=('yo',),
             states=(),
@@ -528,7 +526,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             blkdef_name='Lookup array object (spline)',
             sample_display_name='Lookup array object (spline)',
             display_label='Lookup array object (spline)',
-            category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
+            category_path=('Native', 'Arrays and Matrices'),
             inputs=('yi',),
             outputs=('yo',),
             states=(),
@@ -538,6 +536,8 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             module_filename='typ_16__lookup_array_object_spline.py',
         )
     )
+
+    ############################ missing these two ######################################
 
     records.append(
         BasicBlockCatalogStaticRecord(
@@ -575,6 +575,8 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
         )
     )
 
+    ###################################################################################################
+
     records.append(
         BasicBlockCatalogStaticRecord(
             template_key='lookup_matrix_object_linear',
@@ -582,7 +584,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             blkdef_name='Lookup matrix object (linear)',
             sample_display_name='Lookup matrix object (linear)',
             display_label='Lookup matrix object (linear)',
-            category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
+            category_path=('Native', 'Arrays and Matrices'),
             inputs=('yi1', 'yi2'),
             outputs=('yo',),
             states=(),
@@ -600,7 +602,7 @@ def get_basic_block_catalog_static_records() -> Sequence[BasicBlockCatalogStatic
             blkdef_name='Lookup matrix object (spline)',
             sample_display_name='Lookup matrix object (spline)',
             display_label='Lookup matrix object (spline)',
-            category_path=('Native', 'Lookup and Tables', 'Arrays and Matrices'),
+            category_path=('Native', 'Arrays and Matrices'),
             inputs=('yi1', 'yi2'),
             outputs=('yo',),
             states=(),

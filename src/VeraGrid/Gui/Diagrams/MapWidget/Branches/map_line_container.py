@@ -19,9 +19,7 @@ from VeraGridEngine.enumerations import DeviceType
 from VeraGrid.Gui.Diagrams.generic_graphics import ACTIVE, DEACTIVATED
 from VeraGrid.Gui.Diagrams.generic_graphics import GenericDiagramWidget
 from VeraGrid.Gui.gui_functions import add_menu_entry, translate_context_menu_text
-from VeraGrid.Gui.DeviceEditors.DcLineEditor.dc_line_device_editor import DcLineDeviceEditorDialog
-from VeraGrid.Gui.DeviceEditors.LineEditor.line_device_editor import LineDeviceEditorDialog
-from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor import TemplateDeviceEditor
+from VeraGrid.Gui.DeviceEditors.device_editor_factory import build_device_editor_dialog
 from VeraGrid.Gui.messages import error_msg
 from VeraGrid.Gui.messages import yes_no_question
 
@@ -652,15 +650,7 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
 
         :return: ``True`` when an editor was opened.
         """
-        circuit = self.editor.circuit
-
-        if self.api_object.device_type == DeviceType.LineDevice:
-            dialog = LineDeviceEditorDialog(api_object=self.api_object, circuit=circuit)
-        elif self.api_object.device_type == DeviceType.DCLineDevice:
-            dialog = DcLineDeviceEditorDialog(api_object=self.api_object, circuit=circuit)
-        else:
-            dialog = TemplateDeviceEditor(api_object=self.api_object, circuit=circuit)
-
+        dialog = build_device_editor_dialog(api_object=self.api_object, circuit=self.editor.circuit)
         dialog.exec()
         return True
 

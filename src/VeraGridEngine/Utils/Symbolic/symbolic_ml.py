@@ -108,6 +108,251 @@ def ml_hard_sat(
     return final_block, final_expr 
 
 
+def smooth_hard_sat(
+    vf: VarFactory,
+    u: Expr,
+    u_min: Expr,
+    u_max: Expr,
+    lam: Expr | float = 1e-6,
+):
+    """Smooth approximation of ``hard_sat(u, u_min, u_max)``.
+
+    The expression converges pointwise to exact clipping on ``[u_min, u_max]``
+    as ``lam`` approaches zero:
+
+        0.5 * (u_min + u_max
+               + sqrt((u - u_min)^2 + lam)
+               - sqrt((u - u_max)^2 + lam))
+
+    ``lam`` has squared units of ``u`` and should be positive.
+    """
+
+    lam_expr = vf.add_const(float(lam)) if isinstance(lam, (int, float)) else lam
+    half = vf.add_const(0.5)
+    return half * (
+        u_min
+        + u_max
+        + sym.sqrt((u - u_min) * (u - u_min) + lam_expr)
+        - sym.sqrt((u - u_max) * (u - u_max) + lam_expr)
+    )
+
+
+def ml_smooth_sqrt(
+    vf: VarFactory,
+    x: Expr,
+    name: str = "",
+):
+    """Multilinear auxiliary representation of ``sqrt(x)``.
+
+    The runtime equations are bilinear/linear:
+    ``root_a * root_b = x``, ``root_a = root_b``, ``root_a = pos_a * pos_b``,
+    and ``pos_a = pos_b``. The last two equations select the non-negative root
+    branch when initialized consistently.
+    """
+
+    root_a = vf.add_var("sqrt_a_" + name)
+    root_b = vf.add_var("sqrt_b_" + name)
+    pos_a = vf.add_var("sqrt_pos_a_" + name)
+    pos_b = vf.add_var("sqrt_pos_b_" + name)
+    block = Block(
+        algebraic_eqs=[
+            root_a * root_b - x,
+            root_a - root_b,
+            root_a - pos_a * pos_b,
+            pos_a - pos_b,
+        ],
+        algebraic_vars=[root_a, root_b, pos_a, pos_b],
+        init_eqs={
+            root_a: sym.sqrt(x),
+            root_b: root_a,
+            pos_a: sym.sqrt(root_a),
+            pos_b: pos_a,
+        },
+    )
+    return block, root_a
+
+
+def ml_smooth_hard_sat(
+    vf: VarFactory,
+    u: Expr,
+    u_min: Expr,
+    u_max: Expr,
+    lam: Expr | float = 1e-6,
+    name: str = "",
+):
+    """Multilinearized smooth approximation of ``hard_sat``.
+
+    This is the auxiliary-variable form of ``smooth_hard_sat``. Runtime equations
+    use only linear and bilinear products; direct ``sqrt`` only appears in
+    initialization equations.
+    """
+
+    lam_expr = vf.add_const(float(lam)) if isinstance(lam, (int, float)) else lam
+    half = vf.add_const(0.5)
+
+    du_min = vf.add_var("du_min_" + name)
+    du_max = vf.add_var("du_max_" + name)
+    du_min_aux = vf.add_var("du_min_aux_" + name)
+    du_max_aux = vf.add_var("du_max_aux_" + name)
+    rad_min = vf.add_var("rad_min_" + name)
+    rad_max = vf.add_var("rad_max_" + name)
+
+    shift_block = Block(
+        algebraic_eqs=[
+            du_min - (u - u_min),
+            du_max - (u - u_max),
+            du_min_aux - du_min,
+            du_max_aux - du_max,
+            rad_min - (du_min * du_min_aux + lam_expr),
+            rad_max - (du_max * du_max_aux + lam_expr),
+        ],
+        algebraic_vars=[du_min, du_max, du_min_aux, du_max_aux, rad_min, rad_max],
+        init_eqs={
+            du_min: u - u_min,
+            du_max: u - u_max,
+            du_min_aux: du_min,
+            du_max_aux: du_max,
+            rad_min: du_min * du_min_aux + lam_expr,
+            rad_max: du_max * du_max_aux + lam_expr,
+        },
+    )
+    sqrt_min_block, sqrt_min = ml_smooth_sqrt(vf, rad_min, name + "_min")
+    sqrt_max_block, sqrt_max = ml_smooth_sqrt(vf, rad_max, name + "_max")
+    block = Block(children=[shift_block, sqrt_min_block, sqrt_max_block])
+    return block, half * (u_min + u_max + sqrt_min - sqrt_max)
+
+
+def ml_soft_sign(
+    vf: VarFactory,
+    x: Expr,
+    lamda: Expr | float | int = 1.0e-6,
+    name: str = "",
+):
+    """Smooth sign approximation with an algebraic auxiliary variable.
+
+    This represents ``softsign_x = x / sqrt(x^2 + lamda)`` without division or
+    direct square roots in runtime equations. The generated equations are
+    bilinear/linear, with direct ``sqrt`` only used for initialization.
+    ``lamda`` has squared units of ``x`` and should be positive.
+    """
+
+    lamda_expr = Const(float(lamda)) if isinstance(lamda, (float, int)) else lamda
+    softsign_x = vf.add_var("softsign_" + name)
+    x_aux = vf.add_var("softsign_x_aux_" + name)
+    radicand = vf.add_var("softsign_radicand_" + name)
+    denom_a = vf.add_var("softsign_denom_a_" + name)
+    denom_b = vf.add_var("softsign_denom_b_" + name)
+    denom_pos_a = vf.add_var("softsign_denom_pos_a_" + name)
+    denom_pos_b = vf.add_var("softsign_denom_pos_b_" + name)
+
+    block = Block(
+        algebraic_vars=[softsign_x, x_aux, radicand, denom_a, denom_b, denom_pos_a, denom_pos_b],
+        algebraic_eqs=[
+            x_aux - x,
+            radicand - (x * x_aux + lamda_expr),
+            denom_a * denom_b - radicand,
+            denom_a - denom_b,
+            denom_a - denom_pos_a * denom_pos_b,
+            denom_pos_a - denom_pos_b,
+            softsign_x * denom_a - x,
+        ],
+        init_eqs={
+            x_aux: x,
+            radicand: x * x_aux + lamda_expr,
+            denom_a: sym.sqrt(radicand),
+            denom_b: denom_a,
+            denom_pos_a: sym.sqrt(denom_a),
+            denom_pos_b: denom_pos_a,
+            softsign_x: x / sym.sqrt(radicand),
+        },
+    )
+
+    return block, softsign_x
+
+
+def ml_three_phase_carrier_pwm_direct(
+    vf: VarFactory,
+    ref_a: Expr,
+    ref_b: Expr,
+    ref_c: Expr,
+    carrier: Expr,
+    lamda: Expr | float | int = 1.0e-6,
+    name: str = "",
+):
+    """Smooth three-phase carrier PWM comparator without boolean guards.
+
+    Gates are computed as ``0.5 * (1 + soft_sign(ref - carrier))`` using
+    ``ml_soft_sign``. The outputs approach the boolean comparator gates as
+    ``lamda`` approaches zero, while remaining continuous in ``ref - carrier``.
+    """
+
+    gate_a = vf.add_var("gate_pwm_a_" + name)
+    gate_b = vf.add_var("gate_pwm_b_" + name)
+    gate_c = vf.add_var("gate_pwm_c_" + name)
+
+    s_a = ref_a - carrier
+    s_b = ref_b - carrier
+    s_c = ref_c - carrier
+
+    block_a, softsign_a = ml_soft_sign(vf, s_a, lamda=lamda, name="pwm_a_" + name)
+    block_b, softsign_b = ml_soft_sign(vf, s_b, lamda=lamda, name="pwm_b_" + name)
+    block_c, softsign_c = ml_soft_sign(vf, s_c, lamda=lamda, name="pwm_c_" + name)
+
+    c_half = Const(0.5)
+    c_one = Const(1.0)
+    block = Block(
+        algebraic_vars=[gate_a, gate_b, gate_c],
+        algebraic_eqs=[
+            gate_a - c_half * (c_one + softsign_a),
+            gate_b - c_half * (c_one + softsign_b),
+            gate_c - c_half * (c_one + softsign_c),
+        ],
+        init_eqs={
+            gate_a: c_half * (c_one + softsign_a),
+            gate_b: c_half * (c_one + softsign_b),
+            gate_c: c_half * (c_one + softsign_c),
+        },
+        children=[block_a, block_b, block_c],
+    )
+
+    return block, gate_a, gate_b, gate_c
+
+
+def ml_three_phase_carrier_pwm_direct_params(
+    vf: VarFactory,
+    name: str = "",
+    lamda: Expr | float | int = 1.0e-6,
+    ref_a0: float = 0.0,
+    ref_b0: float = 0.0,
+    ref_c0: float = 0.0,
+    carrier0: float = 0.0,
+):
+    """Smooth direct three-phase carrier PWM with runtime-parameter inputs."""
+
+    ref_a = vf.add_var("u_ref_a_pwm_" + name)
+    ref_b = vf.add_var("u_ref_b_pwm_" + name)
+    ref_c = vf.add_var("u_ref_c_pwm_" + name)
+    carrier = vf.add_var("u_carrier_pwm_" + name)
+
+    block, gate_a, gate_b, gate_c = ml_three_phase_carrier_pwm_direct(
+        vf=vf,
+        ref_a=ref_a,
+        ref_b=ref_b,
+        ref_c=ref_c,
+        carrier=carrier,
+        lamda=lamda,
+        name=name,
+    )
+    block.event_dict.update({
+        ref_a: Const(float(ref_a0)),
+        ref_b: Const(float(ref_b0)),
+        ref_c: Const(float(ref_c0)),
+        carrier: Const(float(carrier0)),
+    })
+
+    return block, gate_a, gate_b, gate_c, ref_a, ref_b, ref_c, carrier
+
+
 def mti_hard_sat(
     vf: VarFactory,
     u: Expr,

@@ -4395,17 +4395,60 @@ class SchematicWidget(BaseDiagramWidget):
         if self.circuit.get_fluid_nodes_number() != len(fluid_node_current_level):
             return
 
+        bus_index_dict: Dict[Bus, int] = self.circuit.get_bus_index_dict()
         for i, elm in enumerate(self.circuit.fluid_nodes):
             graphic_object = self._query_fluid_node_graphic(elm)
             if graphic_object is not None:
+                bus_idx: int | None = None
+                bus_vm: float | None = None
+                bus_va: float | None = None
+                bus_p: float | None = None
+                bus_q: float | None = None
+                bus_tpe: str | None = None
+
+                if elm.bus is None:
+                    pass
+                else:
+                    bus_idx = bus_index_dict.get(elm.bus, None)
+
+                if bus_idx is None:
+                    pass
+                elif bus_idx < 0:
+                    bus_idx = None
+                elif bus_idx >= len(vabs) or bus_idx >= len(vang):
+                    bus_idx = None
+                else:
+                    bus_vm = float(vabs[bus_idx])
+                    bus_va = float(vang[bus_idx])
+
+                    if Sbus is None:
+                        pass
+                    elif bus_idx >= len(Sbus):
+                        pass
+                    else:
+                        bus_p = float(Sbus[bus_idx].real)
+                        bus_q = float(Sbus[bus_idx].imag)
+
+                    if types is None:
+                        pass
+                    elif bus_idx >= len(types):
+                        pass
+                    else:
+                        bus_type_index: int = int(types[bus_idx])
+
+                        if 0 <= bus_type_index < len(bus_types):
+                            bus_tpe = bus_types[bus_type_index]
+                        else:
+                            pass
+
                 graphic_object.set_api_object_color()
                 graphic_object.set_fluid_values(
                     i=i,
-                    Vm=vabs[i],
-                    Va=vang[i],
-                    P=Sbus[i].real if Sbus is not None else None,
-                    Q=Sbus[i].imag if Sbus is not None else None,
-                    tpe=bus_types[int(types[i])] if types is not None else None,
+                    Vm=bus_vm if bus_vm is not None else 0.0,
+                    Va=bus_va if bus_va is not None else 0.0,
+                    P=bus_p,
+                    Q=bus_q,
+                    tpe=bus_tpe,
                     fluid_node_p2x_flow=fluid_node_p2x_flow[i] if fluid_node_p2x_flow is not None else None,
                     fluid_node_current_level=fluid_node_current_level[i] if fluid_node_current_level is not None else None,
                     fluid_node_spillage=fluid_node_spillage[i] if fluid_node_spillage is not None else None,

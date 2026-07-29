@@ -13,7 +13,7 @@ from VeraGridEngine.Simulations.NTC.ntc_driver import OptimalNetTransferCapacity
 from VeraGridEngine.Simulations.NTC.ntc_ts_results import OptimalNetTransferCapacityTimeSeriesResults
 from VeraGridEngine.Simulations.driver_template import TimeSeriesDriverTemplate
 from VeraGridEngine.Simulations.Clustering.clustering_results import ClusteringResults
-from VeraGridEngine.basic_structures import Logger
+from VeraGridEngine.basic_structures import Logger, IntVec
 from VeraGridEngine.enumerations import SimulationTypes
 
 
@@ -29,7 +29,7 @@ class OptimalNetTransferCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
 
     def __init__(self, grid: MultiCircuit,
                  options: OptimalNetTransferCapacityOptions,
-                 time_indices: np.ndarray,
+                 time_indices: IntVec | None,
                  clustering_results: Union[ClusteringResults, None] = None):
         """
 

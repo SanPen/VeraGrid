@@ -54,7 +54,13 @@ def get_blocktype2template_builder_dict():
 
         BlockType.EMT_PI_LINE: emt_templates.PiLineEmtTemplate,
         BlockType.EMT_BERGERON_LINE: emt_templates.BergeronLineEmtTemplate,
+        BlockType.EMT_JMARTI_LINE: emt_templates.JmartiLineEmtTemplate,
 
+        BlockType.INVERSE_LOOKUP_ARRAY: emt_templates.InverseLookupArrayLinearRuntimeTemplate,
+        BlockType.LOOKUP_ARRAY_LINEAR: emt_templates.LookupArrayLinearRuntimeTemplate,
+        BlockType.LOOKUP_ARRAY_SPLINE: emt_templates.LookupArraySplineRuntimeTemplate,
+        BlockType.LOOKUP_MATRIX_LINEAR: emt_templates.LookupMatrixLinearRuntimeTemplate,
+        BlockType.LOOKUP_MATRIX_SPLINE: emt_templates.LookupMatrixSplineRuntimeTemplate
     }
 
 
@@ -98,23 +104,11 @@ def create_block_of_type(var_factory: VarFactory,
     #     blk.name = item_name
     #     return blk
 
-    # SUBSTRACT (2 inputs)
-    elif block_type == BlockType.SUBSTR:
-        blk = basic_block_templates.substract(var_factory, item_name)
-        blk.name = item_name
-        return blk
-
     # # PRODUCT (2 inputs)
     # elif block_type == BlockType.PRODUCT:
     #     blk = product(var_factory, item_name)
     #     blk.name = item_name
     #     return blk
-
-    # DIVIDE (2 inputs)
-    elif block_type == BlockType.DIVIDE:
-        blk = basic_block_templates.divide(var_factory, item_name)
-        blk.name = item_name
-        return blk
 
     # ABSOLUT (single input -> single output)
     elif block_type == BlockType.ABS:
@@ -486,6 +480,42 @@ def create_emt_wizard_block(phase_n: bool,
 
     else:
         return None
+
+def create_j_marti_line_block(phase_n: bool,
+                            phase_a: bool,
+                            phase_b: bool,
+                            phase_c: bool,
+                            var_factory: VarFactory,
+                            block_type: BlockType,
+                            item_name: str) -> Block | None:
+    """
+    :param phase_n:
+    :type phase_n:
+    :param phase_a:
+    :type phase_a:
+    :param phase_b:
+    :type phase_b:
+    :param phase_c:
+    :type phase_c:
+    :param var_factory:
+    :type var_factory:
+    :param block_type:
+    :type block_type:
+    :param item_name:
+    :type item_name:
+    :return: Requested EMT wizard block or ``None``.
+    """
+
+
+    blk = tem.get_jmarti_line_emt_template(vf=var_factory,
+                                           phN=phase_n,
+                                           phA=phase_a,
+                                           phB=phase_b,
+                                           phC=phase_c,
+                                           name=item_name).block
+    blk.name = item_name
+    return blk
+
 
 
 def create_generic_block(var_factory: VarFactory,

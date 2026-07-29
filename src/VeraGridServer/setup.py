@@ -63,6 +63,7 @@ dependencies = ["numpy>=2.2.0,<3",
                 "requests>=2.33.0",
                 "websockets>=9.1",
                 "cryptography>=46.0.7",
+                "psycopg>=3.3.4",
                 "VeraGridEngine==" + __VeraGridServer_VERSION__,  # the VeraGridEngine version must be exactly the same
                 ]
 
@@ -83,18 +84,18 @@ setup(
     author='Santiago Peñate Vera et. Al.',  # Optional
     author_email='spenate@eroots.tech',  # Optional
     classifiers=[
-        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.10',
     ],
     keywords='power systems planning',  # Optional
     packages=packages2,  # Required
     include_package_data=True,
-    python_requires='>=3.8',
+    python_requires='>=3.10',
     install_requires=dependencies,
     extras_require=extras_require,
     package_data=package_data,
     entry_points={
         'console_scripts': [
-            'gridcalserver = VeraGridServer.run:start_server',
+            'veragridserver = VeraGridServer.run:start_server',
         ],
     },
 )

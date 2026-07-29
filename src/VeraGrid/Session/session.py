@@ -218,9 +218,19 @@ class SimulationSession:
         # check and kill
         if driver.tpe in self.drivers.keys():
             del self.drivers[driver.tpe]
-            if self.threads[driver.tpe].isRunning():
-                self.threads[driver.tpe].terminate()
-            del self.threads[driver.tpe]
+            existing_thread: GcThread | None = self.threads.get(driver.tpe, None)
+
+            # Loaded sessions or reset flows can leave a stored driver without a
+            # matching live thread entry. Re-runs must tolerate that state and
+            # only stop a thread when one is actually registered.
+            if existing_thread is not None:
+                if existing_thread.isRunning():
+                    existing_thread.terminate()
+                else:
+                    pass
+                del self.threads[driver.tpe]
+            else:
+                pass
 
         # register
         self.drivers[driver.tpe] = driver

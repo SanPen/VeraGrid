@@ -3,6 +3,7 @@ from typing import Dict, List, Tuple
 import pytest
 from PySide6 import QtWidgets
 
+import VeraGrid.Gui.Diagrams.SchematicWidget.Substation.bus_graphics as bus_graphics_module
 import VeraGrid.Gui.Main.SubClasses.Model.diagrams as diagrams_module
 import VeraGridEngine.api as vge
 from VeraGridEngine.Utils.Symbolic.block import Block
@@ -486,6 +487,58 @@ def test_add_short_circuit_events_creates_faults_for_selected_buses(qt_app: obje
     assert grid.short_circuit_event[0].r_fault == 0.01
     assert grid.short_circuit_event[0].x_fault == 0.02
     assert gui.info_messages == ["2 short circuit events added!"]
+
+
+def test_bus_context_short_circuit_does_not_overwrite_graphic_width(qt_app: object,
+                                                                    monkeypatch: pytest.MonkeyPatch) -> None:
+    """
+    Adding a short circuit from a bus context menu must not replace the bus width with the dialog object.
+    """
+    del qt_app
+
+    class FakeCircuit:
+        """
+        Minimal circuit used by ``BusGraphicItem.add_short_circuit``.
+        """
+
+        def __init__(self) -> None:
+            self.Sbase: float = 100.0
+            self.short_circuit_events: List[object] = list()
+
+        def add_short_circuit_event(self, sc: object) -> None:
+            """
+            Store the created short-circuit event.
+            """
+            self.short_circuit_events.append(sc)
+
+    class FakeEditor:
+        """
+        Minimal editor exposing a circuit.
+        """
+
+        def __init__(self, circuit: FakeCircuit) -> None:
+            self.circuit: FakeCircuit = circuit
+
+    class FakeBusGraphic:
+        """
+        Minimal bus graphic exposing the fields used by the method under test.
+        """
+
+        def __init__(self, circuit: FakeCircuit) -> None:
+            self.w: float = 80.0
+            self.editor: FakeEditor = FakeEditor(circuit=circuit)
+            self.api_object: vge.Bus = vge.Bus(name="BB_14", Vnom=33.0)
+
+    circuit = FakeCircuit()
+    graphic = FakeBusGraphic(circuit=circuit)
+    monkeypatch.setattr(bus_graphics_module, "ShortCircuitSelector", AcceptedShortCircuitSelector)
+
+    bus_graphics_module.BusGraphicItem.add_short_circuit(graphic)
+
+    assert graphic.w == 80.0
+    assert len(circuit.short_circuit_events) == 1
+    assert circuit.short_circuit_events[0].device is graphic.api_object
+    assert circuit.short_circuit_events[0].fault_type == FaultType.LG
 
 
 def test_add_rms_event_to_selected_creates_event_from_dialogue(qt_app: object) -> None:

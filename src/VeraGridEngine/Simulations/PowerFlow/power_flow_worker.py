@@ -7,7 +7,7 @@ import numpy as np
 from typing import Union, Dict, Tuple, TYPE_CHECKING
 
 import VeraGridEngine.Simulations.PowerFlow as pflw
-from VeraGridEngine.enumerations import SolverType, GeneratorControlMode, BusMode
+from VeraGridEngine.enumerations import SolverType, GeneratorControlMode, BusMode, GeneratorType
 from VeraGridEngine.basic_structures import Logger, ConvergenceReport
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
@@ -16,9 +16,10 @@ from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_basic_formulation impo
 from VeraGridEngine.Simulations.PowerFlow.Formulations.pf_full_acdc_with_negative_poles import PfAcDcWithNegativePoles
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.newton_raphson_fx import newton_raphson_fx
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions import (
+    compute_asynchronous_generator_q,
     split_bus_quantity,
     split_reactive_power_between_generators_and_batteries,
-    split_slack_bus_quantity_between_generators_and_batteries,
+    split_slack_bus_quantity_between_generators_and_batteries
 )
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.powell_fx import powell_fx
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.levenberg_marquadt_fx import levenberg_marquardt_fx
@@ -33,6 +34,31 @@ from VeraGridEngine.basic_structures import CxVec, Vec
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGridEngine.Compilers.circuit_to_data import VALID_OPF_RESULTS
+
+
+def _get_generator_q_for_split(nc: NumericalCircuit, V: CxVec) -> Vec:
+    """
+    Return generator Q setpoints for result splitting, including voltage-dependent asynchronous machines.
+    """
+    q0_gen = nc.generator_data.q.copy()
+    q_async = compute_asynchronous_generator_q(V=V,
+                                               gen_bus_idx=nc.generator_data.bus_idx,
+                                               gen_active=nc.generator_data.active,
+                                               gen_types=nc.generator_data.tpe_int,
+                                               Rs=nc.generator_data.Rs,
+                                               Xs=nc.generator_data.Xs,
+                                               Xm=nc.generator_data.Xm,
+                                               Rr=nc.generator_data.Rr,
+                                               Xr=nc.generator_data.Xr,
+                                               P=nc.generator_data.p,
+                                               Snom=nc.generator_data.snom)
+
+    for gen_idx in range(nc.generator_data.nelm):
+        if (nc.generator_data.active[gen_idx]
+                and nc.generator_data.tpe_int[gen_idx] == GeneratorType.Asynchronous.idx()):
+            q0_gen[gen_idx] = q_async[gen_idx]
+
+    return q0_gen
 
 
 def __solve_island_complete_support(nc: NumericalCircuit,
@@ -966,22 +992,25 @@ def multi_island_pf_nc(nc: NumericalCircuit,
         if nc.topology_performed:
             results.voltage = nc.propagate_bus_result(results.voltage)
 
+        V_for_q = results.voltage[nc.bus_data.original_idx] if nc.topology_performed else results.voltage
+        q0_gen = _get_generator_q_for_split(nc=nc, V=V_for_q)
+
         vm_abs: Vec = np.abs(results.voltage)
         slack_bus_mask: np.ndarray = (nc.bus_data.bus_types == BusMode.Slack_tpe.value)
         fixed_load_bus: CxVec = (
-            nc.load_data.get_injections_per_bus()
-            + results.voltage * np.conj(
-                nc.load_data.get_current_injections_per_bus()
-                + nc.load_data.get_admittance_injections_per_bus() * results.voltage
-            )
+                nc.load_data.get_injections_per_bus()
+                + results.voltage * np.conj(
+            nc.load_data.get_current_injections_per_bus()
+            + nc.load_data.get_admittance_injections_per_bus() * results.voltage
+        )
         )
         fixed_shunt_bus: CxVec = results.voltage * np.conj(
             nc.shunt_data.get_injections_per_bus() * results.voltage
         )
         fixed_non_generator_bus: CxVec = fixed_load_bus + fixed_shunt_bus
         qfixed_bus: Vec = (
-            nc.bus_data.q_fixed
-            - (nc.bus_data.ii_fixed + nc.bus_data.b_fixed * vm_abs) * vm_abs
+                nc.bus_data.q_fixed
+                - (nc.bus_data.ii_fixed + nc.bus_data.b_fixed * vm_abs) * vm_abs
         )
 
         # Reconstruct the fixed shunt-like device reactive power from the final
@@ -998,7 +1027,7 @@ def multi_island_pf_nc(nc: NumericalCircuit,
             Qmax_gen=nc.generator_data.qmax,
             gen_status=nc.generator_data.active,
             control_mode_int_gen=nc.generator_data.control_mode_int,
-            Q0_gen=nc.generator_data.q,
+            Q0_gen=q0_gen,
             Vset_gen=nc.generator_data.v,
             k_droop_gen=nc.generator_data.k_droop,
             dead_band_gen=nc.generator_data.dead_band,
@@ -1048,6 +1077,33 @@ def multi_island_pf_nc(nc: NumericalCircuit,
             atol=1e-12,
         )
 
+        if options.distributed_slack:
+            results.gen_p, results.battery_p = split_bus_quantity(
+                Qbus=results.Sbus.real,
+                gen_bus_idx=nc.generator_data.bus_idx,
+                Qmin_gen=nc.generator_data.pmin,
+                Qmax_gen=nc.generator_data.pmax,
+                gen_status=nc.generator_data.active,
+                control_mode_int_gen=nc.generator_data.control_mode_int,
+                Q0_gen=nc.generator_data.q,
+                Vset_gen=nc.generator_data.v,
+                k_droop_gen=nc.generator_data.k_droop,
+                dead_band_gen=nc.generator_data.dead_band,
+                batt_bus_idx=nc.battery_data.bus_idx,
+                Qmin_batt=nc.battery_data.pmin,
+                Qmax_batt=nc.battery_data.pmax,
+                batt_status=nc.battery_data.active,
+                control_mode_int_batt=nc.battery_data.control_mode_int,
+                Q0_batt=nc.battery_data.p,
+                v_ctrl_val_gen=GeneratorControlMode.V.idx(),
+                qv_droop_val_gen=GeneratorControlMode.QVDroop.idx(),
+                Vm=np.abs(results.voltage),
+                atol=1e-12,
+            )
+        else:
+            results.gen_p = nc.generator_data.p
+            results.battery_p = nc.battery_data.p
+
         return results
 
     else:
@@ -1064,22 +1120,25 @@ def multi_island_pf_nc(nc: NumericalCircuit,
         if nc.topology_performed:
             results.voltage = nc.propagate_bus_result(results.voltage)
 
+        V_for_q = results.voltage[nc.bus_data.original_idx] if nc.topology_performed else results.voltage
+        q0_gen = _get_generator_q_for_split(nc=nc, V=V_for_q)
+
         vm_abs: Vec = np.abs(results.voltage)
         slack_bus_mask: np.ndarray = (nc.bus_data.bus_types == BusMode.Slack_tpe.value)
         fixed_load_bus: CxVec = (
-            nc.load_data.get_injections_per_bus()
-            + results.voltage * np.conj(
-                nc.load_data.get_current_injections_per_bus()
-                + nc.load_data.get_admittance_injections_per_bus() * results.voltage
-            )
+                nc.load_data.get_injections_per_bus()
+                + results.voltage * np.conj(
+            nc.load_data.get_current_injections_per_bus()
+            + nc.load_data.get_admittance_injections_per_bus() * results.voltage
+        )
         )
         fixed_shunt_bus: CxVec = results.voltage * np.conj(
             nc.shunt_data.get_injections_per_bus() * results.voltage
         )
         fixed_non_generator_bus: CxVec = fixed_load_bus + fixed_shunt_bus
         qfixed_bus: Vec = (
-            nc.bus_data.q_fixed
-            - (nc.bus_data.ii_fixed + nc.bus_data.b_fixed * vm_abs) * vm_abs
+                nc.bus_data.q_fixed
+                - (nc.bus_data.ii_fixed + nc.bus_data.b_fixed * vm_abs) * vm_abs
         )
 
         results.shunt_q = -(nc.shunt_data.Y.imag * np.power(vm_abs[nc.shunt_data.bus_idx], 2.0)) * nc.shunt_data.active
@@ -1094,7 +1153,7 @@ def multi_island_pf_nc(nc: NumericalCircuit,
             Qmax_gen=nc.generator_data.qmax,
             gen_status=nc.generator_data.active,
             control_mode_int_gen=nc.generator_data.control_mode_int,
-            Q0_gen=nc.generator_data.q,
+            Q0_gen=q0_gen,
             Vset_gen=nc.generator_data.v,
             k_droop_gen=nc.generator_data.k_droop,
             dead_band_gen=nc.generator_data.dead_band,
@@ -1135,7 +1194,10 @@ def multi_island_pf_nc(nc: NumericalCircuit,
                 Qmax_gen=nc.generator_data.pmax,
                 gen_status=nc.generator_data.active,
                 control_mode_int_gen=nc.generator_data.control_mode_int,
-                Q0_gen=nc.generator_data.p,
+                Q0_gen=nc.generator_data.q,
+                Vset_gen=nc.generator_data.v,
+                k_droop_gen=nc.generator_data.k_droop,
+                dead_band_gen=nc.generator_data.dead_band,
                 batt_bus_idx=nc.battery_data.bus_idx,
                 Qmin_batt=nc.battery_data.pmin,
                 Qmax_batt=nc.battery_data.pmax,
@@ -1143,6 +1205,8 @@ def multi_island_pf_nc(nc: NumericalCircuit,
                 control_mode_int_batt=nc.battery_data.control_mode_int,
                 Q0_batt=nc.battery_data.p,
                 v_ctrl_val_gen=GeneratorControlMode.V.idx(),
+                qv_droop_val_gen=GeneratorControlMode.QVDroop.idx(),
+                Vm=np.abs(results.voltage),
                 atol=1e-12,
             )
         else:

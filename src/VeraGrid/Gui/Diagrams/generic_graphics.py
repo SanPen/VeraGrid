@@ -803,6 +803,145 @@ class ControllableShuntSymbol(ShuntSymbol):
         self._register_stroke_item(head, fill_item=True)
 
 
+class FluidTurbineSymbol(InjectionSymbolBase):
+    """
+    Vector fluid turbine symbol.
+    """
+
+    def __init__(self, parent, h: int, w: int) -> None:
+        """
+        Build one fluid turbine symbol.
+
+        :param parent: Parent graphics item.
+        :param h: Symbol height.
+        :param w: Symbol width.
+        :return: ``None``.
+        """
+        super().__init__(parent=parent, w=w, h=h)
+
+        body = QGraphicsEllipseItem(0.0, 0.0, self.w, self.h, parent=self)
+        self._register_stroke_item(body, fill_item=True)
+
+        # The runner blades distinguish the turbine from the generic generator circle.
+        hub = QGraphicsEllipseItem(self.w * 0.42, self.h * 0.42, self.w * 0.16, self.h * 0.16, parent=self)
+        self._register_stroke_item(hub, fill_item=True)
+
+        blade_specs: list[tuple[float, float, float, float]] = [
+            (self.w * 0.50, self.h * 0.18, self.w * 0.50, self.h * 0.38),
+            (self.w * 0.62, self.h * 0.52, self.w * 0.80, self.h * 0.62),
+            (self.w * 0.38, self.h * 0.52, self.w * 0.20, self.h * 0.62),
+        ]
+        blade_spec: tuple[float, float, float, float]
+        for blade_spec in blade_specs:
+            blade = QGraphicsLineItem(*blade_spec, parent=self)
+            self._register_stroke_item(blade)
+
+        wave = QPainterPath()
+        wave.moveTo(self.w * 0.16, self.h * 0.76)
+        wave.cubicTo(self.w * 0.28, self.h * 0.66,
+                     self.w * 0.40, self.h * 0.86,
+                     self.w * 0.52, self.h * 0.76)
+        wave.cubicTo(self.w * 0.64, self.h * 0.66,
+                     self.w * 0.76, self.h * 0.86,
+                     self.w * 0.86, self.h * 0.76)
+        wave_item = QGraphicsPathItem(wave, parent=self)
+        self._register_stroke_item(wave_item)
+
+
+class FluidPumpSymbol(InjectionSymbolBase):
+    """
+    Vector fluid pump symbol.
+    """
+
+    def __init__(self, parent, h: int, w: int) -> None:
+        """
+        Build one fluid pump symbol.
+
+        :param parent: Parent graphics item.
+        :param h: Symbol height.
+        :param w: Symbol width.
+        :return: ``None``.
+        """
+        super().__init__(parent=parent, w=w, h=h)
+
+        body = QGraphicsEllipseItem(0.0, 0.0, self.w, self.h, parent=self)
+        self._register_stroke_item(body, fill_item=True)
+
+        inlet_wave = QPainterPath()
+        inlet_wave.moveTo(self.w * 0.12, self.h * 0.66)
+        inlet_wave.cubicTo(self.w * 0.22, self.h * 0.56,
+                           self.w * 0.32, self.h * 0.76,
+                           self.w * 0.42, self.h * 0.66)
+        wave_item = QGraphicsPathItem(inlet_wave, parent=self)
+        self._register_stroke_item(wave_item)
+
+        shaft = QGraphicsLineItem(self.w * 0.22, self.h * 0.50, self.w * 0.68, self.h * 0.50, parent=self)
+        self._register_stroke_item(shaft)
+
+        arrow_head = QPolygonF([
+            QPointF(self.w * 0.68, self.h * 0.50),
+            QPointF(self.w * 0.50, self.h * 0.38),
+            QPointF(self.w * 0.50, self.h * 0.62),
+        ])
+        arrow = QGraphicsPolygonItem(arrow_head, parent=self)
+        self._register_stroke_item(arrow, fill_item=True)
+
+        volute = QPainterPath()
+        volute.moveTo(self.w * 0.36, self.h * 0.28)
+        volute.cubicTo(self.w * 0.62, self.h * 0.18,
+                       self.w * 0.82, self.h * 0.32,
+                       self.w * 0.78, self.h * 0.56)
+        volute.cubicTo(self.w * 0.74, self.h * 0.76,
+                       self.w * 0.54, self.h * 0.84,
+                       self.w * 0.38, self.h * 0.72)
+        volute_item = QGraphicsPathItem(volute, parent=self)
+        self._register_stroke_item(volute_item)
+
+
+class FluidP2xSymbol(InjectionSymbolBase):
+    """
+    Vector fluid power-to-X symbol.
+    """
+
+    def __init__(self, parent, h: int, w: int) -> None:
+        """
+        Build one fluid power-to-X symbol.
+
+        :param parent: Parent graphics item.
+        :param h: Symbol height.
+        :param w: Symbol width.
+        :return: ``None``.
+        """
+        super().__init__(parent=parent, w=w, h=h)
+
+        body_path = QPainterPath()
+        body_path.addRoundedRect(self.w * 0.06, self.h * 0.12, self.w * 0.88, self.h * 0.76, 6.0, 6.0)
+        body = QGraphicsPathItem(body_path, parent=self)
+        self._register_stroke_item(body, fill_item=True)
+
+        bolt = QPolygonF([
+            QPointF(self.w * 0.44, self.h * 0.18),
+            QPointF(self.w * 0.28, self.h * 0.54),
+            QPointF(self.w * 0.46, self.h * 0.54),
+            QPointF(self.w * 0.36, self.h * 0.82),
+            QPointF(self.w * 0.68, self.h * 0.40),
+            QPointF(self.w * 0.50, self.h * 0.40),
+        ])
+        bolt_item = QGraphicsPolygonItem(bolt, parent=self)
+        self._register_stroke_item(bolt_item, fill_item=True)
+
+        outlet_wave = QPainterPath()
+        outlet_wave.moveTo(self.w * 0.12, self.h * 0.76)
+        outlet_wave.cubicTo(self.w * 0.24, self.h * 0.68,
+                            self.w * 0.36, self.h * 0.84,
+                            self.w * 0.48, self.h * 0.76)
+        outlet_wave.cubicTo(self.w * 0.60, self.h * 0.68,
+                            self.w * 0.72, self.h * 0.84,
+                            self.w * 0.84, self.h * 0.76)
+        wave_item = QGraphicsPathItem(outlet_wave, parent=self)
+        self._register_stroke_item(wave_item)
+
+
 class Line(QGraphicsLineItem):
     """
     Line

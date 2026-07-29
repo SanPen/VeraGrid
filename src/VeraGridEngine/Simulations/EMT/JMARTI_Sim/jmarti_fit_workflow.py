@@ -28,54 +28,6 @@ from VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit import JMartiRa
 from VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_vector_fit import build_jmarti_mode_vector_fit
 
 
-def build_jmarti_frequency_grid(low_hz: float,
-                                high_hz: float,
-                                sample_count: int) -> np.ndarray:
-    """
-    Build one monotone frequency grid for one JMARTI preprocessing run.
-
-    The GUI-driven fitting flow lets the user configure the exploration band and
-    the number of samples used to interrogate the line model. Positive lower
-    limits use logarithmic spacing, while bands starting at zero fall back to an
-    affine grid.
-
-    :param low_hz: Lower frequency bound in Hz.
-    :param high_hz: Upper frequency bound in Hz.
-    :param sample_count: Number of requested samples.
-    :return: Frequency vector in Hz.
-    :raises ValueError: If the requested band is invalid.
-    """
-    resolved_low_hz: float = float(low_hz)
-    resolved_high_hz: float = float(high_hz)
-    resolved_sample_count: int = int(sample_count)
-
-    if resolved_sample_count >= 2:
-        pass
-    else:
-        raise ValueError("JMARTI fitting requires at least two sweep frequency samples")
-
-    if resolved_low_hz >= 0.0:
-        pass
-    else:
-        raise ValueError("JMARTI sweep frequencies must start at zero or above")
-
-    if resolved_high_hz > resolved_low_hz:
-        pass
-    else:
-        raise ValueError("JMARTI sweep upper frequency must be greater than the lower frequency")
-
-    if resolved_low_hz > 0.0:
-        return np.logspace(np.log10(resolved_low_hz),
-                           np.log10(resolved_high_hz),
-                           resolved_sample_count,
-                           dtype=np.float64)
-    else:
-        return np.linspace(resolved_low_hz,
-                           resolved_high_hz,
-                           resolved_sample_count,
-                           dtype=np.float64)
-
-
 def _normalize_phase_label(label: object) -> str:
     """
     Normalize one imported phase label to the internal upper-case representation.
@@ -326,10 +278,15 @@ def load_jmarti_frequency_samples_from_npz(file_path: str,
     except OSError as exc:
         raise ValueError(f"Unable to read JMARTI NPZ file '{resolved_file_path}': {exc}") from exc
 
-    requested_labels: tuple[str, ...] = _build_requested_phase_labels(phase_n=phase_n,
-                                                                       phase_a=phase_a,
-                                                                       phase_b=phase_b,
-                                                                       phase_c=phase_c)
+    requested_labels: list[str] = list()
+    if phase_n:
+        requested_labels.append("N")
+    if phase_a:
+        requested_labels.append("A")
+    if phase_b:
+        requested_labels.append("B")
+    if phase_c:
+        requested_labels.append("C")
     phase_selection, selected_labels = _build_phase_selection_indices(available_labels, requested_labels)
 
     return build_jmarti_frequency_samples(
@@ -388,49 +345,6 @@ def _build_available_phase_labels(template_phase_ids: Sequence[int] | None,
             "JMARTI GUI fitting expects one NABC-like overhead-line matrix with at most four conductors"
         )
 
-
-def _build_requested_phase_labels(phase_n: bool,
-                                  phase_a: bool,
-                                  phase_b: bool,
-                                  phase_c: bool) -> tuple[str, ...]:
-    """
-    Resolve the ordered phase request coming from the GUI block configuration.
-
-    :param phase_n: Whether the neutral is enabled.
-    :param phase_a: Whether phase A is enabled.
-    :param phase_b: Whether phase B is enabled.
-    :param phase_c: Whether phase C is enabled.
-    :return: Ordered requested phase labels.
-    :raises ValueError: If no phase is enabled.
-    """
-    requested_labels: list[str] = list()
-
-    if phase_n:
-        requested_labels.append("N")
-    else:
-        pass
-
-    if phase_a:
-        requested_labels.append("A")
-    else:
-        pass
-
-    if phase_b:
-        requested_labels.append("B")
-    else:
-        pass
-
-    if phase_c:
-        requested_labels.append("C")
-    else:
-        pass
-
-    if requested_labels:
-        return tuple(requested_labels)
-    else:
-        raise ValueError("JMARTI fitting requires at least one enabled phase")
-
-
 def _build_phase_selection_indices(available_labels: Sequence[str],
                                    requested_labels: Sequence[str]) -> tuple[np.ndarray, tuple[str, ...]]:
     """
@@ -477,40 +391,6 @@ def _convert_per_km_tensor_to_per_m(matrices_per_km: np.ndarray) -> np.ndarray:
     return np.asarray(matrices_per_km, dtype=np.complex128) / 1000.0
 
 
-def _resolve_line_voltage_base_kv(line: Line) -> float:
-    """
-    Resolve the voltage base used to convert one line dataset to per unit.
-
-    :param line: Target line device.
-    :return: Voltage base in kV.
-    :raises ValueError: If no positive nominal voltage is available.
-    """
-    candidate_voltage_kv: float = 0.0
-
-    if line.bus_from is not None:
-        candidate_voltage_kv = float(line.bus_from.Vnom)
-    else:
-        candidate_voltage_kv = 0.0
-
-    if candidate_voltage_kv > 0.0:
-        return candidate_voltage_kv
-    else:
-        pass
-
-    if line.bus_to is not None:
-        candidate_voltage_kv = float(line.bus_to.Vnom)
-    else:
-        candidate_voltage_kv = 0.0
-
-    if candidate_voltage_kv > 0.0:
-        return candidate_voltage_kv
-    else:
-        pass
-
-    if isinstance(line.template, (OverheadLineType, SequenceLineType, UndergroundLineType)) and float(line.template.Vnom) > 0.0:
-        return float(line.template.Vnom)
-    else:
-        raise ValueError("JMARTI fitting requires one positive nominal voltage to convert the line data to per unit")
 
 
 def _convert_physical_per_meter_series_shunt_to_per_unit(z_per_meter: np.ndarray,
@@ -615,32 +495,41 @@ def build_jmarti_frequency_samples_from_line(line: Line,
     :return: Frequency-domain JMARTI sample set.
     :raises ValueError: If the line cannot provide compatible data.
     """
-    if isinstance(line.template, (OverheadLineType, SequenceLineType, UndergroundLineType)):
-        template = line.template
+
+    template = line.template
+
+    if line.bus_from.Vnom > 0:
+        resolved_vbase_kv = float(line.bus_from.Vnom)
+    elif line.bus_to.Vnom > 0:
+        resolved_vbase_kv = float(line.bus_to.Vnom)
+    elif isinstance(line.template, (OverheadLineType, SequenceLineType, UndergroundLineType)) and float(
+            line.template.Vnom) > 0.0:
+        resolved_vbase_kv = float(line.template.Vnom)
     else:
-        raise ValueError(
-            "JMARTI GUI fitting currently supports only line devices using an overhead, sequence, or underground line template"
-        )
+        raise ValueError("JMARTI fitting requires one positive nominal voltage to convert the line data to per unit")
 
-    if line.length > 0.0:
-        pass
+    if low_hz > 0.0:
+        frequency_hz = np.logspace(np.log10(float(low_hz)),
+                           np.log10(float(high_hz)),
+                           int(sample_count),
+                           dtype=np.float64)
     else:
-        raise ValueError("JMARTI GUI fitting requires one strictly positive line length")
+        frequency_hz = np.linspace(float(low_hz),
+                           float(high_hz),
+                           int(sample_count),
+                           dtype=np.float64)
 
-    if sbase_mva is not None and float(sbase_mva) > 0.0:
-        resolved_sbase_mva: float = float(sbase_mva)
-    else:
-        raise ValueError("JMARTI fitting requires one positive system base power to convert the line data to per unit")
+    requested_labels: list[str] = list()
+    if phase_n:
+        requested_labels.append("N")
+    if phase_a:
+        requested_labels.append("A")
+    if phase_b:
+        requested_labels.append("B")
+    if phase_c:
+        requested_labels.append("C")
 
-    resolved_vbase_kv: float = _resolve_line_voltage_base_kv(line)
 
-    frequency_hz: np.ndarray = build_jmarti_frequency_grid(low_hz=low_hz,
-                                                           high_hz=high_hz,
-                                                           sample_count=sample_count)
-    requested_labels: tuple[str, ...] = _build_requested_phase_labels(phase_n=phase_n,
-                                                                       phase_a=phase_a,
-                                                                       phase_b=phase_b,
-                                                                       phase_c=phase_c)
     phase_selection: np.ndarray
     selected_labels: tuple[str, ...]
 
@@ -681,7 +570,7 @@ def build_jmarti_frequency_samples_from_line(line: Line,
         z_per_length_pu, y_per_length_pu = _convert_physical_per_meter_series_shunt_to_per_unit(
             z_per_meter=_convert_per_km_tensor_to_per_m(z_per_length),
             y_per_meter=_convert_per_km_tensor_to_per_m(y_per_length),
-            sbase_mva=resolved_sbase_mva,
+            sbase_mva=sbase_mva,
             vbase_kv=resolved_vbase_kv,
         )
 
@@ -705,7 +594,7 @@ def build_jmarti_frequency_samples_from_line(line: Line,
         z_per_length_pu, y_per_length_pu = _convert_physical_per_meter_series_shunt_to_per_unit(
             z_per_meter=_convert_per_km_tensor_to_per_m(_select_square_submatrices(z_full_sweep, phase_selection)),
             y_per_meter=_convert_per_km_tensor_to_per_m(_select_square_submatrices(y_full_sweep, phase_selection)),
-            sbase_mva=resolved_sbase_mva,
+            sbase_mva=sbase_mva,
             vbase_kv=resolved_vbase_kv,
         )
 
@@ -727,7 +616,7 @@ def build_jmarti_frequency_samples_from_line(line: Line,
         z_per_length_pu, y_per_length_pu = _convert_physical_per_meter_series_shunt_to_per_unit(
             z_per_meter=_convert_per_km_tensor_to_per_m(_select_square_submatrices(z_full_sweep, phase_selection)),
             y_per_meter=_convert_per_km_tensor_to_per_m(_select_square_submatrices(y_full_sweep, phase_selection)),
-            sbase_mva=resolved_sbase_mva,
+            sbase_mva=sbase_mva,
             vbase_kv=resolved_vbase_kv,
         )
 
@@ -749,7 +638,7 @@ def build_jmarti_frequency_samples_from_line(line: Line,
         z_per_length_pu, y_per_length_pu = _convert_physical_per_meter_series_shunt_to_per_unit(
             z_per_meter=_convert_per_km_tensor_to_per_m(_select_square_submatrices(z_full_sweep, phase_selection)),
             y_per_meter=_convert_per_km_tensor_to_per_m(_select_square_submatrices(y_full_sweep, phase_selection)),
-            sbase_mva=resolved_sbase_mva,
+            sbase_mva=sbase_mva,
             vbase_kv=resolved_vbase_kv,
         )
 

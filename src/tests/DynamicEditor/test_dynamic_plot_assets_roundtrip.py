@@ -14,7 +14,7 @@ from VeraGrid.Gui.Main.SubClasses.Results.dynamics_results_handler import (
     collect_dynamic_model_plot_parameters,
     ensure_dynamic_plot_event_group,
 )
-from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import initialize_connected_bus_models_for_editor_assignment
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_models import initialize_connected_bus_models_for_editor_assignment
 from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
 from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.Events.dynamic_plot import DynamicPlot

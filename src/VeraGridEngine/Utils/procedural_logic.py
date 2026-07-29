@@ -3032,6 +3032,223 @@ class ThreePhaseCarrierPwmLogic(ProceduralLogicBase):
         )
 
 
+class ThreePhaseCarrierSampledModulationLogic(ProceduralLogicBase):
+    """
+    Regular-sampled three-phase modulation holder using carrier half-period boundaries.
+
+    The sampling instants intentionally follow ``ThreePhaseCarrierPwmLogic`` so a symbolic soft
+    comparator can consume the same held ``m_a/m_b/m_c`` values as the procedural PWM scheduler.
+    """
+
+    __slots__ = [
+        "mod_a_var_name",
+        "mod_b_var_name",
+        "mod_c_var_name",
+        "sample_a_mode_var_name",
+        "sample_b_mode_var_name",
+        "sample_c_mode_var_name",
+        "omega_sw_var_name",
+        "carrier_phase_var_name",
+        "mod_a_idx",
+        "mod_b_idx",
+        "mod_c_idx",
+        "sample_a_idx",
+        "sample_b_idx",
+        "sample_c_idx",
+        "omega_sw_idx",
+        "carrier_phase_idx",
+        "initialized",
+        "interval_end_time",
+    ]
+    logic_tpe = ProceduralLogicType.ThreePhaseCarrierSampledModulation
+
+    def __init__(
+            self,
+            mod_a_var_name: str,
+            mod_b_var_name: str,
+            mod_c_var_name: str,
+            sample_a_mode_var_name: str,
+            sample_b_mode_var_name: str,
+            sample_c_mode_var_name: str,
+            omega_sw_var_name: str,
+            carrier_phase_var_name: str,
+            name: str = "",
+    ) -> None:
+        """
+        Build one carrier-synchronized three-phase sampled modulation holder.
+
+        :param mod_a_var_name: Phase-A source modulation variable name.
+        :param mod_b_var_name: Phase-B source modulation variable name.
+        :param mod_c_var_name: Phase-C source modulation variable name.
+        :param sample_a_mode_var_name: Retained phase-A sampled modulation mode name.
+        :param sample_b_mode_var_name: Retained phase-B sampled modulation mode name.
+        :param sample_c_mode_var_name: Retained phase-C sampled modulation mode name.
+        :param omega_sw_var_name: Switching angular-frequency parameter name.
+        :param carrier_phase_var_name: Carrier phase-shift parameter name.
+        :param name: Logic entry name.
+        :return: None.
+        """
+        super().__init__(name=name)
+        self.mod_a_var_name = mod_a_var_name
+        self.mod_b_var_name = mod_b_var_name
+        self.mod_c_var_name = mod_c_var_name
+        self.sample_a_mode_var_name = sample_a_mode_var_name
+        self.sample_b_mode_var_name = sample_b_mode_var_name
+        self.sample_c_mode_var_name = sample_c_mode_var_name
+        self.omega_sw_var_name = omega_sw_var_name
+        self.carrier_phase_var_name = carrier_phase_var_name
+        self.mod_a_idx = -1
+        self.mod_b_idx = -1
+        self.mod_c_idx = -1
+        self.sample_a_idx = -1
+        self.sample_b_idx = -1
+        self.sample_c_idx = -1
+        self.omega_sw_idx = -1
+        self.carrier_phase_idx = -1
+        self.initialized = False
+        self.interval_end_time = None
+
+    def bind(self, problem: EmtProblemTemplate) -> None:
+        """
+        Resolve modulation, sampled-mode and carrier parameter indices.
+
+        :param problem: Concrete EMT problem.
+        :return: None.
+        """
+        mod_a_var: Var = _find_var_by_name(problem.sys_block, self.mod_a_var_name)
+        mod_b_var: Var = _find_var_by_name(problem.sys_block, self.mod_b_var_name)
+        mod_c_var: Var = _find_var_by_name(problem.sys_block, self.mod_c_var_name)
+        sample_a_var: Var = _find_var_by_name(problem.sys_block, self.sample_a_mode_var_name)
+        sample_b_var: Var = _find_var_by_name(problem.sys_block, self.sample_b_mode_var_name)
+        sample_c_var: Var = _find_var_by_name(problem.sys_block, self.sample_c_mode_var_name)
+        omega_sw_var: Var = _find_var_by_name(problem.sys_block, self.omega_sw_var_name)
+        carrier_phase_var: Var | None = _find_var_by_name_optional(problem.sys_block, self.carrier_phase_var_name)
+
+        super().bind(problem)
+        self.mod_a_idx = int(problem.uid2idx_vars[mod_a_var.uid])
+        self.mod_b_idx = int(problem.uid2idx_vars[mod_b_var.uid])
+        self.mod_c_idx = int(problem.uid2idx_vars[mod_c_var.uid])
+        self.sample_a_idx = int(problem.uid2idx_event_params[sample_a_var.uid])
+        self.sample_b_idx = int(problem.uid2idx_event_params[sample_b_var.uid])
+        self.sample_c_idx = int(problem.uid2idx_event_params[sample_c_var.uid])
+        self.omega_sw_idx = int(problem.uid2idx_event_params[omega_sw_var.uid])
+        if carrier_phase_var is None:
+            self.carrier_phase_idx = -1
+        else:
+            self.carrier_phase_idx = int(problem.uid2idx_event_params[carrier_phase_var.uid])
+        self.initialized = False
+        self.interval_end_time = None
+
+    def _get_half_period(self, params: Vec) -> float:
+        """
+        Return the carrier half-period from the retained switching angular frequency.
+
+        :param params: Runtime parameter vector.
+        :return: Carrier half-period in seconds.
+        """
+        omega_sw: float = abs(float(params[self.omega_sw_idx]))
+        if omega_sw > 1.0e-12:
+            return float(np.pi / omega_sw)
+        else:
+            return 1.0e12
+
+    def _get_interval_end_time(self, sample_time: float, params: Vec) -> float:
+        """
+        Return the end time of the current carrier half-period interval.
+
+        :param sample_time: Accepted sample time.
+        :param params: Runtime parameter vector.
+        :return: Current interval end time.
+        """
+        omega_sw: float = float(params[self.omega_sw_idx])
+        carrier_phase: float
+        shifted_phase: float
+        interval_index: int
+        interval_start_time: float
+
+        if abs(omega_sw) <= 1.0e-12:
+            return sample_time + 1.0e12
+        else:
+            if self.carrier_phase_idx >= 0:
+                carrier_phase = float(params[self.carrier_phase_idx])
+            else:
+                carrier_phase = 0.0
+            shifted_phase = omega_sw * sample_time + carrier_phase + 0.5 * np.pi
+            interval_index = int(math.floor(shifted_phase / np.pi))
+            interval_start_time = (float(interval_index) * np.pi - carrier_phase - 0.5 * np.pi) / omega_sw
+            return float(interval_start_time + self._get_half_period(params))
+
+    def _sample_modulation(self, x: Vec, params: Vec) -> None:
+        """
+        Store accepted modulation values into retained sampled runtime modes.
+
+        :param x: Accepted EMT state vector.
+        :param params: Runtime parameter vector to mutate.
+        :return: None.
+        """
+        params[self.sample_a_idx] = float(x[self.mod_a_idx])
+        params[self.sample_b_idx] = float(x[self.mod_b_idx])
+        params[self.sample_c_idx] = float(x[self.mod_c_idx])
+
+    def get_next_forced_event_time(self, t_prev: float, t_target: float) -> Optional[float]:
+        """
+        Force a solver event at each carrier half-period boundary.
+
+        :param t_prev: Previous accepted solver time.
+        :param t_target: Nominal target time.
+        :return: Next half-period boundary if it lies inside the step.
+        """
+        super().get_next_forced_event_time(t_prev, t_target)
+        if self.interval_end_time is not None and t_prev < self.interval_end_time <= t_target:
+            return float(self.interval_end_time)
+        else:
+            return None
+
+    def update(self, t: float, x: Vec, params: Vec) -> None:
+        """
+        Sample modulation at initialization and at carrier half-period boundaries.
+
+        :param t: Current solver time.
+        :param x: Accepted EMT state vector.
+        :param params: Runtime parameter vector to mutate.
+        :return: None.
+        """
+        sample_time: float = self._get_sample_time(t)
+        if not self.initialized:
+            self._sample_modulation(x=x, params=params)
+            self.interval_end_time = self._get_interval_end_time(sample_time=sample_time, params=params)
+            self.initialized = True
+        else:
+            if self.interval_end_time is not None and self.interval_end_time > 1.0e11 and abs(float(params[self.omega_sw_idx])) > 1.0e-12:
+                self._sample_modulation(x=x, params=params)
+                self.interval_end_time = self._get_interval_end_time(sample_time=sample_time, params=params)
+            elif self.interval_end_time is not None and sample_time + 1.0e-12 >= self.interval_end_time:
+                self._sample_modulation(x=x, params=params)
+                self.interval_end_time = self._get_interval_end_time(sample_time=sample_time, params=params)
+            else:
+                pass
+
+    def remap(self, var_mapping: VarRemap) -> "ThreePhaseCarrierSampledModulationLogic":
+        """
+        Clone this logic under a variable-name remapping.
+
+        :param var_mapping: Variable substitution map.
+        :return: Remapped sampled-modulation logic.
+        """
+        name_mapping: Dict[str, str] = _build_name_mapping(var_mapping)
+        return ThreePhaseCarrierSampledModulationLogic(
+            mod_a_var_name=name_mapping.get(self.mod_a_var_name, self.mod_a_var_name),
+            mod_b_var_name=name_mapping.get(self.mod_b_var_name, self.mod_b_var_name),
+            mod_c_var_name=name_mapping.get(self.mod_c_var_name, self.mod_c_var_name),
+            sample_a_mode_var_name=name_mapping.get(self.sample_a_mode_var_name, self.sample_a_mode_var_name),
+            sample_b_mode_var_name=name_mapping.get(self.sample_b_mode_var_name, self.sample_b_mode_var_name),
+            sample_c_mode_var_name=name_mapping.get(self.sample_c_mode_var_name, self.sample_c_mode_var_name),
+            omega_sw_var_name=name_mapping.get(self.omega_sw_var_name, self.omega_sw_var_name),
+            carrier_phase_var_name=name_mapping.get(self.carrier_phase_var_name, self.carrier_phase_var_name),
+            name=self.name,
+        )
+
+
 class BlockProceduralLogicUpdater(BoundaryUpdateWrapper):
     """
     Boundary updater that delegates runtime decisions to block-attached procedural logic entries.
@@ -3237,6 +3454,18 @@ def procedural_logic_entry_to_dict(entry: ProceduralLogicBase) -> ProceduralLogi
             "gate_a_mode_var_name": entry.gate_a_mode_var_name,
             "gate_b_mode_var_name": entry.gate_b_mode_var_name,
             "gate_c_mode_var_name": entry.gate_c_mode_var_name,
+            "omega_sw_var_name": entry.omega_sw_var_name,
+            "carrier_phase_var_name": entry.carrier_phase_var_name,
+        })
+        return data
+    elif isinstance(entry, ThreePhaseCarrierSampledModulationLogic):
+        data.update({
+            "mod_a_var_name": entry.mod_a_var_name,
+            "mod_b_var_name": entry.mod_b_var_name,
+            "mod_c_var_name": entry.mod_c_var_name,
+            "sample_a_mode_var_name": entry.sample_a_mode_var_name,
+            "sample_b_mode_var_name": entry.sample_b_mode_var_name,
+            "sample_c_mode_var_name": entry.sample_c_mode_var_name,
             "omega_sw_var_name": entry.omega_sw_var_name,
             "carrier_phase_var_name": entry.carrier_phase_var_name,
         })
@@ -3449,6 +3678,26 @@ def _three_phase_carrier_pwm_logic_from_dict(data: ProceduralLogicData) -> Three
     )
 
 
+def _three_phase_carrier_sampled_modulation_logic_from_dict(data: ProceduralLogicData) -> ThreePhaseCarrierSampledModulationLogic:
+    """
+    Deserialize one three-phase carrier sampled-modulation procedural logic entry.
+
+    :param data: Serialized logic dictionary.
+    :return: Three-phase sampled-modulation logic entry.
+    """
+    return ThreePhaseCarrierSampledModulationLogic(
+        mod_a_var_name=str(data["mod_a_var_name"]),
+        mod_b_var_name=str(data["mod_b_var_name"]),
+        mod_c_var_name=str(data["mod_c_var_name"]),
+        sample_a_mode_var_name=str(data["sample_a_mode_var_name"]),
+        sample_b_mode_var_name=str(data["sample_b_mode_var_name"]),
+        sample_c_mode_var_name=str(data["sample_c_mode_var_name"]),
+        omega_sw_var_name=str(data["omega_sw_var_name"]),
+        carrier_phase_var_name=str(data["carrier_phase_var_name"]),
+        name=str(data.get("name", "")),
+    )
+
+
 def build_procedural_logic_entry(data: ProceduralLogicData) -> ProceduralLogicBase:
     """
     Deserialize one procedural logic entry.
@@ -3487,6 +3736,8 @@ def build_procedural_logic_entry(data: ProceduralLogicData) -> ProceduralLogicBa
         return _valve_state_logic_from_dict(data)
     elif logic_tpe == ProceduralLogicType.ThreePhaseCarrierPwm:
         return _three_phase_carrier_pwm_logic_from_dict(data)
+    elif logic_tpe == ProceduralLogicType.ThreePhaseCarrierSampledModulation:
+        return _three_phase_carrier_sampled_modulation_logic_from_dict(data)
     else:
         raise ValueError(f"Unsupported procedural logic type '{logic_tpe_text}'")
 

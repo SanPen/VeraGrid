@@ -10,6 +10,7 @@ from typing import Sequence
 
 import numpy as np
 
+from VeraGridEngine import X_Y_Z_Matrix
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
@@ -20,7 +21,8 @@ from VeraGridEngine.Utils.Symbolic.symbolic import Const
 from VeraGridEngine.Utils.Symbolic.symbolic import CmpOp
 from VeraGridEngine.Utils.Symbolic.symbolic import Expr
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
-from VeraGridEngine.enumerations import DeviceType
+from VeraGridEngine.basic_structures import Vec
+from VeraGridEngine.enumerations import DeviceType, X_Y_SequenceType
 
 
 def _build_lookup_comparison(lhs: Expr, op: CmpOp, rhs: Expr) -> Expr:
@@ -136,9 +138,6 @@ def _validate_lookup_matrix(x_points: Sequence[float], y_points: Sequence[float]
     :raises ValueError: If the lookup matrix is not valid.
     """
     row_index: int
-
-    _validate_lookup_points(x_points=x_points, y_points=x_points)
-    _validate_lookup_points(x_points=y_points, y_points=y_points)
 
     if len(z_matrix) == len(y_points):
         pass
@@ -513,6 +512,39 @@ def _build_clipped_lookup_matrix_expression(
     return result_expr
 
 
+class LookupArrayLinearRuntimeTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="points", units="", descr="Strictly increasing x breakpoints.", tpe=X_Y_SequenceType, value=((0.0, 0.0), (0.02, 1), (0.04, 0.0))),
+                TemplateProp(name="clip", units="", descr="If True, clip outside the table; otherwise extrapolate linearly.", tpe=bool, value=True),
+                TemplateProp(name="name", units="", descr="Optional explicit runtime template name.", tpe=str, value="lookup_array_linear_runtime"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        points: Sequence[Vec] = self.get_value("points")
+        clip: bool = self.get_value("clip")
+        name: str = self.get_value("name")
+
+        x_points = list()
+        y_points = list()
+        for point in points:
+            x_points.append(point[0])
+            y_points.append(point[1])
+
+        return build_lookup_array_linear_runtime_template(
+            vf=self.vf,
+            x_points=x_points,
+            y_points=y_points,
+            clip=clip,
+            name=name,
+        )
+
+
+
 def build_lookup_array_linear_runtime_template(
     vf: VarFactory,
     x_points: Sequence[float],
@@ -540,8 +572,6 @@ def build_lookup_array_linear_runtime_template(
     parameter_var: Var
     lookup_expr: Expr
     template: EmtModelTemplate = EmtModelTemplate()
-
-    _validate_lookup_points(x_points=x_points, y_points=y_points)
 
     if name is None:
         if clip:
@@ -589,16 +619,20 @@ class InverseLookupArrayLinearRuntimeTemplate(TemplateDefinition):
         super().__init__(
             vf,
             params=[
-                TemplateProp(name="x_points", units="", descr="Original x values.", tpe=Sequence[float]),
-                TemplateProp(name="y_points", units="", descr="Original y values to invert.", tpe=Sequence[float]),
-                TemplateProp(name="name", units="", descr="Name of the runtime template.", tpe=str),
+                TemplateProp(name="points", units="", descr="Strictly increasing x breakpoints.", tpe=X_Y_SequenceType, value=((0.0, 0.0), (0.02, 1), (0.04, 0.0))),
+                TemplateProp(name="name", units="", descr="Name of the runtime template.", tpe=str, value="inverse_lookup_array_linear_runtime"),
             ]
         )
 
     def eval(self) -> EmtModelTemplate:
-        x_points: Sequence[float] = self.get_value("x_points")
-        y_points: Sequence[float] = self.get_value("y_points")
+        points: Sequence[Vec] = self.get_value("points")
         name: str | None = self.get_value("name")
+
+        x_points = list()
+        y_points = list()
+        for point in points:
+            x_points.append(point[0])
+            y_points.append(point[1])
 
         return build_inverse_lookup_array_linear_runtime_template(
             self.vf, x_points, y_points, name
@@ -666,6 +700,36 @@ def build_inverse_lookup_array_linear_runtime_template(
         name=template_name,
     )
     return template
+
+
+class LookupMatrixLinearRuntimeTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+
+                TemplateProp(name="x_y_z_values", units="", descr="Flat matrix values in row-major order (y then x).", tpe=X_Y_Z_Matrix, value=((0.0, 0.1), (0.02, 1), ((0.04, 0.0),(0.1, 0.2)))),
+                TemplateProp(name="name", units="", descr="Optional explicit runtime template name.", tpe=str, value="lookup_matrix_linear_runtime"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        x_y_z_values = self.get_value("x_y_z_values")
+        name: str = self.get_value("name")
+
+        x_points = x_y_z_values[0]
+        y_points = x_y_z_values[1]
+
+        z_matrix = x_y_z_values[2]
+
+        return build_lookup_matrix_linear_runtime_template(
+            vf=self.vf,
+            x_points=x_points,
+            y_points=y_points,
+            z_matrix=z_matrix,
+            name=name,
+        )
 
 
 def build_lookup_matrix_linear_runtime_template(
@@ -754,6 +818,35 @@ def build_lookup_matrix_linear_runtime_template(
     return template
 
 
+class LookupArraySplineRuntimeTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="points", units="", descr="Strictly increasing x breakpoints.", tpe=X_Y_SequenceType,
+                             value=((0.0, 0.0), (0.02, 1), (0.04, 0.0))),
+                TemplateProp(name="name", units="", descr="Optional explicit runtime template name.", tpe=str, value="lookup_array_spline_runtime"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        points: Sequence[Vec] = self.get_value("points")
+        name: str | None = self.get_value("name")
+
+        x_points = list()
+        y_points = list()
+        for point in points:
+            x_points.append(point[0])
+            y_points.append(point[1])
+
+        return build_lookup_array_spline_runtime_template(
+            vf=self.vf,
+            x_points=x_points,
+            y_points=y_points,
+            name=name,
+        )
+
 def build_lookup_array_spline_runtime_template(
     vf: VarFactory,
     x_points: Sequence[float],
@@ -779,8 +872,6 @@ def build_lookup_array_spline_runtime_template(
     parameter_var: Var
     lookup_expr: Expr
     template: EmtModelTemplate = EmtModelTemplate()
-
-    _validate_lookup_points(x_points=x_points, y_points=y_points)
 
     if name is None:
         template_name = f"lookup_array_spline_{point_count}pt"
@@ -818,6 +909,34 @@ def build_lookup_array_spline_runtime_template(
         name=template_name,
     )
     return template
+
+
+class LookupMatrixSplineRuntimeTemplate(TemplateDefinition):
+
+    def __init__(self, vf):
+        super().__init__(
+            vf,
+            params=[
+                TemplateProp(name="x_y_z_values", units="", descr="Flat matrix values in row-major order (y then x).", tpe=X_Y_Z_Matrix, value=((0.0, 0.1), (0.02, 1), ((0.04, 0.0), (0.1, 0.2)))),
+                TemplateProp(name="name", units="", descr="Optional explicit runtime template name.", tpe=str, value="lookup_matrix_spline_runtime"),
+            ]
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        x_y_z_values = self.get_value("x_y_z_values")
+        name: str = self.get_value("name")
+
+        x_points = x_y_z_values[0]
+        y_points = x_y_z_values[1]
+        z_matrix = x_y_z_values[2]
+
+        return build_lookup_matrix_spline_runtime_template(
+            vf=self.vf,
+            x_points=x_points,
+            y_points=y_points,
+            z_matrix=z_matrix,
+            name=name,
+        )
 
 
 def build_lookup_matrix_spline_runtime_template(
@@ -914,3 +1033,7 @@ def build_lookup_matrix_spline_runtime_template(
         name=template_name,
     )
     return template
+
+
+
+

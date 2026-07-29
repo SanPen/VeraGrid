@@ -5,24 +5,32 @@
 from __future__ import annotations
 
 import sys
-import re
 from enum import EnumMeta
 from typing import Any, Sequence
 import numpy as np
 from PySide6 import QtCore, QtGui, QtWidgets
 from VeraGrid.Gui.associations_model import AssociationsModel
+from VeraGrid.Gui.DeviceEditors.AdmittanceMatrixEditor.admittance_matrix_editor import (
+    AdmittanceMatrixEditorWidget,
+    project_admittance_matrix_to_phase_state,
+)
+from VeraGrid.Gui.DeviceEditors.LineLocationsEditor.line_locations_editor import LineLocationsEditorWidget
 from VeraGrid.Gui.DeviceEditors.TemplateDeviceEditor.template_device_editor_gui import Ui_TemplateDeviceEditorDialog
 from VeraGrid.Gui.gui_functions import ComboDelegate, FloatDelegate, IntDelegate, TextDelegate, ComplexDelegate
 from VeraGrid.Gui.Widgets.matplotlibwidget import MatplotlibWidget
 from VeraGrid.Gui.messages import warning_msg
 from VeraGrid.Gui.object_model import ObjectsModel
+from VeraGrid.Gui.spread_sheet_table import SpreadsheetTableView
 from VeraGrid.Gui.table_view_header_wrap import HeaderViewWithWordWrap
+from VeraGrid.Gui.toast_widget import ToastManager
 import VeraGrid.Gui.gui_functions as gf
+from VeraGridEngine.Devices.Branches.line import Line
 from VeraGridEngine.Devices.Associations.association import Associations
 from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
+from VeraGridEngine.Devices.Parents.shunt_parent import ShuntParent
 from VeraGridEngine.Devices.Profiles import AnyProfile
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.enumerations import DeviceType, PrpCat, GeneratorControlMode
+from VeraGridEngine.enumerations import DeviceType, PrpCat, GeneratorControlMode, SubObjectType
 
 
 
@@ -273,7 +281,9 @@ class TemplateDeviceEditor(QtWidgets.QDialog):
         # Load UI from Qt Designer definition.
         self.ui = Ui_TemplateDeviceEditorDialog()
         self.ui.setupUi(self)
+        self._replace_profiles_table_view()
         self.setWindowTitle("Device editor")
+        self.toast_manager: ToastManager = ToastManager(parent=self, position_top=False)
 
         prop_filter_mdl = gf.ComboModel(
             icon_enum_values=[
@@ -313,7 +323,7 @@ class TemplateDeviceEditor(QtWidgets.QDialog):
         self.profiles_copy_button: QtWidgets.QPushButton = self.ui.profiles_copy_button
         self.profiles_paste_button: QtWidgets.QPushButton = self.ui.profiles_paste_button
         self.profiles_plot_selected_button: QtWidgets.QPushButton = self.ui.profiles_plot_selected_button
-        self.profiles_table_view: QtWidgets.QTableView = self.ui.profiles_table_view
+        self.profiles_table_view: SpreadsheetTableView = self.ui.profiles_table_view
 
         self.associations_tab: QtWidgets.QWidget = self.ui.associations_tab
         self.associations_layout: QtWidgets.QVBoxLayout = self.ui.associations_layout
@@ -328,8 +338,6 @@ class TemplateDeviceEditor(QtWidgets.QDialog):
         # UI post-configuration.
         self.properties_table_view.setAlternatingRowColors(True)
         self.profiles_table_view.setAlternatingRowColors(True)
-        self.profiles_table_view.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectItems)
-        self.profiles_table_view.setSelectionMode(QtWidgets.QAbstractItemView.SelectionMode.ExtendedSelection)
         self.associations_table_view.setAlternatingRowColors(True)
         self.associations_table_view.setHorizontalHeader(HeaderViewWithWordWrap(self.associations_table_view))
 
@@ -370,6 +378,12 @@ class TemplateDeviceEditor(QtWidgets.QDialog):
         self.association_properties: list[GCProp] = self._get_association_properties()
         self.associations_model: AssociationsModel | None = None
         self._populate_associations_combo_box()
+        self.admittance_matrix_properties: list[GCProp] = self._get_admittance_matrix_properties()
+        self.admittance_matrix_widget: AdmittanceMatrixEditorWidget | None = None
+        self._build_admittance_matrix_tab()
+        self.line_locations_properties: list[GCProp] = self._get_line_locations_properties()
+        self.line_locations_widgets: dict[str, LineLocationsEditorWidget] = dict()
+        self._build_line_locations_tab()
 
         # Configure and connect the slider and dialog actions.
         n_time_steps: int = self._get_available_time_steps()
@@ -387,11 +401,70 @@ class TemplateDeviceEditor(QtWidgets.QDialog):
 
         self.ui.filterComboBox.currentIndexChanged.connect(self.refresh_model)
 
-        self.profiles_shortcuts: list[QtGui.QShortcut] = list()
-        self._install_profiles_shortcuts()
-
         self._update_time_label(slider_index=self.time_step_slider.value())
         self.refresh_associations_table()
+
+    def _replace_profiles_table_view(self) -> None:
+        """
+        Replace the generated profile table with the reusable spreadsheet view.
+        """
+        old_table_view: QtWidgets.QTableView = self.ui.profiles_table_view
+        parent_widget: QtWidgets.QWidget | None = old_table_view.parentWidget()
+        if parent_widget is None:
+            return
+
+        new_table_view: SpreadsheetTableView = SpreadsheetTableView(parent_widget)
+        new_table_view.setObjectName(old_table_view.objectName())
+        new_table_view.setFrameShape(old_table_view.frameShape())
+        new_table_view.setFrameShadow(old_table_view.frameShadow())
+        new_table_view.setAlternatingRowColors(old_table_view.alternatingRowColors())
+        new_table_view.setSortingEnabled(old_table_view.isSortingEnabled())
+        new_table_view.setEditTriggers(old_table_view.editTriggers())
+        new_table_view.setTabKeyNavigation(old_table_view.tabKeyNavigation())
+        new_table_view.setCornerButtonEnabled(old_table_view.isCornerButtonEnabled())
+        new_table_view.setShowGrid(old_table_view.showGrid())
+        new_table_view.setGridStyle(old_table_view.gridStyle())
+
+        self.ui.profiles_layout.replaceWidget(old_table_view, new_table_view)
+        old_table_view.hide()
+        old_table_view.deleteLater()
+        self.ui.profiles_table_view = new_table_view
+
+    def show_toast(self, message: str, duration: int = 2000) -> None:
+        """
+        Show one generic toast attached to this editor.
+
+        :param message: Message to display.
+        :param duration: Duration in milliseconds.
+        """
+        self.toast_manager.show_toast(message=message, duration=duration, toast_type="veragrid")
+
+    def show_error_toast(self, message: str, duration: int = 2000) -> None:
+        """
+        Show one error toast attached to this editor.
+
+        :param message: Message to display.
+        :param duration: Duration in milliseconds.
+        """
+        self.toast_manager.show_error_toast(message=message, duration=duration)
+
+    def show_warning_toast(self, message: str, duration: int = 2000) -> None:
+        """
+        Show one warning toast attached to this editor.
+
+        :param message: Message to display.
+        :param duration: Duration in milliseconds.
+        """
+        self.toast_manager.show_warning_toast(message=message, duration=duration)
+
+    def show_info_toast(self, message: str, duration: int = 2000) -> None:
+        """
+        Show one info toast attached to this editor.
+
+        :param message: Message to display.
+        :param duration: Duration in milliseconds.
+        """
+        self.toast_manager.show_info_toast(message=message, duration=duration)
 
     def _build_delegate_dictionary(self) -> dict[DeviceType, list[object]]:
         """
@@ -437,6 +510,104 @@ class TemplateDeviceEditor(QtWidgets.QDialog):
         self.properties_table_view.verticalHeader().setSectionResizeMode(
             QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
 
+    def apply_admittance_matrix_changes(self) -> None:
+        """
+        Apply the edited admittance matrices back to the API object.
+        """
+        if len(self.admittance_matrix_properties) > 0 and self.admittance_matrix_widget is not None:
+            edited_values: dict[str, object] = self.admittance_matrix_widget.get_admittance_matrices()
+            prop: GCProp
+            for prop in self.admittance_matrix_properties:
+                if prop.name in edited_values:
+                    self.api_object.set_value(prop=prop, t_idx=None, value=edited_values[prop.name])
+                else:
+                    pass
+
+            self.properties_model.set_time_index(time_index=self._get_current_time_index())
+            self.show_info_toast("Admittance values applied")
+        else:
+            pass
+
+    def compute_admittance_matrix_from_sequence_values(self) -> None:
+        """
+        Compute the admittance matrices from the existing sequence values on the API object.
+        """
+        if self._admittance_compute_supports_current_phase_selection():
+            if isinstance(self.api_object, Line):
+                self._compute_admittance_matrix_from_sequence_values_on_supported_object()
+            else:
+                if isinstance(self.api_object, ShuntParent):
+                    self._compute_admittance_matrix_from_sequence_values_on_supported_object()
+                else:
+                    self.show_warning_toast("This device does not support sequence-based admittance computation")
+        else:
+            self.show_warning_toast("Only A/B/C phase combinations can be computed from sequence values")
+
+    def _compute_admittance_matrix_from_sequence_values_on_supported_object(self) -> None:
+        """
+        Run the existing object-level sequence-to-matrix conversion and project it to the selected phase subsets.
+        """
+        phase_state_by_property: dict[str, dict[str, bool]] = dict()
+        prop: GCProp
+
+        if self.admittance_matrix_widget is not None:
+            shared_phase_state: dict[str, bool] = self.admittance_matrix_widget.get_phase_state()
+            for prop in self.admittance_matrix_properties:
+                phase_state_by_property[prop.name] = dict(shared_phase_state)
+        else:
+            pass
+
+        self.api_object.fill_3_phase_from_sequence()
+
+        for prop in self.admittance_matrix_properties:
+            if prop.name in phase_state_by_property:
+                matrix_value = self.api_object.get_snapshot_value(prop=prop)
+                projected_value = project_admittance_matrix_to_phase_state(
+                    admittance_matrix=matrix_value,
+                    phase_state=phase_state_by_property[prop.name],
+                )
+                self.api_object.set_value(prop=prop, t_idx=None, value=projected_value)
+            else:
+                pass
+
+        self._reload_admittance_matrix_widgets_from_object()
+        self.properties_model.set_time_index(time_index=self._get_current_time_index())
+        self.show_info_toast("Admittance values computed from sequence data")
+
+    def _admittance_compute_supports_current_phase_selection(self) -> bool:
+        """
+        Check whether every admittance widget currently uses one supported sequence-computation phase subset.
+
+        :return: ``True`` when all admittance widgets only use A/B/C subsets with ``N=False``.
+        """
+        if self.admittance_matrix_widget is not None:
+            phase_state: dict[str, bool] = self.admittance_matrix_widget.get_phase_state()
+            if phase_state["N"]:
+                return False
+            else:
+                if phase_state["A"] or phase_state["B"] or phase_state["C"]:
+                    return True
+                else:
+                    return False
+        else:
+            return True
+
+    def _reload_admittance_matrix_widgets_from_object(self) -> None:
+        """
+        Reload the admittance-matrix widgets from the current API object values.
+        """
+        if self.admittance_matrix_widget is not None:
+            ys_prop: GCProp | None = self._get_named_admittance_matrix_property(prop_name="ys")
+            ysh_prop: GCProp | None = self._get_named_admittance_matrix_property(prop_name="ysh")
+            ys_value = self.api_object.get_snapshot_value(prop=ys_prop) if ys_prop is not None else None
+            ysh_value = self.api_object.get_snapshot_value(prop=ysh_prop) if ysh_prop is not None else None
+            self.admittance_matrix_widget.set_admittance_matrices(
+                ys_admittance_matrix=ys_value,
+                ysh_admittance_matrix=ysh_value,
+            )
+        else:
+            pass
+
     def _get_profile_properties(self) -> list[GCProp]:
         """
         Get ordered property list that has profile backing values.
@@ -462,6 +633,142 @@ class TemplateDeviceEditor(QtWidgets.QDialog):
         assoc_props, assoc_indices = self.api_object.get_association_properties()
         _ = assoc_indices
         return list(assoc_props)
+
+    def _get_admittance_matrix_properties(self) -> list[GCProp]:
+        """
+        Get ordered property list that stores admittance matrices.
+
+        :return: Admittance-matrix property list.
+        """
+        admittance_properties: list[GCProp] = list()
+        for prop in self.api_object.property_list:
+            if prop.tpe == SubObjectType.AdmittanceMatrix:
+                admittance_properties.append(prop)
+            else:
+                pass
+        return admittance_properties
+
+    def _get_named_admittance_matrix_property(self, prop_name: str) -> GCProp | None:
+        """
+        Return one admittance-matrix property by name when available.
+
+        :param prop_name: Requested property name.
+        :return: Matching property or ``None``.
+        """
+        prop: GCProp
+        for prop in self.admittance_matrix_properties:
+            if prop.name == prop_name:
+                return prop
+            else:
+                pass
+        return None
+
+    def _get_line_locations_properties(self) -> list[GCProp]:
+        """
+        Get ordered property list that stores line locations.
+
+        :return: Line-locations property list.
+        """
+        line_locations_properties: list[GCProp] = list()
+        for prop in self.api_object.property_list:
+            if prop.tpe == SubObjectType.LineLocations:
+                line_locations_properties.append(prop)
+            else:
+                pass
+        return line_locations_properties
+
+    def _build_admittance_matrix_tab(self) -> None:
+        """
+        Build the shared admittance-matrix editor tab when the device exposes those properties.
+        """
+        if len(self.admittance_matrix_properties) > 0:
+            admittance_tab: QtWidgets.QWidget = QtWidgets.QWidget(self.tab_widget)
+            admittance_layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(admittance_tab)
+
+            # Keep the instructions in the tab so the phase controls explain why the matrix resizes.
+            info_label: QtWidgets.QLabel = QtWidgets.QLabel(
+                "Enable the active phases and edit the dense complex admittance matrix.",
+                admittance_tab,
+            )
+            info_label.setWordWrap(True)
+            admittance_layout.addWidget(info_label)
+
+            ys_prop: GCProp | None = self._get_named_admittance_matrix_property(prop_name="ys")
+            ysh_prop: GCProp | None = self._get_named_admittance_matrix_property(prop_name="ysh")
+            ys_value = self.api_object.get_snapshot_value(prop=ys_prop) if ys_prop is not None else None
+            ysh_value = self.api_object.get_snapshot_value(prop=ysh_prop) if ysh_prop is not None else None
+
+            self.admittance_matrix_widget = AdmittanceMatrixEditorWidget(
+                ys_admittance_matrix=ys_value,
+                ysh_admittance_matrix=ysh_value,
+                title="Admittance matrices",
+                description="Edit the dense complex admittance matrices exposed by this device.",
+                parent=admittance_tab,
+            )
+            self.admittance_matrix_widget.compute_requested.connect(self.compute_admittance_matrix_from_sequence_values)
+            self.admittance_matrix_widget.accept_requested.connect(self.apply_admittance_matrix_changes)
+            admittance_layout.addWidget(self.admittance_matrix_widget)
+
+            tab_index: int = self.tab_widget.addTab(admittance_tab, "Admittance")
+            self.tab_widget.setTabIcon(tab_index, QtGui.QIcon(":/Icons/icons/edit.png"))
+        else:
+            pass
+
+    def _build_line_locations_tab(self) -> None:
+        """
+        Build the shared line-locations editor tab when the device exposes those properties.
+        """
+        if len(self.line_locations_properties) > 0:
+            locations_tab: QtWidgets.QWidget = QtWidgets.QWidget(self.tab_widget)
+            locations_layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(locations_tab)
+
+            info_label: QtWidgets.QLabel = QtWidgets.QLabel(
+                "Edit the polyline points used by this branch geometry.",
+                locations_tab,
+            )
+            info_label.setWordWrap(True)
+            locations_layout.addWidget(info_label)
+
+            prop: GCProp
+            for prop in self.line_locations_properties:
+                line_locations_value = self.api_object.get_snapshot_value(prop=prop)
+                editor_widget: LineLocationsEditorWidget = LineLocationsEditorWidget(
+                    line_locations=line_locations_value,
+                    parent=locations_tab,
+                )
+                self.line_locations_widgets[prop.name] = editor_widget
+                locations_layout.addWidget(editor_widget)
+
+            button_layout: QtWidgets.QHBoxLayout = QtWidgets.QHBoxLayout()
+            apply_button: QtWidgets.QPushButton = QtWidgets.QPushButton("Accept", locations_tab)
+            apply_button.setIcon(QtGui.QIcon(":/Icons/icons/accept.png"))
+            apply_button.clicked.connect(self.apply_line_locations_changes)
+            button_layout.addStretch()
+            button_layout.addWidget(apply_button)
+            locations_layout.addLayout(button_layout)
+
+            tab_index: int = self.tab_widget.addTab(locations_tab, "Locations")
+            self.tab_widget.setTabIcon(tab_index, QtGui.QIcon(":/Icons/icons/edit.png"))
+        else:
+            pass
+
+    def apply_line_locations_changes(self) -> None:
+        """
+        Apply the edited line-locations objects back to the API object.
+        """
+        if len(self.line_locations_properties) > 0:
+            prop: GCProp
+            for prop in self.line_locations_properties:
+                if prop.name in self.line_locations_widgets:
+                    edited_value = self.line_locations_widgets[prop.name].get_value()
+                    self.api_object.set_value(prop=prop, t_idx=None, value=edited_value)
+                else:
+                    pass
+
+            self.properties_model.set_time_index(time_index=self._get_current_time_index())
+            self.show_info_toast("Locations applied")
+        else:
+            pass
 
     def _populate_associations_combo_box(self) -> None:
         """
@@ -670,160 +977,39 @@ class TemplateDeviceEditor(QtWidgets.QDialog):
         else:
             return None
 
-    def _install_profiles_shortcuts(self) -> None:
-        """
-        Install profile-tab shortcuts for spreadsheet-style edition.
-        """
-        copy_shortcut: QtGui.QShortcut = QtGui.QShortcut(QtGui.QKeySequence.StandardKey.Copy, self.profiles_tab)
-        copy_shortcut.setContext(QtCore.Qt.ShortcutContext.WidgetWithChildrenShortcut)
-        copy_shortcut.activated.connect(self.copy_profiles_selection_to_clipboard)
-        self.profiles_shortcuts.append(copy_shortcut)
-
-        paste_shortcut: QtGui.QShortcut = QtGui.QShortcut(QtGui.QKeySequence.StandardKey.Paste, self.profiles_tab)
-        paste_shortcut.setContext(QtCore.Qt.ShortcutContext.WidgetWithChildrenShortcut)
-        paste_shortcut.activated.connect(self.paste_profiles_from_clipboard)
-        self.profiles_shortcuts.append(paste_shortcut)
-
-    @staticmethod
-    def _parse_clipboard_grid(clipboard_text: str) -> list[list[str]]:
-        """
-        Parse clipboard text into a two-dimensional grid.
-
-        :param clipboard_text: Raw clipboard text.
-        :return: Parsed string grid.
-        """
-        parsed_rows: list[list[str]] = list()
-        line_text: str
-        split_values: list[str]
-
-        for line_text in clipboard_text.splitlines():
-            if len(line_text.strip()) > 0:
-                if "\t" in line_text:
-                    split_values = [value.rstrip("\r") for value in line_text.split("\t")]
-                    parsed_rows.append(split_values)
-                else:
-                    split_values = [value.strip() for value in re.split(r"[;,]+", line_text.strip())]
-                    parsed_rows.append(split_values)
-            else:
-                pass
-
-        return parsed_rows
-
-    def _get_profiles_paste_anchor(self) -> tuple[int, int]:
-        """
-        Determine the anchor cell where clipboard data starts to paste.
-
-        :return: `(row, column)` anchor.
-        """
-        selection_model: QtCore.QItemSelectionModel | None = self.profiles_table_view.selectionModel()
-        selected_indexes: list[QtCore.QModelIndex] = list()
-
-        if selection_model is not None:
-            selected_indexes = list(selection_model.selectedIndexes())
-        else:
-            pass
-
-        if len(selected_indexes) > 0:
-            row_values: list[int] = [index.row() for index in selected_indexes]
-            col_values: list[int] = [index.column() for index in selected_indexes]
-            return min(row_values), min(col_values)
-        else:
-            current_index: QtCore.QModelIndex = self.profiles_table_view.currentIndex()
-            if current_index.isValid():
-                return current_index.row(), current_index.column()
-            else:
-                return 0, 0
-
     def copy_profiles_selection_to_clipboard(self) -> None:
         """
         Copy the selected profile range to the clipboard.
         """
-        selection_model: QtCore.QItemSelectionModel | None = self.profiles_table_view.selectionModel()
-        selected_indexes: list[QtCore.QModelIndex] = list()
-
-        if selection_model is not None:
-            selected_indexes = list(selection_model.selectedIndexes())
+        if self.profiles_table_view.copy_selection_to_clipboard():
+            self.show_info_toast("Copied!")
         else:
-            pass
-
-        if len(selected_indexes) > 0:
-            min_row: int = min(index.row() for index in selected_indexes)
-            max_row: int = max(index.row() for index in selected_indexes)
-            min_col: int = min(index.column() for index in selected_indexes)
-            max_col: int = max(index.column() for index in selected_indexes)
-            row_lines: list[str] = list()
-            row_index: int
-            col_index: int
-
-            # Copy one rectangular range so it can be pasted directly in spreadsheets.
-            for row_index in range(min_row, max_row + 1):
-                row_cells: list[str] = list()
-                for col_index in range(min_col, max_col + 1):
-                    model_index: QtCore.QModelIndex = self.profiles_model.index(row_index, col_index)
-                    model_value: str | None = self.profiles_model.data(
-                        model_index, int(QtCore.Qt.ItemDataRole.DisplayRole)
-                    )
-                    if model_value is not None:
-                        row_cells.append(model_value)
-                    else:
-                        row_cells.append("")
-                row_lines.append("\t".join(row_cells))
-
-            QtWidgets.QApplication.clipboard().setText("\n".join(row_lines))
-        else:
-            warning_msg("Select profile cells before copying", "Profile editor")
+            self.show_warning_toast("Select profile cells before copying")
 
     def paste_profiles_from_clipboard(self) -> None:
         """
         Paste tabular clipboard data into profile cells.
         """
-        clipboard_text: str = QtWidgets.QApplication.clipboard().text()
-        parsed_rows: list[list[str]] = self._parse_clipboard_grid(clipboard_text=clipboard_text)
+        pasted_cells: int
+        failed_cells: int
+        pasted_cells, failed_cells = self.profiles_table_view.paste_from_clipboard()
 
-        if len(parsed_rows) > 0:
-            anchor_row: int
-            anchor_col: int
-            anchor_row, anchor_col = self._get_profiles_paste_anchor()
-
-            row_count: int = self.profiles_model.rowCount()
-            col_count: int = self.profiles_model.columnCount()
-            row_offset: int
-            col_offset: int
-            target_row: int
-            target_col: int
-            failed_cells: int = 0
-            pasted_cells: int = 0
-
-            # Paste each source cell in the matching target offset cell.
-            for row_offset, row_values in enumerate(parsed_rows):
-                for col_offset, cell_text in enumerate(row_values):
-                    target_row = anchor_row + row_offset
-                    target_col = anchor_col + col_offset
-                    if target_row < row_count and target_col < col_count:
-                        model_index: QtCore.QModelIndex = self.profiles_model.index(target_row, target_col)
-                        ok: bool = self.profiles_model.setData(
-                            model_index,
-                            cell_text,
-                            int(QtCore.Qt.ItemDataRole.EditRole),
-                        )
-                        if ok:
-                            pasted_cells += 1
-                        else:
-                            failed_cells += 1
-                    else:
-                        pass
-
+        if pasted_cells > 0:
             if failed_cells > 0:
-                warning_msg(f"{failed_cells} cell values could not be parsed for their column type", "Profile editor")
+                self.show_warning_toast(
+                    f"Pasted {pasted_cells} cells, {failed_cells} values were rejected",
+                    duration=3000,
+                )
             else:
-                pass
-
-            if pasted_cells == 0:
-                warning_msg("No profile cells were updated", "Profile editor")
-            else:
-                pass
+                self.show_info_toast(f"Pasted {pasted_cells} cells")
         else:
-            warning_msg("Clipboard does not contain tabular data", "Profile editor")
+            clipboard_text: str = QtWidgets.QApplication.clipboard().text()
+            if len(clipboard_text.strip()) == 0:
+                self.show_warning_toast("Clipboard does not contain tabular data")
+            elif failed_cells > 0:
+                self.show_warning_toast("No profile cells were updated")
+            else:
+                self.show_warning_toast("No profile cells were updated")
 
     def _collect_profile_series_by_unit(self, columns: Sequence[int]) -> dict[str, list[tuple[str, np.ndarray]]]:
         """
@@ -853,9 +1039,8 @@ class TemplateDeviceEditor(QtWidgets.QDialog):
                 pass
 
         if len(skipped_columns) > 0:
-            warning_msg(
+            self.show_warning_toast(
                 "Skipped non numeric profiles: " + ", ".join(skipped_columns),
-                "Profile plotting",
             )
         else:
             pass
@@ -915,7 +1100,7 @@ class TemplateDeviceEditor(QtWidgets.QDialog):
             plot_widget.redraw()
             dialog.exec()
         else:
-            warning_msg("No numeric profile columns available for plotting", "Profile plotting")
+            self.show_warning_toast("No numeric profile columns available for plotting")
 
     def plot_selected_profiles_grouped_by_units(self) -> None:
         """
@@ -941,7 +1126,7 @@ class TemplateDeviceEditor(QtWidgets.QDialog):
             )
             self._open_profiles_plot_dialog(grouped_series=grouped_series, title="Selected Profile Plots")
         else:
-            warning_msg("Select one or more profile cells before plotting", "Profile plotting")
+            self.show_warning_toast("Select one or more profile cells before plotting")
 
     def on_time_step_changed(self) -> None:
         """

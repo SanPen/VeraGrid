@@ -1171,13 +1171,13 @@ class OverheadLineType(DynamicDevice):
 
         adm.values = y_4x4
         if 0 in self.y_phases_nabc:
-            adm.phN = 1
+            adm.phN = True
         if 1 in self.y_phases_nabc:
-            adm.phA = 1
+            adm.phA = True
         if 2 in self.y_phases_nabc:
-            adm.phB = 1
+            adm.phB = True
         if 3 in self.y_phases_nabc:
-            adm.phC = 1
+            adm.phC = True
 
         return adm
 
@@ -1207,13 +1207,13 @@ class OverheadLineType(DynamicDevice):
 
         adm.values = y_4x4
         if 0 in self.y_phases_nabc:
-            adm.phN = 1
+            adm.phN = True
         if 1 in self.y_phases_nabc:
-            adm.phA = 1
+            adm.phA = True
         if 2 in self.y_phases_nabc:
-            adm.phB = 1
+            adm.phB = True
         if 3 in self.y_phases_nabc:
-            adm.phC = 1
+            adm.phC = True
 
         return adm
 

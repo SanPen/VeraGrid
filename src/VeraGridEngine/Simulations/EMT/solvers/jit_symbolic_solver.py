@@ -1261,7 +1261,13 @@ class JitSymbolicSolver:
                             else:
                                 pass
 
-                            cached_lu_sparse = (splu(J_final), J_final)
+                            try:
+                                cached_lu_sparse = (splu(J_final), J_final)
+                            except (FloatingPointError, OverflowError, ZeroDivisionError, ValueError, RuntimeError):
+                                if diagnostics_enabled and diag_cfg.enable_fallback:
+                                    cached_lu_sparse = (None, J_final)  # type: ignore[arg-type]
+                                else:
+                                    raise
                             cached_lu_dense = None
                     else:
                         pass

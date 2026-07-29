@@ -54,6 +54,8 @@ class MatpowerBranch:
         Parses a single row of branch data and assigns values to the instance attributes.
         :param row: List of values corresponding to a MATPOWER branch row.
         """
+        row_size = len(row)
+
         # Assign values explicitly
         self.f_bus = int(row[0])          # From bus number
         self.t_bus = int(row[1])          # To bus number
@@ -69,17 +71,50 @@ class MatpowerBranch:
         self.angmin = float(row[11])      # Minimum angle difference
         self.angmax = float(row[12])      # Maximum angle difference
 
-        if len(row) > 13:
+        # MATPOWER adds solved-flow and OPF columns after the required input
+        # branch fields, so truncated rows must keep defaults for any missing
+        # trailing values instead of assuming the full tail exists.
+        if row_size > 13:
             self.pf = float(row[13])          # Real power injected at "from" bus end
-            self.qf = float(row[14])          # Reactive power injected at "from" bus end
-            self.pt = float(row[15])          # Real power injected at "to" bus end
-            self.qt = float(row[16])          # Reactive power injected at "to" bus end
-            self.mu_sf = float(row[17])       # Multiplier on MVA limit at "from" bus
-            self.mu_st = float(row[18])       # Multiplier on MVA limit at "to" bus
-            self.mu_angmin = float(row[19])   # Multiplier lower angle difference limit
-            self.mu_angmax = float(row[20])   # Multiplier upper angle difference limit
+        else:
+            pass
 
-        if len(row) == 37:
+        if row_size > 14:
+            self.qf = float(row[14])          # Reactive power injected at "from" bus end
+        else:
+            pass
+
+        if row_size > 15:
+            self.pt = float(row[15])          # Real power injected at "to" bus end
+        else:
+            pass
+
+        if row_size > 16:
+            self.qt = float(row[16])          # Reactive power injected at "to" bus end
+        else:
+            pass
+
+        if row_size > 17:
+            self.mu_sf = float(row[17])       # Multiplier on MVA limit at "from" bus
+        else:
+            pass
+
+        if row_size > 18:
+            self.mu_st = float(row[18])       # Multiplier on MVA limit at "to" bus
+        else:
+            pass
+
+        if row_size > 19:
+            self.mu_angmin = float(row[19])   # Multiplier lower angle difference limit
+        else:
+            pass
+
+        if row_size > 20:
+            self.mu_angmax = float(row[20])   # Multiplier upper angle difference limit
+        else:
+            pass
+
+        if row_size == 37:
 
             self.vf_set = float(row[21])      # Voltage at "from" bus
             self.vt_set = float(row[22])      # Voltage at "to" bus
@@ -99,4 +134,5 @@ class MatpowerBranch:
             self.kdp = float(row[36])         # Parameter Kdp
 
             self.is_fubm = True
-
+        else:
+            pass

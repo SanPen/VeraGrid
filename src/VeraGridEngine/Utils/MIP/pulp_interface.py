@@ -14,7 +14,7 @@ from typing import List, Union, Callable, Any
 import subprocess
 import pulp
 from pulp import LpVariable as LpVar, LpConstraint as LpCst, LpAffineExpression as LpExp
-from pulp import HiGHS, CPLEX_CMD
+from pulp import HiGHS, CPLEX_CMD, PULP_CBC_CMD
 from pulp import LpContinuous, LpInteger
 from VeraGridEngine.enumerations import MIPSolvers
 from VeraGridEngine.basic_structures import Logger
@@ -186,6 +186,10 @@ class PulpLpModel(AbstractLpModel):
 
         elif self.solver_type == MIPSolvers.SCIP:
             return pulp.getSolver('SCIP_CMD')
+
+        elif self.solver_type == MIPSolvers.CBC:
+            # CBC comes with PuLP, so it is always available and needs no extra dependency
+            return PULP_CBC_CMD(mip=self.model.isMIP(), msg=show_logs)
 
         elif self.solver_type == MIPSolvers.CPLEX:
             return CPLEX_CMD(mip=self.model.isMIP(), msg=show_logs)

@@ -1496,22 +1496,27 @@ def add_linear_branches_formulation(local_t: int,
                     bk = 1.0 / elm.X
 
                 # compute the flow
-                if elm.get_tap_phase_control_mode_at(global_t) == TapPhaseControl.Pf.idx():
+                if (elm.get_tap_phase_control_mode_at(global_t) == TapPhaseControl.Pf.idx() or
+                        elm.get_tap_phase_control_mode_at(global_t) == TapPhaseControl.Pt.idx()):
 
-                    # add angle
+                    # Phase shifter under control, so define angle as a variable
                     branch_vars.tap_angles[local_t, m] = prob.add_var(
                         lb=elm.tap_phase_min,
                         ub=elm.tap_phase_max,
                         name=join("tap_ang_", [local_t, m], "_")
                     )
 
-                    # is a phase shifter device (like phase shifter transformer or VSC with P control)
-                    # flow_ctr = branch_vars.flows[t, m] == bk * (
-                    #         bus_vars.theta[t, fr] - bus_vars.theta[t, to] + branch_vars.tap_angles[t, m])
-                    # prob.add_cst(cst=flow_ctr, name=join("Branch_flow_set_with_ps_", [t, m], "_"))
+                    branch_vars.flows[local_t, m] = bk * (bus_vars.Va[local_t, fr] -
+                                                          bus_vars.Va[local_t, to] -
+                                                          branch_vars.tap_angles[local_t, m])
+
+                elif elm.get_tap_phase_at(global_t) != 0.0:
+
+                    # The device carries a phase shift the user imposed
+                    branch_vars.tap_angles[local_t, m] = elm.get_tap_phase_at(global_t)
 
                     branch_vars.flows[local_t, m] = bk * (bus_vars.Va[local_t, fr] -
-                                                          bus_vars.Va[local_t, to] +
+                                                          bus_vars.Va[local_t, to] -
                                                           branch_vars.tap_angles[local_t, m])
 
                 else:  # rest of the branches

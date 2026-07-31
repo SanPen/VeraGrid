@@ -567,7 +567,9 @@ class AvailableTransferCapacityDriver(DriverTemplate):
             # flows in p.u.
             # HvdcDF is the sensitivity to the from->to transfer, and get_power returns Pf as the
             # injection at the from bus (-transfer), hence the minus sign
-            flows = linear.get_flows(Sbus=Sbus, P_hvdc=-Pf_hvdc)
+            # get_flows works in MW, the rest of this driver works in p.u., so convert in and out
+            flows = linear.get_flows(Sbus=Sbus.real * nc.Sbase,
+                                     P_hvdc=-Pf_hvdc * nc.Sbase) / nc.Sbase
 
         # base exchange
         base_exchange = (self.options.inter_area_branch_sense * flows[self.options.inter_area_branch_idx]).sum()

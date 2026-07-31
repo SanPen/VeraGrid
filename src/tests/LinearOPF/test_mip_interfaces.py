@@ -4,7 +4,10 @@
 # SPDX-License-Identifier: MPL-2.0
 import os
 import numpy as np
+from scipy.sparse import csc_matrix
 import VeraGridEngine.api as vg
+from VeraGridEngine.Utils.MIP.selected_interface import lpDot1D_changes, get_model_instance
+from VeraGridEngine.enumerations import MIPFramework, MIPSolvers
 
 
 def test_issue_372_1():
@@ -113,3 +116,35 @@ def test_issue_372_1():
         assert np.isclose(res.dSbus[a1].sum(), -res.dSbus[a2].sum(), atol=1e-6)
 
         assert np.isclose(res.Sbus[a1].sum(), inter_area_flows, atol=1e-6)
+
+
+def test_lp_dot_1d_changes_row_filter() -> None:
+    """
+    This builds only the rows the caller asked for, leaving the rest untouched.
+     The NTC contingency formulation relies on it to keep a large grid affordable.
+    """
+    model = get_model_instance(tpe=MIPFramework.PuLP, solver_type=MIPSolvers.HIGHS)
+
+    # two columns that both write row 1, so row 1 is reachable twice
+    mat = csc_matrix(np.array([[2.0, 0.0],
+                               [3.0, 5.0],
+                               [0.0, 7.0]]))
+
+    variables = np.empty(2, dtype=object)
+    variables[0] = model.add_var(0.0, 1.0, "x0")
+    variables[1] = model.add_var(0.0, 1.0, "x1")
+
+    # every reachable row is written, and each appears once
+    res_all, idx_all = lpDot1D_changes(mat, variables)
+    assert sorted(idx_all) == [0, 1, 2]
+    assert len(idx_all) == len(set(idx_all))
+
+    # filtered to row 1 only as rows 0 and 2 are never built
+    row_filter = np.array([False, True, False])
+    res_filtered, idx_filtered = lpDot1D_changes(mat, variables, row_filter)
+    assert idx_filtered == [1]
+    assert res_filtered[0] == 0
+    assert res_filtered[2] == 0
+
+    # the row that was kept is identical to the unfiltered one
+    assert str(res_filtered[1]) == str(res_all[1])

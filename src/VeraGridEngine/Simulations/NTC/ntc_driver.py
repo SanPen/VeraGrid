@@ -54,7 +54,16 @@ class OptimalNetTransferCapacityDriver(DriverTemplate):
 
         self.report_text('Compiling...')
 
-        self.report_text('Formulating NTC OPF...')
+        # Make sure contingency groups are used. Otherwise a large grid takes hours
+        if len(self.options.opf_options.contingency_groups_used) > 0:
+            contingency_groups_used = [e for e in self.options.opf_options.contingency_groups_used if e.active]
+        else:
+            contingency_groups_used = self.grid.get_contingency_groups_active()
+
+        if self.options.consider_contingencies:
+            self.report_text(f'Formulating NTC OPF ({len(contingency_groups_used)} contingency groups)...')
+        else:
+            self.report_text('Formulating NTC OPF...')
 
         if self.options.strict_formulation:
             opf_vars, model = run_linear_ntc_opf_strict(
@@ -65,7 +74,7 @@ class OptimalNetTransferCapacityDriver(DriverTemplate):
                 skip_generation_limits=self.options.skip_generation_limits,
                 consider_contingencies=self.options.consider_contingencies,
                 corrective_contingencies=self.options.corrective_contingencies,
-                contingency_groups_used=self.grid.get_contingency_groups_active(),
+                contingency_groups_used=contingency_groups_used,
                 lodf_threshold=self.options.lin_options.lodf_threshold,
                 bus_a1_idx=self.options.sending_bus_idx,
                 bus_a2_idx=self.options.receiving_bus_idx,
@@ -90,7 +99,7 @@ class OptimalNetTransferCapacityDriver(DriverTemplate):
                 skip_generation_limits=self.options.skip_generation_limits,
                 consider_contingencies=self.options.consider_contingencies,
                 corrective_contingencies=self.options.corrective_contingencies,
-                contingency_groups_used=self.grid.get_contingency_groups_active(),
+                contingency_groups_used=contingency_groups_used,
                 lodf_threshold=self.options.lin_options.lodf_threshold,
                 bus_a1_idx=self.options.sending_bus_idx,
                 bus_a2_idx=self.options.receiving_bus_idx,

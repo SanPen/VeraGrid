@@ -9,7 +9,7 @@ Uncomment the appropriate interface imports to use: Pulp or OrTools
 from typing import List, Union, Tuple, TypeAlias, TYPE_CHECKING
 import numpy as np
 from scipy.sparse import csc_matrix
-from VeraGridEngine.basic_structures import ObjVec, ObjMat
+from VeraGridEngine.basic_structures import ObjVec, ObjMat, BoolVec
 from VeraGridEngine.enumerations import MIPFramework, MIPSolvers
 
 from VeraGridEngine.Utils.MIP.pulp_interface import (LpExp as PulpLpExp,
@@ -149,12 +149,20 @@ def lpDot(mat: csc_matrix, arr: Union[ObjVec, ObjMat]) -> Union[ObjVec, ObjMat]:
         raise Exception("lpDot: Unsupported number of dimensions")
 
 
-def lpDot1D_changes(mat: csc_matrix, arr: Union[ObjVec, ObjMat]) -> Tuple[ObjVec, List[int]]:
+def lpDot1D_changes(mat: csc_matrix,
+                    arr: Union[ObjVec, ObjMat],
+                    row_filter: Union[BoolVec, None] = None) -> Tuple[ObjVec, List[int]]:
     """
     CSC matrix-vector or CSC matrix-matrix dot product (A x b)
+
+    Every product term builds an LP expression object, which is by far the most expensive
+    operation when formulating a large problem. ``row_filter`` allows speeding up the 
+    calculation, especially noticeable for large grids.
+
     :param mat: CSC sparse matrix (A)
     :param arr: dense vector or matrix of object type (b)
-    :return: vector or matrix result of the product
+    :param row_filter: per row flag, True for the rows the caller needs. None builds every row.
+    :return: vector or matrix result of the product, and the list of rows that were written
     """
     n_rows, n_cols = mat.shape
 
@@ -169,14 +177,33 @@ def lpDot1D_changes(mat: csc_matrix, arr: Union[ObjVec, ObjMat]) -> Tuple[ObjVec
         """
         Uni-dimensional sparse matrix - vector product
         """
+        if row_filter is None:
+            # no restriction was requested so every row is wanted 
+            wanted: BoolVec = np.ones(n_rows, dtype=bool)
+        else:
+            assert (len(row_filter) == n_rows)
+            wanted = row_filter
+
         res = np.zeros(n_rows, dtype=arr.dtype)
+
+        # rows already written, so the returned index list carries no duplicates
+        written: BoolVec = np.zeros(n_rows, dtype=bool)
         indices = list()
+
         for i in range(n_cols):
             for ii in range(mat.indptr[i], mat.indptr[i + 1]):
                 j = mat.indices[ii]  # row index
-                if mat.data[ii] != 0.0:
+                if mat.data[ii] != 0.0 and wanted[j]:
                     res[j] += mat.data[ii] * arr[i]  # C.data[ii] is equivalent to C[i, j]
-                    indices.append(j)
+                    if not written[j]:
+                        written[j] = True
+                        indices.append(j)
+                    else:
+                        # already registered from a previous column, only the value accumulates
+                        pass
+                else:
+                    # a structural zero, or a row the caller does not need: nothing to build
+                    pass
 
         return res, indices
 

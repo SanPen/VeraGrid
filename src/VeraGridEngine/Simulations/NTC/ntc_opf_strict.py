@@ -32,7 +32,8 @@ from VeraGridEngine.Simulations.LinearFactors.linear_analysis import (LinearAnal
                                                                       LinearMultiContingency)
 from VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver import compute_alpha, compute_alpha_n1, \
     compute_dP
-from VeraGridEngine.Simulations.NTC.ntc_opf import add_corrective_contingency_formulation
+from VeraGridEngine.Simulations.NTC.ntc_opf import (add_corrective_contingency_formulation,
+                                                    get_contingency_monitorable_branches)
 from VeraGridEngine.IO.file_system import opf_file_path
 
 
@@ -1224,7 +1225,7 @@ def add_linear_branches_formulation(t_idx: int,
                     # is a phase shifter device (like phase shifter transformer or VSC with P control)
                     prob.add_cst(
                         cst=branch_vars.flows[t_idx, m] == bk * (bus_vars.Va[t_idx, fr] -
-                                                                 bus_vars.Va[t_idx, to] +
+                                                                 bus_vars.Va[t_idx, to] -
                                                                  branch_vars.tap_angles[t_idx, m]),
                         name=join("ac_flows_ps_", [t_idx, m], "_")
                     )
@@ -1237,7 +1238,7 @@ def add_linear_branches_formulation(t_idx: int,
                         # rest of the branches
                         prob.add_cst(
                             cst=branch_vars.flows[t_idx, m] == bk * (bus_vars.Va[t_idx, fr] -
-                                                                     bus_vars.Va[t_idx, to] +
+                                                                     bus_vars.Va[t_idx, to] -
                                                                      branch_vars.tap_angles[t_idx, m]),
                             name=join("ac_flow_ps_fix", [t_idx, m], "_")
                         )
@@ -1423,26 +1424,48 @@ def add_linear_branches_contingencies_formulation(t_idx: int,
     # formulation does not pre-compute it, so use zeros (no pre-skip; slacks still capture overloads).
     con_loading_zeros = np.zeros(branch_data_t.nelm)
 
+    # Branches that could possibly receive a post-contingency limit
+    monitorable: BoolVec = get_contingency_monitorable_branches(
+        branch_data_t=branch_data_t,
+        branch_vars=branch_vars,
+        t_idx=t_idx,
+        corrective_contingencies=corrective_contingencies,
+        monitor_only_sensitive_branches=monitor_only_sensitive_branches,
+        monitor_only_ntc_load_rule_branches=monitor_only_ntc_load_rule_branches,
+        alpha_threshold=alpha_threshold,
+        alpha_n1=alpha_n1_abs,
+        structural_ntc=structural_ntc,
+        ntc_load_rule=ntc_load_rule
+    )
+
+    # the inter-area branches carry the exchange preservation terms even if not monitored
+    corrective_rows: BoolVec = monitorable.copy()
+    for branch_m, branch_sense in branch_vars.inter_space_branches:
+        corrective_rows[branch_m] = True
+
     for c, contingency in enumerate(linear_multi_contingencies.multi_contingencies):
 
         contingency_flows, mask, changed_idx = contingency.get_lp_contingency_flows(
             base_flow=branch_vars.flows[t_idx, :],
             injections=bus_vars.Pinj[t_idx, :],
             hvdc_flow=hvdc_vars.flows[t_idx, :],
-            vsc_flow=vsc_vars.flows[t_idx, :]
+            vsc_flow=vsc_vars.flows[t_idx, :],
+            row_filter=monitorable
         )
 
         if corrective_contingencies:
             # corrective N-1: the converters may change their set-points after the outage (shared helper)
-            f_obj = f_obj + add_corrective_contingency_formulation(
+            # note: "f_obj = f_obj + ..." copies the whole objective per contingency, making it slower
+            f_obj += add_corrective_contingency_formulation(
                 t_idx=t_idx, c=c, Sbase=Sbase, contingency=contingency,
                 contingency_flows=contingency_flows, changed_idx=changed_idx,
                 branch_data_t=branch_data_t, branch_vars=branch_vars,
                 vsc_vars=vsc_vars, hvdc_vars=hvdc_vars, con_loading=con_loading_zeros,
-                prob=prob, logger=Logger(), vsc_active=vsc_active, hvdc_active=hvdc_active)
+                prob=prob, logger=Logger(), corrective_rows=corrective_rows,
+                vsc_active=vsc_active, hvdc_active=hvdc_active)
         else:
             # preventive N-1: the converters stay at their base-case set-point (hard limits, no slack)
-            f_obj = f_obj + add_preventive_contingency_formulation_strict(
+            f_obj += add_preventive_contingency_formulation_strict(
                 t_idx=t_idx, c=c, Sbase=Sbase, contingency=contingency,
                 contingency_flows=contingency_flows, mask=mask,
                 branch_data_t=branch_data_t, branch_vars=branch_vars,
@@ -1624,9 +1647,8 @@ def add_linear_vsc_formulation(t_idx: int,
         fr = vsc_data_t.F[m]
         to = vsc_data_t.T[m]
 
+        # remote AC bus the droop measures its angle difference against (-1 when the user did not set it)
         control_bus_idx = vsc_data_t.control1_bus_idx[m]
-        if control_bus_idx == -1:
-            control_bus_idx = fr  # pick the DC angle which is 0
 
         vsc_vars.rates[t_idx, m] = vsc_data_t.rates[m]
 
@@ -1639,9 +1661,18 @@ def add_linear_vsc_formulation(t_idx: int,
                 P0 = vsc_data_t.control2_val[m] / Sbase
 
                 # convert MW/deg to pu/rad
-                droop = vsc_data_t.control1_val * 57.295779513 / Sbase  # MW/deg -> p.u./rad
+                droop = vsc_data_t.control1_val[m] * 57.295779513 / Sbase  # MW/deg -> p.u./rad
 
-                if saturate:
+                if control_bus_idx == -1:
+                    # Falling back to the converter's own DC bus makes the droop law reference a bus 
+                    # with no angle variable. Hold the set-point and report it instead.
+                    logger.add_error(msg="P-mode 3 VSC without an angle-droop reference bus: "
+                                         "set 'control1_dev' to the AC bus at the other end of the DC link. "
+                                         "The converter is held at its P set-point instead.",
+                                     device=str(vsc_data_t.names[m]))
+                    vsc_vars.flows[t_idx, m] = P0
+
+                elif saturate:
 
                     vsc_vars.flows[t_idx, m] = pmode3_formulation2(
                         prob=prob,
@@ -1650,8 +1681,8 @@ def add_linear_vsc_formulation(t_idx: int,
                         rate=vsc_data_t.rates[m] / Sbase,
                         P0=P0,
                         droop=droop,
-                        theta_f=bus_vars.Va[t_idx, control_bus_idx],  # control bus
-                        theta_t=bus_vars.Va[t_idx, to],  # ac bus
+                        theta_f=bus_vars.Va[t_idx, control_bus_idx],  # remote AC bus
+                        theta_t=bus_vars.Va[t_idx, to],  # local AC bus
                         base_name="vsc"
                     )
 
@@ -1669,7 +1700,7 @@ def add_linear_vsc_formulation(t_idx: int,
                     # flow = P0 + k · (theta_f - theta_t)
                     prob.add_cst(
                         cst=vsc_vars.flows[t_idx, m] == P0 + droop * (
-                                bus_vars.Va[t_idx, fr] - bus_vars.Va[control_bus_idx, to]),
+                                bus_vars.Va[t_idx, control_bus_idx] - bus_vars.Va[t_idx, to]),
                         name=join("vsc_flow_cst_", [t_idx, m], "_")
                     )
 

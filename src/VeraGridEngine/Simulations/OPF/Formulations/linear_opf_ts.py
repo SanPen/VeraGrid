@@ -2212,27 +2212,28 @@ def add_linear_branches_formulation(t: int,
                     bk = 1.0 / branch_data_t.X[m]
 
                 # compute the flow
-                if ctrl_branch_data_t.tap_phase_control_mode[m] == TapPhaseControl.Pf.idx():
+                if (ctrl_branch_data_t.tap_phase_control_mode[m] == TapPhaseControl.Pf.idx() or
+                        ctrl_branch_data_t.tap_phase_control_mode[m] == TapPhaseControl.Pt.idx()):
 
-                    # add angle
+                    # Phase shifter under control, so define as a variable
                     branch_vars.tap_angles[t, m] = prob.add_var(lb=ctrl_branch_data_t.tap_angle_min[m],
                                                                 ub=ctrl_branch_data_t.tap_angle_max[m],
                                                                 name=join("tap_ang_", [t, m], "_"))
 
-                    # is a phase shifter device (like phase shifter transformer or VSC with P control)
-                    # flow_ctr = branch_vars.flows[t, m] == bk * (
-                    #         bus_vars.theta[t, fr] - bus_vars.theta[t, to] + branch_vars.tap_angles[t, m])
-                    # prob.add_cst(cst=flow_ctr, name=join("Branch_flow_set_with_ps_", [t, m], "_"))
-
                     branch_vars.flows[t, m] = bk * (bus_vars.Va[t, fr] -
-                                                    bus_vars.Va[t, to] +
+                                                    bus_vars.Va[t, to] -
                                                     branch_vars.tap_angles[t, m])
 
-                else:  # rest of the branches
-                    # is a phase shifter device (like phase shifter transformer or VSC with P control)
-                    # flow_ctr = branch_vars.flows[t, m] == bk * (bus_vars.theta[t, fr] - bus_vars.theta[t, to])
-                    # prob.add_cst(cst=flow_ctr, name=join("Branch_flow_set_", [t, m], "_"))
+                elif ctrl_branch_data_t.tap_angle[m] != 0.0:
 
+                    # The device carries a phase shift that the user imposed
+                    branch_vars.tap_angles[t, m] = ctrl_branch_data_t.tap_angle[m]
+
+                    branch_vars.flows[t, m] = bk * (bus_vars.Va[t, fr] -
+                                                    bus_vars.Va[t, to] -
+                                                    branch_vars.tap_angles[t, m])
+
+                else:  # rest of the branches, with no phase shift
                     branch_vars.flows[t, m] = bk * (bus_vars.Va[t, fr] - bus_vars.Va[t, to])
 
             # power injected and subtracted due to the phase shift

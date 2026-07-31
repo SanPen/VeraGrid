@@ -1126,3 +1126,94 @@ if __name__ == '__main__':
     # test_opf_generation_shedding()
     # test_opf_battery_shedding()
     test_opf_hvdc_controls()
+
+
+def _run_opf_with_shifter(mode, angle):
+    """
+    Run the linear OPF on IEEE39_trafo with the phase shifting transformer in a given control mode.
+
+    :param mode: TapPhaseControl to apply to transformers2w[0]
+    :param angle: tap phase in rad to impose, or None to leave the grid value alone
+    :return: flow on the shifter, angle the OPF settled on, the driver
+    """
+    fname = os.path.join('data', 'grids', 'IEEE39_trafo.gridcal')
+    grid = FileOpen(fname).open()
+    tr = grid.transformers2w[0]
+    tr.tap_phase_control_mode = mode
+    if angle is None:
+        pass
+    else:
+        tr.tap_phase = angle
+
+    opf_options = OptimalPowerFlowOptions(verbose=0,
+                                          solver=SolverType.LINEAR_OPF,
+                                          power_flow_options=PowerFlowOptions(SolverType.NR,
+                                                                              verbose=0,
+                                                                              control_q=False,
+                                                                              retry_with_other_methods=False),
+                                          mip_solver=MIPSolvers.HIGHS,
+                                          generate_report=True)
+    drv = OptimalPowerFlowDriver(grid=grid, options=opf_options)
+    drv.run()
+
+    names = list(grid.get_branch_names(add_hvdc=False, add_vsc=False, add_switch=True))
+    k = names.index(tr.name)
+    return float(np.asarray(drv.results.Sf).real[k]), float(drv.results.phase_shift[k]), drv
+
+
+def test_opf_phase_shifter_pt_control():
+    """
+    A phase shifter in Pt control must act as an optimisation variable exactly like one in Pf.
+    """
+    fixed_flow, _, _ = _run_opf_with_shifter(TapPhaseControl.fixed, 0.0)
+    pf_flow, _, _ = _run_opf_with_shifter(TapPhaseControl.Pf, None)
+    pt_flow, _, _ = _run_opf_with_shifter(TapPhaseControl.Pt, None)
+
+    # the controlled shifter must move the flow away from the un-shifted case
+    assert not np.isclose(pt_flow, fixed_flow, atol=1e-6)
+
+    # Pf and Pt differ only by the branch losses, which the DC model ignores, so they must agree
+    assert np.isclose(pt_flow, pf_flow, atol=1e-6)
+
+
+def test_opf_phase_shifter_fixed_angle_is_honoured():
+    """
+    A fixed non-zero tap angle must appear in the flow equation.
+    """
+    base_flow, _, _ = _run_opf_with_shifter(TapPhaseControl.fixed, 0.0)
+
+    previous = base_flow
+    for angle in (0.05, 0.20):
+        flow, _, _ = _run_opf_with_shifter(TapPhaseControl.fixed, angle)
+
+        # the imposed angle must change the flow
+        assert not np.isclose(flow, base_flow, atol=1e-6)
+
+        # sign convention: Pf = b * (theta_f - theta_t - tau), so a positive shift lowers the flow
+        assert flow < previous
+        previous = flow
+
+
+def test_opf_phase_shifter_angle_round_trips_through_the_power_flow():
+    """
+    The angle the OPF chooses must reproduce the OPF flows once applied to the grid
+    """
+    opf_flow, chosen, opf_drv = _run_opf_with_shifter(TapPhaseControl.Pf, None)
+
+    fname = os.path.join('data', 'grids', 'IEEE39_trafo.gridcal')
+    grid = FileOpen(fname).open()
+    tr = grid.transformers2w[0]
+    tr.tap_phase_control_mode = TapPhaseControl.fixed
+    tr.tap_phase = chosen
+
+    # the OPF redispatches, so the power flow has to start from the OPF generation to be comparable
+    for gen, p in zip(grid.generators, opf_drv.results.generator_power):
+        gen.P = float(p)
+
+    names = list(grid.get_branch_names(add_hvdc=False, add_vsc=False, add_switch=True))
+    k = names.index(tr.name)
+
+    lin = LinearAnalysisDriver(grid=grid, options=LinearAnalysisOptions())
+    lin.run()
+
+    assert np.isclose(float(np.asarray(lin.results.Sf).real[k]), opf_flow, atol=1e-3)

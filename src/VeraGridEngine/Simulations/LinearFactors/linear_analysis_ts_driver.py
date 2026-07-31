@@ -125,9 +125,9 @@ class LinearAnalysisTimeSeriesDriver(TimeSeriesDriverTemplate):
                     # Need to invert the HVDC sign since being positive substracts power from the bus
                     # Different direction compared to Sbus
                     _, _, Pf_hvdc, _, _, _ = nc.hvdc_data.get_power(Sbase=nc.Sbase, theta=np.zeros(nc.nbus))
-                    self.results.Sf[it, :] = lin.get_flows(Sbus=Sbus, P_hvdc=-Pf_hvdc) * nc.Sbase
+                    self.results.Sf[it, :] = lin.get_flows(Sbus=Sbus * nc.Sbase, P_hvdc=-Pf_hvdc * nc.Sbase)
                 else:
-                    self.results.Sf[it, :] = lin.get_flows(Sbus=Sbus) * nc.Sbase
+                    self.results.Sf[it, :] = lin.get_flows(Sbus=Sbus * nc.Sbase)
 
                 self.results.S[it, :] = lin.get_corrected_injections(P=Sbus * nc.Sbase)
 

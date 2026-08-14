@@ -11,8 +11,8 @@ from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_worker_3ph import multi_
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph import PowerFlowResults3Ph
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
-from VeraGridEngine.Compilers.circuit_to_gslv import (
-    GSLV_AVAILABLE,
+from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE
+from VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph import (
     gslv_pf_3ph,
     translate_gslv_pf_3ph_results,
 )

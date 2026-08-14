@@ -15,7 +15,10 @@ import pandas as pd
 from PySide6 import QtWidgets, QtCore
 import matplotlib
 
-matplotlib.use('QtAgg')  # Or 'Qt5Agg' — depending on your matplotlib version
+if os.environ.get("QT_QPA_PLATFORM", "") == "offscreen":
+    matplotlib.use("Agg")
+else:
+    matplotlib.use("QtAgg")
 
 from matplotlib import pyplot as plt
 

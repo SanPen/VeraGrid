@@ -16,11 +16,17 @@ import warnings
 from scipy.sparse.linalg import MatrixRankWarning
 
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
-from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtInterfaceValidationError, EmtProblemDae, EmtTopologyError
+from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import (
+    EmtDeviceDisposition,
+    EmtInterfaceValidationError,
+    EmtProblemDae,
+    EmtTopologyError,
+    _build_emt_device_type_disposition_table,
+)
 from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
 from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtSolverTypes, ShuntConnectionType, EmtInitializationMethod, \
-    ConverterControlType, SolverType, VarPowerFlowReferenceType
+    ConverterControlType, DeviceType, SolverType, VarPowerFlowReferenceType
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
 from VeraGridEngine.Templates.Emt.bergeron_line_emt_template import get_bergeron_line_emt_template
 from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_r_emt_template
@@ -31,6 +37,7 @@ from VeraGridEngine.Templates.Emt.converter_emt_template import get_emt_ideal_co
 from VeraGridEngine.Templates.Emt.converter_switched_emt_template import get_switched_emt_converter
 from VeraGridEngine.Templates.Emt.dc_load_emt_template import get_dc_load_emt_template
 from VeraGridEngine.Templates.Emt.dc_line_emt_template import get_dc_line_emt_template
+from VeraGridEngine.Templates.Emt.switch_emt_template import get_switch_emt_template
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
@@ -148,7 +155,132 @@ def _build_interface_validation_problem(grid: gce.MultiCircuit) -> EmtProblemDae
     problem: EmtProblemDae = EmtProblemDae.__new__(EmtProblemDae)
     problem.grid = grid
     problem.logger = Logger()
+    problem._device_type_disposition = _build_emt_device_type_disposition_table()
     return problem
+
+
+def test_bus_readiness_validation_rejects_missing_bus_emt_model() -> None:
+    """EMT problem preconditions must reject buses without one EMT shell."""
+    grid = gce.MultiCircuit(Sbase=100.0, fbase=50.0)
+    bus = gce.Bus(name="BusMissingShell", Vnom=20.0)
+    grid.add_bus(bus)
+
+    problem = _build_interface_validation_problem(grid)
+
+    with pytest.raises(EmtInterfaceValidationError, match="BusMissingShell"):
+        problem._validate_bus_emt_models_ready()
+
+
+def test_bus_readiness_validation_rejects_pending_emt_devices() -> None:
+    """EMT problem preconditions must reject unresolved deferred bus connections."""
+    grid = gce.MultiCircuit(Sbase=100.0, fbase=50.0)
+    bus = gce.Bus(name="BusPending", Vnom=20.0)
+    load = gce.Load(name="PendingLoad", P=10.0, Q=1.0)
+    grid.add_bus(bus)
+    bus.emt_model = _make_external_mapping_block([VarPowerFlowReferenceType.v_A], "bus_pending")
+    bus.add_pending_emt_device(load)
+
+    problem = _build_interface_validation_problem(grid)
+
+    with pytest.raises(EmtInterfaceValidationError, match="PendingLoad"):
+        problem._validate_bus_emt_models_ready()
+
+
+def test_bus_readiness_validation_accepts_valid_ac_bus_shell() -> None:
+    """One valid AC bus EMT shell must pass the new readiness validation."""
+    grid = gce.MultiCircuit(Sbase=100.0, fbase=50.0)
+    bus = gce.Bus(name="BusReadyAC", Vnom=20.0)
+    grid.add_bus(bus)
+    bus.emt_model = _make_external_mapping_block([
+        VarPowerFlowReferenceType.v_A,
+        VarPowerFlowReferenceType.v_B,
+        VarPowerFlowReferenceType.v_C,
+    ], "bus_ready_ac")
+
+    problem = _build_interface_validation_problem(grid)
+    problem._validate_bus_emt_models_ready()
+
+
+def test_bus_readiness_validation_accepts_valid_dc_bus_shell() -> None:
+    """One valid DC bus EMT shell must pass the new readiness validation."""
+    grid = gce.MultiCircuit(Sbase=100.0, fbase=50.0)
+    bus = gce.Bus(name="BusReadyDC", Vnom=320.0, is_dc=True)
+    grid.add_bus(bus)
+    bus.emt_model = _make_external_mapping_block([
+        VarPowerFlowReferenceType.Vdc,
+    ], "bus_ready_dc")
+
+    problem = _build_interface_validation_problem(grid)
+    problem._validate_bus_emt_models_ready()
+
+
+def test_emt_device_type_disposition_table_covers_full_enum() -> None:
+    """Every ``DeviceType`` must have one explicit EMT disposition entry."""
+    disposition_table: dict[DeviceType, str] = _build_emt_device_type_disposition_table()
+    device_tpe: DeviceType
+
+    for device_tpe in DeviceType:
+        assert device_tpe in disposition_table
+
+
+def test_emt_device_type_disposition_table_marks_structural_network_types() -> None:
+    """EMT network devices must map to explicit structural dispositions."""
+    disposition_table: dict[DeviceType, str] = _build_emt_device_type_disposition_table()
+
+    assert disposition_table[DeviceType.BusDevice] == EmtDeviceDisposition.BUS_STRUCTURAL
+    assert disposition_table[DeviceType.LineDevice] == EmtDeviceDisposition.BRANCH_STRUCTURAL
+    assert disposition_table[DeviceType.Transformer2WDevice] == EmtDeviceDisposition.BRANCH_STRUCTURAL
+    assert disposition_table[DeviceType.SeriesReactanceDevice] == EmtDeviceDisposition.BRANCH_STRUCTURAL
+    assert disposition_table[DeviceType.SwitchDevice] == EmtDeviceDisposition.BRANCH_STRUCTURAL
+    assert disposition_table[DeviceType.DCLineDevice] == EmtDeviceDisposition.BRANCH_STRUCTURAL
+    assert disposition_table[DeviceType.HVDCLineDevice] == EmtDeviceDisposition.BRANCH_STRUCTURAL
+    assert disposition_table[DeviceType.VscDevice] == EmtDeviceDisposition.BRANCH_STRUCTURAL
+    assert disposition_table[DeviceType.GeneratorDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+    assert disposition_table[DeviceType.BatteryDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+    assert disposition_table[DeviceType.LoadDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+    assert disposition_table[DeviceType.ExternalGridDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+    assert disposition_table[DeviceType.StaticGeneratorDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+    assert disposition_table[DeviceType.ShuntDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+    assert disposition_table[DeviceType.ControllableShuntDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+    assert disposition_table[DeviceType.CurrentInjectionDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+
+
+def test_emt_device_type_disposition_table_marks_non_network_types_as_noop() -> None:
+    """Non-electrical metadata device types must resolve to explicit EMT no-op."""
+    disposition_table: dict[DeviceType, str] = _build_emt_device_type_disposition_table()
+
+    assert disposition_table[DeviceType.CountryDevice] == EmtDeviceDisposition.NON_EMT_NOOP
+    assert disposition_table[DeviceType.AreaDevice] == EmtDeviceDisposition.NON_EMT_NOOP
+    assert disposition_table[DeviceType.FuelDevice] == EmtDeviceDisposition.NON_EMT_NOOP
+    assert disposition_table[DeviceType.EmtEventDevice] == EmtDeviceDisposition.NON_EMT_NOOP
+    assert disposition_table[DeviceType.EmtModelTemplateDevice] == EmtDeviceDisposition.NON_EMT_NOOP
+
+
+def test_emt_device_type_disposition_table_marks_explicit_branch_paths() -> None:
+    """Representative branch device types must resolve to explicit structural EMT paths."""
+    disposition_table: dict[DeviceType, str] = _build_emt_device_type_disposition_table()
+
+    assert disposition_table[DeviceType.LineDevice] == EmtDeviceDisposition.BRANCH_STRUCTURAL
+    assert disposition_table[DeviceType.Transformer2WDevice] == EmtDeviceDisposition.BRANCH_STRUCTURAL
+    assert disposition_table[DeviceType.SeriesReactanceDevice] == EmtDeviceDisposition.BRANCH_STRUCTURAL
+    assert disposition_table[DeviceType.SwitchDevice] == EmtDeviceDisposition.BRANCH_STRUCTURAL
+    assert disposition_table[DeviceType.DCLineDevice] == EmtDeviceDisposition.BRANCH_STRUCTURAL
+    assert disposition_table[DeviceType.HVDCLineDevice] == EmtDeviceDisposition.BRANCH_STRUCTURAL
+    assert disposition_table[DeviceType.VscDevice] == EmtDeviceDisposition.BRANCH_STRUCTURAL
+
+
+def test_emt_device_type_disposition_table_marks_explicit_injection_paths() -> None:
+    """Representative injection device types must resolve to explicit structural EMT paths."""
+    disposition_table: dict[DeviceType, str] = _build_emt_device_type_disposition_table()
+
+    assert disposition_table[DeviceType.GeneratorDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+    assert disposition_table[DeviceType.BatteryDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+    assert disposition_table[DeviceType.LoadDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+    assert disposition_table[DeviceType.ExternalGridDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+    assert disposition_table[DeviceType.StaticGeneratorDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+    assert disposition_table[DeviceType.ShuntDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+    assert disposition_table[DeviceType.ControllableShuntDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
+    assert disposition_table[DeviceType.CurrentInjectionDevice] == EmtDeviceDisposition.INJECTION_STRUCTURAL
 
 
 def _make_ref_var(reference: VarPowerFlowReferenceType, name_suffix: str) -> Var:
@@ -171,7 +303,7 @@ def _make_external_mapping_block(refs: list[VarPowerFlowReferenceType], name_suf
 
 
 def test_emt_template_assignment_materializes_missing_bus_shell() -> None:
-    """Ensure EMT template assignment initializes the connected bus shell immediately."""
+    """GUI EMT template assignment may materialize one missing bus shell immediately."""
     grid = gce.MultiCircuit(Sbase=2.0, fbase=50.0)
     bus = gce.Bus(name="Bus0", Vnom=10.0, is_slack=True)
     generator = gce.Generator(name="Gen0", vset=1.0, Snom=grid.Sbase, freq=50.0, r1=0.001, x1=1.7)
@@ -250,6 +382,17 @@ def test_pi_line_rload_emt_passes_validation():
 # =============================================================================
 
 def test_bergeron_line_rload_emt_passes_validation():
+    """
+    Validate the Bergeron EMT line workflow with the current history-var naming.
+
+    The Bergeron runtime now resolves history event parameters using the compact
+    root names ``Ih_f_<phase>`` and ``Ih_t_<phase>`` instead of the older
+    line-name-qualified form. This test asserts that the template exposes those
+    runtime parameters before building the EMT problem.
+
+    :return: None.
+    :rtype: None
+    """
     grid = gce.MultiCircuit(Sbase=2.0, fbase=50.0)
     vnom = 10
 
@@ -289,6 +432,20 @@ def test_bergeron_line_rload_emt_passes_validation():
     gen_mdl = get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory).block
     line_mdl = get_bergeron_line_emt_template(vf=grid.var_factory).block
     load_mdl = get_shunt_r_emt_template(vf=grid.var_factory, phA=True, phB=True, phC=True).block
+
+    history_var_names: set[str] = set()
+    history_block = None
+    history_var = None
+    for history_block in line_mdl.get_all_blocks():
+        for history_var in history_block.event_dict.keys():
+            history_var_names.add(str(history_var.name))
+
+    assert "Ih_f_A" in history_var_names
+    assert "Ih_f_B" in history_var_names
+    assert "Ih_f_C" in history_var_names
+    assert "Ih_t_A" in history_var_names
+    assert "Ih_t_B" in history_var_names
+    assert "Ih_t_C" in history_var_names
 
 
     set_emt_model(device=gen0, model=gen_mdl, var_factory=grid.var_factory)
@@ -336,7 +493,8 @@ def test_vsc_emt_passes_validation():
     pf_results, pf_res_3ph = run_power_flow(grid)
 
     gen_mdl = get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory).block
-    trafo_mdl = get_transformer_emt_template(vf=grid.var_factory, name=transformer.name).block
+    trafo_templ = get_transformer_emt_template(vf=grid.var_factory, name=transformer.name)
+    trafo_mdl = trafo_templ.block.children[0]
     vsc_mdl = get_emt_ideal_converter(
         vf=grid.var_factory,
         name=vsc.name,
@@ -431,7 +589,8 @@ def test_switched_vsc_emt_passes_validation_and_switches_gates() -> None:
     pf_res_3ph = None
 
     gen_mdl = get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory).block
-    trafo_mdl = get_transformer_emt_template(vf=grid.var_factory, name=transformer.name).block
+    trafo_templ = get_transformer_emt_template(vf=grid.var_factory, name=transformer.name)
+    trafo_mdl = trafo_templ.block.children[0]
     vsc_mdl = get_switched_emt_converter(vf=grid.var_factory, name=vsc.name).block
     dc_load_mdl = get_dc_load_emt_template(vf=grid.var_factory, name="dc_load_emt_switched").block
 
@@ -653,6 +812,44 @@ def test_interface_validation_accepts_compatible_ac_abc_injection() -> None:
     problem._validate_dynamic_emt_interfaces()
 
 
+def test_interface_validation_ignores_dormant_neutral_mapping_outside_root_contract() -> None:
+    """
+    Dormant neutral mappings must not make one active ABC model expose neutral.
+
+    :return: None.
+    """
+    grid = gce.MultiCircuit(Sbase=100.0, fbase=50.0)
+    bus = gce.Bus(name="BusABC", Vnom=20.0)
+    load = gce.Load(name="LoadWithDormantNeutral", P=10.0, Q=1.0)
+    grid.add_bus(bus)
+    grid.add_load(bus, load)
+
+    bus.emt_model = _make_external_mapping_block([
+        VarPowerFlowReferenceType.v_A,
+        VarPowerFlowReferenceType.v_B,
+        VarPowerFlowReferenceType.v_C,
+    ], "bus_abc_dormant")
+    load.emt_model = _make_external_mapping_block([
+        VarPowerFlowReferenceType.v_A,
+        VarPowerFlowReferenceType.v_B,
+        VarPowerFlowReferenceType.v_C,
+        VarPowerFlowReferenceType.i_A,
+        VarPowerFlowReferenceType.i_B,
+        VarPowerFlowReferenceType.i_C,
+    ], "load_abc_dormant")
+    load.emt_model.external_mapping[VarPowerFlowReferenceType.v_N] = _make_ref_var(
+        VarPowerFlowReferenceType.v_N,
+        "load_dormant_neutral",
+    )
+    load.emt_model.external_mapping[VarPowerFlowReferenceType.i_N] = _make_ref_var(
+        VarPowerFlowReferenceType.i_N,
+        "load_dormant_neutral",
+    )
+
+    problem = _build_interface_validation_problem(grid)
+    problem._validate_dynamic_emt_interfaces()
+
+
 def test_interface_validation_accepts_compatible_ac_abcn_injection() -> None:
     grid = gce.MultiCircuit(Sbase=100.0, fbase=50.0)
     bus = gce.Bus(name="BusABCN", Vnom=20.0)
@@ -816,8 +1013,56 @@ def test_set_emt_model_connects_single_bus_dc_injection_refs() -> None:
     assert load.emt_model.external_mapping[VarPowerFlowReferenceType.Vdc].uid == bus.emt_model.external_mapping[VarPowerFlowReferenceType.Vdc].uid
 
 
-def test_emt_template_setter_allows_gui_order_injection_branch_injection() -> None:
-    """The GUI EMT template setter must tolerate generator-line-load assignment order."""
+def test_set_emt_model_connects_ac_branch_terminal_voltages() -> None:
+    """AC branch EMT models must bind their terminal voltages to both bus shells."""
+    grid = gce.MultiCircuit(Sbase=100.0, fbase=50.0)
+    bus_from = gce.Bus(name="BusFrom", Vnom=20.0)
+    bus_to = gce.Bus(name="BusTo", Vnom=20.0)
+    line = gce.Line(name="LineABC", bus_from=bus_from, bus_to=bus_to, r=0.01, x=0.1, b=0.0, rate=100.0)
+    grid.add_bus(bus_from)
+    grid.add_bus(bus_to)
+    grid.add_line(line)
+
+    get_bus_emt_template(grid=grid, bus=bus_from)
+    get_bus_emt_template(grid=grid, bus=bus_to)
+
+    line_mdl = get_pi_line_emt_template(vf=grid.var_factory, phN=False, phA=True, phB=True, phC=True).block
+    set_emt_model(device=line, model=line_mdl, var_factory=grid.var_factory)
+
+    assert line.emt_model.external_mapping[VarPowerFlowReferenceType.vf_A].uid == bus_from.emt_model.external_mapping[VarPowerFlowReferenceType.v_A].uid
+    assert line.emt_model.external_mapping[VarPowerFlowReferenceType.vf_B].uid == bus_from.emt_model.external_mapping[VarPowerFlowReferenceType.v_B].uid
+    assert line.emt_model.external_mapping[VarPowerFlowReferenceType.vf_C].uid == bus_from.emt_model.external_mapping[VarPowerFlowReferenceType.v_C].uid
+    assert line.emt_model.external_mapping[VarPowerFlowReferenceType.vt_A].uid == bus_to.emt_model.external_mapping[VarPowerFlowReferenceType.v_A].uid
+    assert line.emt_model.external_mapping[VarPowerFlowReferenceType.vt_B].uid == bus_to.emt_model.external_mapping[VarPowerFlowReferenceType.v_B].uid
+    assert line.emt_model.external_mapping[VarPowerFlowReferenceType.vt_C].uid == bus_to.emt_model.external_mapping[VarPowerFlowReferenceType.v_C].uid
+
+
+def test_set_emt_model_connects_vsc_terminal_voltages() -> None:
+    """VSC EMT models must bind DC and AC terminal voltages to their bus shells."""
+    grid = gce.MultiCircuit(Sbase=100.0, fbase=50.0)
+    bus_dc = gce.Bus(name="BusDC", Vnom=320.0, is_dc=True)
+    bus_ac = gce.Bus(name="BusAC", Vnom=20.0)
+    vsc = gce.VSC(name="VSCConnect", bus_from=bus_dc, bus_to=bus_ac, rate=100.0,
+                  control1=ConverterControlType.Vm_ac, control2=ConverterControlType.Va_ac,
+                  control1_val=1.0, control2_val=0.0)
+    grid.add_bus(bus_dc)
+    grid.add_bus(bus_ac)
+    grid.add_vsc(vsc)
+
+    get_bus_emt_template(grid=grid, bus=bus_dc)
+    get_bus_emt_template(grid=grid, bus=bus_ac)
+
+    vsc_mdl = get_emt_ideal_converter(vf=grid.var_factory, name=vsc.name).block
+    set_emt_model(device=vsc, model=vsc_mdl, var_factory=grid.var_factory)
+
+    assert vsc.emt_model.external_mapping[VarPowerFlowReferenceType.Vdc].uid == bus_dc.emt_model.external_mapping[VarPowerFlowReferenceType.Vdc].uid
+    assert vsc.emt_model.external_mapping[VarPowerFlowReferenceType.v_A].uid == bus_ac.emt_model.external_mapping[VarPowerFlowReferenceType.v_A].uid
+    assert vsc.emt_model.external_mapping[VarPowerFlowReferenceType.v_B].uid == bus_ac.emt_model.external_mapping[VarPowerFlowReferenceType.v_B].uid
+    assert vsc.emt_model.external_mapping[VarPowerFlowReferenceType.v_C].uid == bus_ac.emt_model.external_mapping[VarPowerFlowReferenceType.v_C].uid
+
+
+def test_emt_template_setter_requires_bus_shells_before_gui_order_assignment() -> None:
+    """The GUI EMT template setter must require bus shells before EMT assignment order."""
     grid = gce.MultiCircuit(Sbase=2.0, fbase=50.0)
     bus0 = gce.Bus(name="Bus0", Vnom=10.0, is_slack=True)
     bus1 = gce.Bus(name="Bus1", Vnom=10.0)
@@ -846,6 +1091,9 @@ def test_emt_template_setter_allows_gui_order_injection_branch_injection() -> No
     grid.add_line(line0)
     grid.add_generator(bus=bus0, api_obj=gen0)
     grid.add_load(bus=bus1, api_obj=load)
+
+    get_bus_emt_template(grid=grid, bus=bus0)
+    get_bus_emt_template(grid=grid, bus=bus1)
 
     gen0.emt_template = get_generator_thevenin_rl_emt_template_with_ref(vf=grid.var_factory)
     assert not gen0.emt_model.empty()

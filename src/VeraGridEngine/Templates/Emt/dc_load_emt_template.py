@@ -8,7 +8,7 @@
 from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
-from VeraGridEngine.Utils.Symbolic.block import Var
+from VeraGridEngine.Utils.Symbolic.block import Block
 
 """
 EMT DC load template.
@@ -39,44 +39,50 @@ def get_dc_load_emt_template(
     templ.tpe = DeviceType.LoadDevice
     templ.name = name
 
-    templ.block.name = name
-
     p_dc_static = vf.add_var(name=f"Pl0")
     g_dc_static = vf.add_var(name=f"g")
-    templ.block.parameters[p_dc_static] = vf.add_const(0.0)
-    templ.block.parameters[g_dc_static] = vf.add_const(0.0)
+    block = Block()
+    block.parameters[p_dc_static] = vf.add_const(0.0)
+    block.parameters[g_dc_static] = vf.add_const(0.0)
 
     v_dc = vf.add_var(name=f"v_dc", reference=VarPowerFlowReferenceType.Vdc)
 
     i_dc = vf.add_var(name=f"i_dc", reference=VarPowerFlowReferenceType.Idc)
     p_dc = vf.add_var(name=f"p_dc", reference=VarPowerFlowReferenceType.P)
 
-    templ.block.in_vars = [v_dc]
-    templ.block.algebraic_vars = [i_dc, p_dc]
+    block.in_vars = [v_dc]
+    block.algebraic_vars = [i_dc, p_dc]
 
     eps = vf.add_const(1e-10)
-    templ.block.algebraic_eqs = [
+    block.algebraic_eqs = [
         i_dc + p_dc_static / (v_dc + eps) + g_dc_static * v_dc,
         p_dc - v_dc * i_dc,
     ]
 
-    templ.block.out_vars = [i_dc]
+    block.out_vars = [i_dc]
 
-    templ.block.external_mapping = {
+    block.external_mapping = {
         VarPowerFlowReferenceType.Vdc: v_dc,
         VarPowerFlowReferenceType.Idc: i_dc,
         VarPowerFlowReferenceType.P: p_dc,
     }
 
-    templ.block.api_obj_mapping = {
+    block.api_obj_mapping = {
         ParamPowerFlowReferenceType.Pl0: p_dc_static,
         ParamPowerFlowReferenceType.g: g_dc_static,
     }
 
-    templ.block.init_eqs = {
+    block.init_eqs = {
         i_dc: -(p_dc_static / (v_dc + eps) + g_dc_static * v_dc),
         p_dc: -v_dc * (p_dc_static / (v_dc + eps) + g_dc_static * v_dc),
     }
+
+    templ.block.children.append(block)
+    templ.block.external_mapping = block.external_mapping
+    templ.block.api_obj_mapping = block.api_obj_mapping
+    templ.block.parameters = block.parameters
+    templ.block.in_vars = block.in_vars
+    templ.block.out_vars = block.out_vars
 
     return templ
 

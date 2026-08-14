@@ -9,8 +9,8 @@ from typing import TYPE_CHECKING, Dict, Union
 
 import numpy as np
 
-from VeraGridEngine.Compilers.circuit_to_gslv import (
-    GSLV_AVAILABLE,
+from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE
+from VeraGridEngine.Compilers.Gslv.Simulations.power_flow_3ph import (
     gslv_pf_3ph,
     translate_gslv_pf_3ph_results,
 )

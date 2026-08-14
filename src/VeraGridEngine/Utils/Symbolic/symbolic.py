@@ -537,6 +537,17 @@ class Var(Expr):
     def __repr__(self) -> str:
         return self.name
 
+    def set_name(self, name: str) -> None:
+        """
+        Change the variable name without changing the symbolic identity.
+
+        :param name: New variable name.
+        :return: None.
+        """
+        # Only the display and serialization name changes here. The variable
+        # identity remains tied to the existing uid fields.
+        self.name = name
+
     def __eq__(self, other: Any) -> bool | Comparison:
         # Var comparison using the uid
         if isinstance(other, Var):

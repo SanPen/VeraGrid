@@ -734,7 +734,6 @@ class InjectionParent(DynamicDevice):
     @property
     def phN(self) -> bool:
         """
-
         :return:
         """
         return self._phN
@@ -744,12 +743,11 @@ class InjectionParent(DynamicDevice):
         if isinstance(val, bool):
             self._phN = val
         else:
-            raise ValueError(f'{val} is not an bool')
+            raise ValueError(f'{val} is not an bool.')
 
     @property
     def phA(self) -> bool:
         """
-
         :return:
         """
         return self._phA
@@ -759,10 +757,13 @@ class InjectionParent(DynamicDevice):
         if isinstance(val, bool):
             self._phA = val
         else:
-            raise ValueError(f'{val} is not an bool')
+            raise ValueError(f'{val} is not an bool.')
 
     @property
     def phB(self) -> bool:
+        """
+        :return:
+        """
         return self._phB
 
     @phB.setter
@@ -770,10 +771,13 @@ class InjectionParent(DynamicDevice):
         if isinstance(val, bool):
             self._phB = val
         else:
-            raise ValueError(f'{val} is not an bool')
+            raise ValueError(f'{val} is not an bool.')
 
     @property
     def phC(self) -> bool:
+        """
+        :return:
+        """
         return self._phC
 
     @phC.setter
@@ -781,4 +785,4 @@ class InjectionParent(DynamicDevice):
         if isinstance(val, bool):
             self._phC = val
         else:
-            raise ValueError(f'{val} is not an bool')
+            raise ValueError(f'{val} is not an bool.')

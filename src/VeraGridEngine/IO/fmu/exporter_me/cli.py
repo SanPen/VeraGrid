@@ -8,8 +8,8 @@ from argparse import ArgumentParser
 from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 
-from .api import export_fmu_me
-from .config import ExportConfig
+from VeraGridEngine.IO.fmu.exporter_me.api import export_fmu_me
+from VeraGridEngine.IO.fmu.exporter_me.config import ExportConfig
 
 
 def _load_module(module_path: Path):

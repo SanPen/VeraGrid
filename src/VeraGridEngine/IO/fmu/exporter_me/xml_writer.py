@@ -8,7 +8,7 @@ from pathlib import Path
 from xml.dom import minidom
 from xml.etree.ElementTree import Element, SubElement, fromstring, tostring
 
-from .export_ir import ExportModel, VariableCategory
+from VeraGridEngine.IO.fmu.exporter_me.export_ir import ExportModel, VariableCategory
 
 
 def emit_model_description(export_model: ExportModel) -> str:

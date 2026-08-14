@@ -52,7 +52,7 @@ def parse_windings_connection(conn: WindingsConnection) -> tuple[WindingType, Wi
     
     return conn_f, conn_t
 
-def build_vsc_rms(vfactory: VarFactory, name:str = ''):
+def build_vsc_rms(vfactory: VarFactory, name:str = 'vsc_rms_template'):
     """
     Build power control loop model for Grid Following Converter.
     Supports multiple control modes via ConverterControlType.
@@ -64,8 +64,11 @@ def build_vsc_rms(vfactory: VarFactory, name:str = ''):
     templ.tpe = DeviceType.VscDevice
     templ.name = name
 
-    vm_t = vfactory.add_var("Vm_t")
-    inputs: List[Var] = [vm_t]
+    vm_t = vfactory.add_var(name="Vm_t", reference=VarPowerFlowReferenceType.Vm)
+    va_t = vfactory.add_var(name="Va_t", reference=VarPowerFlowReferenceType.Va)
+    vdc = vfactory.add_var(name="Vdc", reference=VarPowerFlowReferenceType.Vdc)
+
+    inputs: List[Var] = [vm_t, va_t, vdc]
 
     Pf  = vfactory.add_var("Pf_vsc", VarPowerFlowReferenceType.Pf)
     Pt  = vfactory.add_var("Pt", VarPowerFlowReferenceType.Pt)
@@ -84,10 +87,12 @@ def build_vsc_rms(vfactory: VarFactory, name:str = ''):
     block.algebraic_vars = [Pf, Pt]
     block.event_dict[Qt_ref] = vfactory.add_const(0.0)
 
-    #Active power is conserved Reactive isnt
+    # Active power is conserved Reactive isn't
     block.algebraic_eqs  = [
         Pf + Pt - 1.0 * (alpha1 + alpha2 * im + alpha3 * im ** 2),
     ]
+
+    block.out_vars = [Pf, Pt, Qt_ref]
     block.external_mapping = {
         VarPowerFlowReferenceType.Vm: vm_t,
         VarPowerFlowReferenceType.Pf: Pf,
@@ -102,7 +107,11 @@ def build_vsc_rms(vfactory: VarFactory, name:str = ''):
     }
 
     block.in_vars =  inputs
-    templ.block = block
+    templ.block.children.append(block)
+    templ.block.external_mapping = block.external_mapping
+    templ.block.api_obj_mapping = block.api_obj_mapping
+    templ.block.in_vars = inputs
+    templ.block.out_vars = block.out_vars
 
     return templ
 

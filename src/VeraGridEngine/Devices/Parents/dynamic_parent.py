@@ -368,14 +368,16 @@ class DynamicDevice(PhysicalDevice):
             if self.auto_update_enabled:
                 # Duplicating the template avoids mutating shared library blocks,
                 # and bus variables are rebound to this specific device instance.
-                emt_mdl = duplicate_block(val.block, self._var_factory)
+                # The attachment normalizers read ``self.emt_model`` while they
+                # rebuild the saved root contract, so publish the new block
+                # before attaching it to the buses.
+                emt_mdl: Block = duplicate_block(val.block, self._var_factory)
                 emt_mdl.name = val.name
+                self.emt_model = emt_mdl
                 connect_bus_variables_emt(self,
                                           emt_mdl,
                                           self._var_factory,
                                           allow_deferred_connection=True)
-
-                self.emt_model = emt_mdl
         elif val is None:
             # Clearing the template makes any previously registered bus endpoint
             # stale because the device no longer guarantees that its current EMT

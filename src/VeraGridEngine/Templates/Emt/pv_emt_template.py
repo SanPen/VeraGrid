@@ -10,7 +10,7 @@ from enum import IntEnum
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Utils.Symbolic.block import Block, Var, Expr
+from VeraGridEngine.Utils.Symbolic.block import Block, Var, Expr, find_name_in_block
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 
 from VeraGridEngine.Templates.Emt.converter_emt_template import (
@@ -20,6 +20,39 @@ from VeraGridEngine.Templates.Emt.converter_emt_template import (
     _build_pseudo_emt_converter_inner_loop_block,
     _build_pseudo_emt_converter_transformer_block,
 )
+
+
+def _tag_connected_pair(vf: VarFactory, out_var: Var, in_var: Var, shared_name: str) -> None:
+    """
+    Add one shared reference to both ends of one internal child-block connection.
+
+    The EMT editor derives visible inter-block edges from shared references on
+    child ports. The runtime symbolic connection is still registered through the
+    shared variable factory, but the explicit shared tag keeps the editor graph
+    readable without exposing the signal at the root block.
+
+    :param vf: Shared variable factory.
+    :param out_var: Source child output.
+    :param in_var: Destination child input.
+    :param shared_name: Shared-reference identifier.
+    :return: None.
+    """
+    vf.add_shared_ref_to_var(out_var, shared_name)
+    vf.add_shared_ref_to_var(in_var, shared_name)
+
+
+def _find_block_var(block: Block, var_name: str) -> Var:
+    """
+    Find one variable by name inside one block and fail loudly if missing.
+
+    :param block: Block to inspect.
+    :param var_name: Variable name.
+    :return: Matching variable.
+    """
+    result: Var | None = find_name_in_block(var_name, block)
+    if result is None:
+        raise ValueError(f"Variable {var_name} not found in block {block.name}")
+    return result
 
 
 class PvEmtModelLevel(IntEnum):
@@ -66,6 +99,8 @@ def _build_converter_blocks(vf: VarFactory, name: str) -> tuple[Block, Block, Bl
 
 
 def _connect_imported_converter_blocks(
+    vf: VarFactory,
+    name: str,
     v_A: Var,
     v_B: Var,
     v_C: Var,
@@ -96,117 +131,149 @@ def _connect_imported_converter_blocks(
     :param transformer_block: Imported AC-side dq0/abc interface block.
     :return: None.
     """
-    transformer_block.connect(transformer_block.in_vars[0:3], [v_A, v_B, v_C])
-    vsc_block.connect([vsc_block.in_vars[6]], [dc_voltage_source])
+    transformer_i_A = _find_block_var(transformer_block, "i_A")
+    transformer_i_B = _find_block_var(transformer_block, "i_B")
+    transformer_i_C = _find_block_var(transformer_block, "i_C")
+    transformer_v_d = _find_block_var(transformer_block, "v_d")
+    transformer_v_q = _find_block_var(transformer_block, "v_q")
+    transformer_v_0 = _find_block_var(transformer_block, "v_0")
+    transformer_i_d = _find_block_var(transformer_block, "i_d")
+    transformer_i_q = _find_block_var(transformer_block, "i_q")
+    transformer_i_0 = _find_block_var(transformer_block, "i_0")
 
-    vsc_block.connect(vsc_block.in_vars[0:3], transformer_block.out_vars[6:9])
-    vsc_block.connect(vsc_block.in_vars[3:6], transformer_block.out_vars[3:6])
-    pll_block.connect([pll_block.in_vars[0]], [transformer_block.out_vars[7]])
-    outer_loop_block.connect(outer_loop_block.in_vars[0:3], transformer_block.out_vars[6:9])
-    outer_loop_block.connect(outer_loop_block.in_vars[3:6], transformer_block.out_vars[3:6])
-    inner_loop_block.connect(inner_loop_block.in_vars[0:3], transformer_block.out_vars[6:9])
-    inner_loop_block.connect(inner_loop_block.in_vars[3:6], transformer_block.out_vars[3:6])
+    vsc_v_dc = _find_block_var(vsc_block, "v_dc")
+    vsc_i_dc = _find_block_var(vsc_block, "i_dc")
+    vsc_P = _find_block_var(vsc_block, "P")
+    vsc_Q = _find_block_var(vsc_block, "Q")
+    vsc_sbase = _find_block_var(vsc_block, "sbase")
+    vsc_P_ref = _find_block_var(vsc_block, "P_ref")
+    vsc_Q_ref = _find_block_var(vsc_block, "Q_ref")
+    vsc_Vdc_ref = _find_block_var(vsc_block, "Vdc_ref")
+    vsc_omega_base = _find_block_var(vsc_block, "omega_base")
+    vsc_phi_v = _find_block_var(vsc_block, "phi_v")
+    vsc_Vpk = _find_block_var(vsc_block, "Vpk")
+    vsc_R_eq = _find_block_var(vsc_block, "R_eq")
+    vsc_L_eq = _find_block_var(vsc_block, "L_eq")
+    vsc_pll_kp = _find_block_var(vsc_block, "pll_kp")
+    vsc_pll_ki = _find_block_var(vsc_block, "pll_ki")
+    vsc_i_kp = _find_block_var(vsc_block, "i_kp")
+    vsc_i_ki = _find_block_var(vsc_block, "i_ki")
+    vsc_vdc_kp = _find_block_var(vsc_block, "vdc_kp")
+    vsc_vdc_ki = _find_block_var(vsc_block, "vdc_ki")
+    vsc_q_kp = _find_block_var(vsc_block, "q_kp")
+    vsc_q_ki = _find_block_var(vsc_block, "q_ki")
+    vsc_i_max = _find_block_var(vsc_block, "i_max")
+    vsc_m_max = _find_block_var(vsc_block, "m_max")
+    vsc_P_loss0 = _find_block_var(vsc_block, "P_loss0")
+    vsc_tau_meas = _find_block_var(vsc_block, "tau_meas")
+    vsc_aw_gain = _find_block_var(vsc_block, "aw_gain")
+    vsc_vdc_floor = _find_block_var(vsc_block, "vdc_floor")
+    vsc_i_dc_conv = _find_block_var(vsc_block, "i_dc_conv")
+    vsc_regulate_vdc = _find_block_var(vsc_block, "regulate_vdc_mode")
+    vsc_regulate_q = _find_block_var(vsc_block, "regulate_q_mode")
+    vsc_regulate_active = _find_block_var(vsc_block, "regulate_active_mode")
 
-    pll_block.connect(
+    pll_theta = _find_block_var(pll_block, "theta_pll")
+    pll_omega = _find_block_var(pll_block, "omega_pll")
+
+    outer_P_f = _find_block_var(outer_loop_block, "P_f")
+    outer_Q_f = _find_block_var(outer_loop_block, "Q_f")
+    outer_i_0_ref = _find_block_var(outer_loop_block, "i_0_ref")
+    outer_i_d_ref = _find_block_var(outer_loop_block, "i_d_ref")
+    outer_i_q_ref = _find_block_var(outer_loop_block, "i_q_ref")
+
+    inner_v_cmd_d = _find_block_var(inner_loop_block, "v_cmd_d")
+    inner_v_cmd_q = _find_block_var(inner_loop_block, "v_cmd_q")
+    inner_v_cmd_0 = _find_block_var(inner_loop_block, "v_cmd_0")
+    inner_k_v_conv = _find_block_var(inner_loop_block, "k_v_conv")
+
+    vf.add_connections(transformer_block.in_vars[0:3], [v_A, v_B, v_C])
+    vf.add_connections([vsc_block.in_vars[6]], [dc_voltage_source])
+    _tag_connected_pair(vf, dc_voltage_source, vsc_block.in_vars[6], f"{vsc_block.name}_vdc_src")
+
+    vf.add_connections(vsc_block.in_vars[0:3], [transformer_v_d, transformer_v_q, transformer_v_0])
+    vf.add_connections(vsc_block.in_vars[3:6], [transformer_i_d, transformer_i_q, transformer_i_0])
+    vf.add_connections([pll_block.in_vars[0]], [transformer_v_q])
+    vf.add_connections(outer_loop_block.in_vars[0:3], [transformer_v_d, transformer_v_q, transformer_v_0])
+    vf.add_connections(outer_loop_block.in_vars[3:6], [transformer_i_d, transformer_i_q, transformer_i_0])
+    vf.add_connections(inner_loop_block.in_vars[0:3], [transformer_v_d, transformer_v_q, transformer_v_0])
+    vf.add_connections(inner_loop_block.in_vars[3:6], [transformer_i_d, transformer_i_q, transformer_i_0])
+    for idx, shared_name in enumerate(["v_d", "v_q", "v_0"]):
+        _tag_connected_pair(vf, [transformer_v_d, transformer_v_q, transformer_v_0][idx], vsc_block.in_vars[idx], f"{name}_{shared_name}_vsc")
+        _tag_connected_pair(vf, [transformer_v_d, transformer_v_q, transformer_v_0][idx], outer_loop_block.in_vars[idx], f"{name}_{shared_name}_outer")
+        _tag_connected_pair(vf, [transformer_v_d, transformer_v_q, transformer_v_0][idx], inner_loop_block.in_vars[idx], f"{name}_{shared_name}_inner")
+    for idx, shared_name in enumerate(["i_d", "i_q", "i_0"]):
+        _tag_connected_pair(vf, [transformer_i_d, transformer_i_q, transformer_i_0][idx], vsc_block.in_vars[3 + idx], f"{name}_{shared_name}_vsc")
+        _tag_connected_pair(vf, [transformer_i_d, transformer_i_q, transformer_i_0][idx], outer_loop_block.in_vars[3 + idx], f"{name}_{shared_name}_outer")
+        _tag_connected_pair(vf, [transformer_i_d, transformer_i_q, transformer_i_0][idx], inner_loop_block.in_vars[3 + idx], f"{name}_{shared_name}_inner")
+    _tag_connected_pair(vf, transformer_v_q, pll_block.in_vars[0], f"{name}_v_q_pll_in")
+
+    vf.add_connections(
         pll_block.in_vars[1:5],
-        [vsc_block.out_vars[8], vsc_block.out_vars[16], vsc_block.out_vars[17], vsc_block.out_vars[9]],
+        [vsc_omega_base, vsc_pll_kp, vsc_pll_ki, vsc_phi_v],
     )
-    outer_loop_block.connect(
+    for idx, shared_name in enumerate(["omega_base", "pll_kp", "pll_ki", "phi_v"]):
+        _tag_connected_pair(vf, [vsc_omega_base, vsc_pll_kp, vsc_pll_ki, vsc_phi_v][idx], pll_block.in_vars[1 + idx], f"{name}_{shared_name}_pll")
+    vf.add_connections(
         [outer_loop_block.in_vars[6], outer_loop_block.in_vars[7], outer_loop_block.in_vars[8]],
-        [vsc_block.out_vars[0], vsc_block.out_vars[2], vsc_block.out_vars[3]],
+        [vsc_v_dc, vsc_P, vsc_Q],
     )
-    outer_loop_block.connect(
+    for in_idx, out_var, shared_name in [(6, vsc_v_dc, "v_dc_outer"), (7, vsc_P, "p_outer"), (8, vsc_Q, "q_outer")]:
+        _tag_connected_pair(vf, out_var, outer_loop_block.in_vars[in_idx], f"{name}_{shared_name}")
+    vf.add_connections(
         outer_loop_block.in_vars[9:25],
         [
-            vsc_block.out_vars[4],
-            vsc_block.out_vars[5],
-            vsc_block.out_vars[6],
-            vsc_block.out_vars[7],
-            vsc_block.out_vars[10],
-            vsc_block.out_vars[26],
-            vsc_block.out_vars[20],
-            vsc_block.out_vars[21],
-            vsc_block.out_vars[22],
-            vsc_block.out_vars[23],
-            vsc_block.out_vars[24],
-            vsc_block.out_vars[29],
-            vsc_block.out_vars[30],
-            vsc_block.out_vars[33],
-            vsc_block.out_vars[34],
-            vsc_block.out_vars[35],
+            vsc_sbase, vsc_P_ref, vsc_Q_ref, vsc_Vdc_ref, vsc_Vpk,
+            vsc_i_max, vsc_vdc_kp, vsc_vdc_ki, vsc_q_kp, vsc_q_ki,
+            vsc_P_loss0, vsc_tau_meas, vsc_aw_gain, vsc_regulate_vdc, vsc_regulate_q, vsc_regulate_active,
         ],
     )
-    inner_loop_block.connect(
+    for offset, out_var in enumerate([vsc_sbase, vsc_P_ref, vsc_Q_ref, vsc_Vdc_ref, vsc_Vpk,
+                                      vsc_i_max, vsc_vdc_kp, vsc_vdc_ki, vsc_q_kp, vsc_q_ki,
+                                      vsc_P_loss0, vsc_tau_meas, vsc_aw_gain, vsc_regulate_vdc, vsc_regulate_q, vsc_regulate_active]):
+        _tag_connected_pair(vf, out_var, outer_loop_block.in_vars[9 + offset], f"{name}_outer_aux_{offset}")
+    vf.add_connections(
         [inner_loop_block.in_vars[6], inner_loop_block.in_vars[7], inner_loop_block.in_vars[8], inner_loop_block.in_vars[9]],
-        [pll_block.out_vars[1], vsc_block.out_vars[8], vsc_block.out_vars[11], vsc_block.out_vars[12]],
+        [pll_omega, vsc_omega_base, vsc_R_eq, vsc_L_eq],
     )
-    inner_loop_block.connect(inner_loop_block.in_vars[10:13], outer_loop_block.out_vars[2:5])
-    inner_loop_block.connect(
+    _tag_connected_pair(vf, pll_omega, inner_loop_block.in_vars[6], f"{name}_omega_pll_to_inner")
+    _tag_connected_pair(vf, vsc_omega_base, inner_loop_block.in_vars[7], f"{name}_omega_base_inner")
+    _tag_connected_pair(vf, vsc_R_eq, inner_loop_block.in_vars[8], f"{name}_r_eq_inner")
+    _tag_connected_pair(vf, vsc_L_eq, inner_loop_block.in_vars[9], f"{name}_l_eq_inner")
+    vf.add_connections(inner_loop_block.in_vars[10:13], [outer_i_0_ref, outer_i_d_ref, outer_i_q_ref])
+    for idx, shared_name in enumerate(["v_cmd_d", "v_cmd_q", "v_cmd_0"]):
+        _tag_connected_pair(vf, [outer_i_0_ref, outer_i_d_ref, outer_i_q_ref][idx], inner_loop_block.in_vars[10 + idx], f"{name}_{shared_name}")
+    vf.add_connections(
         inner_loop_block.in_vars[13:25],
         [
-            vsc_block.out_vars[18],
-            vsc_block.out_vars[19],
-            vsc_block.out_vars[30],
-            vsc_block.out_vars[25],
-            vsc_block.out_vars[7],
-            vsc_block.out_vars[0],
-            vsc_block.out_vars[31],
-            vsc_block.out_vars[4],
-            vsc_block.out_vars[5],
-            vsc_block.out_vars[6],
-            vsc_block.out_vars[26],
-            vsc_block.out_vars[10],
+            vsc_i_kp, vsc_i_ki, vsc_aw_gain, vsc_m_max,
+            vsc_Vdc_ref, vsc_v_dc, vsc_vdc_floor, vsc_sbase,
+            vsc_P_ref, vsc_Q_ref, vsc_P_loss0, vsc_Vpk,
         ],
     )
+    for offset, out_var in enumerate([vsc_i_kp, vsc_i_ki, vsc_aw_gain, vsc_m_max,
+                                      vsc_Vdc_ref, vsc_v_dc, vsc_vdc_floor, vsc_sbase,
+                                      vsc_P_ref, vsc_Q_ref, vsc_P_loss0, vsc_Vpk]):
+        _tag_connected_pair(vf, out_var, inner_loop_block.in_vars[13 + offset], f"{name}_inner_aux_{offset}")
 
-    transformer_block.connect([transformer_block.in_vars[3], transformer_block.in_vars[4]], pll_block.out_vars)
-    transformer_block.connect(
+    vf.add_connections([transformer_block.in_vars[3], transformer_block.in_vars[4]], [pll_theta, pll_omega])
+    _tag_connected_pair(vf, pll_theta, transformer_block.in_vars[3], f"{name}_theta_pll")
+    _tag_connected_pair(vf, pll_omega, transformer_block.in_vars[4], f"{name}_omega_pll")
+    vf.add_connections(
         transformer_block.in_vars[5:8],
-        [vsc_block.out_vars[8], vsc_block.out_vars[11], vsc_block.out_vars[12]],
+        [vsc_omega_base, vsc_R_eq, vsc_L_eq],
     )
-    transformer_block.connect(transformer_block.in_vars[8:11], inner_loop_block.out_vars)
-    transformer_block.connect(
+    for idx, shared_name in enumerate(["omega_base_tf", "r_eq_tf", "l_eq_tf"]):
+        _tag_connected_pair(vf, [vsc_omega_base, vsc_R_eq, vsc_L_eq][idx], transformer_block.in_vars[5 + idx], f"{name}_{shared_name}")
+    vf.add_connections(transformer_block.in_vars[8:11], [inner_v_cmd_d, inner_v_cmd_q, inner_v_cmd_0])
+    for idx, shared_name in enumerate(["v_cmd_d_tf", "v_cmd_q_tf", "v_cmd_0_tf"]):
+        _tag_connected_pair(vf, [inner_v_cmd_d, inner_v_cmd_q, inner_v_cmd_0][idx], transformer_block.in_vars[8 + idx], f"{name}_{shared_name}")
+    vf.add_connections(
         transformer_block.in_vars[11:16],
-        [vsc_block.out_vars[4], vsc_block.out_vars[5], vsc_block.out_vars[6], vsc_block.out_vars[26], vsc_block.out_vars[10]],
+        [vsc_sbase, vsc_P_ref, vsc_Q_ref, vsc_P_loss0, vsc_Vpk],
     )
-
-
-def _set_common_external_mapping(
-    templ: EmtModelTemplate,
-    v_A: Var,
-    v_B: Var,
-    v_C: Var,
-    vsc_block: Block,
-    transformer_block: Block,
-) -> None:
-    """
-    Publish the AC-injection external mapping expected by ``EmtProblemDae``.
-
-    The PV model is an AC injection with an internal DC side. Its DC-link voltage
-    and DC current are internal diagnostic quantities, not external network ports.
-    Exposing them in ``external_mapping`` would incorrectly tell the EMT network
-    assembler to create an additional DC-side connection.
-
-    :param templ: EMT template being assembled.
-    :param v_A: Phase-A terminal voltage variable.
-    :param v_B: Phase-B terminal voltage variable.
-    :param v_C: Phase-C terminal voltage variable.
-    :param vsc_block: Imported VSC block.
-    :param transformer_block: Imported AC-side interface block.
-    :return: None.
-    """
-    templ.block.external_mapping = {
-        VarPowerFlowReferenceType.v_A: v_A,
-        VarPowerFlowReferenceType.v_B: v_B,
-        VarPowerFlowReferenceType.v_C: v_C,
-        VarPowerFlowReferenceType.i_A: transformer_block.out_vars[0],
-        VarPowerFlowReferenceType.i_B: transformer_block.out_vars[1],
-        VarPowerFlowReferenceType.i_C: transformer_block.out_vars[2],
-        VarPowerFlowReferenceType.P: vsc_block.out_vars[2],
-        VarPowerFlowReferenceType.Q: vsc_block.out_vars[3],
-        VarPowerFlowReferenceType.phi_v: vsc_block.out_vars[9],
-        VarPowerFlowReferenceType.Vpk: vsc_block.out_vars[10],
-    }
+    for offset, out_var in enumerate([vsc_sbase, vsc_P_ref, vsc_Q_ref, vsc_P_loss0, vsc_Vpk]):
+        _tag_connected_pair(vf, out_var, transformer_block.in_vars[11 + offset], f"{name}_tf_aux_{offset}")
 
 
 # =============================================================================
@@ -332,7 +399,7 @@ def _build_level1_pv_availability_block(vf: VarFactory, name: str) -> Block:
         },
         diff_init_eqs={d_p_mppt: c0},
         in_vars=[i_dc, v_dc_ctrl],
-        out_vars=[v_dc_bus, p_avail, p_mppt, p_pv, i_pv, p_curt],
+        out_vars=[v_dc_bus, p_mppt],
         name=f"{name}_pv_level1",
     )
 
@@ -401,6 +468,8 @@ def get_pv_avm_grid_following_emt_template(
     pv_block: Block = _build_level1_pv_availability_block(vf=vf, name=name)
 
     _connect_imported_converter_blocks(
+        vf=vf,
+        name=name,
         v_A=v_A,
         v_B=v_B,
         v_C=v_C,
@@ -411,30 +480,31 @@ def get_pv_avm_grid_following_emt_template(
         inner_loop_block=inner_loop_block,
         transformer_block=transformer_block,
     )
-    pv_block.connect(pv_block.in_vars[0:2], [vsc_block.out_vars[1], vsc_block.out_vars[0]])
+    vf.add_connections(pv_block.in_vars[0:2], [vsc_block.out_vars[1], vsc_block.out_vars[0]])
+    _tag_connected_pair(vf, vsc_block.out_vars[1], pv_block.in_vars[0], f"{name}_i_dc_feedback")
+    _tag_connected_pair(vf, vsc_block.out_vars[0], pv_block.in_vars[1], f"{name}_v_dc_feedback")
 
     templ.block.children.extend([pv_block, vsc_block, pll_block, inner_loop_block, outer_loop_block, transformer_block])
-    templ.block.unify_blocks()
     templ.block.in_vars = [v_A, v_B, v_C]
     templ.block.out_vars = [
         transformer_block.out_vars[0],
         transformer_block.out_vars[1],
         transformer_block.out_vars[2],
-        vsc_block.out_vars[1],
-        pv_block.out_vars[1],
-        pv_block.out_vars[2],
-        pv_block.out_vars[3],
-        pv_block.out_vars[5],
     ]
 
-    _set_common_external_mapping(
-        templ=templ,
-        v_A=v_A,
-        v_B=v_B,
-        v_C=v_C,
-        vsc_block=vsc_block,
-        transformer_block=transformer_block,
-    )
+    templ.block.external_mapping = {
+        VarPowerFlowReferenceType.v_A: v_A,
+        VarPowerFlowReferenceType.v_B: v_B,
+        VarPowerFlowReferenceType.v_C: v_C,
+        VarPowerFlowReferenceType.i_A: transformer_block.out_vars[0],
+        VarPowerFlowReferenceType.i_B: transformer_block.out_vars[1],
+        VarPowerFlowReferenceType.i_C: transformer_block.out_vars[2],
+        VarPowerFlowReferenceType.P: vsc_block.out_vars[2],
+        VarPowerFlowReferenceType.Q: vsc_block.out_vars[3],
+        VarPowerFlowReferenceType.phi_v: vsc_block.out_vars[9],
+        VarPowerFlowReferenceType.Vpk: vsc_block.out_vars[10],
+    }
+
     templ.block.api_obj_mapping = dict(vsc_block.api_obj_mapping)
 
     return templ
@@ -659,6 +729,8 @@ def get_pv_avm_boost_grid_following_emt_template(
     pv_boost_block: Block = _build_level2_pv_boost_block(vf=vf, name=name)
 
     _connect_imported_converter_blocks(
+        vf=vf,
+        name=name,
         v_A=v_A,
         v_B=v_B,
         v_C=v_C,
@@ -669,7 +741,9 @@ def get_pv_avm_boost_grid_following_emt_template(
         inner_loop_block=inner_loop_block,
         transformer_block=transformer_block,
     )
-    pv_boost_block.connect(pv_boost_block.in_vars[0:2], [vsc_block.out_vars[1], vsc_block.out_vars[0]])
+    vf.add_connections(pv_boost_block.in_vars[0:2], [vsc_block.out_vars[1], vsc_block.out_vars[0]])
+    _tag_connected_pair(vf, vsc_block.out_vars[1], pv_boost_block.in_vars[0], f"{name}_i_dc_feedback")
+    _tag_connected_pair(vf, vsc_block.out_vars[0], pv_boost_block.in_vars[1], f"{name}_v_dc_feedback")
 
     templ.block.children.extend([
         pv_boost_block,
@@ -679,29 +753,26 @@ def get_pv_avm_boost_grid_following_emt_template(
         outer_loop_block,
         transformer_block,
     ])
-    templ.block.unify_blocks()
     templ.block.in_vars = [v_A, v_B, v_C]
     templ.block.out_vars = [
         transformer_block.out_vars[0],
         transformer_block.out_vars[1],
         transformer_block.out_vars[2],
-        vsc_block.out_vars[1],
-        pv_boost_block.out_vars[1],
-        pv_boost_block.out_vars[2],
-        pv_boost_block.out_vars[3],
-        pv_boost_block.out_vars[4],
-        pv_boost_block.out_vars[5],
-        pv_boost_block.out_vars[8],
     ]
 
-    _set_common_external_mapping(
-        templ=templ,
-        v_A=v_A,
-        v_B=v_B,
-        v_C=v_C,
-        vsc_block=vsc_block,
-        transformer_block=transformer_block,
-    )
+    templ.block.external_mapping = {
+        VarPowerFlowReferenceType.v_A: v_A,
+        VarPowerFlowReferenceType.v_B: v_B,
+        VarPowerFlowReferenceType.v_C: v_C,
+        VarPowerFlowReferenceType.i_A: transformer_block.out_vars[0],
+        VarPowerFlowReferenceType.i_B: transformer_block.out_vars[1],
+        VarPowerFlowReferenceType.i_C: transformer_block.out_vars[2],
+        VarPowerFlowReferenceType.P: vsc_block.out_vars[2],
+        VarPowerFlowReferenceType.Q: vsc_block.out_vars[3],
+        VarPowerFlowReferenceType.phi_v: vsc_block.out_vars[9],
+        VarPowerFlowReferenceType.Vpk: vsc_block.out_vars[10],
+    }
+
     templ.block.api_obj_mapping = dict(vsc_block.api_obj_mapping)
 
     return templ

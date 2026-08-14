@@ -5,7 +5,7 @@
 import os
 import numpy as np
 import VeraGridEngine.api as vg
-from VeraGridEngine.Compilers.circuit_to_gslv import GSLV_AVAILABLE
+from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE
 
 
 def test_gslv_contingencies_snapshot_pf():

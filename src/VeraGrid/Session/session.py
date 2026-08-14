@@ -99,6 +99,7 @@ class GcThread(QThread):
         self.elapsed = 0
 
         self.logger = Logger()
+        self._failed: bool = False
 
         self.__cancel__ = False
 
@@ -115,13 +116,21 @@ class GcThread(QThread):
         """
         self.progress_signal.emit(0.0)
 
-        self.driver.run()
+        try:
+            self.driver.run()
+        except Exception as e:
+            self._failed = True
+            self.logger.add_error(str(e))
+            self.progress_text.emit(f"Error: {str(e)}")
 
         self.progress_signal.emit(0.0)
         if self.__cancel__:
             self.progress_text.emit('Cancelled!')
         else:
-            self.progress_text.emit('Done!')
+            if self._failed:
+                self.progress_text.emit('Failed!')
+            else:
+                self.progress_text.emit('Done!')
         self.done_signal.emit()
 
     def cancel(self) -> None:

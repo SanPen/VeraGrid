@@ -259,13 +259,23 @@ class EmtSimulationDriver(DriverTemplate):
                     self.report_text(
                         f"Event group {emt_events_group} successfully simulated.")
                 else:
+                    init_summary: str = ""
+                    if problem.initialization_report is None:
+                        pass
+                    else:
+                        init_summary = (
+                            f" init_status={problem.initialization_report.status.name}"
+                            f", init_method={problem.initialization_report.method_used}"
+                            f", init_res0={problem.initialization_report.initial_residual_inf:.3e}"
+                            f", init_resf={problem.initialization_report.final_residual_inf:.3e}"
+                        )
                     print(
                         f"Event group {emt_events_group} finished with EMT Newton failures "
-                        f"(well_initialized={well_initialized}, converged={converged})."
+                        f"(well_initialized={well_initialized}, converged={converged}).{init_summary}"
                     )
                     self.report_text(
                         f"Event group {emt_events_group} finished with EMT Newton failures "
-                        f"(well_initialized={well_initialized}, converged={converged})."
+                        f"(well_initialized={well_initialized}, converged={converged}).{init_summary}"
                     )
 
                 print(f"results = {y}")

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Any
 import json
 
-from .compat import Block
+from VeraGridEngine.IO.fmu.exporter.compat import Block
 
 SNAPSHOT_SCHEMA_VERSION = 1
 

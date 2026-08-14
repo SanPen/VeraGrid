@@ -255,14 +255,14 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
         :return: List[CatalogueAction]
         """
         actions: List[CatalogueAction] = list()
-        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
-                                       args=(self._circuit.var_factory,),
-                                       name='GENQEC',
-                                       voltage_text='',
-                                       power_text='',
-                                       unique_key='rms:get_genqec_rms',
-                                       function_ptr=tem.get_genqec_rms)
-                       )
+        # actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
+        #                                args=(self._circuit.var_factory,),
+        #                                name='GENQEC',
+        #                                voltage_text='',
+        #                                power_text='',
+        #                                unique_key='rms:get_genqec_rms',
+        #                                function_ptr=tem.get_genqec_rms)
+        #                )
         # actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
         #                                args=(self._circuit.var_factory,),
         #                                name='Governor',

@@ -32,8 +32,8 @@ def get_esd1_rms_template(vfactory: VarFactory, name: str = "ESD1 RMS template")
     va = vfactory.add_var("Va", reference=VarPowerFlowReferenceType.Va)
     inputs = [vm, va]
 
-    p = vfactory.add_var("P_esd1")
-    q = vfactory.add_var("Q_esd1")
+    p = vfactory.add_var("P_esd1", reference=VarPowerFlowReferenceType.P)
+    q = vfactory.add_var("Q_esd1", reference=VarPowerFlowReferenceType.Q)
 
     pref = vfactory.add_var("Pref")
     pext = vfactory.add_var("Pext")
@@ -209,7 +209,12 @@ def get_esd1_rms_template(vfactory: VarFactory, name: str = "ESD1 RMS template")
         ParamPowerFlowReferenceType.battery_charge_efficiency_pu: eta_ch,
         ParamPowerFlowReferenceType.battery_discharge_efficiency_pu: eta_dis,
     }
-    block.out_vars = [p, q, ipout, iqout, soc, p_sum, q_sum, p_dis_av, p_ch_av]
+    block.out_vars = [p, q]
 
-    templ.block = block
+    templ.block.children.append(block)
+    templ.block.name = name
+    templ.block.external_mapping = block.external_mapping
+    templ.block.api_obj_mapping = block.api_obj_mapping
+    templ.block.in_vars = inputs
+    templ.block.out_vars = block.out_vars
     return templ

@@ -24,7 +24,7 @@ from VeraGridEngine.Templates.Emt.load_RLC_emt_template import get_shunt_rlc_com
 from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model
 from VeraGridEngine.enumerations import DynamicIntegrationMethod, EmtInitializationMethod, EmtSolverTypes, ShuntConnectionType, SolverType
-
+from VeraGridEngine.Utils.Symbolic.block import Block
 
 def _evaluate_scalar_rational_response(frequency_hz: np.ndarray,
                                        poles_s: np.ndarray,
@@ -234,17 +234,16 @@ def test_jmarti_emt_problem_builds_one_history_runtime_and_runs_short_simulation
     power_flow = PowerFlowDriver3Ph(grid, pf_options)
     power_flow.run()
     problem = EmtProblemDae(grid=grid, options=emt_options, pf_results=None, pf_results_3ph=power_flow.results)
-    working_line_model = problem._working_emt_models[str(line.idtag)]
-
     assert len(problem.history_models) == 1
     assert isinstance(problem.history_models[0], JMartiHistoryRuntime)
     assert line.emt_model is original_line_model
     assert dict(line.emt_model.api_obj_mapping) == original_api_mapping
     assert set(line.emt_model.parameters.keys()) == original_parameter_keys
     assert set(line.emt_model.event_dict.keys()) == original_event_keys
-    assert working_line_model is not line.emt_model
-    assert get_jmarti_block_runtime_data(line.emt_model) is None
-    assert get_jmarti_block_runtime_data(working_line_model) is not None
+    assert get_jmarti_block_runtime_data(line.emt_model) is not None
+    runtime_model: Block = problem.history_models[0].block
+    assert runtime_model is line.emt_model
+    assert get_jmarti_block_runtime_data(runtime_model) is not None
 
     solver = JitSymbolicSolver(
         problem=problem,

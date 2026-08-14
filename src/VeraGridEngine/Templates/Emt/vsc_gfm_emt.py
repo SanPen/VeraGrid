@@ -217,7 +217,7 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
         Pe, Qe, i_dc,
     ]
 
-    templ.block = Block(
+    converter_block = Block(
         state_eqs=state_eqs,
         state_vars=state_vars,
         algebraic_eqs=algebraic_eqs,
@@ -226,12 +226,12 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
         out_vars=[i_A, i_B, i_C, i_dc],
     )
 
-    templ.block.diff_vars = [d_i_A, d_i_B, d_i_C, d_theta, d_omega, d_Epk]
+    converter_block.diff_vars = [d_i_A, d_i_B, d_i_C, d_theta, d_omega, d_Epk]
 
     # External mapping. The four ``Vpk`` / ``phi_v`` / ``Ipk`` / ``phi``
     # entries are what the EMT bridge populates from the PF positive-
     # sequence solution (see ``_set_vsc_pf_positive_sequence``).
-    templ.block.external_mapping = {
+    converter_block.external_mapping = {
         VarPowerFlowReferenceType.v_A: v_A,
         VarPowerFlowReferenceType.v_B: v_B,
         VarPowerFlowReferenceType.v_C: v_C,
@@ -245,21 +245,18 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
         VarPowerFlowReferenceType.phi_v: phi_v_ref,
         VarPowerFlowReferenceType.Ipk: Ipk_ref,
         VarPowerFlowReferenceType.phi: phi_ref,
+        VarPowerFlowReferenceType.P: P_ref,
+        VarPowerFlowReferenceType.Q: Q_ref,
     }
 
     # API-object mapping.
-    templ.block.api_obj_mapping = {
+    converter_block.api_obj_mapping = {
         ParamPowerFlowReferenceType.omega_base: omega_base,
         ParamPowerFlowReferenceType.R1: R_s,
         ParamPowerFlowReferenceType.X1: X_s,
     }
 
-    # Runtime / PF-bound parameters.
-    # ``Vpk_ref``, ``phi_v_ref``, ``Ipk_ref``, ``phi_ref`` are seeded by
-    # the bridge. ``P_ref``, ``Q_ref``, ``V_ref`` are pinned by
-    # ``init_eqs`` to the analytical PF steady-state values, so the
-    # droop input is zero at ``t = 0``.
-    templ.block.event_dict = {
+    converter_block.event_dict = {
         omega_base: vf.add_const(2.0 * np.pi * 50.0),
         R_s: vf.add_const(0.01),
         X_s: vf.add_const(0.1),
@@ -268,6 +265,15 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
         tau_omega: vf.add_const(0.05),
         tau_v: vf.add_const(0.05),
         omega_ref: vf.add_const(1.0),
+    }
+
+    # Runtime / PF-bound parameters.
+    # ``Vpk_ref``, ``phi_v_ref``, ``Ipk_ref``, ``phi_ref`` are the canonical
+    # PF-seeded quantities that define the full GFM EMT steady-state operating
+    # point. ``P_ref``, ``Q_ref`` and ``V_ref`` are derived from them at
+    # initialization time, so they must remain ordinary runtime parameters and
+    # not be treated as persistent zero defaults by the EMT build path.
+    converter_block.event_dict.update({
         Qf: vf.add_const(0.0),
         Vpk_ref: vf.add_const(None),
         phi_v_ref: vf.add_const(None),
@@ -276,7 +282,7 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
         P_ref: vf.add_const(None),
         Q_ref: vf.add_const(None),
         V_ref: vf.add_const(None),
-    }
+    })
 
     # Initialization equations.
     #
@@ -286,7 +292,7 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
     # change during simulation, so the consistency Newton has nothing to
     # shift — the explicit init already places the system on the exact
     # steady-state sinusoidal trajectory.
-    templ.block.init_eqs = {
+    converter_block.init_eqs = {
         # Bus AC sample at t = 0 — pin v_A/v_B/v_C so KCL sees the same
         # values that the analytical EMF formula assumes.
         v_A: v_A_init_expr,
@@ -308,23 +314,9 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
         e_B: e_B_init_expr,
         e_C: e_C_init_expr,
 
-        # ``Pe`` and ``Qe`` are NOT pinned via ``init_eqs`` because the
-        # current init code path (``_collect_reduced_initialization_problem``)
-        # adds every algebraic variable to the reduced Newton system with
-        # the runtime algebraic equation as its residual, ignoring any
-        # ``init_eqs`` entry for algebraic vars. Pinning them here is
-        # silently dead code. Pe / Qe are determined by the runtime
-        # equations from the seeded ``v`` and ``i`` samples.
-        #
-        # Side effect we know about: at t=0 the bus per-phase voltages
-        # are not yet populated in the order the init Newton expects,
-        # so ``Qe_expr(0)`` evaluates to exactly 0 instead of the
-        # analytical PF value (~0.05 pu). The runtime algebraic equation
-        # closes this in the very next integrator step, leaving a small
-        # one-step jump on ``Pe`` and ``Qe`` (a few mpu on Pe, ~50 mpu
-        # on Qe). Tracked: needs a fix to ``initialization_emt.py`` so
-        # algebraic vars in ``init_guess`` are skipped by the reduced
-        # system, or so the bridge populates buses before init starts.
+        Pe: Pe_init_expr,
+        Qe: Qe_init_expr,
+
         P_ref: Pe_init_expr,
         Q_ref: Qe_init_expr,
         V_ref: Epk_init_expr,
@@ -338,7 +330,7 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
     d_i_A_init_expr = omega_base * Ipk_ref * sym.cos(theta_i_init_expr)
     d_i_B_init_expr = omega_base * Ipk_ref * sym.cos(theta_i_init_expr - two_pi_over_3)
     d_i_C_init_expr = omega_base * Ipk_ref * sym.cos(theta_i_init_expr + two_pi_over_3)
-    templ.block.diff_init_eqs = {
+    converter_block.diff_init_eqs = {
         d_i_A: d_i_A_init_expr,
         d_i_B: d_i_B_init_expr,
         d_i_C: d_i_C_init_expr,
@@ -346,5 +338,11 @@ def get_gfm_emt_template(vf: VarFactory, name: str = "VSC_GridForming") -> EmtMo
         d_omega: vf.add_const(0.0),
         d_Epk: vf.add_const(0.0),
     }
+
+    templ.block.children.append(converter_block)
+    templ.block.external_mapping = converter_block.external_mapping
+    templ.block.api_obj_mapping = converter_block.api_obj_mapping
+    templ.block.in_vars = inputs
+    templ.block.out_vars = converter_block.out_vars
 
     return templ

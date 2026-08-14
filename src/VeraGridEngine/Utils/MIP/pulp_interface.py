@@ -14,7 +14,14 @@ from typing import List, Union, Callable, Any
 import subprocess
 import pulp
 from pulp import LpVariable as LpVar, LpConstraint as LpCst, LpAffineExpression as LpExp
-from pulp import HiGHS, CPLEX_CMD, PULP_CBC_CMD
+from pulp import (HiGHS,
+                  CPLEX_CMD, CPLEX_PY,
+                  PULP_CBC_CMD,
+                  COPT, COPT_CMD,
+                  CUOPT,
+                  GUROBI_CMD, GUROBI,
+                  XPRESS_CMD, XPRESS_PY,
+                  SCIP_CMD, SCIP_PY)
 from pulp import LpContinuous, LpInteger
 from VeraGridEngine.enumerations import MIPSolvers
 from VeraGridEngine.basic_structures import Logger
@@ -46,16 +53,24 @@ def get_pulp_available_mip_solvers() -> List[str]:
 
     solvers2 = list()
     for slv in solvers:
-        if slv == 'SCIP_CMD':
+        if slv == 'SCIP_CMD' or slv == 'SCIP_PY':
             solvers2.append(MIPSolvers.SCIP.value)
-        elif slv == 'CPLEX_CMD':
+        elif slv == 'CPLEX_CMD' or slv == "CPLEX_PY":
             solvers2.append(MIPSolvers.CPLEX.value)
-        elif slv == 'GUROBI':
+        elif slv == 'GUROBI_CMD' or slv == 'GUROBI':
             solvers2.append(MIPSolvers.GUROBI.value)
-        elif slv == 'XPRESS':
+        elif slv == 'XPRESS' or slv == "XPRESS_PY":
             solvers2.append(MIPSolvers.XPRESS.value)
         elif slv == 'HiGHS':
             solvers2.append(MIPSolvers.HIGHS.value)
+        elif slv == 'PULP_CBC_CMD':
+            solvers2.append(MIPSolvers.CBC.value)
+        elif slv == 'CUOPT':
+            solvers2.append(MIPSolvers.CUOPT.value)
+        elif slv == 'COPT_CMD' or slv == 'COPT':
+            solvers2.append(MIPSolvers.COPT.value)
+        else:
+            print(f"PuLP solver not recognized {slv}")
 
     return solvers2
 
@@ -185,20 +200,57 @@ class PulpLpModel(AbstractLpModel):
             return HiGHS(mip=self.model.isMIP(), msg=show_logs)
 
         elif self.solver_type == MIPSolvers.SCIP:
-            return pulp.getSolver('SCIP_CMD')
+
+            solver = SCIP_CMD(mip=self.model.isMIP(), msg=show_logs)
+            if solver.available() is not True:
+                solver = SCIP_PY(mip=self.model.isMIP(), msg=show_logs)
+            else:
+                self.logger.add_error("No version of SCIP (cmd or python package was available)")
+                solver = HiGHS(mip=self.model.isMIP(), msg=show_logs)
+            return solver
 
         elif self.solver_type == MIPSolvers.CBC:
             # CBC comes with PuLP, so it is always available and needs no extra dependency
             return PULP_CBC_CMD(mip=self.model.isMIP(), msg=show_logs)
 
+        elif self.solver_type == MIPSolvers.CUOPT:
+            return CUOPT(mip=self.model.isMIP(), msg=show_logs)
+
         elif self.solver_type == MIPSolvers.CPLEX:
-            return CPLEX_CMD(mip=self.model.isMIP(), msg=show_logs)
+            solver = CPLEX_CMD(mip=self.model.isMIP(), msg=show_logs)
+            if solver.available() is not True:
+                solver = CPLEX_PY(mip=self.model.isMIP(), msg=show_logs)
+            else:
+                self.logger.add_error("No version of Cplex (cmd or python package was available)")
+                solver = HiGHS(mip=self.model.isMIP(), msg=show_logs)
+            return solver
 
         elif self.solver_type == MIPSolvers.GUROBI:
-            return pulp.getSolver('GUROBI')
+            solver = GUROBI(mip=self.model.isMIP(), msg=show_logs)
+            if solver.available() is not True:
+                solver = GUROBI_CMD(mip=self.model.isMIP(), msg=show_logs)
+            else:
+                self.logger.add_error("No version of Gurobi (cmd or python package was available)")
+                solver = HiGHS(mip=self.model.isMIP(), msg=show_logs)
+            return solver
 
         elif self.solver_type == MIPSolvers.XPRESS:
-            return pulp.getSolver('XPRESS')
+            solver = XPRESS_CMD(mip=self.model.isMIP(), msg=show_logs)
+            if solver.available() is not True:
+                solver = XPRESS_PY(mip=self.model.isMIP(), msg=show_logs)
+            else:
+                self.logger.add_error("No version of Xpress (cmd or python package was available)")
+                solver = HiGHS(mip=self.model.isMIP(), msg=show_logs)
+            return solver
+
+        elif self.solver_type == MIPSolvers.COPT:
+            solver = COPT_CMD(mip=self.model.isMIP(), msg=show_logs)
+            if solver.available() is not True:
+                solver = COPT(mip=self.model.isMIP(), msg=show_logs)
+            else:
+                self.logger.add_error("No version of Copt (cmd or python package was available)")
+                solver = HiGHS(mip=self.model.isMIP(), msg=show_logs)
+            return solver
 
         else:
             raise Exception('PuLP Unsupported MIP solver ' + self.solver_type.value)

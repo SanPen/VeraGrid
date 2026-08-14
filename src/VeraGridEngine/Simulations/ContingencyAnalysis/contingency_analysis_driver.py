@@ -8,7 +8,7 @@ from __future__ import annotations
 import numpy as np
 from typing import Union, List, TYPE_CHECKING
 
-from VeraGridEngine.Compilers.circuit_to_gslv import gslv_contingencies_snapshot
+from VeraGridEngine.Compilers.Gslv.Simulations.contingencies import gslv_contingencies_snapshot
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.enumerations import EngineType, ContingencyMethod, SimulationTypes
 from VeraGridEngine.Simulations.ContingencyAnalysis.contingency_analysis_results import ContingencyAnalysisResults
@@ -21,9 +21,6 @@ from VeraGridEngine.Simulations.ContingencyAnalysis.Methods.nonlinear_contingenc
 from VeraGridEngine.Simulations.ContingencyAnalysis.Methods.linear_contingency_analysis import (
     linear_contingency_analysis)
 from VeraGridEngine.Simulations.ContingencyAnalysis.Methods.helm_contingency_analysis import helm_contingency_analysis
-from VeraGridEngine.Compilers.circuit_to_bentayga import BENTAYGA_AVAILABLE
-from VeraGridEngine.Compilers.circuit_to_newton_pa import (NEWTON_PA_AVAILABLE, newton_pa_contingencies,
-                                                           translate_newton_pa_contingencies)
 from VeraGridEngine.Compilers.circuit_to_pgm import PGM_AVAILABLE
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
@@ -107,14 +104,6 @@ class ContingencyAnalysisDriver(DriverTemplate):
         :param t_prob: probability of te time
         :return: ContingencyAnalysisResults
         """
-        if self.engine == EngineType.NewtonPA and not NEWTON_PA_AVAILABLE:
-            self.engine = EngineType.VeraGrid
-            self.logger.add_warning('Tried to use Newton, but failed back to VeraGrid')
-
-        if self.engine == EngineType.Bentayga and not BENTAYGA_AVAILABLE:
-            self.engine = EngineType.VeraGrid
-            self.logger.add_warning('Tried to use Bentayga, but failed back to VeraGrid')
-
         if self.engine == EngineType.PGM and not PGM_AVAILABLE:
             self.engine = EngineType.VeraGrid
             self.logger.add_warning('Tried to use PGM, but failed back to VeraGrid')
@@ -216,17 +205,6 @@ class ContingencyAnalysisDriver(DriverTemplate):
             # )
             else:
                 raise Exception(f'Unknown contingency engine {self.options.contingency_method}')
-
-        elif self.engine == EngineType.NewtonPA:
-
-            self.report_text("Running contingencies in newton...")
-            con_res = newton_pa_contingencies(circuit=self.grid,
-                                              con_opt=self.options,
-                                              time_series=False,
-                                              time_indices=None)
-
-            self.results = translate_newton_pa_contingencies(grid=self.grid,
-                                                             con_res=con_res)
 
         elif self.engine == EngineType.GSLV:
 

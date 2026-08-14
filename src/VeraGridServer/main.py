@@ -68,7 +68,15 @@ async def ensure_database_schema_on_startup() -> None:
             "Server startup skipped database creation because the database settings are incomplete."
         )
     else:
-        create_veragrid_schema(settings=database_settings)
+        create_veragrid_schema(
+            settings=database_settings,
+            seed_default_admin=settings.seed_default_admin,
+            default_admin_org_idtag=settings.default_admin_org_idtag,
+            default_admin_org_name=settings.default_admin_org_name,
+            default_admin_user_idtag=settings.default_admin_user_idtag,
+            default_admin_user_name=settings.default_admin_user_name,
+            default_admin_user_password=settings.default_admin_user_password,
+        )
 
 def verify_api_key(api_key: str = Header(None)):
     """

@@ -22,6 +22,7 @@ class BusRmsTemplate(RmsModelTemplate):
         "_block",
         "Vm",
         "Va",
+        "Vdc",
     )
 
     def __init__(self, vf: VarFactory, is_dc:bool=False, name: str = "rms_bus_template"):
@@ -34,11 +35,8 @@ class BusRmsTemplate(RmsModelTemplate):
 
         self.tpe: DeviceType = DeviceType.BusDevice
         if is_dc:
-            Vdc = vf.add_var("Vdc")
-            Va = vf.add_var("Va")
-            Vm = vf.add_var("Vm")
-            P = vf.add_var("P")
-            Q = vf.add_var("Q")
+            Vdc = vf.add_var("Vdc", reference=VarPowerFlowReferenceType.Vdc)
+            P = vf.add_var("P", reference=VarPowerFlowReferenceType.P)
 
             self._block = Block(
                 algebraic_vars=[Vdc],
@@ -46,25 +44,29 @@ class BusRmsTemplate(RmsModelTemplate):
 
             self._block.external_mapping = {
                 VarPowerFlowReferenceType.Vdc: Vdc,
+                VarPowerFlowReferenceType.Vm: None,
+                VarPowerFlowReferenceType.Va: None,
+                VarPowerFlowReferenceType.P: P,
+                VarPowerFlowReferenceType.Q: None
+            }
+
+        else:
+            Vm = vf.add_var("Vm", reference=VarPowerFlowReferenceType.Vm)
+            Va = vf.add_var("Va", reference=VarPowerFlowReferenceType.Va)
+            P = vf.add_var("P", reference=VarPowerFlowReferenceType.P)
+            Q = vf.add_var("P", reference=VarPowerFlowReferenceType.Q)
+
+            self._block = Block(
+                algebraic_vars=[Vm, Va],
+                out_vars=[Vm, Va]
+            )
+    
+            self._block.external_mapping = {
+                VarPowerFlowReferenceType.Vdc: None,
                 VarPowerFlowReferenceType.Vm: Vm,
                 VarPowerFlowReferenceType.Va: Va,
                 VarPowerFlowReferenceType.P: P,
                 VarPowerFlowReferenceType.Q: Q
-            }
-
-        else:
-            self.Vm = vf.add_var("Vm", reference=VarPowerFlowReferenceType.Vm)
-            self.Va = vf.add_var("Va", reference=VarPowerFlowReferenceType.Va)
-
-
-            self._block = Block(
-                algebraic_vars=[self.Vm, self.Va],
-                out_vars=[self.Vm, self.Va]
-            )
-    
-            self._block.external_mapping = {
-                VarPowerFlowReferenceType.Vm: self.Vm,
-                VarPowerFlowReferenceType.Va: self.Va,
             }
 
 
@@ -77,36 +79,26 @@ def initialize_bus_rms(bus: Bus, vf: VarFactory):
     """
     bus.rms_model = BusRmsTemplate(vf=vf, is_dc=bus.is_dc).block
 
-def get_bus_rms_algebraic_vars(bus_rms_model: Block) ->Tuple[Var | None, Var, Var]:
+def get_bus_rms_algebraic_vars(bus_rms_model: Block) ->Tuple[Var | None, Var | None, Var | None]:
     """
     Return the RMS bus algebraic voltage variables.
 
     For AC buses:
-        returns (Vm, Va)
+        returns (None, Vm, Va)
 
     For DC buses:
-        returns (Vdc, None)
+        returns (Vdc, None, None)
 
     :param bus_rms_model: RMS bus block
     :return: Tuple with two positions to preserve the project API
     """
     mapping = bus_rms_model.external_mapping
-    if VarPowerFlowReferenceType.Vdc in mapping:
-        Vdc = mapping[VarPowerFlowReferenceType.Vdc]
-        Vm = mapping[VarPowerFlowReferenceType.Vm]
-        Va = mapping[VarPowerFlowReferenceType.Va]
-        if Vdc is not None and Vm is not None and Va is not None:
-            return Vdc, Vm, Va
-        else:
-            raise ValueError("Invalid RMS bus model: expected either (Vdc) or (Vm, Va)")
-
+    Vdc = mapping.get(VarPowerFlowReferenceType.Vdc)
+    Vm = mapping.get(VarPowerFlowReferenceType.Vm)
+    Va = mapping.get(VarPowerFlowReferenceType.Va)
+    if Vdc is not None and Vm is None and Va is  None:
+        return Vdc, None, None
+    elif Vdc is None and Vm is not None and Va is not None:
+        return None, Vm, Va
     else:
-        Vm = mapping[VarPowerFlowReferenceType.Vm]
-        Va = mapping[VarPowerFlowReferenceType.Va]
-
-        if Vm is not None and Va is not None:
-            # SPV: Because we don't want magic, functions ALWAYS return the same number of parameters
-            return None, Vm, Va
-
-        else:
-            raise ValueError("Invalid RMS bus model: expected either (Vdc) or (Vm, Va)")
+        raise ValueError("Invalid RMS bus model: expected either (Vdc) or (Vm, Va)")

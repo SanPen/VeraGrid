@@ -8,10 +8,10 @@ from argparse import ArgumentParser
 from pathlib import Path
 import numpy as np
 
-from .api import export_fmu
-from .config import ExportConfig, TargetPlatform, detect_target_platform
-from .real_pilots import get_pilot_model, pilot_output_path
-from .validate import simulate_fmu_with_fmpy, smoke_test_cs_fmu_with_fmpy, validate_fmu_with_fmpy
+from VeraGridEngine.IO.fmu.exporter.api import export_fmu
+from VeraGridEngine.IO.fmu.exporter.config import ExportConfig, TargetPlatform, detect_target_platform
+from VeraGridEngine.IO.fmu.exporter.real_pilots import get_pilot_model, pilot_output_path
+from VeraGridEngine.IO.fmu.exporter.validate import simulate_fmu_with_fmpy, smoke_test_cs_fmu_with_fmpy, validate_fmu_with_fmpy
 
 
 def export_and_validate_pilot(

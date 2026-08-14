@@ -570,10 +570,6 @@ class NodalCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
             elif self.options.method == NodalCapacityMethod.CPF:
                 self.cpf()
 
-        elif self.engine == EngineType.NewtonPA:
-
-            self.logger.add_warning("Engine not implemented", value=str(self.engine.value))
-
         if self.opf_options.generate_report:
             self.add_report()
 

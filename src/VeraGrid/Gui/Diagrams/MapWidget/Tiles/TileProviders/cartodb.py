@@ -45,7 +45,8 @@ class CartoDbTiles(Tiles):
                  min_zoom: int = 0,
                  max_zoom: int = 22,
                  tile_width=256,
-                 tile_height=256):
+                 tile_height=256,
+                 start_workers: bool = True):
         """
         Override the base class for these tiles.
         Basically, just fill in the BaseTiles class with values from above
@@ -62,6 +63,7 @@ class CartoDbTiles(Tiles):
         :param max_zoom: Maximum zoom (+1)
         :param tile_width: Width of the tile (px)
         :param tile_height: Height of the tile (px)
+        :param start_workers: Start network tile workers immediately.
         """
 
         super().__init__(tile_set_name=name,
@@ -76,7 +78,8 @@ class CartoDbTiles(Tiles):
                          max_server_requests=2,
                          max_lru=10000,
                          http_proxy=http_proxy,
-                         attribution=attribution)
+                         attribution=attribution,
+                         start_workers=start_workers)
 
         # get tile information into instance
         self.level = min(self.levels)

@@ -15,15 +15,9 @@ from VeraGrid.Gui.AboutDialogue.about_gui import Ui_AboutDialog
 from VeraGrid.__version__ import __VeraGrid_VERSION__
 from VeraGrid.update import check_version, get_upgrade_command
 from VeraGridEngine.__version__ import __VeraGridEngine_VERSION__, copyright_msg, contributors_msg
-from VeraGridEngine.Compilers.circuit_to_gslv import (GSLV_AVAILABLE,
+from VeraGridEngine.Compilers.Gslv import (GSLV_AVAILABLE,
                                                       GSLV_RECOMMENDED_VERSION,
                                                       GSLV_VERSION)
-from VeraGridEngine.Compilers.circuit_to_newton_pa import (NEWTON_PA_AVAILABLE,
-                                                           NEWTON_PA_RECOMMENDED_VERSION,
-                                                           NEWTON_PA_VERSION)
-from VeraGridEngine.Compilers.circuit_to_bentayga import (BENTAYGA_AVAILABLE,
-                                                          BENTAYGA_RECOMMENDED_VERSION,
-                                                          BENTAYGA_VERSION)
 from VeraGridEngine.Compilers.circuit_to_pgm import (PGM_AVAILABLE,
                                                      PGM_RECOMMENDED_VERSION,
                                                      PGM_VERSION)
@@ -237,7 +231,7 @@ class AboutDialogueGuiGUI(QtWidgets.QDialog):
         :return:
         """
         self.ui.librariesTableWidget.setColumnCount(4)
-        self.ui.librariesTableWidget.setRowCount(5)
+        self.ui.librariesTableWidget.setRowCount(3)
         self.ui.librariesTableWidget.setHorizontalHeaderLabels([
             self.tr("Name"),
             self.tr("version"),
@@ -259,30 +253,13 @@ class AboutDialogueGuiGUI(QtWidgets.QDialog):
         self.ui.librariesTableWidget.setItem(1, 2, QtWidgets.QTableWidgetItem(GSLV_RECOMMENDED_VERSION))
         self.ui.librariesTableWidget.setItem(1, 3, QtWidgets.QTableWidgetItem(str(GSLV_AVAILABLE)))
 
-        # Newton
-        self.ui.librariesTableWidget.setItem(2, 0, QtWidgets.QTableWidgetItem("NewtonPa"))
-        self.ui.librariesTableWidget.setItem(2, 1, QtWidgets.QTableWidgetItem(NEWTON_PA_VERSION
-                                                                              if NEWTON_PA_AVAILABLE else
-                                                                              self.tr("Not installed")))
-
-        self.ui.librariesTableWidget.setItem(2, 2, QtWidgets.QTableWidgetItem(NEWTON_PA_RECOMMENDED_VERSION))
-        self.ui.librariesTableWidget.setItem(2, 3, QtWidgets.QTableWidgetItem(str(NEWTON_PA_AVAILABLE)))
-
-        # Bentayga
-        self.ui.librariesTableWidget.setItem(3, 0, QtWidgets.QTableWidgetItem("Bentayga"))
-        self.ui.librariesTableWidget.setItem(3, 1, QtWidgets.QTableWidgetItem(BENTAYGA_VERSION
-                                                                              if BENTAYGA_AVAILABLE else
-                                                                              self.tr("Not installed")))
-        self.ui.librariesTableWidget.setItem(3, 2, QtWidgets.QTableWidgetItem(BENTAYGA_RECOMMENDED_VERSION))
-        self.ui.librariesTableWidget.setItem(3, 3, QtWidgets.QTableWidgetItem(str(BENTAYGA_AVAILABLE)))
-
         # PGM
-        self.ui.librariesTableWidget.setItem(4, 0, QtWidgets.QTableWidgetItem("power-grid-model"))
-        self.ui.librariesTableWidget.setItem(4, 1, QtWidgets.QTableWidgetItem(PGM_VERSION
+        self.ui.librariesTableWidget.setItem(2, 0, QtWidgets.QTableWidgetItem("power-grid-model"))
+        self.ui.librariesTableWidget.setItem(2, 1, QtWidgets.QTableWidgetItem(PGM_VERSION
                                                                               if PGM_AVAILABLE else
                                                                               self.tr("Not installed")))
-        self.ui.librariesTableWidget.setItem(4, 2, QtWidgets.QTableWidgetItem(PGM_RECOMMENDED_VERSION))
-        self.ui.librariesTableWidget.setItem(4, 3, QtWidgets.QTableWidgetItem(str(PGM_AVAILABLE)))
+        self.ui.librariesTableWidget.setItem(2, 2, QtWidgets.QTableWidgetItem(PGM_RECOMMENDED_VERSION))
+        self.ui.librariesTableWidget.setItem(2, 3, QtWidgets.QTableWidgetItem(str(PGM_AVAILABLE)))
 
     def fill_libs(self):
 

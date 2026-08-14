@@ -127,27 +127,57 @@ def row_exists(cursor: CursorLike,
         return True
 
 
-def resolve_circuit_idtag(circuit: MultiCircuit) -> str:
+def resolve_circuit_idtag(cursor: CursorLike,
+                          schema_name: str,
+                          file_idtag: str,
+                          circuit: MultiCircuit) -> str:
     """
-    Ensure one circuit has a stable idtag and return it.
+    Ensure one circuit has a stable idtag, scoped to this file, and return it.
 
+    A circuit loaded from disk often already carries an idtag from whenever it (or a
+    template/ancestor it was saved-as from) was first created. Reusing that idtag is
+    correct across re-saves of THIS SAME file - that is the "stable" this function is
+    named for - but the ``Models`` table also enforces ``UNIQUE (idtag)`` regardless of
+    file, because every per-device-type table's foreign key references ``Models(idtag)``
+    directly. Two files derived from a common template carry the identical circuit
+    idtag, so blindly reusing it made the second file's upload fail against that
+    constraint even though the two files are otherwise unrelated. Mint a fresh idtag
+    only when the existing one is blank, or already claimed by a DIFFERENT file;
+    otherwise reuse it exactly as before.
+
+    :param cursor: Open database cursor.
+    :param schema_name: Target schema name.
+    :param file_idtag: File this circuit is being persisted into.
     :param circuit: Circuit to inspect.
-    :return: Stable circuit identifier.
+    :return: Stable circuit identifier, unique across every file in the schema.
     """
     current_idtag: Any = circuit.idtag
+    current_text: str = "" if current_idtag is None else str(current_idtag).strip()
 
-    if current_idtag is None:
+    if len(current_text) == 0:
         resolved_idtag: str = str(uuid4())
-        circuit.idtag = resolved_idtag
     else:
-        current_text: str = str(current_idtag).strip()
-        if len(current_text) == 0:
-            resolved_idtag = str(uuid4())
-            circuit.idtag = resolved_idtag
-        else:
-            resolved_idtag = current_text
-            circuit.idtag = resolved_idtag
+        quoted_schema_name: str = quote_sql_identifier(schema_name)
+        cursor.execute(
+            f'''
+            SELECT file_idtag
+            FROM {quoted_schema_name}."Models"
+            WHERE idtag = %s
+            ''',
+            (current_text,),
+        )
+        owner_row: Any = cursor.fetchone()
 
+        if owner_row is None or str(owner_row[0]) == file_idtag:
+            resolved_idtag = current_text
+        else:
+            log_database_operation(
+                f"Circuit idtag '{current_text}' already belongs to file '{owner_row[0]}' "
+                f"(not '{file_idtag}') - minting a fresh idtag instead of colliding with it."
+            )
+            resolved_idtag = str(uuid4())
+
+    circuit.idtag = resolved_idtag
     return resolved_idtag
 
 
@@ -732,7 +762,9 @@ def insert_model_metadata_rows(cursor: CursorLike,
     node: ScenarioNode
 
     for node in nodes:
-        model_idtag: str = resolve_circuit_idtag(node.circuit)
+        model_idtag: str = resolve_circuit_idtag(
+            cursor=cursor, schema_name=schema_name, file_idtag=file_idtag, circuit=node.circuit
+        )
         model_name_raw: str | None = node.circuit.name
         model_name: str
         if model_name_raw is None or len(model_name_raw.strip()) == 0:
@@ -744,7 +776,10 @@ def insert_model_metadata_rows(cursor: CursorLike,
         if node.parent is None:
             parent_model_idtag = None
         else:
-            parent_model_idtag = resolve_circuit_idtag(node.parent.circuit)
+            parent_model_idtag = resolve_circuit_idtag(
+                cursor=cursor, schema_name=schema_name, file_idtag=file_idtag,
+                circuit=node.parent.circuit,
+            )
 
         batch_parameters.append((file_idtag, model_idtag, model_name, parent_model_idtag))
 
@@ -1170,7 +1205,10 @@ def put_multiverse_in_database(settings: PostgreSqlConnectionSettings,
             )
 
             for node in nodes:
-                model_idtag = resolve_circuit_idtag(node.circuit)
+                model_idtag = resolve_circuit_idtag(
+                    cursor=cursor, schema_name=schema_name, file_idtag=file_idtag,
+                    circuit=node.circuit,
+                )
                 packed_model: Dict[str, Any] = gather_model_as_jsons(
                     circuit=node.circuit,
                     project_directory=project_directory,
@@ -1197,6 +1235,64 @@ def put_multiverse_in_database(settings: PostgreSqlConnectionSettings,
             cursor.close()
     finally:
         release_database_file_lock(settings=settings, file_idtag=file_idtag)
+
+
+def _coerce_ints_to_floats(node: Any) -> Any:
+    """
+    Recursively coerce ``int`` leaves to ``float`` inside one JSON value.
+
+    PostgreSQL's ``jsonb`` type normalizes whole-number-valued floats (e.g.
+    ``-5.76e+16``) into bare integer literals on storage/retrieval. Python's
+    ``json`` module then parses those literals back as native ``int``, and a
+    numpy array built from a list mixing ``int`` and ``float`` can silently
+    fall back to ``dtype=object`` once an ``int`` exceeds the exact-integer
+    range of ``int64``. ``VeraGridEngine``'s ``AdmittanceMatrix`` requires a
+    strict complex dtype and raises on that ``object`` array, so any
+    sufficiently large admittance value round-tripped through this database
+    fails to load. This is a database round-trip workaround, not a fix for
+    whatever produced the oversized admittance values in the first place.
+
+    :param node: JSON-decoded value (dict, list, or scalar).
+    :return: Same structure with every non-bool ``int`` leaf converted to ``float``.
+    """
+    if isinstance(node, dict):
+        return {key: _coerce_ints_to_floats(value) for key, value in node.items()}
+    elif isinstance(node, list):
+        return [_coerce_ints_to_floats(value) for value in node]
+    elif isinstance(node, bool):
+        # bool is a subclass of int, and JSON booleans must stay booleans.
+        return node
+    elif isinstance(node, int):
+        return float(node)
+    else:
+        return node
+
+
+def _sanitize_admittance_matrix_payload(packed_payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Defensively coerce ``values_r``/``values_i`` leaves to ``float`` throughout one packed payload.
+
+    See :func:`_coerce_ints_to_floats` for why this is necessary. Scoped to
+    only these two key names so nothing else in the payload (sizes, indices,
+    booleans, enums) is touched.
+
+    :param packed_payload: Packed model JSON dictionary as read from the database.
+    :return: Same structure with every ``values_r``/``values_i`` leaf coerced to ``float``.
+    """
+    if isinstance(packed_payload, dict):
+        sanitized: Dict[str, Any] = dict()
+        key: str
+        value: Any
+        for key, value in packed_payload.items():
+            if key in ("values_r", "values_i"):
+                sanitized[key] = _coerce_ints_to_floats(value)
+            else:
+                sanitized[key] = _sanitize_admittance_matrix_payload(value)
+        return sanitized
+    elif isinstance(packed_payload, list):
+        return [_sanitize_admittance_matrix_payload(item) for item in packed_payload]
+    else:
+        return packed_payload
 
 
 def get_multiverse_from_database(settings: PostgreSqlConnectionSettings,
@@ -1236,6 +1332,7 @@ def get_multiverse_from_database(settings: PostgreSqlConnectionSettings,
                 model_idtag=model_idtag,
                 table_mappings=table_mappings,
             )
+            packed_payload = _sanitize_admittance_matrix_payload(packed_payload)
             # The SQL model row is the stable scenario identity. Some legacy
             # payloads still store a different circuit idtag inside ModelData,
             # so the parsed circuit must be rebound to the model row idtag

@@ -123,6 +123,7 @@ class DynamicBusDevice(PhysicalDevice):
         '_emt_model',
         '_pending_emt_devices',
         "_emt_models_connected",
+        "_grid_synchronized_emt_model",
     )
 
     LOCAL_PROPERTY_DECLARATIONS: Tuple[GCProp, ...] = (
@@ -170,6 +171,7 @@ class DynamicBusDevice(PhysicalDevice):
         self._emt_model: Block = Block()
         self._pending_emt_devices: List[Any] = list()
         self._emt_models_connected: List[EmtBusConnectedModelRecord] = list()
+        self._grid_synchronized_emt_model: Block | None = None
 
     def set_var_factory(self, val: VarFactory) -> None:
         """
@@ -208,9 +210,33 @@ class DynamicBusDevice(PhysicalDevice):
     @emt_model.setter
     def emt_model(self, val: Block) -> None:
         if isinstance(val, Block):
+            if val is self._emt_model:
+                pass
+            else:
+                self._grid_synchronized_emt_model = None
             self._emt_model = val
         else:
             raise ValueError(f"EMT model cannot accept {val}")
+
+    def mark_emt_model_grid_synchronized(self) -> None:
+        """
+        Mark the current EMT shell as managed by grid-topology synchronization.
+
+        :return: None.
+        """
+        self._grid_synchronized_emt_model = self._emt_model
+
+    def is_emt_model_grid_synchronized(self) -> bool:
+        """
+        Return whether the current EMT shell is the last grid-managed shell.
+
+        Replacing ``emt_model`` explicitly clears the marker, allowing
+        reconciliation to distinguish an external shell contract from one that
+        should follow later grid-topology changes.
+
+        :return: ``True`` when the current shell was synchronized from the grid.
+        """
+        return self._grid_synchronized_emt_model is self._emt_model
 
     def add_pending_emt_device(self, device: Any) -> None:
         """

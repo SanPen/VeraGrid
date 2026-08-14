@@ -11,10 +11,9 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOpt
 from VeraGridEngine.Simulations.driver_template import TimeSeriesDriverTemplate
 from VeraGridEngine.Simulations.Clustering.clustering_results import ClusteringResults
 import VeraGridEngine.Simulations.PowerFlow.power_flow_worker as pf_worker
-from VeraGridEngine.Compilers.circuit_to_bentayga import bentayga_pf
-from VeraGridEngine.Compilers.circuit_to_newton_pa import newton_pa_pf
 from VeraGridEngine.Compilers.circuit_to_pgm import pgm_pf
-from VeraGridEngine.Compilers.circuit_to_gslv import GSLV_AVAILABLE, gslv_pf, translate_gslv_pf_time_series_results
+from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE
+from VeraGridEngine.Compilers.Gslv.Simulations.power_flow import gslv_pf, translate_gslv_pf_time_series_results
 from VeraGridEngine.basic_structures import IntVec
 from VeraGridEngine.enumerations import EngineType, SimulationTypes
 
@@ -139,101 +138,6 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
         return time_series_results
 
-    def run_bentayga(self):
-
-        res = bentayga_pf(self.grid, self.options, time_series=True)
-
-        results = PowerFlowTimeSeriesResults(
-            n=self.grid.get_bus_number(),
-            m=self.grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True),
-            n_hvdc=self.grid.get_hvdc_number(),
-            n_vsc=self.grid.get_vsc_number(),
-            bus_names=res.names,
-            branch_names=res.names,
-            hvdc_names=res.hvdc_names,
-            vsc_names=res.vsc_data.names,
-            bus_types=res.bus_types,
-            time_array=self.grid.get_time_array(),
-            n_gen=self.grid.get_generators_number(),
-            n_batt=self.grid.get_batteries_number(),
-            n_sh=self.grid.get_shunt_like_device_number(),
-            gen_names=self.grid.get_generator_names(),
-            batt_names=self.grid.get_battery_names(),
-            sh_names=self.grid.get_shunt_like_devices_names(),
-            area_names=self.grid.get_area_names(),
-            clustering_results=self.clustering_results
-        )
-
-        results.voltage = res.V
-        results.S = res.S
-        results.Sf = res.Sf
-        results.St = res.St
-        results.loading = res.loading
-        results.losses = res.losses
-        results.Vbranch = res.Vbranch
-        results.If = res.If
-        results.It = res.It
-        results.tap_module = res.tap_modules
-        results.tap_angle = res.tap_angles
-
-        return results
-
-    def run_newton_pa(self, time_indices=None) -> PowerFlowTimeSeriesResults:
-        """
-        Run with Newton Power Analytics
-        :param time_indices: array of time indices
-        :return:
-        """
-        res = newton_pa_pf(circuit=self.grid,
-                           pf_opt=self.options,
-                           time_series=True,
-                           time_indices=time_indices,
-                           opf_results=self.opf_time_series_results)
-
-        results = PowerFlowTimeSeriesResults(
-            n=self.grid.get_bus_number(),
-            m=self.grid.get_branch_number(add_hvdc=False, add_vsc=False, add_switch=True),
-            n_hvdc=self.grid.get_hvdc_number(),
-            n_vsc=self.grid.get_vsc_number(),
-            bus_names=res.bus_names,
-            branch_names=res.branch_names,
-            hvdc_names=res.hvdc_names,
-            vsc_names=res.vsc_data.names,
-            bus_types=res.bus_types,
-            time_array=self.grid.time_profile[time_indices],
-            n_gen=self.grid.get_generators_number(),
-            n_batt=self.grid.get_batteries_number(),
-            n_sh=self.grid.get_shunt_like_device_number(),
-            gen_names=self.grid.get_generator_names(),
-            batt_names=self.grid.get_battery_names(),
-            sh_names=self.grid.get_shunt_like_devices_names(),
-            area_names=self.grid.get_area_names(),
-            clustering_results=self.clustering_results
-        )
-
-        results.voltage = res.voltage
-        results.S = res.Scalc
-        results.Sf = res.Sf
-        results.St = res.St
-        results.loading = res.Loading
-        results.losses = res.Losses
-        # results.Vbranch = res.Vbranch
-        # results.If = res.If
-        # results.It = res.It
-        results.tap_module = res.tap_module
-        results.tap_angle = res.tap_angle
-        results.F = res.F
-        results.T = res.T
-        results.hvdc_F = res.hvdc_F
-        results.hvdc_T = res.hvdc_T
-        results.hvdc_Pf = res.hvdc_Pf
-        results.hvdc_Pt = res.hvdc_Pt
-        results.hvdc_loading = res.hvdc_loading
-        results.hvdc_losses = res.hvdc_losses
-        results.error_values = res.error
-
-        return results
-
     def run_gslv(self, time_indices=None) -> PowerFlowTimeSeriesResults:
         """
         Run with GSLV
@@ -268,14 +172,6 @@ class PowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
 
         if self.engine == EngineType.VeraGrid:
             self.results = self.run_single_thread(time_indices=self.time_indices)
-
-        elif self.engine == EngineType.Bentayga:
-            self.report_text('Running Bentayga... ')
-            self.results = self.run_bentayga()
-
-        elif self.engine == EngineType.NewtonPA:
-            self.report_text('Running Newton power analytics... ')
-            self.results = self.run_newton_pa(time_indices=self.time_indices)
 
         elif self.engine == EngineType.GSLV:
             self.report_text('Running GSLV... ')

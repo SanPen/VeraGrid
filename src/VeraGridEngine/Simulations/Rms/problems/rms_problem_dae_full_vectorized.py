@@ -45,7 +45,11 @@ from VeraGridEngine.IO.fmu.importer.experimental_me import (
     register_rms_fmu_me_device,
 )
 
-from VeraGridEngine.Devices.Dynamic.static_parameter_mapping import (
+# Previous mapper:
+# from VeraGridEngine.Devices.Dynamic.static_parameter_mapping import (
+#     assign_static_api_object_mapping_for_device,
+# )
+from VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified import (
     assign_static_api_object_mapping_for_device,
 )
 

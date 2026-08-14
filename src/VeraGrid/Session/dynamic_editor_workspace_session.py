@@ -90,6 +90,8 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
         """
         if workspace in self._open_workspaces:
             self._open_workspaces.remove(workspace)
+        if workspace in self._retained_workspaces:
+            self._retained_workspaces.remove(workspace)
         if self._last_active_workspace is workspace:
             self._last_active_workspace = self._open_workspaces[-1] if self._open_workspaces else None
 
@@ -99,7 +101,11 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
 
         :return: Open workspaces for this session.
         """
-        return list(self._open_workspaces)
+        return list(
+            workspace
+            for workspace in self._open_workspaces
+            if workspace.is_available_for_pages()
+        )
 
     def get_last_active_workspace(self) -> "DynamicEditorWorkspaceWindow | None":
         """
@@ -107,10 +113,14 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
 
         :return: Preferred workspace or ``None`` when no window is open.
         """
-        if self._last_active_workspace is not None:
+        if self._last_active_workspace is not None and self._last_active_workspace.is_available_for_pages():
             return self._last_active_workspace
-        if len(self._open_workspaces) > 0:
-            return self._open_workspaces[-1]
+
+        self._last_active_workspace = None
+        available_workspaces: list[DynamicEditorWorkspaceWindow] = self.get_open_workspaces()
+        if len(available_workspaces) > 0:
+            self._last_active_workspace = available_workspaces[-1]
+            return self._last_active_workspace
         return None
 
     def reset_for_tests(self) -> None:
@@ -144,7 +154,7 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
         :return: Owning workspace or ``None``.
         """
         workspace: DynamicEditorWorkspaceWindow
-        for workspace in self._open_workspaces:
+        for workspace in self.get_open_workspaces():
             if workspace.index_of_page(page) >= 0:
                 return workspace
             else:
@@ -319,14 +329,28 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
         :param page: Page being removed.
         :return: None.
         """
+        try:
+            page.dirtyStateChanged.disconnect(self._on_page_dirty_state_changed)
+        except (RuntimeError, TypeError):
+            pass
+
         entry = _get_page_entry(page)
         mode = get_page_mode(page)
         if entry is not None and mode is not None:
             self._session_pages.pop(entry.session_key(mode), None)
+        else:
+            pass
+
+        if page in self._retained_pages:
+            self._retained_pages.remove(page)
+        else:
+            pass
 
         if self._pending_drag_page is page:
             self._pending_drag_page = None
             self._pending_drag_workspace = None
+        else:
+            pass
 
     def handle_tab_drag_started(self, workspace: "DynamicEditorWorkspaceWindow", index: int) -> None:
         """

@@ -4,9 +4,11 @@ import sys
 
 from PySide6 import QtWidgets
 
-from VeraGrid.Gui.dynamic_events_editor_dialog import DynamicEventDialogue
-from VeraGrid.Gui.dynamic_events_editor_dialog import collect_block_runtime_event_parameters
-from VeraGrid.Gui.dynamic_events_editor_dialog import SwitchSequenceDialog
+from VeraGrid.Gui.DynamicEventsDialog.dynamic_events_editor import DynamicEventEditor
+from VeraGrid.Gui.DynamicEventsDialog.dynamic_events_editor_support import (
+    SwitchSequenceDialog,
+    collect_block_runtime_event_parameters,
+)
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
@@ -14,7 +16,6 @@ from VeraGridEngine.Devices.Events.rms_events_group import RmsEventsGroup
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.enumerations import DynamicEventTransitionType, DynamicSimulationMode
 from VeraGridEngine.Devices.Events.emt_event import EmtEvent
-from VeraGridEngine.Devices.Events.rms_event import RmsEvent
 
 
 class WarningRecorder:
@@ -128,7 +129,7 @@ def test_emt_event_dialog_enables_force_step_alignment_for_mode_parameters() -> 
     event_var = vf.add_var("event_param")
     mode_var = vf.add_var("mode_param")
 
-    dialog = DynamicEventDialogue(
+    dialog = DynamicEventEditor(
         circuit=circuit,
         parameters_list=[event_var, mode_var],
         target_device_name="Device",
@@ -168,7 +169,7 @@ def test_emt_event_dialog_disables_force_step_alignment_for_event_parameters() -
     event_var = vf.add_var("event_param")
     mode_var = vf.add_var("mode_param")
 
-    dialog = DynamicEventDialogue(
+    dialog = DynamicEventEditor(
         circuit=circuit,
         parameters_list=[event_var, mode_var],
         target_device_name="Device",
@@ -207,7 +208,7 @@ def test_emt_event_dialog_enables_end_time_for_ramp_transition() -> None:
     vf = VarFactory()
     event_var = vf.add_var("event_param")
 
-    dialog = DynamicEventDialogue(
+    dialog = DynamicEventEditor(
         circuit=circuit,
         parameters_list=[event_var],
         target_device_name="Device",
@@ -250,7 +251,7 @@ def test_rms_event_dialog_enables_end_time_for_ramp_transition() -> None:
     vf = VarFactory()
     event_var = vf.add_var("event_param")
 
-    dialog = DynamicEventDialogue(
+    dialog = DynamicEventEditor(
         circuit=circuit,
         parameters_list=[event_var],
         target_device_name="Device",
@@ -338,11 +339,11 @@ def test_rms_event_dialog_rejects_overlapping_step_events_in_same_group(monkeypa
 
     vf: VarFactory = VarFactory()
     event_var = vf.add_var("event_param")
-    dialog = DynamicEventDialogue(circuit=circuit,
-                                  parameters_list=[event_var],
-                                  target_device_name="Device",
-                                  mode=DynamicSimulationMode.RMS,
-                                  mode_parameter_uids=set())
+    dialog = DynamicEventEditor(circuit=circuit,
+                                parameters_list=[event_var],
+                                target_device_name="Device",
+                                mode=DynamicSimulationMode.RMS,
+                                mode_parameter_uids=set())
     recorder: WarningRecorder = WarningRecorder()
     _install_warning_recorder(recorder=recorder, monkeypatch=monkeypatch)
 
@@ -394,11 +395,11 @@ def test_emt_event_dialog_rejects_step_inside_existing_ramp(monkeypatch: object)
                                         transition_type=DynamicEventTransitionType.Ramp)
     circuit.add_emt_event(existing_event)
 
-    dialog = DynamicEventDialogue(circuit=circuit,
-                                  parameters_list=[event_var],
-                                  target_device_name="Device",
-                                  mode=DynamicSimulationMode.EMT,
-                                  mode_parameter_uids=set())
+    dialog = DynamicEventEditor(circuit=circuit,
+                                parameters_list=[event_var],
+                                target_device_name="Device",
+                                mode=DynamicSimulationMode.EMT,
+                                mode_parameter_uids=set())
     recorder: WarningRecorder = WarningRecorder()
     _install_warning_recorder(recorder=recorder, monkeypatch=monkeypatch)
 
@@ -435,11 +436,11 @@ def test_rms_event_dialog_allows_same_time_for_different_parameters(monkeypatch:
     vf: VarFactory = VarFactory()
     first_var = vf.add_var("event_param_1")
     second_var = vf.add_var("event_param_2")
-    dialog = DynamicEventDialogue(circuit=circuit,
-                                  parameters_list=[first_var, second_var],
-                                  target_device_name="Device",
-                                  mode=DynamicSimulationMode.RMS,
-                                  mode_parameter_uids=set())
+    dialog = DynamicEventEditor(circuit=circuit,
+                                parameters_list=[first_var, second_var],
+                                target_device_name="Device",
+                                mode=DynamicSimulationMode.RMS,
+                                mode_parameter_uids=set())
     recorder: WarningRecorder = WarningRecorder()
     _install_warning_recorder(recorder=recorder, monkeypatch=monkeypatch)
 
@@ -480,11 +481,11 @@ def test_emt_event_dialog_rejects_invalid_ramp_interval(monkeypatch: object) -> 
 
     vf: VarFactory = VarFactory()
     event_var = vf.add_var("event_param")
-    dialog = DynamicEventDialogue(circuit=circuit,
-                                  parameters_list=[event_var],
-                                  target_device_name="Device",
-                                  mode=DynamicSimulationMode.EMT,
-                                  mode_parameter_uids=set())
+    dialog = DynamicEventEditor(circuit=circuit,
+                                parameters_list=[event_var],
+                                target_device_name="Device",
+                                mode=DynamicSimulationMode.EMT,
+                                mode_parameter_uids=set())
     recorder: WarningRecorder = WarningRecorder()
     _install_warning_recorder(recorder=recorder, monkeypatch=monkeypatch)
 

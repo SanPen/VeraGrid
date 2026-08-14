@@ -17,9 +17,9 @@ if __package__ in {None, ""}:
     from VeraGridEngine.IO.fmu.exporter.config import ExportConfig, detect_target_platform
     from VeraGridEngine.IO.fmu.exporter.real_pilots import get_powerfactory_pilot_model, pilot_output_path
 else:
-    from .api import export_fmu
-    from .config import ExportConfig, detect_target_platform
-    from .real_pilots import get_powerfactory_pilot_model, pilot_output_path
+    from VeraGridEngine.IO.fmu.exporter.api import export_fmu
+    from VeraGridEngine.IO.fmu.exporter.config import ExportConfig, detect_target_platform
+    from VeraGridEngine.IO.fmu.exporter.real_pilots import get_powerfactory_pilot_model, pilot_output_path
 
 
 IDE_PLAY_DEFAULTS = {

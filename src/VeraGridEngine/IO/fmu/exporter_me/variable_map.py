@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .export_ir import ExportModel, StorageSegment
+from VeraGridEngine.IO.fmu.exporter_me.export_ir import ExportModel, StorageSegment
 
 
 @dataclass(frozen=True, slots=True)

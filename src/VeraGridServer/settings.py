@@ -113,6 +113,12 @@ class ExtraSettings:
         self.db_user: str = ""
         self.db_password: str = ""
         self.db_schema: str = "veragrid"
+        self.seed_default_admin: bool = True
+        self.default_admin_org_idtag: str = "admin"
+        self.default_admin_org_name: str = "admin"
+        self.default_admin_user_idtag: str = "admin"
+        self.default_admin_user_name: str = "admin"
+        self.default_admin_user_password: str = "veragrid is great"
         self.file_operation_locks: FileOperationLockRegistry = FileOperationLockRegistry()
 
     def has_database_configuration(self) -> bool:

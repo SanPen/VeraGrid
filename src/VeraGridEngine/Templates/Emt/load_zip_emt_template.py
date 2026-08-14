@@ -23,6 +23,22 @@ from VeraGridEngine.Templates.template_definition import TemplateDefinition, Tem
 from VeraGridEngine.Utils.Symbolic.block import Expr, Var
 from VeraGridEngine.enumerations import DeviceType, ParamPowerFlowReferenceType, ShuntConnectionType, VarPowerFlowReferenceType
 
+def _get_current_reference(phase_label: str) -> VarPowerFlowReferenceType:
+    """Return the EMT injected-current reference enum for one phase.
+
+    :param phase_label: Phase label ``A``, ``B`` or ``C``.
+    :return: Matching external current reference enum.
+    """
+    if phase_label == "A":
+        reference: VarPowerFlowReferenceType = VarPowerFlowReferenceType.i_A
+    elif phase_label == "B":
+        reference = VarPowerFlowReferenceType.i_B
+    elif phase_label == "C":
+        reference = VarPowerFlowReferenceType.i_C
+    else:
+        raise ValueError(f"Unsupported phase label '{phase_label}'")
+
+    return reference
 
 class LoadZipEmtTemplate(TemplateDefinition):
 
@@ -265,7 +281,10 @@ def get_load_ZIP_emt_template(
         ratio_var: Var = vf.add_var(name=f"r{phase_label}")
         p_var: Var = vf.add_var(name=f"P_{phase_label}")
         q_load_var: Var = vf.add_var(name=f"Q_{phase_label}")
-        current_var: Var = vf.add_var(name=f"i_{phase_label}")
+        current_var: Var = vf.add_var(
+            name=f"i_{phase_label}",
+            reference=_get_current_reference(phase_label),
+        )
 
         v2_vars[phase_label] = v2_var
         vm_vars[phase_label] = vm_var
@@ -295,8 +314,11 @@ def get_load_ZIP_emt_template(
         # The magnitude is evaluated from the physically non-negative quantity u^2 + q^2.
         algebraic_eqs.append(vm_var - ((u_var ** 2 + q_var ** 2 + eps) ** c05))
 
-        # The ZIP ratio uses the positive magnitude variable.
-        algebraic_eqs.append(ratio_var - (vm_var / v0))
+        # Keep the ZIP voltage ratio strictly away from zero so generated
+        # Jacobians do not introduce hidden ``1 / vm`` factors at zero-voltage
+        # Newton trial states.
+        safe_vm_expr: Expr = vm_var + eps
+        algebraic_eqs.append(ratio_var - (safe_vm_expr / v0))
 
         # The active and reactive ZIP powers keep the original polynomial structure.
         algebraic_eqs.append(p_var + (p0_var * (a1 * ratio_var ** 2 + a2 * ratio_var + a3)))
@@ -314,7 +336,7 @@ def get_load_ZIP_emt_template(
         init_eqs[q_var] = -voltage_derivative_var / omega
         init_eqs[v2_var] = u_var ** 2 + q_var ** 2
         init_eqs[vm_var] = (v2_var + eps) ** c05
-        init_eqs[ratio_var] = vm_var / v0
+        init_eqs[ratio_var] = safe_vm_expr / v0
         init_eqs[p_var] = -(p0_var * (a1 * ratio_var ** 2 + a2 * ratio_var + a3))
         init_eqs[q_load_var] = -(q0_var * (a4 * ratio_var ** 2 + a5 * ratio_var + a6))
         init_eqs[current_var] = -(
@@ -331,15 +353,19 @@ def get_load_ZIP_emt_template(
     else:
         pass
 
-    templ.block.in_vars = in_vars
-    templ.block.out_vars = list(current_vars[phase_label] for phase_label in active_phases)
-    templ.block.state_vars = state_vars
-    templ.block.diff_vars = diff_vars
-    templ.block.state_eqs = state_eqs
-    templ.block.algebraic_vars = algebraic_vars
-    templ.block.algebraic_eqs = algebraic_eqs
-    templ.block.init_eqs = init_eqs
-    templ.block.diff_init_eqs = diff_init_eqs
+    block_model = templ.block.__class__(
+        in_vars=in_vars,
+        out_vars=list(current_vars[phase_label] for phase_label in active_phases),
+        state_vars=state_vars,
+        diff_vars=diff_vars,
+        state_eqs=state_eqs,
+        algebraic_vars=algebraic_vars,
+        algebraic_eqs=algebraic_eqs,
+        init_eqs=init_eqs,
+        diff_init_eqs=diff_init_eqs,
+    )
+    block_model.name = resolved_name
+    block_model.event_dict = templ.block.event_dict
 
     # The external mapping stays compatible with the fixed EMT enum contract, but
     # only active phases carry symbolic variables into the topology assembler.
@@ -360,7 +386,7 @@ def get_load_ZIP_emt_template(
         VarPowerFlowReferenceType.d_v_B: voltage_derivative_vars.get("B", None),
         VarPowerFlowReferenceType.d_v_C: voltage_derivative_vars.get("C", None),
     })
-    templ.block.external_mapping = external_mapping
+    block_model.external_mapping = external_mapping
 
     # Only active per-phase load powers are published to the EMT initializer, and
     # the shared omega parameter remains mapped exactly as in the 3-phase model.
@@ -375,7 +401,13 @@ def get_load_ZIP_emt_template(
         api_obj_mapping[p_reference] = p0_vars[phase_label]
         api_obj_mapping[q_reference] = q0_vars[phase_label]
 
-    templ.block.api_obj_mapping = api_obj_mapping
+    block_model.api_obj_mapping = api_obj_mapping
+
+    templ.block.children.append(block_model)
+    templ.block.external_mapping = block_model.external_mapping
+    templ.block.api_obj_mapping = block_model.api_obj_mapping
+    templ.block.in_vars = block_model.in_vars
+    templ.block.out_vars = block_model.out_vars
 
     if connection_type is None:
         return templ

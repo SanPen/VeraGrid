@@ -9,6 +9,38 @@ import pytest
 
 _ORIGINAL_CWD: Path | None = None
 _TESTS_ROOT: Path = Path(__file__).resolve().parent
+_TEST_STATE_ROOT: Path = Path("/tmp/veragrid-pytest")
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    """
+    Configure process-wide test settings before test modules import Qt.
+
+    :param config: Pytest configuration object.
+    :return: None.
+    """
+    _unused_config: pytest.Config = config
+
+    if "QT_QPA_PLATFORM" in os.environ:
+        pass
+    else:
+        os.environ["QT_QPA_PLATFORM"] = "offscreen"
+
+    _TEST_STATE_ROOT.mkdir(parents=True, exist_ok=True)
+
+    if "MPLCONFIGDIR" in os.environ:
+        pass
+    else:
+        matplotlib_cache_dir: Path = _TEST_STATE_ROOT / "matplotlib"
+        matplotlib_cache_dir.mkdir(parents=True, exist_ok=True)
+        os.environ["MPLCONFIGDIR"] = str(matplotlib_cache_dir)
+
+    if "VERAGRID_EMT_INIT_CACHE_DIR" in os.environ:
+        pass
+    else:
+        emt_cache_dir: Path = _TEST_STATE_ROOT / "emt_reduced_initialization"
+        emt_cache_dir.mkdir(parents=True, exist_ok=True)
+        os.environ["VERAGRID_EMT_INIT_CACHE_DIR"] = str(emt_cache_dir)
 
 
 class _AttributeOverrideManager:

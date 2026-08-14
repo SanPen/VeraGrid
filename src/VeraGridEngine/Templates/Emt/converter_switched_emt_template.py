@@ -112,57 +112,57 @@ def _build_pseudo_emt_converter_vsc_block(vf: VarFactory, name: str) -> Block:
     :param name: Symbolic model name suffix.
     :return: VSC/DC block.
     """
-    v_d: Var = vf.add_var(name=f"v_d_in")
-    v_q: Var = vf.add_var(name=f"v_q_in")
-    v_0: Var = vf.add_var(name=f"v_0_in")
-    i_d: Var = vf.add_var(name=f"i_d_in")
-    i_q: Var = vf.add_var(name=f"i_q_in")
-    i_0: Var = vf.add_var(name=f"i_0_in")
-    v_dc_bus: Var = vf.add_var(name=f"v_dc_bus_in", reference=VarPowerFlowReferenceType.Vdc)
+    v_d: Var = vf.add_var(name=f"v_d_in", shared_reference="v_d_reference")
+    v_q: Var = vf.add_var(name=f"v_q_in", shared_reference="v_q_reference")
+    v_0: Var = vf.add_var(name=f"v_0_in", shared_reference="v_0_reference")
+    i_d: Var = vf.add_var(name=f"i_d_in", shared_reference="i_d_reference")
+    i_q: Var = vf.add_var(name=f"i_q_in", shared_reference="i_q_reference")
+    i_0: Var = vf.add_var(name=f"i_0_in", shared_reference="i_0_reference")
+    v_dc_bus: Var = vf.add_var(name=f"v_dc_bus_in", reference=VarPowerFlowReferenceType.Vdc, shared_reference="v_dc_bus_reference")
 
-    v_dc: Var = vf.add_var(name=f"v_dc")
+    v_dc: Var = vf.add_var(name=f"v_dc", shared_reference="v_dc_reference")
     d_v_dc: Var = vf.add_diff_var(name=f"d_v_dc", base_var=v_dc)
 
-    i_dc: Var = vf.add_var(name=f"i_dc", reference=VarPowerFlowReferenceType.Idc)
-    P: Var = vf.add_var(name=f"P", reference=VarPowerFlowReferenceType.P)
-    Q: Var = vf.add_var(name=f"Q", reference=VarPowerFlowReferenceType.Q)
+    i_dc: Var = vf.add_var(name=f"i_dc", reference=VarPowerFlowReferenceType.Idc, shared_reference="i_dc_reference")
+    P: Var = vf.add_var(name=f"P", reference=VarPowerFlowReferenceType.P, shared_reference="P_reference")
+    Q: Var = vf.add_var(name=f"Q", reference=VarPowerFlowReferenceType.Q, shared_reference="Q_reference")
     i_mag: Var = vf.add_var(name=f"i_mag")
     P_loss: Var = vf.add_var(name=f"P_loss")
-    i_dc_conv: Var = vf.add_var(name=f"i_dc_conv")
+    i_dc_conv: Var = vf.add_var(name=f"i_dc_conv", shared_reference="i_dc_conv_reference")
 
-    sbase: Var = vf.add_var(name=f"sbase")
-    P_ref: Var = vf.add_var(name=f"P_ref")
-    Q_ref: Var = vf.add_var(name=f"Q_ref")
-    Vdc_ref: Var = vf.add_var(name=f"Vdc_ref")
+    sbase: Var = vf.add_var(name=f"sbase", shared_reference="sbase_reference")
+    P_ref: Var = vf.add_var(name=f"P_ref", shared_reference="P_ref_reference")
+    Q_ref: Var = vf.add_var(name=f"Q_ref", shared_reference="Q_ref_reference")
+    Vdc_ref: Var = vf.add_var(name=f"Vdc_ref", shared_reference="Vdc_ref_reference")
     P0_sched: Var = vf.add_var(name=f"P0")
     control1: Var = vf.add_var(name=f"control1")
     control2: Var = vf.add_var(name=f"control2")
     control1_val: Var = vf.add_var(name=f"control1_val")
     control2_val: Var = vf.add_var(name=f"control2_val")
-    omega_base: Var = vf.add_var(name=f"omega_base")
-    phi_v: Var = vf.add_var(name=f"phi_v")
-    Vpk: Var = vf.add_var(name=f"Vpk")
-    R_eq: Var = vf.add_var(name=f"R_eq")
-    L_eq: Var = vf.add_var(name=f"L_eq")
-    C_dc: Var = vf.add_var(name=f"C_dc")
-    R_dc: Var = vf.add_var(name=f"R_dc")
-    R_dc_term: Var = vf.add_var(name=f"R_dc_term")
-    pll_kp: Var = vf.add_var(name=f"pll_kp")
-    pll_ki: Var = vf.add_var(name=f"pll_ki")
-    i_kp: Var = vf.add_var(name=f"i_kp")
-    i_ki: Var = vf.add_var(name=f"i_ki")
-    vdc_kp: Var = vf.add_var(name=f"vdc_kp")
-    vdc_ki: Var = vf.add_var(name=f"vdc_ki")
-    q_kp: Var = vf.add_var(name=f"q_kp")
-    q_ki: Var = vf.add_var(name=f"q_ki")
-    i_max: Var = vf.add_var(name=f"i_max")
-    m_max: Var = vf.add_var(name=f"m_max")
-    P_loss0: Var = vf.add_var(name=f"P_loss0")
-    P_loss_i1: Var = vf.add_var(name=f"P_loss_i1")
-    P_loss_i2: Var = vf.add_var(name=f"P_loss_i2")
-    tau_meas: Var = vf.add_var(name=f"tau_meas")
-    aw_gain: Var = vf.add_var(name=f"aw_gain")
-    vdc_floor: Var = vf.add_var(name=f"vdc_floor")
+    omega_base: Var = vf.add_var(name=f"omega_base", shared_reference="omega_base_reference")
+    phi_v: Var = vf.add_var(name=f"phi_v", shared_reference="phi_v_reference")
+    Vpk: Var = vf.add_var(name=f"Vpk", shared_reference="Vpk_reference")
+    R_eq: Var = vf.add_var(name=f"R_eq", shared_reference="R_eq_reference")
+    L_eq: Var = vf.add_var(name=f"L_eq", shared_reference="L_eq_reference")
+    C_dc: Var = vf.add_var(name=f"C_dc", shared_reference="C_dc_reference")
+    R_dc: Var = vf.add_var(name=f"R_dc", shared_reference="R_dc_reference")
+    R_dc_term: Var = vf.add_var(name=f"R_dc_term", shared_reference="R_dc_term_reference")
+    pll_kp: Var = vf.add_var(name=f"pll_kp", shared_reference="pll_kp_reference")
+    pll_ki: Var = vf.add_var(name=f"pll_ki", shared_reference="pll_ki_reference")
+    i_kp: Var = vf.add_var(name=f"i_kp", shared_reference="i_kp_reference")
+    i_ki: Var = vf.add_var(name=f"i_ki", shared_reference="i_ki_reference")
+    vdc_kp: Var = vf.add_var(name=f"vdc_kp", shared_reference="vdc_kp_reference")
+    vdc_ki: Var = vf.add_var(name=f"vdc_ki", shared_reference="vdc_ki_reference")
+    q_kp: Var = vf.add_var(name=f"q_kp", shared_reference="q_kp_reference")
+    q_ki: Var = vf.add_var(name=f"q_ki", shared_reference="q_ki_reference")
+    i_max: Var = vf.add_var(name=f"i_max", shared_reference="i_max_reference")
+    m_max: Var = vf.add_var(name=f"m_max", shared_reference="m_max_reference")
+    P_loss0: Var = vf.add_var(name=f"P_loss0", shared_reference="P_loss0_reference")
+    P_loss_i1: Var = vf.add_var(name=f"P_loss_i1", shared_reference="P_loss_i1_reference")
+    P_loss_i2: Var = vf.add_var(name=f"P_loss_i2", shared_reference="P_loss_i2_reference")
+    tau_meas: Var = vf.add_var(name=f"tau_meas", shared_reference="tau_meas_reference")
+    aw_gain: Var = vf.add_var(name=f"aw_gain", shared_reference="aw_gain_reference")
+    vdc_floor: Var = vf.add_var(name=f"vdc_floor", shared_reference="vdc_floor_reference")
 
     p_ref_expr: Expr
     q_ref_expr: Expr
@@ -741,18 +741,8 @@ def get_switched_emt_converter(vf: VarFactory, name: str = "switched_converter_e
     v_dc_bus: Var = vf.add_var(name=f"v_dc_bus", reference=VarPowerFlowReferenceType.Vdc)
     switching_enabled_mode: Var = vf.add_var(name=f"switching_enabled_mode")
     t_enable_sw: Var = vf.add_var(name=f"t_enable_sw")
-    i_A: Var = vf.add_var(name=f"i_A", reference=VarPowerFlowReferenceType.i_A)
-    i_B: Var = vf.add_var(name=f"i_B", reference=VarPowerFlowReferenceType.i_B)
-    i_C: Var = vf.add_var(name=f"i_C", reference=VarPowerFlowReferenceType.i_C)
-    gate_a: Var = vf.add_var(name=f"gate_a")
-    gate_b: Var = vf.add_var(name=f"gate_b")
-    gate_c: Var = vf.add_var(name=f"gate_c")
-    v_conv_a: Var = vf.add_var(name=f"v_conv_a")
-    v_conv_b: Var = vf.add_var(name=f"v_conv_b")
-    v_conv_c: Var = vf.add_var(name=f"v_conv_c")
-    v_conv_d: Var = vf.add_var(name=f"v_conv_d")
-    v_conv_q: Var = vf.add_var(name=f"v_conv_q")
-    v_conv_0: Var = vf.add_var(name=f"v_conv_0")
+    omega_sw: Var = vf.add_var(name=f"omega_sw")
+    carrier_phase: Var = vf.add_var(name=f"carrier_phase")
     omega_sw_eff: Var = vf.add_var(name=f"omega_sw_eff")
 
     data_block: Block = _build_switched_converter_data_block(vf=vf, name=name)
@@ -838,60 +828,20 @@ def get_switched_emt_converter(vf: VarFactory, name: str = "switched_converter_e
     # bridge pole voltages after the exact startup handover time.
     filter_stage_block.state_eqs = list([
         equation.subs({
-            plant_v_conv_a: v_conv_a,
-            plant_v_conv_b: v_conv_b,
-            plant_v_conv_c: v_conv_c,
+            plant_v_conv_a: averaged_mode * plant_v_ref_a + switching_enabled_mode * plant_v_conv_a,
+            plant_v_conv_b: averaged_mode * plant_v_ref_b + switching_enabled_mode * plant_v_conv_b,
+            plant_v_conv_c: averaged_mode * plant_v_ref_c + switching_enabled_mode * plant_v_conv_c,
         })
         for equation in filter_stage_block.state_eqs
     ])
 
-    templ.block.algebraic_eqs.extend(list([
-        i_A - plant_i_A,
-        i_B - plant_i_B,
-        i_C - plant_i_C,
-        gate_a - plant_gate_a,
-        gate_b - plant_gate_b,
-        gate_c - plant_gate_c,
-        v_conv_a - (averaged_mode * plant_v_ref_a + switching_enabled_mode * plant_v_conv_a),
-        v_conv_b - (averaged_mode * plant_v_ref_b + switching_enabled_mode * plant_v_conv_b),
-        v_conv_c - (averaged_mode * plant_v_ref_c + switching_enabled_mode * plant_v_conv_c),
-        v_conv_d - (averaged_mode * plant_v_cmd_d + switching_enabled_mode * plant_v_conv_d),
-        v_conv_q - (averaged_mode * plant_v_cmd_q + switching_enabled_mode * plant_v_conv_q),
-        v_conv_0 - (averaged_mode * plant_v_cmd_0 + switching_enabled_mode * plant_v_conv_0),
-    ]))
-    templ.block.algebraic_vars.extend(list([
-        i_A,
-        i_B,
-        i_C,
-        gate_a,
-        gate_b,
-        gate_c,
-        v_conv_a,
-        v_conv_b,
-        v_conv_c,
-        v_conv_d,
-        v_conv_q,
-        v_conv_0,
-    ]))
-    templ.block.init_eqs.update(dict([
-        (i_A, plant_i_A),
-        (i_B, plant_i_B),
-        (i_C, plant_i_C),
-        (gate_a, plant_gate_a),
-        (gate_b, plant_gate_b),
-        (gate_c, plant_gate_c),
-        (v_conv_a, averaged_mode * plant_v_ref_a + switching_enabled_mode * plant_v_conv_a),
-        (v_conv_b, averaged_mode * plant_v_ref_b + switching_enabled_mode * plant_v_conv_b),
-        (v_conv_c, averaged_mode * plant_v_ref_c + switching_enabled_mode * plant_v_conv_c),
-        (v_conv_d, averaged_mode * plant_v_cmd_d + switching_enabled_mode * plant_v_conv_d),
-        (v_conv_q, averaged_mode * plant_v_cmd_q + switching_enabled_mode * plant_v_conv_q),
-        (v_conv_0, averaged_mode * plant_v_cmd_0 + switching_enabled_mode * plant_v_conv_0),
-    ]))
     templ.block.event_dict.update(dict([
         (t_enable_sw, Const(1.0e-4)),
         # Keeping the PWM carrier frequency at zero before the handover prevents the bridge procedural
         # logic from introducing discrete switching activity while the converter is still in averaged mode.
-        (omega_sw_eff, switching_enabled_mode * data_omega_sw),
+        (omega_sw_eff, switching_enabled_mode * omega_sw),
+        (omega_sw, data_omega_sw),
+        (carrier_phase, data_carrier_phase),
     ]))
     templ.block.mode_dict.update(dict([
         (switching_enabled_mode, Const(0.0)),
@@ -966,8 +916,8 @@ def get_switched_emt_converter(vf: VarFactory, name: str = "switched_converter_e
         data_m_max,
         data_vdc_floor,
         omega_sw_eff,
-        data_omega_sw,
-        data_carrier_phase,
+        omega_sw,
+        carrier_phase,
         data_r_eq,
         data_l_eq,
         data_pll_kp,
@@ -985,22 +935,12 @@ def get_switched_emt_converter(vf: VarFactory, name: str = "switched_converter_e
     ]))
 
     templ.block.children.extend(list([data_block, outer_loop_block, plant_block]))
-    templ.block.unify_blocks()
     templ.block.in_vars = list([v_A, v_B, v_C, v_dc_bus])
     templ.block.out_vars = list([
-        i_A,
-        i_B,
-        i_C,
+        plant_i_A,
+        plant_i_B,
+        plant_i_C,
         data_idc,
-        gate_a,
-        gate_b,
-        gate_c,
-        v_conv_a,
-        v_conv_b,
-        v_conv_c,
-        v_conv_d,
-        v_conv_q,
-        v_conv_0,
     ])
 
     templ.block.external_mapping = dict([
@@ -1008,9 +948,9 @@ def get_switched_emt_converter(vf: VarFactory, name: str = "switched_converter_e
         (VarPowerFlowReferenceType.v_B, v_B),
         (VarPowerFlowReferenceType.v_C, v_C),
         (VarPowerFlowReferenceType.Vdc, v_dc_bus),
-        (VarPowerFlowReferenceType.i_A, i_A),
-        (VarPowerFlowReferenceType.i_B, i_B),
-        (VarPowerFlowReferenceType.i_C, i_C),
+        (VarPowerFlowReferenceType.i_A, plant_i_A),
+        (VarPowerFlowReferenceType.i_B, plant_i_B),
+        (VarPowerFlowReferenceType.i_C, plant_i_C),
         (VarPowerFlowReferenceType.Idc, data_idc),
         (VarPowerFlowReferenceType.P, data_p),
         (VarPowerFlowReferenceType.Q, data_q),

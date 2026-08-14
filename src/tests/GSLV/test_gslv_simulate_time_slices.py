@@ -5,7 +5,7 @@
 import os
 import numpy as np
 import VeraGridEngine.api as vg
-from VeraGridEngine.Compilers.circuit_to_gslv import GSLV_AVAILABLE, pg, to_gslv, compare_nc, CheckArr
+from VeraGridEngine.Compilers.Gslv import GSLV_AVAILABLE, pg, to_gslv, compare_nc, CheckArr
 
 
 def test_gslv_power_flow_slices():

@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 
 import VeraGridEngine.api as vg
-from VeraGridEngine.Compilers.circuit_to_gslv import GSLV_AVAILABLE
+from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_results_3ph import PowerFlowResults3Ph
 from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_ts_results_3ph import PowerFlowTimeSeriesResults3Ph
 

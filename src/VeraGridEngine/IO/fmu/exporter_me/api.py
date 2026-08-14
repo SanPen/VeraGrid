@@ -7,15 +7,15 @@ from __future__ import annotations
 from pathlib import Path
 import shutil
 
-from .build import build_shared_library, emit_c_sources, ensure_build_layout, write_debug_resources
-from .config import ExportConfig
-from .export_ir import build_export_model
-from .packager import package_fmu, prepare_fmu_staging_dir
-from .normalize import prepare_flat_block_for_me
-from .procedural_ir import build_logic_entries
-from .snapshot import build_model_snapshot
-from .validate import validate_export_model
-from .xml_writer import write_model_description
+from VeraGridEngine.IO.fmu.exporter_me.build import build_shared_library, emit_c_sources, ensure_build_layout, write_debug_resources
+from VeraGridEngine.IO.fmu.exporter_me.config import ExportConfig
+from VeraGridEngine.IO.fmu.exporter_me.export_ir import build_export_model
+from VeraGridEngine.IO.fmu.exporter_me.packager import package_fmu, prepare_fmu_staging_dir
+from VeraGridEngine.IO.fmu.exporter_me.normalize import prepare_flat_block_for_me
+from VeraGridEngine.IO.fmu.exporter_me.procedural_ir import build_logic_entries
+from VeraGridEngine.IO.fmu.exporter_me.snapshot import build_model_snapshot
+from VeraGridEngine.IO.fmu.exporter_me.validate import validate_export_model
+from VeraGridEngine.IO.fmu.exporter_me.xml_writer import write_model_description
 
 
 def export_fmu_me(model: object, cfg: ExportConfig) -> Path:

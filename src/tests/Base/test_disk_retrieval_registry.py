@@ -307,6 +307,7 @@ def test_rms_small_signal_results_register_from_disk_data(tmp_path: Path) -> Non
 
     driver.results = SmallSignalStabilityRmsResults(
         eigenvalues=np.array([-1.0, -2.0], dtype=float),
+        right_eigenvectors=np.array([[1.0, 0.0], [0.0, 1.0]], dtype=complex),
         participation_factors=np.array([[0.8, 0.2], [0.2, 0.8]], dtype=float),
         damping_ratios=np.array([1.0, 1.0], dtype=float),
         conjugate_frequencies=np.array([0.0, 0.0], dtype=float),
@@ -355,6 +356,7 @@ def test_rms_small_signal_results_register_from_disk_data(tmp_path: Path) -> Non
     assert results is not None
     assert np.array_equal(results.stat_vars_array, driver.results.stat_vars_array)
     assert np.array_equal(results.eigenvalues, driver.results.eigenvalues)
+    assert np.array_equal(results.right_eigenvectors, driver.results.right_eigenvectors)
     assert np.array_equal(results.participation_factors, driver.results.participation_factors)
     assert np.array_equal(results.damping_ratios, driver.results.damping_ratios)
     assert np.array_equal(results.conjugate_frequencies, driver.results.conjugate_frequencies)

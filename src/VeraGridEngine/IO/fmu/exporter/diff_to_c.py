@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
-from .config import IntegrationMethod
+from VeraGridEngine.IO.fmu.exporter.config import IntegrationMethod
 
 
 def render_discrete_derivative(

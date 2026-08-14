@@ -712,33 +712,6 @@ def save_psse_batch_zip(circuit: MultiCircuit,
     return logger
 
 
-def save_newton(circuit: MultiCircuit,
-                file_name: str) -> Logger:
-    """
-    Save the circuit information in sqlite
-    :return: logger with information
-    """
-
-    logger = Logger()
-    try:
-        from VeraGridEngine.Compilers.circuit_to_newton_pa import to_newton_pa, npa
-
-        time_series = circuit.time_profile is not None
-
-        if time_series:
-            t_idx = list(range(circuit.get_time_number()))
-        else:
-            t_idx = None
-
-        newton_grid, _ = to_newton_pa(circuit, use_time_series=time_series, time_indices=t_idx)
-
-        npa.FileHandler().save(newton_grid, file_name)
-    except ImportError:
-        logger.add_error(msg="Error while trying to import newton package!", )
-
-    return logger
-
-
 def save_pgm(circuit: MultiCircuit, file_name: str) -> Logger:
     """
     Save to Power Grid Model format

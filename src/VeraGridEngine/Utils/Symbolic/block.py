@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import copy
 import uuid
+from enum import Enum
 from typing import List, Dict, Any, Tuple
 
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const, Expr, _expr_to_dict, _dict_to_expr, BinOp, UnOp, Func, Func2, Comparison
@@ -14,6 +15,172 @@ from VeraGridEngine.Devices.Diagrams.block_diagram import BlockDiagram
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType, ParamPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.compare_expressions_structure import equivalent_systems
 from VeraGridEngine.Utils.Symbolic.variable_alignment_engine import align_variables
+
+
+class DynamicConnectionIntentOrigin(Enum):
+    """
+    Describe why one dynamic root-interface connection exists.
+    """
+
+    USER = "USER"
+    TEMPLATE_DERIVED = "TEMPLATE_DERIVED"
+
+
+def build_dynamic_connection_intent_record(origin: DynamicConnectionIntentOrigin,
+                                           root_ref: VarPowerFlowReferenceType | None,
+                                           root_direction: str,
+                                           internal_block_uid: int,
+                                           internal_port_direction: str,
+                                           internal_port_index: int,
+                                           suppressed: bool = False) -> Dict[str, Any]:
+    """
+    Build one serializable connection-intent record.
+
+    :param origin: Why the connection exists.
+    :param root_ref: Semantic root-side reference.
+    :param root_direction: ``input`` or ``output`` for the root-side wrapper.
+    :param internal_block_uid: Stable internal block UID.
+    :param internal_port_direction: ``input`` or ``output`` on the internal block.
+    :param internal_port_index: Internal block port index.
+    :param suppressed: Whether the intent is intentionally disabled.
+    :return: Serializable record.
+    """
+    root_ref_value: str | None
+
+    if root_ref is None:
+        root_ref_value = None
+    else:
+        root_ref_value = root_ref.value
+
+    return dict({
+        "origin": origin.value,
+        "root_ref": root_ref_value,
+        "root_direction": root_direction,
+        "internal_block_uid": internal_block_uid,
+        "internal_port_direction": internal_port_direction,
+        "internal_port_index": internal_port_index,
+        "suppressed": suppressed,
+    })
+
+
+def is_dynamic_connection_intent_record(entry: Dict[str, Any]) -> bool:
+    """
+    Return whether one dictionary looks like one persisted intent record.
+
+    :param entry: Candidate dictionary.
+    :return: ``True`` when the schema matches.
+    """
+    if "origin" not in entry:
+        return False
+    elif "root_ref" not in entry:
+        return False
+    elif "root_direction" not in entry:
+        return False
+    elif "internal_block_uid" not in entry:
+        return False
+    elif "internal_port_direction" not in entry:
+        return False
+    elif "internal_port_index" not in entry:
+        return False
+    elif "suppressed" not in entry:
+        return False
+    else:
+        return True
+
+
+def normalize_dynamic_connection_intents(block: "Block") -> None:
+    """
+    Keep only valid serializable connection-intent entries on one block.
+
+    :param block: Block whose intents must be normalized.
+    :return: None.
+    """
+    normalized_entries: List[Dict[str, Any]] = list()
+    entry: Any
+
+    for entry in block.connection_intents:
+        if isinstance(entry, dict):
+            if is_dynamic_connection_intent_record(entry):
+                normalized_entries.append(dict(entry))
+            else:
+                pass
+        else:
+            pass
+
+    block.connection_intents = normalized_entries
+
+
+def find_matching_dynamic_connection_intent(block: "Block",
+                                            origin: DynamicConnectionIntentOrigin,
+                                            root_ref_value: str | None,
+                                            root_direction: str,
+                                            internal_block_uid: int,
+                                            internal_port_direction: str,
+                                            internal_port_index: int) -> Dict[str, Any] | None:
+    """
+    Find one exact connection-intent record on one block.
+
+    :param block: Root block that owns the persisted intents.
+    :param origin: Required provenance.
+    :param root_ref_value: Serialized root ref value.
+    :param root_direction: Root-side direction.
+    :param internal_block_uid: Internal block UID.
+    :param internal_port_direction: Internal port direction.
+    :param internal_port_index: Internal port index.
+    :return: Matching record or ``None``.
+    """
+    entry: Dict[str, Any]
+
+    for entry in block.connection_intents:
+        if entry.get("origin", None) != origin.value:
+            pass
+        elif entry.get("root_ref", None) != root_ref_value:
+            pass
+        elif entry.get("root_direction", None) != root_direction:
+            pass
+        elif entry.get("internal_block_uid", None) != internal_block_uid:
+            pass
+        elif entry.get("internal_port_direction", None) != internal_port_direction:
+            pass
+        elif entry.get("internal_port_index", None) != internal_port_index:
+            pass
+        else:
+            return entry
+
+    return None
+
+
+def rehash_block_var_keyed_dicts(block_model: "Block") -> None:
+    """
+    Rebuild every block dictionary whose keys are mutable-UID variables.
+
+    ``Var.__hash__`` depends on ``uid``. Identity alignment can intentionally
+    update that value, so all Var-keyed containers must be rebuilt immediately
+    afterward to restore valid hash buckets.
+
+    :param block_model: Block whose variable-keyed dictionaries must be rebuilt.
+    :return: None.
+    """
+    block_model.parameters = dict(block_model.parameters.items())
+    block_model.init_values = dict(block_model.init_values.items())
+    block_model.init_eqs = dict(block_model.init_eqs.items())
+    block_model.diff_init_eqs = dict(block_model.diff_init_eqs.items())
+    block_model.discrete_eqs = dict(block_model.discrete_eqs.items())
+    block_model.event_dict = dict(block_model.event_dict.items())
+    block_model.mode_dict = dict(block_model.mode_dict.items())
+    block_model.boolean_guards = dict(block_model.boolean_guards.items())
+
+
+def rehash_block_tree_var_keyed_dicts(root_block: "Block") -> None:
+    """
+    Rebuild variable-keyed dictionaries throughout one symbolic block tree.
+
+    :param root_block: Root of the block tree to repair.
+    :return: None.
+    """
+    block_model: Block
+    for block_model in root_block.get_all_blocks():
+        rehash_block_var_keyed_dicts(block_model=block_model)
 
 
 def _new_uid() -> int:
@@ -78,11 +245,13 @@ class Block:
                  mode_dict: Dict[Var, Expr] | None = None,
                  boolean_guards: Dict[Var, Expr | Comparison] | None = None,
                  procedural_logic: List[Any] | None = None,
+                 connection_intents: List[Dict[str, Any]] | None = None,
                  external_mapping: Dict[VarPowerFlowReferenceType, Var] | None = None,
                  api_obj_mapping: Dict[ParamPowerFlowReferenceType, Var] | None = None,
                  is_decomposable: bool = True,
                  name: str = "",
-                 uid: int | None = None):
+                 uid: int | None = None,
+                 is_root_interface_wrapper: bool = False):
         """
         This represents a group of equations or a group of blocks
 
@@ -98,6 +267,7 @@ class Block:
          :param event_dict: Dictionary of parameters that can change during the simulations
          :param procedural_logic: List of runtime procedural logic objects attached to the block
          :param external_mapping: Dictionary of vars that are related to the Power flow initialization
+         :param is_root_interface_wrapper: Whether this block is an editor root-interface wrapper
          :param name: name of the block
          """
 
@@ -106,6 +276,7 @@ class Block:
         self.uid: int = _new_uid() if uid is None else uid
 
         self.is_decomposable = is_decomposable
+        self.is_root_interface_wrapper: bool = is_root_interface_wrapper
         self.tpe_uid: int | None =  None
         self.vars_glob_name2uid: Dict[str, int] = dict()
 
@@ -151,6 +322,7 @@ class Block:
         self.mode_dict: Dict[Var, Expr | Const] = dict() if mode_dict is None else mode_dict
         self.boolean_guards: Dict[Var, Expr | Comparison] = dict() if boolean_guards is None else boolean_guards
         self.procedural_logic: List[Any] = list() if procedural_logic is None else procedural_logic
+        self.connection_intents: List[Dict[str, Any]] = list() if connection_intents is None else connection_intents
 
         self._diagram: BlockDiagram = BlockDiagram()
 
@@ -174,6 +346,17 @@ class Block:
         else:
             raise ValueError(f"Cannot set diagram with {val}")
 
+    def set_name(self, name: str) -> None:
+        """
+        Change the block name without changing the block identity.
+
+        :param name: New block name.
+        :return: None.
+        """
+        # Only the display and serialization name changes here. The block
+        # identity remains tied to the existing uid.
+        self.name = name
+
     def to_dict(self) -> Dict[str, Any]:
         """
         Get dictionary representation of this block
@@ -182,6 +365,7 @@ class Block:
         return {
             "name": self.name,
             "uid": self.uid,
+            "is_root_interface_wrapper": self.is_root_interface_wrapper,
 
             "state_vars": [_expr_to_dict(v) for v in self.state_vars],
             "algebraic_vars": [_expr_to_dict(v) for v in self.algebraic_vars],
@@ -237,6 +421,7 @@ class Block:
             },
 
             "procedural_logic": self._procedural_logic_to_dict(),
+            "connection_intents": list(self.connection_intents),
 
             "parameters": {
                 k.uid: {
@@ -332,6 +517,7 @@ class Block:
                 for item in data.get("boolean_guards", {}).values()
             },
             procedural_logic=Block._procedural_logic_from_dict(data.get("procedural_logic", [])),
+            connection_intents=list(data.get("connection_intents", list())),
             external_mapping={
                 VarPowerFlowReferenceType(k): (_dict_to_expr(v) if v is not None else None)
                 for k, v in data["external_mapping"].items()
@@ -340,6 +526,7 @@ class Block:
                 ParamPowerFlowReferenceType(k): (_dict_to_expr(v) if v is not None else None)
                 for k, v in data["api_obj_mapping"].items()
             },
+            is_root_interface_wrapper=bool(data.get("is_root_interface_wrapper", False)),
             name=data["name"],
             uid=data["uid"]
         )

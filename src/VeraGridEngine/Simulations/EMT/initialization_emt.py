@@ -3,20 +3,21 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Callable, Dict, List, Tuple, Union, Optional
+from __future__ import annotations
+
+from typing import Dict, List, Tuple, Union, Optional, BinaryIO
 import numpy as np
 import numba as nb
-import math
 import time
 import hashlib
 import os
 import pickle
 from pathlib import Path
+from collections.abc import Callable
+from typing import cast
 import warnings
 import scipy.sparse as sp
 import scipy.sparse.linalg as spla
-
-from collections import defaultdict, deque
 
 from VeraGridEngine.enumerations import EmtInitializationMethod, EmtInitializationStatus
 from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
@@ -24,7 +25,6 @@ from VeraGridEngine.Simulations.EMT.problems.emt_problem_template import EmtProb
 from VeraGridEngine.Simulations.Rms.numerical.pseudo_transient import PseudoTransient
 from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicJacobian, SymbolicVector
-from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler
 from VeraGridEngine.Utils.Symbolic.symbolic import expression2numba, get_expression_vars, heaviside_num
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const, Expr, find_vars_order
@@ -201,23 +201,23 @@ class InitializationVectorCacheEntry:
 
     __slots__ = ["_vector"]
 
-    def __init__(self, vector: SymbolicVector) -> None:
+    def __init__(self, vector: InitializationStateRhsVector | SymbolicVector) -> None:
         """
         Build one initialization-vector cache entry.
 
         :param vector: Cached symbolic vector evaluator.
-        :type vector: SymbolicVector
+        :type vector: InitializationStateRhsVector | SymbolicVector
         :return: None.
         :rtype: None
         """
         self._vector = vector
 
-    def get_vector(self) -> SymbolicVector:
+    def get_vector(self) -> InitializationStateRhsVector | SymbolicVector:
         """
         Return the cached symbolic vector evaluator.
 
         :return: Cached symbolic vector evaluator.
-        :rtype: SymbolicVector
+        :rtype: InitializationStateRhsVector | SymbolicVector
         """
         return self._vector
 
@@ -266,6 +266,57 @@ class InitializationVectorCache:
 INITIALIZATION_VECTOR_CACHE = InitializationVectorCache()
 
 
+StateRhsCallable = Callable[[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray], None]
+
+
+def _payload_str(value: object) -> str:
+    """
+    Return one payload value as a string.
+
+    :param value: Serialized payload value.
+    :type value: object
+    :return: String representation.
+    :rtype: str
+    """
+    return str(value)
+
+
+def _payload_float(value: object) -> float:
+    """
+    Return one payload value as a float.
+
+    :param value: Serialized payload value.
+    :type value: object
+    :return: Float representation.
+    :rtype: float
+    """
+    return float(cast(float | int | str, value))
+
+
+def _payload_int(value: object) -> int:
+    """
+    Return one payload value as an integer.
+
+    :param value: Serialized payload value.
+    :type value: object
+    :return: Integer representation.
+    :rtype: int
+    """
+    return int(cast(int | float | str, value))
+
+
+def _payload_bool(value: object) -> bool:
+    """
+    Return one payload value as a boolean.
+
+    :param value: Serialized payload value.
+    :type value: object
+    :return: Boolean representation.
+    :rtype: bool
+    """
+    return bool(cast(bool | int | float | str, value))
+
+
 class InitializationStateRhsVector:
     """
     Lightweight state-RHS evaluator used by ``dx0`` completion.
@@ -287,16 +338,19 @@ class InitializationStateRhsVector:
         :rtype: None
         """
         namespace: Dict[str, object] = dict(math=__import__("math"), np=np, _heaviside=heaviside_num)
+        compiled_func: StateRhsCallable
         exec(source_code, namespace)
 
         if use_jit:
-            self._func = nb.njit(
+            compiled_func = nb.njit(
                 nb.void(nb.float64[:], nb.float64[:], nb.float64[:], nb.float64[:], nb.float64[:]),
                 fastmath=True,
                 cache=False,
-            )(namespace["func"])
+            )(cast(StateRhsCallable, namespace["func"]))
         else:
-            self._func = namespace["func"]
+            compiled_func = cast(StateRhsCallable, namespace["func"])
+
+        self._func: StateRhsCallable = compiled_func
 
         self._data = np.zeros(output_size, dtype=np.float64)
 
@@ -317,6 +371,166 @@ class InitializationStateRhsVector:
         """
         self._func(values, diff_values, event_params, params, self._data)
         return self._data
+
+
+def _collect_block_sequence(root_block: Block) -> List[Block]:
+    """
+    Return one root-first block traversal sequence.
+
+    :param root_block: Root symbolic block.
+    :type root_block: Block
+    :return: Ordered block list including every descendant.
+    :rtype: List[Block]
+    """
+    ordered_blocks: List[Block] = list()
+    pending_blocks: List[Block] = list([root_block])
+    pending_index: int = 0
+    current_block: Block
+    child_block: Block
+
+    while pending_index < len(pending_blocks):
+        current_block = pending_blocks[pending_index]
+        pending_index += 1
+        ordered_blocks.append(current_block)
+
+        for child_block in current_block.children:
+            pending_blocks.append(child_block)
+
+    return ordered_blocks
+
+
+def _build_hierarchical_event_equation_lookup(mdl: Block) -> Dict[int, Union[Expr, Const]]:
+    """
+    Build one uid-keyed runtime-event equation lookup from the full block hierarchy.
+
+    :param mdl: Root symbolic block.
+    :type mdl: Block
+    :return: Runtime-event equation lookup keyed by variable uid.
+    :rtype: Dict[int, Union[Expr, Const]]
+    """
+    block_sequence: List[Block] = _collect_block_sequence(mdl)
+    event_equation_lookup: Dict[int, Union[Expr, Const]] = dict()
+    block_item: Block
+    event_var: Var
+    event_eq: Union[Expr, Const]
+
+    for block_item in block_sequence:
+        for event_var, event_eq in block_item.event_dict.items():
+            event_equation_lookup[event_var.uid] = event_eq
+
+        for event_var, event_eq in block_item.mode_dict.items():
+            event_equation_lookup[event_var.uid] = event_eq
+
+    return event_equation_lookup
+
+
+def _build_hierarchical_event_equation_list(
+        mdl: Block,
+        variable_parameters: List[Var],
+        fallback_event_parameters_eqs: List[Union[Expr, Const]],
+) -> List[Union[Expr, Const]]:
+    """
+    Build one runtime-equation list aligned with the canonical variable-parameter order.
+
+    :param mdl: Root symbolic block.
+    :type mdl: Block
+    :param variable_parameters: Canonical runtime parameter order.
+    :type variable_parameters: List[Var]
+    :param fallback_event_parameters_eqs: Existing runtime equation list used as fallback.
+    :type fallback_event_parameters_eqs: List[Union[Expr, Const]]
+    :return: Runtime equation list aligned with ``variable_parameters``.
+    :rtype: List[Union[Expr, Const]]
+    """
+    event_equation_lookup: Dict[int, Union[Expr, Const]] = _build_hierarchical_event_equation_lookup(mdl)
+    ordered_equations: List[Union[Expr, Const]] = list()
+    parameter_index: int = 0
+    runtime_parameter: Var
+
+    while parameter_index < len(variable_parameters):
+        runtime_parameter = variable_parameters[parameter_index]
+        if runtime_parameter.uid in event_equation_lookup:
+            ordered_equations.append(event_equation_lookup[runtime_parameter.uid])
+        else:
+            if parameter_index < len(fallback_event_parameters_eqs):
+                ordered_equations.append(fallback_event_parameters_eqs[parameter_index])
+            else:
+                ordered_equations.append(Const(None))
+        parameter_index += 1
+
+    return ordered_equations
+
+
+def _build_event_equation_lookup_from_problem_order(
+        variable_parameters: List[Var],
+        event_parameters_eqs: List[Union[Expr, Const]],
+) -> Dict[int, Union[Expr, Const]]:
+    """
+    Build one uid-keyed runtime-equation lookup from the canonical problem order.
+
+    :param variable_parameters: Canonical runtime parameter order.
+    :type variable_parameters: List[Var]
+    :param event_parameters_eqs: Runtime equations aligned with ``variable_parameters``.
+    :type event_parameters_eqs: List[Union[Expr, Const]]
+    :return: Runtime-equation lookup keyed by uid.
+    :rtype: Dict[int, Union[Expr, Const]]
+    """
+    equation_lookup: Dict[int, Union[Expr, Const]] = dict()
+    parameter_index: int = 0
+    runtime_parameter: Var
+
+    while parameter_index < len(variable_parameters) and parameter_index < len(event_parameters_eqs):
+        runtime_parameter = variable_parameters[parameter_index]
+        equation_lookup[runtime_parameter.uid] = event_parameters_eqs[parameter_index]
+        parameter_index += 1
+
+    return equation_lookup
+
+
+def _seed_runtime_event_parameter_array(
+        variable_parameters: List[Var],
+        event_parameters_eqs: List[Union[Expr, Const]],
+        uid2idx_event_params: Dict[int, int],
+        event_params_array: np.ndarray,
+) -> None:
+    """
+    Seed the flat runtime-parameter array from concrete event equations.
+
+    EMT wrapper models can enter explicit initialization with runtime parameter
+    slots that already carry concrete ``Const`` equations after PF seeding. The
+    explicit initializer must mirror those values into ``event_params_array``
+    before it starts dependency evaluation, or downstream expressions can still
+    observe stale placeholder zeros and propagate ``nan`` into the first DAE step.
+
+    :param variable_parameters: Canonical runtime parameter order.
+    :type variable_parameters: List[Var]
+    :param event_parameters_eqs: Runtime parameter equations aligned with the canonical order.
+    :type event_parameters_eqs: List[Union[Expr, Const]]
+    :param uid2idx_event_params: Runtime-parameter uid-to-index lookup.
+    :type uid2idx_event_params: Dict[int, int]
+    :param event_params_array: Runtime parameter storage updated in place.
+    :type event_params_array: np.ndarray
+    :return: None.
+    :rtype: None
+    """
+    parameter_index: int = 0
+    runtime_parameter: Var
+    runtime_equation: Union[Expr, Const]
+    runtime_idx: int | None
+
+    while parameter_index < len(variable_parameters):
+        runtime_parameter = variable_parameters[parameter_index]
+        runtime_equation = event_parameters_eqs[parameter_index]
+        runtime_idx = uid2idx_event_params.get(runtime_parameter.uid, None)
+
+        if runtime_idx is None:
+            pass
+        else:
+            if isinstance(runtime_equation, Const) and runtime_equation.value is not None:
+                event_params_array[runtime_idx] = float(runtime_equation.value)
+            else:
+                pass
+
+        parameter_index += 1
 
 
 def _get_state_rhs_persistent_cache_directory() -> Path:
@@ -423,9 +637,9 @@ def _load_or_build_state_rhs_vector(
             payload: Dict[str, object] = dict(pickle.load(cache_file))
 
         state_rhs_fn = InitializationStateRhsVector(
-            source_code=str(payload["source_code"]),
-            use_jit=bool(payload["use_jit"]),
-            output_size=int(payload["output_size"]),
+            source_code=_payload_str(payload["source_code"]),
+            use_jit=_payload_bool(payload["use_jit"]),
+            output_size=_payload_int(payload["output_size"]),
         )
         INITIALIZATION_VECTOR_CACHE.set_entry(cache_key, InitializationVectorCacheEntry(state_rhs_fn))
         report.state_rhs_vector_build_s = float(time.perf_counter() - phase_t0)
@@ -456,13 +670,14 @@ def _load_or_build_state_rhs_vector(
     INITIALIZATION_VECTOR_CACHE.set_entry(cache_key, InitializationVectorCacheEntry(state_rhs_fn))
 
     with open(cache_path, "wb") as cache_file:
+        cache_file_typed: BinaryIO = cache_file
         pickle.dump(
             dict(
                 source_code=source_code,
                 use_jit=use_jit_for_state_rhs,
                 output_size=len(missing_state_eqs),
             ),
-            cache_file,
+            cache_file_typed,
             protocol=pickle.HIGHEST_PROTOCOL,
         )
 
@@ -617,36 +832,67 @@ def _restore_initialization_report_from_payload(
     :return: None.
     :rtype: None
     """
-    report.status = InitializationStatus[str(payload["status"])]
-    report.method_requested = EmtInitializationMethod[str(payload["method_requested"])]
-    report.method_used = EmtInitializationMethod[str(payload["method_used"])]
-    report.initial_residual_inf = float(payload["initial_residual_inf"])
-    report.final_residual_inf = float(payload["final_residual_inf"])
-    report.newton_iterations = int(payload["newton_iterations"])
-    report.pseudo_transient_steps = int(payload["pseudo_transient_steps"])
-    report.unknown_var_count = int(payload["unknown_var_count"])
-    report.unresolved_state_count = int(payload["unresolved_state_count"])
-    report.automatic_dx0_count = int(payload["automatic_dx0_count"])
-    report.reduced_system_build_s = float(payload["reduced_system_build_s"])
-    report.runtime_param_build_s = float(payload["runtime_param_build_s"])
-    report.constant_param_build_s = float(payload["constant_param_build_s"])
-    report.initial_residual_eval_s = float(payload["initial_residual_eval_s"])
-    report.newton_elapsed_s = float(payload["newton_elapsed_s"])
-    report.pseudo_transient_elapsed_s = float(payload["pseudo_transient_elapsed_s"])
-    report.dx0_completion_s = float(payload["dx0_completion_s"])
-    report.x0_rebuild_s = float(payload.get("x0_rebuild_s", 0.0))
-    report.dx0_seed_build_s = float(payload.get("dx0_seed_build_s", 0.0))
-    report.state_rhs_vector_build_s = float(payload.get("state_rhs_vector_build_s", 0.0))
-    report.state_rhs_vector_cache_hit = bool(payload.get("state_rhs_vector_cache_hit", False))
-    report.solution_apply_s = float(payload.get("solution_apply_s", 0.0))
-    report.missing_dx_problem_collect_s = float(payload.get("missing_dx_problem_collect_s", 0.0))
-    report.state_rhs_eval_s = float(payload.get("state_rhs_eval_s", 0.0))
-    report.missing_dx_scatter_s = float(payload.get("missing_dx_scatter_s", 0.0))
-    report.persistent_cache_hit = bool(payload.get("persistent_cache_hit", False))
-    report.persistent_cache_load_s = float(payload.get("persistent_cache_load_s", 0.0))
-    report.persistent_cache_store_s = float(payload.get("persistent_cache_store_s", 0.0))
-    report.elapsed_s = float(payload["elapsed_s"])
-    report.message = str(payload["message"])
+    status_name: str = _payload_str(payload["status"])
+    method_requested_name: str = _payload_str(payload["method_requested"])
+    method_used_name: str = _payload_str(payload["method_used"])
+    initial_residual_inf_value: float = _payload_float(payload["initial_residual_inf"])
+    final_residual_inf_value: float = _payload_float(payload["final_residual_inf"])
+    newton_iterations_value: int = _payload_int(payload["newton_iterations"])
+    pseudo_transient_steps_value: int = _payload_int(payload["pseudo_transient_steps"])
+    unknown_var_count_value: int = _payload_int(payload["unknown_var_count"])
+    unresolved_state_count_value: int = _payload_int(payload["unresolved_state_count"])
+    automatic_dx0_count_value: int = _payload_int(payload["automatic_dx0_count"])
+    reduced_system_build_s_value: float = _payload_float(payload["reduced_system_build_s"])
+    runtime_param_build_s_value: float = _payload_float(payload["runtime_param_build_s"])
+    constant_param_build_s_value: float = _payload_float(payload["constant_param_build_s"])
+    initial_residual_eval_s_value: float = _payload_float(payload["initial_residual_eval_s"])
+    newton_elapsed_s_value: float = _payload_float(payload["newton_elapsed_s"])
+    pseudo_transient_elapsed_s_value: float = _payload_float(payload["pseudo_transient_elapsed_s"])
+    dx0_completion_s_value: float = _payload_float(payload["dx0_completion_s"])
+    x0_rebuild_s_value: float = _payload_float(payload.get("x0_rebuild_s", 0.0))
+    dx0_seed_build_s_value: float = _payload_float(payload.get("dx0_seed_build_s", 0.0))
+    state_rhs_vector_build_s_value: float = _payload_float(payload.get("state_rhs_vector_build_s", 0.0))
+    state_rhs_vector_cache_hit_value: bool = _payload_bool(payload.get("state_rhs_vector_cache_hit", False))
+    solution_apply_s_value: float = _payload_float(payload.get("solution_apply_s", 0.0))
+    missing_dx_problem_collect_s_value: float = _payload_float(payload.get("missing_dx_problem_collect_s", 0.0))
+    state_rhs_eval_s_value: float = _payload_float(payload.get("state_rhs_eval_s", 0.0))
+    missing_dx_scatter_s_value: float = _payload_float(payload.get("missing_dx_scatter_s", 0.0))
+    persistent_cache_hit_value: bool = _payload_bool(payload.get("persistent_cache_hit", False))
+    persistent_cache_load_s_value: float = _payload_float(payload.get("persistent_cache_load_s", 0.0))
+    persistent_cache_store_s_value: float = _payload_float(payload.get("persistent_cache_store_s", 0.0))
+    elapsed_s_value: float = _payload_float(payload["elapsed_s"])
+    message_value: str = _payload_str(payload["message"])
+
+    report.status = EmtInitializationStatus[status_name]
+    report.method_requested = EmtInitializationMethod[method_requested_name]
+    report.method_used = EmtInitializationMethod[method_used_name]
+    report.initial_residual_inf = initial_residual_inf_value
+    report.final_residual_inf = final_residual_inf_value
+    report.newton_iterations = newton_iterations_value
+    report.pseudo_transient_steps = pseudo_transient_steps_value
+    report.unknown_var_count = unknown_var_count_value
+    report.unresolved_state_count = unresolved_state_count_value
+    report.automatic_dx0_count = automatic_dx0_count_value
+    report.reduced_system_build_s = reduced_system_build_s_value
+    report.runtime_param_build_s = runtime_param_build_s_value
+    report.constant_param_build_s = constant_param_build_s_value
+    report.initial_residual_eval_s = initial_residual_eval_s_value
+    report.newton_elapsed_s = newton_elapsed_s_value
+    report.pseudo_transient_elapsed_s = pseudo_transient_elapsed_s_value
+    report.dx0_completion_s = dx0_completion_s_value
+    report.x0_rebuild_s = x0_rebuild_s_value
+    report.dx0_seed_build_s = dx0_seed_build_s_value
+    report.state_rhs_vector_build_s = state_rhs_vector_build_s_value
+    report.state_rhs_vector_cache_hit = state_rhs_vector_cache_hit_value
+    report.solution_apply_s = solution_apply_s_value
+    report.missing_dx_problem_collect_s = missing_dx_problem_collect_s_value
+    report.state_rhs_eval_s = state_rhs_eval_s_value
+    report.missing_dx_scatter_s = missing_dx_scatter_s_value
+    report.persistent_cache_hit = persistent_cache_hit_value
+    report.persistent_cache_load_s = persistent_cache_load_s_value
+    report.persistent_cache_store_s = persistent_cache_store_s_value
+    report.elapsed_s = elapsed_s_value
+    report.message = message_value
 
 
 def _build_persistent_initialization_cache_key(
@@ -782,7 +1028,8 @@ def _store_persistent_initialization_solution(cache_key: str, payload: Dict[str,
     cache_path: Path = _get_reduced_initialization_persistent_cache_directory() / f"{cache_key}.pkl"
 
     with open(cache_path, "wb") as cache_file:
-        pickle.dump(payload, cache_file, protocol=pickle.HIGHEST_PROTOCOL)
+        cache_file_typed: BinaryIO = cache_file
+        pickle.dump(payload, cache_file_typed, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def _build_reduced_initialization_cache_key(
@@ -973,7 +1220,10 @@ def build_uid_bindings(
     return uid_bindings
 
 
-def event_param_is_resolved(v: Var, mdl: Block) -> bool:
+def event_param_is_resolved(v: Var,
+                            mdl: Block,
+                            event_parameters_eqs: List[Union[Expr, Const]] | None = None,
+                            uid2idx_event_params: Dict[int, int] | None = None) -> bool:
     """
     Checks if an event parameter has been assigned a concrete value.
 
@@ -981,8 +1231,28 @@ def event_param_is_resolved(v: Var, mdl: Block) -> bool:
     :param mdl: The symbolic model block.
     :return: True if resolved, False otherwise.
     """
-    if v in mdl.event_dict:
-        eqv: Union[Expr, Const] = mdl.event_dict[v]
+    eqv: Union[Expr, Const] | None = None
+    runtime_idx: int | None = None
+
+    if uid2idx_event_params is None:
+        runtime_idx = None
+    else:
+        runtime_idx = uid2idx_event_params.get(v.uid, None)
+
+    if event_parameters_eqs is not None and runtime_idx is not None:
+        eqv = event_parameters_eqs[runtime_idx]
+    else:
+        if v in mdl.event_dict:
+            eqv = mdl.event_dict[v]
+        else:
+            eqv = None
+
+    if eqv is None:
+        return True
+    else:
+        pass
+
+    if v in mdl.event_dict or runtime_idx is not None:
         if isinstance(eqv, Const):
             if eqv.value is None:
                 return False
@@ -998,8 +1268,10 @@ def can_compute_init(
         var: Var,
         eq: Union[Expr, Const],
         mdl: Block,
+        event_parameters_eqs: List[Union[Expr, Const]],
         init_guess: Dict[int, float],
         diff_init_guess: Dict[int, float],
+        uid2idx_event_params: Dict[int, int],
         uid2idx_diff: Dict[int, int],
         uid2idx_vars: Dict[int, int]
 ) -> bool:
@@ -1019,8 +1291,8 @@ def can_compute_init(
     for v_dep in vars_needed:
         if v_dep.uid == var.uid:
             dependency_ready: bool = True
-        elif v_dep in mdl.event_dict:
-            dependency_ready = event_param_is_resolved(v_dep, mdl)
+        elif v_dep.uid in uid2idx_event_params:
+            dependency_ready = event_param_is_resolved(v_dep, mdl, event_parameters_eqs, uid2idx_event_params)
         elif v_dep.uid in uid2idx_diff:
             dependency_ready = v_dep.uid in diff_init_guess
         elif v_dep.uid in uid2idx_vars:
@@ -1113,26 +1385,54 @@ def init_explicit_emt(
 
     # Primary pass: resolve basic event parameters that are constant or immediate
     event_params_array: np.ndarray = np.ones(len(variable_parameters))
-    for event_param in mdl.event_dict.keys():
-        eq: Union[Expr, Const] = mdl.event_dict[event_param]
+    block_sequence: List[Block] = _collect_block_sequence(mdl)
+    event_equation_lookup: Dict[int, Union[Expr, Const]] = _build_hierarchical_event_equation_lookup(mdl)
+    event_block: Block
+    event_param: Var
 
-        # Determine if the expression is concrete enough to evaluate
-        is_concrete_const: bool = isinstance(eq, Const) and eq.value is not None
-        is_expression: bool = not isinstance(eq, Const)
+    _seed_runtime_event_parameter_array(
+        variable_parameters=variable_parameters,
+        event_parameters_eqs=event_parameters_eqs,
+        uid2idx_event_params=uid2idx_event_params,
+        event_params_array=event_params_array,
+    )
 
-        if is_concrete_const or is_expression:
-            vars_list: List[Var] = find_vars_order(eq)
-            # Bind current values for calculation
-            uid_bindings: Dict[int, float] = dict()
-            for var in vars_list:
-                uid_bindings[var.uid] = float(event_params_array[uid2idx_event_params[var.uid]])
+    for event_block in block_sequence:
+        for event_param in event_block.event_dict.keys():
+            event_runtime_idx: int | None = uid2idx_event_params.get(event_param.uid, None)
+            eq: Union[Expr, Const]
 
-            result: float = eq.eval_uid(uid_bindings)
-            event_params_array[uid2idx_event_params[event_param.uid]] = result
-            if verbose:
-                print(f"event_param:{event_param.name} initialized from events_dict with: {result}")
-        else:
-            event_param = event_param
+            if event_runtime_idx is None:
+                eq = event_block.event_dict[event_param]
+            else:
+                eq = event_equation_lookup.get(event_param.uid, event_parameters_eqs[event_runtime_idx])
+
+            # GUI and wrapper-loaded EMT models can expose one runtime parameter
+            # on the root while the concrete ``event_dict`` definition still lives
+            # inside a child block. The explicit initializer must therefore scan
+            # the full hierarchy instead of only ``mdl.event_dict``.
+            is_concrete_const: bool = isinstance(eq, Const) and eq.value is not None
+            is_expression: bool = not isinstance(eq, Const)
+
+            if is_concrete_const or is_expression:
+                vars_list: List[Var] = find_vars_order(eq)
+                uid_bindings: Dict[int, float] = dict()
+                for var in vars_list:
+                    dep_runtime_idx: int | None = uid2idx_event_params.get(var.uid, None)
+                    if dep_runtime_idx is None:
+                        pass
+                    else:
+                        uid_bindings[var.uid] = float(event_params_array[dep_runtime_idx])
+
+                result: float = eq.eval_uid(uid_bindings)
+                if event_runtime_idx is None:
+                    pass
+                else:
+                    event_params_array[event_runtime_idx] = result
+                if verbose:
+                    print(f"event_param:{event_param.name} initialized from events_dict with: {result}")
+            else:
+                event_param = event_param
 
     # Track pending equations that require dependency resolution
     init_pending: Dict[int, Tuple[Var, Union[Expr, Const]]] = dict()
@@ -1150,30 +1450,31 @@ def init_explicit_emt(
         # Solve for Algebraic/State variables
         for uid in list(init_pending.keys()):
             var, eq = init_pending[uid]
-            if can_compute_init(var, eq, mdl, init_guess, diff_init_guess, uid2idx_diff, uid2idx_vars):
+            if can_compute_init(var, eq, mdl, event_parameters_eqs, init_guess, diff_init_guess, uid2idx_event_params, uid2idx_diff, uid2idx_vars):
 
                 # Logic for variables that are registered as event parameters
                 if var in mdl.event_dict:
+                    var_runtime_idx: int | None = uid2idx_event_params.get(var.uid, None)
                     if isinstance(eq, Const) and eq.value is not None:
-                        event_params_array[uid2idx_event_params[var.uid]] = float(eq.value)
+                        if var_runtime_idx is None:
+                            pass
+                        else:
+                            event_params_array[var_runtime_idx] = float(eq.value)
                     else:
                         bindings: Dict[int, float] = build_uid_bindings(
                             eq, event_params_array, x, params_array, dx,
                             uid2idx_event_params, uid2idx_vars, uid2idx_params, uid2idx_diff
                         )
                         res: float = eq.eval_uid(bindings)
-                        mdl.event_dict[var] = Const(res)
-                        event_params_array[uid2idx_event_params[var.uid]] = res
+                        if var_runtime_idx is None:
+                            pass
+                        else:
+                            event_parameters_eqs[var_runtime_idx] = Const(res)
+                            event_params_array[var_runtime_idx] = res
                         if verbose:
                             print(f"event_param:{var.name} initialized from init_eqs with: {res}")
                         else:
                             pass
-
-
-
-                        param_idx: int = variable_parameters.index(var)
-                        event_parameters_eqs[param_idx].value = float(res)
-                        event_params_array[param_idx] = float(res)
 
                 # Logic for standard algebraic variables
                 else:
@@ -1226,7 +1527,7 @@ def init_explicit_emt(
         for uid in list(diff_pending.keys()):
             d_var, eq = diff_pending[uid]
             # Use separate check for diff equations to ensure variables are ready
-            if can_compute_init(d_var, eq, mdl, init_guess, diff_init_guess, uid2idx_diff, uid2idx_vars):
+            if can_compute_init(d_var, eq, mdl, event_parameters_eqs, init_guess, diff_init_guess, uid2idx_event_params, uid2idx_diff, uid2idx_vars):
                 vars_in_eqs = get_expression_vars(eq)
 
                 if d_var not in vars_in_eqs:
@@ -1674,7 +1975,7 @@ class EmtPseudoTransientProblemAdapter(RmsProblemTemplate):
             idx += 1
         return state_vars_list
 
-    def update_variable_params(self, t: float, x_snapshot: np.ndarray | None = None) -> None:
+    def update_variable_params(self, t: float, x_snapshot: Optional[np.ndarray] = None) -> None:
         """
         Keep the EMT runtime-parameter snapshot aligned with the RMS solver API.
 
@@ -1683,11 +1984,11 @@ class EmtPseudoTransientProblemAdapter(RmsProblemTemplate):
         beginning of the loop, so the adapter accepts the call and intentionally
         preserves the already prepared parameter arrays.
 
-        :param t: Pseudo-time value requested by the solver.
+        :param t: Pseudo-time value requested by the solver
         :type t: float
-        :param x_snapshot: Optional reduced state snapshot.
+        :param x_snapshot: Optional reduced state snapshot
         :type x_snapshot: np.ndarray | None
-        :return: None.
+        :return: None
         :rtype: None
         """
         if x_snapshot is None:
@@ -2434,10 +2735,10 @@ def _apply_solution_to_problem(problem: EmtProblemTemplate, x: np.ndarray) -> No
 
 def _compute_missing_dx0(problem: EmtProblemTemplate,
                          report: EmtInitializationReport,
-                         x_full: np.ndarray | None = None,
-                         dx_full: np.ndarray | None = None,
-                         runtime_params: np.ndarray | None = None,
-                         constant_params: np.ndarray | None = None,
+                         x_full: Optional[np.ndarray] = None,
+                         dx_full: Optional[np.ndarray] = None,
+                         runtime_params: Optional[np.ndarray] = None,
+                         constant_params: Optional[np.ndarray] = None,
                          include_existing: bool = False) -> None:
     """
     Compute missing differential initial values from the state equations.
@@ -2616,7 +2917,9 @@ def run_emt_native_initialization(problem: EmtProblemTemplate, options: EmtOptio
                     report.reduced_system_build_s += 0.0
                 else:
                     if "init_guess_by_name" in cached_payload and "diff_init_guess_by_name" in cached_payload and _persistent_initialization_params_match(cached_payload, runtime_params, constant_params):
-                        problem.init_guess = _restore_problem_guess_map(problem, dict(cached_payload["init_guess_by_name"]), False)
+                        init_guess_payload: Dict[str, float] = cast(Dict[str, float], cached_payload["init_guess_by_name"])
+                        report_payload: Dict[str, object] = cast(Dict[str, object], cached_payload["report"])
+                        problem.init_guess = _restore_problem_guess_map(problem, dict(init_guess_payload), False)
                         problem.diff_init_guess = dict()
                         _compute_missing_dx0(
                             problem,
@@ -2625,7 +2928,7 @@ def run_emt_native_initialization(problem: EmtProblemTemplate, options: EmtOptio
                             constant_params=constant_params,
                             include_existing=True,
                         )
-                        _restore_initialization_report_from_payload(report, dict(cached_payload["report"]))
+                        _restore_initialization_report_from_payload(report, dict(report_payload))
                         report.persistent_cache_hit = True
                         report.persistent_cache_load_s = float(report.persistent_cache_load_s)
                         report.elapsed_s = float(time.perf_counter() - start_time)

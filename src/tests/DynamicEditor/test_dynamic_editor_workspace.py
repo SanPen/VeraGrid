@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import gc
 import sys
 
 from PySide6 import QtCore, QtGui, QtWidgets
+import shiboken6
 
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_window import DynamicEditorWorkspaceWindow
 from VeraGrid.Session.dynamic_editor_entries import build_dynamic_editor_entry
@@ -216,5 +218,56 @@ def test_workspace_opens_rms_editor_for_dc_bus_load() -> None:
 
     assert rms_page is not None
     assert workspace.get_current_block_editor() is not None
+
+    _reset_dynamic_editor_workspaces()
+
+
+def test_repeated_workspace_teardown_destroys_dynamic_editor_qt_objects() -> None:
+    """
+    Destroy every editor-owned Qt object across repeated open/close cycles.
+
+    :return: None.
+    """
+    app: QtWidgets.QApplication = _get_app()
+    _reset_dynamic_editor_workspaces()
+    iteration: int
+    for iteration in range(8):
+        circuit, load, _entry = _build_load_entry()
+        session = DynamicEditorWorkspaceSession()
+        workspace = DynamicEditorWorkspaceWindow(session=session)
+        page = workspace.open_dynamic_editor_for(
+            load,
+            circuit,
+            preferred_mode=DynamicSimulationMode.EMT,
+            target_workspace=workspace,
+        )
+        assert page is not None
+        editor = page.editor
+        assert editor is not None
+        scene = editor.scene
+        view = editor.view
+        assert scene is not None
+        assert view is not None
+
+        workspace.close_tab_at(workspace.index_of_page(page))
+
+        assert editor.scene is None
+        assert editor.view is None
+        assert scene.editor is None
+        assert len(scene.items()) == 0
+        assert page.editor is None
+        assert len(session._session_pages) == 0
+
+        QtCore.QCoreApplication.sendPostedEvents(
+            None,
+            QtCore.QEvent.Type.DeferredDelete,
+        )
+        app.processEvents()
+        gc.collect()
+
+        assert not shiboken6.isValid(scene)
+        assert not shiboken6.isValid(view)
+        assert not shiboken6.isValid(editor)
+        assert not shiboken6.isValid(page)
 
     _reset_dynamic_editor_workspaces()

@@ -5,13 +5,14 @@
 
 from abc import ABC
 import numpy as np
-from typing import Any, Dict, List, Optional, Protocol
+from typing import Any, Dict, List, Optional, Protocol, Tuple
 
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var, hard_sat, heaviside, piecewise
+from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var, hard_sat, heaviside, piecewise, get_expression_vars
 from VeraGridEngine.basic_structures import Vec
 from VeraGridEngine.Simulations.driver_template import DummySignal
 from VeraGridEngine.Devices.Events.emt_events_group import EmtEventsGroup
+from VeraGridEngine.Devices import MultiCircuit
 from VeraGridEngine.enumerations import DynamicEventTransitionType, VarPowerFlowReferenceType
 
 
@@ -38,6 +39,217 @@ def _get_external_mapping(mdl: Block) -> Optional[Dict[Any, Var]]:
         return None
     else:
         return external_mapping
+
+
+def _register_referenced_static_parameter_vars(state_eqs: List[Any],
+                                               algebraic_eqs: List[Any],
+                                               diff_init_eqs: Dict[Var, Any],
+                                               init_eqs: Dict[Var, Any],
+                                               static_parameter_values: Dict[Var, Const],
+                                               known_state_vars: List[Var],
+                                               known_algebraic_vars: List[Var],
+                                               known_diff_vars: List[Var],
+                                               runtime_parameter_vars: List[Var]) -> None:
+    """
+    Register referenced static parameter vars that are not explicit block members.
+
+    Some EMT templates keep static quantities such as ``omega_base`` outside the
+    block ``parameters`` dictionary while still referencing them from state or
+    initialization equations. The EMT compiler-name tables are built only from the
+    collected states, algebraics, runtime parameters, diff vars, and static
+    parameters. This helper therefore scans the device equations and promotes any
+    already-known static parameter var into ``static_parameter_values`` when it is
+    referenced symbolically but absent from the explicit block collections.
+
+    :param state_eqs: State equations collected from the system block tree.
+    :type state_eqs: List[Any]
+    :param algebraic_eqs: Algebraic equations collected from the system block tree.
+    :type algebraic_eqs: List[Any]
+    :param diff_init_eqs: Differential initialization equations.
+    :type diff_init_eqs: Dict[Var, Any]
+    :param init_eqs: Initialization equations.
+    :type init_eqs: Dict[Var, Any]
+    :param static_parameter_values: Static parameter mapping being assembled.
+    :type static_parameter_values: Dict[Var, Const]
+    :param known_state_vars: Collected state variables.
+    :type known_state_vars: List[Var]
+    :param known_algebraic_vars: Collected algebraic variables.
+    :type known_algebraic_vars: List[Var]
+    :param known_diff_vars: Collected differential variables.
+    :type known_diff_vars: List[Var]
+    :param runtime_parameter_vars: Collected runtime parameter variables.
+    :type runtime_parameter_vars: List[Var]
+    :return: None.
+    :rtype: None
+    """
+    known_uids: set[int] = set()
+    static_parameter_value_by_uid: Dict[int, Const] = dict()
+    expression_collections: List[List[Any]] = list()
+    expression_list: List[Any] = list()
+    expression_item: Any
+    referenced_var: Var
+
+    for referenced_var in known_state_vars:
+        known_uids.add(referenced_var.uid)
+
+    for referenced_var in known_algebraic_vars:
+        known_uids.add(referenced_var.uid)
+
+    for referenced_var in known_diff_vars:
+        known_uids.add(referenced_var.uid)
+
+    for referenced_var in runtime_parameter_vars:
+        known_uids.add(referenced_var.uid)
+
+    for referenced_var in static_parameter_values.keys():
+        known_uids.add(referenced_var.uid)
+        static_parameter_value_by_uid[referenced_var.uid] = static_parameter_values[referenced_var]
+
+    expression_collections.append(state_eqs)
+    expression_collections.append(algebraic_eqs)
+    expression_collections.append(list(diff_init_eqs.values()))
+    expression_collections.append(list(init_eqs.values()))
+
+    for expression_list in expression_collections:
+        for expression_item in expression_list:
+            for referenced_var in get_expression_vars(expression_item):
+                if referenced_var.uid in known_uids:
+                    if referenced_var in static_parameter_values:
+                        pass
+                    else:
+                        static_parameter_value: Const | None = static_parameter_value_by_uid.get(referenced_var.uid, None)
+                        if static_parameter_value is None:
+                            pass
+                        else:
+                            static_parameter_values[referenced_var] = static_parameter_value
+                else:
+                    static_parameter_value = static_parameter_value_by_uid.get(referenced_var.uid, None)
+                    if static_parameter_value is None:
+                        pass
+                    else:
+                        static_parameter_values[referenced_var] = static_parameter_value
+                        known_uids.add(referenced_var.uid)
+
+
+def _register_equation_variable_aliases(state_eqs: List[Any],
+                                        algebraic_eqs: List[Any],
+                                        diff_init_eqs: Dict[Var, Any],
+                                        init_eqs: Dict[Var, Any],
+                                        compiler_names_dict: Dict[int, str],
+                                        alias_names_dict: Dict[int, str]) -> None:
+    """
+    Register compiler-name aliases for vars referenced only through cloned expressions.
+
+    Saved editor models can preserve symbolic expressions that reference one ``Var``
+    instance while the canonical problem collections store another instance with the
+    same stable ``uid``. The EMT compilers index by ``uid``, so this helper scans
+    the final equations and ensures every referenced uid has one compiler-name entry
+    before any expression-to-numba conversion happens.
+
+    :param state_eqs: State equations collected from the system block tree.
+    :type state_eqs: List[Any]
+    :param algebraic_eqs: Algebraic equations collected from the system block tree.
+    :type algebraic_eqs: List[Any]
+    :param diff_init_eqs: Differential initialization equations.
+    :type diff_init_eqs: Dict[Var, Any]
+    :param init_eqs: Initialization equations.
+    :type init_eqs: Dict[Var, Any]
+    :param compiler_names_dict: Problem compiler-name mapping keyed by uid.
+    :type compiler_names_dict: Dict[int, str]
+    :param alias_names_dict: Problem alias mapping keyed by uid.
+    :type alias_names_dict: Dict[int, str]
+    :return: None.
+    :rtype: None
+    """
+    expression_groups: List[List[Any]] = list()
+    expression_group: List[Any]
+    expression_item: Any
+    referenced_var: Var
+
+    expression_groups.append(state_eqs)
+    expression_groups.append(algebraic_eqs)
+    expression_groups.append(list(diff_init_eqs.values()))
+    expression_groups.append(list(init_eqs.values()))
+
+    for expression_group in expression_groups:
+        for expression_item in expression_group:
+            for referenced_var in get_expression_vars(expression_item):
+                if referenced_var.uid in compiler_names_dict:
+                    pass
+                else:
+                    compiler_names_dict[referenced_var.uid] = referenced_var.name
+                    alias_names_dict[referenced_var.uid] = referenced_var.name
+
+
+def _collect_block_tree_sequence(root_block: Block) -> List[Block]:
+    """
+    Return the symbolic block tree in root-first traversal order.
+
+    :param root_block: Root symbolic block.
+    :return: Ordered block list including the root and every descendant.
+    """
+    ordered_blocks: List[Block] = list()
+    pending_blocks: List[Block] = list([root_block])
+    pending_index: int = 0
+    current_block: Block
+    child_block: Block
+
+    while pending_index < len(pending_blocks):
+        current_block = pending_blocks[pending_index]
+        pending_index += 1
+        ordered_blocks.append(current_block)
+
+        for child_block in current_block.children:
+            pending_blocks.append(child_block)
+
+    return ordered_blocks
+
+
+def _collect_hierarchical_init_equations(root_block: Block) -> tuple[Dict[Var, Any], Dict[Var, Any]]:
+    """
+    Collect initialization equations from the full block hierarchy.
+
+    :param root_block: Root symbolic block.
+    :return: Tuple ``(init_eqs, diff_init_eqs)`` merged from the hierarchy.
+    """
+    block_sequence: List[Block] = _collect_block_tree_sequence(root_block)
+    init_eqs: Dict[Var, Any] = dict()
+    diff_init_eqs: Dict[Var, Any] = dict()
+    block_item: Block
+    init_var: Var
+    init_expr: Any
+
+    for block_item in block_sequence:
+        for init_var, init_expr in block_item.init_eqs.items():
+            init_eqs[init_var] = init_expr
+
+        for init_var, init_expr in block_item.diff_init_eqs.items():
+            diff_init_eqs[init_var] = init_expr
+
+    return init_eqs, diff_init_eqs
+
+
+def _collect_hierarchical_runtime_equations(root_block: Block) -> Dict[int, Any]:
+    """
+    Collect runtime event and mode equations from the full block hierarchy.
+
+    :param root_block: Root symbolic block.
+    :return: Runtime equation lookup keyed by variable uid.
+    """
+    block_sequence: List[Block] = _collect_block_tree_sequence(root_block)
+    runtime_equation_lookup: Dict[int, Any] = dict()
+    block_item: Block
+    runtime_var: Var
+    runtime_expr: Any
+
+    for block_item in block_sequence:
+        for runtime_var, runtime_expr in block_item.event_dict.items():
+            runtime_equation_lookup[runtime_var.uid] = runtime_expr
+
+        for runtime_var, runtime_expr in block_item.mode_dict.items():
+            runtime_equation_lookup[runtime_var.uid] = runtime_expr
+
+    return runtime_equation_lookup
 
 
 class EmtBoundaryUpdateProtocol(Protocol):
@@ -217,6 +429,9 @@ class EmtProblemTemplate(ABC):
                  sys_block: Block,
                  static_parameter_values_mapping: Dict[Var, Const],
                  glob_time: Var,
+                 init_eqs_flat: Dict[Var, Any] | None = None,
+                 diff_init_eqs_flat: Dict[Var, Any] | None = None,
+                 vars_glob_name2uid: Dict[str, int] | None = None,
                  progress_signal: DummySignal | None = None,
                  progress_text: DummySignal | None = None,
                  )->None:
@@ -225,38 +440,100 @@ class EmtProblemTemplate(ABC):
 
         :param sys_block: Root symbolic block that defines the EMT problem.
         :param glob_time: Global time variable used by runtime expressions.
+        :param init_eqs_flat: Optional pre-collected initialization equations.
+        :param diff_init_eqs_flat: Optional pre-collected differential initialization equations.
+        :param vars_glob_name2uid: Optional pre-collected variable-name lookup.
         :return: None
         """
         super().__init__()
         self.sys_block: Block = sys_block
+        existing_grid: MultiCircuit | None
+        try:
+            existing_grid = self.grid
+        except AttributeError:
+            existing_grid = None
+        self.grid: MultiCircuit | None = existing_grid
         self._glob_time: Var = glob_time
         self._newton_trace_collector: Optional[Any] = None
+        self._init_eqs_flat: Dict[Var, Any] = dict()
+        self._diff_init_eqs_flat: Dict[Var, Any] = dict()
 
-        self._state_vars: List[Var] = self.sys_block.state_vars
-        self._algebraic_vars: List[Var] = self.sys_block.algebraic_vars
-        self._state_eqs: List[Any] = self.sys_block.state_eqs
-        self._algebraic_eqs: List[Any] = self.sys_block.algebraic_eqs
-        self._diff_vars: List[Var] = self.sys_block.diff_vars
+        block_sequence: List[Block] = _collect_block_tree_sequence(self.sys_block)
+        hierarchical_init_eqs: Dict[Var, Any]
+        hierarchical_diff_init_eqs: Dict[Var, Any]
+        block_item: Block
+        runtime_var: Var
+        runtime_expr: Any
+        const_var: Var
+        const_expr: Const
 
-        self._static_parameter_values: Dict[Var, Const] = static_parameter_values_mapping
-        self._constant_parameters: List[Var] = list(self._static_parameter_values.keys())
-        self._parameters_values: List[Const] = list(self._static_parameter_values.values())
+        if init_eqs_flat is None or diff_init_eqs_flat is None:
+            hierarchical_init_eqs, hierarchical_diff_init_eqs = _collect_hierarchical_init_equations(self.sys_block)
+            self._init_eqs_flat = hierarchical_init_eqs
+            self._diff_init_eqs_flat = hierarchical_diff_init_eqs
+        else:
+            self._init_eqs_flat = dict(init_eqs_flat)
+            self._diff_init_eqs_flat = dict(diff_init_eqs_flat)
 
-        self._variable_parameters: List[Var] = list()
-        self._event_parameters_eqs: List[Any] = list()
+        self._state_vars: List[Var] = list()
+        self._algebraic_vars: List[Var] = list()
+        self._state_eqs: List[Any] = list()
+        self._algebraic_eqs: List[Any] = list()
+        self._diff_vars: List[Var] = list()
 
+        self._static_parameter_values: Dict[Var, Const] = dict()
+        static_parameter_values_by_uid: Dict[int, Const] = dict()
         self._variable_parameters: List[Var] = list()
         self._event_parameters_eqs: List[Any] = list()
         self._runtime_mode_uids: set[int] = set()
 
-        if self.sys_block.event_dict:
-            self._variable_parameters.extend(list(self.sys_block.event_dict.keys()))
-            self._event_parameters_eqs.extend(list(self.sys_block.event_dict.values()))
+        for const_var, const_expr in static_parameter_values_mapping.items():
+            self._static_parameter_values[const_var] = const_expr
+            static_parameter_values_by_uid[const_var.uid] = const_expr
 
-        self._variable_parameters.extend(list(self.sys_block.mode_dict.keys()))
-        self._event_parameters_eqs.extend(list(self.sys_block.mode_dict.values()))
-        for v in self.sys_block.mode_dict.keys():
-            self._runtime_mode_uids.add(v.uid)
+        for block_item in block_sequence:
+            self._state_vars.extend(block_item.state_vars)
+            self._algebraic_vars.extend(block_item.algebraic_vars)
+            self._state_eqs.extend(block_item.state_eqs)
+            self._algebraic_eqs.extend(block_item.algebraic_eqs)
+            self._diff_vars.extend(block_item.diff_vars)
+
+            for const_var, const_expr in block_item.parameters.items():
+                if const_var.uid in static_parameter_values_by_uid:
+                    canonical_const_expr: Const = static_parameter_values_by_uid[const_var.uid]
+                    self._static_parameter_values[const_var] = canonical_const_expr
+                else:
+                    self._static_parameter_values[const_var] = const_expr
+                    static_parameter_values_by_uid[const_var.uid] = const_expr
+
+            for runtime_var, runtime_expr in block_item.event_dict.items():
+                self._variable_parameters.append(runtime_var)
+                self._event_parameters_eqs.append(runtime_expr)
+
+            for runtime_var, runtime_expr in block_item.mode_dict.items():
+                self._variable_parameters.append(runtime_var)
+                self._event_parameters_eqs.append(runtime_expr)
+                self._runtime_mode_uids.add(runtime_var.uid)
+
+        # Some EMT templates expose static symbolic quantities through the shared
+        # API-object mapping but keep them outside ``block.parameters``. They can
+        # still appear inside the final state and initialization equations, so the
+        # problem must keep those vars in the constant-parameter set before it
+        # builds compiler-name tables.
+        _register_referenced_static_parameter_vars(
+            state_eqs=self._state_eqs,
+            algebraic_eqs=self._algebraic_eqs,
+            diff_init_eqs=self._diff_init_eqs_flat,
+            init_eqs=self._init_eqs_flat,
+            static_parameter_values=self._static_parameter_values,
+            known_state_vars=self._state_vars,
+            known_algebraic_vars=self._algebraic_vars,
+            known_diff_vars=self._diff_vars,
+            runtime_parameter_vars=self._variable_parameters,
+        )
+
+        self._constant_parameters: List[Var] = list(self._static_parameter_values.keys())
+        self._parameters_values: List[Const] = list(self._static_parameter_values.values())
 
         self._runtime_all_parameters_source: List[Var] = list(self._variable_parameters)
         self._runtime_all_eqs_source: List[Any] = list(self._event_parameters_eqs)
@@ -269,6 +546,11 @@ class EmtProblemTemplate(ABC):
 
         self._runtime_continuous_slice: slice = slice(0, 0)
         self._runtime_mode_slice: slice = slice(0, 0)
+
+        if vars_glob_name2uid is None:
+            self._vars_glob_name2uid: Dict[str, int] = dict()
+        else:
+            self._vars_glob_name2uid = dict(vars_glob_name2uid)
 
         self._rebuild_runtime_parameter_partition()
 
@@ -341,6 +623,23 @@ class EmtProblemTemplate(ABC):
         :return: None
         """
 
+        parameter_var: Var
+        parameter_value: Const
+
+        # The unified EMT builder may assemble wrapped models where the final
+        # flattened ``sys_block`` owns static parameter vars that were not present
+        # in the earlier pre-flattened mapping snapshot. Reconcile against the
+        # definitive unified parameter dictionary here so every referenced static
+        # var receives one constant-array slot before symbolic compilation.
+        for parameter_var, parameter_value in self.sys_block.parameters.items():
+            if parameter_var in self._static_parameter_values:
+                pass
+            else:
+                self._static_parameter_values[parameter_var] = parameter_value
+
+        self._constant_parameters = list(self._static_parameter_values.keys())
+        self._parameters_values = list(self._static_parameter_values.values())
+
         self._diff_vars = sorted(self._diff_vars, key=_get_diff_var_sort_key)
 
         self._n_state = len(self._state_vars)
@@ -359,21 +658,27 @@ class EmtProblemTemplate(ABC):
         self._uid2idx_diff: Dict[int, int] = dict()
         self._uid2idx_t: Dict[int, int] = dict()
 
-        self._vars_glob_name2uid: Dict[str, int] = dict()
+        self._vars_glob_name2uid = dict(self._vars_glob_name2uid)
 
         i: int = 0
         for v in self._state_vars:
             self._compiler_names_dict[v.uid] = f"{self.VARS_NAME}[{i}]"
             self._alias_names_dict[v.uid] = f"{self.VARS_NAME}_{i}"
             self._uid2idx_vars[v.uid] = i
-            self._vars_glob_name2uid[v.name] = v.uid
+            if v.name in self._vars_glob_name2uid:
+                pass
+            else:
+                self._vars_glob_name2uid[v.name] = v.uid
             i += 1
 
         for v in self._algebraic_vars:
             self._compiler_names_dict[v.uid] = f"{self.VARS_NAME}[{i}]"
             self._alias_names_dict[v.uid] = f"{self.VARS_NAME}_{i}"
             self._uid2idx_vars[v.uid] = i
-            self._vars_glob_name2uid[v.name] = v.uid
+            if v.name in self._vars_glob_name2uid:
+                pass
+            else:
+                self._vars_glob_name2uid[v.name] = v.uid
             i += 1
 
         for j, p in enumerate(self._constant_parameters):
@@ -390,7 +695,24 @@ class EmtProblemTemplate(ABC):
             self._compiler_names_dict[d.uid] = f"{self.DIFF_NAME}[{k}]"
             self._alias_names_dict[d.uid] = f"{self.DIFF_NAME}_{k}"
             self._uid2idx_diff[d.uid] = k
-            self._vars_glob_name2uid[d.name] = d.uid
+            if d.name in self._vars_glob_name2uid:
+                pass
+            else:
+                self._vars_glob_name2uid[d.name] = d.uid
+
+        # Saved editor models can keep equation trees that still reference cloned
+        # ``Var`` objects carrying the same uid as the canonical problem vars or
+        # static parameters. Populate any missing uid-based compiler aliases from
+        # the final equations so expression compilation stays robust after model
+        # round-trips through the editor.
+        _register_equation_variable_aliases(
+            state_eqs=self._state_eqs,
+            algebraic_eqs=self._algebraic_eqs,
+            diff_init_eqs=self._diff_init_eqs_flat,
+            init_eqs=self._init_eqs_flat,
+            compiler_names_dict=self._compiler_names_dict,
+            alias_names_dict=self._alias_names_dict,
+        )
 
         self._compiler_names_dict[self._glob_time.uid] = self.TIME_NAME
         self._uid2idx_t[self._glob_time.uid] = 0
@@ -410,7 +732,7 @@ class EmtProblemTemplate(ABC):
         self._event_params_values = np.zeros(n_runtime, dtype=np.float64)
 
         if n_runtime > 0:
-            self._event_params_values = self._initialize_runtime_parameter_values(0.0)
+            self._event_params_values = self._initialize_runtime_parameter_values(0.0, seed_values=self._event_params_values)
             self._event_params_values = self.def_event_params_fn(self._event_params_values, 0.0)
         else:
             pass
@@ -440,7 +762,10 @@ class EmtProblemTemplate(ABC):
 
         collect_events = {param.uid: list() for param in self._variable_parameters}
         uid_to_parameter = {param.uid: param for param in self._variable_parameters}
-        emt_events = self.grid.emt_events
+        if self.grid is None:
+            emt_events = list()
+        else:
+            emt_events = self.grid.emt_events
 
         if emt_events_group is None:
             selected_events = list()
@@ -521,7 +846,7 @@ class EmtProblemTemplate(ABC):
         :param t0: Initial simulation time.
         :return: None
         """
-        self._event_params_values = self._initialize_runtime_parameter_values(float(t0))
+        self._event_params_values = self._initialize_runtime_parameter_values(float(t0), seed_values=self._event_params_values)
         self._event_params_values = self.def_event_params_fn(self._event_params_values, float(t0))
 
     def get_compiler_names_dict(self) -> Dict[int, str]:
@@ -601,6 +926,29 @@ class EmtProblemTemplate(ABC):
         self._runtime_continuous_slice = slice(0, n_continuous)
         self._runtime_mode_slice = slice(n_continuous, n_continuous + n_mode)
 
+    def refresh_runtime_equations_from_hierarchy(self) -> None:
+        """
+        Refresh canonical runtime equations from the current block hierarchy.
+
+        :return: None
+        """
+        runtime_equation_lookup: Dict[int, Any] = _collect_hierarchical_runtime_equations(self.sys_block)
+        refreshed_equations: List[Any] = list()
+        runtime_parameter: Var
+
+        for runtime_parameter in self._runtime_all_parameters_source:
+            if runtime_parameter.uid in runtime_equation_lookup:
+                refreshed_equations.append(runtime_equation_lookup[runtime_parameter.uid])
+            else:
+                runtime_idx: int | None = self.uid2idx_event_params.get(runtime_parameter.uid, None) if hasattr(self, 'uid2idx_event_params') else None
+                if runtime_idx is None or runtime_idx >= len(self._event_parameters_eqs):
+                    refreshed_equations.append(Const(None))
+                else:
+                    refreshed_equations.append(self._event_parameters_eqs[runtime_idx])
+
+        self._runtime_all_eqs_source = refreshed_equations
+        self._rebuild_runtime_parameter_partition()
+
     def set_runtime_mode_parameters(self, mode_parameters: List[Var]) -> None:
         """
         Classify a subset of runtime parameters as retained discrete mode parameters.
@@ -631,7 +979,7 @@ class EmtProblemTemplate(ABC):
         self._finalize_order_and_maps()
         self._build_runtime_param_vectors()
 
-    def _initialize_runtime_parameter_values(self, tm: float) -> Vec:
+    def _initialize_runtime_parameter_values(self, tm: float, seed_values: Optional[Vec] = None) -> Vec:
         """
         Initialize the flat runtime parameter vector at a given time.
 
@@ -645,10 +993,19 @@ class EmtProblemTemplate(ABC):
         n_runtime: int = len(self._variable_parameters)
         out: Vec = np.zeros(n_runtime, dtype=np.float64)
 
+        if seed_values is None:
+            pass
+        else:
+            n_seed: int = min(len(seed_values), n_runtime)
+            out[:n_seed] = seed_values[:n_seed]
+
         i: int = 0
         while i < n_runtime:
             expression: Any = self._event_parameters_eqs[i]
-            out[i] = self._evaluate_runtime_expression(expression, out, tm)
+            if isinstance(expression, Const) and expression.value is None:
+                out[i] = float(out[i])
+            else:
+                out[i] = self._evaluate_runtime_expression(expression, out, tm)
             i += 1
 
         return out
@@ -879,7 +1236,11 @@ class EmtProblemTemplate(ABC):
         for uid, val in self.init_guess.items():
             idx = self._uid2idx_vars.get(uid, None)
             if idx is not None:
-                x[idx] = float(val)
+                value_float: float = float(val)
+                if np.isfinite(value_float):
+                    x[idx] = value_float
+                else:
+                    pass
             else:
                 pass
 
@@ -895,7 +1256,11 @@ class EmtProblemTemplate(ABC):
         for uid, val in self.diff_init_guess.items():
             idx = self._uid2idx_diff.get(uid, None)
             if idx is not None:
-                dx[idx] = float(val)
+                value_float: float = float(val)
+                if np.isfinite(value_float):
+                    dx[idx] = value_float
+                else:
+                    pass
             else:
                 pass
         return dx

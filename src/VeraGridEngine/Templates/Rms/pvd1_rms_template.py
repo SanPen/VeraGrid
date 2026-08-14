@@ -714,9 +714,19 @@ def get_pvd1_dc_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 DC-MPP
         VarPowerFlowReferenceType.P: p,
         VarPowerFlowReferenceType.Q: q,
     }
-    block.out_vars = [p, q, ipout, iqout, pavail, pmppt, p_sum, q_sum, f_trip, v_trip]
+    block.out_vars = [p, q]
 
-    templ.block = block
+    templ.block.children.append(block)
+    templ.block.external_mapping = {
+        VarPowerFlowReferenceType.Vm: vm,
+        VarPowerFlowReferenceType.Va: va,
+        VarPowerFlowReferenceType.P: p,
+        VarPowerFlowReferenceType.Q: q,
+    }
+    templ.block.api_obj_mapping = {}
+    templ.block.in_vars = inputs
+    templ.block.out_vars = [p, q]
+
     return templ
 
 

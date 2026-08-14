@@ -60,7 +60,7 @@ class FakeSelectionGui:
         self.investment_checks_diag: object | None = None
         self.sc_selector_dialogue: object | None = None
         self.check_list_dialogue_cls = diagrams_module.CheckListDialogue
-        self.dynamic_event_dialogue_cls = diagrams_module.DynamicEventDialogue
+        self.dynamic_event_dialogue_cls = diagrams_module.DynamicEventEditor
         self.short_circuit_selector_cls = diagrams_module.ShortCircuitSelector
 
     def get_selected_devices(self) -> List[object]:
@@ -562,7 +562,7 @@ def test_add_rms_event_to_selected_creates_event_from_dialogue(qt_app: object) -
     gui: FakeSelectionGui = FakeSelectionGui(circuit=grid,
                                              selected_devices=selected_devices,
                                              selected_buses=selected_buses)
-    diagrams_module.DynamicEventDialogue = AcceptedDynamicEventDialogue
+    diagrams_module.DynamicEventEditor = AcceptedDynamicEventDialogue
 
     diagrams_module.DiagramsMain.add_rms_event_to_selected(gui)
 
@@ -597,7 +597,7 @@ def test_add_emt_event_to_selected_creates_event_from_dialogue(qt_app: object) -
     gui: FakeSelectionGui = FakeSelectionGui(circuit=grid,
                                              selected_devices=selected_devices,
                                              selected_buses=selected_buses)
-    diagrams_module.DynamicEventDialogue = AcceptedDynamicEventDialogue
+    diagrams_module.DynamicEventEditor = AcceptedDynamicEventDialogue
 
     diagrams_module.DiagramsMain.add_emt_event_to_selected(gui)
 

@@ -7,7 +7,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Iterable, cast
 
-from . import compat
+from VeraGridEngine.IO.fmu.exporter_me import compat
 
 
 @dataclass(frozen=True, slots=True)

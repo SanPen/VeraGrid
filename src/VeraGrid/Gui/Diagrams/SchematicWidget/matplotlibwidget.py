@@ -3,10 +3,14 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
+import os
+
 from PySide6 import QtWidgets
 import matplotlib
 
-matplotlib.use('Qt5Agg')
+if os.environ.get("QT_QPA_PLATFORM", "") != "offscreen":
+    matplotlib.use('Qt5Agg')
+
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as Navigationtoolbar
 from matplotlib.figure import Figure

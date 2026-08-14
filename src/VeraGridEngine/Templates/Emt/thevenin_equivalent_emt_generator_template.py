@@ -13,6 +13,21 @@ from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType, DeviceType, ParamPowerFlowReferenceType
 from VeraGridEngine.Templates.Emt.generator_emt_type_template import get_pf_positive_sequence_init_refs
 
+
+def get_thevenin_internal_shared_references() -> tuple[str, str, str, str]:
+    """
+    Return the stable shared-reference contract of the Thevenin seed variables.
+
+    :return: Shared references for ``theta``, ``e_A``, ``e_B`` and ``e_C``.
+    :rtype: tuple[str, str, str, str]
+    """
+    return (
+        "thevenin_theta_internal",
+        "thevenin_e_a_internal",
+        "thevenin_e_b_internal",
+        "thevenin_e_c_internal",
+    )
+
 def get_generator_thevenin_rl_emt_template_with_ref(
         vf: VarFactory,
         name: str = "emt_thevenin_eq_generator_template",
@@ -79,7 +94,11 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     templ: EmtModelTemplate = EmtModelTemplate()
     templ.tpe = DeviceType.GeneratorDevice
     templ.name = name
-    templ.block.name = name
+    theta_internal_reference: str
+    e_a_internal_reference: str
+    e_b_internal_reference: str
+    e_c_internal_reference: str
+    theta_internal_reference, e_a_internal_reference, e_b_internal_reference, e_c_internal_reference = get_thevenin_internal_shared_references()
 
     # ------------------------------------------------------------------
     # Constants used in symbolic expressions.
@@ -105,7 +124,7 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     i_B = vf.add_var(name=f"i_B", reference=VarPowerFlowReferenceType.i_B)
     i_C = vf.add_var(name=f"i_C", reference=VarPowerFlowReferenceType.i_C)
 
-    theta = vf.add_var(name=f"theta")
+    theta = vf.add_var(name=f"theta", shared_reference=theta_internal_reference)
     # parameter to create a phase jump
     theta_deviation_param = vf.add_var(name=f"theta_deviation_param")
     # parameter to create RoCoF
@@ -121,9 +140,9 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     # - internal phase emfs
     # - measured active/reactive power
     # ------------------------------------------------------------------
-    e_A = vf.add_var(name=f"e_A")
-    e_B = vf.add_var(name=f"e_B")
-    e_C = vf.add_var(name=f"e_C")
+    e_A = vf.add_var(name=f"e_A", shared_reference=e_a_internal_reference)
+    e_B = vf.add_var(name=f"e_B", shared_reference=e_b_internal_reference)
+    e_C = vf.add_var(name=f"e_C", shared_reference=e_c_internal_reference)
     Pe = vf.add_var(name=f"Pe")
     Qe = vf.add_var(name=f"Qe")
 
@@ -198,7 +217,7 @@ def get_generator_thevenin_rl_emt_template_with_ref(
 
     algebraic_vars: List[Any] = list([e_A, e_B, e_C, Pe, Qe])
 
-    templ.block = Block(
+    block = Block(
         state_eqs=state_eqs,
         state_vars=state_vars,
         algebraic_eqs=algebraic_eqs,
@@ -207,7 +226,7 @@ def get_generator_thevenin_rl_emt_template_with_ref(
         out_vars=list([i_A, i_B, i_C]),
     )
 
-    templ.block.diff_vars = list([
+    block.diff_vars = list([
         d_i_A,
         d_i_B,
         d_i_C,
@@ -218,7 +237,7 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     # External mapping:
     # keep the original EMT injection interface intact.
     # ------------------------------------------------------------------
-    templ.block.external_mapping = dict({
+    block.external_mapping = dict({
         VarPowerFlowReferenceType.v_A: v_A,
         VarPowerFlowReferenceType.v_B: v_B,
         VarPowerFlowReferenceType.v_C: v_C,
@@ -245,7 +264,7 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     # static generator parameters plus optional sharing references assigned
     # by EmtProblemDae.
     # ------------------------------------------------------------------
-    templ.block.api_obj_mapping = dict({
+    block.api_obj_mapping = dict({
         ParamPowerFlowReferenceType.omega_base: omega_base,
         ParamPowerFlowReferenceType.R1: R_s,
         ParamPowerFlowReferenceType.X1: X_s,
@@ -261,7 +280,7 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     # The gains are intentionally conservative compared with the version
     # that acted directly on dtheta/dt.
     # ------------------------------------------------------------------
-    templ.block.event_dict = dict({
+    block.event_dict = dict({
         phi_v: vf.add_const(None),
         phi: vf.add_const(None),
         Vpk: vf.add_const(None),
@@ -278,7 +297,7 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     # the sharing controller starts exactly from the PF-consistent open-loop
     # operating point, so it does not create a jump at t = 0.
     # ------------------------------------------------------------------
-    templ.block.init_eqs = dict({
+    block.init_eqs = dict({
         theta: phi_v + delta_expr,
         e_A: E_scale * Epk_expr * sym.sin(theta + theta_deviation_param),
         e_B: E_scale * Epk_expr * sym.sin(theta - 2.0 * np.pi / 3.0 + theta_deviation_param),
@@ -295,11 +314,18 @@ def get_generator_thevenin_rl_emt_template_with_ref(
     # Differential initialization equations:
     # these keep the standard EMT explicit-init semantics.
     # ------------------------------------------------------------------
-    templ.block.diff_init_eqs = dict({
+    block.diff_init_eqs = dict({
         d_i_A: omega_base * (e_A - R_s * i_A - v_A) / X_s,
         d_i_B: omega_base * (e_B - R_s * i_B - v_B) / X_s,
         d_i_C: omega_base * (e_C - R_s * i_C - v_C) / X_s,
         d_theta: theta_speed * w_scale,
     })
+
+    templ.block.children.append(block)
+    templ.block.external_mapping = block.external_mapping
+    templ.block.api_obj_mapping = block.api_obj_mapping
+    templ.block.parameters = block.parameters
+    templ.block.in_vars = inputs
+    templ.block.out_vars = block.out_vars
 
     return templ

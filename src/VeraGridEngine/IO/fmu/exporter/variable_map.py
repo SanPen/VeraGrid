@@ -6,9 +6,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .config import ExportConfig
-from .diff_to_c import render_discrete_derivative
-from .export_ir import ExportModel, StorageSegment, VariableCategory
+from VeraGridEngine.IO.fmu.exporter.config import ExportConfig
+from VeraGridEngine.IO.fmu.exporter.diff_to_c import render_discrete_derivative
+from VeraGridEngine.IO.fmu.exporter.export_ir import ExportModel, StorageSegment, VariableCategory
 
 
 @dataclass(frozen=True, slots=True)

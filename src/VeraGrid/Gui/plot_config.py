@@ -3,9 +3,16 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
+import os
+
 import PySide6  # this line is necessary so that Matplotlib recognises that PySide is the Qt Backend
 import matplotlib
-matplotlib.use('QtAgg')
+
+if os.environ.get("QT_QPA_PLATFORM", "") == "offscreen":
+    matplotlib.use("Agg")
+else:
+    matplotlib.use("QtAgg")
+
 from matplotlib import pyplot as plt  # leave here
 
 

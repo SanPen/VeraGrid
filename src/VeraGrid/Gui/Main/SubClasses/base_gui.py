@@ -29,9 +29,7 @@ from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
 
-from VeraGridEngine.Compilers.circuit_to_bentayga import BENTAYGA_AVAILABLE
-from VeraGridEngine.Compilers.circuit_to_newton_pa import NEWTON_PA_AVAILABLE
-from VeraGridEngine.Compilers.circuit_to_gslv import GSLV_AVAILABLE
+from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE
 from VeraGridEngine.Compilers.circuit_to_pgm import PGM_AVAILABLE
 from VeraGridEngine.Simulations.Clustering.clustering_results import ClusteringResults
 
@@ -339,10 +337,7 @@ class BaseMainGui(QMainWindow):
         engine_lst = [EngineType.VeraGrid]
         if GSLV_AVAILABLE:
             engine_lst.append(EngineType.GSLV)
-        if NEWTON_PA_AVAILABLE:
-            engine_lst.append(EngineType.NewtonPA)
-        if BENTAYGA_AVAILABLE:
-            engine_lst.append(EngineType.Bentayga)
+
         if PGM_AVAILABLE:
             engine_lst.append(EngineType.PGM)
 

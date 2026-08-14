@@ -1,6 +1,6 @@
 # VeraGridEngine Module: src/VeraGridEngine/Utils/ThirdParty/gslv/gslv_activation.py
 
-- Original source path: `src/VeraGridEngine/Utils/ThirdParty/gslv/gslv_activation.py`
+- Original source path: `../../../../VeraGridEngine/Compilers/Gslv/gslv_activation.py`
 - Knowledge kind: generated VeraGridEngine code summary
 
 ## Module Summary

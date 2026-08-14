@@ -19,11 +19,11 @@ from VeraGridEngine.IO.fmu.exporter.build import (
     _toolchain_env,
 )
 
-from .config import ExportConfig, TargetPlatform
-from .expr_to_c import ExprToCVisitor
-from .export_ir import EquationGroup, ExportModel, StorageSegment, VariableCategory
-from .procedural_to_c import render_procedural_c
-from .variable_map import CVariableResolver
+from VeraGridEngine.IO.fmu.exporter_me.config import ExportConfig, TargetPlatform
+from VeraGridEngine.IO.fmu.exporter_me.expr_to_c import ExprToCVisitor
+from VeraGridEngine.IO.fmu.exporter_me.export_ir import EquationGroup, ExportModel, StorageSegment, VariableCategory
+from VeraGridEngine.IO.fmu.exporter_me.procedural_to_c import render_procedural_c
+from VeraGridEngine.IO.fmu.exporter_me.variable_map import CVariableResolver
 
 
 def _base_template_root() -> Path:

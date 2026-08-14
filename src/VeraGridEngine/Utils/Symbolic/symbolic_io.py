@@ -7,6 +7,7 @@ from __future__ import annotations
 import copy
 from typing import Dict, Any, List
 
+from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory, Connection
 from VeraGridEngine.Utils.Symbolic import SharedVarReferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Expr, Const, BinOp, UnOp, Func, Func2
@@ -566,6 +567,13 @@ class BlockSaver:
 
             "state_eqs": state_expressions,
 
+            "inequalities": expr_list_to_list(
+                lst=blk.inequalities,
+                const_dict=self.var_factory.get_const_dict(),
+                var_dict=self.var_factory.get_vars_dict(),
+                diff_var_dict=self.var_factory.get_diff_var_dict()
+            ),
+
             "algebraic_vars": [v.uid for v in blk.algebraic_vars],
 
             "algebraic_eqs": algebraic_expressions,
@@ -579,6 +587,47 @@ class BlockSaver:
             "init_eqs": init_eq_list,
 
             "diff_init_eqs": diff_init_eq_list,
+
+            "discrete_eqs": [
+                {
+                    "var": var.uid,
+                    "expr": expr_to_dict(
+                        expr=expr,
+                        const_dict=self.var_factory.get_const_dict(),
+                        var_dict=self.var_factory.get_vars_dict(),
+                        diff_var_dict=self.var_factory.get_diff_var_dict()
+                    )
+                }
+                for var, expr in blk.discrete_eqs.items()
+            ],
+
+            "mode_dict": [
+                {
+                    "var": var.uid,
+                    "expr": expr_to_dict(
+                        expr=expr,
+                        const_dict=self.var_factory.get_const_dict(),
+                        var_dict=self.var_factory.get_vars_dict(),
+                        diff_var_dict=self.var_factory.get_diff_var_dict()
+                    )
+                }
+                for var, expr in blk.mode_dict.items()
+            ],
+
+            "boolean_guards": [
+                {
+                    "var": var.uid,
+                    "expr": expr_to_dict(
+                        expr=expr,
+                        const_dict=self.var_factory.get_const_dict(),
+                        var_dict=self.var_factory.get_vars_dict(),
+                        diff_var_dict=self.var_factory.get_diff_var_dict()
+                    )
+                }
+                for var, expr in blk.boolean_guards.items()
+            ],
+
+            "procedural_logic": list(blk.procedural_logic),
 
             "init_values": init_values,
 
@@ -610,11 +659,102 @@ class BlockParser:
     __slots__ = (
         "var_factory",
         "block_dict",
+        "logger",
     )
 
-    def __init__(self, var_factory: VarFactory):
+    def __init__(self, var_factory: VarFactory, logger: Logger | None = None):
         self.var_factory = var_factory
         self.block_dict: Dict[int, Block] = dict()
+        self.logger: Logger | None = logger
+
+    def _add_warning(self,
+                     msg: str,
+                     block_name: str,
+                     block_uid: int,
+                     field_name: str,
+                     missing_uid: int | None) -> None:
+        """
+        Record one non-fatal warning while rebuilding one dynamic block.
+
+        :param msg: Warning message.
+        :param block_name: Block name.
+        :param block_uid: Block uid.
+        :param field_name: Block field being parsed.
+        :param missing_uid: Missing symbolic uid.
+        :return: None.
+        """
+        if self.logger is not None:
+            self.logger.add_warning(msg=msg,
+                                    device=block_name,
+                                    value=missing_uid,
+                                    device_property=field_name,
+                                    device_class=f"Block:{block_uid}")
+        else:
+            pass
+
+    def _resolve_var_or_warn(self,
+                             var_uid: int | None,
+                             block_name: str,
+                             block_uid: int,
+                             field_name: str) -> Var | None:
+        """
+        Resolve one algebraic symbolic variable with legacy-tolerant fallback.
+
+        :param var_uid: Variable uid.
+        :param block_name: Block name.
+        :param block_uid: Block uid.
+        :param field_name: Block field being parsed.
+        :return: Resolved variable or ``None``.
+        """
+        resolved_var: Var | None
+
+        if var_uid is None:
+            resolved_var = None
+        else:
+            resolved_var = self.var_factory.get_vars_dict().get(var_uid, None)
+
+        if resolved_var is None:
+            self._add_warning(msg="Missing symbolic variable while parsing dynamic block",
+                              block_name=block_name,
+                              block_uid=block_uid,
+                              field_name=field_name,
+                              missing_uid=var_uid)
+        else:
+            pass
+
+        return resolved_var
+
+    def _resolve_diff_var_or_warn(self,
+                                  var_uid: int | None,
+                                  block_name: str,
+                                  block_uid: int,
+                                  field_name: str) -> Var | None:
+        """
+        Resolve one differential symbolic variable with legacy-tolerant fallback.
+
+        :param var_uid: Differential variable uid.
+        :param block_name: Block name.
+        :param block_uid: Block uid.
+        :param field_name: Block field being parsed.
+        :return: Resolved differential variable or ``None``.
+        """
+        resolved_var: Var | None
+
+        if var_uid is None:
+            resolved_var = None
+        else:
+            resolved_var = self.var_factory.get_diff_var_dict().get(var_uid, None)
+
+        if resolved_var is None:
+            self._add_warning(msg="Missing differential symbolic variable while parsing dynamic block",
+                              block_name=block_name,
+                              block_uid=block_uid,
+                              field_name=field_name,
+                              missing_uid=var_uid)
+        else:
+            pass
+
+        return resolved_var
 
     def _get_var_by_non_mutable_uid(self, non_mutable_uid: int) -> Var:
         """
@@ -719,109 +859,267 @@ class BlockParser:
 
         if main_block_uid not in blocks_data:
             main_block_uid = str(main_block_uid)
+        else:
+            pass
 
         data = blocks_data[main_block_uid]
+        block_name: str = data.get("name", "")
+        block_uid_value: int = data.get("uid", int(main_block_uid))
 
-        state_vars = [self.var_factory.get_var(v_uid) for v_uid in data["state_vars"]]
+        state_vars: List[Var] = list()
+        v_uid: int
+        for v_uid in data.get("state_vars", list()):
+            state_var: Var | None = self._resolve_var_or_warn(v_uid, block_name, block_uid_value, "state_vars")
+            if state_var is not None:
+                state_vars.append(state_var)
+            else:
+                pass
 
-        state_eqs = parse_expr_list(lst=data["state_eqs"],
+        state_eqs = parse_expr_list(lst=data.get("state_eqs", list()),
                                     const_dict=self.var_factory.get_const_dict(),
                                     var_dict=self.var_factory.get_vars_dict(),
                                     diff_var_dict=self.var_factory.get_diff_var_dict())
 
-        algebraic_vars = [self.var_factory.get_var(v_uid) for v_uid in data["algebraic_vars"]]
+        algebraic_vars: List[Var] = list()
+        for v_uid in data.get("algebraic_vars", list()):
+            algebraic_var: Var | None = self._resolve_var_or_warn(v_uid,
+                                                                  block_name,
+                                                                  block_uid_value,
+                                                                  "algebraic_vars")
+            if algebraic_var is not None:
+                algebraic_vars.append(algebraic_var)
+            else:
+                pass
 
-        algebraic_eqs = parse_expr_list(lst=data["algebraic_eqs"],
+        algebraic_eqs = parse_expr_list(lst=data.get("algebraic_eqs", list()),
                                         const_dict=self.var_factory.get_const_dict(),
                                         var_dict=self.var_factory.get_vars_dict(),
                                         diff_var_dict=self.var_factory.get_diff_var_dict())
-        if data["diff_vars"]:
-            diff_vars = [self.var_factory.get_diff_var(v_uid) for v_uid in data["diff_vars"]]
+        if data.get("diff_vars", list()):
+            diff_vars: List[Var] = list()
+            for v_uid in data.get("diff_vars", list()):
+                diff_var: Var | None = self._resolve_diff_var_or_warn(v_uid,
+                                                                      block_name,
+                                                                      block_uid_value,
+                                                                      "diff_vars")
+                if diff_var is not None:
+                    diff_vars.append(diff_var)
+                else:
+                    pass
         else:
-            diff_vars = []
+            diff_vars = list()
 
-        differential_eqs = parse_expr_list(lst=data["differential_eqs"],
+        differential_eqs = parse_expr_list(lst=data.get("differential_eqs", list()),
                                            const_dict=self.var_factory.get_const_dict(),
                                            var_dict=self.var_factory.get_vars_dict(),
                                            diff_var_dict=self.var_factory.get_diff_var_dict())
+
+        inequalities = parse_expr_list(lst=data.get("inequalities", list()),
+                                       const_dict=self.var_factory.get_const_dict(),
+                                       var_dict=self.var_factory.get_vars_dict(),
+                                       diff_var_dict=self.var_factory.get_diff_var_dict())
 
         # Rebuild interface variables using the stable non-mutable UID stored
         # in the factory keys. This preserves the original port object and its
         # semantic reference even when runtime connections have aliased the
         # mutable ``uid`` to another connected variable.
-        in_vars = [self._get_var_by_non_mutable_uid(v_uid) for v_uid in data["in_vars"]]
+        in_vars: List[Var] = list()
+        for v_uid in data.get("in_vars", list()):
+            in_var: Var | None = self.var_factory.get_vars_dict().get(v_uid, None)
+            if in_var is not None:
+                in_vars.append(in_var)
+            else:
+                self._add_warning(msg="Missing input symbolic variable while parsing dynamic block",
+                                  block_name=block_name,
+                                  block_uid=block_uid_value,
+                                  field_name="in_vars",
+                                  missing_uid=v_uid)
 
         # Apply the same stable lookup to outputs for consistency with inputs
         # and to avoid replacing exported branch variables with connected bus
         # variables after deserialization.
-        out_vars = [self._get_var_by_non_mutable_uid(v_uid) for v_uid in data["out_vars"]]
+        out_vars: List[Var] = list()
+        for v_uid in data.get("out_vars", list()):
+            out_var: Var | None = self.var_factory.get_vars_dict().get(v_uid, None)
+            if out_var is not None:
+                out_vars.append(out_var)
+            else:
+                self._add_warning(msg="Missing output symbolic variable while parsing dynamic block",
+                                  block_name=block_name,
+                                  block_uid=block_uid_value,
+                                  field_name="out_vars",
+                                  missing_uid=v_uid)
 
-        children = [self.parse_block(blocks_data, child_uid) for child_uid in data["children"]]
+        children = [self.parse_block(blocks_data, child_uid) for child_uid in data.get("children", list())]
 
         init_eqs: Dict[Var, Expr] = dict()
-        for entry in data["init_eqs"]:
-            var = self.var_factory.get_var(entry["var"])
-            init_eqs[var] = parse_expr(data=entry["expr"],
-                                       const_dict=self.var_factory.get_const_dict(),
-                                       var_dict=self.var_factory.get_vars_dict(),
-                                       diff_var_dict=self.var_factory.get_diff_var_dict())
+        entry: Dict[str, Any]
+        for entry in data.get("init_eqs", list()):
+            var = self._resolve_var_or_warn(entry.get("var", None), block_name, block_uid_value, "init_eqs")
+            if var is not None:
+                init_eqs[var] = parse_expr(data=entry["expr"],
+                                           const_dict=self.var_factory.get_const_dict(),
+                                           var_dict=self.var_factory.get_vars_dict(),
+                                           diff_var_dict=self.var_factory.get_diff_var_dict())
+            else:
+                pass
+
+        diff_init_eqs: Dict[Var, Expr] = dict()
+        for entry in data.get("diff_init_eqs", list()):
+            diff_var_entry = self._resolve_diff_var_or_warn(entry.get("var", None),
+                                                            block_name,
+                                                            block_uid_value,
+                                                            "diff_init_eqs")
+            if diff_var_entry is not None:
+                diff_init_eqs[diff_var_entry] = parse_expr(data=entry["expr"],
+                                                           const_dict=self.var_factory.get_const_dict(),
+                                                           var_dict=self.var_factory.get_vars_dict(),
+                                                           diff_var_dict=self.var_factory.get_diff_var_dict())
+            else:
+                pass
 
         event_dict: Dict[Var, Expr] = dict()
-        for entry in data["event_dict"]:
-            var = self.var_factory.get_var(entry["var"])
-            event_dict[var] = parse_expr(data=entry["expr"],
-                                         const_dict=self.var_factory.get_const_dict(),
-                                         var_dict=self.var_factory.get_vars_dict(),
-                                         diff_var_dict=self.var_factory.get_diff_var_dict())
+        for entry in data.get("event_dict", list()):
+            var = self._resolve_var_or_warn(entry.get("var", None), block_name, block_uid_value, "event_dict")
+            if var is not None:
+                event_dict[var] = parse_expr(data=entry["expr"],
+                                             const_dict=self.var_factory.get_const_dict(),
+                                             var_dict=self.var_factory.get_vars_dict(),
+                                             diff_var_dict=self.var_factory.get_diff_var_dict())
+            else:
+                pass
+
+        mode_dict: Dict[Var, Expr] = dict()
+        for entry in data.get("mode_dict", list()):
+            var = self._resolve_var_or_warn(entry.get("var", None), block_name, block_uid_value, "mode_dict")
+            if var is not None:
+                mode_dict[var] = parse_expr(data=entry["expr"],
+                                            const_dict=self.var_factory.get_const_dict(),
+                                            var_dict=self.var_factory.get_vars_dict(),
+                                            diff_var_dict=self.var_factory.get_diff_var_dict())
+            else:
+                pass
+
+        discrete_eqs: Dict[Var, Expr] = dict()
+        for entry in data.get("discrete_eqs", list()):
+            var = self._resolve_var_or_warn(entry.get("var", None), block_name, block_uid_value, "discrete_eqs")
+            if var is not None:
+                discrete_eqs[var] = parse_expr(data=entry["expr"],
+                                               const_dict=self.var_factory.get_const_dict(),
+                                               var_dict=self.var_factory.get_vars_dict(),
+                                               diff_var_dict=self.var_factory.get_diff_var_dict())
+            else:
+                pass
+
+        boolean_guards: Dict[Var, Expr] = dict()
+        for entry in data.get("boolean_guards", list()):
+            var = self._resolve_var_or_warn(entry.get("var", None), block_name, block_uid_value, "boolean_guards")
+            if var is not None:
+                boolean_guards[var] = parse_expr(data=entry["expr"],
+                                                 const_dict=self.var_factory.get_const_dict(),
+                                                 var_dict=self.var_factory.get_vars_dict(),
+                                                 diff_var_dict=self.var_factory.get_diff_var_dict())
+            else:
+                pass
 
         parameters: Dict[Var, Const] = dict()
-        for entry in data["parameters"]:
-            var = self.var_factory.get_var(entry["var"])
-            parameters[var] = Const(entry["value"])
+        for entry in data.get("parameters", list()):
+            var = self._resolve_var_or_warn(entry.get("var", None), block_name, block_uid_value, "parameters")
+            if var is not None:
+                parameters[var] = Const(entry["value"])
+            else:
+                pass
 
         init_values: Dict[Var, Const] = dict()
-        for entry in data["init_values"]:
-            var = self.var_factory.get_var(entry["var"])
-            init_values[var] = Const(entry["value"])
+        for entry in data.get("init_values", list()):
+            var = self._resolve_var_or_warn(entry.get("var", None), block_name, block_uid_value, "init_values")
+            if var is not None:
+                init_values[var] = Const(entry["value"])
+            else:
+                pass
 
         external_mapping: Dict[VarPowerFlowReferenceType, Var | None] = dict()
-        for key_str, var_uid in data["external_mapping"].items():
-            key = VarPowerFlowReferenceType(key_str)
-            # Rebuild PF-exposed mappings using the stable symbolic identity.
-            # This preserves the original variable object selected by the
-            # template even when runtime connections have aliased mutable UIDs.
-            var_in_varfactory = self._find_var_or_diff_var_by_non_mutable_uid(var_uid)
-            if var_in_varfactory is not None:
-                external_mapping[key] = var_in_varfactory
-            else:
+        key_str: str
+        var_uid: int | None
+        for key_str, var_uid in data.get("external_mapping", dict()).items():
+            key: VarPowerFlowReferenceType = VarPowerFlowReferenceType(key_str)
+            if var_uid is None:
+                # Legacy files use explicit nulls for optional power-flow
+                # references, so retaining the empty slot is not data loss.
                 external_mapping[key] = None
+            else:
+                # Rebuild PF-exposed mappings using the stable symbolic
+                # identity. A non-null UID that is absent from both factory
+                # dictionaries is a broken persisted reference and matters to
+                # the user even though parsing can continue without it.
+                var_in_varfactory: Var | None = self._find_var_or_diff_var_by_non_mutable_uid(var_uid)
+                if var_in_varfactory is not None:
+                    external_mapping[key] = var_in_varfactory
+                else:
+                    external_mapping[key] = None
+                    self._add_warning(msg="Missing symbolic variable while parsing dynamic block",
+                                      block_name=block_name,
+                                      block_uid=block_uid_value,
+                                      field_name="external_mapping",
+                                      missing_uid=var_uid)
 
         api_obj_mapping: Dict[ParamPowerFlowReferenceType, Var] = dict()
-        for key_str, var_uid in data["api_obj_mapping"].items():
-            key = ParamPowerFlowReferenceType(key_str)
-            api_obj_mapping[key] = self.var_factory.get_var(var_uid)
+        for key_str, var_uid in data.get("api_obj_mapping", dict()).items():
+            key: ParamPowerFlowReferenceType = ParamPowerFlowReferenceType(key_str)
+            if var_uid is None:
+                # Older dynamic models persist optional API mappings as null.
+                # The missing target is intentional and must not be presented
+                # as a damaged symbolic reference in the open-file logger.
+                pass
+            else:
+                # Non-null mapping UIDs are expected to identify a real
+                # variable because dropping them can prevent static parameters
+                # from reaching the dynamic model.
+                api_var: Var | None = self._resolve_var_or_warn(var_uid,
+                                                                block_name,
+                                                                block_uid_value,
+                                                                "api_obj_mapping")
+                if api_var is not None:
+                    api_obj_mapping[key] = api_var
+                else:
+                    pass
 
-        reformulated_vars = [self.var_factory.get_var(v_uid) for v_uid in data["reformulated_vars"]]
+        reformulated_vars: List[Var] = list()
+        for v_uid in data.get("reformulated_vars", list()):
+            reformulated_var: Var | None = self._resolve_var_or_warn(v_uid,
+                                                                     block_name,
+                                                                     block_uid_value,
+                                                                     "reformulated_vars")
+            if reformulated_var is not None:
+                reformulated_vars.append(reformulated_var)
+            else:
+                pass
 
         block = Block(
             state_vars=state_vars,
             state_eqs=state_eqs,
             algebraic_vars=algebraic_vars,
             algebraic_eqs=algebraic_eqs,
+            inequalities=inequalities,
             diff_vars=diff_vars,
             differential_eqs=differential_eqs,
             in_vars=in_vars,
             out_vars=out_vars,
             init_eqs=init_eqs,
+            diff_init_eqs=diff_init_eqs,
+            discrete_eqs=discrete_eqs,
             event_dict=event_dict,
+            mode_dict=mode_dict,
+            boolean_guards=boolean_guards,
+            procedural_logic=list(data.get("procedural_logic", list())),
             children=children,  # TODO think about this
             parameters=parameters,
             init_values=init_values,
             external_mapping=external_mapping,
             api_obj_mapping=api_obj_mapping,
             reformulated_vars=reformulated_vars,
-            name=data["name"],
-            uid=data["uid"]
+            name=block_name,
+            uid=block_uid_value
         )
         diagram_data = data.get("diagram", None)
         if diagram_data is not None:

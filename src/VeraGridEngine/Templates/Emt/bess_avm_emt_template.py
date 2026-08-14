@@ -477,7 +477,7 @@ def get_bess_avm_grid_following_emt_template(
     )
 
     # ------------------------------------------------------------------
-    # Unified model assembly.
+    # Composite editor-facing assembly.
     # ------------------------------------------------------------------
     templ.block.children.extend([
         battery_block,
@@ -487,7 +487,6 @@ def get_bess_avm_grid_following_emt_template(
         outer_loop_block,
         transformer_block,
     ])
-    templ.block.unify_blocks()
     templ.block.in_vars = [v_A, v_B, v_C]
     templ.block.out_vars = [
         transformer_block.out_vars[0],

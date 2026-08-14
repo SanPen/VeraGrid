@@ -1856,7 +1856,7 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
     # New way of parsing information from .model files (Json files)
     # These files are just .json stored in the model_data inside the zip file
 
-    block_parser = BlockParser(circuit.var_factory)
+    block_parser = BlockParser(circuit.var_factory, logger=logger)
     symbolic_data: Dict[str, Any] | None = data.get('symbolic_data', None)
     if symbolic_data is not None:
         if len(symbolic_data) > 0:

@@ -41,6 +41,7 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
         """
         super().__init__(parent)
         self.__session = session
+        self._accepts_new_pages: bool = True
         self._current_circuit: Any | None = None
         self._tree_model = QtGui.QStandardItemModel(self)
         self._tree_proxy = QtCore.QSortFilterProxyModel(self)
@@ -112,6 +113,18 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
         """
         return self.session.get_open_workspaces()
 
+    def is_available_for_pages(self) -> bool:
+        """
+        Return whether this workspace can still receive editor pages.
+
+        The Python wrapper can outlive the underlying Qt window while deferred
+        deletion is being processed. Session routing uses this Python-owned flag
+        so it never calls into a workspace whose native children are closing.
+
+        :return: ``True`` while new pages may be added.
+        """
+        return self._accepts_new_pages
+
     @property
     def session(self) -> DynamicEditorWorkspaceSession:
         """
@@ -154,6 +167,8 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
         :return: Open editor page for the requested entry.
         """
         target = target_workspace if target_workspace is not None else self
+        if not target.is_available_for_pages():
+            raise RuntimeError("Cannot open a dynamic editor in a closing workspace")
         target._set_workspace_circuit(entry.circuit)
         return self.session.open_entry(
             entry,
@@ -612,6 +627,9 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
         :param insert_index: Target insertion index, or ``-1`` to append.
         :return: None.
         """
+        if not self.is_available_for_pages():
+            raise RuntimeError("Cannot add a dynamic editor page to a closing workspace")
+
         if insert_index < 0 or insert_index > self.editor_tabs.count():
             index = self.editor_tabs.addTab(page, tab_title)
         else:
@@ -704,6 +722,7 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
         page.prepare_to_delete()
         self.session.unregister_page(page)
         self.remove_page(page)
+        page.setParent(None)
         page.deleteLater()
 
         if self.editor_tabs.count() == 0:
@@ -726,12 +745,17 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
             else:
                 pass
 
+        self._accepts_new_pages = False
         pages = [self.page_at(index) for index in range(self.editor_tabs.count())]
         for page in pages:
             if page is None:
-                continue
-            page.prepare_to_delete()
-            self.session.unregister_page(page)
+                pass
+            else:
+                page.prepare_to_delete()
+                self.session.unregister_page(page)
+                self.remove_page(page)
+                page.setParent(None)
+                page.deleteLater()
 
         self.session.unregister_workspace(self)
         event.accept()

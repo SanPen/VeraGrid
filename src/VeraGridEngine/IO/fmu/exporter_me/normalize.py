@@ -7,9 +7,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Iterable, cast
 
-from . import compat
-from .flatten import flatten_block
-from .snapshot import reconstruct_block
+from VeraGridEngine.IO.fmu.exporter_me import compat
+from VeraGridEngine.IO.fmu.exporter_me.flatten import flatten_block
+from VeraGridEngine.IO.fmu.exporter_me.snapshot import reconstruct_block
 
 
 Const = compat.Const

@@ -8,8 +8,8 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
-from . import compat
-from .config import ExportConfig
+from VeraGridEngine.IO.fmu.exporter import compat
+from VeraGridEngine.IO.fmu.exporter.config import ExportConfig
 
 Const = compat.Const
 _expr_to_dict = compat._expr_to_dict

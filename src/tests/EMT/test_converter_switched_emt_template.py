@@ -39,6 +39,3 @@ def test_switched_converter_template_builds_on_bridge_filter_control_stack() -> 
     assert find_name_in_block("theta_pll", templ.block) is not None
     assert "t_enable_sw" in runtime_parameter_names
     assert "switching_enabled_mode" in mode_names
-    assert "gate_a_mode" in mode_names
-    assert "gate_b_mode" in mode_names
-    assert "gate_c_mode" in mode_names

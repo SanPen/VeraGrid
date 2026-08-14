@@ -40,7 +40,7 @@ from VeraGridEngine.IO.file_open import determine_file_type, FileOpen
 from VeraGridEngine.enumerations import SimulationTypes, FileType
 from VeraGridEngine.IO.veragrid.contingency_parser import import_contingencies_from_json, export_contingencies_json_file
 from VeraGridEngine.IO.veragrid.catalogue import save_catalogue, load_catalogue
-from VeraGridEngine.Utils.ThirdParty.gslv.gslv_activation import install_gslv_license
+from VeraGridEngine.Compilers.Gslv.activation import install_gslv_license
 from VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue import CatalogueElementsSelectionDialogue
 
 

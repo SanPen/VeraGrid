@@ -147,14 +147,6 @@ class CompiledArraysModule:
             )
             self.islands = nc.split_into_islands()
 
-        elif engine == EngineType.Bentayga:
-            import VeraGridEngine.Compilers.circuit_to_bentayga as ben
-            self.calculation_inputs_to_display = ben.get_snapshots_from_bentayga(self.grid)
-
-        elif engine == EngineType.NewtonPA:
-            import VeraGridEngine.Compilers.circuit_to_newton_pa as ne
-            self.calculation_inputs_to_display = ne.get_snapshots_from_newtonpa(self.grid)
-
         else:
             # fallback to VeraGrid
             nc = compile_numerical_circuit_at(self.grid)

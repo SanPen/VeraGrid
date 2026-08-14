@@ -11,12 +11,12 @@ import shutil
 import subprocess
 import tempfile
 
-from .config import ExportConfig, TargetPlatform
-from .diff_to_c import render_discrete_derivative
-from .expr_to_c import ExprToCVisitor
-from .export_ir import EquationGroup, ExportModel, StorageSegment, VariableCategory
-from .procedural_to_c import render_procedural_c
-from .variable_map import CVariableResolver
+from VeraGridEngine.IO.fmu.exporter.config import ExportConfig, TargetPlatform
+from VeraGridEngine.IO.fmu.exporter.diff_to_c import render_discrete_derivative
+from VeraGridEngine.IO.fmu.exporter.expr_to_c import ExprToCVisitor
+from VeraGridEngine.IO.fmu.exporter.export_ir import EquationGroup, ExportModel, StorageSegment, VariableCategory
+from VeraGridEngine.IO.fmu.exporter.procedural_to_c import render_procedural_c
+from VeraGridEngine.IO.fmu.exporter.variable_map import CVariableResolver
 
 
 def _template_root() -> Path:

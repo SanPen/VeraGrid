@@ -1,0 +1,76 @@
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# SPDX-License-Identifier: MPL-2.0
+from __future__ import annotations
+
+from typing import Dict
+
+from VeraGridEngine.Compilers.Gslv.activation import pg
+from VeraGridEngine.Compilers.Gslv.common import fill_profile
+from VeraGridEngine.Devices.Injections.static_generator import StaticGenerator
+from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.basic_structures import IntVec
+
+
+def convert_static_generator(elm: StaticGenerator,
+                             bus_dict: Dict[str, "pg.Bus"],
+                             n_time: int,
+                             use_time_series: bool,
+                             time_indices: IntVec | None = None) -> "pg.StaticGenerator":
+    """
+    Convert one VeraGrid static generator into one GSLV static generator.
+
+    :param elm: VeraGrid static generator.
+    :param bus_dict: Bus lookup by VeraGrid id tag.
+    :param n_time: Number of exported time steps.
+    :param use_time_series: Whether the export is time-series based.
+    :param time_indices: Optional time-series selection.
+    :return: GSLV static generator.
+    """
+    pe_inj = pg.StaticGenerator(
+        idtag=elm.idtag,
+        code=str(elm.code),
+        name=elm.name,
+        bus=None if elm.bus is None else bus_dict[elm.bus.idtag],
+        nt=n_time,
+        P=elm.P,
+        power_factor=elm.Pf,
+        build_status=elm.build_status,
+    )
+
+    fill_profile(pe_inj.active, elm.active_prof, use_time_series, time_indices, n_time, elm.active)
+    fill_profile(pe_inj.P, elm.P_prof, use_time_series, time_indices, n_time, elm.P)
+    fill_profile(pe_inj.Q, elm.Q_prof, use_time_series, time_indices, n_time, elm.Q)
+    fill_profile(pe_inj.cost, elm.Cost_prof, use_time_series, time_indices, n_time, elm.Cost)
+
+    return pe_inj
+
+
+def add_static_generators(circuit: MultiCircuit,
+                          gslv_grid: "pg.MultiCircuit",
+                          bus_dict: Dict[str, "pg.Bus"],
+                          time_series: bool,
+                          n_time: int = 1,
+                          time_indices: IntVec | None = None) -> None:
+    """
+    Add every VeraGrid static generator to the target GSLV grid.
+
+    :param circuit: VeraGrid circuit.
+    :param gslv_grid: GSLV circuit.
+    :param bus_dict: Bus lookup by VeraGrid id tag.
+    :param time_series: Whether the export is time-series based.
+    :param n_time: Number of exported time steps.
+    :param time_indices: Optional time-series selection.
+    :return: None.
+    """
+    devices = circuit.get_static_generators()
+    for elm in devices:
+        pe_inj = convert_static_generator(
+            elm=elm,
+            bus_dict=bus_dict,
+            n_time=n_time,
+            use_time_series=time_series,
+            time_indices=time_indices,
+        )
+        gslv_grid.add_static_generator(pe_inj)

@@ -7,7 +7,7 @@ from VeraGridEngine.Devices.Branches.overhead_line_type import OverheadLineType
 from VeraGridEngine.Devices.Branches.underground_line_type import UndergroundLineType
 from VeraGridEngine.Devices.Branches.sequence_line_type import SequenceLineType
 from VeraGridEngine.Devices.Branches.line import Line
-from VeraGridEngine import VeraGridEngine as gce
+import VeraGridEngine as gce
 import builtins
 
 

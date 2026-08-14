@@ -8,9 +8,9 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
-from . import compat
-from .config import ExportConfig
-from .profile import assert_block_supported_for_me
+from VeraGridEngine.IO.fmu.exporter_me import compat
+from VeraGridEngine.IO.fmu.exporter_me.config import ExportConfig
+from VeraGridEngine.IO.fmu.exporter_me.profile import assert_block_supported_for_me
 
 Const = compat.Const
 _expr_to_dict = compat._expr_to_dict

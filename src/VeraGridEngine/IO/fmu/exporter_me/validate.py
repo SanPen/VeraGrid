@@ -10,7 +10,7 @@ import shutil
 import tempfile
 from typing import Any
 
-from .export_ir import ExportModel, VariableCategory
+from VeraGridEngine.IO.fmu.exporter_me.export_ir import ExportModel, VariableCategory
 
 try:
     import fmpy

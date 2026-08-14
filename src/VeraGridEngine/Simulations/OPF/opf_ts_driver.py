@@ -16,10 +16,10 @@ from VeraGridEngine.Simulations.OPF.ac_opf_worker import run_nonlinear_opf
 from VeraGridEngine.Simulations.OPF.opf_ts_results import OptimalPowerFlowTimeSeriesResults
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.driver_template import TimeSeriesDriverTemplate
-from VeraGridEngine.Compilers.circuit_to_newton_pa import newton_pa_linear_opf, newton_pa_nonlinear_opf
 from VeraGridEngine.Simulations.Clustering.clustering_results import ClusteringResults
 from VeraGridEngine.basic_structures import IntVec, Vec, get_time_groups
-import VeraGridEngine.Compilers.circuit_to_gslv as gslv
+from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE
+from VeraGridEngine.Compilers.Gslv.Simulations.opf import gslv_opf
 
 
 class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
@@ -670,7 +670,7 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
         self.tic()
 
         if self.engine == EngineType.GSLV:
-            if not gslv.GSLV_AVAILABLE:
+            if not GSLV_AVAILABLE:
                 self.engine = EngineType.VeraGrid
                 self.logger.add_warning('GSLV not available, falling back to VeraGrid')
             else:
@@ -695,86 +695,6 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
                     else:
                         self.opf_by_groups()
 
-        elif self.engine == EngineType.NewtonPA:
-
-            if self.time_indices is None:
-                ti = 0
-                use_time_series = False
-            else:
-                use_time_series = True
-                if self.using_clusters:
-                    ti = np.arange(0, len(self.time_indices))
-                else:
-                    ti = self.time_indices
-
-            if self.options.solver == SolverType.LINEAR_OPF:
-                self.report_text('Running Linear OPF with Newton...')
-
-                gslv_res = newton_pa_linear_opf(circuit=self.grid,
-                                                opf_options=self.options,
-                                                pf_opt=PowerFlowOptions(),
-                                                time_series=use_time_series,
-                                                time_indices=self.time_indices)
-
-                self.results.voltage[ti, :] = gslv_res.voltage_module * np.exp(1j * gslv_res.voltage_angle)
-                self.results.bus_shadow_prices[ti, :] = gslv_res.nodal_shadow_prices
-                self.results.load_shedding[ti, :] = gslv_res.load_shedding
-                self.results.battery_power[ti, :] = gslv_res.battery_power
-                self.results.battery_energy[ti, :] = gslv_res.battery_energy
-                self.results.generator_power[ti, :] = gslv_res.generator_power
-                self.results.Sf[ti, :] = gslv_res.branch_flows
-                self.results.St[ti, :] = -gslv_res.branch_flows
-                self.results.overloads[ti, :] = gslv_res.branch_overloads
-                self.results.loading[ti, :] = gslv_res.branch_loading
-                self.results.tap_angle[ti, :] = gslv_res.branch_tap_angle
-
-                # self.results.Sbus[ti, :] = problem.get_power_injections()
-                self.results.hvdc_Pf[ti, :] = gslv_res.hvdc_flows
-                self.results.hvdc_loading[ti, :] = gslv_res.hvdc_loading
-
-                self.results.fluid_node_current_level[ti, :] = gslv_res.fluid_node_vars.current_level
-                self.results.fluid_node_flow_in[ti, :] = gslv_res.fluid_node_vars.flow_in
-                self.results.fluid_node_flow_out[ti, :] = gslv_res.fluid_node_vars.flow_out
-                self.results.fluid_node_p2x_flow[ti, :] = gslv_res.fluid_node_vars.p2x_flow
-                self.results.fluid_node_spillage[ti, :] = gslv_res.fluid_node_vars.spillage
-                self.results.fluid_path_flow[ti, :] = gslv_res.fluid_path_vars.flow
-                self.results.fluid_injection_flow[ti, :] = gslv_res.fluid_inject_vars.flow
-
-            if self.options.solver == SolverType.NONLINEAR_OPF:
-                self.report_text('Running Non-Linear OPF with Newton...')
-
-                # pack the results
-                gslv_res = newton_pa_nonlinear_opf(circuit=self.grid,
-                                                   pf_opt=self.pf_options,
-                                                   opf_opt=self.options,
-                                                   time_series=use_time_series,
-                                                   time_indices=self.time_indices)
-
-                self.results.voltage[ti, :] = gslv_res.voltage
-                self.results.Sbus[ti, :] = gslv_res.Scalc
-                self.results.bus_shadow_prices[ti, :] = gslv_res.bus_shadow_prices
-                self.results.load_shedding[ti, :] = gslv_res.load_shedding
-                self.results.battery_power[ti, :] = gslv_res.battery_p
-                # self.results.battery_energy[ti, :] = npa_res.battery_energy
-                self.results.generator_power[ti, :] = gslv_res.generator_p
-                self.results.Sf[ti, :] = gslv_res.Sf
-                self.results.St[ti, :] = gslv_res.St
-                self.results.overloads[ti, :] = gslv_res.branch_overload
-                self.results.loading[ti, :] = gslv_res.Loading
-                # self.results.phase_shift[ti, :] = npa_res.branch_tap_angle
-
-                # self.results.Sbus[ti, :] = problem.get_power_injections()
-                self.results.hvdc_Pf[ti, :] = gslv_res.hvdc_Pf
-                self.results.hvdc_loading[ti, :] = gslv_res.hvdc_loading
-
-                self.results.fluid_node_current_level[ti, :] = gslv_res.fluid_node_vars.current_level
-                self.results.fluid_node_flow_in[ti, :] = gslv_res.fluid_node_vars.flow_in
-                self.results.fluid_node_flow_out[ti, :] = gslv_res.fluid_node_vars.flow_out
-                self.results.fluid_node_p2x_flow[ti, :] = gslv_res.fluid_node_vars.p2x_flow
-                self.results.fluid_node_spillage[ti, :] = gslv_res.fluid_node_vars.spillage
-                self.results.fluid_path_flow[ti, :] = gslv_res.fluid_path_vars.flow
-                self.results.fluid_injection_flow[ti, :] = gslv_res.fluid_inject_vars.flow
-
         elif self.engine == EngineType.GSLV:
 
             if self.time_indices is None:
@@ -789,11 +709,11 @@ class OptimalPowerFlowTimeSeriesDriver(TimeSeriesDriverTemplate):
             if self.options.solver == SolverType.LINEAR_OPF:
                 self.report_text('Running Linear OPF with GSLV...')
 
-                gslv_res = gslv.gslv_opf(circuit=self.grid,
-                                         opf_options=self.options,
-                                         time_series=use_time_series,
-                                         time_indices=self.time_indices,
-                                         logger=self.logger)
+                gslv_res = gslv_opf(circuit=self.grid,
+                                    opf_options=self.options,
+                                    time_series=use_time_series,
+                                    time_indices=self.time_indices,
+                                    logger=self.logger)
 
                 self.results.voltage[result_time_indices, :] = gslv_res.voltage[source_time_indices, :]
                 self.results.Sbus[result_time_indices, :] = gslv_res.Sbus[source_time_indices, :].real

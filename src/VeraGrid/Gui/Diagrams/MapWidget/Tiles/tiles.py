@@ -69,7 +69,8 @@ class Tiles(BaseTiles):
                  max_server_requests: int,
                  http_proxy,
                  re_fetch_days: int = 60,
-                 attribution: str = ""):
+                 attribution: str = "",
+                 start_workers: bool = True):
         """
         Initialise a Tiles instance.
         :param tile_set_name: Name of the tile set.
@@ -85,6 +86,7 @@ class Tiles(BaseTiles):
         :param max_server_requests: maximum number of requests per server
         :param http_proxy: proxy to use if required
         :param re_fetch_days: fetch new server tile if older than this in days (0 means don't ever update tiles)
+        :param start_workers: Start network tile workers immediately.
         """
         # perform the base class initialization
         super().__init__(levels, tile_width, tile_height, tiles_dir, max_lru)
@@ -168,64 +170,72 @@ class Tiles(BaseTiles):
                        404: 'You might need to check the tile addressing for this server.',
                        429: 'You are asking for too many tiles.', }
 
-        # test for firewall - use proxy (if supplied)
-        test_url = self.servers[0] + self.url_path.format(Z=0, X=0, Y=0)
-        try:
-            r = request.Request(test_url, headers={'User-Agent': 'VeraGrid 5'})
-            response = request.urlopen(r).read()
-
-        except HTTPError as e:
-            # if it's fatal, log it and die, otherwise try a proxy
-            status_code = e.code
-            warn('Error: test_url=%s, status_code=%s' % (test_url, str(status_code)))
-            error_msg = StatusError.get(status_code, None)
-            if status_code:
-                msg = "\nYou got a " + str(status_code) + " (" + str(error_msg) + ") error from: " + str(test_url)
-                print(msg)
-                # raise RuntimeError(msg) from None
-
-            warn('%s exception doing simple connection to: %s' % (type(e).__name__, test_url))
-            warn(''.join(traceback.format_exc()))
-
-            if http_proxy:
-                proxy = request.ProxyHandler({'http': http_proxy})
-                opener = request.build_opener(proxy)
-                request.install_opener(opener)
-                try:
-                    request.urlopen(test_url)
-                except (HTTPError, urllib.error.URLError, http.client.IncompleteRead) as proxy_error:
-                    msg = "Using HTTP proxy but still can't get through a firewall!"
-                    print(msg)
-                    warn('%s exception doing simple connection through proxy to: %s' % (type(proxy_error).__name__, test_url))
-                    warn(''.join(traceback.format_exc()))
-                    # raise Exception(msg) from None
-            else:
-                msg = "There is a firewall but you didn't give me an HTTP proxy to get through it?"
-                print(msg)
-                # raise Exception(msg) from None
-        except urllib.error.URLError as e:
-            print(e)
-
-        except http.client.IncompleteRead as e:
-            print(e)
-
         # set up the request queue and worker threads
         self.request_queue = queue.Queue()  # entries are (level, x, y)
-        self.workers = []
-        for server in self.servers:
-            for num_thread in range(self.max_requests):
-                worker = TileWorker(id_num=num_thread,
-                                    server=server,
-                                    tile_path=self.url_path,
-                                    requests_cue=self.request_queue,
-                                    callback=self.tile_is_available,
-                                    error_tile=self.error_tile,
-                                    content_type=self.content_type,
-                                    re_request_age=self.re_request_age,
-                                    error_image=self.error_tile,
-                                    refresh_tiles_after_days=60)
-                self.workers.append(worker)
-                worker.start()
+        self.workers: List[TileWorker] = list()
+
+        if start_workers:
+            # test for firewall - use proxy (if supplied)
+            test_url = self.servers[0] + self.url_path.format(Z=0, X=0, Y=0)
+            try:
+                r = request.Request(test_url, headers={'User-Agent': 'VeraGrid 5'})
+                request.urlopen(r).read()
+
+            except HTTPError as e:
+                # if it's fatal, log it and die, otherwise try a proxy
+                status_code = e.code
+                warn('Error: test_url=%s, status_code=%s' % (test_url, str(status_code)))
+                error_msg = StatusError.get(status_code, None)
+                if status_code:
+                    msg = "\nYou got a " + str(status_code) + " (" + str(error_msg) + ") error from: " + str(test_url)
+                    print(msg)
+                    # raise RuntimeError(msg) from None
+                else:
+                    pass
+
+                warn('%s exception doing simple connection to: %s' % (type(e).__name__, test_url))
+                warn(''.join(traceback.format_exc()))
+
+                if http_proxy:
+                    proxy = request.ProxyHandler({'http': http_proxy})
+                    opener = request.build_opener(proxy)
+                    request.install_opener(opener)
+                    try:
+                        request.urlopen(test_url)
+                    except (HTTPError, urllib.error.URLError, http.client.IncompleteRead) as proxy_error:
+                        msg = "Using HTTP proxy but still can't get through a firewall!"
+                        print(msg)
+                        warn('%s exception doing simple connection through proxy to: %s' % (type(proxy_error).__name__, test_url))
+                        warn(''.join(traceback.format_exc()))
+                        # raise Exception(msg) from None
+                else:
+                    msg = "There is a firewall but you didn't give me an HTTP proxy to get through it?"
+                    print(msg)
+                    # raise Exception(msg) from None
+            except urllib.error.URLError as e:
+                print(e)
+
+            except http.client.IncompleteRead as e:
+                print(e)
+
+            server: str
+            for server in self.servers:
+                num_thread: int
+                for num_thread in range(self.max_requests):
+                    worker = TileWorker(id_num=num_thread,
+                                        server=server,
+                                        tile_path=self.url_path,
+                                        requests_cue=self.request_queue,
+                                        callback=self.tile_is_available,
+                                        error_tile=self.error_tile,
+                                        content_type=self.content_type,
+                                        re_request_age=self.re_request_age,
+                                        error_image=self.error_tile,
+                                        refresh_tiles_after_days=60)
+                    self.workers.append(worker)
+                    worker.start()
+        else:
+            pass
 
     def copy(self) -> "Tiles":
         """

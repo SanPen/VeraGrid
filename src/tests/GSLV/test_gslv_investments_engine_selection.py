@@ -5,7 +5,7 @@
 import numpy as np
 
 import VeraGridEngine.api as vg
-from VeraGridEngine.Compilers.circuit_to_gslv import translate_gslv_investments_evaluation_results
+from VeraGridEngine.Compilers.Gslv import translate_gslv_investments_evaluation_results
 from VeraGridEngine.enumerations import (
     EngineType,
     InvestmentEvaluationMethod,

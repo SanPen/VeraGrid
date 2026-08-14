@@ -403,7 +403,7 @@ def get_induction_motor_single_cage_emt_template(
     :return: Configured EMT template.
     """
     templ: EmtModelTemplate = EmtModelTemplate()
-    block: Block = templ.block
+    block: Block = Block()
     params: Dict[str, Var] = _build_common_events(vf=vf, block=block, name=name)
     r_r: Var = vf.add_var(name=f"r_r")
     x_lr: Var = vf.add_var(name=f"x_lr")
@@ -470,6 +470,9 @@ def get_induction_motor_single_cage_emt_template(
     v_alpha_expr, v_beta_expr = _abc_to_alpha_beta(v_a, v_b, v_c)
     i_a_motor_expr, i_b_motor_expr, i_c_motor_expr = _alpha_beta_to_abc(i_s_alpha, i_s_beta)
 
+    block.in_vars = [v_a, v_b, v_c]
+    block.out_vars = [i_a, i_b, i_c]
+
     # Dynamic states: stator flux, rotor flux and normalized mechanical speed.
     block.state_vars = [psi_s_alpha, psi_s_beta, psi_r_alpha, psi_r_beta, omega_r]
     block.diff_vars = [d_psi_s_alpha, d_psi_s_beta, d_psi_r_alpha, d_psi_r_beta, d_omega_r]
@@ -532,20 +535,8 @@ def get_induction_motor_single_cage_emt_template(
         v_beta - v_beta_expr,
     ]
 
-    _set_common_block_metadata(
-        templ=templ,
-        name=name,
-        v_a=v_a,
-        v_b=v_b,
-        v_c=v_c,
-        i_a=i_a,
-        i_b=i_b,
-        i_c=i_c,
-        d_v_a=d_v_a,
-        d_v_b=d_v_b,
-        d_v_c=d_v_c,
-        params=params,
-    )
+
+
 
     # Build peak voltage phasors from EMT initial voltage samples and derivatives.
     v_a_peak: Expr = _phase_peak_phasor(v_a, d_v_a, params["omega_base"], c_eps)
@@ -669,6 +660,28 @@ def get_induction_motor_single_cage_emt_template(
         # Initial rotor-speed derivative from the mechanical swing equation.
         d_omega_r: (torque_e - torque_m - params["d"] * (omega_r - c_one)) / (c_two * params["h"] + c_eps),
     })
+
+    
+    templ.block.children.append(block)
+    templ.block.external_mapping = block.external_mapping
+    templ.block.api_obj_mapping = block.api_obj_mapping
+    templ.block.parameters = block.parameters
+    templ.block.in_vars = block.in_vars
+    templ.block.out_vars = block.out_vars
+    _set_common_block_metadata(
+        templ=templ,
+        name=name,
+        v_a=v_a,
+        v_b=v_b,
+        v_c=v_c,
+        i_a=i_a,
+        i_b=i_b,
+        i_c=i_c,
+        d_v_a=d_v_a,
+        d_v_b=d_v_b,
+        d_v_c=d_v_c,
+        params=params,
+    )
     return templ
 
 
@@ -692,7 +705,7 @@ def get_induction_motor_double_cage_emt_template(
     :return: Configured EMT template.
     """
     templ: EmtModelTemplate = EmtModelTemplate()
-    block: Block = templ.block
+    block: Block = Block()
     params: Dict[str, Var] = _build_common_events(vf=vf, block=block, name=name)
     r_r1: Var = vf.add_var(name=f"r_r1")
     x_lr1: Var = vf.add_var(name=f"x_lr1")
@@ -774,6 +787,9 @@ def get_induction_motor_double_cage_emt_template(
     # Terminal-current sign convention and ABC-to-alpha-beta voltage relation.
     i_a_motor_expr, i_b_motor_expr, i_c_motor_expr = _alpha_beta_to_abc(i_s_alpha, i_s_beta)
     v_alpha_expr, v_beta_expr = _abc_to_alpha_beta(v_a, v_b, v_c)
+
+    block.in_vars = [v_a, v_b, v_c]
+    block.out_vars = [i_a, i_b, i_c]
 
     # Dynamic states: stator flux, both rotor-cage fluxes and normalized mechanical speed.
     block.state_vars = [psi_s_alpha, psi_s_beta, psi_r1_alpha, psi_r1_beta, psi_r2_alpha, psi_r2_beta, omega_r]
@@ -1025,6 +1041,13 @@ def get_induction_motor_double_cage_emt_template(
         # Initial rotor-speed derivative from the mechanical swing equation.
         d_omega_r: (torque_e - torque_m - params["d"] * (omega_r - c_one)) / (c_two * params["h"] + c_eps),
     })
+    
+    templ.block.children.append(block)
+    templ.block.external_mapping = block.external_mapping
+    templ.block.api_obj_mapping = block.api_obj_mapping
+    templ.block.parameters = block.parameters
+    templ.block.in_vars = block.in_vars
+    templ.block.out_vars = block.out_vars
     return templ
 
 

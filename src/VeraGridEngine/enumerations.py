@@ -396,8 +396,6 @@ class EngineType(Enum):
     Available engines enumeration
     """
     VeraGrid = 'VeraGrid'
-    Bentayga = 'Bentayga'
-    NewtonPA = 'Newton Power Analytics'
     PGM = 'Power Grid Model'
     GSLV = "gslv"
 
@@ -449,6 +447,8 @@ class MIPSolvers(Enum):
     XPRESS = 'XPRESS'
     CBC = 'CBC'
     PDLP = 'PDLP'
+    CUOPT = "CUOPT"
+    COPT = "COPT"
 
     def __str__(self):
         return self.value
@@ -2753,6 +2753,7 @@ class ResultTypes(Enum):
     ParticipationFactors = "Participation Factors"
     StateMatrix = "State Matrix"
     Modes = "Modes"
+    RightEigenvectors = "Right Eigenvectors"
     SDomainPlot = "S-Domain Plot"
     SDomainPlotHz = "S-Domain Plot in Hz"
 
@@ -4624,3 +4625,35 @@ class DynEditorGraphicsModes(Enum):
     """
     DARK = "Dark"
     LIGHT = "Light"
+
+class RoutingAxis(Enum):
+    """
+    Enumerate the only valid orthogonal segment axes.
+
+    :returns: Enumeration values describing orthogonal axes.
+    """
+
+    HORIZONTAL = "horizontal"
+    VERTICAL = "vertical"
+
+class RoutingPortSide(Enum):
+    """
+    Enumerate the physical block side where one routing port is attached.
+
+    :returns: Enumeration values describing the physical port side.
+    """
+
+    LEFT = "left"
+    RIGHT = "right"
+    TOP = "top"
+    BOTTOM = "bottom"
+
+class RoutingValidationMessageLevel(Enum):
+    """
+    Enumerate validation message severities.
+
+    :returns: Enumeration values describing validation severity levels.
+    """
+
+    ERROR = "error"
+    WARNING = "warning"

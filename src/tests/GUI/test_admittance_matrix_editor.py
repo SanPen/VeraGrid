@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import numpy as np
-from PySide6 import QtCore, QtWidgets
 
 from VeraGrid.Gui.DeviceEditors.AdmittanceMatrixEditor.admittance_matrix_editor import (
     AdmittanceMatrixEditorWidget,
@@ -39,15 +38,11 @@ def _build_demo_admittance_matrix() -> AdmittanceMatrix:
     return admittance_matrix
 
 
-def test_admittance_matrix_model_preserves_surviving_entries() -> None:
+def test_admittance_matrix_model_preserves_surviving_entries(qt_app: object) -> None:
     """
     Verify that toggling phases resizes the matrix without scrambling matching rows and columns.
     """
-    app: QtWidgets.QApplication | None = QtWidgets.QApplication.instance()
-    if app is None:
-        app = QtWidgets.QApplication([])
-    else:
-        pass
+    _qt_app: object = qt_app
 
     model: AdmittanceMatrixTableModel = AdmittanceMatrixTableModel(
         admittance_matrix=_build_demo_admittance_matrix(),
@@ -139,15 +134,11 @@ def test_admittance_matrix_editor_widget_exposes_ys_and_ysh_tables(qt_app: objec
     widget.close()
 
 
-def test_line_locations_model_roundtrip_and_remove_rows() -> None:
+def test_line_locations_model_roundtrip_and_remove_rows(qt_app: object) -> None:
     """
     Verify that the line-locations model preserves values and renumbers rows after deletion.
     """
-    app: QtWidgets.QApplication | None = QtWidgets.QApplication.instance()
-    if app is None:
-        app = QtWidgets.QApplication([])
-    else:
-        pass
+    _qt_app: object = qt_app
 
     line_locations: LineLocations = LineLocations()
     line_locations.add(sequence=0, latitude=10.0, longitude=20.0, altitude=5.0, idtag="a")

@@ -441,9 +441,9 @@ def test_validation_sections_skip_phase_consistency_for_pure_dc_injection() -> N
     editor.close()
 
 
-def test_validation_sections_show_phase_consistency_for_mixed_ac_dc_branch() -> None:
+def test_validation_sections_skip_phase_consistency_for_mixed_ac_dc_branch() -> None:
     """
-    Ensure mixed AC/DC branch EMT interfaces still expose phase consistency.
+    Ensure mixed AC/DC branch EMT interfaces no longer expose phase consistency.
 
     :return: None.
     """
@@ -477,14 +477,13 @@ def test_validation_sections_show_phase_consistency_for_mixed_ac_dc_branch() -> 
     sections: list[ValidationSection] = editor.collect_model_consistency_sections()
     phase_section: ValidationSection | None = _get_section_by_title(sections, "Phases Consistency")
 
-    assert phase_section is not None
-    assert phase_section.get_first_column_title() == "Phase"
+    assert phase_section is None
     editor.close()
 
 
-def test_validation_phase_consistency_matches_injection_mask_logic() -> None:
+def test_validation_sections_skip_phase_consistency_for_ac_injection() -> None:
     """
-    Ensure the validator phase section matches the EMT ``Do it!`` mask logic.
+    Ensure EMT injections no longer expose the phase consistency section.
 
     :return: None.
     """
@@ -512,27 +511,15 @@ def test_validation_phase_consistency_matches_injection_mask_logic() -> None:
         VarPowerFlowReferenceType.i_C,
     ]))
 
-    _connect_root_interface_ref(editor, VarPowerFlowReferenceType.v_N)
-    _connect_root_interface_ref(editor, VarPowerFlowReferenceType.i_N)
-    _connect_root_interface_ref(editor, VarPowerFlowReferenceType.v_A)
-    _connect_root_interface_ref(editor, VarPowerFlowReferenceType.i_A)
-    _connect_root_interface_ref(editor, VarPowerFlowReferenceType.v_B)
-
     sections: list[ValidationSection] = editor.collect_model_consistency_sections()
     phase_section: ValidationSection | None = _get_section_by_title(sections, "Phases Consistency")
-    assert phase_section is not None
-
-    detail_map: dict[str, list[str]] = _get_row_detail_map(phase_section)
-    assert detail_map["Neutral"] == ["the model has this neutral wire"]
-    assert detail_map["A"] == ["the model has this phase A"]
-    assert detail_map["B"] == ["inconsistent connection of phase B, only V ports are connected"]
-    assert detail_map["C"] == ["the model has no phase C"]
+    assert phase_section is None
     editor.close()
 
 
-def test_validation_phase_consistency_shows_only_ac_side_for_mixed_branch() -> None:
+def test_validation_sections_skip_phase_consistency_for_mixed_branch_with_ac_side() -> None:
     """
-    Ensure mixed AC/DC branch devices show only the AC side rows.
+    Ensure mixed AC/DC branch devices no longer expose phase consistency rows.
 
     :return: None.
     """
@@ -565,15 +552,7 @@ def test_validation_phase_consistency_shows_only_ac_side_for_mixed_branch() -> N
 
     sections: list[ValidationSection] = editor.collect_model_consistency_sections()
     phase_section: ValidationSection | None = _get_section_by_title(sections, "Phases Consistency")
-    assert phase_section is not None
-
-    row_labels: list[str] = list(row.get_block_label() for row in phase_section.get_rows())
-    assert row_labels == [
-        "N bus from",
-        "A bus from",
-        "B bus from",
-        "C bus from",
-    ]
+    assert phase_section is None
     editor.close()
 
 

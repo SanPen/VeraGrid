@@ -1,0 +1,542 @@
+from __future__ import annotations
+
+from typing import Any, Dict, List, Tuple
+
+import numpy as np
+from PySide6 import QtWidgets
+
+from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
+from VeraGridEngine.Devices.Branches.line import Line
+from VeraGridEngine.Devices.Branches.overhead_line_type import OverheadLineType
+from VeraGridEngine.Devices.Branches.wire import Wire
+from VeraGridEngine.Devices.Injections.generator import Generator
+from VeraGridEngine.Devices.Injections.load import Load
+from VeraGridEngine.Devices.Substation.bus import Bus
+from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.Simulations.EMT.emt_driver import EmtSimulationDriver
+from VeraGridEngine.Simulations.EMT.emt_options import EmtOptions
+from VeraGridEngine.Simulations.EMT.emt_results import EmtResults
+from VeraGridEngine.Simulations.EMT.problems.emt_problem_dae import EmtProblemDae
+from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowDriver
+from VeraGridEngine.Simulations.PowerFlow.power_flow_driver import PowerFlowOptions
+from VeraGridEngine.Simulations.PowerFlow3ph.power_flow_driver_3ph import PowerFlowDriver3Ph
+from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDae
+from VeraGridEngine.Simulations.Rms.rms_driver import RmsSimulationDriver
+from VeraGridEngine.Simulations.Rms.rms_options import RmsOptions
+from VeraGridEngine.Simulations.Rms.rms_results import RmsResults
+from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_template
+from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
+from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
+from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complete_generator_template_rms
+from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
+from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
+from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
+from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
+from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model, set_rms_model
+from VeraGridEngine.enumerations import BranchImpedanceMode, DynamicIntegrationMethod, DynamicSimulationMode, DynEditorGraphicsModes, EmtInitializationMethod, EmtSolverTypes, RmsInitializationMethod, ShuntConnectionType, SolverType
+
+
+def _collect_block_signature(block: Block) -> Dict[str, Any]:
+    """
+    Collect one structural signature from a symbolic block tree.
+
+    :param block: Root symbolic block to inspect.
+    :type block: Block
+    :return: Comparable structural signature.
+    :rtype: Dict[str, Any]
+    """
+    signature: Dict[str, Any] = dict()
+    all_blocks: List[Block] = block.get_all_blocks()
+
+    signature["block_count"] = len(all_blocks)
+    signature["state_var_names"] = [var.name for blk in all_blocks for var in blk.state_vars]
+    signature["algebraic_var_names"] = [var.name for blk in all_blocks for var in blk.algebraic_vars]
+    signature["diff_var_names"] = [var.name for blk in all_blocks for var in blk.diff_vars]
+    signature["parameter_names"] = [var.name for blk in all_blocks for var in blk.parameters.keys()]
+    signature["event_names"] = [var.name for blk in all_blocks for var in blk.event_dict.keys()]
+    signature["root_in_refs"] = [var.ref for var in block.in_vars]
+    signature["root_out_refs"] = [var.ref for var in block.out_vars]
+    signature["root_mapping_keys"] = list(block.external_mapping.keys())
+    return signature
+
+
+def _collect_block_semantic_signature(block: Block) -> Dict[str, Any]:
+    """
+    Collect one order-insensitive semantic signature from a symbolic block tree.
+
+    :param block: Root symbolic block to inspect.
+    :type block: Block
+    :return: Comparable semantic signature.
+    :rtype: Dict[str, Any]
+    """
+    signature: Dict[str, Any] = dict()
+    all_blocks: List[Block] = block.get_all_blocks()
+
+    signature["state_var_names"] = sorted([var.name for blk in all_blocks for var in blk.state_vars])
+    signature["algebraic_var_names"] = sorted([var.name for blk in all_blocks for var in blk.algebraic_vars])
+    signature["diff_var_names"] = sorted([var.name for blk in all_blocks for var in blk.diff_vars])
+    signature["parameter_names"] = sorted([var.name for blk in all_blocks for var in blk.parameters.keys()])
+    signature["event_names"] = sorted([var.name for blk in all_blocks for var in blk.event_dict.keys()])
+    signature["root_in_refs"] = sorted([str(var.ref) for var in block.in_vars])
+    signature["root_out_refs"] = sorted([str(var.ref) for var in block.out_vars])
+    signature["root_mapping_keys"] = sorted([str(key) for key in block.external_mapping.keys()])
+    return signature
+
+
+def _build_pf_options() -> PowerFlowOptions:
+    """
+    Build one common power-flow option set.
+
+    :return: Configured power-flow options.
+    :rtype: PowerFlowOptions
+    """
+    return PowerFlowOptions(
+        solver_type=SolverType.NR,
+        retry_with_other_methods=False,
+        verbose=0,
+        initialize_with_existing_solution=True,
+        tolerance=1e-6,
+        max_iter=25,
+        control_q=False,
+        control_taps_modules=True,
+        control_taps_phase=True,
+        control_remote_voltage=True,
+        orthogonalize_controls=True,
+        apply_temperature_correction=True,
+        branch_impedance_tolerance_mode=BranchImpedanceMode.Specified,
+        distributed_slack=False,
+        ignore_single_node_islands=False,
+        trust_radius=1.0,
+        backtracking_parameter=0.05,
+        use_stored_guess=False,
+        initialize_angles=False,
+        generate_report=False,
+    )
+
+
+def _build_emt_options() -> EmtOptions:
+    """
+    Build one EMT option set for equivalence checks.
+
+    :return: Configured EMT options.
+    :rtype: EmtOptions
+    """
+    return EmtOptions(
+        time_step=5e-6,
+        simulation_time=2e-4,
+        tolerance=1e-6,
+        solver_type=EmtSolverTypes.StructuralCompiled,
+        integration_method=DynamicIntegrationMethod.DaeTrapezoidal,
+        initialization_method=EmtInitializationMethod.PseudoTransient,
+        verbose=0,
+    )
+
+
+def _build_rms_options() -> RmsOptions:
+    """
+    Build one RMS option set for equivalence checks.
+
+    :return: Configured RMS options.
+    :rtype: RmsOptions
+    """
+    return RmsOptions(
+        time_step=0.001,
+        simulation_time=0.02,
+        tolerance=1e-6,
+        integration_method=DynamicIntegrationMethod.DaeBackEuler,
+        initialization_method=RmsInitializationMethod.Explicit,
+        use_init_values=False,
+        max_iter=1000,
+        verbose=0,
+    )
+
+
+def _build_two_bus_emt_grid() -> Tuple[MultiCircuit, Generator, Line, Load]:
+    """
+    Build one two-bus EMT benchmark grid.
+
+    :return: Grid and the three dynamic devices.
+    :rtype: Tuple[MultiCircuit, Generator, Line, Load]
+    """
+    grid: MultiCircuit = MultiCircuit(Sbase=2.0, fbase=50.0)
+    vnom: float = 10.0
+
+    bus0: Bus = Bus(name="Bus0", Vnom=vnom, is_slack=True)
+    bus1: Bus = Bus(name="Bus1", Vnom=vnom)
+    grid.add_bus(bus0)
+    grid.add_bus(bus1)
+
+    line0: Line = Line(name="line0", bus_from=bus0, bus_to=bus1, length=10.0, rate=900.0)
+    tower: OverheadLineType = OverheadLineType(name="Tower", Vnom=vnom)
+    wire: Wire = Wire(name="Panther 30/7 ACSR", diameter=21.0, diameter_internal=9.0, is_tube=True, r=0.1363, max_current=1)
+    tower.add_wire_relationship(wire=wire, xpos=-12.65, ypos=27.5, phase=1)
+    tower.add_wire_relationship(wire=wire, xpos=0.0, ypos=27.5, phase=2)
+    tower.add_wire_relationship(wire=wire, xpos=12.65, ypos=27.5, phase=3)
+    tower.compute()
+    line0.apply_template(tower, grid.Sbase, grid.fBase)
+
+    r_ph: float = 100.0
+    v_ph: float = vnom / (3.0 ** 0.5)
+    p_ph: float = (v_ph ** 2) / r_ph
+    q_ph: float = 0.0
+    load: Load = Load(name="load", P1=p_ph, P2=p_ph, P3=p_ph, Q1=q_ph, Q2=q_ph, Q3=q_ph)
+    load.conn = ShuntConnectionType.GroundedStar
+
+    gen0: Generator = Generator(name="Gen0", vset=1.0, Snom=grid.Sbase, freq=50.0, r1=0.001, x1=1.7)
+
+    grid.add_line(line0)
+    grid.add_generator(bus=bus0, api_obj=gen0)
+    grid.add_load(bus=bus1, api_obj=load)
+
+    return grid, gen0, line0, load
+
+
+def _build_two_bus_rms_grid() -> Tuple[MultiCircuit, Generator, Any, Load]:
+    """
+    Build one two-bus RMS benchmark grid.
+
+    :return: Grid and the three dynamic devices.
+    :rtype: Tuple[MultiCircuit, Generator, Any, Load]
+    """
+    grid: MultiCircuit = MultiCircuit(Sbase=100.0, fbase=50.0)
+
+    bus0: Bus = Bus(name="Bus0", Vnom=10.0, is_slack=True)
+    bus1: Bus = Bus(name="Bus1", Vnom=10.0)
+    grid.add_bus(bus0)
+    grid.add_bus(bus1)
+
+    bus_obj: Bus
+    for bus_obj in grid.buses:
+        initialize_bus_rms(bus_obj, vf=grid.var_factory)
+
+    line0 = Line(name="line 0-2", bus_from=bus0, bus_to=bus1, r=0.029585, x=0.071005, b=0.03, rate=900.0)
+    grid.add_line(line0)
+
+    load: Load = Load(P=9.999999, Q=0.999999)
+    grid.add_load(bus=bus1, api_obj=load)
+
+    gen0: Generator = Generator(name="Gen0", P=10.0, vset=1.0, Snom=900.0, x1=0.86138701, r1=0.3, freq=50.0)
+    grid.add_generator(bus=bus0, api_obj=gen0)
+
+    return grid, gen0, line0, load
+
+
+def _run_emt_power_flow(grid: MultiCircuit) -> Any:
+    """
+    Run one EMT benchmark three-phase power flow.
+
+    :param grid: Network model.
+    :type grid: MultiCircuit
+    :return: Three-phase power-flow results.
+    :rtype: Any
+    """
+    power_flow: PowerFlowDriver3Ph = PowerFlowDriver3Ph(grid, _build_pf_options())
+    power_flow.run()
+    return power_flow.results
+
+
+def _run_emt_driver(grid: MultiCircuit, pf_results_3ph: Any) -> EmtResults:
+    """
+    Run one EMT simulation.
+
+    :param grid: Network model.
+    :type grid: MultiCircuit
+    :param pf_results_3ph: Three-phase power-flow results.
+    :type pf_results_3ph: Any
+    :return: EMT results.
+    :rtype: EmtResults
+    """
+    driver: EmtSimulationDriver = EmtSimulationDriver(grid=grid, options=_build_emt_options(), pf_results_3ph=pf_results_3ph, pf_results=None)
+    driver.run()
+    if driver.results is None:
+        raise AssertionError("EMT driver did not produce results.")
+    else:
+        return driver.results
+
+
+def _run_rms_driver(grid: MultiCircuit) -> Tuple[RmsResults, RmsProblemDae]:
+    """
+    Run one RMS simulation.
+
+    :param grid: Network model.
+    :type grid: MultiCircuit
+    :return: RMS results and built problem.
+    :rtype: Tuple[RmsResults, RmsProblemDae]
+    """
+    pf_results: Any = MultiCircuit.power_flow(grid, options=_build_pf_options()) if False else None
+    pf_results = __import__("VeraGridEngine.api", fromlist=["power_flow"]).power_flow(grid, options=_build_pf_options())
+    driver: RmsSimulationDriver = RmsSimulationDriver(grid=grid, options=_build_rms_options(), pf_results=pf_results)
+    driver.run()
+    if driver.results is None:
+        raise AssertionError("RMS driver did not produce results.")
+    else:
+        problem: RmsProblemDae = RmsProblemDae(grid=grid, options=_build_rms_options(), pf_results=pf_results)
+        return driver.results, problem
+
+
+def _build_gui_editor(qt_app: QtWidgets.QApplication,
+                      grid: MultiCircuit,
+                      api_object: Any,
+                      mode: DynamicSimulationMode,
+                      root_block: Block) -> DynamicBlockEditorGUI:
+    """
+    Build one real dynamic block editor instance for one device.
+
+    :param qt_app: Shared Qt application.
+    :type qt_app: QtWidgets.QApplication
+    :param grid: Owning circuit.
+    :type grid: MultiCircuit
+    :param api_object: Edited device.
+    :type api_object: Any
+    :param mode: Dynamic editor mode.
+    :type mode: DynamicSimulationMode
+    :param root_block: Root block to edit.
+    :type root_block: Block
+    :return: Live editor widget.
+    :rtype: DynamicBlockEditorGUI
+    """
+    _app: QtWidgets.QApplication = qt_app
+    editor: DynamicBlockEditorGUI = DynamicBlockEditorGUI(
+        var_factory=grid.var_factory,
+        api_object=api_object,
+        circuit=grid,
+        current_theme=DynEditorGraphicsModes.LIGHT,
+        mode=mode,
+        templates_list=list(),
+        is_root_editor=True,
+        modal=False,
+        workspace_embedded=False,
+        root_block=root_block,
+        current_block=root_block,
+    )
+    editor.show()
+    _app.processEvents()
+    return editor
+
+
+def _run_balanced_pf(grid: MultiCircuit) -> Any:
+    power_flow: PowerFlowDriver = PowerFlowDriver(grid, _build_pf_options())
+    power_flow.run()
+    return power_flow.results
+
+
+def test_gui_editor_apply_changes_matches_scripting_for_emt(qt_app: QtWidgets.QApplication) -> None:
+    """
+    Compare the real EMT editor save path against EMT scripting assembly.
+
+    :param qt_app: Shared Qt application fixture.
+    :type qt_app: QtWidgets.QApplication
+    :return: None.
+    :rtype: None
+    """
+    script_grid: MultiCircuit
+    script_gen: Generator
+    script_line: Line
+    script_load: Load
+    script_grid, script_gen, script_line, script_load = _build_two_bus_emt_grid()
+
+    bus_obj: Bus
+    for bus_obj in script_grid.buses:
+        get_bus_emt_template(script_grid, bus_obj)
+
+    set_emt_model(device=script_gen, model=get_generator_thevenin_rl_emt_template_with_ref(vf=script_grid.var_factory).block, var_factory=script_grid.var_factory)
+    set_emt_model(device=script_line, model=get_pi_line_emt_template(vf=script_grid.var_factory, phN=False, phA=True, phB=True, phC=True).block, var_factory=script_grid.var_factory)
+    set_emt_model(device=script_load, model=get_load_ZIP_emt_template(vf=script_grid.var_factory, phA=True, phB=True, phC=True).block, var_factory=script_grid.var_factory)
+
+    gui_grid: MultiCircuit
+    gui_gen: Generator
+    gui_line: Line
+    gui_load: Load
+    gui_grid, gui_gen, gui_line, gui_load = _build_two_bus_emt_grid()
+
+    gui_gen.emt_template = get_generator_thevenin_rl_emt_template_with_ref(vf=gui_grid.var_factory)
+    gui_line.emt_template = get_pi_line_emt_template(vf=gui_grid.var_factory, phN=False, phA=True, phB=True, phC=True)
+    gui_load.emt_template = get_load_ZIP_emt_template(vf=gui_grid.var_factory, phA=True, phB=True, phC=True)
+
+    gen_editor: DynamicBlockEditorGUI = _build_gui_editor(qt_app=qt_app, grid=gui_grid, api_object=gui_gen, mode=DynamicSimulationMode.EMT, root_block=gui_gen.emt_model)
+    line_editor: DynamicBlockEditorGUI = _build_gui_editor(qt_app=qt_app, grid=gui_grid, api_object=gui_line, mode=DynamicSimulationMode.EMT, root_block=gui_line.emt_model)
+    load_editor: DynamicBlockEditorGUI = _build_gui_editor(qt_app=qt_app, grid=gui_grid, api_object=gui_load, mode=DynamicSimulationMode.EMT, root_block=gui_load.emt_model)
+
+    gen_editor.apply_changes()
+    line_editor.apply_changes()
+    load_editor.apply_changes()
+    qt_app.processEvents()
+
+    assert _collect_block_semantic_signature(gui_gen.emt_model) == _collect_block_semantic_signature(script_gen.emt_model)
+    assert _collect_block_semantic_signature(gui_line.emt_model) == _collect_block_semantic_signature(script_line.emt_model)
+    assert _collect_block_semantic_signature(gui_load.emt_model) == _collect_block_semantic_signature(script_load.emt_model)
+
+    script_pf_results_3ph: Any = _run_emt_power_flow(script_grid)
+    gui_pf_results_3ph: Any = _run_emt_power_flow(gui_grid)
+    script_problem = __import__("VeraGridEngine.Simulations.EMT.problems.emt_problem_dae", fromlist=["EmtProblemDae"]).EmtProblemDae(grid=script_grid, options=_build_emt_options(), pf_results_3ph=script_pf_results_3ph, pf_results=None)
+    gui_problem = __import__("VeraGridEngine.Simulations.EMT.problems.emt_problem_dae", fromlist=["EmtProblemDae"]).EmtProblemDae(grid=gui_grid, options=_build_emt_options(), pf_results_3ph=gui_pf_results_3ph, pf_results=None)
+    assert script_problem.get_states_number() == gui_problem.get_states_number()
+    assert script_problem.get_algebraic_var_number() == gui_problem.get_algebraic_var_number()
+    script_results: EmtResults = _run_emt_driver(script_grid, script_pf_results_3ph)
+    gui_results: EmtResults = _run_emt_driver(gui_grid, gui_pf_results_3ph)
+
+    assert list(script_results.variable_array) == list(gui_results.variable_array)
+    assert np.allclose(script_results.values, gui_results.values, rtol=1e-8, atol=1e-8)
+    assert np.allclose(script_results.diff_values, gui_results.diff_values, rtol=1e-8, atol=1e-8)
+
+
+def test_gui_editor_apply_changes_matches_scripting_for_emt_with_balanced_pf(
+        qt_app: QtWidgets.QApplication) -> None:
+    script_grid: MultiCircuit
+    script_gen: Generator
+    script_line: Line
+    script_load: Load
+    script_grid, script_gen, script_line, script_load = _build_two_bus_emt_grid()
+
+    bus_obj: Bus
+    for bus_obj in script_grid.buses:
+        get_bus_emt_template(script_grid, bus_obj)
+
+    set_emt_model(device=script_gen, model=get_generator_thevenin_rl_emt_template_with_ref(vf=script_grid.var_factory).block, var_factory=script_grid.var_factory)
+    set_emt_model(device=script_line, model=get_pi_line_emt_template(vf=script_grid.var_factory, phN=False, phA=True, phB=True, phC=True).block, var_factory=script_grid.var_factory)
+    set_emt_model(device=script_load, model=get_load_ZIP_emt_template(vf=script_grid.var_factory, phA=True, phB=True, phC=True).block, var_factory=script_grid.var_factory)
+
+    gui_grid: MultiCircuit
+    gui_gen: Generator
+    gui_line: Line
+    gui_load: Load
+    gui_grid, gui_gen, gui_line, gui_load = _build_two_bus_emt_grid()
+
+    gui_gen.emt_template = get_generator_thevenin_rl_emt_template_with_ref(vf=gui_grid.var_factory)
+    gui_line.emt_template = get_pi_line_emt_template(vf=gui_grid.var_factory, phN=False, phA=True, phB=True, phC=True)
+    gui_load.emt_template = get_load_ZIP_emt_template(vf=gui_grid.var_factory, phA=True, phB=True, phC=True)
+
+    gen_editor: DynamicBlockEditorGUI = _build_gui_editor(qt_app=qt_app, grid=gui_grid, api_object=gui_gen, mode=DynamicSimulationMode.EMT, root_block=gui_gen.emt_model)
+    line_editor: DynamicBlockEditorGUI = _build_gui_editor(qt_app=qt_app, grid=gui_grid, api_object=gui_line, mode=DynamicSimulationMode.EMT, root_block=gui_line.emt_model)
+    load_editor: DynamicBlockEditorGUI = _build_gui_editor(qt_app=qt_app, grid=gui_grid, api_object=gui_load, mode=DynamicSimulationMode.EMT, root_block=gui_load.emt_model)
+
+    gen_editor.apply_changes()
+    line_editor.apply_changes()
+    load_editor.apply_changes()
+    qt_app.processEvents()
+
+    script_pf_results: Any = _run_balanced_pf(script_grid)
+    gui_pf_results: Any = _run_balanced_pf(gui_grid)
+
+    script_problem: EmtProblemDae = EmtProblemDae(grid=script_grid, options=_build_emt_options(), pf_results=script_pf_results, pf_results_3ph=None)
+    gui_problem: EmtProblemDae = EmtProblemDae(grid=gui_grid, options=_build_emt_options(), pf_results=gui_pf_results, pf_results_3ph=None)
+
+    assert script_problem.initialization_report is not None
+    assert gui_problem.initialization_report is not None
+    assert script_problem.initialization_report.status == gui_problem.initialization_report.status
+    assert script_problem.get_states_number() == gui_problem.get_states_number()
+    assert script_problem.get_algebraic_var_number() == gui_problem.get_algebraic_var_number()
+
+    script_driver: EmtSimulationDriver = EmtSimulationDriver(grid=script_grid, options=_build_emt_options(), pf_results_3ph=None, pf_results=script_pf_results)
+    gui_driver: EmtSimulationDriver = EmtSimulationDriver(grid=gui_grid, options=_build_emt_options(), pf_results_3ph=None, pf_results=gui_pf_results)
+    script_driver.run()
+    gui_driver.run()
+
+    assert script_driver.results is not None
+    assert gui_driver.results is not None
+    assert np.array_equal(script_driver.results.converged, gui_driver.results.converged)
+    assert np.array_equal(script_driver.results.well_initialized, gui_driver.results.well_initialized)
+    assert np.allclose(script_driver.results.values, gui_driver.results.values, rtol=1e-8, atol=1e-8)
+
+
+def test_native_emt_template_assignment_matches_set_emt_model_with_balanced_pf() -> None:
+    script_grid: MultiCircuit
+    script_gen: Generator
+    script_line: Line
+    script_load: Load
+    script_grid, script_gen, script_line, script_load = _build_two_bus_emt_grid()
+
+    bus_obj: Bus
+    for bus_obj in script_grid.buses:
+        get_bus_emt_template(script_grid, bus_obj)
+
+    set_emt_model(device=script_gen, model=get_generator_thevenin_rl_emt_template_with_ref(vf=script_grid.var_factory).block, var_factory=script_grid.var_factory)
+    set_emt_model(device=script_line, model=get_pi_line_emt_template(vf=script_grid.var_factory, phN=False, phA=True, phB=True, phC=True).block, var_factory=script_grid.var_factory)
+    set_emt_model(device=script_load, model=get_load_ZIP_emt_template(vf=script_grid.var_factory, phA=True, phB=True, phC=True).block, var_factory=script_grid.var_factory)
+
+    template_grid: MultiCircuit
+    template_gen: Generator
+    template_line: Line
+    template_load: Load
+    template_grid, template_gen, template_line, template_load = _build_two_bus_emt_grid()
+
+    for bus_obj in template_grid.buses:
+        get_bus_emt_template(template_grid, bus_obj)
+
+    template_gen.emt_template = get_generator_thevenin_rl_emt_template_with_ref(vf=template_grid.var_factory)
+    template_line.emt_template = get_pi_line_emt_template(vf=template_grid.var_factory, phN=False, phA=True, phB=True, phC=True)
+    template_load.emt_template = get_load_ZIP_emt_template(vf=template_grid.var_factory, phA=True, phB=True, phC=True)
+
+    assert _collect_block_semantic_signature(template_gen.emt_model) == _collect_block_semantic_signature(script_gen.emt_model)
+    assert _collect_block_semantic_signature(template_line.emt_model) == _collect_block_semantic_signature(script_line.emt_model)
+    assert _collect_block_semantic_signature(template_load.emt_model) == _collect_block_semantic_signature(script_load.emt_model)
+
+    script_pf_results: Any = _run_balanced_pf(script_grid)
+    template_pf_results: Any = _run_balanced_pf(template_grid)
+
+    script_driver: EmtSimulationDriver = EmtSimulationDriver(grid=script_grid, options=_build_emt_options(), pf_results_3ph=None, pf_results=script_pf_results)
+    template_driver: EmtSimulationDriver = EmtSimulationDriver(grid=template_grid, options=_build_emt_options(), pf_results_3ph=None, pf_results=template_pf_results)
+    script_driver.run()
+    template_driver.run()
+
+    assert script_driver.results is not None
+    assert template_driver.results is not None
+    assert np.array_equal(script_driver.results.converged, template_driver.results.converged)
+    assert np.array_equal(script_driver.results.well_initialized, template_driver.results.well_initialized)
+    assert np.allclose(script_driver.results.values, template_driver.results.values, rtol=1e-8, atol=1e-8)
+
+
+def test_gui_editor_apply_changes_matches_scripting_for_rms(qt_app: QtWidgets.QApplication) -> None:
+    """
+    Compare the real RMS editor save path against RMS scripting assembly.
+
+    :param qt_app: Shared Qt application fixture.
+    :type qt_app: QtWidgets.QApplication
+    :return: None.
+    :rtype: None
+    """
+    script_grid: MultiCircuit
+    script_gen: Generator
+    script_line: Any
+    script_load: Load
+    script_grid, script_gen, script_line, script_load = _build_two_bus_rms_grid()
+
+    set_rms_model(device=script_gen, model=get_complete_generator_template_rms(script_grid.var_factory).block, var_factory=script_grid.var_factory)
+    set_rms_model(device=script_line, model=get_line_rms_template(script_grid.var_factory).block, var_factory=script_grid.var_factory)
+    set_rms_model(device=script_load, model=get_load_rms_template(script_grid.var_factory).block, var_factory=script_grid.var_factory)
+
+    gui_grid: MultiCircuit
+    gui_gen: Generator
+    gui_line: Any
+    gui_load: Load
+    gui_grid, gui_gen, gui_line, gui_load = _build_two_bus_rms_grid()
+
+    gui_gen.rms_template = get_complete_generator_template_rms(gui_grid.var_factory)
+    gui_line.rms_template = get_line_rms_template(gui_grid.var_factory)
+    gui_load.rms_template = get_load_rms_template(gui_grid.var_factory)
+
+    gen_editor: DynamicBlockEditorGUI = _build_gui_editor(qt_app=qt_app, grid=gui_grid, api_object=gui_gen, mode=DynamicSimulationMode.RMS, root_block=gui_gen.rms_model)
+    line_editor: DynamicBlockEditorGUI = _build_gui_editor(qt_app=qt_app, grid=gui_grid, api_object=gui_line, mode=DynamicSimulationMode.RMS, root_block=gui_line.rms_model)
+    load_editor: DynamicBlockEditorGUI = _build_gui_editor(qt_app=qt_app, grid=gui_grid, api_object=gui_load, mode=DynamicSimulationMode.RMS, root_block=gui_load.rms_model)
+
+    gen_editor.apply_changes()
+    line_editor.apply_changes()
+    load_editor.apply_changes()
+    qt_app.processEvents()
+
+    assert _collect_block_semantic_signature(gui_gen.rms_model) == _collect_block_semantic_signature(script_gen.rms_model)
+    assert _collect_block_semantic_signature(gui_line.rms_model) == _collect_block_semantic_signature(script_line.rms_model)
+    assert _collect_block_semantic_signature(gui_load.rms_model) == _collect_block_semantic_signature(script_load.rms_model)
+
+    script_results: RmsResults
+    gui_results: RmsResults
+    script_problem: RmsProblemDae
+    gui_problem: RmsProblemDae
+    script_results, script_problem = _run_rms_driver(script_grid)
+    gui_results, gui_problem = _run_rms_driver(gui_grid)
+
+    assert script_problem.get_states_number() == gui_problem.get_states_number()
+    assert script_problem.get_algebraic_var_number() == gui_problem.get_algebraic_var_number()
+    assert list(script_results.variable_array) == list(gui_results.variable_array)
+    assert np.allclose(script_results.values, gui_results.values, rtol=1e-8, atol=1e-8)

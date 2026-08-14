@@ -6,8 +6,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from .compat import Block, procedural_logic_to_dict
-from .export_ir import ExportLogicEntry
+from VeraGridEngine.IO.fmu.exporter.compat import Block, procedural_logic_to_dict
+from VeraGridEngine.IO.fmu.exporter.export_ir import ExportLogicEntry
 
 
 SUPPORTED_LOGIC_TYPES = {

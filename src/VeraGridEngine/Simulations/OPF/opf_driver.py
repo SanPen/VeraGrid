@@ -13,8 +13,8 @@ from VeraGridEngine.Simulations.OPF.ac_opf_worker import run_nonlinear_opf
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
 from VeraGridEngine.Simulations.driver_template import TimeSeriesDriverTemplate
 from VeraGridEngine.Simulations.OPF.simple_dispatch_ts import GreedyDispatchInputsSnapshot, greedy_dispatch2
-from VeraGridEngine.Compilers.circuit_to_newton_pa import newton_pa_linear_opf, newton_pa_nonlinear_opf
-import VeraGridEngine.Compilers.circuit_to_gslv as gslv
+from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE, pg
+from VeraGridEngine.Compilers.Gslv.Simulations.opf import gslv_opf
 
 
 class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
@@ -306,93 +306,36 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
         self.tic()
 
         if self.engine == EngineType.GSLV:
-            if not gslv.GSLV_AVAILABLE:
+            if not GSLV_AVAILABLE:
                 self.engine = EngineType.VeraGrid
                 self.logger.add_warning('GSLV not available, falling back to VeraGrid')
             else:
-                if self.options.solver != SolverType.LINEAR_OPF:
+                if self.options.solver not in (SolverType.LINEAR_OPF, SolverType.NONLINEAR_OPF):
                     self.engine = EngineType.VeraGrid
-                    self.logger.add_warning('GSLV OPF snapshot only supports LINEAR_OPF, falling back to VeraGrid')
+                    self.logger.add_warning(
+                        'GSLV OPF snapshot only supports LINEAR_OPF and NONLINEAR_OPF, falling back to VeraGrid'
+                    )
                 else:
                     pass
 
         if self.engine == EngineType.VeraGrid:
             self.opf()
 
-        elif self.engine == EngineType.NewtonPA:
-
-            ti = self.time_indices if self.time_indices is not None else 0
-            use_time_series = self.time_indices is not None
-
-            if self.options.solver == SolverType.LINEAR_OPF:
-                self.report_text('Running Linear OPF with Newton...')
-
-                npa_res = newton_pa_linear_opf(circuit=self.grid,
-                                               opf_options=self.options,
-                                               pf_opt=PowerFlowOptions(),
-                                               time_series=use_time_series,
-                                               time_indices=self.time_indices)
-
-                self.results.voltage = npa_res.voltage_module[0, :] * np.exp(1j * npa_res.voltage_angle[0, :])
-                self.results.bus_shadow_prices = npa_res.nodal_shadow_prices[0, :]
-                self.results.load_shedding = npa_res.load_shedding[0, :]
-                self.results.battery_power = npa_res.battery_power[0, :]
-                # self.results.battery_energy = npa_res.battery_energy[0, :]
-                self.results.generator_power = npa_res.generator_power[0, :]
-                self.results.Sf = npa_res.branch_flows[0, :]
-                self.results.St = -npa_res.branch_flows[0, :]
-                self.results.overloads = npa_res.branch_overloads[0, :]
-                self.results.loading = npa_res.branch_loading[0, :]
-                self.results.tap_angle = npa_res.branch_tap_angle[0, :]
-
-                # self.results.Sbus = npa_res.
-                self.results.hvdc_Pf = npa_res.hvdc_flows[0, :]
-                self.results.hvdc_loading = npa_res.hvdc_loading[0, :]
-                self.results.converged = True
-
-            elif self.options.solver == SolverType.NONLINEAR_OPF:
-                self.report_text('Running Non-Linear OPF with Newton...')
-
-                # pack the results
-                npa_res = newton_pa_nonlinear_opf(circuit=self.grid,
-                                                  pf_opt=self.pf_options,
-                                                  opf_opt=self.options,
-                                                  time_series=use_time_series,
-                                                  time_indices=self.time_indices)
-
-                self.results.voltage = npa_res.voltage[0, :]
-                self.results.Sbus = npa_res.Scalc[0, :]
-                self.results.bus_shadow_prices = npa_res.bus_shadow_prices[0, :]
-                self.results.load_shedding = npa_res.load_shedding[0, :]
-                self.results.battery_power = npa_res.battery_p[0, :]
-                # self.results.battery_energy = npa_res.battery_energy[0, :]
-                self.results.generator_power = npa_res.generator_p[0, :]
-                self.results.Sf = npa_res.Sf[0, :]
-                self.results.St = npa_res.St[0, :]
-                self.results.overloads = npa_res.branch_overload[0, :]
-                self.results.loading = npa_res.Loading[0, :]
-                # self.results.losses =
-                self.results.tap_angle = npa_res.tap_angle[0, :]
-
-                self.results.hvdc_Pf = npa_res.hvdc_Pf[0, :]
-                self.results.hvdc_loading = npa_res.hvdc_loading[0, :]
-                self.results.converged = npa_res.converged
-
-            else:
-                raise Exception(f"{self.options.solver} Not implemented yet")
-
         elif self.engine == EngineType.GSLV:
 
-            self.report_text('Running Linear OPF with GSLV...')
+            if self.options.solver == SolverType.LINEAR_OPF:
+                self.report_text('Running Linear OPF with GSLV...')
+            else:
+                self.report_text('Running Non-Linear OPF with GSLV...')
 
-            gslv_res = gslv.gslv_opf(circuit=self.grid,
-                                     opf_options=self.options,
-                                     time_series=False,
-                                     time_indices=None,
-                                     logger=self.logger)
+            gslv_res = gslv_opf(circuit=self.grid,
+                                opf_options=self.options,
+                                time_series=False,
+                                time_indices=None,
+                                logger=self.logger)
 
             self.results.voltage = gslv_res.voltage[0, :]
-            self.results.Sbus = gslv_res.Sbus[0, :].real
+            self.results.Sbus = gslv_res.Sbus[0, :]
             self.results.bus_shadow_prices = gslv_res.bus_shadow_prices[0, :]
 
             self.results.load_power = gslv_res.load_power[0, :]
@@ -401,11 +344,11 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
             self.results.battery_power = gslv_res.battery_power[0, :]
             self.results.generator_power = gslv_res.generator_power[0, :]
             self.results.generator_reactive_power = gslv_res.generator_reactive_power[0, :]
-            self.results.Sf = gslv_res.Sf[0, :].real
-            self.results.St = gslv_res.St[0, :].real
-            self.results.overloads = gslv_res.overloads[0, :].real
+            self.results.Sf = gslv_res.Sf[0, :]
+            self.results.St = gslv_res.St[0, :]
+            self.results.overloads = gslv_res.overloads[0, :]
             self.results.overloads_cost = gslv_res.overloads_cost[0, :]
-            self.results.loading = gslv_res.loading[0, :].real
+            self.results.loading = gslv_res.loading[0, :]
             self.results.losses = gslv_res.losses[0, :]
             self.results.tap_angle = gslv_res.tap_angle[0, :]
             self.results.tap_module = gslv_res.tap_module[0, :]
@@ -423,6 +366,12 @@ class OptimalPowerFlowDriver(TimeSeriesDriverTemplate):
             self.results.fluid_node_spillage = gslv_res.fluid_node_spillage[0, :]
             self.results.fluid_path_flow = gslv_res.fluid_path_flow[0, :]
             self.results.fluid_injection_flow = gslv_res.fluid_injection_flow[0, :]
+            self.results.converged = bool(gslv_res.converged[0])
+            if isinstance(gslv_res, pg.OptimalPowerFlowResults):
+                self.results.error = 0.0 if self.results.converged else np.nan
+            else:
+                self.results.error = float(gslv_res.error_values[0])
+            self.results.non_linear = self.options.solver == SolverType.NONLINEAR_OPF
 
         else:
             self.opf()

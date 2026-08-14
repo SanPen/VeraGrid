@@ -3,12 +3,15 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
+from __future__ import annotations
+
 import numpy as np
 import scipy.sparse as sp
 import time
 import warnings
 import sys
 import os
+from typing import TYPE_CHECKING
 from scipy.sparse import csc_matrix
 from scipy.sparse import linalg as spla
 import matplotlib.pyplot as plt
@@ -17,13 +20,14 @@ from VeraGridEngine.Simulations.Rms.problems.rms_problem_dae import RmsProblemDa
 from VeraGridEngine.Utils.Sparse.csc import pack_4_by_4_scipy
 from VeraGridEngine.Utils.Symbolic.symbolic import get_expression_vars, Var, Const, BinOp
 from VeraGridEngine.basic_structures import Vec, Mat
-from VeraGridEngine.Simulations.Rms.problems.rms_problem_template import RmsProblemTemplate
 
+if TYPE_CHECKING:
+    from VeraGridEngine.Simulations.EMT.initialization_emt import EmtPseudoTransientProblemAdapter
 
 class  PseudoTransient:
 
     def __init__(self,
-                 problem: RmsProblemDae,
+                 problem: RmsProblemDae | EmtPseudoTransientProblemAdapter,
                  h: float,
                  dtau0: float,
                  dtau_max: float = 1e2,

@@ -9,7 +9,7 @@ from pathlib import Path
 import shutil
 import tempfile
 
-from .export_ir import ExportModel, VariableCategory
+from VeraGridEngine.IO.fmu.exporter.export_ir import ExportModel, VariableCategory
 
 try:
     import fmpy

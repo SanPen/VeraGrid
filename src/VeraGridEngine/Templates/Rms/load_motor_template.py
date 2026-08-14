@@ -37,7 +37,8 @@ def MotorLoadBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     templ.tpe = DeviceType.LoadDevice
     pi = math.pi
     # Inputs:
-    inputs = [vfactory.add_var('Vm'), vfactory.add_var('Va')]
+    inputs = [vfactory.add_var('Vm', reference=VarPowerFlowReferenceType.Vm),
+              vfactory.add_var('Va', reference=VarPowerFlowReferenceType.Va)]
     Vm = inputs[0]
     Va = inputs[1]
     # Variables:

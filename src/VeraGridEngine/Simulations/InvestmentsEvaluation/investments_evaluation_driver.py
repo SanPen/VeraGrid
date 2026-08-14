@@ -8,7 +8,8 @@ from math import comb
 
 import numpy as np
 
-from VeraGridEngine.Compilers.circuit_to_gslv import GSLV_AVAILABLE, gslv_investments_evaluation
+from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE
+from VeraGridEngine.Compilers.Gslv.Simulations.investments import gslv_investments_evaluation
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Utils.NumericalMethods.MVRSM_mo_pareto import MVRSM_mo_pareto

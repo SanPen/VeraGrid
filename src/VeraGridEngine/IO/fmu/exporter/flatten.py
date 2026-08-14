@@ -6,8 +6,8 @@ from __future__ import annotations
 
 from typing import Iterable, List
 
-from .compat import Block, Const, Var
-from .snapshot import reconstruct_block
+from VeraGridEngine.IO.fmu.exporter.compat import Block, Const, Var
+from VeraGridEngine.IO.fmu.exporter.snapshot import reconstruct_block
 
 
 def _extend_unique_vars(target: List[Var], source: Iterable[Var]) -> None:

@@ -13,7 +13,7 @@ from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as Navigation
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from VeraGrid.Gui.Icons.icon_associations import device_type_icons
-from VeraGrid.Gui.dynamic_events_editor_dialog import create_dynamic_events_group_with_dialog
+from VeraGrid.Gui.DynamicEventsDialog.dynamic_events_editor_support import create_dynamic_events_group_with_dialog
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Devices.Events.dynamic_plot import DynamicPlot
 from VeraGridEngine.Devices.Events.dynamic_plot_entry import DynamicPlotEntry

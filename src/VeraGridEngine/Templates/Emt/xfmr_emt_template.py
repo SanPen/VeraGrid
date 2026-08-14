@@ -168,7 +168,9 @@ def get_xfmr_emt_template(
     templ = EmtModelTemplate()
     templ.tpe = DeviceType.Transformer2WDevice
     templ.name = name
-    templ.block.name = name
+
+    block = Block()
+    block.name=name
 
     if conn_f in {WindingType.GroundedStar, WindingType.NeutralStar}:
         from_has_neutral_port: bool = True
@@ -199,13 +201,13 @@ def get_xfmr_emt_template(
     xfmr_sc_loss_kw: Var = vf.add_var(name=f"xfmr_sc_loss_kw")
     xfmr_tap_module: Var = vf.add_var(name=f"xfmr_tap_module")
 
-    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.omega_base] = omega_base
-    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_rated_power_mva] = xfmr_s_rated_mva
-    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_open_circuit_current_pct] = xfmr_oc_current_pct
-    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_open_circuit_loss_kw] = xfmr_oc_loss_kw
-    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_short_circuit_voltage_pct] = xfmr_sc_voltage_pct
-    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_short_circuit_loss_kw] = xfmr_sc_loss_kw
-    templ.block.api_obj_mapping[ParamPowerFlowReferenceType.tap_module] = xfmr_tap_module
+    block.api_obj_mapping[ParamPowerFlowReferenceType.omega_base] = omega_base
+    block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_rated_power_mva] = xfmr_s_rated_mva
+    block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_open_circuit_current_pct] = xfmr_oc_current_pct
+    block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_open_circuit_loss_kw] = xfmr_oc_loss_kw
+    block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_short_circuit_voltage_pct] = xfmr_sc_voltage_pct
+    block.api_obj_mapping[ParamPowerFlowReferenceType.transformer_short_circuit_loss_kw] = xfmr_sc_loss_kw
+    block.api_obj_mapping[ParamPowerFlowReferenceType.tap_module] = xfmr_tap_module
 
     # ------------------------------------------------------------------
     # Mapped winding-connection matrices.
@@ -256,8 +258,8 @@ def get_xfmr_emt_template(
             c_f_var: Var = vf.add_var(name=f"xfmr_cf_{i}_{j}")
             c_t_var: Var = vf.add_var(name=f"xfmr_ct_{i}_{j}")
 
-            templ.block.api_obj_mapping[cf_enums[i][j]] = c_f_var
-            templ.block.api_obj_mapping[ct_enums[i][j]] = c_t_var
+            block.api_obj_mapping[cf_enums[i][j]] = c_f_var
+            block.api_obj_mapping[ct_enums[i][j]] = c_t_var
 
             c_f_row.append(c_f_var)
             c_t_row.append(c_t_var)
@@ -283,26 +285,26 @@ def get_xfmr_emt_template(
     xfmr_core_a_prime: Var = vf.add_var(name=f"xfmr_core_a_prime")
     xfmr_core_b_prime: Var = vf.add_var(name=f"xfmr_core_b_prime")
 
-    templ.block.event_dict[xfmr_core_topology_code] = vf.add_const(3.0)
-    templ.block.event_dict[xfmr_yoke_area_rel] = vf.add_const(1.0)
-    templ.block.event_dict[xfmr_yoke_length_rel] = vf.add_const(1.0)
-    templ.block.event_dict[xfmr_outer_leg_area_rel] = vf.add_const(1.0)
-    templ.block.event_dict[xfmr_outer_leg_length_rel] = vf.add_const(1.0)
-    templ.block.event_dict[xfmr_c_term] = vf.add_const(1e-6)
-    templ.block.event_dict[xfmr_use_linear_core] = vf.add_const(1.0)
-    templ.block.event_dict[xfmr_core_knee_flux_mult] = vf.add_const(1.50)
-    templ.block.event_dict[xfmr_core_knee_current_mult] = vf.add_const(8.0)
+    block.event_dict[xfmr_core_topology_code] = vf.add_const(3.0)
+    block.event_dict[xfmr_yoke_area_rel] = vf.add_const(1.0)
+    block.event_dict[xfmr_yoke_length_rel] = vf.add_const(1.0)
+    block.event_dict[xfmr_outer_leg_area_rel] = vf.add_const(1.0)
+    block.event_dict[xfmr_outer_leg_length_rel] = vf.add_const(1.0)
+    block.event_dict[xfmr_c_term] = vf.add_const(1e-6)
+    block.event_dict[xfmr_use_linear_core] = vf.add_const(1.0)
+    block.event_dict[xfmr_core_knee_flux_mult] = vf.add_const(1.50)
+    block.event_dict[xfmr_core_knee_current_mult] = vf.add_const(8.0)
 
     # ------------------------------------------------------------------
     # Derived local parameters of the dynamic model.
     # ------------------------------------------------------------------
-    templ.block.event_dict[xfmr_sc_resistance_pct] = xfmr_sc_loss_kw / (vf.add_const(10.0) * xfmr_s_rated_mva + c_eps)
+    block.event_dict[xfmr_sc_resistance_pct] = xfmr_sc_loss_kw / (vf.add_const(10.0) * xfmr_s_rated_mva + c_eps)
 
     oc_loss_pu: Expr = (xfmr_oc_loss_kw / vf.add_const(1000.0)) / (xfmr_s_rated_mva + c_eps)
     oc_current_pu: Expr = xfmr_oc_current_pct / vf.add_const(100.0)
     i_mag_pu: Expr = sym.sqrt(oc_current_pu * oc_current_pu - oc_loss_pu * oc_loss_pu + c_eps)
 
-    templ.block.event_dict[xfmr_core_linear_l_pu] = c1 / (i_mag_pu + c_eps)
+    block.event_dict[xfmr_core_linear_l_pu] = c1 / (i_mag_pu + c_eps)
 
     lambda_nom_peak: Expr = c_sqrt2
     i_nom_peak_from_linear: Expr = lambda_nom_peak / (xfmr_core_linear_l_pu + c_eps)
@@ -312,8 +314,8 @@ def get_xfmr_emt_template(
     b_prime_raw: Expr = (i_knee / (lambda_knee + c_eps) - a_prime_auto) / (i_knee + c_eps)
     b_prime_auto: Expr = b_prime_raw * b_prime_raw / (sym.sqrt(b_prime_raw * b_prime_raw + c_smooth) + c_eps)
 
-    templ.block.event_dict[xfmr_core_a_prime] = a_prime_auto
-    templ.block.event_dict[xfmr_core_b_prime] = b_prime_auto
+    block.event_dict[xfmr_core_a_prime] = a_prime_auto
+    block.event_dict[xfmr_core_b_prime] = b_prime_auto
 
     # ------------------------------------------------------------------
     # Leakage-branch parameters.
@@ -391,10 +393,18 @@ def get_xfmr_emt_template(
     i_loss_leg: list[Var] = [vf.add_var(name=f"i_loss_leg_{ph}") for ph in ("A", "B", "C")]
     i_cap_f: list[Var] = [vf.add_var(name=f"i_cap_f_{ph}") for ph in ("A", "B", "C")]
     i_cap_t: list[Var] = [vf.add_var(name=f"i_cap_t_{ph}") for ph in ("A", "B", "C")]
-    if_act: list[Var] = [vf.add_var(name=f"if_{ph}") for ph in ("A", "B", "C")]
-    it_act: list[Var] = [vf.add_var(name=f"it_{ph}") for ph in ("A", "B", "C")]
-    if_n_act: Var | None = vf.add_var(name=f"if_N") if from_has_neutral_port else None
-    it_n_act: Var | None = vf.add_var(name=f"it_N") if to_has_neutral_port else None
+    if_act: list[Var] = [
+        vf.add_var(name=f"if_A", reference=VarPowerFlowReferenceType.if_A),
+        vf.add_var(name=f"if_B", reference=VarPowerFlowReferenceType.if_B),
+        vf.add_var(name=f"if_C", reference=VarPowerFlowReferenceType.if_C),
+    ]
+    it_act: list[Var] = [
+        vf.add_var(name=f"it_A", reference=VarPowerFlowReferenceType.it_A),
+        vf.add_var(name=f"it_B", reference=VarPowerFlowReferenceType.it_B),
+        vf.add_var(name=f"it_C", reference=VarPowerFlowReferenceType.it_C),
+    ]
+    if_n_act: Var | None = vf.add_var(name=f"if_N", reference=VarPowerFlowReferenceType.if_N) if from_has_neutral_port else None
+    it_n_act: Var | None = vf.add_var(name=f"it_N", reference=VarPowerFlowReferenceType.it_N) if to_has_neutral_port else None
     from_ground_current: Var | None = None
     to_ground_current: Var | None = None
     from_grounding_link_block: Block | None = None
@@ -430,7 +440,7 @@ def get_xfmr_emt_template(
         vf.add_connections(from_grounding_link_template.block.in_vars, [v_f_n])
         from_ground_current = from_grounding_link_template.block.out_vars[0]
         from_grounding_link_block = from_grounding_link_template.block
-        templ.block.add(from_grounding_link_block)
+        block.add(from_grounding_link_block)
     else:
         pass
 
@@ -447,7 +457,7 @@ def get_xfmr_emt_template(
         vf.add_connections(to_grounding_link_template.block.in_vars, [v_t_n])
         to_ground_current = to_grounding_link_template.block.out_vars[0]
         to_grounding_link_block = to_grounding_link_template.block
-        templ.block.add(to_grounding_link_block)
+        block.add(to_grounding_link_block)
     else:
         pass
 
@@ -472,10 +482,10 @@ def get_xfmr_emt_template(
     else:
         pass
 
-    templ.block.in_vars = input_vars
-    templ.block.state_vars = i_leak + lam_leg + q_f + q_t
-    templ.block.diff_vars = di_leak + dlam_leg + dq_f + dq_t
-    templ.block.algebraic_vars = algebraic_vars
+    block.in_vars = input_vars
+    block.state_vars = i_leak + lam_leg + q_f + q_t
+    block.diff_vars = di_leak + dlam_leg + dq_f + dq_t
+    block.algebraic_vars = algebraic_vars
 
     v_f_term: list[Expr] = list()
     v_t_term: list[Expr] = list()
@@ -543,7 +553,7 @@ def get_xfmr_emt_template(
     for k in range(3):
         state_eqs.append(i_cap_t[k])
 
-    templ.block.state_eqs = state_eqs
+    block.state_eqs = state_eqs
 
     # ------------------------------------------------------------------
     # Core topology selectors.
@@ -689,7 +699,7 @@ def get_xfmr_emt_template(
     else:
         pass
 
-    templ.block.algebraic_eqs = alg_eqs
+    block.algebraic_eqs = alg_eqs
     output_vars: list[Var] = list()
     if if_n_act is not None:
         output_vars.append(if_n_act)
@@ -704,8 +714,7 @@ def get_xfmr_emt_template(
         pass
 
     output_vars.extend(it_act)
-    output_vars.extend(i_mag)
-    templ.block.out_vars = output_vars
+    block.out_vars = output_vars
 
     # ------------------------------------------------------------------
     # External mapping.
@@ -784,7 +793,7 @@ def get_xfmr_emt_template(
     mapping[it_keys["B"]] = it_act[1]
     mapping[it_keys["C"]] = it_act[2]
 
-    templ.block.external_mapping = mapping
+    block.external_mapping = mapping
 
     # ------------------------------------------------------------------
     # Initialization equations.
@@ -857,7 +866,7 @@ def get_xfmr_emt_template(
         init_eqs[i_cap_f[k]] = if_act[k] - (i_series_from[k] + i_core_from_term[k])
         init_eqs[i_cap_t[k]] = it_act[k] - (-n_tap * i_series_to[k])
 
-    templ.block.init_eqs = init_eqs
+    block.init_eqs = init_eqs
 
     # ------------------------------------------------------------------
     # Differential initialization equations.
@@ -870,7 +879,7 @@ def get_xfmr_emt_template(
         diff_init_eqs[dq_f[k]] = i_cap_f[k]
         diff_init_eqs[dq_t[k]] = i_cap_t[k]
 
-    templ.block.diff_init_eqs = diff_init_eqs
+    block.diff_init_eqs = diff_init_eqs
 
     grounding_pairs: List[Tuple[Var, Block]] = list()
     if v_f_n is not None and from_grounding_link_block is not None:
@@ -884,11 +893,18 @@ def get_xfmr_emt_template(
         pass
 
     _attach_transformer_editor_diagram(
-        root_block=templ.block,
+        root_block=block,
         input_vars=input_vars,
         output_vars=output_vars,
         grounding_pairs=grounding_pairs,
     )
+
+    templ.block.children.append(block)
+    templ.block.external_mapping = block.external_mapping
+    templ.block.api_obj_mapping = block.api_obj_mapping
+    templ.block.parameters = block.parameters
+    templ.block.in_vars = block.in_vars
+    templ.block.out_vars = block.out_vars
 
     return templ
 

@@ -284,7 +284,7 @@ def plot_stability(eigenvalues: Vec,
 def run_dense_small_signal_stability(problem: RmsProblemTemplate,
                                      x: Vec,
                                      dx: Vec,
-                                     verbose: int = 0) -> tuple[Vec, Mat, Vec, Vec, Mat, None]:
+                                     verbose: int = 0) -> tuple[Vec, Vec, Mat, Vec, Vec, Mat, None]:
     """
     Run small signal stability analysis using dense matrices calculations. The operation returns all the eigenvalues.
     :param problem: RmsProblemTemplate
@@ -337,14 +337,14 @@ def run_dense_small_signal_stability(problem: RmsProblemTemplate,
     if verbose:
         print("Eigenvalues:", eigenvalues)
 
-    return eigenvalues, participation_factors, damping_ratios, conjugate_freq, A_orig, None
+    return eigenvalues,v, participation_factors, damping_ratios, conjugate_freq, A_orig, None
 
 
 def run_sparse_small_signal_stability(problem: RmsProblemTemplate,
                                       x: Vec,
                                       dx: Vec,
                                       k: int,
-                                      verbose: int = 0) -> tuple[Vec, Mat, Vec, Vec, Mat, None]:
+                                      verbose: int = 0) -> tuple[Vec, Vec, Mat, Vec, Vec, Mat, None]:
     """
     Run small signal stability analysis using sparse matrices calculations. The operation returns k eigenvalues.
     :param problem: RmsProblemTemplate
@@ -512,7 +512,7 @@ def run_sparse_small_signal_stability(problem: RmsProblemTemplate,
     if verbose:
         print(f"Sparse SSS Math Time: {(time.perf_counter() - t0) * 1000:.2f} ms")
 
-    return eigenvalues, participation_factors, damping_ratios, conjugate_freq, np.empty(0), None
+    return eigenvalues, v_valid, participation_factors, damping_ratios, conjugate_freq, np.empty(0), None
 
 
 class SparseGeneralizedShiftInvertMethods:
@@ -657,6 +657,7 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
         self.integration_methods_dict[DynamicIntegrationMethod.DaeBackEuler] = BackEulerImplicitIntegration
 
         self.results: SmallSignalStabilityRmsResults = SmallSignalStabilityRmsResults(eigenvalues=np.empty(0),
+                                                                                      right_eigenvectors=np.empty(0),
                                                                                       participation_factors=np.empty(0),
                                                                                       damping_ratios=np.empty(0),
                                                                                       conjugate_frequencies=np.empty(0),
@@ -705,6 +706,7 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
         n = self.problem.get_states_number() + self.problem.get_diff_var_number()
         if self.k >= n - 1 or self.k == 0:
             (eigenvalues,
+             right_eigenvectors,
              participation_factors,
              damping_ratios,
              conjugate_frequencies,
@@ -715,6 +717,7 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
                                                                       verbose=self.sss_options.verbose)
         else:
             (eigenvalues,
+             right_eigenvectors,
              participation_factors,
              damping_ratios,
              conjugate_frequencies,
@@ -728,6 +731,7 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
         algebraic_vars = self.problem.algebraic_vars
         self.results: SmallSignalStabilityRmsResults = SmallSignalStabilityRmsResults(
             eigenvalues=eigenvalues,
+            right_eigenvectors=right_eigenvectors,
             participation_factors=participation_factors,
             damping_ratios=damping_ratios,
             conjugate_frequencies=conjugate_frequencies,

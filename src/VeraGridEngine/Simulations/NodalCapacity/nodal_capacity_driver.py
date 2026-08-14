@@ -5,7 +5,7 @@
 import numpy as np
 from typing import Union
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
-from VeraGridEngine.enumerations import EngineType, SimulationTypes, SolverType
+from VeraGridEngine.enumerations import EngineType, SimulationTypes
 from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_options import NodalCapacityOptions
 from VeraGridEngine.Simulations.NodalCapacity.nodal_capacity_results import NodalCapacityResults
 from VeraGridEngine.Simulations.OPF.Formulations.linear_opf_ts import run_linear_opf_ts
@@ -292,9 +292,6 @@ class NodalCapacityDriver(DriverTemplate):
                 self.cpf()
             else:
                 raise NotImplementedError(f"self.engine {self.engine} is not implemented")
-
-        elif self.engine == EngineType.NewtonPA:
-            self.logger.add_warning("Engine not implemented", value=str(self.engine.value))
 
         else:
             if self.options.method == NodalCapacityMethod.LinearOptimization:

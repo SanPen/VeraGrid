@@ -12,15 +12,15 @@ import math
 
 import numpy as np
 
-from . import compat  # noqa: F401  # bootstrap VeraGrid imports
-from .compat import Const, Var
+from VeraGridEngine.IO.fmu.exporter import compat  # noqa: F401  # bootstrap VeraGrid imports
+from VeraGridEngine.IO.fmu.exporter.compat import Const, Var
 
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
 from VeraGridEngine.Templates.Rms.load_frequency_dependent import FrequencyLoadBuild
 
-from .snapshot import build_model_snapshot, reconstruct_block
+from VeraGridEngine.IO.fmu.exporter.snapshot import build_model_snapshot, reconstruct_block
 
 
 @dataclass(frozen=True, slots=True)

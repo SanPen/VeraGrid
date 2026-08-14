@@ -1738,7 +1738,7 @@ def get_exciter_emt(vf: VarFactory, name: str = "exciter") -> EmtModelTemplate:
 
     events_dict = {
         # Exciter (AVR) parameters
-        UsRefPu: vf.add_const(None),  # reference voltage (pu)
+        UsRefPu: vf.add_const(1.0),  # reference voltage (pu)
         AEz: vf.add_const(0.02),  # saturation gain
         BEz: vf.add_const(1.5),  # saturation exponential coefficient
         Se_threshold: vf.add_const(1.0),  # saturation threshold
@@ -1777,9 +1777,14 @@ def get_exciter_emt(vf: VarFactory, name: str = "exciter") -> EmtModelTemplate:
                                  VfeMaxPu_submodel)
     field_voltage_ref = sym.hard_sat(y4, min_const, field_ceiling)
     vf_init = parameters['Kfd'].value * inputs[0]
-    field_feedback_init = parameters['Ke'].value * vf_init + AEx * sym.hard_sat(vf_init, vf.add_const(0.0), vf.add_const(1e6)) * (
-        sym.exp(BEx * (sym.hard_sat(vf_init, vf.add_const(0.0), vf.add_const(1e6)) - Se_threshold)) - vf.add_const(1.0)
-    ) * sym.heaviside(sym.hard_sat(vf_init, vf.add_const(0.0), vf.add_const(1e6)) - Se_threshold)
+    vf_init_positive = sym.hard_sat(vf_init, vf.add_const(0.0), vf.add_const(1e6))
+    field_feedback_init = parameters['Ke'].value * vf_init + AEx * vf_init_positive * (
+        sym.exp(BEx * (vf_init_positive - Se_threshold)) - vf.add_const(1.0)
+    ) * sym.heaviside(vf_init_positive - Se_threshold)
+    us_ref_init = measured_vm
+    y2_init = parameters["Kf"].value * vf_init
+    y4_init = field_feedback_init
+    y3_init = field_feedback_init / parameters["Ka"].value
     templ.block = Block(
         state_eqs=[
             (Vm - y1) / parameters["tR"].value,
@@ -1804,13 +1809,13 @@ def get_exciter_emt(vf: VarFactory, name: str = "exciter") -> EmtModelTemplate:
             Vm: measured_vm,
             y1: Vm,
             Vf: vf_init,
-            y2: parameters["Kf"].value * Vf,
+            y2: y2_init,
             u_aux: field_feedback_init,
             VeMaxPu: field_ceiling,
             Efe: field_feedback_init,
-            y4: Efe,
-            y3: Efe / parameters["Ka"].value,
-            UsRefPu: y1 + y2 - inputs[4] + y3,
+            y4: y4_init,
+            y3: y3_init,
+            UsRefPu: us_ref_init,
         },
         name=name,
     )

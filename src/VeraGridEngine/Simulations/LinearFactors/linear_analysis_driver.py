@@ -13,9 +13,8 @@ from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Compilers.circuit_to_data import compile_numerical_circuit_at
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis import LinearAnalysis
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
-from VeraGridEngine.Compilers.circuit_to_bentayga import BENTAYGA_AVAILABLE, bentayga_linear_matrices
-from VeraGridEngine.Compilers.circuit_to_newton_pa import NEWTON_PA_AVAILABLE, newton_pa_linear_matrices
-from VeraGridEngine.Compilers.circuit_to_gslv import GSLV_AVAILABLE, gslv_linear_matrices
+from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE
+from VeraGridEngine.Compilers.Gslv.Simulations.linear import gslv_linear_matrices
 from VeraGridEngine.enumerations import EngineType, SimulationTypes
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis_results import LinearAnalysisResults
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis_options import LinearAnalysisOptions
@@ -90,14 +89,6 @@ class LinearAnalysisDriver(DriverTemplate):
             return
 
         # Run Analysis
-        if self.engine == EngineType.Bentayga and not BENTAYGA_AVAILABLE:
-            self.engine = EngineType.VeraGrid
-            self.logger.add_warning('Failed, back to VeraGrid')
-
-        if self.engine == EngineType.NewtonPA and not NEWTON_PA_AVAILABLE:
-            self.engine = EngineType.VeraGrid
-            self.logger.add_warning('Failed, back to VeraGrid')
-
         if self.engine == EngineType.GSLV and not GSLV_AVAILABLE:
             self.engine = EngineType.VeraGrid
             self.logger.add_warning('Failed, back to VeraGrid')
@@ -142,26 +133,6 @@ class LinearAnalysisDriver(DriverTemplate):
             self.results.Sbus = analysis.get_corrected_injections(P=Sbus)
             
             self.results.loading = self.results.Sf / (nc.passive_branch_data.rates + 1e-20)
-
-        elif self.engine == EngineType.Bentayga:
-
-            lin_mat = bentayga_linear_matrices(circuit=self.grid, distributed_slack=self.options.distribute_slack)
-            self.results.PTDF = lin_mat.Linear
-            self.results.LODF = lin_mat.LODF
-            self.results.Sf = lin_mat.get_flows(lin_mat.Pbus * self.grid.Sbase)
-            self.results.loading = self.results.Sf / (lin_mat.rates + 1e-20)
-            self.results.Sbus = lin_mat.Pbus * self.grid.Sbase
-
-        elif self.engine == EngineType.NewtonPA:
-
-            lin_mat = newton_pa_linear_matrices(circuit=self.grid, distributed_slack=self.options.distribute_slack)
-            self.results.PTDF = lin_mat.Linear
-            self.results.LODF = lin_mat.LODF
-            # TODO: figure this out
-            self.results.Sbus = self.grid.get_Pbus()
-            rates = self.grid.get_branch_rates()
-            self.results.Sf = np.dot(lin_mat.Linear, self.results.Sbus)
-            self.results.loading = self.results.Sf / (rates + 1e-20)
 
         elif self.engine == EngineType.GSLV:
 

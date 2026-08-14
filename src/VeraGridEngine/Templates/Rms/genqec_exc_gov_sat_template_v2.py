@@ -26,11 +26,13 @@ from VeraGridEngine.enumerations import VarPowerFlowReferenceType
 def get_genqec_rms(vfactory: VarFactory, name: str = "Genqec_rms_template") -> RmsModelTemplate:
     """
      generator with quadratic saturation
+     :return: RmsModelTemplate
     """
     pi = math.pi
 
     templ = RmsModelTemplate(name=name)
     templ.tpe = DeviceType.GeneratorDevice
+    templ.name = name
 
     # Inputs
     # Vm: Bus voltage module
@@ -173,7 +175,7 @@ def get_genqec_rms(vfactory: VarFactory, name: str = "Genqec_rms_template") -> R
     # Xd_2prime_sat = (Xd_2prime - Xl)/Sat + Xl
     # Xq_2prime_sat = (Xq_2prime - Xl)/Sat + Xl
 
-    templ.block = Block(
+    block = Block(
         state_eqs=[
             (omega - vfactory.add_const(1)) * ws,  # dδ/dt
             (inputs[2] - Te - D * (omega - vfactory.add_const(1))) * (1 / M),  # dω/dt
@@ -284,6 +286,12 @@ def get_genqec_rms(vfactory: VarFactory, name: str = "Genqec_rms_template") -> R
         event_dict=event_dict,
         name="genqec"
     )
+
+    templ.block.children.append(block)
+    templ.block.external_mapping = block.external_mapping
+    templ.block.api_obj_mapping = block.api_obj_mapping
+    templ.block.in_vars = inputs
+    templ.block.out_vars = block.out_vars
 
     return templ
 

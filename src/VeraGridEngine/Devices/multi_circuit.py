@@ -23,6 +23,7 @@ from VeraGridEngine.Utils.GeographicalMethods.haversine_distance import haversin
 from VeraGridEngine.basic_structures import IntVec, Vec, Mat, CxVec, IntMat, CxMat, BoolVec
 
 import VeraGridEngine.Devices as dev
+from VeraGridEngine.Utils.Symbolic.templates_common_functions import reconcile_saved_emt_model_against_current_topology
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES, INJECTION_DEVICE_TYPES, FLUID_TYPES, AREA_TYPES, BRANCH_TYPES
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Topology.topology import find_different_states
@@ -3806,6 +3807,9 @@ class MultiCircuit(Assets):
                                  device_class=elm.device_type.value,
                                  device=elm.name)
             else:
+                reconcile_saved_emt_model_against_current_topology(device=elm,
+                                                                  grid=self,
+                                                                  var_factory=self.var_factory)
                 _validate_branch_emt_bus_connections(logger=logger, branch=elm)
                 if elm.device_type == DeviceType.LineDevice:
                     _validate_line_emt_model_phases_present_in_static_object(logger=logger, line=elm)
@@ -3823,6 +3827,9 @@ class MultiCircuit(Assets):
                                  device_class=elm.device_type.value,
                                  device=elm.name)
             else:
+                reconcile_saved_emt_model_against_current_topology(device=elm,
+                                                                  grid=self,
+                                                                  var_factory=self.var_factory)
                 _validate_injection_emt_bus_connections(logger=logger, injection=elm)
                 # TODO: add static vs dynamic validation for other types of device
                 # if elm.device_type == DeviceType.GeneratorDevice:

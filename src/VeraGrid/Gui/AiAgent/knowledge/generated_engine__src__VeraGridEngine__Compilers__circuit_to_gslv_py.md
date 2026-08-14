@@ -1,6 +1,6 @@
 # VeraGridEngine Module: src/VeraGridEngine/Compilers/circuit_to_gslv.py
 
-- Original source path: `src/VeraGridEngine/Compilers/circuit_to_gslv.py`
+- Original source path: `src/VeraGridEngine/Compilers/Gslv`
 - Knowledge kind: generated VeraGridEngine code summary
 
 ## Module Summary

@@ -10,10 +10,10 @@ from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 from typing import Any
 
-from .api import export_fmu
-from .config import ExportConfig, IntegrationMethod, TargetPlatform, detect_target_platform
-from .host_validation import validate_exported_pilot
-from .real_pilots import get_pilot_model, pilot_output_path
+from VeraGridEngine.IO.fmu.exporter.api import export_fmu
+from VeraGridEngine.IO.fmu.exporter.config import ExportConfig, IntegrationMethod, TargetPlatform, detect_target_platform
+from VeraGridEngine.IO.fmu.exporter.host_validation import validate_exported_pilot
+from VeraGridEngine.IO.fmu.exporter.real_pilots import get_pilot_model, pilot_output_path
 
 
 def _load_module(module_arg: str) -> Any:

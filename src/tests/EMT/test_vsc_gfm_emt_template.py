@@ -133,11 +133,12 @@ def test_vsc_gfm_emt_template_exposes_expected_structure() -> None:
     """
     vf: VarFactory = VarFactory()
     templ = get_gfm_emt_template(vf=vf, name="G1")
+    model = templ.block.children[0]
 
     assert templ.tpe == DeviceType.VscDevice
     assert [var.name for var in templ.block.in_vars] == ["v_A", "v_B", "v_C", "v_dc"]
     assert [var.name for var in templ.block.out_vars] == ["i_A", "i_B", "i_C", "i_dc"]
-    assert [var.name for var in templ.block.state_vars] == [
+    assert [var.name for var in model.state_vars] == [
         "i_A",
         "i_B",
         "i_C",
@@ -153,7 +154,7 @@ def test_vsc_gfm_emt_template_exposes_expected_structure() -> None:
         "Qe",
         "i_dc",
     ]
-    assert [var.name for var in templ.block.algebraic_vars] == expected_algebraic
+    assert [var.name for var in model.algebraic_vars] == expected_algebraic
 
     for net_var in ["v_A", "v_B", "v_C", "i_A", "i_B", "i_C", "v_dc"]:
         assert find_name_in_block(net_var, templ.block) is not None
@@ -171,9 +172,10 @@ def test_vsc_gfm_emt_template_can_be_loaded_into_generic_problem() -> None:
     """
     vf: VarFactory = VarFactory()
     templ = get_gfm_emt_template(vf=vf, name="VSC")
+    model = templ.block.children[0]
     static_parameter_values_mapping: Dict[Var, Const] = dict()
     problem = GenericEmtProblem(
-        sys_block=templ.block,
+        sys_block=model,
         glob_time=vf.add_var("t_gfm_emt_case"),
         static_parameter_values_mapping=static_parameter_values_mapping,
     )
@@ -193,21 +195,22 @@ def test_vsc_gfm_emt_template_init_residual_is_small() -> None:
     """
     vf: VarFactory = VarFactory()
     templ = get_gfm_emt_template(vf=vf, name="G1")
+    model = templ.block.children[0]
     bindings: Dict[str, float] = _build_pf_consistent_bindings(name="G1")
 
-    for idx, eq in enumerate(templ.block.algebraic_eqs):
+    for idx, eq in enumerate(model.algebraic_eqs):
         residual: float = float(eq.eval(**bindings))
         assert abs(residual) < 1.0e-9, (
             f"algebraic_eq[{idx}] residual {residual:.3e} too large at the PF init point"
         )
 
-    for var, init_expr in templ.block.init_eqs.items():
+    for var, init_expr in model.init_eqs.items():
         init_value: float = float(init_expr.eval(**bindings))
         binding_value: float = bindings[var.name]
         assert abs(init_value - binding_value) < 1.0e-9, (
             f"init_eqs[{var.name}] gives {init_value:.6e} but binding is {binding_value:.6e}"
         )
 
-    d_theta_var = next(v for v in templ.block.diff_vars if v.name == "d_theta")
+    d_theta_var = next(v for v in model.diff_vars if v.name == "d_theta")
     omega_base_val: float = bindings["omega_base"]
-    assert abs(float(templ.block.diff_init_eqs[d_theta_var].eval(**bindings)) - omega_base_val) < 1.0e-9
+    assert abs(float(model.diff_init_eqs[d_theta_var].eval(**bindings)) - omega_base_val) < 1.0e-9

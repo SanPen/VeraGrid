@@ -5,7 +5,7 @@
 import os
 import numpy as np
 import VeraGridEngine.api as vg
-from VeraGridEngine.Compilers.circuit_to_gslv import GSLV_AVAILABLE
+from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE
 from VeraGridEngine.Simulations.OPF.opf_ts_results import OptimalPowerFlowTimeSeriesResults
 
 

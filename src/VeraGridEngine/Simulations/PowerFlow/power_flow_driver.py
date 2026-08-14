@@ -11,11 +11,8 @@ from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import multi_island_
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
-from VeraGridEngine.Compilers.circuit_to_bentayga import (BENTAYGA_AVAILABLE, bentayga_pf,
-                                                          translate_bentayga_pf_results)
-from VeraGridEngine.Compilers.circuit_to_newton_pa import (NEWTON_PA_AVAILABLE, newton_pa_pf,
-                                                           translate_newton_pa_pf_results)
-from VeraGridEngine.Compilers.circuit_to_gslv import (GSLV_AVAILABLE, gslv_pf, translate_gslv_pf_results)
+from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE
+from VeraGridEngine.Compilers.Gslv.Simulations.power_flow import gslv_pf, translate_gslv_pf_results
 from VeraGridEngine.Compilers.circuit_to_pgm import PGM_AVAILABLE, pgm_pf
 from VeraGridEngine.enumerations import EngineType, SimulationTypes
 
@@ -139,14 +136,6 @@ class PowerFlowDriver(DriverTemplate):
             self.engine = EngineType.VeraGrid
             self.logger.add_warning('Failed back to VeraGrid')
 
-        if self.engine == EngineType.NewtonPA and not NEWTON_PA_AVAILABLE:
-            self.engine = EngineType.VeraGrid
-            self.logger.add_warning('Failed back to VeraGrid')
-
-        if self.engine == EngineType.Bentayga and not BENTAYGA_AVAILABLE:
-            self.engine = EngineType.VeraGrid
-            self.logger.add_warning('Failed back to VeraGrid')
-
         if self.engine == EngineType.PGM and not PGM_AVAILABLE:
             self.engine = EngineType.VeraGrid
             self.logger.add_warning('Failed back to VeraGrid')
@@ -160,33 +149,6 @@ class PowerFlowDriver(DriverTemplate):
                                            logger=self.logger)
             self.convergence_reports = self.results.convergence_reports
 
-        elif self.engine == EngineType.NewtonPA:
-
-            res = newton_pa_pf(circuit=self.grid,
-                               pf_opt=self.options,
-                               time_series=False)
-
-            self.results = PowerFlowResults(n=self.grid.get_bus_number(),
-                                            m=self.grid.get_branch_number(add_hvdc=False, add_vsc=False,
-                                                                          add_switch=True),
-                                            n_hvdc=self.grid.get_hvdc_number(),
-                                            n_vsc=self.grid.get_vsc_number(),
-                                            n_gen=self.grid.get_generators_number(),
-                                            n_batt=self.grid.get_batteries_number(),
-                                            n_sh=self.grid.get_shunt_like_device_number(),
-                                            bus_names=res.bus_names,
-                                            branch_names=res.branch_names,
-                                            hvdc_names=res.hvdc_names,
-                                            vsc_names=self.grid.get_vsc_names(),
-                                            gen_names=self.grid.get_generator_names(),
-                                            batt_names=self.grid.get_battery_names(),
-                                            sh_names=self.grid.get_shunt_like_devices_names(),
-                                            bus_types=res.bus_types)
-
-            self.results = translate_newton_pa_pf_results(self.grid, res)
-            self.results.area_names = [a.name for a in self.grid.areas]
-            self.convergence_reports = self.results.convergence_reports
-
         elif self.engine == EngineType.GSLV:
 
             res = gslv_pf(circuit=self.grid,
@@ -195,31 +157,6 @@ class PowerFlowDriver(DriverTemplate):
                           logger=self.logger)
 
             self.results = translate_gslv_pf_results(self.grid, res=res)
-            self.results.area_names = [a.name for a in self.grid.areas]
-            self.convergence_reports = self.results.convergence_reports
-
-        elif self.engine == EngineType.Bentayga:
-
-            res = bentayga_pf(self.grid, self.options, time_series=False)
-
-            self.results = PowerFlowResults(n=self.grid.get_bus_number(),
-                                            m=self.grid.get_branch_number(add_hvdc=False, add_vsc=False,
-                                                                          add_switch=True),
-                                            n_hvdc=self.grid.get_hvdc_number(),
-                                            n_vsc=self.grid.get_vsc_number(),
-                                            n_gen=self.grid.get_generators_number(),
-                                            n_batt=self.grid.get_batteries_number(),
-                                            n_sh=self.grid.get_shunt_like_device_number(),
-                                            bus_names=res.names,
-                                            branch_names=res.names,
-                                            hvdc_names=res.hvdc_names,
-                                            vsc_names=self.grid.get_vsc_names(),
-                                            gen_names=self.grid.get_generator_names(),
-                                            batt_names=self.grid.get_battery_names(),
-                                            sh_names=self.grid.get_shunt_like_devices_names(),
-                                            bus_types=res.bus_types)
-
-            self.results = translate_bentayga_pf_results(self.grid, res)
             self.results.area_names = [a.name for a in self.grid.areas]
             self.convergence_reports = self.results.convergence_reports
 

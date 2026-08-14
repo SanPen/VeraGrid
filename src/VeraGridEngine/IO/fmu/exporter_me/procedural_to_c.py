@@ -6,10 +6,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from . import compat
-from .expr_to_c import ExprToCVisitor
-from .export_ir import ExportEventIndicator, ExportLogicEntry, ExportModel
-from .variable_map import CVariableResolver
+from VeraGridEngine.IO.fmu.exporter_me import compat
+from VeraGridEngine.IO.fmu.exporter_me.expr_to_c import ExprToCVisitor
+from VeraGridEngine.IO.fmu.exporter_me.export_ir import ExportEventIndicator, ExportLogicEntry, ExportModel
+from VeraGridEngine.IO.fmu.exporter_me.variable_map import CVariableResolver
 
 _dict_to_expr = compat._dict_to_expr
 

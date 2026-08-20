@@ -6,18 +6,17 @@
 from __future__ import annotations
 
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_elements import RoutingNode
-from VeraGrid.Gui.DynamicModelEditor.Routing.routing_elements import RoutingNodeKind
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_elements import RoutingPoint
-from VeraGridEngine.enumerations import RoutingPortSide
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_elements import RoutingSegment
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_graph import RoutingGraph
+from VeraGridEngine.enumerations import RoutingNodeKind, RoutingPortSide
 
 
 class RoutingSerializedNode:
     """
     Store one serialized routing node record.
 
-    :returns: None.
+    :return: None.
     """
 
     __slots__ = ("_node_id", "_kind", "_x_pos", "_y_pos", "_port_side")
@@ -38,7 +37,7 @@ class RoutingSerializedNode:
         :param x_pos: Horizontal coordinate.
         :param y_pos: Vertical coordinate.
         :param port_side: Physical block side for port nodes.
-        :returns: None.
+        :return: None.
         """
         self._node_id: int = int(node_id)
         self._kind: RoutingNodeKind = kind
@@ -48,33 +47,25 @@ class RoutingSerializedNode:
 
     def get_node_id(self) -> int:
         """
-        Return the node identifier.
-
-        :returns: Node identifier.
+        :return: Node identifier.
         """
         return self._node_id
 
     def get_kind(self) -> RoutingNodeKind:
         """
-        Return the node kind.
-
-        :returns: Node kind.
+        :return: Node kind.
         """
         return self._kind
 
     def get_x(self) -> float:
         """
-        Return the horizontal coordinate.
-
-        :returns: Horizontal coordinate.
+        :return: Horizontal coordinate.
         """
         return self._x_pos
 
     def get_y(self) -> float:
         """
-        Return the vertical coordinate.
-
-        :returns: Vertical coordinate.
+        :return: Vertical coordinate.
         """
         return self._y_pos
 
@@ -82,7 +73,7 @@ class RoutingSerializedNode:
         """
         Return whether this serialized node stores one physical port side.
 
-        :returns: ``True`` when a physical port side exists.
+        :return: ``True`` when a physical port side exists.
         """
         if self._port_side is None:
             return False
@@ -93,7 +84,7 @@ class RoutingSerializedNode:
         """
         Return the stored physical port side.
 
-        :returns: Physical port side or ``None``.
+        :return: Physical port side or ``None``.
         """
         return self._port_side
 
@@ -101,7 +92,7 @@ class RoutingSerializedNode:
         """
         Convert the serialized node record to one plain persistence payload.
 
-        :returns: Plain node payload.
+        :return: Plain node payload.
         """
         payload: dict[str, object] = dict()
         payload["node_id"] = self._node_id
@@ -119,7 +110,7 @@ class RoutingSerializedSegment:
     """
     Store one serialized routing segment record.
 
-    :returns: None.
+    :return: None.
     """
 
     __slots__ = ("_segment_id", "_start_node_id", "_end_node_id")
@@ -131,7 +122,7 @@ class RoutingSerializedSegment:
         :param segment_id: Stable segment identifier.
         :param start_node_id: Start node identifier.
         :param end_node_id: End node identifier.
-        :returns: None.
+        :return: None.
         """
         self._segment_id: int = int(segment_id)
         self._start_node_id: int = int(start_node_id)
@@ -139,25 +130,19 @@ class RoutingSerializedSegment:
 
     def get_segment_id(self) -> int:
         """
-        Return the segment identifier.
-
-        :returns: Segment identifier.
+        :return: Segment identifier.
         """
         return self._segment_id
 
     def get_start_node_id(self) -> int:
         """
-        Return the start node identifier.
-
-        :returns: Start node identifier.
+        :return: Start node identifier.
         """
         return self._start_node_id
 
     def get_end_node_id(self) -> int:
         """
-        Return the end node identifier.
-
-        :returns: End node identifier.
+        :return: End node identifier.
         """
         return self._end_node_id
 
@@ -165,7 +150,7 @@ class RoutingSerializedSegment:
         """
         Convert the serialized segment record to one plain persistence payload.
 
-        :returns: Plain segment payload.
+        :return: Plain segment payload.
         """
         payload: dict[str, object] = dict()
         payload["segment_id"] = self._segment_id
@@ -178,7 +163,7 @@ class RoutingSerializedGraph:
     """
     Store one serialized routing graph payload.
 
-    :returns: None.
+    :return: None.
     """
 
     __slots__ = ("_source_node_id", "_destination_node_id", "_nodes", "_segments")
@@ -197,7 +182,7 @@ class RoutingSerializedGraph:
         :param destination_node_id: Destination port node identifier.
         :param nodes: Serialized node records.
         :param segments: Serialized segment records.
-        :returns: None.
+        :return: None.
         """
         self._source_node_id: int = int(source_node_id)
         self._destination_node_id: int = int(destination_node_id)
@@ -206,33 +191,25 @@ class RoutingSerializedGraph:
 
     def get_source_node_id(self) -> int:
         """
-        Return the source node identifier.
-
-        :returns: Source node identifier.
+        :return: Source node identifier.
         """
         return self._source_node_id
 
     def get_destination_node_id(self) -> int:
         """
-        Return the destination node identifier.
-
-        :returns: Destination node identifier.
+        :return: Destination node identifier.
         """
         return self._destination_node_id
 
     def get_nodes(self) -> list[RoutingSerializedNode]:
         """
-        Return the serialized node records.
-
-        :returns: Serialized node records.
+        :return: Serialized node records.
         """
         return list(self._nodes)
 
     def get_segments(self) -> list[RoutingSerializedSegment]:
         """
-        Return the serialized segment records.
-
-        :returns: Serialized segment records.
+        :return: Serialized segment records.
         """
         return list(self._segments)
 
@@ -240,7 +217,7 @@ class RoutingSerializedGraph:
         """
         Convert the serialized graph to one plain persistence payload.
 
-        :returns: Plain graph payload.
+        :return: Plain graph payload.
         """
         node_payloads: list[dict[str, object]] = list()
         segment_payloads: list[dict[str, object]] = list()
@@ -265,7 +242,7 @@ class RoutingGraphSerializer:
     """
     Encode and decode one routing graph as one persistence payload.
 
-    :returns: None.
+    :return: None.
     """
 
     __slots__ = tuple()
@@ -275,7 +252,7 @@ class RoutingGraphSerializer:
         Encode one routing graph.
 
         :param routing_graph: Graph to encode.
-        :returns: Serialized graph payload.
+        :return: Serialized graph payload.
         """
         node_records: list[RoutingSerializedNode] = list()
         segment_records: list[RoutingSerializedSegment] = list()
@@ -315,7 +292,7 @@ class RoutingGraphSerializer:
         Decode one serialized graph payload.
 
         :param serialized_graph: Serialized graph payload.
-        :returns: Decoded routing graph.
+        :return: Decoded routing graph.
         """
         routing_graph: RoutingGraph = RoutingGraph(
             source_node_id=serialized_graph.get_source_node_id(),
@@ -353,7 +330,7 @@ class RoutingGraphSerializer:
         Build one serialized graph payload object from one plain persistence mapping.
 
         :param data: Plain persistence mapping.
-        :returns: Serialized graph payload or ``None`` when the payload is malformed.
+        :return: Serialized graph payload or ``None`` when the payload is malformed.
         """
         source_node_value: object | None = data.get("source_node_id", None)
         destination_node_value: object | None = data.get("destination_node_id", None)
@@ -482,7 +459,7 @@ class RoutingGraphSerializer:
         Convert one raw node-kind string to one enum member.
 
         :param raw_kind: Raw node-kind string.
-        :returns: Node-kind enum member or ``None``.
+        :return: Node-kind enum member or ``None``.
         """
         if raw_kind == RoutingNodeKind.PORT.value:
             return RoutingNodeKind.PORT
@@ -498,7 +475,7 @@ class RoutingGraphSerializer:
         Convert one raw port-side string to one enum member.
 
         :param raw_port_side: Raw port-side string or ``None``.
-        :returns: Port-side enum member or ``None``.
+        :return: Port-side enum member or ``None``.
         """
         if raw_port_side == RoutingPortSide.LEFT.value:
             return RoutingPortSide.LEFT

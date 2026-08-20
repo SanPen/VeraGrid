@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import os
 import numpy as np
+import scipy.sparse as sp
 
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType, DynamicIntegrationMethod, RmsInitializationMethod
 from VeraGridEngine.Devices.Substation.bus import Bus
@@ -502,6 +503,14 @@ def stability_kundur_no_shunt():
                                                         rms_options=rms_options,
                                                         sss_options=ss_options,
                                                         pf_results=power_flow.results)
+
+    initial_point: np.ndarray = small_signal_driver.problem.get_x0()
+    initial_derivatives: np.ndarray = np.zeros_like(initial_point)
+    static_state_matrix: sp.csc_matrix = small_signal_driver.problem.get_static_state_matrix(
+        x=initial_point,
+        dx=initial_derivatives,
+    )
+    assert sp.isspmatrix_csc(static_state_matrix)
 
     small_signal_driver.run()
     t_end_sss = time.perf_counter()

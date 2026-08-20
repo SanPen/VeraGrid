@@ -1,260 +1,251 @@
 # SPDX-License-Identifier: MPL-2.0
+"""Executable Scripting editor specialization."""
+
 from __future__ import annotations
 
+import builtins
 import rlcompleter
-from typing import Dict, Any, List
+from types import ModuleType
+from typing import Any, Dict, Mapping, List
 
-from PySide6.QtCore import Qt, QEvent, QStringListModel
-from PySide6.QtGui import QTextCursor, QFont
-from PySide6.QtWidgets import QPlainTextEdit, QCompleter
+from PySide6 import QtCore, QtGui, QtWidgets
+
+from VeraGrid.Gui.base_python_code_editor import BasePythonCodeEditor
 from VeraGrid.Gui.python_highlighter import PythonHighlighter
-from VeraGrid.Gui.font_config import CONSOLE_TEXT_SIZE
 
 
-class PythonCodeEditor(QPlainTextEdit):
+def normalize_scripting_namespace(namespace: Mapping[str, Any]) -> Dict[str, Any]:
+    """Return an rlcompleter-compatible namespace with explicit builtins.
+
+    :param namespace: Objects exposed by the Scripting controller.
+    :return: Detached namespace accepted by ``rlcompleter``.
     """
-    QPlainTextEdit with runtime Python autocomplete using rlcompleter.
-    Same mechanism as the interactive console.
-    """
+    normalized_namespace: Dict[str, Any] = dict(namespace)
+    builtins_object: object = normalized_namespace.get("__builtins__", builtins)
+    if isinstance(builtins_object, dict):
+        builtins_dictionary: Dict[str, Any] = builtins_object
+    elif isinstance(builtins_object, ModuleType):
+        builtins_dictionary = builtins_object.__dict__
+    else:
+        builtins_dictionary = builtins.__dict__
+    normalized_namespace["__builtins__"] = builtins_dictionary
+    return normalized_namespace
+
+
+class ScriptingPythonEditor(BasePythonCodeEditor):
+    """Python editor with executable namespace awareness and completion."""
+
+    __slots__ = (
+        "_highlighter",
+        "_vars_dict",
+        "_namespace",
+        "_completer_backend",
+        "_qt_completer",
+        "_completion_model",
+        "_last_prefix",
+    )
 
     def __init__(
             self,
-            parent=None,
-            vars_dict: Dict[str, Any] | None = None, ):
-        """
+            parent: QtWidgets.QWidget | None = None,
+            vars_dict: Mapping[str, Any] | None = None,
+    ) -> None:
+        """Create the Scripting editor and its runtime completion namespace.
 
-        :param parent:
-        :param vars_dict:
+        Actual execution remains in the Scripting controller, which forwards
+        the source to the shared Python console. Keeping execution outside the
+        visual editor prevents an editing widget from owning application flow.
+
+        :param parent: Optional owning Qt widget.
+        :param vars_dict: Initial objects exposed to completion and execution.
+        :return: None.
         """
         super().__init__(parent)
+        self._highlighter: PythonHighlighter = PythonHighlighter(self.document())
+        if vars_dict is None:
+            self._vars_dict: Dict[str, Any] = dict()
+        else:
+            self._vars_dict = dict(vars_dict)
+        self._vars_dict["__builtins__"] = builtins
+        self._namespace: Dict[str, Any] = normalize_scripting_namespace(self._vars_dict)
+        self._completer_backend: rlcompleter.Completer = rlcompleter.Completer(self._namespace)
 
-        font = QFont("Consolas", CONSOLE_TEXT_SIZE)
-        self.setFont(font)
-        self._tab_text: str = "    "
-
-        # Keep the visual width of tab characters aligned with four spaces so
-        # existing text containing tabs is shown with the same indentation width
-        # that the editor inserts for new indentation.
-        self.setTabStopDistance(float(self.fontMetrics().horizontalAdvance(self._tab_text)))
-
-        self.setLineWrapMode(QPlainTextEdit.LineWrapMode.NoWrap)
-
-        # VERY IMPORTANT: Tab must NOT move focus
-        self.setTabChangesFocus(False)
-
-        PythonHighlighter(self.document())
-
-        # Normalize namespace exactly like the console
-        self._vars_dict = dict() if vars_dict is None else vars_dict
-
-        self._vars_dict["__builtins__"] = __builtins__  # dict or module, both fine]
-
-        self._namespace = self._normalize_namespace(self._vars_dict)
-
-        # rlcompleter backend (same as console)
-        self._completer_backend = rlcompleter.Completer(self._namespace)
-
-        # Qt popup completer
-        self._qt_completer = QCompleter(self)
+        # The Qt popup is only a view over matches produced by rlcompleter; it
+        # does not execute or inspect DAE symbolic expressions.
+        self._qt_completer: QtWidgets.QCompleter = QtWidgets.QCompleter(self)
         self._qt_completer.setWidget(self)
-        self._qt_completer.setCompletionMode(QCompleter.CompletionMode.PopupCompletion)
-        self._qt_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
+        self._qt_completer.setCompletionMode(
+            QtWidgets.QCompleter.CompletionMode.PopupCompletion
+        )
+        self._qt_completer.setCaseSensitivity(QtCore.Qt.CaseSensitivity.CaseInsensitive)
         self._qt_completer.activated.connect(self._insert_completion)
-
-        self._model = QStringListModel(self)
-        self._qt_completer.setModel(self._model)
-
-        # Remember what we replace
-        self._last_prefix = ""
+        self._completion_model: QtCore.QStringListModel = QtCore.QStringListModel(self)
+        self._qt_completer.setModel(self._completion_model)
+        self._last_prefix: str = ""
 
     def add_var(self, name: str, val: Any) -> None:
-        """
-        Add variable to the interpreter
-        :param name: name of the variable
-        :param val: value or pointer
+        """Expose one object to Scripting completion and execution.
+
+        :param name: Python identifier used by scripts.
+        :param val: Runtime object bound to the identifier.
+        :return: None.
         """
         self._vars_dict[name] = val
-        self._namespace = self._normalize_namespace(self._vars_dict)
+        self._namespace = normalize_scripting_namespace(self._vars_dict)
         self._completer_backend = rlcompleter.Completer(self._namespace)
 
-    @staticmethod
-    def _normalize_namespace(ns: Dict[str, Any]) -> Dict[str, Any]:
-        builtins_obj = ns.get("__builtins__", __builtins__)
-        builtins_dict = (
-            builtins_obj if isinstance(builtins_obj, dict)
-            else builtins_obj.__dict__
+    def get_execution_namespace(self) -> Dict[str, Any]:
+        """Return a detached view of the namespace exposed to Scripting.
+
+        The Scripting controller remains responsible for executing the source.
+        Returning a copy prevents callers from bypassing :meth:`add_var` and
+        leaving the completion backend out of sync.
+
+        :return: Current executable Python namespace.
+        """
+        return dict(self._namespace)
+
+    def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
+        """Coordinate completion keys before using the shared editor behavior.
+
+        :param event: Incoming keyboard event.
+        :return: None.
+        """
+        popup: QtWidgets.QAbstractItemView = self._qt_completer.popup()
+        pressed_key: int = event.key()
+        popup_visible: bool = popup.isVisible()
+        completion_keys: tuple[QtCore.Qt.Key, ...] = (
+            QtCore.Qt.Key.Key_Tab,
+            QtCore.Qt.Key.Key_Return,
+            QtCore.Qt.Key.Key_Enter,
+        )
+        navigation_keys: tuple[QtCore.Qt.Key, ...] = (
+            QtCore.Qt.Key.Key_Up,
+            QtCore.Qt.Key.Key_Down,
+            QtCore.Qt.Key.Key_PageUp,
+            QtCore.Qt.Key.Key_PageDown,
+        )
+        horizontal_keys: tuple[QtCore.Qt.Key, ...] = (
+            QtCore.Qt.Key.Key_Left,
+            QtCore.Qt.Key.Key_Right,
         )
 
-        out = dict(ns)
-        out["__builtins__"] = builtins_dict
-        return out
-
-    # ------------------------------------------------------------------
-    # THIS is the key part: intercept Tab at event() level
-    # ------------------------------------------------------------------
-
-    def keyPressEvent(self, e: QEvent):
-        if e.type() == QEvent.Type.KeyPress:
-
-            popup = self._qt_completer.popup()
-
-            # --------------------------------------------------
-            # If completion popup is visible → handle selection
-            # --------------------------------------------------
-            if popup.isVisible():
-                if e.key() in (Qt.Key.Key_Tab, Qt.Key.Key_Return, Qt.Key.Key_Enter):
-                    # If popup is visible, accept the completion
-                    index = popup.currentIndex()
-                    if index.isValid():
-                        completion = index.data()
-                        self._insert_completion(completion)
-                    popup.hide()
-                    return True
-
-                elif e.key() == Qt.Key.Key_Escape:
-                    # If Escape is pressed, hide the popup
-                    popup.hide()
-                    return True
-
-                # Let popup handle navigation keys like Up/Down/PageUp/PageDown
-                if e.key() in (Qt.Key.Key_Up, Qt.Key.Key_Down, Qt.Key.Key_PageUp, Qt.Key.Key_PageDown):
-                    return super().event(e)
-
-                # Prevent left/right arrow from inserting characters
-                if e.key() in (Qt.Key.Key_Left, Qt.Key.Key_Right):
-                    return  # Prevent left/right arrow key from inserting text while popup is visible
-
-                # Update the completion model as text changes
+        if popup_visible and pressed_key in completion_keys:
+            completion_index: QtCore.QModelIndex = popup.currentIndex()
+            if completion_index.isValid():
+                completion_text: str = str(completion_index.data())
+                self._insert_completion(completion_text)
+            else:
+                pass
+            popup.hide()
+            event.accept()
+        elif popup_visible and pressed_key == QtCore.Qt.Key.Key_Escape:
+            popup.hide()
+            event.accept()
+        elif popup_visible and pressed_key in navigation_keys:
+            # QCompleter installs its own event filter and consumes navigation
+            # before normal editor movement is considered.
+            QtWidgets.QPlainTextEdit.event(self, event)
+        elif popup_visible and pressed_key in horizontal_keys:
+            event.accept()
+        elif (pressed_key == QtCore.Qt.Key.Key_Space
+              and event.modifiers() & QtCore.Qt.KeyboardModifier.ControlModifier):
+            self._trigger_completion()
+            event.accept()
+        else:
+            BasePythonCodeEditor.keyPressEvent(self, event)
+            if popup_visible:
                 self._trigger_completion()
+            else:
+                pass
 
-            # --------------------------------------------------
-            # No popup → insert tab space or trigger completion
-            # --------------------------------------------------
-            elif e.key() == Qt.Key.Key_Tab:
-                if not popup.isVisible():
-                    # Insert four spaces instead of a literal tab character so
-                    # new indentation always follows the configured width.
-                    cursor = self.textCursor()
-                    cursor.insertText(self._tab_text)
-                    self.setTextCursor(cursor)
-                    return True
+    def _trigger_completion(self) -> None:
+        """Populate or directly apply matches for the current source prefix.
 
-                # Trigger completion if popup is not visible
-                self._trigger_completion()
-                return True
+        :return: None.
+        """
+        prefix: str = self._extract_prefix()
+        if len(prefix) == 0:
+            pass
+        else:
+            self._last_prefix = prefix
+            matches: List[str] = list()
+            completion_index: int = 0
+            completion: str | None = self._completer_backend.complete(
+                prefix,
+                completion_index,
+            )
+            while completion is not None:
+                matches.append(completion)
+                completion_index += 1
+                completion = self._completer_backend.complete(prefix, completion_index)
 
-            elif e.key() == Qt.Key.Key_Space and e.modifiers() & Qt.KeyboardModifier.ControlModifier:
-                # Trigger the completion popup when Ctrl + Space is pressed
-                self._trigger_completion()
-                return True
+            # rlcompleter can repeat candidates through different resolution
+            # routes. Preserve its useful order while removing duplicates.
+            unique_matches: List[str] = list()
+            seen_matches: set[str] = set()
+            match: str
+            for match in matches:
+                if match not in seen_matches:
+                    seen_matches.add(match)
+                    unique_matches.append(match)
+                else:
+                    pass
 
-        # Let the base class handle other key press events
-        super().keyPressEvent(e)
-
-    # ------------------------------------------------------------------
-    # Completion logic (console-style)
-    # ------------------------------------------------------------------
-
-    def _trigger_completion(self):
-        prefix = self._extract_prefix()
-        if not prefix:
-            return
-
-        self._last_prefix = prefix
-
-        matches: List[str] = []
-        i = 0
-        while True:
-            m = self._completer_backend.complete(prefix, i)
-            if m is None:
-                break
-            matches.append(m)
-            i += 1
-
-        if not matches:
-            return
-
-        # Remove duplicates, keep order
-        seen = set()
-        uniq = []
-        for m in matches:
-            if m not in seen:
-                seen.add(m)
-                uniq.append(m)
-
-        if len(uniq) == 1:
-            self._replace_prefix(uniq[0])
-            return
-
-        self._model.setStringList(uniq)
-
-        rect = self.cursorRect()
-        rect.setWidth(
-            self._qt_completer.popup().sizeHintForColumn(0)
-            + self._qt_completer.popup().verticalScrollBar().sizeHint().width()
-        )
-        self._qt_completer.complete(rect)
-
-    # ------------------------------------------------------------------
-    # Prefix handling (critical – NOT WordUnderCursor)
-    # ------------------------------------------------------------------
+            if len(unique_matches) == 0:
+                pass
+            elif len(unique_matches) == 1:
+                self._replace_prefix(unique_matches[0])
+            else:
+                self._completion_model.setStringList(unique_matches)
+                completion_rectangle: QtCore.QRect = self.cursorRect()
+                completion_rectangle.setWidth(
+                    self._qt_completer.popup().sizeHintForColumn(0)
+                    + self._qt_completer.popup().verticalScrollBar().sizeHint().width()
+                )
+                self._qt_completer.complete(completion_rectangle)
 
     def _extract_prefix(self) -> str:
-        cursor = self.textCursor()
-        pos = cursor.position()
-        text = self.toPlainText()
+        """Return the dotted Python expression directly before the cursor.
 
-        i = pos - 1
-        while i >= 0:
-            ch = text[i]
-            if ch.isalnum() or ch in "._":
-                i -= 1
+        :return: Completion prefix.
+        """
+        text_cursor: QtGui.QTextCursor = self.textCursor()
+        cursor_position: int = text_cursor.position()
+        source_text: str = self.toPlainText()
+        start_position: int = cursor_position - 1
+        prefix_complete: bool = False
+        while start_position >= 0 and not prefix_complete:
+            character: str = source_text[start_position]
+            if character.isalnum() or character in "._":
+                start_position -= 1
             else:
-                break
+                prefix_complete = True
+        return source_text[start_position + 1:cursor_position]
 
-        return text[i + 1:pos]
+    def _replace_prefix(self, completion: str) -> None:
+        """Replace the remembered prefix with one completion candidate.
 
-    def _replace_prefix(self, completion: str):
-        cursor = self.textCursor()
-        cursor.beginEditBlock()
-
-        cursor.movePosition(
-            QTextCursor.MoveOperation.Left,
-            QTextCursor.MoveMode.KeepAnchor,
+        :param completion: Complete Python name selected by the user.
+        :return: None.
+        """
+        text_cursor: QtGui.QTextCursor = self.textCursor()
+        text_cursor.beginEditBlock()
+        text_cursor.movePosition(
+            QtGui.QTextCursor.MoveOperation.Left,
+            QtGui.QTextCursor.MoveMode.KeepAnchor,
             len(self._last_prefix),
         )
-        cursor.removeSelectedText()
-        cursor.insertText(completion)
+        text_cursor.removeSelectedText()
+        text_cursor.insertText(completion)
+        text_cursor.endEditBlock()
+        self.setTextCursor(text_cursor)
 
-        cursor.endEditBlock()
-        self.setTextCursor(cursor)
+    @QtCore.Slot(str)
+    def _insert_completion(self, text: str) -> None:
+        """Insert the completion emitted by the popup.
 
-    def _insert_completion(self, text: str):
+        :param text: Selected completion string.
+        :return: None.
+        """
         self._replace_prefix(text)
-
-
-if __name__ == "__main__":
-    import sys
-    import numpy as np
-    from PySide6.QtWidgets import QApplication, QMainWindow
-
-
-    class ConsoleMainWindow(QMainWindow):
-        def __init__(self):
-            super().__init__()
-            self.setWindowTitle("PySide6 Python Console")
-            console = PythonCodeEditor(
-                vars_dict={
-                    "__builtins__": __builtins__,  # dict or module, both fine
-                    "app": self,
-                    "np": np,
-                },
-            )
-            self.setCentralWidget(console)
-
-
-    app = QApplication(sys.argv)
-    window = ConsoleMainWindow()
-    window.resize(800, 600)
-    window.show()
-    sys.exit(app.exec())

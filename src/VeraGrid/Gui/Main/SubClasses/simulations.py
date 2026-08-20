@@ -20,6 +20,7 @@ from VeraGrid.Gui.Main.SubClasses.Model.time_events import TimeEventsMain
 from VeraGrid.Gui.SigmaAnalysis.sigma_analysis_dialogue import SigmaAnalysisGUI
 from VeraGrid.Gui.ProceduralGrid.procedural_grid import ProceduralGridWindow
 from VeraGrid.Gui.ProceduralGrid.map_warning import MapWarningDialog
+from VeraGrid.Session.session import GcThread
 from VeraGrid.Session.server_driver import RemoteJobDriver
 from VeraGrid.Gui.DynamicEventsDialog.dynamic_events_editor_support import create_dynamic_events_group_with_dialog
 
@@ -4223,16 +4224,23 @@ class SimulationsMain(TimeEventsMain):
         :return:
         """
         _, results = self.session.small_signal_stability_simulation
+        rms_thread: GcThread | None = self.session.threads.get(SimulationTypes.RmsSmallSignal_run, None)
 
-        if results is not None:
+        # The simulation is no longer part of the active-run list whether it
+        # succeeded or failed.  Leaving it there makes subsequent runs appear
+        # duplicated in the GUI state.
+        self.remove_simulation(SimulationTypes.RmsSmallSignal_run)
+        self.update_available_results()
 
-            # delete from the current simulations
-            self.remove_simulation(SimulationTypes.RmsSmallSignal_run)
-            self.update_available_results()
-
+        if results is not None and (rms_thread is None or not rms_thread.has_failed()):
             self.show_info_toast("Small-signal stability analysis RMS has finished correctly!")
 
         else:
+            if rms_thread is not None and rms_thread.logger.has_logs():
+                self.show_logs(logger=rms_thread.logger, name="RMS small-signal simulation error")
+            else:
+                pass
+
             warning_msg('There are no Small-Signal Stability analysis RMS results.',
                         'Small-Signal Stability analysis RMS')
 

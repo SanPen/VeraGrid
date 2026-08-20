@@ -3,5 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results import InvestmentsEvaluationResults
+# from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_results import InvestmentsEvaluationResults
 from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_options import InvestmentsEvaluationOptions
+from VeraGridEngine.Simulations.InvestmentsEvaluation.investments_evaluation_driver import InvestmentsEvaluationDriver
+from VeraGridEngine.Simulations.InvestmentsEvaluation.Problems import *

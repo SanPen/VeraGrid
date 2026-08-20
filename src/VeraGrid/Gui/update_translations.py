@@ -49,28 +49,36 @@ def _reactivate_manual_context_translations(ts_file: Path) -> None:
     :returns: Nothing.
     """
     contents: str = ts_file.read_text(encoding="utf-8")
-    context_name: str
-    context_pattern: str
-    context_match: re.Match[str] | None
-    original_block: str
-    updated_block: str
     updated_contents: str = contents
 
-    for context_name in ["ContextMenu", "ConfigurationMain", "messages"]:
-        context_pattern = rf"<context>\s*<name>{context_name}</name>.*?</context>"
-        context_match = re.search(context_pattern, updated_contents, re.DOTALL)
+    for context_name in ["ContextMenu", "ConfigurationMain", "messages", "SimulationsMain"]:
+        context_pattern: str = rf"(<context>\s*<name>{context_name}</name>.*?</context>)"
 
-        if context_match is None:
-            pass
-        else:
-            original_block = context_match.group(0)
-            updated_block = original_block.replace('<translation type="vanished">', "<translation>")
-            updated_block = re.sub(
+        def reactivate_context_block(context_match: re.Match[str]) -> str:
+            """
+            Remove ``vanished`` and selected ``unfinished`` markers from one runtime context block.
+
+            :param context_match: Regex match containing one whole TS context block.
+            :returns: Patched TS context block.
+            """
+            context_block: str = context_match.group(1)
+            reactivated_block: str = context_block.replace(
+                '<translation type="vanished">',
+                "<translation>",
+            )
+            reactivated_block = re.sub(
                 r'<translation type="unfinished">([^<]+)</translation>',
                 r"<translation>\1</translation>",
-                updated_block,
+                reactivated_block,
             )
-            updated_contents = updated_contents.replace(original_block, updated_block, 1)
+            return reactivated_block
+
+        updated_contents = re.sub(
+            context_pattern,
+            reactivate_context_block,
+            updated_contents,
+            flags=re.DOTALL,
+        )
 
     if updated_contents == contents:
         return

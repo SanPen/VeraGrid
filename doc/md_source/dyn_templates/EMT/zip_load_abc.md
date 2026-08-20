@@ -1,5 +1,14 @@
 # ZIP load (ABC)
 
+<!-- veragrid-block-introduction:start -->
+**ZIP load (ABC)** describes how electrical demand responds to terminal voltage, frequency, or internal states. Static impedance/current/power components and dynamic load states produce different fault and recovery behavior, so the selected formulation materially changes system damping and voltage stability.
+
+## Typical use
+
+- Use the formulation that matches the time scale and measured behavior of the represented demand.
+- Initialize active and reactive demand from the power flow and verify the voltage-dependence convention.
+<!-- veragrid-block-introduction:end -->
+
 This model represents a phase-selective EMT ZIP load with per-phase voltage filtering and polynomial voltage dependence.
 
 ### Purpose

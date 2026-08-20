@@ -103,6 +103,17 @@ class RmsProblemTemplate(ABC):
 
     def get_static_state_matrix(self, x: Vec, dx: Vec):
         raise NotImplementedError("get_static_state_matrix")
+
+    def get_small_signal_reference_indices(self) -> tuple[int, int] | None:
+        """
+        Return the augmented-Jacobian row and column used to fix the angle gauge.
+
+        Problems without an explicit electrical angle reference do not require
+        a small-signal gauge constraint and return ``None``.
+
+        :return: Reference row and column, or ``None`` when not applicable.
+        """
+        return None
     
     def get_dt(self):
         return NotImplementedError("get_dt")

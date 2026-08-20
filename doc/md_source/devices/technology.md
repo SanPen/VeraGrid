@@ -7,18 +7,20 @@ A `Technology` is a reusable association used to tag injections and assets by te
 This device is used as reusable metadata that other assets can reference through associations.
 
 ### Registered properties
-Profile-enabled properties: none.
+Profile-enabled properties: `reference_cost`.
 
-|    name    |   class_type   |unit|mandatory|max_chars|                     descriptions                     |has_profile|comment|
-|------------|----------------|----|---------|---------|------------------------------------------------------|-----------|-------|
-|idtag       |str             |    |False    |         |Unique ID                                             |False      |       |
-|name        |str             |    |False    |         |Name of the device.                                   |False      |       |
-|code        |str             |    |False    |         |Secondary ID                                          |False      |       |
-|rdfid       |str             |    |False    |         |RDF ID for further compatibility                      |False      |       |
-|action      |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.|False      |       |
-|comment     |str             |    |False    |         |User comment                                          |False      |       |
-|diff_changes|MergeInformation|    |False    |         |                                                      |False      |       |
-|name2       |str             |    |False    |         |Name 2 of the technology                              |False      |       |
-|name3       |str             |    |False    |         |Name 3 of the technology                              |False      |       |
-|name4       |str             |    |False    |         |Name 4 of the technology                              |False      |       |
-|color       |str             |    |False    |         |Color to paint                                        |False      |       |
+|      name       |   class_type   |    unit    |mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-----------------|----------------|------------|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag            |str             |            |False    |         |Unique ID                                               |False      |       |
+|name             |str             |            |False    |         |Name of the device.                                     |False      |       |
+|code             |str             |            |False    |         |Secondary ID                                            |False      |       |
+|rdfid            |str             |            |False    |         |RDF ID for further compatibility                        |False      |       |
+|action           |enum ActionType |            |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge|bool            |            |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment          |str             |            |False    |         |User comment                                            |False      |       |
+|diff_changes     |MergeInformation|            |False    |         |                                                        |False      |       |
+|reference_cost   |float           |Currency/MWh|False    |         |Reference cost for the technology                       |True       |       |
+|name2            |str             |            |False    |         |Name 2 of the technology                                |False      |       |
+|name3            |str             |            |False    |         |Name 3 of the technology                                |False      |       |
+|name4            |str             |            |False    |         |Name 4 of the technology                                |False      |       |
+|color            |str             |            |False    |         |Color to paint                                          |False      |       |

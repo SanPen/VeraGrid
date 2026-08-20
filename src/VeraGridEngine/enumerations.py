@@ -4253,6 +4253,28 @@ class PlotSimulationType(Enum):
         return self.value
 
 
+class ResultTablePlotType(Enum):
+    """
+    Plot representation used by a results table.
+
+    The representation describes how table dimensions map to graphical
+    coordinates without coupling the generic results infrastructure to a
+    particular simulation.
+    """
+
+    SERIES = "SERIES"
+    COMPLEX_POINTS = "COMPLEX_POINTS"
+    COMPLEX_VECTORS = "COMPLEX_VECTORS"
+
+    def __str__(self) -> str:
+        """
+        Return the persistent plot-representation label.
+
+        :return: Persistent plot-representation label.
+        """
+        return self.value
+
+
 class DynamicPlotMode(Enum):
     """
     Plotting mode used by persistent dynamic plot definitions.
@@ -4475,6 +4497,75 @@ class BlockType(Enum):
             return BlockType[s]
         except KeyError:
             return s
+
+
+class BlockSymbolKind(Enum):
+    """Editable primary role of one dynamic-block symbol."""
+
+    INPUT = "Input"
+    ALGEBRAIC = "Algebraic"
+    STATE = "State"
+    DIFFERENTIAL = "Differential"
+    PARAMETER = "Parameter"
+    EVENT_PARAMETER = "Dynamic parameter"
+    MODE_PARAMETER = "Mode parameter"
+    OUTPUT_ONLY = "Output only (legacy)"
+
+
+class BlockSymbolCategory(Enum):
+    """Visible symbol group used to filter dynamic-block symbol tables."""
+
+    VARIABLES = "Variables"
+    PARAMETERS = "Parameters"
+
+
+class DynamicEditorMimeType(Enum):
+    """MIME identifiers used by Dynamic Model Editor drag-and-drop workflows."""
+
+    TAB = "application/x-veragrid-dynamic-editor-tab"
+
+
+class EquationExportSection(Enum):
+    """Dynamic equation groups that users can select independently for export."""
+
+    STATE = "State equations"
+    ALGEBRAIC = "Algebraic equations"
+    INITIALIZATION = "Initialization equations"
+    DERIVATIVE_INITIALIZATION = "Derivative initialization equations"
+
+
+class EquationPdfStyle(Enum):
+    """Visual representation used for equations inside an exported PDF."""
+
+    LATEX_SOURCE = "LaTeX source"
+    RENDERED = "Rendered equations"
+
+
+class JMartiDataSourceMode(Enum):
+    """Available sources for the offline JMarti frequency-domain fit."""
+
+    AUTOMATIC_TEMPLATE = "Auto from attached template"
+    IMPORT_FREQUENCY_SAMPLES = "Import NPZ frequency samples"
+
+
+class ProceduralFieldType(Enum):
+    """Semantic editor kind for one procedural-logic field."""
+
+    EXPRESSION = "Expression"
+    MODE_REFERENCE = "Retained mode"
+    VARIABLE_REFERENCE = "DAE variable"
+    RUNTIME_REFERENCE = "Runtime parameter"
+    TARGET_REFERENCE = "Mutable target"
+    FLOAT = "Number"
+    OPTIONAL_FLOAT = "Optional number"
+
+
+class RoutingNodeKind(Enum):
+    """Topological roles supported by an orthogonal routing graph."""
+
+    PORT = "port"
+    STUB = "stub"
+    ELBOW = "elbow"
 
 
 class ProceduralGridMethods(Enum):

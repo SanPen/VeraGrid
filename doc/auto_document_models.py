@@ -338,7 +338,8 @@ def write_models_to_md(filename):
     :param filename:
     :return:
     """
-    with open(filename, 'w') as w:
+    # with open(filename, 'w') as w:
+    with open(filename, 'w', encoding='utf-8') as w:
         w.write("# Data Models\n")
 
         cgmes_info = get_cgmes_data_frames()

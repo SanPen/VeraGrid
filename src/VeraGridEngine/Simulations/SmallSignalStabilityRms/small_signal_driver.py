@@ -39,16 +39,55 @@ def compute_state_matrix(problem: RmsProblemTemplate, x: Vec, dx: Vec) -> tuple[
     """
     h = problem.get_dt_value()
     # h = 0.001
-    fx = problem.get_j11(x, dx, h)  # ∂f/∂x
-    fy = problem.get_j12(x, dx, h)  # ∂f/∂y
-    gx = problem.get_j21(x, dx, h)  # ∂g/∂x
-    gy = problem.get_j22(x, dx, h)  # ∂g/∂y
+    fx: sp.csc_matrix = problem.get_j11(x, dx, h).tocsc()  # ∂f/∂x
+    fy: sp.csc_matrix = problem.get_j12(x, dx, h).tocsc()  # ∂f/∂y
+    gx: sp.csc_matrix = problem.get_j21(x, dx, h).tocsc()  # ∂g/∂x
+    gy: sp.csc_matrix = problem.get_j22(x, dx, h).tocsc()  # ∂g/∂y
 
     # Convert to dense for SVD-based solve (handles singular matrices)
 
     differential_vars = problem.get_diff_var_number()
     if differential_vars == 0:
-        gy_lu = spla.splu(gy)
+        try:
+            gy_lu: spla.SuperLU = spla.splu(gy)
+        except RuntimeError as factorization_error:
+            reference_indices: tuple[int, int] | None = problem.get_small_signal_reference_indices()
+            if reference_indices is not None:
+                reference_row: int
+                reference_column: int
+                reference_row, reference_column = reference_indices
+                number_of_states: int = problem.get_states_number()
+                algebraic_row: int = reference_row - number_of_states
+                algebraic_column: int = reference_column - number_of_states
+
+                if (0 <= algebraic_row < gy.shape[0]
+                        and 0 <= algebraic_column < gy.shape[1]):
+                    # Replace the redundant slack active-power row by the
+                    # voltage-angle reference only after the original algebraic
+                    # factorization has proved exactly singular.
+                    constrained_gy: sp.lil_matrix = gy.tolil(copy=True)
+                    constrained_gx: sp.lil_matrix = gx.tolil(copy=True)
+                    constrained_gy.rows[algebraic_row] = [algebraic_column]
+                    constrained_gy.data[algebraic_row] = [1.0]
+                    constrained_gx.rows[algebraic_row] = list()
+                    constrained_gx.data[algebraic_row] = list()
+                    gy = constrained_gy.tocsc()
+                    gx = constrained_gx.tocsc()
+                    try:
+                        gy_lu = spla.splu(gy)
+                    except RuntimeError as constrained_factorization_error:
+                        raise RuntimeError(
+                            "The algebraic Jacobian remains singular after fixing the voltage-angle reference. "
+                            "The dense all-modes reduction is not valid for this RMS model. "
+                            "Select a positive number of modes to use the sparse DAE eigensolver."
+                        ) from constrained_factorization_error
+                else:
+                    raise RuntimeError("Invalid RMS small-signal angle-reference indices") from factorization_error
+            else:
+                raise RuntimeError(
+                    "The algebraic Jacobian is singular and the RMS problem has no voltage-angle reference. "
+                    "The dense all-modes reduction cannot be constructed."
+                ) from factorization_error
 
         gy_inv_gx = gy_lu.solve(gx.toarray())
     else:
@@ -362,23 +401,27 @@ def run_sparse_small_signal_stability(problem: RmsProblemTemplate,
     t0: float = time.perf_counter()
     A_static = problem.get_static_state_matrix(x, dx)
     J_aug = A_static.tocsc() if sp.issparse(A_static) else sp.csc_matrix(np.asarray(A_static, dtype=float))
+    reference_indices: tuple[int, int] | None = problem.get_small_signal_reference_indices()
+    if reference_indices is not None:
+        reference_row: int
+        reference_column: int
+        reference_row, reference_column = reference_indices
+
+        # Replace only the redundant slack active-power row in the numerical
+        # eigenproblem.  The physical RMS DAE still retains its original nodal
+        # balance equation; this operation merely selects one angular gauge for
+        # a factorization that would otherwise be exactly singular.
+        reference_jacobian: sp.lil_matrix = J_aug.tolil(copy=True)
+        reference_jacobian.rows[reference_row] = [reference_column]
+        reference_jacobian.data[reference_row] = [1.0]
+        J_aug = reference_jacobian.tocsc()
+    else:
+        pass
     differential_vars = problem.get_diff_var_number()
     n_states: int = problem.get_states_number()
     E = None
 
     if differential_vars == 0:
-        # 2. SUPER-LU FACTORIZATION OF THE ENTIRE SYSTEM
-        J_aug_lu = spla.splu(J_aug)
-
-        # 3. CREATE THE SHIFT-AND-INVERT OPERATOR (A^-1 * v)
-        op_methods = SparseShiftAndInvertMethods(n_states=n_states,
-                                                 total_size=J_aug.shape[0],
-                                                 J_aug_lu=J_aug_lu)
-        Inv_A_op = spla.LinearOperator(shape=(n_states, n_states),
-                                       matvec=op_methods.matvec,
-                                       rmatvec=op_methods.rmatvec)
-
-        # 4. MODAL EXTRACTION
         # In small systems, k_search cannot exceed the dimension of the operator.
         k_search = min(k + 6, n_states - 2)
         if k_search <= 0:
@@ -386,23 +429,86 @@ def run_sparse_small_signal_stability(problem: RmsProblemTemplate,
         else:
             pass
 
-        mu_R, v_raw = spla.eigs(Inv_A_op, k=k_search, which="LM", tol=1e-10)
-        mu_L, w_raw = spla.eigs(Inv_A_op.T, k=k_search, which="LM", tol=1e-10)
+        # A zero mode makes direct factorization of J_aug singular.  Shift only
+        # the differential-state block, matching the generalized sparse path,
+        # and recover the original eigenvalues after inverse iteration.
+        shift_diagonal: Vec = np.zeros(J_aug.shape[0], dtype=float)
+        shift_diagonal[:n_states] = 1.0
+        state_shift_matrix: sp.csc_matrix = sp.diags(shift_diagonal, format="csc")
+        full_shift_matrix: sp.csc_matrix = sp.eye(J_aug.shape[0], format="csc")
+        descriptor_sigmas: tuple[float, ...] = (0.0, 1.0e-8, 1.0e-7, 1.0e-6, 1.0e-5, 1.0e-4, 1.0e-3)
+        regularization_sigmas: tuple[float, ...] = (1.0e-5, 1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1)
+        shift_strategies: list[tuple[str, sp.csc_matrix, tuple[float, ...]]] = list()
+        shift_strategies.append(("descriptor", state_shift_matrix, descriptor_sigmas))
+        shift_strategies.append(("full regularization", full_shift_matrix, regularization_sigmas))
+        eig_ok: bool = False
+        last_error: RuntimeError | ValueError | spla.ArpackNoConvergence | None = None
 
-        # Tolerance for filtering algebraic noise (mu -> 0 means lambda -> inf)
-        tol_mu = 1e-8
+        for shift_name, shift_matrix, sigma_candidates in shift_strategies:
+            for sigma in sigma_candidates:
+                try:
+                    J_shift: sp.csc_matrix = (J_aug - sigma * shift_matrix).tocsc()
+                    J_shift_lu: Any = spla.splu(J_shift)
 
-        # --- Rights Filtering ---
-        valid_mask_R = np.abs(mu_R) > tol_mu
-        mu_R_valid = mu_R[valid_mask_R]
-        v_valid = v_raw[:, valid_mask_R]
-        eigenvalues_R = 1.0 / mu_R_valid
+                    op_methods: SparseShiftAndInvertMethods = SparseShiftAndInvertMethods(
+                        n_states=n_states,
+                        total_size=J_shift.shape[0],
+                        J_aug_lu=J_shift_lu,
+                    )
+                    inv_a_op: spla.LinearOperator = spla.LinearOperator(
+                        shape=(n_states, n_states),
+                        matvec=op_methods.matvec,
+                        rmatvec=op_methods.rmatvec,
+                        dtype=np.complex128,
+                    )
 
-        # --- Left Filtering ---
-        valid_mask_L = np.abs(mu_L) > tol_mu
-        mu_L_valid = mu_L[valid_mask_L]
-        w_valid = w_raw[:, valid_mask_L]
-        eigenvalues_L = 1.0 / mu_L_valid
+                    mu_R, v_raw = spla.eigs(inv_a_op, k=k_search, which="LM", tol=1e-10)
+                    mu_L, w_raw = spla.eigs(inv_a_op.T, k=k_search, which="LM", tol=1e-10)
+
+                    # Filter algebraic noise: mu -> 0 represents lambda -> infinity.
+                    tol_mu: float = 1.0e-8
+                    valid_mask_R: np.ndarray = np.isfinite(mu_R) & (np.abs(mu_R) > tol_mu)
+                    valid_mask_L: np.ndarray = np.isfinite(mu_L) & (np.abs(mu_L) > tol_mu)
+                    mu_R_valid: Vec = mu_R[valid_mask_R]
+                    mu_L_valid: Vec = mu_L[valid_mask_L]
+                    v_valid = v_raw[:, valid_mask_R]
+                    w_valid = w_raw[:, valid_mask_L]
+                    eigenvalues_R = sigma + 1.0 / mu_R_valid
+                    eigenvalues_L = sigma + 1.0 / mu_L_valid
+
+                    if (eigenvalues_R.size == 0
+                            or eigenvalues_L.size == 0
+                            or not np.all(np.isfinite(eigenvalues_R))
+                            or not np.all(np.isfinite(eigenvalues_L))
+                            or v_valid.shape[1] == 0
+                            or w_valid.shape[1] == 0):
+                        raise ValueError("ARPACK returned empty or non-finite standard eigenvalues")
+                    else:
+                        pass
+
+                    eig_ok = True
+                    if verbose:
+                        print(f"Sparse standard {shift_name} shift-invert converged with sigma={sigma:.1e}")
+                    else:
+                        pass
+                    break
+                except (RuntimeError, ValueError, spla.ArpackNoConvergence) as error:
+                    last_error = error
+                    if verbose:
+                        print(f"Sparse standard {shift_name} shift-invert failed "
+                              f"with sigma={sigma:.1e}: {error}")
+                    else:
+                        pass
+
+            if eig_ok:
+                break
+            else:
+                pass
+
+        if eig_ok:
+            pass
+        else:
+            raise RuntimeError(f"Sparse standard eigensolver failed with all sigma candidates: {last_error}")
     else:
         # Sparse generalized shift-invert using custom LinearOperator.
         E_raw = problem.get_E_matrix(x, dx)
@@ -580,10 +686,16 @@ class SparseShiftAndInvertMethods:
         :type b: Vec
         :return: Result vector.
         """
-        rhs = np.zeros(self.total_size, dtype=np.float64)
-        rhs[:self.n_states] = b
-        sol = self.J_aug_lu.solve(rhs)
-        return sol[:self.n_states]
+        # SuperLU owns a real factorization while ARPACK may request a complex
+        # operator product.  Solve both components explicitly to preserve the
+        # imaginary part of Arnoldi vectors.
+        rhs_real: Vec = np.zeros(self.total_size, dtype=np.float64)
+        rhs_imag: Vec = np.zeros(self.total_size, dtype=np.float64)
+        rhs_real[:self.n_states] = np.asarray(b.real, dtype=np.float64)
+        rhs_imag[:self.n_states] = np.asarray(b.imag, dtype=np.float64)
+        solution_real: Vec = self.J_aug_lu.solve(rhs_real)
+        solution_imag: Vec = self.J_aug_lu.solve(rhs_imag)
+        return solution_real[:self.n_states] + 1j * solution_imag[:self.n_states]
 
     def rmatvec(self, b: Vec) -> Vec:
         """
@@ -593,13 +705,15 @@ class SparseShiftAndInvertMethods:
         :type b: Vec
         :return: Result vector.
         """
-        rhs = np.zeros(self.total_size, dtype=np.float64)
-        rhs[:self.n_states] = b
-
+        rhs_real: Vec = np.zeros(self.total_size, dtype=np.float64)
+        rhs_imag: Vec = np.zeros(self.total_size, dtype=np.float64)
+        rhs_real[:self.n_states] = np.asarray(b.real, dtype=np.float64)
+        rhs_imag[:self.n_states] = np.asarray(b.imag, dtype=np.float64)
         solver: Any = self.J_aug_lu
-        sol = solver.solve(rhs, trans='T')
+        solution_real: Vec = solver.solve(rhs_real, trans='T')
+        solution_imag: Vec = solver.solve(rhs_imag, trans='T')
 
-        return sol[:self.n_states]
+        return solution_real[:self.n_states] + 1j * solution_imag[:self.n_states]
 
 
 class SmallSignalStabilityRmsDriver(DriverTemplate):
@@ -637,31 +751,36 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
 
         DriverTemplate.__init__(self, grid=grid, engine=engine)
 
+        # Normalize optional configurations before the RMS problem consumes
+        # them.  This keeps direct API construction consistent with the GUI,
+        # which always passes explicit option instances.
+        self.rms_options: RmsOptions = RmsOptions() if rms_options is None else rms_options
+        self.sss_options: RmsSmallSignalStabilityOptions = (
+            RmsSmallSignalStabilityOptions() if sss_options is None else sss_options
+        )
+
         events_group = RmsEventsGroup("simulation1")
 
         self.problem = RmsProblemDae(grid=grid,
-                                     options=rms_options,
+                                     options=self.rms_options,
                                      pf_results=pf_results)
 
         self.problem.set_events_group(events_group)
 
-        self.sss_options: RmsSmallSignalStabilityOptions = RmsSmallSignalStabilityOptions() if sss_options is None else sss_options
         self.assessment_time = self.sss_options.ss_assessment_time
 
         n_modes = self.problem.get_states_number() + self.problem.get_diff_var_number()
         self.k = self.sss_options.k if self.sss_options.k is not None else n_modes
 
-        self.rms_options: RmsOptions = RmsOptions() if rms_options is None else rms_options
-
         self.integration_methods_dict: dict[DynamicIntegrationMethod, type] = dict()
         self.integration_methods_dict[DynamicIntegrationMethod.DaeBackEuler] = BackEulerImplicitIntegration
 
         self.results: SmallSignalStabilityRmsResults = SmallSignalStabilityRmsResults(eigenvalues=np.empty(0),
-                                                                                      right_eigenvectors=np.empty(0),
-                                                                                      participation_factors=np.empty(0),
+                                                                                      right_eigenvectors=np.empty((0, 0)),
+                                                                                      participation_factors=np.empty((0, 0)),
                                                                                       damping_ratios=np.empty(0),
                                                                                       conjugate_frequencies=np.empty(0),
-                                                                                      state_matrix=np.empty(0),
+                                                                                      state_matrix=np.empty((0, 0)),
                                                                                       stat_vars=list(),
                                                                                       algebraic_vars=list())
 
@@ -683,10 +802,22 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
         """
         self.tic()
 
+        # Start the progress sequence before preparing the linearization point so
+        # the GUI immediately reflects that the small-signal study is running.
+        self.report_progress(0.0)
+        self.report_text("Preparing the RMS small-signal stability analysis...")
+
         x = self.problem.get_x0()
         dx = np.zeros_like(x)
 
         if not self.assessment_time == 0:
+
+            # The optional time-domain simulation moves the RMS model to the
+            # exact operating point requested for the subsequent linearization.
+            self.report_progress(10.0)
+            self.report_text(
+                f"Simulating the RMS model up to the assessment time ({self.assessment_time:g} s)..."
+            )
 
             solver = self.integration_methods_dict[self.rms_options.integration_method](
                 problem=self.problem,
@@ -701,10 +832,19 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
             x = y[i]
 
         else:
-            pass
+            # Without a requested assessment time, the initialized RMS state is
+            # already the operating point used to build the small-signal model.
+            self.report_text("Using the initialized RMS operating point...")
+
+        # Both operating-point paths converge here before the modal calculation.
+        self.report_progress(55.0)
 
         n = self.problem.get_states_number() + self.problem.get_diff_var_number()
         if self.k >= n - 1 or self.k == 0:
+            # The dense solver returns the complete modal spectrum when all
+            # system modes have been requested.
+            self.report_progress(60.0)
+            self.report_text("Computing the complete RMS small-signal modal spectrum...")
             (eigenvalues,
              right_eigenvectors,
              participation_factors,
@@ -716,6 +856,10 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
                                                                       dx=dx,
                                                                       verbose=self.sss_options.verbose)
         else:
+            # The sparse solver targets only the requested modes and avoids the
+            # cost of a complete decomposition for larger RMS systems.
+            self.report_progress(60.0)
+            self.report_text(f"Computing {self.k} RMS small-signal modes with the sparse eigensolver...")
             (eigenvalues,
              right_eigenvectors,
              participation_factors,
@@ -727,6 +871,10 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
                                                                        k=self.k,
                                                                        verbose=self.sss_options.verbose)
 
+        # Package the modal quantities only after the eigensolver has completed,
+        # keeping the final part of the progress range for result construction.
+        self.report_progress(90.0)
+        self.report_text("Building the RMS small-signal stability results...")
         state_vars = self.problem.state_vars
         algebraic_vars = self.problem.algebraic_vars
         self.results: SmallSignalStabilityRmsResults = SmallSignalStabilityRmsResults(
@@ -741,3 +889,5 @@ class SmallSignalStabilityRmsDriver(DriverTemplate):
         )
 
         self.toc()
+        self.report_progress(100.0)
+        self.report_text("RMS small-signal stability analysis completed.")

@@ -16,6 +16,31 @@ import numpy as np
 from PySide6 import QtCore, QtGui, QtWidgets
 
 
+def sort_pair_by_x(point: tuple[float, float] | tuple[float, int]) -> float:
+    """Return the first coordinate used to sort one lookup-table pair.
+
+    :param point: Lookup-table value/index pair.
+    :return: First coordinate as a floating-point sorting key.
+    """
+    return float(point[0])
+
+
+def build_sorted_axis_indexes(axis_values: Sequence[float]) -> list[int]:
+    """Return the stable sorted index order for one lookup-table axis.
+
+    :param axis_values: Axis values to sort.
+    :return: Sorted index list.
+    """
+    indexed_values: list[tuple[float, int]] = list()
+    value_index: int
+
+    for value_index in range(len(axis_values)):
+        indexed_values.append((float(axis_values[value_index]), value_index))
+
+    indexed_values.sort(key=sort_pair_by_x)
+    return list(item[1] for item in indexed_values)
+
+
 def _copy_selected_table_range_to_clipboard(table_widget: QtWidgets.QTableWidget) -> None:
     """
     Copy the currently selected table range to the clipboard.
@@ -179,7 +204,7 @@ class LookupArrayLinearDialog(QtWidgets.QDialog):
 
         self._table_widget = QtWidgets.QTableWidget(self)
         self._table_widget.setColumnCount(2)
-        self._table_widget.setHorizontalHeaderLabels(list([self._x_label, self._y_label]))
+        self._table_widget.setHorizontalHeaderLabels(list((self._x_label, self._y_label,)))
         self._table_widget.horizontalHeader().setSectionResizeMode(QtWidgets.QHeaderView.ResizeMode.Stretch)
         self._table_widget.horizontalHeader().sectionClicked.connect(self.select_column_by_header)
         self._table_widget.verticalHeader().setVisible(False)
@@ -340,7 +365,7 @@ class LookupArrayLinearDialog(QtWidgets.QDialog):
             return
 
         pairs: list[tuple[float, float]] = list(zip(x_points, y_points))
-        pairs.sort(key=self._sort_pair_by_x)
+        pairs.sort(key=sort_pair_by_x)
         self._replace_table_points(pairs)
 
     def paste_from_clipboard(self) -> None:
@@ -434,7 +459,7 @@ class LookupArrayLinearDialog(QtWidgets.QDialog):
             return
 
         sorted_pairs: list[tuple[float, float]] = list(zip(x_points, y_points))
-        sorted_pairs.sort(key=self._sort_pair_by_x)
+        sorted_pairs.sort(key=sort_pair_by_x)
         self._x_points = list(pair[0] for pair in sorted_pairs)
         self._y_points = list(pair[1] for pair in sorted_pairs)
 
@@ -488,7 +513,7 @@ class LookupArrayLinearDialog(QtWidgets.QDialog):
             return
 
         pairs: list[tuple[float, float]] = list(zip(x_points, y_points))
-        pairs.sort(key=self._sort_pair_by_x)
+        pairs.sort(key=sort_pair_by_x)
 
         if len(pairs) < 2:
             QtWidgets.QMessageBox.warning(self, "Lookup Table", "Lookup tables require at least two points.")
@@ -619,17 +644,12 @@ class LookupArrayLinearDialog(QtWidgets.QDialog):
         else:
             return parsed_points
 
-    @staticmethod
-    def _sort_pair_by_x(point: tuple[float, float]) -> float:
-        """
-        Return the x coordinate used to sort one lookup row.
-
-        :param point: Lookup row.
-        :return: X coordinate.
-        """
-        return float(point[0])
-
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
+        """Forward unhandled key events to the base dialog.
+
+        :param event: Incoming key event.
+        :return: None.
+        """
         super().keyPressEvent(event)
 
     def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent) -> bool:
@@ -1073,8 +1093,8 @@ class LookupMatrixLinearDialog(QtWidgets.QDialog):
             QtWidgets.QMessageBox.warning(self, "Lookup Matrix", str(exc))
             return
 
-        sorted_x_indexes = self._build_sorted_axis_indexes(x_points)
-        sorted_y_indexes = self._build_sorted_axis_indexes(y_points)
+        sorted_x_indexes = build_sorted_axis_indexes(x_points)
+        sorted_y_indexes = build_sorted_axis_indexes(y_points)
 
         for y_sorted_index in sorted_y_indexes:
             reordered_row: list[float] = list()
@@ -1349,6 +1369,11 @@ class LookupMatrixLinearDialog(QtWidgets.QDialog):
         return x_points, y_points, z_matrix
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
+        """Forward unhandled key events to the base dialog.
+
+        :param event: Incoming key event.
+        :return: None.
+        """
         super().keyPressEvent(event)
 
     def eventFilter(self, watched: QtCore.QObject, event: QtCore.QEvent) -> bool:
@@ -1386,20 +1411,3 @@ class LookupMatrixLinearDialog(QtWidgets.QDialog):
             pass
 
         return super().eventFilter(watched, event)
-
-    @staticmethod
-    def _build_sorted_axis_indexes(axis_values: Sequence[float]) -> list[int]:
-        """
-        Return the sorted index order for one axis.
-
-        :param axis_values: Axis values to sort.
-        :return: Sorted index list.
-        """
-        indexed_values: list[tuple[float, int]] = list()
-        value_index: int
-
-        for value_index in range(len(axis_values)):
-            indexed_values.append((float(axis_values[value_index]), value_index))
-
-        indexed_values.sort(key=LookupArrayLinearDialog._sort_pair_by_x)
-        return list(item[1] for item in indexed_values)

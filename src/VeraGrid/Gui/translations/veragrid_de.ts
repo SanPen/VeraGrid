@@ -117,6 +117,64 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </message>
 </context>
 <context>
+    <name>AdmittanceMatrixEditorWidget</name>
+    <message>
+        <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="19"/>
+        <source>Phases:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="26"/>
+        <source>N</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="33"/>
+        <source>A</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="40"/>
+        <source>B</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="47"/>
+        <source>C</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="103"/>
+        <source>Compute from sequence values</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="130"/>
+        <source>Accept</source>
+        <translation type="unfinished">Akzeptiere</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="148"/>
+        <source>Admittance matrix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="158"/>
+        <source>Dense complex admittance matrix.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="173"/>
+        <source>Shunt admittance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="185"/>
+        <source>Series admittance</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AiChatDialog</name>
     <message>
         <location filename="../AiAgent/ai_chat_gui.ui" line="14"/>
@@ -384,19 +442,16 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <translation>Durchsuchen Sie grundlegende Blöcke</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/block_editor.ui" line="181"/>
         <source>Variables</source>
-        <translation>Variablen</translation>
+        <translation type="vanished">Variablen</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/block_editor.ui" line="215"/>
         <source>Parameters</source>
-        <translation>Parameter</translation>
+        <translation type="vanished">Parameter</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/block_editor.ui" line="249"/>
         <source>Equations</source>
-        <translation>Gleichungen</translation>
+        <translation type="vanished">Gleichungen</translation>
     </message>
 </context>
 <context>
@@ -1692,6 +1747,24 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </message>
 </context>
 <context>
+    <name>DynamicBlockPropertiesDialog</name>
+    <message>
+        <location filename="../DynamicModelEditor/dynamic_block_properties.ui" line="14"/>
+        <source>Block properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/dynamic_block_properties.ui" line="67"/>
+        <source>Apply changes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DynamicModelEditor/dynamic_block_properties.ui" line="78"/>
+        <source>Close</source>
+        <translation type="unfinished">Schließen</translation>
+    </message>
+</context>
+<context>
     <name>DynamicEditorWorkspaceWindow</name>
     <message>
         <location filename="../DynamicModelEditor/dynamic_editor_workspace.ui" line="14"/>
@@ -1752,6 +1825,39 @@ li.checked::marker { content: &quot;\2612&quot;; }
         <location filename="../DynamicModelEditor/dynamic_editor_workspace.ui" line="238"/>
         <source>view tree</source>
         <translation>Baum anzeigen</translation>
+    </message>
+</context>
+<context>
+    <name>DynamicEventDialogue</name>
+    <message>
+        <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="14"/>
+        <source>Dynamic Event Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="20"/>
+        <source>&lt;b&gt;Target device:&lt;/b&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="58"/>
+        <source>➕ New Event Group</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="69"/>
+        <source>➕ Add New Event</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="76"/>
+        <source>❌ Remove Selected Rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="85"/>
+        <source>Switch Sequence Wizard</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2297,6 +2403,39 @@ Abbrechen und erneut versuchen?</translation>
         <location filename="../DeviceEditors/LineEditor/line_editor_gui.ui" line="235"/>
         <source>Accept</source>
         <translation>Akzeptiere</translation>
+    </message>
+</context>
+<context>
+    <name>LineLocationsEditorWidget</name>
+    <message>
+        <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="19"/>
+        <source>Add point</source>
+        <translation type="unfinished">Punkt hinzufügen</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="33"/>
+        <source>Remove selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="47"/>
+        <source>Import CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="61"/>
+        <source>Export CSV</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="75"/>
+        <source>Copy</source>
+        <translation type="unfinished">Kopie</translation>
+    </message>
+    <message>
+        <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="89"/>
+        <source>Paste</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3591,6 +3730,135 @@ Monte-Carlo-Leistungsflussergebnisse:</translation>
     </message>
 </context>
 <context>
+    <name>ServerFileDialog</name>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="14"/>
+        <source>Server Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="91"/>
+        <source>Selection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="97"/>
+        <source>Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="104"/>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="121"/>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="138"/>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="155"/>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="172"/>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="189"/>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="206"/>
+        <source>-</source>
+        <translation type="unfinished">-</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="114"/>
+        <source>File name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="131"/>
+        <source>File idtag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="148"/>
+        <source>Model name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="165"/>
+        <source>Model idtag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="182"/>
+        <source>Owner user</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="199"/>
+        <source>Created at</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="219"/>
+        <source>Actions</source>
+        <translation type="unfinished">Aktionen</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="225"/>
+        <source>Delete removes the selected file or the selected model branch from the server database after confirmation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="246"/>
+        <source>Refresh</source>
+        <translation type="unfinished">Aktualisieren</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="249"/>
+        <source>Reload the server file tree</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="258"/>
+        <source>Load File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="261"/>
+        <source>Load the full selected multiverse</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="270"/>
+        <source>Load Base Model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="273"/>
+        <source>Load only the selected file base model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="282"/>
+        <source>Load Selected Model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="285"/>
+        <source>Load the selected scenario branch as one flat circuit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="294"/>
+        <source>Save Current Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="297"/>
+        <source>Upload the current project into the selected server file or model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="306"/>
+        <source>Delete Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="309"/>
+        <source>Delete the selected file or model from the server database</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ServerMain</name>
     <message>
         <source>Server config file was erroneous, wrote a new one</source>
@@ -4296,7 +4564,7 @@ Monte-Carlo-Leistungsflussergebnisse:</translation>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="86"/>
-        <location filename="../Main/MainWindow.ui" line="10904"/>
+        <location filename="../Main/MainWindow.ui" line="11059"/>
         <source>Model</source>
         <translation>Modell</translation>
     </message>
@@ -4476,8 +4744,8 @@ Monte-Carlo-Leistungsflussergebnisse:</translation>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="907"/>
-        <location filename="../Main/MainWindow.ui" line="3600"/>
-        <location filename="../Main/MainWindow.ui" line="5839"/>
+        <location filename="../Main/MainWindow.ui" line="3608"/>
+        <location filename="../Main/MainWindow.ui" line="5887"/>
         <source>General settings</source>
         <translation>Allgemeine Einstellungen</translation>
     </message>
@@ -4569,11 +4837,11 @@ Monte-Carlo-Leistungsflussergebnisse:</translation>
         <location filename="../Main/MainWindow.ui" line="1204"/>
         <location filename="../Main/MainWindow.ui" line="1658"/>
         <location filename="../Main/MainWindow.ui" line="2623"/>
-        <location filename="../Main/MainWindow.ui" line="10392"/>
-        <location filename="../Main/MainWindow.ui" line="10406"/>
-        <location filename="../Main/MainWindow.ui" line="10413"/>
-        <location filename="../Main/MainWindow.ui" line="10476"/>
-        <location filename="../Main/MainWindow.ui" line="10678"/>
+        <location filename="../Main/MainWindow.ui" line="10547"/>
+        <location filename="../Main/MainWindow.ui" line="10561"/>
+        <location filename="../Main/MainWindow.ui" line="10568"/>
+        <location filename="../Main/MainWindow.ui" line="10631"/>
+        <location filename="../Main/MainWindow.ui" line="10833"/>
         <source>...</source>
         <translation>...</translation>
     </message>
@@ -4775,7 +5043,7 @@ Monte-Carlo-Leistungsflussergebnisse:</translation>
     <message>
         <location filename="../Main/MainWindow.ui" line="2328"/>
         <location filename="../Main/MainWindow.ui" line="2393"/>
-        <location filename="../Main/MainWindow.ui" line="12686"/>
+        <location filename="../Main/MainWindow.ui" line="12841"/>
         <source>Results</source>
         <translation>Ergebnisse</translation>
     </message>
@@ -4832,7 +5100,7 @@ Monte-Carlo-Leistungsflussergebnisse:</translation>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="2723"/>
-        <location filename="../Main/MainWindow.ui" line="10806"/>
+        <location filename="../Main/MainWindow.ui" line="10961"/>
         <source>Export data</source>
         <translation>Daten exportieren</translation>
     </message>
@@ -4857,244 +5125,242 @@ Monte-Carlo-Leistungsflussergebnisse:</translation>
         <translation>Öffnen Sie den dynamischen Ploteditor RMS vor der Simulation</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2847"/>
         <source>RMS plots</source>
-        <translation>RMS-Plots</translation>
+        <translation type="vanished">RMS-Plots</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2854"/>
+        <location filename="../Main/MainWindow.ui" line="2858"/>
         <source>Open the EMT pre-simulation dynamic plot editor</source>
         <translation>Öffnen Sie den dynamischen Ploteditor EMT vor der Simulation</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2857"/>
         <source>EMT plots</source>
-        <translation>EMT-Plots</translation>
+        <translation type="vanished">EMT-Plots</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2877"/>
+        <location filename="../Main/MainWindow.ui" line="2885"/>
         <source>Add new plot</source>
         <translation>Neue Handlung hinzufügen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2891"/>
+        <location filename="../Main/MainWindow.ui" line="2899"/>
         <source>Remove selected plot</source>
         <translation>Ausgewählten Plot entfernen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2905"/>
+        <location filename="../Main/MainWindow.ui" line="2913"/>
         <source>Display selected plot</source>
         <translation>Ausgewähltes Diagramm anzeigen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2950"/>
+        <location filename="../Main/MainWindow.ui" line="2958"/>
         <source>Drag and drop the Var to the desired plot. Double click to plot directly.</source>
         <translation>Ziehen Sie die Variable per Drag-and-Drop auf den gewünschten Plot. Doppelklicken Sie, um direkt zu plotten.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3021"/>
+        <location filename="../Main/MainWindow.ui" line="3029"/>
         <source>Logs</source>
         <translation>Protokolle</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3064"/>
+        <location filename="../Main/MainWindow.ui" line="3072"/>
         <source>Save the logs to a file</source>
         <translation>Speichern Sie die Protokolle in einer Datei</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3093"/>
+        <location filename="../Main/MainWindow.ui" line="3101"/>
         <source>Report</source>
         <translation>Bericht</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3118"/>
+        <location filename="../Main/MainWindow.ui" line="3126"/>
         <source>Scripting</source>
         <translation>Skripterstellung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3203"/>
+        <location filename="../Main/MainWindow.ui" line="3211"/>
         <source>New script, will delete the existing code.</source>
         <translation>Neues Skript, löscht den vorhandenen Code.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3217"/>
+        <location filename="../Main/MainWindow.ui" line="3225"/>
         <source>Save the current source code</source>
         <translation>Speichern Sie den aktuellen Quellcode</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3238"/>
+        <location filename="../Main/MainWindow.ui" line="3246"/>
         <source>Name of the source code file</source>
         <translation>Name der Quellcodedatei</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3252"/>
+        <location filename="../Main/MainWindow.ui" line="3260"/>
         <source>Run the source code in the console</source>
         <translation>Führen Sie den Quellcode in der Konsole aus</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3318"/>
+        <location filename="../Main/MainWindow.ui" line="3326"/>
         <source>Python console</source>
         <translation>Python-Konsole</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3391"/>
+        <location filename="../Main/MainWindow.ui" line="3399"/>
         <source>Clear the console</source>
         <translation>Leeren Sie die Konsole</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3419"/>
+        <location filename="../Main/MainWindow.ui" line="3427"/>
         <source>Source code</source>
         <translation>Quellcode</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3461"/>
+        <location filename="../Main/MainWindow.ui" line="3469"/>
         <source>Settings</source>
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3690"/>
+        <location filename="../Main/MainWindow.ui" line="3698"/>
         <source>Frequency</source>
         <translation>Häufigkeit</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3697"/>
+        <location filename="../Main/MainWindow.ui" line="3705"/>
         <source>Snapshot time</source>
         <translation>Schnappschusszeit</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3728"/>
+        <location filename="../Main/MainWindow.ui" line="3736"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;System frequency&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This only has an effect in the program when computing lines&apos; per-unit impedance from ohm values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Systemfrequenz&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Dies wirkt sich im Programm nur aus, wenn die Impedanz der Leitungen pro Einheit aus Ohm-Werten berechnet wird.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3731"/>
+        <location filename="../Main/MainWindow.ui" line="3739"/>
         <source> Hz</source>
         <translation> Hz</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3757"/>
+        <location filename="../Main/MainWindow.ui" line="3765"/>
         <source>Base power</source>
         <translation>Basisleistung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3764"/>
+        <location filename="../Main/MainWindow.ui" line="3772"/>
         <source>Name of the grid model</source>
         <translation>Name des Gittermodells</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3778"/>
+        <location filename="../Main/MainWindow.ui" line="3786"/>
         <source>Grid name</source>
         <translation>Rastername</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3785"/>
+        <location filename="../Main/MainWindow.ui" line="3793"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Base power&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Despite all the bibliography, changing this number to anything other than 100 MVA, might change the meaning of what sensible per-unit voltage are.&lt;/p&gt;&lt;p&gt;So, don&apos;t touch it. To have power in kW, use the option at the loads, geneerators, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Basisleistung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Trotz aller Bibliographie könnte eine Änderung dieser Zahl auf einen anderen Wert als 100 MVA die Bedeutung der sinnvollen Spannung pro Einheit ändern.&lt;/p&gt;&lt;p&gt;Fassen Sie es also nicht an. Um Strom in kW zu haben, verwenden Sie die Option an den Lasten, Generatoren usw.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3788"/>
+        <location filename="../Main/MainWindow.ui" line="3796"/>
         <source> MVA</source>
         <translation> MVA</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3807"/>
+        <location filename="../Main/MainWindow.ui" line="3815"/>
         <source>Engine to be used when available</source>
         <translation>Motor, der verwendet werden soll, sofern verfügbar</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3814"/>
+        <location filename="../Main/MainWindow.ui" line="3822"/>
         <source>Engine</source>
         <translation>Motor</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3821"/>
+        <location filename="../Main/MainWindow.ui" line="3829"/>
         <source>Language</source>
         <translation>Sprache</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3831"/>
+        <location filename="../Main/MainWindow.ui" line="3839"/>
         <source>Dark mode</source>
         <translation>Dunkler Modus</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3860"/>
+        <location filename="../Main/MainWindow.ui" line="3868"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Settings for state estimation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Einstellungen zur Zustandsschätzung.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3897"/>
-        <location filename="../Main/MainWindow.ui" line="3907"/>
+        <location filename="../Main/MainWindow.ui" line="3905"/>
+        <location filename="../Main/MainWindow.ui" line="3915"/>
         <source>Power flow settings</source>
         <translation>Stromflusseinstellungen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3904"/>
+        <location filename="../Main/MainWindow.ui" line="3912"/>
         <source>Pf</source>
         <translation>Pf</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3980"/>
+        <location filename="../Main/MainWindow.ui" line="3988"/>
         <source>Power flow</source>
         <translation>Kraftfluss</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4120"/>
+        <location filename="../Main/MainWindow.ui" line="4128"/>
         <source>PTDF / LODF</source>
         <translation>PTDF / LODF</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4192"/>
+        <location filename="../Main/MainWindow.ui" line="4200"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Theoretically PTDF and LODF values should be in the range (-1, 1)&lt;br/&gt;However, this is not true in general for any grid due to the existence of antennas.&lt;br/&gt;With this option the values are truncated to the range (-1, 1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Theoretisch sollten die PTDF- und LODF-Werte im Bereich (-1, 1) liegen.&lt;br/&gt;Aufgrund der vorhandenen Antennen gilt dies jedoch nicht generell für jedes Netz.&lt;br/&gt;Mit dieser Option werden die Werte auf den Bereich (-1, 1) gekürzt&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4195"/>
+        <location filename="../Main/MainWindow.ui" line="4203"/>
         <source>Correct nonsense values</source>
         <translation>Korrekte Unsinnswerte</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4205"/>
+        <location filename="../Main/MainWindow.ui" line="4213"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;With this option, the PTDF is computed such that the slack effects are distributed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mit dieser Option wird die PTDF so berechnet, dass die Slack-Effekte verteilt werden&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4208"/>
-        <location filename="../Main/MainWindow.ui" line="4437"/>
+        <location filename="../Main/MainWindow.ui" line="4216"/>
+        <location filename="../Main/MainWindow.ui" line="4445"/>
         <source>Distributed slack</source>
         <translation>Verteilter Durchhang</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4218"/>
+        <location filename="../Main/MainWindow.ui" line="4226"/>
         <source>Threshold under which sensitivities are ignored when the PTDF is converted to sparse</source>
         <translation>Schwellenwert, unter dem Empfindlichkeiten ignoriert werden, wenn die PTDF in „sparse“ konvertiert wird</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4237"/>
+        <location filename="../Main/MainWindow.ui" line="4245"/>
         <source>LODF threshold</source>
         <translation>LODF-Schwellenwert</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4281"/>
+        <location filename="../Main/MainWindow.ui" line="4289"/>
         <source>Threshold under which sensitivities are ignored when the LODF is converted to sparse</source>
         <translation>Schwellenwert, unter dem Empfindlichkeiten ignoriert werden, wenn das LODF in „sparse“ konvertiert wird</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4300"/>
+        <location filename="../Main/MainWindow.ui" line="4308"/>
         <source>PTDF threshold</source>
         <translation>PTDF-Schwellenwert</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4326"/>
+        <location filename="../Main/MainWindow.ui" line="4334"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum numberof iterations to use.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Tipical values: &lt;/p&gt;&lt;p&gt;Newton Raphson: 5&lt;/p&gt;&lt;p&gt;Levenberg-Marquards: 20&lt;/p&gt;&lt;p&gt;Fast decoupled: 10&lt;/p&gt;&lt;p&gt;Others: 20&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximale Anzahl der zu verwendenden Iterationen.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Typische Werte: &lt;/p&gt;&lt;p&gt;Newton Raphson: 5&lt;/p&gt;&lt;p&gt;Levenberg-Marquards: 20&lt;/p&gt;&lt;p&gt;Schnell entkoppelt: 10&lt;/p&gt;&lt;p&gt;Andere: 20&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4329"/>
+        <location filename="../Main/MainWindow.ui" line="4337"/>
         <source> iterations</source>
         <translation> Iterationen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4351"/>
+        <location filename="../Main/MainWindow.ui" line="4359"/>
         <source>Find the tolerance that best represents the load values for power flow</source>
         <translation>Finden Sie die Toleranz, die die Lastwerte für den Leistungsfluss am besten repräsentiert</translation>
     </message>
@@ -5103,2462 +5369,2516 @@ Monte-Carlo-Leistungsflussergebnisse:</translation>
         <translation type="vanished">Finden</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4378"/>
+        <location filename="../Main/MainWindow.ui" line="4386"/>
         <source>Max. iterations</source>
         <translation>Max. Iterationen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4394"/>
+        <location filename="../Main/MainWindow.ui" line="4402"/>
         <source>General switch for generators remote voltage control</source>
         <translation>Allgemeiner Schalter für die Fernsteuerung der Generatorspannung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4397"/>
+        <location filename="../Main/MainWindow.ui" line="4405"/>
         <source>Control remote voltage</source>
         <translation>Steuern Sie die Fernspannung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4404"/>
+        <location filename="../Main/MainWindow.ui" line="4412"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the selected method does not converge, try a list of methods that may help&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wenn die ausgewählte Methode nicht konvergiert, versuchen Sie es mit einer Liste hilfreicher Methoden&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4407"/>
+        <location filename="../Main/MainWindow.ui" line="4415"/>
         <source>Retry with other methods</source>
         <translation>Versuchen Sie es mit anderen Methoden erneut</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4417"/>
+        <location filename="../Main/MainWindow.ui" line="4425"/>
         <source>General switch for branches tap module control</source>
         <translation>Allgemeiner Schalter für die Steuerung des Abzweigmoduls</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4420"/>
+        <location filename="../Main/MainWindow.ui" line="4428"/>
         <source>Control tap module</source>
         <translation>Steuerhahnmodul</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4427"/>
+        <location filename="../Main/MainWindow.ui" line="4435"/>
         <source>Apply impedance tolerances</source>
         <translation>Wenden Sie Impedanztoleranzen an</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4434"/>
+        <location filename="../Main/MainWindow.ui" line="4442"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If active, the slack power is distributed among the generators according to their installed power &amp;quot;Snom&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wenn aktiv, wird die Pufferleistung entsprechend ihrer installierten Leistung „Snom“ auf die Generatoren verteilt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4444"/>
+        <location filename="../Main/MainWindow.ui" line="4452"/>
         <source>If checked, the power flow solution is initialized with a linear (so called DC) power flow first</source>
         <translation>Wenn diese Option aktiviert ist, wird die Leistungsflusslösung zunächst mit einem linearen (sogenannten DC) Leistungsfluss initialisiert</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4447"/>
+        <location filename="../Main/MainWindow.ui" line="4455"/>
         <source>Initialize angles</source>
         <translation>Winkel initialisieren</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4454"/>
+        <location filename="../Main/MainWindow.ui" line="4462"/>
         <source>If active, the islands of a single node are ignored.</source>
         <translation>Wenn aktiv, werden die Inseln eines einzelnen Knotens ignoriert.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4457"/>
+        <location filename="../Main/MainWindow.ui" line="4465"/>
         <source>Ignore single node islands</source>
         <translation>Ignorieren Sie einzelne Knoteninseln</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4467"/>
+        <location filename="../Main/MainWindow.ui" line="4475"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If active, the Vm0 and Va0 properties of the bus objects are used to initialize the power flow simulation.&lt;/p&gt;&lt;p&gt;If you need this it is a sign of grid ill conditioning by something else like incorrect impedances of too much loading, specially reactive power that cannot be transported.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wenn aktiv, werden die Vm0- und Va0-Eigenschaften der Busobjekte zur Initialisierung der Leistungsflusssimulation verwendet.&lt;/p&gt;&lt;p&gt;Wenn Sie dies benötigen, ist dies ein Zeichen dafür, dass das Netz durch etwas anderes schlecht konditioniert ist, beispielsweise durch falsche Impedanzen oder zu hohe Belastung, insbesondere durch Blindleistung, die nicht transportiert werden kann.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4470"/>
+        <location filename="../Main/MainWindow.ui" line="4478"/>
         <source>Use voltage guess</source>
         <translation>Verwenden Sie die Spannungsschätzung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4477"/>
-        <location filename="../Main/MainWindow.ui" line="5923"/>
+        <location filename="../Main/MainWindow.ui" line="4485"/>
+        <location filename="../Main/MainWindow.ui" line="5971"/>
         <source>Add a results report in the logs</source>
         <translation>Fügen Sie den Protokollen einen Ergebnisbericht hinzu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4480"/>
-        <location filename="../Main/MainWindow.ui" line="5926"/>
+        <location filename="../Main/MainWindow.ui" line="4488"/>
+        <location filename="../Main/MainWindow.ui" line="5974"/>
         <source>Add report</source>
         <translation>Bericht hinzufügen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4487"/>
+        <location filename="../Main/MainWindow.ui" line="4495"/>
         <source>General switch for reactive power limits control</source>
         <translation>Allgemeiner Schalter zur Steuerung der Blindleistungsgrenzen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4490"/>
-        <location filename="../Main/MainWindow.ui" line="5823"/>
+        <location filename="../Main/MainWindow.ui" line="4498"/>
+        <location filename="../Main/MainWindow.ui" line="5871"/>
         <source>Control Q limits</source>
         <translation>Kontrollieren Sie die Q-Grenzwerte</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4497"/>
+        <location filename="../Main/MainWindow.ui" line="4505"/>
         <source>General switch for branches tap phase control</source>
         <translation>Allgemeiner Schalter für Abzweigphasensteuerung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4500"/>
+        <location filename="../Main/MainWindow.ui" line="4508"/>
         <source>Control tap phase</source>
         <translation>Steuerhahnphase</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4507"/>
+        <location filename="../Main/MainWindow.ui" line="4515"/>
         <source>If checked, the controls are adjusted to their closest tap</source>
         <translation>Wenn diese Option aktiviert ist, werden die Steuerelemente an den nächstgelegenen Tipp angepasst</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4510"/>
+        <location filename="../Main/MainWindow.ui" line="4518"/>
         <source>Orthogonalize controls</source>
         <translation>Orthogonalisieren Sie die Steuerelemente</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4517"/>
+        <location filename="../Main/MainWindow.ui" line="4525"/>
         <source>Correct the branches resistance using the temperature</source>
         <translation>Korrigieren Sie den Widerstand der Zweige anhand der Temperatur</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4520"/>
+        <location filename="../Main/MainWindow.ui" line="4528"/>
         <source>Apply temperature correction</source>
         <translation>Temperaturkorrektur anwenden</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4530"/>
-        <location filename="../Main/MainWindow.ui" line="5782"/>
+        <location filename="../Main/MainWindow.ui" line="4538"/>
+        <location filename="../Main/MainWindow.ui" line="5830"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Factor that multiplies each increment solution. &lt;/p&gt;&lt;p&gt;In practice this is used to slow down troublesome solutions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Faktor, der jede Inkrementlösung multipliziert. &lt;/p&gt;&lt;p&gt;In der Praxis wird dies genutzt, um problematische Lösungen zu verlangsamen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4533"/>
-        <location filename="../Main/MainWindow.ui" line="4582"/>
-        <location filename="../Main/MainWindow.ui" line="4635"/>
+        <location filename="../Main/MainWindow.ui" line="4541"/>
+        <location filename="../Main/MainWindow.ui" line="4590"/>
+        <location filename="../Main/MainWindow.ui" line="4643"/>
         <source> p.u.</source>
         <translation> p.u.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4555"/>
+        <location filename="../Main/MainWindow.ui" line="4563"/>
         <source>Level of console information. 0: None, 1: some information, 2: all the information</source>
         <translation>Ebene der Konsoleninformationen. 0: Keine, 1: einige Informationen, 2: alle Informationen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4565"/>
-        <location filename="../Main/MainWindow.ui" line="5107"/>
-        <location filename="../Main/MainWindow.ui" line="8340"/>
+        <location filename="../Main/MainWindow.ui" line="4573"/>
+        <location filename="../Main/MainWindow.ui" line="5115"/>
+        <location filename="../Main/MainWindow.ui" line="8549"/>
         <source>Solver</source>
         <translation>Löser</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4572"/>
-        <location filename="../Main/MainWindow.ui" line="5807"/>
+        <location filename="../Main/MainWindow.ui" line="4580"/>
+        <location filename="../Main/MainWindow.ui" line="5855"/>
         <source>Trust radius</source>
         <translation>Vertrauensradius</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4579"/>
-        <location filename="../Main/MainWindow.ui" line="5235"/>
-        <location filename="../Main/MainWindow.ui" line="5741"/>
-        <location filename="../Main/MainWindow.ui" line="7899"/>
-        <location filename="../Main/MainWindow.ui" line="8550"/>
+        <location filename="../Main/MainWindow.ui" line="4587"/>
+        <location filename="../Main/MainWindow.ui" line="5243"/>
+        <location filename="../Main/MainWindow.ui" line="5789"/>
+        <location filename="../Main/MainWindow.ui" line="8039"/>
+        <location filename="../Main/MainWindow.ui" line="8457"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Error tolerance of the method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Fehlertoleranz der Methode&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4585"/>
-        <location filename="../Main/MainWindow.ui" line="4638"/>
-        <location filename="../Main/MainWindow.ui" line="5238"/>
-        <location filename="../Main/MainWindow.ui" line="5744"/>
-        <location filename="../Main/MainWindow.ui" line="7902"/>
-        <location filename="../Main/MainWindow.ui" line="8553"/>
-        <location filename="../Main/MainWindow.ui" line="9813"/>
-        <location filename="../Main/MainWindow.ui" line="10075"/>
+        <location filename="../Main/MainWindow.ui" line="4593"/>
+        <location filename="../Main/MainWindow.ui" line="4646"/>
+        <location filename="../Main/MainWindow.ui" line="5246"/>
+        <location filename="../Main/MainWindow.ui" line="5792"/>
+        <location filename="../Main/MainWindow.ui" line="8042"/>
+        <location filename="../Main/MainWindow.ui" line="8460"/>
+        <location filename="../Main/MainWindow.ui" line="9968"/>
+        <location filename="../Main/MainWindow.ui" line="10230"/>
         <source>1e-</source>
         <translation>1e-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4611"/>
+        <location filename="../Main/MainWindow.ui" line="4619"/>
         <source>Verbosity</source>
         <translation>Ausführlichkeit</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4618"/>
-        <location filename="../Main/MainWindow.ui" line="5215"/>
-        <location filename="../Main/MainWindow.ui" line="5728"/>
-        <location filename="../Main/MainWindow.ui" line="7835"/>
-        <location filename="../Main/MainWindow.ui" line="8333"/>
+        <location filename="../Main/MainWindow.ui" line="4626"/>
+        <location filename="../Main/MainWindow.ui" line="5223"/>
+        <location filename="../Main/MainWindow.ui" line="5776"/>
+        <location filename="../Main/MainWindow.ui" line="8113"/>
+        <location filename="../Main/MainWindow.ui" line="8496"/>
         <source>Tolerance</source>
         <translation>Toleranz</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4625"/>
+        <location filename="../Main/MainWindow.ui" line="4633"/>
         <source>Controls apply after</source>
         <translation>Die Kontrollen gelten danach</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4632"/>
+        <location filename="../Main/MainWindow.ui" line="4640"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;VeraGrid does not have an &amp;quot;outer loop&amp;quot;&lt;br/&gt;Instead, in iterative numerical methods (Newton-Raphson, Levenberg-Marquardt, Powell Dog Leg) the controls apply after a certain error threshold has been reached.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;VeraGrid hat keine „äußere Schleife“&lt;br/&gt;Stattdessen werden bei iterativen numerischen Verfahren (Newton-Raphson, Levenberg-Marquardt, Powell Dog Leg) die Kontrollen ab Erreichen einer bestimmten Fehlerschwelle angewendet.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4658"/>
+        <location filename="../Main/MainWindow.ui" line="4666"/>
         <source>Continuation power flow settings</source>
         <translation>Einstellungen für den Fortsetzungsstromfluss</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4665"/>
+        <location filename="../Main/MainWindow.ui" line="4673"/>
         <source>Cpf</source>
         <translation>Cpf</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4668"/>
+        <location filename="../Main/MainWindow.ui" line="4676"/>
         <source>Continuation power flow related settings</source>
         <translation>Einstellungen für den Fortsetzungsstromfluss</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4699"/>
+        <location filename="../Main/MainWindow.ui" line="4707"/>
         <source>Stop at</source>
         <translation>Stoppen Sie bei</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4706"/>
+        <location filename="../Main/MainWindow.ui" line="4714"/>
         <source>Refer to the NTC areas (Linear tab)</source>
         <translation>Siehe NTC-Bereiche (Registerkarte „Linear“)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4786"/>
+        <location filename="../Main/MainWindow.ui" line="4794"/>
         <source>Now</source>
         <translation>Jetzt</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4793"/>
+        <location filename="../Main/MainWindow.ui" line="4801"/>
         <source>Use departure and target points from time series</source>
         <translation>Nutzen Sie Start- und Zielpunkte aus Zeitreihen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4803"/>
+        <location filename="../Main/MainWindow.ui" line="4811"/>
         <source>Available transfer capacity</source>
         <translation>Verfügbare Übertragungskapazität</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4817"/>
+        <location filename="../Main/MainWindow.ui" line="4825"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lambda factor&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lambda-Faktor&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4824"/>
-        <location filename="../Main/MainWindow.ui" line="5020"/>
+        <location filename="../Main/MainWindow.ui" line="4832"/>
+        <location filename="../Main/MainWindow.ui" line="5028"/>
         <source>Max. Iterations</source>
         <translation>Max. Iterationen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4831"/>
+        <location filename="../Main/MainWindow.ui" line="4839"/>
         <source>Target</source>
         <translation>Ziel</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4933"/>
-        <location filename="../Main/MainWindow.ui" line="11216"/>
+        <location filename="../Main/MainWindow.ui" line="4941"/>
+        <location filename="../Main/MainWindow.ui" line="11371"/>
         <source>Continuation power flow</source>
         <translation>Fortsetzung des Stromflusses</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4951"/>
+        <location filename="../Main/MainWindow.ui" line="4959"/>
         <source>Simulation mode</source>
         <translation>Simulationsmodus</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4958"/>
+        <location filename="../Main/MainWindow.ui" line="4966"/>
         <source>Increase system loading</source>
         <translation>Erhöhen Sie die Systemlast</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5002"/>
+        <location filename="../Main/MainWindow.ui" line="5010"/>
         <source>SE</source>
         <translation>SE</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5030"/>
+        <location filename="../Main/MainWindow.ui" line="5038"/>
         <source>Observability analysis</source>
         <translation>Beobachtbarkeitsanalyse</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5100"/>
+        <location filename="../Main/MainWindow.ui" line="5108"/>
         <source>Fixed slack</source>
         <translation>Durchhang behoben</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5202"/>
-        <location filename="../Main/MainWindow.ui" line="12542"/>
+        <location filename="../Main/MainWindow.ui" line="5210"/>
+        <location filename="../Main/MainWindow.ui" line="12697"/>
         <source>State estimation</source>
         <translation>Zustandsschätzung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5254"/>
+        <location filename="../Main/MainWindow.ui" line="5262"/>
         <source>Prefer correct</source>
         <translation>Lieber richtig</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5261"/>
+        <location filename="../Main/MainWindow.ui" line="5269"/>
         <source>Add pseudo measurements</source>
         <translation>Fügen Sie Pseudomessungen hinzu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5268"/>
+        <location filename="../Main/MainWindow.ui" line="5276"/>
         <source>Measurements profiling</source>
         <translation>Messprofilierung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5292"/>
-        <location filename="../Main/MainWindow.ui" line="5302"/>
+        <location filename="../Main/MainWindow.ui" line="5300"/>
+        <location filename="../Main/MainWindow.ui" line="5310"/>
         <source>Optimal power flow settings</source>
         <translation>Optimale Kraftflusseinstellungen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5299"/>
+        <location filename="../Main/MainWindow.ui" line="5307"/>
         <source>Opf</source>
         <translation>Opf</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5314"/>
+        <location filename="../Main/MainWindow.ui" line="5322"/>
         <source>Linear settings</source>
         <translation>Lineare Einstellungen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5326"/>
+        <location filename="../Main/MainWindow.ui" line="5458"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the time grouping to possibly shorten the solution time.&lt;/p&gt;&lt;p&gt;This splits the time series by week, month, etc. and the subproblems are solved sequentially.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wählen Sie die Zeitgruppierung, um die Lösungszeit möglicherweise zu verkürzen.&lt;/p&gt;&lt;p&gt;Dadurch wird die Zeitreihe nach Woche, Monat usw. aufgeteilt und die Teilprobleme werden nacheinander gelöst.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5339"/>
+        <location filename="../Main/MainWindow.ui" line="5492"/>
         <source>Consider per-area generation spinning reserve</source>
         <translation>Berücksichtigen Sie die Rotationsreserve pro Gebietsgeneration</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5342"/>
+        <location filename="../Main/MainWindow.ui" line="5495"/>
         <source>Spinning reserve</source>
         <translation>Spinnreserve</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5355"/>
+        <location filename="../Main/MainWindow.ui" line="5607"/>
         <source>Instead of using the generation, loads cost for dispatching, use the GLSK (Generation, Load Shift Keys)</source>
         <translation>Anstatt die Generierung und Ladekosten für den Versand zu verwenden, verwenden Sie GLSK (Generation, Load Shift Keys).</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5358"/>
+        <location filename="../Main/MainWindow.ui" line="5610"/>
         <source>Use GSLK as costs</source>
         <translation>Verwenden Sie GSLK als Kosten</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5371"/>
+        <location filename="../Main/MainWindow.ui" line="5373"/>
         <source>MIP framework</source>
         <translation>MIP-Framework</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5583"/>
+        <location filename="../Main/MainWindow.ui" line="5591"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When checked, the generation costs will use the quadratic coefficients cost, which will trigger a more complex formulation to approximate the quadratic thermal generation curve. Otherwise a linear model is used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wenn diese Option aktiviert ist, verwenden die Erzeugungskosten die quadratischen Kostenkoeffizienten. Dadurch wird eine komplexere Formulierung zur Approximation der quadratischen thermischen Erzeugungskurve verwendet. Andernfalls wird ein lineares Modell verwendet.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5586"/>
+        <location filename="../Main/MainWindow.ui" line="5594"/>
         <source>Use quadratic costs</source>
         <translation>Quadratische Kosten verwenden</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5384"/>
+        <location filename="../Main/MainWindow.ui" line="5419"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the zonal grouping.&lt;br/&gt;When All (Copper plate) is selected, the branch restrictions are ignored&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wählen Sie die Zonengruppierung.&lt;br/&gt;Wenn „Alle (Kupferplatte)“ ausgewählt ist, werden die Verzweigungsbeschränkungen ignoriert&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5397"/>
+        <location filename="../Main/MainWindow.ui" line="5432"/>
         <source>Choose the external mixed integer framework</source>
         <translation>Wählen Sie das externe Mixed-Integer-Framework</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5410"/>
+        <location filename="../Main/MainWindow.ui" line="5399"/>
         <source>Time grouping</source>
         <translation>Zeitgruppierung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5443"/>
+        <location filename="../Main/MainWindow.ui" line="5508"/>
         <source>Consider generation minimum up/down time</source>
         <translation>Berücksichtigen Sie die minimale Auf-/Ab-Zeit für die Generierung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5446"/>
+        <location filename="../Main/MainWindow.ui" line="5511"/>
         <source>Consider min up/down time</source>
         <translation>Berücksichtigen Sie die minimale Auf-/Ab-Zeit</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5459"/>
+        <location filename="../Main/MainWindow.ui" line="5623"/>
         <source>When checked, the branch losses will be aproximated by a factor r * rate / (V^2)</source>
         <translation>Wenn diese Option aktiviert ist, werden die Zweigverluste durch einen Faktor r * Rate / (V^2) angenähert.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5462"/>
+        <location filename="../Main/MainWindow.ui" line="5626"/>
         <source>Approximate losses</source>
         <translation>Ungefähre Verluste</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5475"/>
+        <location filename="../Main/MainWindow.ui" line="5347"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select how the generation dispatch should behave&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wählen Sie aus, wie sich der Generierungsversand verhalten soll&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5488"/>
+        <location filename="../Main/MainWindow.ui" line="5578"/>
         <source>Contingency tolerance</source>
         <translation>Eventualtoleranz</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5501"/>
+        <location filename="../Main/MainWindow.ui" line="5540"/>
         <source>LODF matrix tolerance choosing contingencies</source>
         <translation>LODF-Matrixtoleranz bei der Auswahl von Eventualitäten</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5523"/>
+        <location filename="../Main/MainWindow.ui" line="5524"/>
         <source>Consider the contingencies when dispatching</source>
         <translation>Berücksichtigen Sie beim Versand die Eventualitäten</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5526"/>
+        <location filename="../Main/MainWindow.ui" line="5527"/>
         <source>Compute contingencies</source>
         <translation>Berechnen Sie Eventualitäten</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5539"/>
+        <location filename="../Main/MainWindow.ui" line="5655"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The program will save the MIP formulation and be displayed in the text tab of the results&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Das Programm speichert die MIP-Formulierung und zeigt sie im Textregister der Ergebnisse an&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5542"/>
+        <location filename="../Main/MainWindow.ui" line="5658"/>
         <source>Report MIP formulation</source>
         <translation>MIP-Formulierung melden</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5555"/>
+        <location filename="../Main/MainWindow.ui" line="5639"/>
         <source>Fix infeasible problems and rey with the relaxed problem. Applies to OPF and NTC</source>
         <translation>Beheben Sie unlösbare Probleme und lösen Sie das gelöste Problem. Gilt für OPF und NTC</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5558"/>
+        <location filename="../Main/MainWindow.ui" line="5642"/>
         <source>Fix infeasibilities and retry</source>
         <translation>Beheben Sie Unzulänglichkeiten und versuchen Sie es erneut</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5571"/>
+        <location filename="../Main/MainWindow.ui" line="5562"/>
         <source>Consider generation ramps</source>
         <translation>Erwägen Sie Erzeugungsrampen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5574"/>
+        <location filename="../Main/MainWindow.ui" line="5565"/>
         <source>Consider ramps</source>
         <translation>Denken Sie über Rampen nach</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5587"/>
+        <location filename="../Main/MainWindow.ui" line="5360"/>
         <source>Dispatch mode</source>
         <translation>Versandmodus</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5600"/>
+        <location filename="../Main/MainWindow.ui" line="5386"/>
         <source>Choose the external mixed integer programming solver</source>
         <translation>Wählen Sie den externen gemischt-ganzzahligen Programmierlöser</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5613"/>
+        <location filename="../Main/MainWindow.ui" line="5334"/>
         <source>Zone grouping</source>
         <translation>Zonengruppierung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5629"/>
+        <location filename="../Main/MainWindow.ui" line="5677"/>
         <source>Nonlinear settings</source>
         <translation>Nichtlineare Einstellungen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5654"/>
+        <location filename="../Main/MainWindow.ui" line="5702"/>
         <source>Interior point solver maximum number of iterations</source>
         <translation>Maximale Anzahl von Iterationen des inneren Punktlösers</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5657"/>
+        <location filename="../Main/MainWindow.ui" line="5705"/>
         <source>Iterations</source>
         <translation>Iterationen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5670"/>
+        <location filename="../Main/MainWindow.ui" line="5718"/>
         <source>Initialize the interior point OPF with the power flow solution</source>
         <translation>Initialisieren Sie den Innenpunkt OPF mit der Power-Flow-Lösung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5673"/>
+        <location filename="../Main/MainWindow.ui" line="5721"/>
         <source>Initialize with power flow</source>
         <translation>Initialisierung mit Stromfluss</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5696"/>
+        <location filename="../Main/MainWindow.ui" line="5744"/>
         <source>Number of iterations of the method</source>
         <translation>Anzahl der Iterationen der Methode</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5725"/>
+        <location filename="../Main/MainWindow.ui" line="5773"/>
         <source>Interior point solver tolerance</source>
         <translation>Toleranz des inneren Punktlösers</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5766"/>
+        <location filename="../Main/MainWindow.ui" line="5814"/>
         <source>Interior point solver method</source>
         <translation>Lösungsmethode für innere Punkte</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5769"/>
+        <location filename="../Main/MainWindow.ui" line="5817"/>
         <source>IPS method</source>
         <translation>IPS-Methode</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5804"/>
+        <location filename="../Main/MainWindow.ui" line="5852"/>
         <source>Interior point trust radius</source>
         <translation>Vertrauensradius des inneren Punkts</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5820"/>
+        <location filename="../Main/MainWindow.ui" line="5868"/>
         <source>General switch for reactive power limits control in the nonlinear optimal power flow</source>
         <translation>Allgemeiner Schalter zur Blindleistungsbegrenzungsregelung im nichtlinearen optimalen Leistungsfluss</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5851"/>
+        <location filename="../Main/MainWindow.ui" line="5899"/>
         <source>Verbosity level</source>
         <translation>Ausführlichkeitsgrad</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5864"/>
-        <location filename="../Main/MainWindow.ui" line="6140"/>
+        <location filename="../Main/MainWindow.ui" line="5912"/>
+        <location filename="../Main/MainWindow.ui" line="6188"/>
         <source>Skip generation limits</source>
         <translation>Generationsgrenzen überspringen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5877"/>
+        <location filename="../Main/MainWindow.ui" line="5925"/>
         <source>Verbose</source>
         <translation>Ausführlich</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5897"/>
+        <location filename="../Main/MainWindow.ui" line="5945"/>
         <source>Choose the optimal power flow method</source>
         <translation>Wählen Sie die optimale Kraftflussmethode</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5910"/>
-        <location filename="../Main/MainWindow.ui" line="6800"/>
-        <location filename="../Main/MainWindow.ui" line="8866"/>
-        <location filename="../Main/MainWindow.ui" line="9771"/>
-        <location filename="../Main/MainWindow.ui" line="9836"/>
+        <location filename="../Main/MainWindow.ui" line="5958"/>
+        <location filename="../Main/MainWindow.ui" line="6848"/>
+        <location filename="../Main/MainWindow.ui" line="9021"/>
+        <location filename="../Main/MainWindow.ui" line="9926"/>
+        <location filename="../Main/MainWindow.ui" line="9991"/>
         <source>Method</source>
         <translation>Methode</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6079"/>
+        <location filename="../Main/MainWindow.ui" line="6127"/>
         <source>Optimal Power Flow</source>
         <translation>Optimaler Kraftfluss</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6090"/>
+        <location filename="../Main/MainWindow.ui" line="6138"/>
         <source>Net transfer capacity settings</source>
         <translation>Einstellungen der Nettoübertragungskapazität</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6097"/>
+        <location filename="../Main/MainWindow.ui" line="6145"/>
         <source>Ntc</source>
         <translation>Ntc</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6100"/>
+        <location filename="../Main/MainWindow.ui" line="6148"/>
         <source>Network transfer capacity related settings</source>
         <translation>Einstellungen für die Netzwerkübertragungskapazität</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6111"/>
+        <location filename="../Main/MainWindow.ui" line="6159"/>
         <source>Optimization</source>
         <translation>Optimierung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6122"/>
+        <location filename="../Main/MainWindow.ui" line="6170"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This criteria springs from the ACER (Agency for the Cooperation for Energy Regulators).&lt;/p&gt;&lt;p&gt;It determines that a branch is only relevant to be considered in a NTC calculation if the flow due to the exchange is over a percentage (70%) &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;A branch is monitored only if:&lt;/p&gt;&lt;p&gt;(branch_rate * 70%) / branch_alpha &amp;lt;= total exchange rating&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Diese Kriterien stammen von der ACER (Agency for the Cooperation for Energy Regulators).&lt;/p&gt;&lt;p&gt;Es bestimmt, dass ein Zweig nur dann für die Berücksichtigung in einer NTC-Berechnung relevant ist, wenn der Fluss aufgrund des Austauschs über einem Prozentsatz (70 %) liegt. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Eine Verzweigung wird nur überwacht, wenn:&lt;/p&gt;&lt;p&gt;(branch_rate * 70 %) / branch_alpha &lt;= gesamte Wechselkursbewertung&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6125"/>
+        <location filename="../Main/MainWindow.ui" line="6173"/>
         <source>Branch rating contribution (ACER)</source>
         <translation>Branchenratingbeitrag (ACER)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6137"/>
+        <location filename="../Main/MainWindow.ui" line="6185"/>
         <source>If activated, the generation limits are not considered</source>
         <translation>Bei Aktivierung werden die Generierungsgrenzen nicht berücksichtigt</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6155"/>
-        <location filename="../Main/MainWindow.ui" line="7498"/>
+        <location filename="../Main/MainWindow.ui" line="6203"/>
+        <location filename="../Main/MainWindow.ui" line="7546"/>
         <source> MW</source>
         <translation> MW</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6179"/>
+        <location filename="../Main/MainWindow.ui" line="6227"/>
         <source>If checked, the NTC optimization will use the system declared contingencies</source>
         <translation>Wenn diese Option aktiviert ist, verwendet die NTC-Optimierung die vom System deklarierten Eventualverbindlichkeiten</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6182"/>
+        <location filename="../Main/MainWindow.ui" line="6230"/>
         <source>Consider constingencies</source>
         <translation>Berücksichtigen Sie Eventualitäten</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6194"/>
+        <location filename="../Main/MainWindow.ui" line="6242"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A branch is monitored solely based on its contribution to the inter-area excahge sensitivity. Therefore a branch is selected if it&apos;s alpha value is greater than the set alpha %&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Eine Zweigstelle wird ausschließlich auf der Grundlage ihres Beitrags zur gebietsübergreifenden Austauschempfindlichkeit überwacht. Daher wird ein Zweig ausgewählt, wenn sein Alpha-Wert größer als der eingestellte Alpha-Prozentsatz ist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6197"/>
+        <location filename="../Main/MainWindow.ui" line="6245"/>
         <source>Branch exchange sensitivity (α)</source>
         <translation>Filialwechselempfindlichkeit (α)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6212"/>
-        <location filename="../Main/MainWindow.ui" line="6362"/>
-        <location filename="../Main/MainWindow.ui" line="6461"/>
+        <location filename="../Main/MainWindow.ui" line="6260"/>
+        <location filename="../Main/MainWindow.ui" line="6410"/>
+        <location filename="../Main/MainWindow.ui" line="6509"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6295"/>
+        <location filename="../Main/MainWindow.ui" line="6343"/>
         <source>Determine the branches that enter the optimization</source>
         <translation>Bestimmen Sie die Zweige, die in die Optimierung eingehen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6298"/>
+        <location filename="../Main/MainWindow.ui" line="6346"/>
         <source>Branch monitoring selection criteria</source>
         <translation>Auswahlkriterien für die Filialüberwachung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6347"/>
-        <location filename="../Main/MainWindow.ui" line="7419"/>
-        <location filename="../Main/MainWindow.ui" line="12677"/>
-        <location filename="../Main/MainWindow.ui" line="12704"/>
+        <location filename="../Main/MainWindow.ui" line="6395"/>
+        <location filename="../Main/MainWindow.ui" line="7467"/>
+        <location filename="../Main/MainWindow.ui" line="12832"/>
+        <location filename="../Main/MainWindow.ui" line="12859"/>
         <source>Contingencies</source>
         <translation>Eventualverbindlichkeiten</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6359"/>
+        <location filename="../Main/MainWindow.ui" line="6407"/>
         <source>Minimum exchange contribution (Alpha)</source>
         <translation>Mindestumtauschbeitrag (Alpha)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6380"/>
-        <location filename="../Main/MainWindow.ui" line="6383"/>
+        <location filename="../Main/MainWindow.ui" line="6428"/>
+        <location filename="../Main/MainWindow.ui" line="6431"/>
         <source>Transmission reliability margin (TRM)</source>
         <translation>Übertragungszuverlässigkeitsspanne (TRM)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6395"/>
+        <location filename="../Main/MainWindow.ui" line="6443"/>
         <source>More strict NTC Formulation: No slacks of any type and specific monitoring criteria</source>
         <translation>Strengere NTC-Formulierung: Keine Lücken jeglicher Art und spezifische Überwachungskriterien</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6398"/>
+        <location filename="../Main/MainWindow.ui" line="6446"/>
         <source>Strict formulation</source>
         <translation>Strenge Formulierung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6413"/>
-        <location filename="../Main/MainWindow.ui" line="6750"/>
+        <location filename="../Main/MainWindow.ui" line="6461"/>
+        <location filename="../Main/MainWindow.ui" line="6798"/>
         <source>General</source>
         <translation>Allgemein</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6437"/>
+        <location filename="../Main/MainWindow.ui" line="6485"/>
         <source>Loading threshold to report</source>
         <translation>Zu meldender Ladeschwellenwert</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6449"/>
+        <location filename="../Main/MainWindow.ui" line="6497"/>
         <source>Transfer method</source>
         <translation>Übertragungsmethode</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6579"/>
+        <location filename="../Main/MainWindow.ui" line="6627"/>
         <source>Linear</source>
         <translation>Linear</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6596"/>
+        <location filename="../Main/MainWindow.ui" line="6644"/>
         <source>Transfer sensitivity threshold</source>
         <translation>Schwellenwert für die Übertragungsempfindlichkeit</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6608"/>
+        <location filename="../Main/MainWindow.ui" line="6656"/>
         <source>n-1 sensibility consideration</source>
         <translation>n-1-Sensibilitätsbetrachtung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6636"/>
+        <location filename="../Main/MainWindow.ui" line="6684"/>
         <source>Threshold used to discard insensitive branches</source>
         <translation>Schwellenwert, der zum Verwerfen unempfindlicher Zweige verwendet wird</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6660"/>
+        <location filename="../Main/MainWindow.ui" line="6708"/>
         <source>Use existing power flow values for the contingency initialization in the net transfer capacity and contingency simulations</source>
         <translation>Verwenden Sie vorhandene Leistungsflusswerte für die Notfallinitialisierung in den Nettoübertragungskapazitäts- und Notfallsimulationen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6663"/>
+        <location filename="../Main/MainWindow.ui" line="6711"/>
         <source>Use power flow values for initialization</source>
         <translation>Verwenden Sie Leistungsflusswerte zur Initialisierung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6718"/>
-        <location filename="../Main/MainWindow.ui" line="6962"/>
+        <location filename="../Main/MainWindow.ui" line="6766"/>
+        <location filename="../Main/MainWindow.ui" line="7010"/>
         <source>Select the solver in the OPF tab and the areas in the areas tab</source>
         <translation>Wählen Sie den Solver auf der Registerkarte OPF und die Flächen auf der Registerkarte Flächen aus</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6721"/>
+        <location filename="../Main/MainWindow.ui" line="6769"/>
         <source>Net transfer capacity</source>
         <translation>Nettoübertragungskapazität</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6729"/>
+        <location filename="../Main/MainWindow.ui" line="6777"/>
         <source>Nodal capacity hosting options</source>
         <translation>Hosting-Optionen für Knotenkapazität</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6736"/>
+        <location filename="../Main/MainWindow.ui" line="6784"/>
         <source>Nhc</source>
         <translation>Nhc</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6739"/>
+        <location filename="../Main/MainWindow.ui" line="6787"/>
         <source>Nodal hosting capacity related settings</source>
         <translation>Einstellungen für die Hosting-Kapazität des Knotens</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6761"/>
-        <location filename="../Main/MainWindow.ui" line="6779"/>
+        <location filename="../Main/MainWindow.ui" line="6809"/>
+        <location filename="../Main/MainWindow.ui" line="6827"/>
         <source>If the sense is positive, the algorithm will assess the maximum generation capacity in the selected nodes. If it is negative it will asses the maximum loading capacity in the selected nodes.</source>
         <translation>Wenn der Sinn positiv ist, ermittelt der Algorithmus die maximale Erzeugungskapazität in den ausgewählten Knoten. Wenn es negativ ist, wird die maximale Ladekapazität in den ausgewählten Knoten ermittelt.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6767"/>
+        <location filename="../Main/MainWindow.ui" line="6815"/>
         <source>Sense</source>
         <translation>Sinn</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6812"/>
+        <location filename="../Main/MainWindow.ui" line="6860"/>
         <source>Optimization method to use</source>
         <translation>Zu verwendende Optimierungsmethode</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6965"/>
+        <location filename="../Main/MainWindow.ui" line="7013"/>
         <source>Nodal hosting capacity</source>
         <translation>Knoten-Hosting-Kapazität</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6986"/>
+        <location filename="../Main/MainWindow.ui" line="7034"/>
         <source>Area transfer settings</source>
         <translation>Bereichsübertragungseinstellungen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6993"/>
+        <location filename="../Main/MainWindow.ui" line="7041"/>
         <source>Txfr</source>
         <translation>Txfr</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6996"/>
+        <location filename="../Main/MainWindow.ui" line="7044"/>
         <source>Area, Zone, etc related settings</source>
         <translation>Bereichs-, Zonen- usw. bezogene Einstellungen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7103"/>
+        <location filename="../Main/MainWindow.ui" line="7151"/>
         <source>Transfer configuration</source>
         <translation>Konfiguration übertragen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7148"/>
+        <location filename="../Main/MainWindow.ui" line="7196"/>
         <source>From</source>
         <translation>Von</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7171"/>
+        <location filename="../Main/MainWindow.ui" line="7219"/>
         <source>To</source>
         <translation>Zu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7192"/>
+        <location filename="../Main/MainWindow.ui" line="7240"/>
         <source>Contingencies settings</source>
         <translation>Einstellungen für Eventualverbindlichkeiten</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7199"/>
+        <location filename="../Main/MainWindow.ui" line="7247"/>
         <source>Con</source>
         <translation>Con</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7202"/>
+        <location filename="../Main/MainWindow.ui" line="7250"/>
         <source>Contingencies related settings</source>
         <translation>Einstellungen für Eventualverbindlichkeiten</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7229"/>
+        <location filename="../Main/MainWindow.ui" line="7277"/>
         <source>Contingency filter</source>
         <translation>Notfallfilter</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7242"/>
+        <location filename="../Main/MainWindow.ui" line="7290"/>
         <source>Filter by</source>
         <translation>Filtern nach</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7258"/>
+        <location filename="../Main/MainWindow.ui" line="7306"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Filter contingencies&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This option allows you to only consider the contingencies that fall in ceratain groupings such as Area, Zone or Country. The filtering is performed based on the information stored in the Buses.&lt;/p&gt;&lt;p&gt;This is highly discouraged. We trully advise you to not to filter the contingencies and select All Contingencies. Use this feature at your own risk.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Eventualitäten filtern&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Mit dieser Option können Sie nur die Eventualitäten berücksichtigen, die in bestimmte Gruppierungen wie Gebiet, Zone oder Land fallen. Die Filterung erfolgt auf Grundlage der in den Bussen gespeicherten Informationen.&lt;/p&gt;&lt;p&gt;Davon wird dringend abgeraten. Wir raten Ihnen dringend, die Eventualverbindlichkeiten nicht zu filtern und Alle Eventualverbindlichkeiten auszuwählen. Die Nutzung dieser Funktion erfolgt auf eigene Gefahr.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7441"/>
+        <location filename="../Main/MainWindow.ui" line="7489"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dead band over the SRAP rating.&lt;/p&gt;&lt;p&gt;If greater than zero, the SRAP is investigated for values over the branch protections rating until the specified value.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Totband über dem SRAP-Rating.&lt;/p&gt;&lt;p&gt;Wenn der SRAP größer als Null ist, wird er auf Werte untersucht, die über der Zweigschutzbewertung liegen, bis der angegebene Wert erreicht ist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7444"/>
+        <location filename="../Main/MainWindow.ui" line="7492"/>
         <source>SRAP dead band</source>
         <translation>SRAP-Totzone</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7458"/>
+        <location filename="../Main/MainWindow.ui" line="7506"/>
         <source>SRAP limit</source>
         <translation>SRAP-Limit</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7465"/>
+        <location filename="../Main/MainWindow.ui" line="7513"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked the SRAP objective solution is the branch nominal rate. Otherwise, the objective rating is the contingency rating.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wenn diese Option aktiviert ist, ist die SRAP-Ziellösung der Nominalzinssatz der Branche. Ansonsten ist die objektive Bewertung die Kontingenzbewertung.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7468"/>
+        <location filename="../Main/MainWindow.ui" line="7516"/>
         <source>Revert to nominal rating</source>
         <translation>Zur Nominalbewertung zurückkehren</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7475"/>
+        <location filename="../Main/MainWindow.ui" line="7523"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Activate SRAP (Sistema de reducción automática de potencia)&lt;/p&gt;&lt;p&gt;It is a mechanism that helps avoiding considering a contingency if it would be eventually resolved by nearby generation shifting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aktivieren Sie SRAP (Sistema de reducción automática de potencia)&lt;/p&gt;&lt;p&gt;Es handelt sich um einen Mechanismus, der dazu beiträgt, die Berücksichtigung eines Notfalls zu vermeiden, wenn er letztendlich durch einen Generationswechsel in der Nähe gelöst werden könnte.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7478"/>
+        <location filename="../Main/MainWindow.ui" line="7526"/>
         <source>Use SRAP</source>
         <translation>Verwenden Sie SRAP</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7485"/>
+        <location filename="../Main/MainWindow.ui" line="7533"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked, a massive posibly intractable report is generated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wenn diese Option aktiviert ist, wird ein umfangreicher, möglicherweise unlösbarer Bericht generiert.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7488"/>
+        <location filename="../Main/MainWindow.ui" line="7536"/>
         <source>Detailed report</source>
         <translation>Ausführlicher Bericht</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7495"/>
+        <location filename="../Main/MainWindow.ui" line="7543"/>
         <source>Maximum overload power that is solvable using the SRAP technique.</source>
         <translation>Maximale Überlastleistung, die mit der SRAP-Technik lösbar ist.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7527"/>
-        <location filename="../Main/MainWindow.ui" line="7567"/>
-        <location filename="../Main/MainWindow.ui" line="8928"/>
+        <location filename="../Main/MainWindow.ui" line="7575"/>
+        <location filename="../Main/MainWindow.ui" line="7615"/>
+        <location filename="../Main/MainWindow.ui" line="9083"/>
         <source> %</source>
         <translation> %</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7540"/>
+        <location filename="../Main/MainWindow.ui" line="7588"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Amount of contingency loading with respect to the base situation loading that triggers the report of the contingency. This is specially useful when we want to avoig reporting contingencies that are not significant with respect to the base situation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Höhe der Notfallbelastung im Verhältnis zur Basissituationsbelastung, die die Meldung der Notfallsituation auslöst. Dies ist besonders nützlich, wenn wir die Meldung von Eventualitäten vermeiden möchten, die im Hinblick auf die Ausgangssituation nicht von Bedeutung sind.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7543"/>
+        <location filename="../Main/MainWindow.ui" line="7591"/>
         <source>Contingency dead band</source>
         <translation>Notfall-Totzone</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7550"/>
+        <location filename="../Main/MainWindow.ui" line="7598"/>
         <source>Maximum number of generation nodes to participate in the SRAP</source>
         <translation>Maximale Anzahl von Generationsknoten, die am SRAP teilnehmen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7553"/>
+        <location filename="../Main/MainWindow.ui" line="7601"/>
         <source>SRAP top N</source>
         <translation>SRAP oben N</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7560"/>
+        <location filename="../Main/MainWindow.ui" line="7608"/>
         <source>Contingency engine</source>
         <translation>Notfall-Engine</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7610"/>
+        <location filename="../Main/MainWindow.ui" line="7658"/>
         <source>Dyn</source>
         <translation>Dyn</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7613"/>
+        <location filename="../Main/MainWindow.ui" line="7661"/>
         <source>Rms simulation settings</source>
         <translation>RMS-Simulationseinstellungen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7691"/>
+        <location filename="../Main/MainWindow.ui" line="7789"/>
         <source>RMS</source>
         <translation>RMS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7758"/>
-        <location filename="../Main/MainWindow.ui" line="7918"/>
-        <location filename="../Main/MainWindow.ui" line="8002"/>
-        <location filename="../Main/MainWindow.ui" line="8347"/>
-        <location filename="../Main/MainWindow.ui" line="8403"/>
-        <location filename="../Main/MainWindow.ui" line="8525"/>
+        <location filename="../Main/MainWindow.ui" line="7897"/>
+        <location filename="../Main/MainWindow.ui" line="7943"/>
+        <location filename="../Main/MainWindow.ui" line="8058"/>
+        <location filename="../Main/MainWindow.ui" line="8400"/>
+        <location filename="../Main/MainWindow.ui" line="8425"/>
+        <location filename="../Main/MainWindow.ui" line="8754"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Initial time for the simulation. &lt;/p&gt;&lt;p&gt;In practice this is used to slow down troublesome solutions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Anfangszeitpunkt für die Simulation. &lt;/p&gt;&lt;p&gt;In der Praxis wird dies genutzt, um problematische Lösungen zu verlangsamen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7761"/>
-        <location filename="../Main/MainWindow.ui" line="8005"/>
-        <location filename="../Main/MainWindow.ui" line="8350"/>
-        <location filename="../Main/MainWindow.ui" line="8406"/>
-        <location filename="../Main/MainWindow.ui" line="8528"/>
+        <location filename="../Main/MainWindow.ui" line="7946"/>
+        <location filename="../Main/MainWindow.ui" line="8061"/>
+        <location filename="../Main/MainWindow.ui" line="8403"/>
+        <location filename="../Main/MainWindow.ui" line="8428"/>
+        <location filename="../Main/MainWindow.ui" line="8757"/>
         <source> s</source>
         <translation> s</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7783"/>
-        <location filename="../Main/MainWindow.ui" line="8442"/>
+        <location filename="../Main/MainWindow.ui" line="8032"/>
+        <location filename="../Main/MainWindow.ui" line="8620"/>
         <source>Assessment time</source>
         <translation>Beurteilungszeit</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7821"/>
-        <location filename="../Main/MainWindow.ui" line="8435"/>
+        <location filename="../Main/MainWindow.ui" line="7890"/>
+        <location filename="../Main/MainWindow.ui" line="8779"/>
         <source>Initialization</source>
         <translation>Initialisierung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7828"/>
-        <location filename="../Main/MainWindow.ui" line="8462"/>
+        <location filename="../Main/MainWindow.ui" line="8133"/>
+        <location filename="../Main/MainWindow.ui" line="8627"/>
         <source>Time step</source>
         <translation>Zeitschritt</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7892"/>
-        <location filename="../Main/MainWindow.ui" line="8428"/>
+        <location filename="../Main/MainWindow.ui" line="7922"/>
+        <location filename="../Main/MainWindow.ui" line="8556"/>
         <source>Integration</source>
         <translation>Integration</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7921"/>
+        <location filename="../Main/MainWindow.ui" line="7900"/>
         <source>s</source>
         <translation>s</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7943"/>
-        <location filename="../Main/MainWindow.ui" line="8569"/>
+        <location filename="../Main/MainWindow.ui" line="8093"/>
+        <location filename="../Main/MainWindow.ui" line="8563"/>
         <source>Simulation time</source>
         <translation>Simulationszeit</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7992"/>
+        <location filename="../Main/MainWindow.ui" line="8189"/>
         <source>RMS Small-Signal</source>
         <translation>RMS Kleinsignal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8040"/>
-        <location filename="../Main/MainWindow.ui" line="8264"/>
-        <location filename="../Main/MainWindow.ui" line="8268"/>
+        <location filename="../Main/MainWindow.ui" line="7877"/>
+        <location filename="../Main/MainWindow.ui" line="8512"/>
+        <location filename="../Main/MainWindow.ui" line="8516"/>
         <source>trapezoid</source>
         <translation>Trapez</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8045"/>
-        <location filename="../Main/MainWindow.ui" line="8273"/>
+        <location filename="../Main/MainWindow.ui" line="7882"/>
+        <location filename="../Main/MainWindow.ui" line="8521"/>
         <source>implicit euler</source>
         <translation>impliziter Euler</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8066"/>
-        <location filename="../Main/MainWindow.ui" line="8583"/>
+        <location filename="../Main/MainWindow.ui" line="8086"/>
+        <location filename="../Main/MainWindow.ui" line="8532"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of modes.&lt;br/&gt;If zero, all modes are included and the calculation is done using dense matrices.&lt;br/&gt;If a number of modes greater than zero is given the calculation is sparse.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Anzahl der Modi.&lt;br/&gt;Bei Null werden alle Modi berücksichtigt und die Berechnung erfolgt mithilfe dichter Matrizen.&lt;br/&gt;Wenn eine Anzahl von Moden größer als Null angegeben wird, ist die Berechnung dünn besetzt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8073"/>
-        <location filename="../Main/MainWindow.ui" line="8590"/>
+        <location filename="../Main/MainWindow.ui" line="7968"/>
+        <location filename="../Main/MainWindow.ui" line="8634"/>
         <source>Modes</source>
         <translation>Modi</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8208"/>
+        <location filename="../Main/MainWindow.ui" line="7930"/>
+        <location filename="../Main/MainWindow.ui" line="8725"/>
+        <source>standard</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="7935"/>
+        <location filename="../Main/MainWindow.ui" line="8730"/>
+        <source>vectorized</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="8140"/>
+        <location filename="../Main/MainWindow.ui" line="8489"/>
+        <source>Problem</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="8327"/>
         <source>EMT</source>
         <translation>EMT</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8323"/>
+        <location filename="../Main/MainWindow.ui" line="8380"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Subspace build type. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="8383"/>
+        <location filename="../Main/MainWindow.ui" line="8387"/>
+        <source>Arnoldi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="8392"/>
+        <source>Hybrid Arnoldi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="8450"/>
+        <source>Build type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="8542"/>
+        <source>Target period</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="8683"/>
         <source>EMT Small-Signal</source>
         <translation>EMT Kleinsignal</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8667"/>
+        <location filename="../Main/MainWindow.ui" line="8738"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Period of the periodic orbit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="8741"/>
+        <source>Hz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="8822"/>
         <source>Machine-learning related settings</source>
         <translation>Einstellungen für maschinelles Lernen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8674"/>
+        <location filename="../Main/MainWindow.ui" line="8829"/>
         <source>ML</source>
         <translation>ML</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8677"/>
+        <location filename="../Main/MainWindow.ui" line="8832"/>
         <source>Machine learning related settings</source>
         <translation>Einstellungen für maschinelles Lernen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8695"/>
+        <location filename="../Main/MainWindow.ui" line="8850"/>
         <source>Objective function</source>
         <translation>Zielfunktion</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8859"/>
+        <location filename="../Main/MainWindow.ui" line="9014"/>
         <source>Minimum form capacity</source>
         <translation>Mindestformkapazität</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8915"/>
+        <location filename="../Main/MainWindow.ui" line="9070"/>
         <source>Node grouping</source>
         <translation>Knotengruppierung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8925"/>
+        <location filename="../Main/MainWindow.ui" line="9080"/>
         <source>In adequecy and simple dispatch indicated the minimum share of total firm capacity of the system to be in desirable, less is penalized</source>
         <translation>Bei Angemessenheit und einfacher Bereitstellung wird angegeben, dass der Mindestanteil der gesamten Unternehmenskapazität des Systems wünschenswert ist, weniger wird bestraft</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8944"/>
+        <location filename="../Main/MainWindow.ui" line="9099"/>
         <source>Number of maximum evaluations for the optimization methods</source>
         <translation>Anzahl maximaler Auswertungen für die Optimierungsmethoden</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8947"/>
+        <location filename="../Main/MainWindow.ui" line="9102"/>
         <source> x number of investments</source>
         <translation> x Anzahl der Investitionen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9026"/>
-        <location filename="../Main/MainWindow.ui" line="12017"/>
+        <location filename="../Main/MainWindow.ui" line="9181"/>
+        <location filename="../Main/MainWindow.ui" line="12172"/>
         <source>Clustering</source>
         <translation>Clustering</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9039"/>
+        <location filename="../Main/MainWindow.ui" line="9194"/>
         <source>Nodal distances</source>
         <translation>Knotenabstände</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9046"/>
+        <location filename="../Main/MainWindow.ui" line="9201"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of clusters, this affects all the simulations that deal with clustering&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Anzahl der Cluster, dies betrifft alle Simulationen, die sich mit Clustering befassen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9049"/>
+        <location filename="../Main/MainWindow.ui" line="9204"/>
         <source> Clusters</source>
         <translation> Cluster</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9065"/>
+        <location filename="../Main/MainWindow.ui" line="9220"/>
         <source>Maximum evaluations</source>
         <translation>Maximale Bewertungen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9099"/>
+        <location filename="../Main/MainWindow.ui" line="9254"/>
         <source>Máximum standard deviation to determine the groups</source>
         <translation>Maximale Standardabweichung zur Bestimmung der Gruppen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9102"/>
+        <location filename="../Main/MainWindow.ui" line="9257"/>
         <source> σ</source>
         <translation> σ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9118"/>
+        <location filename="../Main/MainWindow.ui" line="9273"/>
         <source>Min. group size</source>
         <translation>Min. Gruppengröße</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9125"/>
+        <location filename="../Main/MainWindow.ui" line="9280"/>
         <source>Select the investment evaluation method</source>
         <translation>Wählen Sie die Methode zur Investitionsbewertung aus</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9132"/>
+        <location filename="../Main/MainWindow.ui" line="9287"/>
         <source>Minimum size of the group</source>
         <translation>Mindestgröße der Gruppe</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9138"/>
+        <location filename="../Main/MainWindow.ui" line="9293"/>
         <source> elements</source>
         <translation> Elemente</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9196"/>
+        <location filename="../Main/MainWindow.ui" line="9351"/>
         <source>Investment evaluation</source>
         <translation>Investitionsbewertung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9206"/>
+        <location filename="../Main/MainWindow.ui" line="9361"/>
         <source>Number of clusters</source>
         <translation>Anzahl der Cluster</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9312"/>
+        <location filename="../Main/MainWindow.ui" line="9467"/>
         <source>Number of islands produced until the analysis stops</source>
         <translation>Anzahl der bis zum Ende der Analyse erzeugten Inseln</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9353"/>
+        <location filename="../Main/MainWindow.ui" line="9508"/>
         <source>Reliability evaluation method</source>
         <translation>Methode zur Zuverlässigkeitsbewertung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9360"/>
+        <location filename="../Main/MainWindow.ui" line="9515"/>
         <source>Maximum number of samples</source>
         <translation>Maximale Anzahl an Proben</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9418"/>
+        <location filename="../Main/MainWindow.ui" line="9573"/>
         <source>Reliability</source>
         <translation>Zuverlässigkeit</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9428"/>
-        <location filename="../Main/MainWindow.ui" line="9764"/>
+        <location filename="../Main/MainWindow.ui" line="9583"/>
+        <location filename="../Main/MainWindow.ui" line="9919"/>
         <source>Samples</source>
         <translation>Proben</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9477"/>
+        <location filename="../Main/MainWindow.ui" line="9632"/>
         <source>Cascading</source>
         <translation>Kaskadierung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9674"/>
-        <location filename="../Main/MainWindow.ui" line="11201"/>
+        <location filename="../Main/MainWindow.ui" line="9829"/>
+        <location filename="../Main/MainWindow.ui" line="11356"/>
         <source>Stochastic power flow</source>
         <translation>Stochastischer Kraftfluss</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9684"/>
+        <location filename="../Main/MainWindow.ui" line="9839"/>
         <source>Maximum number of Monte Carlo samples</source>
         <translation>Maximale Anzahl von Monte-Carlo-Proben</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9700"/>
+        <location filename="../Main/MainWindow.ui" line="9855"/>
         <source>Aditional islands until stop</source>
         <translation>Weitere Inseln bis zum Stopp</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9707"/>
+        <location filename="../Main/MainWindow.ui" line="9862"/>
         <source>Voltage variance</source>
         <translation>Spannungsvarianz</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9778"/>
+        <location filename="../Main/MainWindow.ui" line="9933"/>
         <source>Stochastic power flow method</source>
         <translation>Stochastische Kraftflussmethode</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9810"/>
+        <location filename="../Main/MainWindow.ui" line="9965"/>
         <source>Monte Carlo variance until stop</source>
         <translation>Monte-Carlo-Varianz bis zum Anschlag</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9860"/>
+        <location filename="../Main/MainWindow.ui" line="10015"/>
         <source>Topology settings</source>
         <translation>Topologieeinstellungen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9867"/>
+        <location filename="../Main/MainWindow.ui" line="10022"/>
         <source>Tplgy</source>
         <translation>Tplgy</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9870"/>
+        <location filename="../Main/MainWindow.ui" line="10025"/>
         <source>Topology related settings</source>
         <translation>Topologiebezogene Einstellungen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9989"/>
-        <location filename="../Main/MainWindow.ui" line="12434"/>
+        <location filename="../Main/MainWindow.ui" line="10144"/>
+        <location filename="../Main/MainWindow.ui" line="12589"/>
         <source>Grid reduction</source>
         <translation>Netzverkleinerung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10052"/>
+        <location filename="../Main/MainWindow.ui" line="10207"/>
         <source>Select branch types to reduce</source>
         <translation>Wählen Sie die zu reduzierenden Zweigtypen aus</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10062"/>
+        <location filename="../Main/MainWindow.ui" line="10217"/>
         <source>Filter by r+x under threshold</source>
         <translation>Filtern Sie nach r+x unter dem Schwellenwert</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10072"/>
+        <location filename="../Main/MainWindow.ui" line="10227"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Exponent of the threshold to use.&lt;/p&gt;&lt;p&gt;threshold = 1x10^-factor&lt;/p&gt;&lt;p&gt;i.e.&lt;/p&gt;&lt;p&gt;factor=3&lt;/p&gt;&lt;p&gt;threshold = 1e-3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Exponent des zu verwendenden Schwellenwerts.&lt;/p&gt;&lt;p&gt;Schwellenwert = 1x10^-Faktor&lt;/p&gt;&lt;p&gt;d.h.&lt;/p&gt;&lt;p&gt;Faktor=3&lt;/p&gt;&lt;p&gt;Schwelle = 1e-3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10201"/>
+        <location filename="../Main/MainWindow.ui" line="10356"/>
         <source>Branch rating</source>
         <translation>Branchenbewertung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10273"/>
+        <location filename="../Main/MainWindow.ui" line="10428"/>
         <source>Branch rating factor</source>
         <translation>Bewertungsfaktor der Filiale</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10280"/>
+        <location filename="../Main/MainWindow.ui" line="10435"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Factor to aply to the branch calculated power to use as rating&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Faktor, der auf die berechnete Leistung des Zweigs angewendet werden soll, um sie als Nennwert zu verwenden&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10299"/>
+        <location filename="../Main/MainWindow.ui" line="10454"/>
         <source>override values</source>
         <translation>Werte überschreiben</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10326"/>
+        <location filename="../Main/MainWindow.ui" line="10481"/>
         <source>File settings</source>
         <translation>Dateieinstellungen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10333"/>
-        <location filename="../Main/MainWindow.ui" line="10785"/>
+        <location filename="../Main/MainWindow.ui" line="10488"/>
+        <location filename="../Main/MainWindow.ui" line="10940"/>
         <source>File</source>
         <translation>Datei</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10336"/>
+        <location filename="../Main/MainWindow.ui" line="10491"/>
         <source>File related settings</source>
         <translation>Dateibezogene Einstellungen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10357"/>
+        <location filename="../Main/MainWindow.ui" line="10512"/>
         <source>If checked, the results are stored inside the VeraGrid file in a compressed format.</source>
         <translation>Wenn diese Option aktiviert ist, werden die Ergebnisse in einem komprimierten Format in der Datei VeraGrid gespeichert.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10360"/>
+        <location filename="../Main/MainWindow.ui" line="10515"/>
         <source>Save results in .veragrid files</source>
         <translation>Ergebnisse in .veragrid-Dateien speichern</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10399"/>
+        <location filename="../Main/MainWindow.ui" line="10554"/>
         <source>File path</source>
         <translation>Dateipfad</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10525"/>
+        <location filename="../Main/MainWindow.ui" line="10680"/>
         <source>File Information</source>
         <translation>Dateiinformationen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10573"/>
+        <location filename="../Main/MainWindow.ui" line="10728"/>
         <source>Server</source>
         <translation>Server</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10579"/>
+        <location filename="../Main/MainWindow.ui" line="10734"/>
         <source>Server jobs currently on cue</source>
         <translation>Serverjobs stehen derzeit an</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10607"/>
+        <location filename="../Main/MainWindow.ui" line="10762"/>
         <source>Url</source>
         <translation>URL</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10614"/>
+        <location filename="../Main/MainWindow.ui" line="10769"/>
         <source>Type here the VeraGrid server URL (ask your IT team)</source>
         <translation>Geben Sie hier die Server-URL VeraGrid ein (fragen Sie Ihr IT-Team).</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10621"/>
+        <location filename="../Main/MainWindow.ui" line="10776"/>
         <source>Port</source>
         <translation>Hafen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10628"/>
+        <location filename="../Main/MainWindow.ui" line="10783"/>
         <source>Type here the VeraGrid server Port (ask your IT team)</source>
         <translation>Geben Sie hier den VeraGrid-Server-Port ein (fragen Sie Ihr IT-Team).</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10641"/>
+        <location filename="../Main/MainWindow.ui" line="10796"/>
         <source>Password</source>
         <translation>Passwort</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10648"/>
+        <location filename="../Main/MainWindow.ui" line="10803"/>
         <source>Type here the VeraGrid server password (ask your IT team)</source>
         <translation>Geben Sie hier das Serverkennwort VeraGrid ein (fragen Sie Ihr IT-Team).</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10658"/>
+        <location filename="../Main/MainWindow.ui" line="10813"/>
         <source>Secure</source>
         <translation>Sicher</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10716"/>
+        <location filename="../Main/MainWindow.ui" line="10871"/>
         <source>Cancel process</source>
         <translation>Vorgang abbrechen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10789"/>
+        <location filename="../Main/MainWindow.ui" line="10944"/>
         <source>Export grid</source>
         <translation>Raster exportieren</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10815"/>
+        <location filename="../Main/MainWindow.ui" line="10970"/>
         <source>Import data</source>
         <translation>Daten importieren</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10836"/>
+        <location filename="../Main/MainWindow.ui" line="10991"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10844"/>
+        <location filename="../Main/MainWindow.ui" line="10999"/>
         <source>Actions</source>
         <translation>Aktionen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10857"/>
+        <location filename="../Main/MainWindow.ui" line="11012"/>
         <source>Simulations</source>
         <translation>Simulationen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10932"/>
+        <location filename="../Main/MainWindow.ui" line="11087"/>
         <source>Diagram</source>
         <translation>Diagramm</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10936"/>
+        <location filename="../Main/MainWindow.ui" line="11091"/>
         <source>Branches drawing style</source>
         <translation>Zweige-Zeichenstil</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10976"/>
+        <location filename="../Main/MainWindow.ui" line="11131"/>
         <source>plugins</source>
         <translation>Plugins</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10981"/>
+        <location filename="../Main/MainWindow.ui" line="11136"/>
         <source>Events</source>
         <translation>Veranstaltungen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11002"/>
+        <location filename="../Main/MainWindow.ui" line="11157"/>
         <source>toolBar</source>
         <translation>toolBar</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11069"/>
+        <location filename="../Main/MainWindow.ui" line="11224"/>
         <source>Open file</source>
         <translation>Datei öffnen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11075"/>
+        <location filename="../Main/MainWindow.ui" line="11230"/>
         <source>Ctrl+O</source>
         <translation>Strg+O</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11084"/>
+        <location filename="../Main/MainWindow.ui" line="11239"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11090"/>
-        <location filename="../Main/MainWindow.ui" line="12903"/>
+        <location filename="../Main/MainWindow.ui" line="11245"/>
+        <location filename="../Main/MainWindow.ui" line="13058"/>
         <source>Ctrl+S</source>
         <translation>Strg+S</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11099"/>
+        <location filename="../Main/MainWindow.ui" line="11254"/>
         <source>Take picture</source>
         <translation>Machen Sie ein Foto</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11111"/>
+        <location filename="../Main/MainWindow.ui" line="11266"/>
         <source>New project</source>
         <translation>Neues Projekt</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11117"/>
+        <location filename="../Main/MainWindow.ui" line="11272"/>
         <source>Ctrl+N</source>
         <translation>Strg+N</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11126"/>
+        <location filename="../Main/MainWindow.ui" line="11281"/>
         <source>Power Flow</source>
         <translation>Kraftfluss</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11129"/>
+        <location filename="../Main/MainWindow.ui" line="11284"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power Flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a power flow analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Kraftfluss&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine Leistungsflussanalyse durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11135"/>
+        <location filename="../Main/MainWindow.ui" line="11290"/>
         <source>F5</source>
         <translation>F5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11147"/>
+        <location filename="../Main/MainWindow.ui" line="11302"/>
         <source>Power flow time series</source>
         <translation>Kraftfluss-Zeitreihen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11150"/>
+        <location filename="../Main/MainWindow.ui" line="11305"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the power flow study with time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Kraftfluss&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie die Leistungsflussstudie mit Zeitreihendaten durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11156"/>
+        <location filename="../Main/MainWindow.ui" line="11311"/>
         <source>Ctrl+F5</source>
         <translation>Strg+F5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11165"/>
+        <location filename="../Main/MainWindow.ui" line="11320"/>
         <source>Expand</source>
         <translation>Erweitern</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11168"/>
+        <location filename="../Main/MainWindow.ui" line="11323"/>
         <source>Expand distances</source>
         <translation>Distanzen erweitern</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11174"/>
+        <location filename="../Main/MainWindow.ui" line="11329"/>
         <source>Ctrl+Alt++</source>
         <translation>Strg+Alt++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11183"/>
+        <location filename="../Main/MainWindow.ui" line="11338"/>
         <source>Shrink</source>
         <translation>Schrumpfen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11186"/>
+        <location filename="../Main/MainWindow.ui" line="11341"/>
         <source>Shrink distances</source>
         <translation>Distanzen schrumpfen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11192"/>
+        <location filename="../Main/MainWindow.ui" line="11347"/>
         <source>Ctrl+Alt+-</source>
         <translation>Strg+Alt+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11204"/>
+        <location filename="../Main/MainWindow.ui" line="11359"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Stochastic power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a stochastic power flow over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Stochastischer Kraftfluss&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie einen stochastischen Leistungsfluss über die Zeitreihendaten durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11219"/>
+        <location filename="../Main/MainWindow.ui" line="11374"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Continuation power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a continuation power flow over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Fortsetzung des Stromflusses&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie einen kontinuierlichen Stromfluss über die Snapshot-Daten durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11231"/>
+        <location filename="../Main/MainWindow.ui" line="11386"/>
         <source>About</source>
         <translation>Über</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11243"/>
+        <location filename="../Main/MainWindow.ui" line="11398"/>
         <source>center view</source>
         <translation>mittlere Ansicht</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11246"/>
+        <location filename="../Main/MainWindow.ui" line="11401"/>
         <source>Center view</source>
         <translation>Ansicht in der Mitte</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11252"/>
+        <location filename="../Main/MainWindow.ui" line="11407"/>
         <source>Ctrl+E</source>
         <translation>Strg+E</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11261"/>
+        <location filename="../Main/MainWindow.ui" line="11416"/>
         <source>Short Circuit</source>
         <translation>Kurzschluss</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11264"/>
+        <location filename="../Main/MainWindow.ui" line="11419"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Short Circuit&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a short circuit study over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Kurzschluss&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine Kurzschlussstudie über die Snapshot-Daten durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11276"/>
+        <location filename="../Main/MainWindow.ui" line="11431"/>
         <source>Automatic grid layout</source>
         <translation>Automatisches Rasterlayout</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11279"/>
+        <location filename="../Main/MainWindow.ui" line="11434"/>
         <source>Automatic layout the of the grid</source>
         <translation>Automatisches Layout des Rasters</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11294"/>
+        <location filename="../Main/MainWindow.ui" line="11449"/>
         <source>Blackout cascade</source>
         <translation>Blackout-Kaskade</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11297"/>
+        <location filename="../Main/MainWindow.ui" line="11452"/>
         <source>Run a simulation or step by step blackout cascade</source>
         <translation>Führen Sie eine Simulation oder eine schrittweise Blackout-Kaskade durch</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11309"/>
+        <location filename="../Main/MainWindow.ui" line="11464"/>
         <source>Optimal power flow</source>
         <translation>Optimaler Kraftfluss</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11312"/>
+        <location filename="../Main/MainWindow.ui" line="11467"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This runs an optimal power flow&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimaler Kraftfluss&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Dadurch entsteht ein optimaler Kraftfluss&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11318"/>
+        <location filename="../Main/MainWindow.ui" line="11473"/>
         <source>F6</source>
         <translation>F6</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11327"/>
+        <location filename="../Main/MainWindow.ui" line="11482"/>
         <source>Optimal power flow time series</source>
         <translation>Zeitreihe des optimalen Leistungsflusses</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11330"/>
+        <location filename="../Main/MainWindow.ui" line="11485"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This runs an optimal power flow for the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimaler Kraftfluss&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Dadurch entsteht ein optimaler Leistungsfluss für die Zeitreihendaten&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11336"/>
+        <location filename="../Main/MainWindow.ui" line="11491"/>
         <source>Ctrl+F6</source>
         <translation>Strg+F6</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11345"/>
+        <location filename="../Main/MainWindow.ui" line="11500"/>
         <source>Detect transformers</source>
         <translation>Transformatoren erkennen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11348"/>
+        <location filename="../Main/MainWindow.ui" line="11503"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Detect transformers.&lt;/p&gt;&lt;p&gt;Use the nodes nominal voltage to determine which branches should be a transformer.&lt;/p&gt;&lt;p&gt;If a branch joins two nodes with different voltage levels, the branch should be a transformer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Transformatoren erkennen.&lt;/p&gt;&lt;p&gt;Verwenden Sie die Nennspannung des Knotens, um zu bestimmen, welche Zweige ein Transformator sein sollen.&lt;/p&gt;&lt;p&gt;Wenn ein Zweig zwei Knoten mit unterschiedlichen Spannungspegeln verbindet, sollte der Zweig ein Transformator sein.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11360"/>
+        <location filename="../Main/MainWindow.ui" line="11515"/>
         <source>Auto rate branches</source>
         <translation>Filialen automatisch bewerten</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11363"/>
+        <location filename="../Main/MainWindow.ui" line="11518"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatic rating of the branches.&lt;/p&gt;&lt;p&gt;Use the branches calculated power to establish a rate, if the branch rate is unknown. A factor is available in the settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatische Bewertung der Filialen.&lt;/p&gt;&lt;p&gt;Verwenden Sie die berechnete Leistung der Zweige, um eine Rate festzulegen, wenn die Zweigrate unbekannt ist. In den Einstellungen ist ein Faktor verfügbar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11378"/>
+        <location filename="../Main/MainWindow.ui" line="11533"/>
         <source>Storage location suggestion</source>
         <translation>Vorschlag für einen Lagerort</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11381"/>
+        <location filename="../Main/MainWindow.ui" line="11536"/>
         <source>Suggest places where storage devices are useful</source>
         <translation>Schlagen Sie Orte vor, an denen Speichergeräte nützlich sind</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11393"/>
+        <location filename="../Main/MainWindow.ui" line="11548"/>
         <source>Launch data analysis tool</source>
         <translation>Starten Sie das Datenanalysetool</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11396"/>
+        <location filename="../Main/MainWindow.ui" line="11551"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Data analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Launch the data analysis tool that finds and tries to repair common grid modelling issues&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Datenanalyse&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Starten Sie das Datenanalysetool, das häufige Probleme bei der Gittermodellierung findet und zu beheben versucht&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11402"/>
+        <location filename="../Main/MainWindow.ui" line="11557"/>
         <source>F12</source>
         <translation>F12</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11411"/>
+        <location filename="../Main/MainWindow.ui" line="11566"/>
         <source>Online documentation</source>
         <translation>Online-Dokumentation</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11417"/>
+        <location filename="../Main/MainWindow.ui" line="11572"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11426"/>
+        <location filename="../Main/MainWindow.ui" line="11581"/>
         <source>Save as</source>
         <translation>Speichern unter</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11438"/>
+        <location filename="../Main/MainWindow.ui" line="11593"/>
         <source>Delete selected</source>
         <translation>Ausgewählte löschen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11441"/>
+        <location filename="../Main/MainWindow.ui" line="11596"/>
         <source>Delete selected objects from the diagrams and optionally from the database</source>
         <translation>Löschen Sie ausgewählte Objekte aus den Diagrammen und optional aus der Datenbank</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11447"/>
+        <location filename="../Main/MainWindow.ui" line="11602"/>
         <source>Del</source>
         <translation>Del</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11456"/>
+        <location filename="../Main/MainWindow.ui" line="11611"/>
         <source>Linear analysis</source>
         <translation>Lineare Analyse</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11459"/>
+        <location filename="../Main/MainWindow.ui" line="11614"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Linear analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform linear analysis with distribution factors (PTDF, LODF)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Lineare Analyse&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine lineare Analyse mit Verteilungsfaktoren (PTDF, LODF) durch.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11465"/>
+        <location filename="../Main/MainWindow.ui" line="11620"/>
         <source>F7</source>
         <translation>F7</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11474"/>
+        <location filename="../Main/MainWindow.ui" line="11629"/>
         <source>Reset console</source>
         <translation>Konsole zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11489"/>
+        <location filename="../Main/MainWindow.ui" line="11644"/>
         <source>Set OPF results to power flow (non destructive)</source>
         <translation>Setzen Sie die OPF-Ergebnisse auf Leistungsfluss (zerstörungsfrei).</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11492"/>
+        <location filename="../Main/MainWindow.ui" line="11647"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy OPF data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Set the OPF results into the power flow or time series simulations (non destructive)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Kopieren Sie die OPF-Daten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Setzen Sie die OPF-Ergebnisse in die Leistungsfluss- oder Zeitreihensimulationen (zerstörungsfrei).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11504"/>
+        <location filename="../Main/MainWindow.ui" line="11659"/>
         <source>Correct buses location</source>
         <translation>Richtiger Standort der Busse</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11507"/>
+        <location filename="../Main/MainWindow.ui" line="11662"/>
         <source>Set selected buses location closer to their neighbours</source>
         <translation>Stellen Sie den Standort ausgewählter Busse näher an ihre Nachbarn ein</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11519"/>
+        <location filename="../Main/MainWindow.ui" line="11674"/>
         <source>Copy OPF generation to database (destructive)</source>
         <translation>OPF-Generierung in die Datenbank kopieren (destruktiv)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11522"/>
+        <location filename="../Main/MainWindow.ui" line="11677"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy OPF data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Destructive copy of the OPF generation results to the input profiles&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Kopieren Sie die OPF-Daten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zerstörerische Kopie der OPF-Generierungsergebnisse in die Eingabeprofile&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11534"/>
+        <location filename="../Main/MainWindow.ui" line="11689"/>
         <source>Linear analysis time series power flow</source>
         <translation>Lineare Analyse des Zeitreihen-Leistungsflusses</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11537"/>
+        <location filename="../Main/MainWindow.ui" line="11692"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Linear analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;PTDF based time series power flow&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Lineare Analyse&lt;/span&gt;&lt;/p&gt;&lt;p&gt;PTDF-basierter Zeitreihen-Leistungsfluss&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11543"/>
+        <location filename="../Main/MainWindow.ui" line="11698"/>
         <source>Ctrl+F7</source>
         <translation>Strg+F7</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11552"/>
+        <location filename="../Main/MainWindow.ui" line="11707"/>
         <source>Import circuit</source>
         <translation>Schaltung importieren</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11555"/>
+        <location filename="../Main/MainWindow.ui" line="11710"/>
         <source>Add circuit to the current circuit</source>
         <translation>Schaltkreis zum aktuellen Schaltkreis hinzufügen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11561"/>
+        <location filename="../Main/MainWindow.ui" line="11716"/>
         <source>Ctrl+N, Ctrl+O</source>
         <translation>Strg+N, Strg+O</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11573"/>
+        <location filename="../Main/MainWindow.ui" line="11728"/>
         <source>Sync</source>
         <translation>Synchronisieren</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11576"/>
+        <location filename="../Main/MainWindow.ui" line="11731"/>
         <source>Sync with the file for colaborative editing of the grid</source>
         <translation>Synchronisieren Sie mit der Datei, um das Raster gemeinsam zu bearbeiten</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11585"/>
+        <location filename="../Main/MainWindow.ui" line="11740"/>
         <source>Draw schematic</source>
         <translation>Schaltplan zeichnen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11594"/>
+        <location filename="../Main/MainWindow.ui" line="11749"/>
         <source>Sigma analysis</source>
         <translation>Sigma-Analyse</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11597"/>
+        <location filename="../Main/MainWindow.ui" line="11752"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Sigma analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform HELM-Sigma analysis over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Sigma-Analyse&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine HELM-Sigma-Analyse für die Snapshot-Daten durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11609"/>
+        <location filename="../Main/MainWindow.ui" line="11764"/>
         <source>Clear &quot;stuff running right now&quot;</source>
         <translation>Deaktivieren Sie „Dinge laufen gerade“</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11621"/>
+        <location filename="../Main/MainWindow.ui" line="11776"/>
         <source>Add default catalogue</source>
         <translation>Standardkatalog hinzufügen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11636"/>
+        <location filename="../Main/MainWindow.ui" line="11791"/>
         <source>Find node groups</source>
         <translation>Knotengruppen finden</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11639"/>
+        <location filename="../Main/MainWindow.ui" line="11794"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Finds the electrically related nodes by using their electrical distance and the DBSCAN clustering method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Findet die elektrisch verbundenen Knoten anhand ihres elektrischen Abstands und der DBSCAN-Clustering-Methode&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11651"/>
+        <location filename="../Main/MainWindow.ui" line="11806"/>
         <source>Grid Generator</source>
         <translation>Gittergenerator</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11657"/>
+        <location filename="../Main/MainWindow.ui" line="11812"/>
         <source>Ctrl+G</source>
         <translation>Strg+G</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11666"/>
+        <location filename="../Main/MainWindow.ui" line="11821"/>
         <source>Node load</source>
         <translation>Knotenlast</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11675"/>
+        <location filename="../Main/MainWindow.ui" line="11830"/>
         <source>Generator generation</source>
         <translation>Generatorerzeugung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11684"/>
+        <location filename="../Main/MainWindow.ui" line="11839"/>
         <source>Contingency analysis time series</source>
         <translation>Zeitreihen zur Kontingenzanalyse</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11687"/>
+        <location filename="../Main/MainWindow.ui" line="11842"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingency analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Per form a contingency analysis with the selected method over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Notfallanalyse&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie mit der ausgewählten Methode eine Notfallanalyse über die Zeitreihendaten durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11693"/>
+        <location filename="../Main/MainWindow.ui" line="11848"/>
         <source>Ctrl+F8</source>
         <translation>Strg+F8</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11702"/>
+        <location filename="../Main/MainWindow.ui" line="11857"/>
         <source>Branch rates</source>
         <translation>Filialtarife</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11711"/>
+        <location filename="../Main/MainWindow.ui" line="11866"/>
         <source>Set selected buses&apos; Area</source>
         <translation>Legen Sie den Bereich der ausgewählten Busse fest</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11723"/>
+        <location filename="../Main/MainWindow.ui" line="11878"/>
         <source>Set selected buses&apos; Zone</source>
         <translation>Legen Sie die Zone der ausgewählten Busse fest</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11735"/>
+        <location filename="../Main/MainWindow.ui" line="11890"/>
         <source>Set seleted buses&apos; Country</source>
         <translation>Legen Sie das Land der ausgewählten Busse fest</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11747"/>
+        <location filename="../Main/MainWindow.ui" line="11902"/>
         <source>Import bus coordinates</source>
         <translation>Buskoordinaten importieren</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11759"/>
+        <location filename="../Main/MainWindow.ui" line="11914"/>
         <source>Available Transfer Capacity</source>
         <translation>Verfügbare Übertragungskapazität</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11762"/>
+        <location filename="../Main/MainWindow.ui" line="11917"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a linear net transfer capacity assesment for the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Nettoübertragungskapazität&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine lineare Nettoübertragungskapazitätsbewertung für die Snapshot-Daten durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11774"/>
+        <location filename="../Main/MainWindow.ui" line="11929"/>
         <source>Available Transfer Capacity Time Series</source>
         <translation>Zeitreihen zur verfügbaren Übertragungskapazität</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11777"/>
+        <location filename="../Main/MainWindow.ui" line="11932"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a linear net transfer capacity assesment for the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Nettoübertragungskapazität&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine lineare Nettoübertragungskapazitätsbewertung für die Zeitreihendaten durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11789"/>
+        <location filename="../Main/MainWindow.ui" line="11944"/>
         <source>Contingency analysis</source>
         <translation>Notfallanalyse</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11792"/>
+        <location filename="../Main/MainWindow.ui" line="11947"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingency analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a contingency analysis with the selected method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Notfallanalyse&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine Notfallanalyse mit der ausgewählten Methode durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11798"/>
+        <location filename="../Main/MainWindow.ui" line="11953"/>
         <source>F8</source>
         <translation>F8</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11807"/>
+        <location filename="../Main/MainWindow.ui" line="11962"/>
         <source>Optimal net transfer capacity</source>
         <translation>Optimale Nettoübertragungskapazität</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11810"/>
+        <location filename="../Main/MainWindow.ui" line="11965"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform an optimal net transfer capacity optimization&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimale Nettoübertragungskapazität&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine optimale Optimierung der Nettoübertragungskapazität durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11822"/>
+        <location filename="../Main/MainWindow.ui" line="11977"/>
         <source>Set schematic (x,y) from (lat,lon)</source>
         <translation>Schematische Darstellung (x,y) aus (lat,lon) festlegen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11834"/>
+        <location filename="../Main/MainWindow.ui" line="11989"/>
         <source>Inputs analysis</source>
         <translation>Eingabeanalyse</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11837"/>
+        <location filename="../Main/MainWindow.ui" line="11992"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Inputs analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform an analysis of the inputs for both the snapshot and time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Eingabeanalyse&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine Analyse der Eingaben sowohl für die Snapshot- als auch für die Zeitreihendaten durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11843"/>
+        <location filename="../Main/MainWindow.ui" line="11998"/>
         <source>F11</source>
         <translation>F11</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11852"/>
+        <location filename="../Main/MainWindow.ui" line="12007"/>
         <source>Fuse devices</source>
         <translation>Sicherungsgeräte</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11855"/>
+        <location filename="../Main/MainWindow.ui" line="12010"/>
         <source>Fuse devices into a single device of each category per node</source>
         <translation>Fassen Sie Geräte zu einem einzigen Gerät jeder Kategorie pro Knoten zusammen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11867"/>
-        <location filename="../Main/MainWindow.ui" line="11870"/>
+        <location filename="../Main/MainWindow.ui" line="12022"/>
+        <location filename="../Main/MainWindow.ui" line="12025"/>
         <source>Delete inconsistencies</source>
         <translation>Inkonsistenzen löschen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11882"/>
+        <location filename="../Main/MainWindow.ui" line="12037"/>
         <source>Optimal NTC time series</source>
         <translation>Optimale NTC-Zeitreihe</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11885"/>
+        <location filename="../Main/MainWindow.ui" line="12040"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a net transfer capacity optimization over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Nettoübertragungskapazität&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine Optimierung der Nettoübertragungskapazität über die Zeitreihendaten durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11897"/>
+        <location filename="../Main/MainWindow.ui" line="12052"/>
         <source>re-index time</source>
         <translation>Neuindizierungszeit</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11909"/>
+        <location filename="../Main/MainWindow.ui" line="12064"/>
         <source>Fix generators active based on the power</source>
         <translation>Korrigieren Sie die aktiven Generatoren basierend auf der Leistung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11921"/>
-        <location filename="../Main/MainWindow.ui" line="11924"/>
+        <location filename="../Main/MainWindow.ui" line="12076"/>
+        <location filename="../Main/MainWindow.ui" line="12079"/>
         <source>Fix loads active based on the power</source>
         <translation>Fixieren Sie aktive Lasten basierend auf der Leistung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11936"/>
+        <location filename="../Main/MainWindow.ui" line="12091"/>
         <source>Initialize contingencies</source>
         <translation>Eventualverbindlichkeiten initialisieren</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11939"/>
+        <location filename="../Main/MainWindow.ui" line="12094"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingencies wizard&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Launch the contingencies wizard to automatically set up the contingency objects&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Assistent für Eventualverbindlichkeiten&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Starten Sie den Notfallassistenten, um die Notfallobjekte automatisch einzurichten&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11951"/>
+        <location filename="../Main/MainWindow.ui" line="12106"/>
         <source>Add selected as new contingency</source>
         <translation>Ausgewählte als neue Kontingenz hinzufügen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11954"/>
+        <location filename="../Main/MainWindow.ui" line="12109"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add contingency&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new contingency from the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Kontingenz hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Erstellen Sie aus der Schaltplanauswahl eine neue Kontingenz&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11960"/>
+        <location filename="../Main/MainWindow.ui" line="12115"/>
         <source>Ctrl+A, Ctrl+C</source>
         <translation>Strg+A, Strg+C</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11969"/>
+        <location filename="../Main/MainWindow.ui" line="12124"/>
         <source>Add selected as new investment</source>
         <translation>Ausgewählte als neue Investition hinzufügen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11972"/>
+        <location filename="../Main/MainWindow.ui" line="12127"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Investments&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create new investment with the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Investitionen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Erstellen Sie mit der schematischen Auswahl eine neue Investition&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11978"/>
+        <location filename="../Main/MainWindow.ui" line="12133"/>
         <source>Ctrl+A, Ctrl+I</source>
         <translation>Strg+A, Strg+I</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11987"/>
+        <location filename="../Main/MainWindow.ui" line="12142"/>
         <source>Zoom in</source>
         <translation>Vergrößern</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11993"/>
+        <location filename="../Main/MainWindow.ui" line="12148"/>
         <source>Ctrl++</source>
         <translation>Strg++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12002"/>
+        <location filename="../Main/MainWindow.ui" line="12157"/>
         <source>Zoom out</source>
         <translation>Herauszoomen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12008"/>
+        <location filename="../Main/MainWindow.ui" line="12163"/>
         <source>Ctrl+-</source>
         <translation>Strg+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12020"/>
+        <location filename="../Main/MainWindow.ui" line="12175"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a clustering study of the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine Clustering-Studie der Zeitreihendaten durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12038"/>
+        <location filename="../Main/MainWindow.ui" line="12193"/>
         <source>Use clustering</source>
         <translation>Verwenden Sie Clustering</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12041"/>
+        <location filename="../Main/MainWindow.ui" line="12196"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;If active, the available clustering results are used in all the simulations that handle time series data non-destructivelly&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Wenn aktiv, werden die verfügbaren Clustering-Ergebnisse in allen Simulationen verwendet, die Zeitreihendaten zerstörungsfrei verarbeiten&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12053"/>
+        <location filename="../Main/MainWindow.ui" line="12208"/>
         <source>Investments evaluation</source>
         <translation>Bewertung der Investitionen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12056"/>
+        <location filename="../Main/MainWindow.ui" line="12211"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Investments&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform the investments evaluation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Investitionen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie die Investitionsbewertung durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12062"/>
+        <location filename="../Main/MainWindow.ui" line="12217"/>
         <source>Ctrl+I, Ctrl+E</source>
         <translation>Strg+I, Strg+E</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12071"/>
+        <location filename="../Main/MainWindow.ui" line="12226"/>
         <source>New schematic from selection</source>
         <translation>Neuer Schaltplan aus Auswahl</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12083"/>
+        <location filename="../Main/MainWindow.ui" line="12238"/>
         <source>New schematic</source>
         <translation>Neuer Schaltplan</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12095"/>
+        <location filename="../Main/MainWindow.ui" line="12250"/>
         <source>New map</source>
         <translation>Neue Karte</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12107"/>
+        <location filename="../Main/MainWindow.ui" line="12262"/>
         <source>Remove selected diagram</source>
         <translation>Ausgewähltes Diagramm entfernen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12116"/>
+        <location filename="../Main/MainWindow.ui" line="12271"/>
         <source>Report a bug or feature</source>
         <translation>Melden Sie einen Fehler oder eine Funktion</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12128"/>
+        <location filename="../Main/MainWindow.ui" line="12283"/>
         <source>Search</source>
         <translation>Suchen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12140"/>
+        <location filename="../Main/MainWindow.ui" line="12295"/>
         <source>Process topology</source>
         <translation>Prozesstopologie</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12152"/>
+        <location filename="../Main/MainWindow.ui" line="12307"/>
         <source>Edit simulation time limits</source>
         <translation>Simulationszeitlimits bearbeiten</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12155"/>
+        <location filename="../Main/MainWindow.ui" line="12310"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Time series&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Edit simulation time limits&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Zeitreihen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Simulationszeitlimits bearbeiten&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12170"/>
+        <location filename="../Main/MainWindow.ui" line="12325"/>
         <source>activate time series</source>
         <translation>Zeitreihen aktivieren</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12173"/>
+        <location filename="../Main/MainWindow.ui" line="12328"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Time series mode&lt;/span&gt;&lt;/p&gt;&lt;p&gt;When activated, the simulations run their time series version&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Zeitreihenmodus&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Bei Aktivierung führen die Simulationen ihre Zeitreihenversion aus&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12179"/>
+        <location filename="../Main/MainWindow.ui" line="12334"/>
         <source>Ctrl+T</source>
         <translation>Strg+T</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12188"/>
+        <location filename="../Main/MainWindow.ui" line="12343"/>
         <source>Clean database</source>
         <translation>Bereinigen Sie die Datenbank</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12194"/>
+        <location filename="../Main/MainWindow.ui" line="12349"/>
         <source>Ctrl+C, Ctrl+D</source>
         <translation>Strg+C, Strg+D</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12203"/>
+        <location filename="../Main/MainWindow.ui" line="12358"/>
         <source>Scale</source>
         <translation>Maßstab</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12206"/>
+        <location filename="../Main/MainWindow.ui" line="12361"/>
         <source>Scale the system load and or generation</source>
         <translation>Skalieren Sie die Systemlast und/oder -erzeugung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12218"/>
+        <location filename="../Main/MainWindow.ui" line="12373"/>
         <source>Disable all results tags</source>
         <translation>Deaktivieren Sie alle Ergebnis-Tags</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12230"/>
+        <location filename="../Main/MainWindow.ui" line="12385"/>
         <source>Enable all results tags</source>
         <translation>Aktivieren Sie alle Ergebnis-Tags</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12242"/>
+        <location filename="../Main/MainWindow.ui" line="12397"/>
         <source>Detect substations</source>
         <translation>Unterstationen erkennen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12254"/>
+        <location filename="../Main/MainWindow.ui" line="12409"/>
         <source>Optimal hosting capacity</source>
         <translation>Optimale Hosting-Kapazität</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12257"/>
+        <location filename="../Main/MainWindow.ui" line="12412"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Nodal hosting capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the nodal hosting capacity calculation using the selected optimization method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Knoten-Hosting-Kapazität&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie die Berechnung der Knoten-Hosting-Kapazität mit der ausgewählten Optimierungsmethode durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12272"/>
+        <location filename="../Main/MainWindow.ui" line="12427"/>
         <source>Enable server mode</source>
         <translation>Aktivieren Sie den Servermodus</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12284"/>
+        <location filename="../Main/MainWindow.ui" line="12439"/>
         <source>Record video</source>
         <translation>Video aufnehmen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12287"/>
+        <location filename="../Main/MainWindow.ui" line="12442"/>
         <source>Record video of the schematic</source>
         <translation>Nehmen Sie ein Video des Schaltplans auf</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12299"/>
+        <location filename="../Main/MainWindow.ui" line="12454"/>
         <source>Save  differential</source>
         <translation>Differenz sparen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12311"/>
+        <location filename="../Main/MainWindow.ui" line="12466"/>
         <source>Consolidate coordinates</source>
         <translation>Koordinaten konsolidieren</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12323"/>
+        <location filename="../Main/MainWindow.ui" line="12478"/>
         <source>Add selected as new remedial action</source>
         <translation>Ausgewählte als neue Abhilfemaßnahme hinzufügen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12326"/>
+        <location filename="../Main/MainWindow.ui" line="12481"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add remedial action&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new remedial action from the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Abhilfemaßnahme hinzufügen&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Erstellen Sie aus der Schaltplanauswahl eine neue Abhilfemaßnahme&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12332"/>
+        <location filename="../Main/MainWindow.ui" line="12487"/>
         <source>Ctrl+A, Ctrl+R</source>
         <translation>Strg+A, Strg+R</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12341"/>
+        <location filename="../Main/MainWindow.ui" line="12496"/>
         <source>Detect facilities</source>
         <translation>Einrichtungen erkennen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12350"/>
+        <location filename="../Main/MainWindow.ui" line="12505"/>
         <source>Rotate</source>
         <translation>Drehen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12362"/>
+        <location filename="../Main/MainWindow.ui" line="12517"/>
         <source>Reset diagram coordinates to database values</source>
         <translation>Diagrammkoordinaten auf Datenbankwerte zurücksetzen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12374"/>
+        <location filename="../Main/MainWindow.ui" line="12529"/>
         <source>Reliability analysis</source>
         <translation>Zuverlässigkeitsanalyse</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12377"/>
+        <location filename="../Main/MainWindow.ui" line="12532"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Reliability study&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the reliability calculation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Zuverlässigkeitsstudie&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie die Zuverlässigkeitsberechnung durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12392"/>
+        <location filename="../Main/MainWindow.ui" line="12547"/>
         <source>Color buses by...</source>
         <translation>Farbige Busse von...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12404"/>
+        <location filename="../Main/MainWindow.ui" line="12559"/>
         <source>Color substations by...</source>
         <translation>Farbige Umspannwerke von...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12419"/>
+        <location filename="../Main/MainWindow.ui" line="12574"/>
         <source>Select buses by...</source>
         <translation>Busse auswählen nach...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12446"/>
+        <location filename="../Main/MainWindow.ui" line="12601"/>
         <source>Substation wizard</source>
         <translation>Unterstationsassistent</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12449"/>
+        <location filename="../Main/MainWindow.ui" line="12604"/>
         <source>Add substation with a wizard form</source>
         <translation>Fügen Sie eine Unterstation mit einem Assistentenformular hinzu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12452"/>
+        <location filename="../Main/MainWindow.ui" line="12607"/>
         <source>Ctrl+A, Ctrl+S</source>
         <translation>Strg+A, Strg+S</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12464"/>
+        <location filename="../Main/MainWindow.ui" line="12619"/>
         <source>Dynamic RMS Simulation</source>
         <translation>Dynamische RMS-Simulation</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12467"/>
+        <location filename="../Main/MainWindow.ui" line="12622"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMS Simulation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a dynamic RMS simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMS Simulation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine dynamische RMS-Simulation aus&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12479"/>
+        <location filename="../Main/MainWindow.ui" line="12634"/>
         <source>Prepare RMS dynamic plots</source>
         <translation>Bereiten Sie dynamische Diagramme RMS vor</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12482"/>
+        <location filename="../Main/MainWindow.ui" line="12637"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepare RMS dynamic plots&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the RMS dynamic plot editor before running the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Bereiten Sie dynamische Diagramme RMS vor&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Öffnen Sie den dynamischen Ploteditor RMS, bevor Sie die Simulation ausführen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12494"/>
-        <location filename="../Main/MainWindow.ui" line="12497"/>
+        <location filename="../Main/MainWindow.ui" line="12649"/>
+        <location filename="../Main/MainWindow.ui" line="12652"/>
         <source>Small-Signal RMS Simulation</source>
         <translation>Kleinsignal-RMS-Simulation</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12500"/>
+        <location filename="../Main/MainWindow.ui" line="12655"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Small Signal Simulation (RMS)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an RMS Small Signal stability analysis simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Kleinsignalsimulation (RMS)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine RMS-Kleinsignal-Stabilitätsanalysesimulation durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12512"/>
+        <location filename="../Main/MainWindow.ui" line="12667"/>
         <source>Add rms event to selected</source>
         <translation>RMS-Ereignis zur Auswahl hinzufügen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12515"/>
+        <location filename="../Main/MainWindow.ui" line="12670"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add RMS event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new RMS event to the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Fügen Sie das Ereignis RMS hinzu&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Erstellen Sie ein neues RMS-Ereignis zur Schaltplanauswahl&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12530"/>
+        <location filename="../Main/MainWindow.ui" line="12685"/>
         <source>Clear highlights</source>
         <translation>Klare Highlights</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12545"/>
+        <location filename="../Main/MainWindow.ui" line="12700"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;State estimation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a state estimation analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Zustandsschätzung&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine Zustandsschätzungsanalyse durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12557"/>
+        <location filename="../Main/MainWindow.ui" line="12712"/>
         <source>Add short circuit events</source>
         <translation>Fügen Sie Kurzschlussereignisse hinzu</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12569"/>
+        <location filename="../Main/MainWindow.ui" line="12724"/>
         <source>PSS/e Raw / Rawx</source>
         <translation>PSS/e Raw / Rawx</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12578"/>
+        <location filename="../Main/MainWindow.ui" line="12733"/>
         <source>Power Factory DGS</source>
         <translation>Energiefabrik DGS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12587"/>
+        <location filename="../Main/MainWindow.ui" line="12742"/>
         <source>Matpower</source>
         <translation>Matpower</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12596"/>
+        <location filename="../Main/MainWindow.ui" line="12751"/>
         <source>UCTE</source>
         <translation>UCTE</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12605"/>
+        <location filename="../Main/MainWindow.ui" line="12760"/>
         <source>CGMES</source>
         <translation>CGMES</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12614"/>
+        <location filename="../Main/MainWindow.ui" line="12769"/>
         <source>Power Grid Models</source>
         <translation>Stromnetzmodelle</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12623"/>
+        <location filename="../Main/MainWindow.ui" line="12778"/>
         <source>CIM</source>
         <translation>CIM</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12632"/>
+        <location filename="../Main/MainWindow.ui" line="12787"/>
         <source>H5</source>
         <translation>H5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12641"/>
+        <location filename="../Main/MainWindow.ui" line="12796"/>
         <source>JSON</source>
         <translation>JSON</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12650"/>
+        <location filename="../Main/MainWindow.ui" line="12805"/>
         <source>Microsoft Excel</source>
         <translation>Microsoft Excel</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12659"/>
+        <location filename="../Main/MainWindow.ui" line="12814"/>
         <source>SQLite</source>
         <translation>SQLite</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12668"/>
+        <location filename="../Main/MainWindow.ui" line="12823"/>
         <source>Profiles</source>
         <translation>Profile</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12695"/>
-        <location filename="../Main/MainWindow.ui" line="12713"/>
+        <location filename="../Main/MainWindow.ui" line="12850"/>
+        <location filename="../Main/MainWindow.ui" line="12868"/>
         <source>Catalogue</source>
         <translation>Katalog</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12722"/>
+        <location filename="../Main/MainWindow.ui" line="12877"/>
         <source>Clean Room</source>
         <translation>Reinraum</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12725"/>
+        <location filename="../Main/MainWindow.ui" line="12880"/>
         <source>Cleam room utility to produce an machine learning statistical representation of the static time series</source>
         <translation>Reinraum-Dienstprogramm zur Erstellung einer statistischen Darstellung der statischen Zeitreihe durch maschinelles Lernen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12737"/>
+        <location filename="../Main/MainWindow.ui" line="12892"/>
         <source>Procedural grid expansion</source>
         <translation>Verfahrenstechnische Netzerweiterung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12746"/>
+        <location filename="../Main/MainWindow.ui" line="12901"/>
         <source>Catalogue element optimization</source>
         <translation>Katalogelementoptimierung</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12755"/>
+        <location filename="../Main/MainWindow.ui" line="12910"/>
         <source>Dynamic EMT Simulation</source>
         <translation>Dynamische EMT-Simulation</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12758"/>
+        <location filename="../Main/MainWindow.ui" line="12913"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMT Simulation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a dynamic EMT simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMT Simulation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine dynamische EMT-Simulation aus&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12770"/>
+        <location filename="../Main/MainWindow.ui" line="12925"/>
         <source>Prepare EMT dynamic plots</source>
         <translation>Bereiten Sie dynamische Diagramme EMT vor</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12773"/>
+        <location filename="../Main/MainWindow.ui" line="12928"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepare EMT dynamic plots&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the EMT dynamic plot editor before running the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Bereiten Sie dynamische Diagramme EMT vor&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Öffnen Sie den dynamischen Ploteditor EMT, bevor Sie die Simulation ausführen&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12785"/>
-        <location filename="../Main/MainWindow.ui" line="12788"/>
+        <location filename="../Main/MainWindow.ui" line="12940"/>
+        <location filename="../Main/MainWindow.ui" line="12943"/>
         <source>Small-Signal EMT Simulation</source>
         <translation>Kleinsignal-EMT-Simulation</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12791"/>
+        <location filename="../Main/MainWindow.ui" line="12946"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Small Signal Simulation (EMT)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an EMT Small Signal stability analysis simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Kleinsignalsimulation (EMT)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine EMT-Kleinsignal-Stabilitätsanalysesimulation durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12799"/>
+        <location filename="../Main/MainWindow.ui" line="12954"/>
         <source>Reticular</source>
         <translation>Retikulär</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12804"/>
+        <location filename="../Main/MainWindow.ui" line="12959"/>
         <source>Straight</source>
         <translation>Gerade</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12813"/>
+        <location filename="../Main/MainWindow.ui" line="12968"/>
         <source>ai_chat</source>
         <translation>ai_chat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12816"/>
+        <location filename="../Main/MainWindow.ui" line="12971"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;VeraGrid AI &lt;/span&gt;&lt;/p&gt;&lt;p&gt;Show the VeraGrid AI chat&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;VeraGrid AI &lt;/span&gt;&lt;/p&gt;&lt;p&gt;Zeigen Sie den VeraGrid AI-Chat an&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12828"/>
+        <location filename="../Main/MainWindow.ui" line="12983"/>
         <source>Power Flow 3-phase</source>
         <translation>Leistungsfluss 3-phasig</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12831"/>
+        <location filename="../Main/MainWindow.ui" line="12986"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power Flow 3-phase&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an unbalanced 3-phase power flow analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Leistungsfluss 3-phasig&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Führen Sie eine unsymmetrische 3-Phasen-Leistungsflussanalyse durch&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12846"/>
+        <location filename="../Main/MainWindow.ui" line="13001"/>
         <source>Add emt event to selected</source>
         <translation>EMT-Ereignis zur Auswahl hinzufügen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12849"/>
+        <location filename="../Main/MainWindow.ui" line="13004"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add EMT event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new EMT event to the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Fügen Sie das Ereignis EMT hinzu&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Erstellen Sie ein neues EMT-Ereignis zur Schaltplanauswahl&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12858"/>
+        <location filename="../Main/MainWindow.ui" line="13013"/>
         <source>Set model (x,y) based on (lat, lon)</source>
         <translation>Modell (x,y) basierend auf (lat, lon) festlegen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12867"/>
+        <location filename="../Main/MainWindow.ui" line="13022"/>
         <source>Restore investments</source>
         <translation>Investitionen wiederherstellen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12879"/>
+        <location filename="../Main/MainWindow.ui" line="13034"/>
         <source>Veragrid Scenario</source>
         <translation>Veragrid-Szenario</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12888"/>
+        <location filename="../Main/MainWindow.ui" line="13043"/>
         <source>Show dynamic models editor</source>
         <translation>Editor für dynamische Modelle anzeigen</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12900"/>
+        <location filename="../Main/MainWindow.ui" line="13055"/>
         <source>Repair diagram</source>
         <translation>Reparaturdiagramm</translation>
     </message>

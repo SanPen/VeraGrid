@@ -152,7 +152,6 @@ def get_pi_current_controller(vfactory: VarFactory, name: str = "current_ctrl_iq
                                            output_var_name = 'vq_hat'
                                            )
 
-    control_block_iq.algebraic_vars.remove(vq_hat)
     control_block_iq.init_eqs = {
     }
 
@@ -166,7 +165,6 @@ def get_pi_current_controller(vfactory: VarFactory, name: str = "current_ctrl_iq
                                            output_var_name='vd_hat'
                                            )
 
-    control_block_id.algebraic_vars.remove(vd_hat)
     control_block_id.init_eqs = {
     }
 

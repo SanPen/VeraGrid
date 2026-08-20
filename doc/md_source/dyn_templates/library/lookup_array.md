@@ -1,5 +1,14 @@
 # Lookup array
 
+<!-- veragrid-block-introduction:start -->
+**Lookup array** evaluates a tabulated characteristic instead of assuming one closed-form equation. Interpolation maps measured or commanded inputs to empirical outputs such as efficiency, saturation, capability, or control schedules while preserving the supplied breakpoints.
+
+## Typical use
+
+- Use it when manufacturer data or a calibrated characteristic is available as points or a matrix.
+- Keep breakpoints ordered and decide deliberately whether values outside the table clip or extrapolate.
+<!-- veragrid-block-introduction:end -->
+
 ### Purpose
 
 This block approximates one nonlinear relation from one one-dimensional stored array.

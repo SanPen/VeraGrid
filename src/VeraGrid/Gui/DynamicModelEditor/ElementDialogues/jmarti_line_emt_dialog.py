@@ -5,6 +5,39 @@ from PySide6 import QtWidgets
 from VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_options import JMartiFitOptions
 
 
+def build_float_spin(minimum: float,
+                     maximum: float,
+                     decimals: int,
+                     step: float) -> QtWidgets.QDoubleSpinBox:
+    """Build one configured floating-point spin box.
+
+    :param minimum: Minimum allowed value.
+    :param maximum: Maximum allowed value.
+    :param decimals: Decimal precision.
+    :param step: Single-step size.
+    :return: Configured spin box.
+    """
+    widget: QtWidgets.QDoubleSpinBox = QtWidgets.QDoubleSpinBox()
+    widget.setRange(float(minimum), float(maximum))
+    widget.setDecimals(int(decimals))
+    widget.setSingleStep(float(step))
+    widget.setAccelerated(True)
+    return widget
+
+
+def build_int_spin(minimum: int, maximum: int) -> QtWidgets.QSpinBox:
+    """Build one configured integer spin box.
+
+    :param minimum: Minimum allowed value.
+    :param maximum: Maximum allowed value.
+    :return: Configured spin box.
+    """
+    widget: QtWidgets.QSpinBox = QtWidgets.QSpinBox()
+    widget.setRange(int(minimum), int(maximum))
+    widget.setAccelerated(True)
+    return widget
+
+
 class JMartiLineEmtDialog(QtWidgets.QDialog):
     """
     Modal dialog used to configure one EMT J_Marti line block.
@@ -123,7 +156,7 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
         self._source_combo.addItem("Import NPZ frequency samples", "import_frequency_samples")
         self._source_form_layout.addRow("Source mode", self._source_combo)
 
-        self._float_inputs["nominal_frequency_hz"] = self._build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=1.0)
+        self._float_inputs["nominal_frequency_hz"] = build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=1.0)
         self._source_form_layout.addRow("Nominal frequency [Hz]", self._float_inputs["nominal_frequency_hz"])
 
         self._import_path_edit = QtWidgets.QLineEdit(group)
@@ -139,7 +172,7 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
         path_layout.addWidget(browse_button)
         self._source_form_layout.addRow("NPZ file", self._import_path_widget)
 
-        self._import_length_spin = self._build_float_spin(minimum=0.0, maximum=1.0e12, decimals=6, step=1.0)
+        self._import_length_spin = build_float_spin(minimum=0.0, maximum=1.0e12, decimals=6, step=1.0)
         self._source_form_layout.addRow("Imported line length [m]", self._import_length_spin)
 
         self._source_help_label = QtWidgets.QLabel(group)
@@ -157,9 +190,9 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
         """
         group = QtWidgets.QGroupBox("Automatic Sweep", self)
         form_layout = QtWidgets.QFormLayout(group)
-        self._float_inputs["sweep_low_hz"] = self._build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=1.0)
-        self._float_inputs["sweep_high_hz"] = self._build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=10.0)
-        self._int_inputs["sweep_sample_count"] = self._build_int_spin(minimum=2, maximum=8192)
+        self._float_inputs["sweep_low_hz"] = build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=1.0)
+        self._float_inputs["sweep_high_hz"] = build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=10.0)
+        self._int_inputs["sweep_sample_count"] = build_int_spin(minimum=2, maximum=8192)
         form_layout.addRow("Sweep low [Hz]", self._float_inputs["sweep_low_hz"])
         form_layout.addRow("Sweep high [Hz]", self._float_inputs["sweep_high_hz"])
         form_layout.addRow("Sweep samples", self._int_inputs["sweep_sample_count"])
@@ -175,13 +208,13 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
         _unused = options
         group = QtWidgets.QGroupBox("Frequency Windows", self)
         form_layout = QtWidgets.QFormLayout(group)
-        self._float_inputs["reference_frequency_hz"] = self._build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=1.0)
+        self._float_inputs["reference_frequency_hz"] = build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=1.0)
         self._bool_inputs["use_frequency_exploration_window"] = QtWidgets.QCheckBox(group)
-        self._float_inputs["exploration_low_hz"] = self._build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=1.0)
-        self._float_inputs["exploration_high_hz"] = self._build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=10.0)
+        self._float_inputs["exploration_low_hz"] = build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=1.0)
+        self._float_inputs["exploration_high_hz"] = build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=10.0)
         self._bool_inputs["use_delay_fit_window"] = QtWidgets.QCheckBox(group)
-        self._float_inputs["delay_fit_low_hz"] = self._build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=1.0)
-        self._float_inputs["delay_fit_high_hz"] = self._build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=10.0)
+        self._float_inputs["delay_fit_low_hz"] = build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=1.0)
+        self._float_inputs["delay_fit_high_hz"] = build_float_spin(minimum=0.0, maximum=1.0e9, decimals=4, step=10.0)
         form_layout.addRow("Reference frequency [Hz]", self._float_inputs["reference_frequency_hz"])
         form_layout.addRow("Use exploration window", self._bool_inputs["use_frequency_exploration_window"])
         form_layout.addRow("Exploration low [Hz]", self._float_inputs["exploration_low_hz"])
@@ -201,15 +234,15 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
         _unused = options
         group = QtWidgets.QGroupBox("Rational Fit", self)
         form_layout = QtWidgets.QFormLayout(group)
-        self._float_inputs["decoupling_warning_tolerance"] = self._build_float_spin(minimum=0.0, maximum=1.0, decimals=10, step=1.0e-4)
-        self._float_inputs["loewner_relative_tolerance"] = self._build_float_spin(minimum=0.0, maximum=1.0, decimals=12, step=1.0e-8)
-        self._int_inputs["maximum_model_order"] = self._build_int_spin(minimum=1, maximum=2048)
-        self._int_inputs["forced_model_order"] = self._build_int_spin(minimum=0, maximum=2048)
-        self._int_inputs["minimum_frequency_samples"] = self._build_int_spin(minimum=2, maximum=8192)
-        self._int_inputs["vf_max_iterations"] = self._build_int_spin(minimum=1, maximum=1024)
-        self._float_inputs["vf_pole_shift_tolerance"] = self._build_float_spin(minimum=0.0, maximum=1.0, decimals=12, step=1.0e-8)
+        self._float_inputs["decoupling_warning_tolerance"] = build_float_spin(minimum=0.0, maximum=1.0, decimals=10, step=1.0e-4)
+        self._float_inputs["loewner_relative_tolerance"] = build_float_spin(minimum=0.0, maximum=1.0, decimals=12, step=1.0e-8)
+        self._int_inputs["maximum_model_order"] = build_int_spin(minimum=1, maximum=2048)
+        self._int_inputs["forced_model_order"] = build_int_spin(minimum=0, maximum=2048)
+        self._int_inputs["minimum_frequency_samples"] = build_int_spin(minimum=2, maximum=8192)
+        self._int_inputs["vf_max_iterations"] = build_int_spin(minimum=1, maximum=1024)
+        self._float_inputs["vf_pole_shift_tolerance"] = build_float_spin(minimum=0.0, maximum=1.0, decimals=12, step=1.0e-8)
         self._bool_inputs["vf_enforce_stable_poles"] = QtWidgets.QCheckBox(group)
-        self._float_inputs["vf_stability_real_part_floor"] = self._build_float_spin(minimum=0.0, maximum=1.0e6, decimals=12, step=1.0e-8)
+        self._float_inputs["vf_stability_real_part_floor"] = build_float_spin(minimum=0.0, maximum=1.0e6, decimals=12, step=1.0e-8)
         self._bool_inputs["vf_include_constant_term"] = QtWidgets.QCheckBox(group)
         self._bool_inputs["vf_include_proportional_term"] = QtWidgets.QCheckBox(group)
         form_layout.addRow("Decoupling warning tol.", self._float_inputs["decoupling_warning_tolerance"])
@@ -235,9 +268,9 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
         _unused = options
         group = QtWidgets.QGroupBox("Passivity Checks", self)
         form_layout = QtWidgets.QFormLayout(group)
-        self._int_inputs["passivity_frequency_sample_count"] = self._build_int_spin(minimum=2, maximum=65536)
-        self._float_inputs["passivity_minimum_real_yc_tolerance"] = self._build_float_spin(minimum=0.0, maximum=1.0, decimals=12, step=1.0e-8)
-        self._float_inputs["passivity_maximum_hres_gain_tolerance"] = self._build_float_spin(minimum=0.0, maximum=1.0, decimals=12, step=1.0e-8)
+        self._int_inputs["passivity_frequency_sample_count"] = build_int_spin(minimum=2, maximum=65536)
+        self._float_inputs["passivity_minimum_real_yc_tolerance"] = build_float_spin(minimum=0.0, maximum=1.0, decimals=12, step=1.0e-8)
+        self._float_inputs["passivity_maximum_hres_gain_tolerance"] = build_float_spin(minimum=0.0, maximum=1.0, decimals=12, step=1.0e-8)
         form_layout.addRow("Check sample count", self._int_inputs["passivity_frequency_sample_count"])
         form_layout.addRow("Minimum Re(Yc) tol.", self._float_inputs["passivity_minimum_real_yc_tolerance"])
         form_layout.addRow("Maximum |Hres|-1 tol.", self._float_inputs["passivity_maximum_hres_gain_tolerance"])
@@ -263,42 +296,6 @@ class JMartiLineEmtDialog(QtWidgets.QDialog):
         self._diagnostics_text.setPlaceholderText("Detailed fit diagnostics will be stored here after one successful fit.")
         layout.addWidget(self._diagnostics_text)
         return group
-
-    @staticmethod
-    def _build_float_spin(minimum: float,
-                          maximum: float,
-                          decimals: int,
-                          step: float) -> QtWidgets.QDoubleSpinBox:
-        """
-        Build one configured floating-point spin box.
-
-        :param minimum: Minimum allowed value.
-        :param maximum: Maximum allowed value.
-        :param decimals: Decimal precision.
-        :param step: Single-step size.
-        :return: Configured spin box.
-        """
-        widget = QtWidgets.QDoubleSpinBox()
-        widget.setRange(float(minimum), float(maximum))
-        widget.setDecimals(int(decimals))
-        widget.setSingleStep(float(step))
-        widget.setAccelerated(True)
-        return widget
-
-    @staticmethod
-    def _build_int_spin(minimum: int,
-                        maximum: int) -> QtWidgets.QSpinBox:
-        """
-        Build one configured integer spin box.
-
-        :param minimum: Minimum allowed value.
-        :param maximum: Maximum allowed value.
-        :return: Configured spin box.
-        """
-        widget = QtWidgets.QSpinBox()
-        widget.setRange(int(minimum), int(maximum))
-        widget.setAccelerated(True)
-        return widget
 
     def _apply_default_values(self, options: JMartiFitOptions) -> None:
         """

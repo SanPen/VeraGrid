@@ -52,7 +52,7 @@ At the end of the session, students should be able to:
 
 The system represents a two-bus system with a generator connected to a load by means of a line.
 
-![Two-bus system model](figures/system_model.png)
+![Two-bus system model](figures/dynamics/system_model.png)
 
 ### 3.1. Modelling conventions and per-unit bases
 
@@ -203,18 +203,18 @@ There are no parameters to change.
 
 This is the built model:
 
-![Static RMS model built in VeraGrid](figures/static_model_built.png)
+![Static RMS model built in VeraGrid](figures/dynamics/static_model_built.png)
 
 1. Buses are added by dragging a bus from the Library, located in the left vertical bar, to the centre.
 2. Injections, such as generators and loads, are added by right-clicking on the bus.
 
-![Add injection menu](figures/add_injection_menu.png)
+![Add injection menu](figures/dynamics/add_injection_menu.png)
 
 3. Drag a line connecting the buses to create the line.
 4. Add all static parameters in the left vertical bar for all devices. See the parameter values in [Section 4](#4-device-parameters).
 5. To check if the static model is correct, run a power flow by clicking on the corresponding icon in the upper bar. The result should be the following:
 
-![RMS power-flow result](figures/rms_power_flow_result.png)
+![RMS power-flow result](figures/dynamics/rms_power_flow_result.png)
 
 ### 5.2. Dynamic model construction
 
@@ -225,13 +225,13 @@ VeraGrid allows two different dynamic simulation modes: RMS and EMT. The followi
 
 To open the RMS/EMT editor, right-click on the device to be edited and click the editor to be used. In this case, select the RMS editor.
 
-![Open RMS editor menu](figures/open_emt_editor_menu.png)
+![Open RMS editor menu](figures/dynamics/open_emt_editor_menu.png)
 
 For example, for the generator:
 
 The dynamic editor is divided into two main parts: the main page where the model is created by blocks, and the left bar with the library of blocks and devices available.
 
-![RMS editor with initial blocks](figures/rms_editor_initial_blocks.png)
+![RMS editor with initial blocks](figures/dynamics/rms_editor_initial_blocks.png)
 
 When opening the RMS editor, some blocks are already in the main page: these are the grid connection blocks. In order to dynamically connect the devices, the simulator needs the voltages and currents of the device. These blocks must be connected to the device to be created.
 
@@ -243,7 +243,7 @@ Add the devices by dragging them from the library into the main page. To inspect
 
 This is the final model for the generator:
 
-![Final RMS generator model](figures/rms_generator_model.png)
+![Final RMS generator model](figures/dynamics/rms_generator_model.png)
 
 ### 5.3. Events
 
@@ -254,11 +254,11 @@ Adding events to the dynamic simulations is the way to test different grid scena
 
 To add an event from the static model, click on the device where the event is configured and go to **Events -> Add emt event to selected**. Since there is no `EmtEventsGroup`, it must be created.
 
-![Create EMT events group](figures/create_emt_events_group.png)
+![Create EMT events group](figures/dynamics/create_emt_events_group.png)
 
 Create the `EmtEventsGroup` by giving it a name, for example `simulation1`. After that, add the new events and parametrise them according to [Section 4.4](#44-rms-events).
 
-![EMT event editor](figures/emt_event_editor.png)
+![EMT event editor](figures/dynamics/emt_event_editor.png)
 
 One can see and edit the RMS/EMT EventsGroup and RMS/EMT Events from **Database -> Dynamics**.
 
@@ -268,7 +268,7 @@ One can see and edit the RMS/EMT EventsGroup and RMS/EMT Events from **Database 
 
 To perform an RMS simulation, click the button in the upper bar. The simulation will last a few seconds.
 
-![RMS simulation menu](figures/emt_simulation_menu.png)
+![RMS simulation menu](figures/dynamics/emt_simulation_menu.png)
 
 ### 6.2. Dynamic results
 
@@ -277,7 +277,7 @@ To see the results, go to **Results -> RMS Dynamic**. There, there are two main 
 - **Dynamic results:** all variables available to be plotted can be found here. By double-clicking on a variable, the plot appears.
 - **Dynamic plots:** these are used to create plots with more than one variable. Dynamic plots are added by clicking on the `+` sign in the upper-right corner. Variables from the dynamic results can be dragged to the plots and then plotted by double-clicking the plot.
 
-![RMS dynamic results](figures/emt_dynamic_results.png)
+![RMS dynamic results](figures/dynamics/emt_dynamic_results.png)
 
 ## 7. Suggestions
 

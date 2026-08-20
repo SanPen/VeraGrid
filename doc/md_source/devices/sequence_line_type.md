@@ -16,6 +16,7 @@ Profile-enabled properties: none.
 |code                    |str                |            |False    |         |Secondary ID                                                                    |False      |       |
 |rdfid                   |str                |            |False    |         |RDF ID for further compatibility                                                |False      |       |
 |action                  |enum ActionType    |            |False    |         |Object action to perform. Only used for model merging.                          |False      |       |
+|selected_to_merge       |bool               |            |False    |         |Whether this object should be applied during diff merge.                        |False      |       |
 |comment                 |str                |            |False    |         |User comment                                                                    |False      |       |
 |diff_changes            |MergeInformation   |            |False    |         |                                                                                |False      |       |
 |modelling_authority     |Modelling Authority|            |False    |         |Modelling authority of this asset                                               |False      |       |
@@ -38,9 +39,11 @@ Profile-enabled properties: none.
 |R                       |float              |Ohm/km      |False    |         |Positive-sequence resistance per km                                             |False      |       |
 |X                       |float              |Ohm/km      |False    |         |Positive-sequence reactance per km                                              |False      |       |
 |B                       |float              |uS/km       |False    |         |Positive-sequence shunt susceptance per km                                      |False      |       |
+|G                       |float              |uS/km       |False    |         |Positive-sequence shunt conductance per km                                      |False      |       |
 |R0                      |float              |Ohm/km      |False    |         |Zero-sequence resistance per km                                                 |False      |       |
 |X0                      |float              |Ohm/km      |False    |         |Zero-sequence reactance per km                                                  |False      |       |
 |B0                      |float              |uS/km       |False    |         |Zero-sequence shunt susceptance per km                                          |False      |       |
+|G0                      |float              |uS/km       |False    |         |Zero-sequence shunt conductance per km                                          |False      |       |
 |Cnf                     |float              |nF/km       |False    |         |Positive-sequence shunt conductance per km                                      |False      |       |
 |Cnf0                    |float              |nF/km       |False    |         |Zero-sequence shunt conductance per km                                          |False      |       |
 |use_conductance         |bool               |            |False    |         |Use conductance? else the susceptance is used                                   |False      |       |

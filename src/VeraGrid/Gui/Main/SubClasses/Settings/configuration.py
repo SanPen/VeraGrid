@@ -267,6 +267,7 @@ class ConfigurationMain(ResultsMain):
                 ApplicationLanguage.CANTONESE,
                 ApplicationLanguage.JAPANESE,
                 ApplicationLanguage.HINDI,
+                ApplicationLanguage.POLISH,
                 ApplicationLanguage.ARABIC,
             ]
         )

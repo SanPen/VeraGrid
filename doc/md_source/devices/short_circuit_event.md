@@ -9,21 +9,23 @@ This device defines study events, outages, switching actions, or remedial action
 ### Registered properties
 Profile-enabled properties: none.
 
-|    name    |      class_type       |unit|mandatory|max_chars|                                 descriptions                                 |has_profile|comment|
-|------------|-----------------------|----|---------|---------|------------------------------------------------------------------------------|-----------|-------|
-|idtag       |str                    |    |False    |         |Unique ID                                                                     |False      |       |
-|name        |str                    |    |False    |         |Name of the device.                                                           |False      |       |
-|code        |str                    |    |False    |         |Secondary ID                                                                  |False      |       |
-|rdfid       |str                    |    |False    |         |RDF ID for further compatibility                                              |False      |       |
-|action      |enum ActionType        |    |False    |         |Object action to perform. Only used for model merging.                        |False      |       |
-|comment     |str                    |    |False    |         |User comment                                                                  |False      |       |
-|diff_changes|MergeInformation       |    |False    |         |                                                                              |False      |       |
-|device_idtag|str                    |    |False    |         |Unique ID                                                                     |False      |       |
-|tpe         |enum DeviceType        |    |False    |         |Device type                                                                   |False      |       |
-|device_name |str                    |    |False    |         |Device name                                                                   |False      |       |
-|fault_type  |enum FaultType         |    |False    |         |Type of short circuit                                                         |False      |       |
-|method      |enum MethodShortCircuit|    |False    |         |Method of short circuit                                                       |False      |       |
-|phases      |enum PhasesShortCircuit|    |False    |         |Phases involved                                                               |False      |       |
-|active      |bool                   |    |False    |         |If true the short-circuit activates when calculated, otherwise is deactivated.|False      |       |
-|r_fault     |float                  |p.u.|False    |         |Resistance of the fault.This is used for short circuit studies.               |False      |       |
-|x_fault     |float                  |p.u.|False    |         |Reactance of the fault.This is used for short circuit studies.                |False      |       |
+|      name       |      class_type       |unit|mandatory|max_chars|                                 descriptions                                 |has_profile|comment|
+|-----------------|-----------------------|----|---------|---------|------------------------------------------------------------------------------|-----------|-------|
+|idtag            |str                    |    |False    |         |Unique ID                                                                     |False      |       |
+|name             |str                    |    |False    |         |Name of the device.                                                           |False      |       |
+|code             |str                    |    |False    |         |Secondary ID                                                                  |False      |       |
+|rdfid            |str                    |    |False    |         |RDF ID for further compatibility                                              |False      |       |
+|action           |enum ActionType        |    |False    |         |Object action to perform. Only used for model merging.                        |False      |       |
+|selected_to_merge|bool                   |    |False    |         |Whether this object should be applied during diff merge.                      |False      |       |
+|comment          |str                    |    |False    |         |User comment                                                                  |False      |       |
+|diff_changes     |MergeInformation       |    |False    |         |                                                                              |False      |       |
+|device_idtag     |str                    |    |False    |         |Unique ID                                                                     |False      |       |
+|tpe              |enum DeviceType        |    |False    |         |Device type                                                                   |False      |       |
+|device_name      |str                    |    |False    |         |Device name                                                                   |False      |       |
+|fault_type       |enum FaultType         |    |False    |         |Type of short circuit                                                         |False      |       |
+|method           |enum MethodShortCircuit|    |False    |         |Method of short circuit                                                       |False      |       |
+|phases           |enum PhasesShortCircuit|    |False    |         |Phases involved                                                               |False      |       |
+|active           |bool                   |    |False    |         |If true the short-circuit activates when calculated, otherwise is deactivated.|False      |       |
+|constz           |bool                   |    |False    |         |If true the constant power and current loads are linearised.                  |False      |       |
+|r_fault          |float                  |p.u.|False    |         |Resistance of the fault.This is used for short circuit studies.               |False      |       |
+|x_fault          |float                  |p.u.|False    |         |Reactance of the fault.This is used for short circuit studies.                |False      |       |

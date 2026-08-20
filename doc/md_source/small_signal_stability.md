@@ -1,4 +1,4 @@
-# Small-Signal Stability Analysis
+# 🔍Small-Signal Stability Analysis
 
 RMS small-signal stability analysis linearizes the RMS dynamic model around one operating point and computes the corresponding eigenvalues and modal information.
 
@@ -19,7 +19,7 @@ If `ss_assessment_time > 0.0`, the driver first runs an RMS simulation from `t =
 
 This is the Small-Signal settings page:
 
-![](figures/smallsignal_settings.png)
+![](figures/dynamics/dynamic_settings.png)
 
 ### Small-signal settings
 
@@ -138,21 +138,54 @@ Sparse calculation is the correct choice when:
 
 ## Results
 
-The RMS small-signal study currently provides the following main results.
+The RMS small-signal study provides four result tables.
 
-- **Modes**: Eigenvalue table with real part, imaginary part, damping ratio, and oscillation frequency.
+- **Modes**: Modal properties and the source table for the S-domain plot.
 - **Participation factors**: Normalized participation-factor matrix. Row `k`, column `i` gives the participation of variable `k` in mode `i`.
 - **State matrix**: Linearized state or generalized system matrix used by the modal analysis.
-- **Right eigenvectors**: Right eigenvector matrix associated with the computed modes.
-- **S-domain plot**: Eigenvalue plot in the complex plane.
-  - The imaginary axis can be shown in `rad/s` or `Hz`.
+- **Right eigenvectors**: Right eigenvector matrix and the source table for the mode-shape plots.
 
-![](figures/SDomain_plot_VeraGrid.png)
+### Modes and the S-domain plot
+
+The **Modes** result replaces the former separate **S-Domain Plot** and **S-Domain Plot in Hz** entries. It contains one row per eigenvalue and the following columns.
+
+| Column | Description |
+|--------|-------------|
+| `Real` | Real part of the eigenvalue. |
+| `Imaginary [rad/s]` | Signed imaginary part in radians per second. |
+| `Imaginary [Hz]` | Signed imaginary part divided by $2\pi$. Both members of a conjugate pair are retained. |
+| `Damping ratio` | Damping ratio reported by the modal calculation. |
+| `Oscillation frequency` | Frequency in hertz assigned only to the representative member of an oscillatory conjugate pair. Other rows contain `NaN`. |
+
+Clicking **Plot** with no selection draws all visible modes in the complex plane using `Real` and `Imaginary [rad/s]`. The plot includes the $\zeta=5\%$ damping boundary, and hovering over a point shows its mode name and coordinates.
+
+To plot a subset of modes, select cells or complete rows in the **Modes** table before clicking **Plot**. A filter applied to the table also limits the visible modes. When there is no selection, every mode that remains visible after filtering is plotted.
+
+To use hertz on the imaginary axis:
+
+1. Hold `Ctrl` and select the complete `Real` and `Imaginary [Hz]` column headers.
+2. Optionally select the desired modal rows while keeping both complete columns selected.
+3. Click **Plot**.
+
+Only a complete pair consisting of `Real` and one of the two `Imaginary` columns changes the plot coordinates. Selecting ordinary cells chooses modes; it does not redefine the coordinate pair.
+
+![](figures/dynamics/SDomain_plot_VeraGrid.png)
+
+### Right eigenvectors and mode-shape plots
+
+The **Right eigenvectors** table contains state variables in its rows and modes in its columns. Oscillatory representative modes include their frequency on a second line in the column header, for example `Mode 4` followed by `f=0.443 Hz`.
+
+Clicking **Plot** draws each selected mode in a separate real-versus-imaginary subplot. Each state component is represented by an arrow from the origin. The vectors are phase-aligned with their dominant visible component and normalized so that this component has unit magnitude; this preserves the relative magnitude and phase of the other components.
+
+Modes can be chosen by selecting their column headers or any cells in their columns. The column-name filter can also be used to reduce the table before plotting; for example, `col like Hz` keeps the oscillatory representative modes whose headers include a frequency. Select complete row headers to restrict the plotted state components. If there is no selection, all visible modes and state rows are plotted.
+
+Complex-plane plotting is available for the original **Modes** and **Right eigenvectors** representations. Table transformations such as transpose, absolute value, or cumulative distribution produce a generic transformed table and therefore use the standard series plot.
 
 ### Result interpretation notes
 
-- `damping_ratios` and `conjugate_frequencies` are reported for oscillatory modes.
-- Non-oscillatory modes keep `NaN` entries in those vectors.
+- `damping_ratios` and `conjugate_frequencies` are reported for the representative member of each oscillatory conjugate pair.
+- The other member of the conjugate pair and non-oscillatory modes keep `NaN` entries in those vectors.
+- `Imaginary [Hz]` is different from `Oscillation frequency`: the former is a signed coordinate available for every eigenvalue, while the latter identifies one representative per oscillatory pair.
 - In generalized RMS cases, result tables can include algebraic variables in addition to state variables.
 
 <!-- BEGIN RESULTS REGISTERED PROPERTIES -->
@@ -169,8 +202,8 @@ The RMS small-signal stability result stores modal, matrix, and labeling data fo
 | `algebraic_vars_array` | `StrVec` | Labels of the RMS algebraic variables used when generalized results include algebraic rows or columns. |
 | `eigenvalues` | `Vec` | Eigenvalues of the linearized RMS system. |
 | `participation_factors` | `Mat` | Normalized participation-factor matrix relating variables to modes. |
-| `damping_ratios` | `Vec` | Damping ratio of each oscillatory mode. Non-oscillatory modes remain `NaN`. |
-| `conjugate_frequencies` | `Vec` | Oscillation frequency of each oscillatory mode in hertz. Non-oscillatory modes remain `NaN`. |
+| `damping_ratios` | `Vec` | Damping ratio assigned to the representative member of each oscillatory conjugate pair. Other entries remain `NaN`. |
+| `conjugate_frequencies` | `Vec` | Frequency in hertz assigned to the representative member of each oscillatory conjugate pair. Other entries remain `NaN`. |
 | `state_matrix` | `Mat` | Linearized matrix used by the RMS modal analysis. |
 | `right_eigenvectors` | `Mat` | Right eigenvector matrix associated with the computed modes. |
 
@@ -364,7 +397,7 @@ def stability_andes():
 
 Comparing the case of Kundur two-area system VeraGrid gets exactly the same results.
 
-![](figures/andes_vs_veragrid_kundur.png)
+![](figures/dynamics/andes_vs_veragrid_kundur.png)
 
 The following plot template is used to compare results.
 

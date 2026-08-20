@@ -64,7 +64,11 @@ class SharedVarReferenceType:
     __slots__ = ("name", "uid")
     # this class is related to var factory, and a dictionary contains all the "shared vars" that have a certain reference.
     def __init__(self, name: str, uid: int| None = None):
+        """Create an identity shared by variables that represent one signal.
 
+        :param name: Human-readable name of the shared signal reference.
+        :param uid: Existing reference identifier, or ``None`` to allocate one.
+        """
         self.uid: int = _new_uid() if uid is None else uid
         self.name = name
 
@@ -341,6 +345,12 @@ class Const(Expr):
     # class to represent constants symbolically
 
     def __init__(self, value: NUMBER | None = None, uid: int | None = None, name: str = ""):
+        """Create a symbolic constant node.
+
+        :param value: Numeric constant value, or ``None`` for an undefined constant.
+        :param uid: Existing expression identifier, or ``None`` to allocate one.
+        :param name: Optional descriptive name used by editors and serializers.
+        """
         super().__init__(uid=uid)
         self.value: NUMBER | None = value
         self.name: str = name
@@ -444,16 +454,24 @@ class Var(Expr):
                  base_var: Var | None = None):
 
         """
+        Create a symbolic variable and its optional identity relationships.
 
-        :param name:
-        :param shared_reference:
-        :param reference
-        :param network_conn:
-        :param uid:
-        :param diff_var:
+        :param name: Symbol name used in equations and user interfaces.
+        :param reference: Optional power-flow reference represented by the variable.
+        :param network_conn: Whether the variable belongs to a network connection interface.
+        :param shared_reference: Optional identity shared with equivalent signal variables.
+        :param non_mutable_uid: Stable physical variable identity.
+        :param uid: Current symbolic identifier, or ``None`` to allocate one.
+        :param diff_var: Optional derivative variable associated with this base variable.
+        :param base_var: Optional state variable associated with this derivative variable.
         """
         super().__init__(uid=uid)
-        self.non_mutable_uid: int = _new_uid() if uid is None else uid
+        # Preserve the physical variable identity independently from the
+        # mutable UID used to represent the currently connected signal.
+        if non_mutable_uid is None:
+            self.non_mutable_uid: int = _new_uid() if uid is None else uid
+        else:
+            self.non_mutable_uid = non_mutable_uid
         self.name: str = name
         self._ref: VarPowerFlowReferenceType | None = reference
         self._network_conn: bool = network_conn
@@ -771,11 +789,12 @@ class BinOp(Expr):
 
     def __init__(self, left: Expr, op: str, right: Expr, uid: int | None = None):
         """
+        Create a symbolic binary-operation node.
 
-        :param left:
-        :param op:
-        :param right:
-        :param uid:
+        :param left: Symbolic expression on the left-hand side.
+        :param op: Supported binary operator token.
+        :param right: Symbolic expression on the right-hand side.
+        :param uid: Existing expression identifier, or ``None`` to allocate one.
         """
         super().__init__(uid=uid)
         self.op: str = op
@@ -998,10 +1017,11 @@ class UnOp(Expr):
 
     def __init__(self, op: str, operand: Expr, uid: int | None = None):
         """
+        Create a symbolic unary-operation node.
 
-        :param op:
-        :param operand:
-        :param uid:
+        :param op: Supported unary operator token.
+        :param operand: Symbolic expression to which the operator is applied.
+        :param uid: Existing expression identifier, or ``None`` to allocate one.
         """
         super().__init__(uid=uid)
         self.op: str = op
@@ -1254,14 +1274,43 @@ def _evaluate_binary_function(name: str, arg1: NUMBER, arg2: NUMBER) -> NUMBER:
         raise ValueError(f"Unknown binary function '{name}'")
 
 
+def _binary_function_to_python(name: str, arg1: str, arg2: str) -> str:
+    """
+    Emit the NumPy source for one binary symbolic function.
+
+    Legacy files may contain ``Func2`` nodes named ``min`` or ``max``.  Those
+    names represent two-operand element-wise operations, whereas ``np.min``
+    and ``np.max`` interpret their second positional argument as an axis.
+    Keeping the mapping here shared by every code-generation path prevents the
+    same persisted expression from acquiring different runtime semantics.
+
+    :param name: Symbolic binary function name.
+    :param arg1: Generated source for the first argument.
+    :param arg2: Generated source for the second argument.
+    :return: NumPy-compatible Python expression source.
+    """
+    if name == "atan2":
+        source: str = f"np.arctan2({arg2}, {arg1})"
+    elif name == "min":
+        source = f"np.minimum({arg1}, {arg2})"
+    elif name == "max":
+        source = f"np.maximum({arg1}, {arg2})"
+    else:
+        source = f"np.{name}({arg1}, {arg2})"
+
+    return source
+
+
 class Func(Expr):
     __slots__ = ("op", "arg")
 
     def __init__(self, arg: Expr, op: str = "", uid: int | None = None):
         """
+        Create a symbolic single-argument function node.
 
-        :param op:
-        :param uid:
+        :param arg: Symbolic argument passed to the function.
+        :param op: Supported function name.
+        :param uid: Existing expression identifier, or ``None`` to allocate one.
         """
         super().__init__(uid=uid)
         self.op: str = op
@@ -1637,6 +1686,13 @@ class Func2(Expr):
     __slots__ = ("name", "arg1", "arg2")
 
     def __init__(self, name: str, arg1: Expr, arg2: Expr, uid: int | None = None):
+        """Create a symbolic two-argument function node.
+
+        :param name: Supported binary function name.
+        :param arg1: First symbolic function argument.
+        :param arg2: Second symbolic function argument.
+        :param uid: Existing expression identifier, or ``None`` to allocate one.
+        """
         super().__init__(uid=uid)
         self.name: str = name
         self.arg1: Expr = arg1
@@ -1789,6 +1845,7 @@ def _expr_to_dict(expr: Expr | Comparison) -> Dict[str, Any]:
                 "type": "Var",
                 "name": expr.name,
                 "uid": expr.uid,
+                "non_mutable_uid": expr.non_mutable_uid,
                 "base_var": "None"
             }
         else:
@@ -1796,6 +1853,7 @@ def _expr_to_dict(expr: Expr | Comparison) -> Dict[str, Any]:
                 "type": "Var",
                 "name": expr.name,
                 "uid": expr.uid,
+                "non_mutable_uid": expr.non_mutable_uid,
                 "base_var": _expr_to_dict(expr.base_var),
             }
 
@@ -1866,8 +1924,16 @@ def _dict_to_expr(data: Dict[str, Any]) -> Expr | Var | Const | Comparison:
         else:
             obj = Const(data["value"])
     elif t == "Var":
+        non_mutable_uid_value: object = data.get("non_mutable_uid", data["uid"])
+        if isinstance(non_mutable_uid_value, int) and not isinstance(non_mutable_uid_value, bool):
+            non_mutable_uid: int = non_mutable_uid_value
+        else:
+            # Legacy dictionaries only persisted the mutable UID. At creation
+            # time that value was also the physical variable identity.
+            non_mutable_uid = data["uid"]
+
         if data["base_var"] == "None":
-            obj = Var(data["name"])
+            obj = Var(name=data["name"], non_mutable_uid=non_mutable_uid)
         else:
             # reconstruct base_var
             base_data = data["base_var"]
@@ -1875,7 +1941,9 @@ def _dict_to_expr(data: Dict[str, Any]) -> Expr | Var | Const | Comparison:
             if not isinstance(base_var, Var):
                 raise TypeError("base_var must be a Var")
 
-            obj = Var(name=data["name"], base_var=base_var)
+            obj = Var(name=data["name"],
+                      non_mutable_uid=non_mutable_uid,
+                      base_var=base_var)
 
 
     elif t == "BinOp":
@@ -2061,10 +2129,7 @@ def expression2numba(expr: Expr,
     elif isinstance(expr, Func2):
         arg1 = expression2numba(expr.arg1, compiler_names_dict, 0)
         arg2 = expression2numba(expr.arg2, compiler_names_dict, 0)
-        if expr.name == "atan2":
-            s = f"np.arctan2({arg2}, {arg1})"
-        else:
-            s = f"np.{expr.name}({arg1}, {arg2})"
+        s = _binary_function_to_python(name=expr.name, arg1=arg1, arg2=arg2)
 
     else:
         raise TypeError(type(expr))
@@ -2115,10 +2180,7 @@ def _emit_event_params_eq(expr: Expr, uid_map_t: Dict[int, str] | None = None) -
     if isinstance(expr, Func2):
         arg1 = _emit_event_params_eq(expr.arg1, uid_map_t)
         arg2 = _emit_event_params_eq(expr.arg2, uid_map_t)
-        if expr.name == "atan2":
-            return f"np.arctan2({arg2}, {arg1})"
-        else:
-            return f"np.{expr.name}({arg1}, {arg2})"
+        return _binary_function_to_python(name=expr.name, arg1=arg1, arg2=arg2)
     else:
         raise ValueError(f"Unsupported expression '{type(expr).__name__}' in _emit_params_eq")
 
@@ -2163,10 +2225,7 @@ def _emit_one(expr: Expr, uid_map_vars: Dict[int, str], uid_map_event_params: Di
     if isinstance(expr, Func2):
         arg1 = _emit_one(expr.arg1, uid_map_vars, uid_map_event_params, uid_map_params)
         arg2 = _emit_one(expr.arg2, uid_map_vars, uid_map_event_params, uid_map_params)
-        if expr.name == "atan2":
-            return f"np.arctan2({arg2}, {arg1})"
-        else:
-            return f"np.{expr.name}({arg1}, {arg2})"
+        return _binary_function_to_python(name=expr.name, arg1=arg1, arg2=arg2)
 
     raise TypeError(expr)
 
@@ -2308,6 +2367,12 @@ def _call_symbolic_parser_function(function_name: str, arg_expr: Expr) -> Expr:
         return heaviside(arg_expr)
     elif function_name == "rand":
         return rand(arg_expr)
+    elif function_name == "floor":
+        return floor(arg_expr)
+    elif function_name == "ceil":
+        return ceil(arg_expr)
+    elif function_name == "round":
+        return round(arg_expr)
     else:
         raise ValueError(f"Unknown function '{function_name}'")
 
@@ -2337,6 +2402,9 @@ def _get_symbolic_parser_function_names_internal() -> List[str]:
         "angle",
         "heaviside",
         "rand",
+        "floor",
+        "ceil",
+        "round",
     ]
 
 

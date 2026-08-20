@@ -25,7 +25,7 @@ simulation = ContingencyAnalysisTimeSeriesDriver(
     grid=main_circuit,
     options=options_,
     time_indices=main_circuit.get_all_time_indices(),
-    engine=EngineType.NewtonPA
+    engine=EngineType.VeraGrid
 )
 
 simulation.run()

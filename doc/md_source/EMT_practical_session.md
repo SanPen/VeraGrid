@@ -51,7 +51,7 @@ At the end of the session, students should be able to:
 
 The system represents a two-bus system with a generator connected to a load by means of a line.
 
-![System model](figures/system_model.png)
+![System model](figures/dynamics/system_model.png)
 
 ### 3.1. Modelling conventions and per-unit bases
 
@@ -166,12 +166,12 @@ To keep the exercise simple, the **R load** is selected. The configuration must 
 
 This is the built model:
 
-![Static model built in VeraGrid](figures/static_model_built.png)
+![Static model built in VeraGrid](figures/dynamics/static_model_built.png)
 
 1. Add buses by dragging a bus from the **Library** in the left vertical bar to the centre of the diagram.
 2. Add injections, such as generators, by right-clicking on the bus.
 
-   ![Add injection menu](figures/add_injection_menu.png)
+   ![Add injection menu](figures/dynamics/add_injection_menu.png)
 
 3. To add VSC or DC lines, first configure the DC buses as DC buses. To change the properties of a device or bus, use the left vertical bar and go to **Properties**. Set the DC buses as `is_dc = True`. Take this opportunity to change all parameters in all buses. See the parameter values in [Section 4](#4-device-parameters). After that, drag a line connecting the buses to create the VSC devices between the AC and DC buses and the DC line between the DC buses.
 4. Add all static parameters in the left vertical bar for all devices. See the parameter values in [Section 4](#4-device-parameters).
@@ -183,19 +183,19 @@ This is the built model:
 
    1. Add the towers and wires in the catalogue. Go to **Actions -> Add default catalogue** and select the required templates. RMS and EMT templates can also be added and used from this menu.
 
-      ![Add default catalogue](figures/add_default_catalogue.png)
+      ![Add default catalogue](figures/dynamics/add_default_catalogue.png)
 
    2. Go to **Database -> Catalogue -> Towers**. Add a new tower by clicking the `+` button, or right-click and edit an existing tower. The tower editor will open. Select the required wire, add the wire positions and phases, and set the voltage of the line.
 
-      ![Tower editor](figures/tower_editor.png)
+      ![Tower editor](figures/dynamics/tower_editor.png)
 
    3. Return to the main diagram and double-click on the line. Go to **Line editor**, select the required tower template, load the template values and click **Accept**. The `R`, `X`, `B` and rate values of the line will be updated in the line properties.
 
-      ![Line editor](figures/line_editor.png)
+      ![Line editor](figures/dynamics/line_editor.png)
 
 6. To check whether the static model is correct, run a power flow by clicking the power-flow icon in the upper bar. The result should be similar to the following:
 
-   ![Power flow result](figures/power_flow_result.png)
+   ![Power flow result](figures/dynamics/power_flow_result.png)
 
 ### 5.2. Dynamic model construction
 
@@ -211,7 +211,7 @@ There are two ways to assign dynamic models to a device:
 
 To open the RMS/EMT editor, right-click on the device to be edited and select the editor to be used. In this case, select the **EMT editor**.
 
-![Open EMT editor menu](figures/open_emt_editor_menu.png)
+![Open EMT editor menu](figures/dynamics/open_emt_editor_menu.png)
 
 For example, for the generator:
 
@@ -220,7 +220,7 @@ The dynamic editor is divided into two main parts:
 - The main page, where the model is created by blocks.
 - The left bar, which contains the library of available blocks and devices.
 
-![EMT editor initial blocks](figures/emt_editor_initial_blocks.png)
+![EMT editor initial blocks](figures/dynamics/emt_editor_initial_blocks.png)
 
 When opening the EMT editor, some blocks are already in the main page. These are the grid connection blocks. To dynamically connect devices, the simulator needs the voltages and currents of the device. These blocks must be connected to the device to be created.
 
@@ -234,11 +234,11 @@ To inspect a model, select it and then use the left vertical bar:
 
 This is the final model for the generator when selecting the Thevenin equivalent generator, for example:
 
-![Generator Thevenin model](figures/generator_thevenin_model.png)
+![Generator Thevenin model](figures/dynamics/generator_thevenin_model.png)
 
-The following is an example of building a full converter with all its controllers:
+The following is an example of building a generator with all its controllers:
 
-![Full converter example](figures/full_converter_example.png)
+![Full converter example](figures/dynamics/full_generator_example.png)
 
 In both cases, the neutral wire connections are not used. Leave them as they are; the solver will understand that there is no neutral wire for this model.
 
@@ -255,11 +255,11 @@ To add an event from the static model, click on the device where the event is co
 
 Create the `EmtEventsGroup` by giving it a name, for example `simulation1`.
 
-![Create EMT events group](figures/create_emt_events_group.png)
+![Create EMT events group](figures/dynamics/create_emt_events_group.png)
 
 After that, add the new events and parametrise them according to [Section 4.4](#44-emt-events). These are, for example, some possible events to change the reference power of a VSC:
 
-![EMT event editor](figures/emt_event_editor.png)
+![EMT event editor](figures/dynamics/emt_event_editor.png)
 
 The RMS/EMT `EventsGroup` and RMS/EMT events can be seen and edited from **Database -> Dynamics**.
 
@@ -269,7 +269,7 @@ The RMS/EMT `EventsGroup` and RMS/EMT events can be seen and edited from **Datab
 
 To perform an EMT simulation, click the dynamic simulation button in the upper bar. The simulation will last a few seconds.
 
-![EMT simulation menu](figures/emt_simulation_menu.png)
+![EMT simulation menu](figures/dynamics/emt_simulation_menu.png)
 
 ### 6.2. Dynamic results
 
@@ -278,7 +278,7 @@ To see the results, go to **Results -> EMT Dynamic**. There are two main parts:
 - **Dynamic results:** this section contains all variables available to be plotted. By double-clicking on a variable, the plot appears.
 - **Dynamic plots:** this section is used to create plots with more than one variable. Dynamic plots are added by clicking on the `+` sign in the upper-right corner. Variables from the dynamic results can be dragged to the plots and then plotted by double-clicking the plot.
 
-![EMT dynamic results](assets/emt_dynamic_results.png)
+![EMT dynamic results](figures/dynamics/emt_dynamic_results.png)
 
 ## 7. Suggestions
 

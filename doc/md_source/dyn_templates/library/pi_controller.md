@@ -1,5 +1,14 @@
 # PI controller
 
+<!-- veragrid-block-introduction:start -->
+**PI controller** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
 ### Purpose
 
 A PI controller produces a control output from the sum of a proportional term and an integral term applied to an error signal.

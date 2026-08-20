@@ -33,6 +33,8 @@ def prepare_block_for_editing(
     block2blocktype = dict()
     if not block.children and not block.empty() and block.is_eq_decomposable():
         block2blocktype= decompose_block_in_place(block, var_factory)
+    else:
+        pass
     return block, block2blocktype
 
 

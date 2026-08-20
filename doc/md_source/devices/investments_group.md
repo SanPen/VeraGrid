@@ -9,16 +9,17 @@ This device is used by expansion-planning and candidate-investment workflows.
 ### Registered properties
 Profile-enabled properties: none.
 
-|    name     |   class_type   |unit|mandatory|max_chars|                                descriptions                                 |has_profile|comment|
-|-------------|----------------|----|---------|---------|-----------------------------------------------------------------------------|-----------|-------|
-|idtag        |str             |    |False    |         |Unique ID                                                                    |False      |       |
-|name         |str             |    |False    |         |Name of the device.                                                          |False      |       |
-|code         |str             |    |False    |         |Secondary ID                                                                 |False      |       |
-|rdfid        |str             |    |False    |         |RDF ID for further compatibility                                             |False      |       |
-|action       |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.                       |False      |       |
-|comment      |str             |    |False    |         |User comment                                                                 |False      |       |
-|diff_changes |MergeInformation|    |False    |         |                                                                             |False      |       |
-|category     |str             |    |False    |         |Some tag to category the investment group                                    |False      |       |
-|discount_rate|float           |%   |False    |         |Investment group discount rate                                               |False      |       |
-|CAPEX        |float           |€   |False    |         |Capital Expenditure of the group (added to the individual investments' capex)|False      |       |
-|color        |str             |    |False    |         |Color to paint                                                               |False      |       |
+|      name       |   class_type   |unit|mandatory|max_chars|                                descriptions                                 |has_profile|comment|
+|-----------------|----------------|----|---------|---------|-----------------------------------------------------------------------------|-----------|-------|
+|idtag            |str             |    |False    |         |Unique ID                                                                    |False      |       |
+|name             |str             |    |False    |         |Name of the device.                                                          |False      |       |
+|code             |str             |    |False    |         |Secondary ID                                                                 |False      |       |
+|rdfid            |str             |    |False    |         |RDF ID for further compatibility                                             |False      |       |
+|action           |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.                       |False      |       |
+|selected_to_merge|bool            |    |False    |         |Whether this object should be applied during diff merge.                     |False      |       |
+|comment          |str             |    |False    |         |User comment                                                                 |False      |       |
+|diff_changes     |MergeInformation|    |False    |         |                                                                             |False      |       |
+|category         |str             |    |False    |         |Some tag to category the investment group                                    |False      |       |
+|discount_rate    |float           |%   |False    |         |Investment group discount rate                                               |False      |       |
+|CAPEX            |float           |€   |False    |         |Capital Expenditure of the group (added to the individual investments' capex)|False      |       |
+|color            |str             |    |False    |         |Color to paint                                                               |False      |       |

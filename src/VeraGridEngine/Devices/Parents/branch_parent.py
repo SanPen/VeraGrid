@@ -180,6 +180,7 @@ class BranchParent(DynamicDevice):
             tpe=str,
             definition='Color to paint the element in the map diagram',
             is_color=True,
+            cat=[PrpCat.TP],
         ),
         GCProp(
             prop_name='bus_from_pos',

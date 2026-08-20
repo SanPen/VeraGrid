@@ -9,22 +9,23 @@ This device supports RMS or EMT event scheduling and dynamic simulations.
 ### Registered properties
 Profile-enabled properties: none.
 
-|        name        |          class_type           |unit|mandatory|max_chars|                     descriptions                     |has_profile|comment|
-|--------------------|-------------------------------|----|---------|---------|------------------------------------------------------|-----------|-------|
-|idtag               |str                            |    |False    |         |Unique ID                                             |False      |       |
-|name                |str                            |    |False    |         |Name of the device.                                   |False      |       |
-|code                |str                            |    |False    |         |Secondary ID                                          |False      |       |
-|rdfid               |str                            |    |False    |         |RDF ID for further compatibility                      |False      |       |
-|action              |enum ActionType                |    |False    |         |Object action to perform. Only used for model merging.|False      |       |
-|comment             |str                            |    |False    |         |User comment                                          |False      |       |
-|diff_changes        |MergeInformation               |    |False    |         |                                                      |False      |       |
-|device_idtag        |str                            |    |False    |         |Unique ID                                             |False      |       |
-|tpe                 |enum DeviceType                |    |False    |         |Device type                                           |False      |       |
-|device_name         |str                            |    |False    |         |Device name                                           |False      |       |
-|parameter           |VarType                        |    |False    |         |parameter that the event changes                      |False      |       |
-|time                |float                          |    |False    |         |Time when the event occurs                            |False      |       |
-|end_time            |float                          |    |False    |         |End time used by ramp events                          |False      |       |
-|value               |float                          |    |False    |         |New value for the parameter                           |False      |       |
-|group               |Emt Events Group               |    |False    |         |EmtEvent group                                        |False      |       |
-|force_step_alignment|bool                           |    |False    |         |Force step alignment                                  |False      |       |
-|transition_type     |enum DynamicEventTransitionType|    |False    |         |Transition profile for the event                      |False      |       |
+|        name        |          class_type           |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|--------------------|-------------------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag               |str                            |    |False    |         |Unique ID                                               |False      |       |
+|name                |str                            |    |False    |         |Name of the device.                                     |False      |       |
+|code                |str                            |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid               |str                            |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action              |enum ActionType                |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge   |bool                           |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment             |str                            |    |False    |         |User comment                                            |False      |       |
+|diff_changes        |MergeInformation               |    |False    |         |                                                        |False      |       |
+|device_idtag        |str                            |    |False    |         |Unique ID                                               |False      |       |
+|tpe                 |enum DeviceType                |    |False    |         |Device type                                             |False      |       |
+|device_name         |str                            |    |False    |         |Device name                                             |False      |       |
+|parameter           |VarType                        |    |False    |         |parameter that the event changes                        |False      |       |
+|time                |float                          |    |False    |         |Time when the event occurs                              |False      |       |
+|end_time            |float                          |    |False    |         |End time used by ramp events                            |False      |       |
+|value               |float                          |    |False    |         |New value for the parameter                             |False      |       |
+|group               |Emt Events Group               |    |False    |         |EmtEvent group                                          |False      |       |
+|force_step_alignment|bool                           |    |False    |         |Force step alignment                                    |False      |       |
+|transition_type     |enum DynamicEventTransitionType|    |False    |         |Transition profile for the event                        |False      |       |

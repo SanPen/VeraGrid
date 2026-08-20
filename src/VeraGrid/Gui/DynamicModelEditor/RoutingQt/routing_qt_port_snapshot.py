@@ -17,7 +17,7 @@ class QtRoutingPortSnapshot:
     """
     Store one Qt port snapshot for the new routing engine.
 
-    :returns: None.
+    :return: None.
     """
 
     __slots__ = ("_block_uid", "_port_index", "_is_input", "_position", "_port_side")
@@ -38,7 +38,7 @@ class QtRoutingPortSnapshot:
         :param is_input: Whether the port is one input port.
         :param position: Port position in scene coordinates.
         :param port_side: Physical block side where the port is attached.
-        :returns: None.
+        :return: None.
         """
         self._block_uid: int = int(block_uid)
         self._port_index: int = int(port_index)
@@ -46,43 +46,21 @@ class QtRoutingPortSnapshot:
         self._position: RoutingPoint = position
         self._port_side: RoutingPortSide = port_side
 
-    def get_block_uid(self) -> int:
-        """
-        Return the owning block identifier.
-
-        :returns: Owning block identifier.
-        """
-        return self._block_uid
-
     def get_port_index(self) -> int:
         """
-        Return the port index.
-
-        :returns: Port index.
+        :return: Port index.
         """
         return self._port_index
 
-    def is_input_port(self) -> bool:
-        """
-        Return whether the snapshot belongs to one input port.
-
-        :returns: Input-port state.
-        """
-        return self._is_input
-
     def get_position(self) -> RoutingPoint:
         """
-        Return the scene-space port position.
-
-        :returns: Scene-space port position.
+        :return: Scene-space port position.
         """
         return self._position
 
     def get_port_side(self) -> RoutingPortSide:
         """
-        Return the physical block side of the port.
-
-        :returns: Physical block side of the port.
+        :return: Physical block side of the port.
         """
         return self._port_side
 
@@ -96,7 +74,7 @@ def _resolve_port_side(port_item: PortItem) -> RoutingPortSide:
     from graphics again.
 
     :param port_item: Qt port item to inspect.
-    :returns: Physical block side of the port.
+    :return: Physical block side of the port.
     """
     parent_item: object = port_item.subsystem
     if isinstance(parent_item, QGraphicsRectItem):
@@ -131,7 +109,7 @@ def build_qt_routing_port_snapshot(port_item: PortItem) -> QtRoutingPortSnapshot
     Build one immutable snapshot from one live Qt port item.
 
     :param port_item: Qt port item to snapshot.
-    :returns: Immutable Qt routing port snapshot.
+    :return: Immutable Qt routing port snapshot.
     """
     # The Qt layer resolves all live graphics data once and freezes it into a
     # plain snapshot so the routing engine never depends on mutable Qt items.

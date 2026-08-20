@@ -1,5 +1,14 @@
 # Inverse Clarke transform (power invariant)
 
+<!-- veragrid-block-introduction:start -->
+**Inverse Clarke transform (power invariant)** is a coordinate-transformation block. In three-phase analysis, Clarke and Park transforms separate stationary or rotating components so sinusoidal phase quantities can be controlled as nearly constant d-q signals. The selected scaling determines whether amplitude or instantaneous power is preserved.
+
+## Typical use
+
+- Use it to connect phase-domain electrical quantities with d-q or sequence-domain control laws.
+- Keep angle orientation, axis alignment, phase order, and power/amplitude convention consistent.
+<!-- veragrid-block-introduction:end -->
+
 ### Purpose
 
 This block reconstructs three-phase quantities from power-invariant `alpha-beta-0` components.

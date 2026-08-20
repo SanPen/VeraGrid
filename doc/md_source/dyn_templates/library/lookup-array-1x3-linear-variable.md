@@ -1,5 +1,14 @@
 # Lookup array 1x3 (linear variable)
 
+<!-- veragrid-block-introduction:start -->
+**Lookup array 1x3 (linear variable)** represents passive network physics through resistance, inductance, capacitance, coupling, or switching topology. Its equations enforce voltage-current constitutive relations and therefore affect energy storage, damping, propagation, fault current, or grounding behavior.
+
+## Typical use
+
+- Use it to reproduce the electrical path between sources, converters, machines, and loads.
+- Keep phases, terminal orientation, connection type, and SI/per-unit parameter bases consistent.
+<!-- veragrid-block-introduction:end -->
+
 Lookup array 1x3 (linear variable) interpolates between three x-y points supplied as input signals. Use it when the lookup points themselves must change during simulation.
 
 ## Interface table

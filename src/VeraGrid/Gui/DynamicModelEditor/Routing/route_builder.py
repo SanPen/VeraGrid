@@ -6,19 +6,18 @@
 from __future__ import annotations
 
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_elements import RoutingNode
-from VeraGrid.Gui.DynamicModelEditor.Routing.routing_elements import RoutingNodeKind
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_elements import RoutingPoint
-from VeraGridEngine.enumerations import RoutingPortSide
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_elements import RoutingSegment
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_graph import RoutingGraph
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_geometry import RoutingGeometry
+from VeraGridEngine.enumerations import RoutingNodeKind, RoutingPortSide
 
 
 class RouteBuilder:
     """
     Build one deterministic orthogonal routing graph between two ports.
 
-    :returns: None.
+    :return: None.
     """
 
     __slots__ = (
@@ -43,7 +42,7 @@ class RouteBuilder:
         :param destination_position: Destination port position.
         :param source_port_side: Physical side of the source port on its block.
         :param destination_port_side: Physical side of the destination port on its block.
-        :returns: None.
+        :return: None.
         """
         self._source_position: RoutingPoint = source_position.copy()
         self._destination_position: RoutingPoint = destination_position.copy()
@@ -55,7 +54,7 @@ class RouteBuilder:
         """
         Build one deterministic orthogonal graph.
 
-        :returns: Built routing graph.
+        :return: Built routing graph.
         """
         routing_graph: RoutingGraph = RoutingGraph(source_node_id=1, destination_node_id=2)
         source_node: RoutingNode = RoutingNode(
@@ -90,7 +89,7 @@ class RouteBuilder:
         rather than the two ports themselves.
 
         :param routing_graph: Graph under construction.
-        :returns: None.
+        :return: None.
         """
         route_points: list[RoutingPoint] = self._build_stubbed_route_points()
         # The builder owns the only topology-from-scratch step. Once the full
@@ -102,7 +101,7 @@ class RouteBuilder:
         """
         Build one full route including both terminal stubs.
 
-        :returns: Route points including both ports and both stubs.
+        :return: Route points including both ports and both stubs.
         """
         route_points: list[RoutingPoint] = list()
         source_stub: RoutingPoint = self._build_stub_point(
@@ -140,7 +139,7 @@ class RouteBuilder:
 
         :param start_position: Effective route start.
         :param end_position: Effective route end.
-        :returns: Ordered route points including both endpoints.
+        :return: Ordered route points including both endpoints.
         """
         route_points: list[RoutingPoint] = list()
         route_points.append(start_position.copy())
@@ -168,7 +167,7 @@ class RouteBuilder:
 
         :param port_position: Port position.
         :param port_side: Physical side of the port.
-        :returns: Stub endpoint.
+        :return: Stub endpoint.
         """
         return self._geometry.build_port_stub_point(
             port_position=port_position,
@@ -185,9 +184,9 @@ class RouteBuilder:
 
         :param routing_graph: Graph under construction.
         :param route_points: Ordered route points including both ports.
-        :returns: None.
+        :return: None.
         """
-        node_ids: list[int] = [1]
+        node_ids: list[int] = list((1,))
         next_node_id: int = 3
         interior_point_count: int = len(route_points) - 2
         point_index: int
@@ -227,7 +226,7 @@ class RouteBuilder:
         :param segment_id: Segment identifier.
         :param start_node_id: Start node identifier.
         :param end_node_id: End node identifier.
-        :returns: Routing segment.
+        :return: Routing segment.
         """
         route_segment: RoutingSegment = RoutingSegment(
             segment_id=segment_id,

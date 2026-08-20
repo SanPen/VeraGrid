@@ -25,6 +25,7 @@ Precedence levels (higher binds tighter):
 
 from __future__ import annotations
 
+import math
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -130,16 +131,66 @@ def _wrap(latex: str, needs: bool, *, big: bool = False) -> str:
 # ---------------------------------------------------------------------------
 
 
+def _format_real_number_latex(value: float) -> str:
+    """Format one real scalar as unambiguous mathematical LaTeX.
+
+    :param value: Real constant stored by the symbolic expression.
+    :return: Integer, decimal, or scientific notation suitable for MathText.
+    """
+    if not math.isfinite(value):
+        return str(value)
+    elif value == int(value) and abs(value) < 1e15:
+        return str(int(value))
+    else:
+        pass
+    formatted: str = f"{value:.6g}"
+    if "e" in formatted:
+        mantissa: str
+        exponent: str
+        mantissa, exponent = formatted.split("e", 1)
+        return rf"{mantissa} \times 10^{{{int(exponent)}}}"
+    else:
+        return formatted
+
+
 def _print_const(expr: Const) -> str:
     """Render a constant as a plain number."""
     if expr.value is None:
         return r"\bot"
-    v = expr.value
-    if isinstance(v, float):
-        if v == int(v) and abs(v) < 1e15:
-            return str(int(v))
-        return f"{v:.6g}"
-    return str(v)
+    else:
+        pass
+    value: object = expr.value
+    if isinstance(value, complex):
+        real_component: float = float(value.real)
+        imaginary_component: float = float(value.imag)
+        if imaginary_component == 0.0:
+            return _format_real_number_latex(real_component)
+        else:
+            pass
+        imaginary_magnitude: float = abs(imaginary_component)
+        if imaginary_magnitude == 1.0:
+            imaginary_term: str = r"\mathrm{j}"
+        else:
+            imaginary_term = (
+                _format_real_number_latex(imaginary_magnitude) + r"\mathrm{j}"
+            )
+        if real_component == 0.0:
+            if imaginary_component < 0.0:
+                return f"-{imaginary_term}"
+            else:
+                return imaginary_term
+        else:
+            pass
+        if imaginary_component < 0.0:
+            sign: str = "-"
+        else:
+            sign = "+"
+        real_term: str = _format_real_number_latex(real_component)
+        return f"({real_term} {sign} {imaginary_term})"
+    elif isinstance(value, float):
+        return _format_real_number_latex(value)
+    else:
+        return str(value)
 
 
 def _print_var(expr: Var) -> str:
@@ -190,10 +241,12 @@ def _print_mul(left_latex: str, right_latex: str,
         return f"{left_latex} \\cdot {right_latex}"
 
     if _is_atom_like(left) and _is_atom_like(right):
-        return f"{left_latex}{right_latex}"
+        # Explicit multiplication avoids rendering ``speed * RPM`` as
+        # ``speed(RPM)`` when the right atom was previously parenthesized.
+        return f"{left_latex} \\cdot {right_latex}"
 
     if _is_atom_like(right):
-        return f"{left_latex}{right_latex}"
+        return f"{left_latex} \\cdot {right_latex}"
 
     return f"{left_latex} \\cdot {right_latex}"
 
@@ -212,60 +265,84 @@ def _print_unop(expr: UnOp) -> str:
 
 
 def _print_binop(expr: BinOp, parent_prec: int) -> str:
-    op = expr.op
+    """Render a binary expression while preserving operator precedence.
+
+    :param expr: Binary symbolic node to convert.
+    :param parent_prec: Precedence required by the parent expression.
+    :return: Semantically equivalent LaTeX.
+    """
+    op: str = expr.op
 
     if op == "+":
-        lp = _latex(expr.left, _ADD)
-        rp = _latex(expr.right, _ADD, right=True)
+        lp: str = _latex(expr.left, _ADD)
+        rp: str = _latex(expr.right, _ADD, right=True)
         return _wrap(f"{lp} + {rp}", _needs_parens(expr, parent_prec, _ADD))
 
-    if op == "-":
+    elif op == "-":
         lp = _latex(expr.left, _ADD)
         rp = _latex(expr.right, _ADD, right=True)
+        if isinstance(expr.right, BinOp) and expr.right.op in ("+", "-"):
+            # Subtraction is not associative. Retaining the right-hand group
+            # is essential: a - (b + c) and a - (b - c) otherwise change
+            # mathematical meaning when exported.
+            rp = _wrap(rp, True)
+        else:
+            pass
         return _wrap(f"{lp} - {rp}", _needs_parens(expr, parent_prec, _ADD))
 
-    if op == "*":
-        left_needs = _needs_parens(expr.left, _MUL, _MUL)
-        right_needs = _needs_parens(expr.right, _MUL, _MUL, right=True)
-        lp = _wrap(_latex(expr.left, _MUL), left_needs)
-        rp = _wrap(_latex(expr.right, _MUL, right=True), right_needs)
-        result = _print_mul(lp, rp, expr.left, expr.right)
+    elif op == "*":
+        # Each recursive child printer already compares its real precedence
+        # with ``_MUL``. Applying ``_needs_parens`` with a hard-coded child
+        # precedence of ``_MUL`` parenthesized every right-hand atom and made a
+        # product such as ``speed * RPM`` look like a function call.
+        lp = _latex(expr.left, _MUL)
+        rp = _latex(expr.right, _MUL, right=True)
+        result: str = _print_mul(lp, rp, expr.left, expr.right)
         return _wrap(result, _needs_parens(expr, parent_prec, _MUL))
 
-    if op == "/":
-        num = _latex(expr.left, _CMP)
-        den = _latex(expr.right, _CMP)
+    elif op == "/":
+        numerator: str = _latex(expr.left, _CMP)
+        denominator: str = _latex(expr.right, _CMP)
         return _wrap(
-            f"\\frac{{{num}}}{{{den}}}",
+            f"\\frac{{{numerator}}}{{{denominator}}}",
             _needs_parens(expr, parent_prec, _DIV),
         )
 
-    if op == "**":
-        base_needs = _needs_parens(expr.left, _POW, _POW)
-        base = _wrap(_latex(expr.left, _POW), base_needs, big=base_needs)
-        exp_str = _latex(expr.right, _POW, right=True)
+    elif op == "**":
+        base_needs: bool = _needs_parens(expr.left, _POW, _POW)
+        base: str = _wrap(_latex(expr.left, _POW), base_needs, big=base_needs)
+        exponent: str = _latex(expr.right, _POW, right=True)
         return _wrap(
-            f"{base}^{{{exp_str}}}",
+            f"{base}^{{{exponent}}}",
             _needs_parens(expr, parent_prec, _POW),
         )
 
-    lp = _latex(expr.left, _ATOM)
-    rp = _latex(expr.right, _ATOM)
-    return f"{lp} {op} {rp}"
+    else:
+        lp = _latex(expr.left, _ATOM)
+        rp = _latex(expr.right, _ATOM)
+        return f"{lp} {op} {rp}"
 
 
 def _print_func(expr: Func) -> str:
-    tex_name = _FUNC_LATEX.get(expr.op, r"\operatorname{" + expr.op + "}")
-    inner = _latex(expr.arg, _CMP)
+    """Render one unary symbolic function with valid MathText grouping.
 
-    if expr.op == "abs":
+    :param expr: Unary symbolic function to convert.
+    :return: MathText-compatible LaTeX.
+    """
+    tex_name: str = _FUNC_LATEX.get(expr.op, r"\operatorname{" + expr.op + "}")
+    inner: str = _latex(expr.arg, _CMP)
+
+    if expr.op == "sqrt":
+        # MathText requires a braced radicand. Supplying a scalable delimiter
+        # as the next token made square roots fall back to visible source code.
+        return f"{tex_name}{{{inner}}}"
+    elif expr.op == "abs":
         return f"{tex_name}{inner}\\rvert"
-
-    if expr.op in ("floor", "ceil"):
-        close = r"\rfloor" if expr.op == "floor" else r"\rceil"
+    elif expr.op in ("floor", "ceil"):
+        close: str = r"\rfloor" if expr.op == "floor" else r"\rceil"
         return f"{tex_name}{inner}{close}"
-
-    return f"{tex_name}\\left({inner}\\right)"
+    else:
+        return f"{tex_name}\\left({inner}\\right)"
 
 
 def _print_func2(expr: Func2) -> str:

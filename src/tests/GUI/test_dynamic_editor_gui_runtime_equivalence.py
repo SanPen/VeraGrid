@@ -6,6 +6,9 @@ import numpy as np
 from PySide6 import QtWidgets
 
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.dynamic_block_preparation import prepare_block_for_editing
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_utilities import create_generic_block
+import VeraGrid.Gui.DynamicModelEditor.dynamic_editor_graphics as graph
 from VeraGridEngine.Devices.Branches.line import Line
 from VeraGridEngine.Devices.Branches.overhead_line_type import OverheadLineType
 from VeraGridEngine.Devices.Branches.wire import Wire
@@ -28,13 +31,15 @@ from VeraGridEngine.Templates.Emt.load_zip_emt_template import get_load_ZIP_emt_
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template
 from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
 from VeraGridEngine.Templates.Rms.genqec_exc_gov_sat_template import get_complete_generator_template_rms
+from VeraGridEngine.Templates.Rms.genrow_rms_template import get_genrow_rms_template
 from VeraGridEngine.Templates.Rms.line_rms_template import get_line_rms_template
 from VeraGridEngine.Templates.Rms.load_rms_template import get_load_rms_template
 from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.symbolic import symbolic_to_string
 from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_emt_template
 from VeraGridEngine.Utils.Symbolic.bus_rms_template import initialize_bus_rms
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import set_emt_model, set_rms_model
-from VeraGridEngine.enumerations import BranchImpedanceMode, DynamicIntegrationMethod, DynamicSimulationMode, DynEditorGraphicsModes, EmtInitializationMethod, EmtSolverTypes, RmsInitializationMethod, ShuntConnectionType, SolverType
+from VeraGridEngine.enumerations import BlockType, BranchImpedanceMode, DynamicIntegrationMethod, DynamicSimulationMode, DynEditorGraphicsModes, EmtInitializationMethod, EmtSolverTypes, RmsInitializationMethod, ShuntConnectionType, SolverType, VarPowerFlowReferenceType
 
 
 def _collect_block_signature(block: Block) -> Dict[str, Any]:
@@ -540,3 +545,450 @@ def test_gui_editor_apply_changes_matches_scripting_for_rms(qt_app: QtWidgets.QA
     assert script_problem.get_algebraic_var_number() == gui_problem.get_algebraic_var_number()
     assert list(script_results.variable_array) == list(gui_results.variable_array)
     assert np.allclose(script_results.values, gui_results.values, rtol=1e-8, atol=1e-8)
+
+
+def test_rms_editor_open_materializes_connection_vars(qt_app: QtWidgets.QApplication) -> None:
+    """
+    Show every RMS root connection variable immediately when an editor opens.
+
+    :param qt_app: Shared Qt application fixture.
+    :return: None.
+    """
+    grid: MultiCircuit
+    generator: Generator
+    line: Line
+    load: Load
+    grid, generator, line, load = _build_two_bus_rms_grid()
+
+    generator.rms_template = get_complete_generator_template_rms(grid.var_factory)
+    load.rms_template = get_load_rms_template(grid.var_factory)
+
+    generator_editor: DynamicBlockEditorGUI = _build_gui_editor(
+        qt_app=qt_app,
+        grid=grid,
+        api_object=generator,
+        mode=DynamicSimulationMode.RMS,
+        root_block=generator.rms_model,
+    )
+    line_editor: DynamicBlockEditorGUI = _build_gui_editor(
+        qt_app=qt_app,
+        grid=grid,
+        api_object=line,
+        mode=DynamicSimulationMode.RMS,
+        root_block=line.rms_model,
+    )
+    load_editor: DynamicBlockEditorGUI = _build_gui_editor(
+        qt_app=qt_app,
+        grid=grid,
+        api_object=load,
+        mode=DynamicSimulationMode.RMS,
+        root_block=load.rms_model,
+    )
+
+    editor: DynamicBlockEditorGUI
+    expected_refs_by_editor: list[tuple[DynamicBlockEditorGUI, set[VarPowerFlowReferenceType]]] = list([
+        (generator_editor, set([
+            VarPowerFlowReferenceType.Vm,
+            VarPowerFlowReferenceType.Va,
+            VarPowerFlowReferenceType.P,
+            VarPowerFlowReferenceType.Q,
+        ])),
+        (line_editor, set([
+            VarPowerFlowReferenceType.Vmf,
+            VarPowerFlowReferenceType.Vaf,
+            VarPowerFlowReferenceType.Vmt,
+            VarPowerFlowReferenceType.Vat,
+            VarPowerFlowReferenceType.Pf,
+            VarPowerFlowReferenceType.Qf,
+            VarPowerFlowReferenceType.Pt,
+            VarPowerFlowReferenceType.Qt,
+        ])),
+        (load_editor, set([
+            VarPowerFlowReferenceType.Vm,
+            VarPowerFlowReferenceType.Va,
+            VarPowerFlowReferenceType.P,
+            VarPowerFlowReferenceType.Q,
+        ])),
+    ])
+
+    for editor, _unused_expected_references in expected_refs_by_editor:
+        assert editor.ui.toolBox.count() == 1
+        assert editor.ui.toolBox.currentWidget() is editor.ui.page_7
+
+    try:
+        for editor, expected_refs in expected_refs_by_editor:
+            visible_refs: set[VarPowerFlowReferenceType] = set()
+            visible_positions: set[tuple[float, float]] = set()
+            scene_item: Any
+            block_type: BlockType
+            semantic_reference: VarPowerFlowReferenceType | None
+            for scene_item in editor.scene.items():
+                if isinstance(scene_item, graph.ProtectedConnectionBlockItem):
+                    if scene_item.subsys is None:
+                        pass
+                    else:
+                        if len(scene_item.subsys.out_vars) == 1 and len(scene_item.subsys.in_vars) == 0:
+                            block_type = BlockType.INPUT_CONN
+                        else:
+                            block_type = BlockType.OUTPUT_CONN
+                        semantic_reference = editor._get_semantic_root_interface_reference(
+                            wrapper_block=scene_item.subsys,
+                            block_type=block_type,
+                        )
+                        if semantic_reference is not None:
+                            visible_refs.add(semantic_reference)
+                            visible_positions.add((scene_item.pos().x(), scene_item.pos().y()))
+                        else:
+                            pass
+                else:
+                    pass
+
+            assert visible_refs == expected_refs
+            assert len(visible_positions) == len(expected_refs)
+    finally:
+        for editor, _expected_refs in expected_refs_by_editor:
+            editor.prepare_to_delete()
+            editor.close()
+            editor.deleteLater()
+
+
+def test_rms_editor_reopen_preserves_persisted_connection_arrows(
+        qt_app: QtWidgets.QApplication,
+) -> None:
+    """
+    Restore RMS arrows from persisted diagram-node wrapper semantics.
+
+    Root-interface wrapper blocks are persisted through their diagram node
+    types. The symbolic ``Block`` must remain unaware of this GUI role, while
+    reopening must still reconstruct the same graphical connections.
+
+    :param qt_app: Shared Qt application fixture.
+    :return: None.
+    """
+    grid: MultiCircuit
+    generator: Generator
+    line: Line
+    load: Load
+    grid, generator, line, load = _build_two_bus_rms_grid()
+
+    # Build the same three RMS models that users assign from the editor library.
+    generator.rms_template = get_complete_generator_template_rms(grid.var_factory)
+    line.rms_template = get_line_rms_template(grid.var_factory)
+    load.rms_template = get_load_rms_template(grid.var_factory)
+
+    devices: List[Generator | Line | Load] = list([generator, line, load])
+    initial_editors: List[DynamicBlockEditorGUI] = list()
+    expected_connection_counts: Dict[int, int] = dict()
+    device: Generator | Line | Load
+    editor: DynamicBlockEditorGUI
+
+    # First opening materializes and persists each template's graphical arrows.
+    for device in devices:
+        editor = _build_gui_editor(
+            qt_app=qt_app,
+            grid=grid,
+            api_object=device,
+            mode=DynamicSimulationMode.RMS,
+            root_block=device.rms_model,
+        )
+        initial_editors.append(editor)
+        expected_connection_counts[device.rms_model.uid] = len(device.rms_model.diagram.con_data)
+
+    for editor in initial_editors:
+        editor.prepare_to_delete()
+        editor.close()
+        editor.deleteLater()
+    qt_app.processEvents()
+
+    # Confirm the symbolic tree and its fallback dictionary boundary contain
+    # no GUI-only wrapper state before exercising the persisted diagram path.
+    for device in devices:
+        for child_block in device.rms_model.children:
+            assert "is_root_interface_wrapper" not in child_block.__dict__
+            assert "is_root_interface_wrapper" not in child_block.to_dict()
+
+    reopened_editors: List[DynamicBlockEditorGUI] = list()
+    try:
+        for device in devices:
+            editor = _build_gui_editor(
+                qt_app=qt_app,
+                grid=grid,
+                api_object=device,
+                mode=DynamicSimulationMode.RMS,
+                root_block=device.rms_model,
+            )
+            reopened_editors.append(editor)
+
+            scene_connection_count: int = len([
+                scene_item for scene_item in editor.scene.items()
+                if isinstance(scene_item, graph.ConnectionItem)
+            ])
+            expected_connection_count: int | None = expected_connection_counts.get(device.rms_model.uid, None)
+            assert expected_connection_count is not None
+            assert expected_connection_count > 0
+            assert len(editor.diagram.con_data) == expected_connection_count
+            assert scene_connection_count == expected_connection_count
+    finally:
+        for editor in reopened_editors:
+            editor.prepare_to_delete()
+            editor.close()
+            editor.deleteLater()
+
+
+def test_decomposed_rms_block_persists_and_restores_elk_connections(
+        qt_app: QtWidgets.QApplication,
+) -> None:
+    """
+    Keep ELK-generated equation arrows through the immediate scene rebuild.
+
+    Also cover diagrams saved by the regression with nodes but no graphical
+    branches: reopening must infer the missing arrows from symbolic block
+    connectivity, including arithmetic and unary graphics item types.
+
+    :param qt_app: Shared Qt application fixture.
+    :return: None.
+    """
+    grid: MultiCircuit
+    generator: Generator
+    line: Line
+    load: Load
+    grid, generator, line, load = _build_two_bus_rms_grid()
+    del line
+    del load
+
+    wrapper_block: Block = get_genrow_rms_template(grid.var_factory).block
+    decomposable_block: Block = wrapper_block.children[0]
+    prepared_block: Block
+    block_types: Dict[int, BlockType]
+    prepared_block, block_types = prepare_block_for_editing(
+        block=decomposable_block,
+        var_factory=grid.var_factory,
+    )
+    assert len(prepared_block.children) > 0
+    assert len(block_types) == len(prepared_block.children)
+
+    first_editor: DynamicBlockEditorGUI = DynamicBlockEditorGUI(
+        var_factory=grid.var_factory,
+        root_block=wrapper_block,
+        current_block=prepared_block,
+        api_object=generator,
+        circuit=grid,
+        mode=DynamicSimulationMode.RMS,
+        current_theme=DynEditorGraphicsModes.LIGHT,
+        templates_list=list(),
+        is_root_editor=False,
+        modal=False,
+        workspace_embedded=False,
+        block2blocktype=block_types,
+    )
+    first_editor.show()
+    qt_app.processEvents()
+
+    expected_edge_count: int = len(
+        first_editor._build_elk_layout_graph(
+            child_blocks=prepared_block.children,
+            input_output_blocks=list(),
+        ).edges
+    )
+    first_scene_connections: List[graph.ConnectionItem] = [
+        scene_item for scene_item in first_editor.scene.items()
+        if isinstance(scene_item, graph.ConnectionItem)
+    ]
+    assert expected_edge_count > 0
+    assert len(first_editor.diagram.con_data) >= expected_edge_count
+    assert len(first_scene_connections) >= expected_edge_count
+    assert all(not connection.path().isEmpty() for connection in first_scene_connections)
+
+    first_editor.prepare_to_delete()
+    first_editor.close()
+    first_editor.deleteLater()
+    qt_app.processEvents()
+
+    # Emulate a diagram persisted by the regression: all generated nodes were
+    # retained, while its transient ELK arrows disappeared during scene rebuild.
+    prepared_block.diagram.con_data.clear()
+    second_editor: DynamicBlockEditorGUI = DynamicBlockEditorGUI(
+        var_factory=grid.var_factory,
+        root_block=wrapper_block,
+        current_block=prepared_block,
+        api_object=generator,
+        circuit=grid,
+        mode=DynamicSimulationMode.RMS,
+        current_theme=DynEditorGraphicsModes.LIGHT,
+        templates_list=list(),
+        is_root_editor=False,
+        modal=False,
+        workspace_embedded=False,
+        block2blocktype=block_types,
+    )
+    second_editor.show()
+    qt_app.processEvents()
+    restored_scene_connections: List[graph.ConnectionItem] = [
+        scene_item for scene_item in second_editor.scene.items()
+        if isinstance(scene_item, graph.ConnectionItem)
+    ]
+
+    try:
+        assert len(second_editor.diagram.con_data) >= expected_edge_count
+        assert len(restored_scene_connections) >= expected_edge_count
+        assert all(not connection.path().isEmpty() for connection in restored_scene_connections)
+    finally:
+        second_editor.prepare_to_delete()
+        second_editor.close()
+        second_editor.deleteLater()
+
+
+def test_empty_generic_nested_editor_contains_only_boundary_ports(
+        qt_app: QtWidgets.QApplication,
+) -> None:
+    """Keep an empty Generic nested view free from a duplicate central block.
+
+    Also exercise migration of a diagram saved by the former behaviour, where
+    the Generic persisted a node representing itself between its own boundary
+    ports.
+
+    :param qt_app: Shared Qt application fixture.
+    :return: None.
+    """
+    circuit: MultiCircuit = MultiCircuit()
+    generator: Generator = Generator(name="Generic owner")
+    generic_block: Block = create_generic_block(
+        var_factory=circuit.var_factory,
+        inputs=3,
+        outputs=1,
+        name="GENERIC_1",
+    )
+    root_block: Block = Block(name="generic_root")
+    root_block.add(generic_block)
+
+    # Reproduce a file saved by the regression. The constructor must discard
+    # this self node before it creates the legitimate boundary wrappers.
+    generic_block.diagram.add_node(
+        name=generic_block.name,
+        x=480.0,
+        y=260.0,
+        tpe=BlockType.GENERIC.name,
+        device_uid=generic_block.uid,
+    )
+
+    editor: DynamicBlockEditorGUI = DynamicBlockEditorGUI(
+        var_factory=circuit.var_factory,
+        root_block=root_block,
+        current_block=generic_block,
+        api_object=generator,
+        circuit=circuit,
+        mode=DynamicSimulationMode.RMS,
+        current_theme=DynEditorGraphicsModes.LIGHT,
+        templates_list=list(),
+        is_root_editor=False,
+        modal=False,
+        workspace_embedded=False,
+        block2blocktype=dict(),
+    )
+    editor.show()
+    qt_app.processEvents()
+
+    try:
+        node_types: List[str] = [node.tpe for node in editor.diagram.node_data.values()]
+        assert len(node_types) == 4
+        assert node_types.count(BlockType.INPUT_CONN.name) == 3
+        assert node_types.count(BlockType.OUTPUT_CONN.name) == 1
+        assert BlockType.GENERIC.name not in node_types
+        assert all(node.device_uid != generic_block.uid for node in editor.diagram.node_data.values())
+    finally:
+        editor.prepare_to_delete()
+        editor.close()
+        editor.deleteLater()
+        qt_app.processEvents()
+
+
+def test_canvas_copy_paste_clones_blocks_without_parent_connections(
+        qt_app: QtWidgets.QApplication,
+) -> None:
+    """Clone block content and identities while omitting every canvas arrow.
+
+    :param qt_app: Shared Qt application fixture.
+    :return: None.
+    """
+    circuit: MultiCircuit = MultiCircuit()
+    generator: Generator = Generator(name="Clipboard owner")
+    root_block: Block = Block(name="clipboard_root")
+    editor: DynamicBlockEditorGUI = DynamicBlockEditorGUI(
+        var_factory=circuit.var_factory,
+        root_block=root_block,
+        current_block=root_block,
+        api_object=generator,
+        circuit=circuit,
+        mode=DynamicSimulationMode.RMS,
+        current_theme=DynEditorGraphicsModes.LIGHT,
+        templates_list=list(),
+        is_root_editor=False,
+        modal=False,
+        workspace_embedded=False,
+        block2blocktype=dict(),
+    )
+    editor.show()
+    qt_app.processEvents()
+
+    try:
+        source_item: graph.GenericBlockItem | None = editor.create_generic_block_item(
+            block_type=BlockType.GENERIC,
+            x_pos=100.0,
+            y_pos=120.0,
+        )
+        target_item: graph.GenericBlockItem | None = editor.create_generic_block_item(
+            block_type=BlockType.GENERIC,
+            x_pos=360.0,
+            y_pos=120.0,
+        )
+        assert source_item is not None
+        assert target_item is not None
+        source_block: Block = source_item.subsys
+        target_block: Block = target_item.subsys
+
+        source_block.algebraic_vars.append(source_block.out_vars[0])
+        source_block.algebraic_eqs.append(source_block.out_vars[0] - source_block.in_vars[0])
+        editor.scene.connect_ports(source_item.outputs[0], target_item.inputs[0])
+        connection_count_before_copy: int = len(editor.diagram.con_data)
+        assert connection_count_before_copy == 1
+
+        editor.scene.clearSelection()
+        source_item.setSelected(True)
+        editor.copy_selected_blocks()
+        editor.paste_copied_blocks()
+        qt_app.processEvents()
+
+        pasted_candidates: List[Block] = list()
+        child_block: Block
+        for child_block in root_block.children:
+            if child_block.uid not in set((source_block.uid, target_block.uid)):
+                pasted_candidates.append(child_block)
+            else:
+                pass
+        assert len(pasted_candidates) == 1
+        pasted_block: Block = pasted_candidates[0]
+        assert pasted_block.uid != source_block.uid
+        source_variable_uids: set[int] = set(
+            variable.non_mutable_uid
+            for variable in source_block.in_vars + source_block.out_vars + source_block.algebraic_vars
+        )
+        pasted_variable_uids: set[int] = set(
+            variable.non_mutable_uid
+            for variable in pasted_block.in_vars + pasted_block.out_vars + pasted_block.algebraic_vars
+        )
+        assert source_variable_uids.isdisjoint(pasted_variable_uids)
+        assert symbolic_to_string(pasted_block.algebraic_eqs[0]) == symbolic_to_string(
+            source_block.algebraic_eqs[0]
+        )
+        assert len(editor.diagram.con_data) == connection_count_before_copy
+
+        editor.remove_selected_canvas_items()
+        qt_app.processEvents()
+        assert all(child.uid != pasted_block.uid for child in root_block.children)
+        assert pasted_block.uid not in editor.diagram.node_data
+        assert len(editor.diagram.con_data) == connection_count_before_copy
+    finally:
+        editor.prepare_to_delete()
+        editor.close()
+        editor.deleteLater()
+        qt_app.processEvents()

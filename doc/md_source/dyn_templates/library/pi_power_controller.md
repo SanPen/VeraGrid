@@ -1,5 +1,14 @@
 # PI power controller
 
+<!-- veragrid-block-introduction:start -->
+**PI power controller** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
 ### Purpose
 
 A PI power controller regulates active power, reactive power, or DC voltage and converts those control objectives into current references.

@@ -5,9 +5,11 @@
 """
 Script to update correctly the main GUI (.py) file from the Qt design (.ui) file
 """
-from VeraGrid.Gui.update_gui_common import convert_resource_file, convert_ui_file
+from VeraGrid.Gui.update_gui_common import convert_ui_file
 
 if __name__ == '__main__':
-
-    for f in ['block_editor.ui', 'dynamic_editor_workspace.ui']:
-        convert_ui_file(source=f)
+    file_name: str
+    for file_name in list(('block_editor.ui', 'dynamic_editor_workspace.ui', 'dynamic_block_properties.ui',)):
+        convert_ui_file(source=file_name)
+else:
+    pass

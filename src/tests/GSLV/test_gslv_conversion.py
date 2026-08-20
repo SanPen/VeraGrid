@@ -5,13 +5,9 @@
 import os
 import numpy as np
 import VeraGridEngine.api as vg
-from VeraGridEngine.Compilers.Gslv import (
-    GSLV_AVAILABLE,
-    pg,
-    to_gslv,
-    compare_nc,
-    CheckArr,
-)
+from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE, pg
+from VeraGridEngine.Compilers.Gslv.compare import compare_nc, CheckArr
+from VeraGridEngine.Compilers.Gslv.conversion import to_gslv
 
 
 def compare_inputs(grid_gslv: "pg.MultiCircuit", grid_gc: vg.MultiCircuit, tol=1e-6, t_idx=None):

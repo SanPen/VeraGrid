@@ -19,7 +19,7 @@ class QtRoutingGraphAdapter:
     """
     Adapt one Qt-independent routing graph to Qt drawing primitives.
 
-    :returns: None.
+    :return: None.
     """
 
     __slots__ = tuple()
@@ -29,7 +29,7 @@ class QtRoutingGraphAdapter:
         Build one Qt painter path from one routing graph.
 
         :param routing_graph: Routing graph to render.
-        :returns: Qt painter path.
+        :return: Qt painter path.
         """
         painter_path: QPainterPath = QPainterPath()
         ordered_nodes: list[RoutingNode] = routing_graph.get_ordered_nodes()
@@ -67,7 +67,7 @@ class QtRoutingGraphAdapter:
 
         :param routing_graph: Routing graph to inspect.
         :param segment_id: Segment identifier.
-        :returns: Segment endpoints or ``None``.
+        :return: Segment endpoints or ``None``.
         """
         route_segment: RoutingSegment | None = routing_graph.get_segment(segment_id)
         if route_segment is None:
@@ -116,7 +116,7 @@ class QtRoutingGraphAdapter:
         :param routing_geometry: Shared routing geometry helper.
         :param current_point: Current rendered path point.
         :param target_point: Next raw node position.
-        :returns: Rendered target point.
+        :return: Rendered target point.
         """
         if routing_geometry.are_y_aligned_values(current_point.y(), target_point.y()):
             return QPointF(target_point.x(), current_point.y())

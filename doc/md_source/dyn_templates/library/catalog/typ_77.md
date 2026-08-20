@@ -1,0 +1,40 @@
+# Moving average
+
+This is Basic Block Catalog type `77` (`movingavg`). It represents a continuous-time dynamic operation, including any declared internal states.
+
+<!-- veragrid-block-introduction:start -->
+**Moving average** belongs to the hybrid/event layer of a dynamic model. It selects, stores, delays, or switches signals according to conditions, so its result depends on discrete mode or accepted simulation history in addition to the instantaneous continuous variables.
+
+## Typical use
+
+- Use it for protection, enable/disable sequences, sampled control, reset logic, and mode transfer.
+- Define initial mode and boundary behavior explicitly to avoid unintended event chattering.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Continuous / Delays and Memory`.
+- Inputs: 1.
+- Outputs: 1.
+- Declared states: 0.
+- Configurable parameters: 2.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+0 = (yo - proc_{movingavg\_0})
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Input | `yi` | Input signal consumed by the block | model-dependent |
+| Output | `yo` | Output signal produced by the block | model-dependent |
+| Parameter | `Tdel` | Configurable model parameter | model-dependent |
+| Parameter | `Tlength` | Configurable model parameter | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

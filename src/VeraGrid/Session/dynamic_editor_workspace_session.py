@@ -129,14 +129,17 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
 
         :return: None.
         """
-        for workspace in list(self._open_workspaces):
-            workspace.close()
-            workspace.deleteLater()
+        # Close from a stable snapshot because each close event unregisters its
+        # workspace and pages from this same session.
+        workspaces_to_close: List[DynamicEditorWorkspaceWindow] = list(self._open_workspaces)
+        workspace_to_close: DynamicEditorWorkspaceWindow | None
+        for workspace_to_close in workspaces_to_close:
+            workspace_to_close.close()
+            workspace_to_close.deleteLater()
 
-        app: QtWidgets.QApplication | None = QtWidgets.QApplication.instance()
-        if app is not None:
-            app.processEvents()
-
+        # Drop every Python-side owner before Qt processes DeferredDelete events.
+        # Keeping retained pages/workspaces alive while their C++ children are
+        # destroyed is unsafe after a long mixed GUI test process.
         self._open_workspaces.clear()
         self._session_pages.clear()
         self._last_mode_by_key_base.clear()
@@ -145,6 +148,14 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
         self._pending_drag_workspace = None
         self._retained_workspaces.clear()
         self._retained_pages.clear()
+        workspaces_to_close.clear()
+        workspace_to_close = None
+
+        # Do not flush the process-wide Qt event queue here. Other GUI tests may
+        # own unrelated DeferredDelete events, and processing them from this
+        # session-specific reset can destroy C++ objects while their Python test
+        # fixtures are still alive. Tests that require immediate destruction
+        # explicitly flush DeferredDelete after releasing their own references.
 
     def workspace_for_page(self, page: DynamicBlockEditorGUI | DynamicEditorTab) -> "DynamicEditorWorkspaceWindow | None":
         """

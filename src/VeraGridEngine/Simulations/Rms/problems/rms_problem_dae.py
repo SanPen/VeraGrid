@@ -66,6 +66,55 @@ def _toc(t0):
     return time.perf_counter() - t0
 
 
+def build_inactive_bus_boundary_equations(
+        bus: Bus,
+        init_guess: Dict[int, float | int | complex | None],
+) -> List[Expr]:
+    """
+    Build algebraic boundary equations for one isolated inactive bus.
+
+    Inactive buses can remain stored in legacy grids without any connected
+    active network element.  Their RMS voltage variables are still present in
+    the bus block, but nodal P/Q balances do not exist.  Fixing those detached
+    algebraic variables at the power-flow initial point removes them from the
+    active DAE without adding electrical behavior to the network.
+
+    :param bus: Isolated inactive bus owning the RMS voltage variables.
+    :param init_guess: Global RMS initial-value lookup keyed by variable uid.
+    :return: One DC or two AC voltage boundary equations.
+    """
+    boundary_equations: List[Expr] = list()
+    vdc: Var | None
+    vm: Var | None
+    va: Var | None
+    vdc, vm, va = get_bus_rms_algebraic_vars(bus_rms_model=bus.rms_model)
+
+    if vdc is not None:
+        vdc_initial_raw: float | int | complex | None = init_guess.get(vdc.uid, 1.0)
+        if vdc_initial_raw is None or not np.isfinite(vdc_initial_raw):
+            vdc_initial: float = 1.0
+        else:
+            vdc_initial = float(np.real(vdc_initial_raw))
+        boundary_equations.append(vdc - Const(vdc_initial))
+    elif vm is not None and va is not None:
+        vm_initial_raw: float | int | complex | None = init_guess.get(vm.uid, 1.0)
+        va_initial_raw: float | int | complex | None = init_guess.get(va.uid, 0.0)
+        if vm_initial_raw is None or not np.isfinite(vm_initial_raw):
+            vm_initial: float = 1.0
+        else:
+            vm_initial = float(np.real(vm_initial_raw))
+        if va_initial_raw is None or not np.isfinite(va_initial_raw):
+            va_initial: float = 0.0
+        else:
+            va_initial = float(np.real(va_initial_raw))
+        boundary_equations.append(vm - Const(vm_initial))
+        boundary_equations.append(va - Const(va_initial))
+    else:
+        pass
+
+    return boundary_equations
+
+
 def _is_time_aligned(t_curr: float, event_time: float) -> bool:
     """
     Return whether ``t_curr`` is aligned with ``event_time`` within numeric tolerance.
@@ -441,6 +490,8 @@ class RmsProblemDae(RmsProblemTemplate):
         # when vectorizing this will be a list of lists
         self._algebraic_vars: List[Var] = list()
         self._algebraic_eqs: List[Expr] = list()
+        self._small_signal_reference_row: int | None = None
+        self._small_signal_reference_column: int | None = None
         # when vectorizing this will be a list of lists
         self._state_vars: List[Var] = list()
         self._state_eqs: List[Expr] = list()
@@ -1028,7 +1079,23 @@ class RmsProblemDae(RmsProblemTemplate):
         ]
         for i, elm in enumerate(self.grid.buses):
             if not P_used[i] and not Q_used[i]:
-                self.logger.add_error("Isolated bus", value=i)
+                if elm.active:
+                    self.logger.add_error("Isolated active bus", device=elm.name, value=i)
+                else:
+                    # Detached out-of-service buses must not leave free algebraic
+                    # voltage variables in an otherwise square RMS system.
+                    boundary_equations: List[Expr] = build_inactive_bus_boundary_equations(
+                        bus=elm,
+                        init_guess=self.init_guess,
+                    )
+                    if len(boundary_equations) > 0:
+                        self._algebraic_eqs.extend(boundary_equations)
+                        self.logger.add_info("Inactive isolated bus fixed at its initial voltage",
+                                             device=elm.name)
+                    else:
+                        self.logger.add_error("Invalid RMS model for inactive isolated bus",
+                                              device=elm.name,
+                                              value=i)
             else:
                 if elm.is_dc:
                     self._algebraic_eqs.append(P[i])
@@ -1036,6 +1103,21 @@ class RmsProblemDae(RmsProblemTemplate):
                     self._algebraic_eqs.append(P[i])
                 else:
                     self._algebraic_eqs.append(Q[i])
+
+                    # The active-power balance at the AC slack bus is the
+                    # redundant equation associated with the global angle
+                    # gauge.  Keep it in the physical DAE, but remember its
+                    # exact Jacobian position so small-signal factorization can
+                    # replace it with an angle-reference row.
+                    if elm.is_slack and self._small_signal_reference_row is None:
+                        _, _, voltage_angle = get_bus_rms_algebraic_vars(bus_rms_model=elm.rms_model)
+                        if voltage_angle is not None:
+                            algebraic_column: int = self._algebraic_vars.index(voltage_angle)
+                            self._small_signal_reference_row = len(self._state_eqs) + len(self._algebraic_eqs)
+                            self._small_signal_reference_column = len(self._state_vars) + algebraic_column
+                        else:
+                            self.logger.add_error("AC slack bus has no RMS voltage-angle variable",
+                                                  device=elm.name)
                     self._algebraic_eqs.append(P[i])
 
         # print("created balance equations")
@@ -1812,19 +1894,51 @@ class RmsProblemDae(RmsProblemTemplate):
             self._block_boundary_updater.update(float(t), x_snapshot, full_params)
             self._variable_parameters_values[:] = full_params[:self.get_variable_parameter_number()]
 
-    def get_static_state_matrix(self, x:Vec, dx:Vec):
-        nx = self.get_states_number()
-        ny = self.get_algebraic_var_number()
+    def get_static_state_matrix(self, x: Vec, dx: Vec) -> sp.csc_matrix:
+        """
+        Build the sparse static Jacobian used by small-signal analysis.
 
-        if nx == 0:
-            gy = self.get_j22(x, dx, 1e15).toarray()
-            return gy
+        Keeping the component Jacobians sparse avoids allocating the complete
+        augmented matrix as a dense array before the sparse eigensolver starts.
 
-        fx = self.get_j11(x, dx, 1e10).toarray()
-        fy = self.get_j12(x, dx, 1e10).toarray()
-        gx = self.get_j21(x, dx, 1e10).toarray()
-        gy = self.get_j22(x, dx, 1e15).toarray()
-        return np.block([[fx, fy], [gx, gy]])
+        :param x: State and algebraic variable values.
+        :param dx: Differential variable values.
+        :return: Static Jacobian in compressed sparse-column format.
+        """
+        number_of_states: int = self.get_states_number()
+
+        if number_of_states == 0:
+            # A purely algebraic problem only contributes its algebraic block.
+            algebraic_jacobian: sp.csc_matrix = self.get_j22(x, dx, 1.0e15).tocsc()
+            return algebraic_jacobian
+        else:
+            # Preserve sparsity while assembling the differential-algebraic
+            # block matrix.  Power-system Jacobians are sparse by construction.
+            state_jacobian: sp.csc_matrix = self.get_j11(x, dx, 1.0e10).tocsc()
+            state_to_algebraic_jacobian: sp.csc_matrix = self.get_j12(x, dx, 1.0e10).tocsc()
+            algebraic_to_state_jacobian: sp.csc_matrix = self.get_j21(x, dx, 1.0e10).tocsc()
+            algebraic_jacobian: sp.csc_matrix = self.get_j22(x, dx, 1.0e15).tocsc()
+            static_jacobian: sp.csc_matrix = sp.bmat(
+                [[state_jacobian, state_to_algebraic_jacobian],
+                 [algebraic_to_state_jacobian, algebraic_jacobian]],
+                format="csc",
+            )
+            return static_jacobian
+
+    def get_small_signal_reference_indices(self) -> tuple[int, int] | None:
+        """
+        Return the Jacobian row and column that define the AC angle reference.
+
+        The recorded row is the redundant active-power balance of the slack
+        bus, while the column is that bus's RMS voltage-angle variable.
+
+        :return: Augmented-Jacobian reference indices, or ``None`` when absent.
+        """
+        if (self._small_signal_reference_row is not None
+                and self._small_signal_reference_column is not None):
+            return self._small_signal_reference_row, self._small_signal_reference_column
+        else:
+            return None
 
     def update(self, t: float, x: Vec, params: Vec) -> None:
         self._update_dynamic_mode_defaults(t=t, x=x, params=params)

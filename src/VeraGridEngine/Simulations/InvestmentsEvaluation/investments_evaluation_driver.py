@@ -8,8 +8,7 @@ from math import comb
 
 import numpy as np
 
-from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE
-from VeraGridEngine.Compilers.Gslv.Simulations.investments import gslv_investments_evaluation
+
 from VeraGridEngine.Simulations.driver_template import DriverTemplate
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.Utils.NumericalMethods.MVRSM_mo_pareto import MVRSM_mo_pareto
@@ -25,7 +24,8 @@ from VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba impo
 from VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black_box_problem_template import BlackBoxProblemTemplate
 from VeraGridEngine.enumerations import EngineType, InvestmentEvaluationMethod, InvestmentsEvaluationObjectives, SimulationTypes
 from VeraGridEngine.basic_structures import IntVec, IntMat, Vec, Mat
-
+from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE
+from VeraGridEngine.Compilers.Gslv.Simulations.investments import gslv_investments_evaluation
 
 class InvestmentsEvaluationDriver(DriverTemplate):
     __slots__ = (

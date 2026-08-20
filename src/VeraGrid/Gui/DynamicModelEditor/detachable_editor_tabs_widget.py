@@ -5,29 +5,35 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Optional
+
 from PySide6 import QtCore, QtGui, QtWidgets
 from PySide6.QtWidgets import (QAbstractItemView, QComboBox, QDialogButtonBox,
                                QGroupBox, QHBoxLayout, QLabel,
                                QLineEdit, QPushButton, QSizePolicy, QSpacerItem,
                                QTableWidget, QTableWidgetItem, QVBoxLayout)
-from typing import Optional
 from VeraGrid.Session.dynamic_editor_entries import DynamicEditorEntry
-from VeraGridEngine.enumerations import DynamicSimulationMode
-
-DYNAMIC_EDITOR_TAB_MIME: str = "application/x-veragrid-dynamic-editor-tab"
+from VeraGridEngine.enumerations import DynamicEditorMimeType, DynamicSimulationMode
 
 
 class DynamicEditorPickerDialog(QtWidgets.QDialog):
-    """
-    Modal dialog used by the workspace `+` button to open another dynamic editor.
-    """
+    """Modal dialog used by the workspace ``+`` button to open another editor."""
+
+    __slots__ = ()
 
     def __init__(self,
                  entries: list[DynamicEditorEntry],
                  current_entry: DynamicEditorEntry | None = None,
                  current_mode: DynamicSimulationMode | None = None,
                  parent: QtWidgets.QWidget | None = None) -> None:
+        """Create a picker for opening another device and simulation mode.
+
+        :param entries: Dynamic editor entries offered by the workspace.
+        :param current_entry: Entry represented by the current editor.
+        :param current_mode: Simulation mode used by the current editor.
+        :param parent: Owning workspace widget.
+        :return: None.
+        """
         super().__init__(parent)
         self.setObjectName("DynamicEditorPickerDialog")
         self.resize(720, 520)
@@ -73,7 +79,7 @@ class DynamicEditorPickerDialog(QtWidgets.QDialog):
         header.setSectionResizeMode(1, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
         header.setSectionResizeMode(2, QtWidgets.QHeaderView.ResizeMode.ResizeToContents)
 
-        for col, text in enumerate([self.tr("Name"), self.tr("Type"), self.tr("Modes")]):
+        for col, text in enumerate(list((self.tr("Name"), self.tr("Type"), self.tr("Modes"),))):
             self.entriesTableWidget.setHorizontalHeaderItem(col, QTableWidgetItem(text))
 
         self.verticalLayout.addWidget(self.entriesTableWidget)
@@ -131,20 +137,30 @@ class DynamicEditorPickerDialog(QtWidgets.QDialog):
         self.quickOpenButton.setText(self.tr("Open"))
         self.searchLineEdit.setPlaceholderText(self.tr("Search dynamic editors"))
         self.modeLabel.setText(self.tr("Mode"))
-        self.entriesTableWidget.setHorizontalHeaderLabels([self.tr("Name"), self.tr("Type"), self.tr("Modes")])
+        self.entriesTableWidget.setHorizontalHeaderLabels(list((self.tr("Name"), self.tr("Type"), self.tr("Modes"),)))
         self._configure_quick_open(current_entry=self._quick_entry, current_mode=self._selected_mode)
 
     def _configure_quick_open(self,
                               current_entry: DynamicEditorEntry | None,
                               current_mode: DynamicSimulationMode | None) -> None:
+        """Configure the shortcut that opens the current device in another mode.
+
+        :param current_entry: Entry represented by the current editor.
+        :param current_mode: Simulation mode used by the current editor.
+        :return: None.
+        """
         if current_entry is None or current_mode is None:
             self.quickOpenGroupBox.setVisible(False)
             return
+        else:
+            pass
 
         alternate_modes = [mode for mode in current_entry.available_modes if mode != current_mode]
         if len(alternate_modes) == 0:
             self.quickOpenGroupBox.setVisible(False)
             return
+        else:
+            pass
 
         self._quick_mode = alternate_modes[0]
         self.quickOpenGroupBox.setVisible(True)
@@ -154,6 +170,11 @@ class DynamicEditorPickerDialog(QtWidgets.QDialog):
         self.quickOpenButton.setText(self.tr("Open {mode}").format(mode=self._quick_mode.name))
 
     def _apply_filter(self, text: str) -> None:
+        """Filter the candidate table using device, type, and mode text.
+
+        :param text: User-entered search text.
+        :return: None.
+        """
         needle = text.strip().lower()
         if needle:
             self._filtered_entries = [
@@ -181,12 +202,18 @@ class DynamicEditorPickerDialog(QtWidgets.QDialog):
             self.modeComboBox.clear()
 
     def _on_selection_changed(self) -> None:
+        """Synchronize the selected entry and its available mode choices.
+
+        :return: None.
+        """
         current_row = self.entriesTableWidget.currentRow()
         if current_row < 0 or current_row >= len(self._filtered_entries):
             self._selected_entry = None
             self._selected_mode = None
             self.modeComboBox.clear()
             return
+        else:
+            pass
 
         self._selected_entry = self._filtered_entries[current_row]
         self.modeComboBox.blockSignals(True)
@@ -201,35 +228,63 @@ class DynamicEditorPickerDialog(QtWidgets.QDialog):
             self._selected_mode = None
 
     def _on_mode_changed(self, _index: int) -> None:
+        """Store the mode selected by the user.
+
+        :param _index: Combo-box index supplied by Qt.
+        :return: None.
+        """
         self._selected_mode = self.modeComboBox.currentData(QtCore.Qt.ItemDataRole.UserRole)
 
     def _accept_quick_open(self) -> None:
+        """Accept the current-device shortcut when its target is complete.
+
+        :return: None.
+        """
         if self._quick_entry is None or self._quick_mode is None:
             return
+        else:
+            pass
 
         self._selected_entry = self._quick_entry
         self._selected_mode = self._quick_mode
         self.accept()
 
     def _accept_selected_entry(self) -> None:
+        """Accept the table selection when both entry and mode are available.
+
+        :return: None.
+        """
         if self._selected_entry is None or self._selected_mode is None:
             return
+        else:
+            pass
         self.accept()
 
     def get_selection(self) -> tuple[DynamicEditorEntry, DynamicSimulationMode] | None:
+        """Return the accepted entry and simulation mode.
+
+        :return: Accepted selection, or ``None`` when incomplete.
+        """
         if self._selected_entry is None or self._selected_mode is None:
             return None
+        else:
+            pass
         return self._selected_entry, self._selected_mode
 
 
 class DynamicEditorAddButton(QtWidgets.QToolButton):
-    """
-    Corner button used as both the add-entry action and a reattach drop target.
-    """
+    """Corner button serving as add-entry action and reattach drop target."""
+
+    __slots__ = ()
 
     tabWidgetDropRequested = QtCore.Signal(QtCore.QPoint)
 
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+        """Create the add button and enable it as a tab drop target.
+
+        :param parent: Owning tab widget.
+        :return: None.
+        """
         super().__init__(parent)
         self.setAcceptDrops(True)
         self.setText("+")
@@ -251,19 +306,34 @@ class DynamicEditorAddButton(QtWidgets.QToolButton):
             pass
 
     def dragEnterEvent(self, event: QtGui.QDragEnterEvent) -> None:
-        if event.mimeData().hasFormat(DYNAMIC_EDITOR_TAB_MIME):
+        """Accept drag entry only for Dynamic Editor tabs.
+
+        :param event: Incoming drag event.
+        :return: None.
+        """
+        if event.mimeData().hasFormat(DynamicEditorMimeType.TAB.value):
             event.acceptProposedAction()
         else:
             event.ignore()
 
     def dragMoveEvent(self, event: QtGui.QDragMoveEvent) -> None:
-        if event.mimeData().hasFormat(DYNAMIC_EDITOR_TAB_MIME):
+        """Keep a compatible tab drag accepted while it crosses the button.
+
+        :param event: Incoming drag-move event.
+        :return: None.
+        """
+        if event.mimeData().hasFormat(DynamicEditorMimeType.TAB.value):
             event.acceptProposedAction()
         else:
             event.ignore()
 
     def dropEvent(self, event: QtGui.QDropEvent) -> None:
-        if event.mimeData().hasFormat(DYNAMIC_EDITOR_TAB_MIME):
+        """Request tab reattachment when a compatible drop is completed.
+
+        :param event: Incoming drop event.
+        :return: None.
+        """
+        if event.mimeData().hasFormat(DynamicEditorMimeType.TAB.value):
             self.tabWidgetDropRequested.emit(self.mapToGlobal(event.position().toPoint()))
             event.acceptProposedAction()
         else:
@@ -271,14 +341,19 @@ class DynamicEditorAddButton(QtWidgets.QToolButton):
 
 
 class DetachableEditorTabBar(QtWidgets.QTabBar):
-    """
-    Tab bar that supports drag-out detach and drag-in reattach between workspaces.
-    """
+    """Tab bar supporting detach and reattach drags between workspaces."""
+
+    __slots__ = ()
 
     detachDragIgnored = QtCore.Signal(QtCore.QPoint)
     tabDropRequested = QtCore.Signal(QtCore.QPoint, int)
 
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+        """Create a non-reordering tab bar with detach support.
+
+        :param parent: Owning tab widget.
+        :return: None.
+        """
         super().__init__(parent)
         self._drag_start_pos: Optional[QtCore.QPoint] = None
         self._drag_index: int = -1
@@ -287,6 +362,11 @@ class DetachableEditorTabBar(QtWidgets.QTabBar):
         self.setMovable(False)
 
     def mousePressEvent(self, event: QtGui.QMouseEvent) -> None:
+        """Record the possible origin of a left-button tab drag.
+
+        :param event: Incoming mouse press.
+        :return: None.
+        """
         if event.button() == QtCore.Qt.MouseButton.LeftButton:
             self._drag_start_pos = event.pos()
             self._drag_index = self.tabAt(event.pos())
@@ -297,6 +377,11 @@ class DetachableEditorTabBar(QtWidgets.QTabBar):
         super().mousePressEvent(event)
 
     def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
+        """Start a tab drag after Qt's configured movement threshold.
+
+        :param event: Incoming mouse move.
+        :return: None.
+        """
         if (
                 self._drag_start_pos is None
                 or self._drag_index < 0
@@ -304,16 +389,20 @@ class DetachableEditorTabBar(QtWidgets.QTabBar):
         ):
             super().mouseMoveEvent(event)
             return
+        else:
+            pass
 
         if (event.pos() - self._drag_start_pos).manhattanLength() < QtWidgets.QApplication.startDragDistance():
             super().mouseMoveEvent(event)
             return
+        else:
+            pass
 
         tab_widget = self.parent()
         if isinstance(tab_widget, DetachableEditorTabWidget):
             drag = QtGui.QDrag(self)
             mime = QtCore.QMimeData()
-            mime.setData(DYNAMIC_EDITOR_TAB_MIME, b"dynamic-editor-tab")
+            mime.setData(DynamicEditorMimeType.TAB.value, b"dynamic-editor-tab")
             drag.setMimeData(mime)
             drag.setHotSpot(event.pos() - self.tabRect(self._drag_index).topLeft())
             tab_widget.prepare_tab_drag(self._drag_index)
@@ -326,19 +415,34 @@ class DetachableEditorTabBar(QtWidgets.QTabBar):
             super().mouseMoveEvent(event)
 
     def dragEnterEvent(self, event: QtGui.QDragEnterEvent) -> None:
-        if event.mimeData().hasFormat(DYNAMIC_EDITOR_TAB_MIME):
+        """Accept drag entry only for Dynamic Editor tabs.
+
+        :param event: Incoming drag event.
+        :return: None.
+        """
+        if event.mimeData().hasFormat(DynamicEditorMimeType.TAB.value):
             event.acceptProposedAction()
         else:
             event.ignore()
 
     def dragMoveEvent(self, event: QtGui.QDragMoveEvent) -> None:
-        if event.mimeData().hasFormat(DYNAMIC_EDITOR_TAB_MIME):
+        """Keep a compatible tab drag accepted over the tab bar.
+
+        :param event: Incoming drag-move event.
+        :return: None.
+        """
+        if event.mimeData().hasFormat(DynamicEditorMimeType.TAB.value):
             event.acceptProposedAction()
         else:
             event.ignore()
 
     def dropEvent(self, event: QtGui.QDropEvent) -> None:
-        if event.mimeData().hasFormat(DYNAMIC_EDITOR_TAB_MIME):
+        """Request reattachment at the tab index under the drop.
+
+        :param event: Incoming drop event.
+        :return: None.
+        """
+        if event.mimeData().hasFormat(DynamicEditorMimeType.TAB.value):
             target_index = self.tabAt(event.position().toPoint())
             self.tabDropRequested.emit(self.mapToGlobal(event.position().toPoint()), target_index)
             event.acceptProposedAction()
@@ -347,15 +451,20 @@ class DetachableEditorTabBar(QtWidgets.QTabBar):
 
 
 class DetachableEditorTabWidget(QtWidgets.QTabWidget):
-    """
-    QTabWidget wrapper used by the Dynamic Editor workspace.
-    """
+    """Tab widget wrapper used by the Dynamic Editor workspace."""
+
+    __slots__ = ()
 
     tabDragStarted = QtCore.Signal(int)
     detachRequested = QtCore.Signal(QtCore.QPoint)
     reattachRequested = QtCore.Signal(QtCore.QPoint, int)
 
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+        """Create a tab widget whose pages can move between workspaces.
+
+        :param parent: Owning workspace widget.
+        :return: None.
+        """
         super().__init__(parent)
         self._tab_bar = DetachableEditorTabBar(self)
         self._pending_drag_index: int = -1
@@ -368,12 +477,25 @@ class DetachableEditorTabWidget(QtWidgets.QTabWidget):
         self._tab_bar.tabDropRequested.connect(self.reattachRequested.emit)
 
     def prepare_tab_drag(self, index: int) -> None:
+        """Record and announce the page that begins a detach drag.
+
+        :param index: Source tab index.
+        :return: None.
+        """
         self._pending_drag_index = index
         self.tabDragStarted.emit(index)
 
     def finish_tab_drag(self, result: QtCore.Qt.DropAction, global_pos: QtCore.QPoint) -> None:
+        """Complete a tab drag by requesting detachment when no drop consumed it.
+
+        :param result: Qt drag result.
+        :param global_pos: Cursor position at drag completion.
+        :return: None.
+        """
         if self._pending_drag_index < 0:
             return
+        else:
+            pass
 
         if result != QtCore.Qt.DropAction.MoveAction:
             self.detachRequested.emit(global_pos)
@@ -383,19 +505,34 @@ class DetachableEditorTabWidget(QtWidgets.QTabWidget):
         self._pending_drag_index = -1
 
     def dragEnterEvent(self, event: QtGui.QDragEnterEvent) -> None:
-        if event.mimeData().hasFormat(DYNAMIC_EDITOR_TAB_MIME) and event.position().y() <= self.tabBar().height() + 8:
+        """Accept compatible drags entering the tab-bar strip.
+
+        :param event: Incoming drag event.
+        :return: None.
+        """
+        if event.mimeData().hasFormat(DynamicEditorMimeType.TAB.value) and event.position().y() <= self.tabBar().height() + 8:
             event.acceptProposedAction()
         else:
             event.ignore()
 
     def dragMoveEvent(self, event: QtGui.QDragMoveEvent) -> None:
-        if event.mimeData().hasFormat(DYNAMIC_EDITOR_TAB_MIME) and event.position().y() <= self.tabBar().height() + 8:
+        """Keep compatible drags accepted while they remain over the tab strip.
+
+        :param event: Incoming drag-move event.
+        :return: None.
+        """
+        if event.mimeData().hasFormat(DynamicEditorMimeType.TAB.value) and event.position().y() <= self.tabBar().height() + 8:
             event.acceptProposedAction()
         else:
             event.ignore()
 
     def dropEvent(self, event: QtGui.QDropEvent) -> None:
-        if event.mimeData().hasFormat(DYNAMIC_EDITOR_TAB_MIME) and event.position().y() <= self.tabBar().height() + 8:
+        """Request reattachment at the tab index under a compatible drop.
+
+        :param event: Incoming drop event.
+        :return: None.
+        """
+        if event.mimeData().hasFormat(DynamicEditorMimeType.TAB.value) and event.position().y() <= self.tabBar().height() + 8:
             target_index = self.tabBar().tabAt(self.tabBar().mapFrom(self, event.position().toPoint()))
             self.reattachRequested.emit(self.mapToGlobal(event.position().toPoint()), target_index)
             event.acceptProposedAction()
@@ -403,4 +540,9 @@ class DetachableEditorTabWidget(QtWidgets.QTabWidget):
             event.ignore()
 
     def _on_detach_drag_ignored(self, global_pos: QtCore.QPoint) -> None:
+        """Translate an unconsumed tab-bar drag into a detach request.
+
+        :param global_pos: Cursor position where the drag was ignored.
+        :return: None.
+        """
         self.detachRequested.emit(global_pos)

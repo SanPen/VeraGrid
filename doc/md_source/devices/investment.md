@@ -16,6 +16,7 @@ Profile-enabled properties: none.
 |code                |str              |    |False    |         |Secondary ID                                                                                               |False      |       |
 |rdfid               |str              |    |False    |         |RDF ID for further compatibility                                                                           |False      |       |
 |action              |enum ActionType  |    |False    |         |Object action to perform. Only used for model merging.                                                     |False      |       |
+|selected_to_merge   |bool             |    |False    |         |Whether this object should be applied during diff merge.                                                   |False      |       |
 |comment             |str              |    |False    |         |User comment                                                                                               |False      |       |
 |diff_changes        |MergeInformation |    |False    |         |                                                                                                           |False      |       |
 |device_idtag        |str              |    |False    |         |Unique ID                                                                                                  |False      |       |

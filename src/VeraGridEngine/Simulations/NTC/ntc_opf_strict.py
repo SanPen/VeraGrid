@@ -33,7 +33,8 @@ from VeraGridEngine.Simulations.LinearFactors.linear_analysis import (LinearAnal
 from VeraGridEngine.Simulations.ATC.available_transfer_capacity_driver import compute_alpha, compute_alpha_n1, \
     compute_dP
 from VeraGridEngine.Simulations.NTC.ntc_opf import (add_corrective_contingency_formulation,
-                                                    get_contingency_monitorable_branches)
+                                                    get_contingency_monitorable_branches,
+                                                    compute_vsc_pmode3_saturation_rates)
 from VeraGridEngine.IO.file_system import opf_file_path
 
 
@@ -1625,6 +1626,7 @@ def add_linear_vsc_formulation(t_idx: int,
                                bus_vars: BusNtcVars,
                                prob: OrToolsLpModel,
                                logger: Logger,
+                               sat_rates: Vec,
                                saturate: bool = True):
     """
 
@@ -1636,6 +1638,7 @@ def add_linear_vsc_formulation(t_idx: int,
     :param bus_vars:
     :param prob:
     :param logger:
+    :param sat_rates: per-VSC P-mode 3 saturation rates in MW (see compute_vsc_pmode3_saturation_rates)
     :param saturate:
     :return:
     """
@@ -1678,7 +1681,7 @@ def add_linear_vsc_formulation(t_idx: int,
                         prob=prob,
                         t_idx=t_idx,
                         m=m,
-                        rate=vsc_data_t.rates[m] / Sbase,
+                        rate=sat_rates[m] / Sbase,
                         P0=P0,
                         droop=droop,
                         theta_f=bus_vars.Va[t_idx, control_bus_idx],  # remote AC bus
@@ -1692,8 +1695,8 @@ def add_linear_vsc_formulation(t_idx: int,
 
                     # declare the flow var
                     vsc_vars.flows[t_idx, m] = prob.add_var(
-                        lb=-vsc_data_t.rates[m] / Sbase,
-                        ub=vsc_data_t.rates[m] / Sbase,
+                        lb=-sat_rates[m] / Sbase,
+                        ub=sat_rates[m] / Sbase,
                         name=join("vsc_flow_", [t_idx, m], "_")
                     )
 
@@ -2006,7 +2009,10 @@ def run_linear_ntc_opf_strict(grid: MultiCircuit,
         vsc_vars=mip_vars.vsc_vars,
         bus_vars=mip_vars.bus_vars,
         prob=lp_model,
-        logger=logger
+        logger=logger,
+        sat_rates=compute_vsc_pmode3_saturation_rates(vsc_data_t=nc.vsc_data,
+                                                      branch_data_t=nc.passive_branch_data,
+                                                      bus_data_t=nc.bus_data)
     )
 
     if zonal_grouping == ZonalGrouping.NoGrouping:

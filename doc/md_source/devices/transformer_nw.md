@@ -9,24 +9,26 @@ This device links terminals or represents a network element between buses.
 ### Registered properties
 Profile-enabled properties: `active`.
 
-|       name        |    class_type     |unit|mandatory|max_chars|                     descriptions                     |has_profile|comment|
-|-------------------|-------------------|----|---------|---------|------------------------------------------------------|-----------|-------|
-|idtag              |str                |    |False    |         |Unique ID                                             |False      |       |
-|name               |str                |    |False    |         |Name of the device.                                   |False      |       |
-|code               |str                |    |False    |         |Secondary ID                                          |False      |       |
-|rdfid              |str                |    |False    |         |RDF ID for further compatibility                      |False      |       |
-|action             |enum ActionType    |    |False    |         |Object action to perform. Only used for model merging.|False      |       |
-|comment            |str                |    |False    |         |User comment                                          |False      |       |
-|diff_changes       |MergeInformation   |    |False    |         |                                                      |False      |       |
-|modelling_authority|Modelling Authority|    |False    |         |Modelling authority of this asset                     |False      |       |
-|commissioned_date  |int                |    |False    |         |Commissioned date of the asset                        |False      |       |
-|decommissioned_date|int                |    |False    |         |Decommissioned date of the asset                      |False      |       |
-|build_status       |enum BuildStatus   |    |False    |         |Device build status. Used in expansion planning.      |False      |       |
-|owners             |AssociationsList   |p.u.|False    |         |Owners associations to injections                     |False      |       |
-|bus0               |Bus                |    |False    |         |Middle point connection bus.                          |False      |       |
-|active             |bool               |    |False    |         |Is active?                                            |True       |       |
-|winding_count      |int                |    |False    |         |Number of windings.                                   |False      |       |
-|Pfe                |float              |kW  |False    |         |Iron loss                                             |False      |       |
-|I0                 |float              |%   |False    |         |No-load current                                       |False      |       |
-|x                  |float              |px  |False    |         |x position                                            |False      |       |
-|y                  |float              |px  |False    |         |y position                                            |False      |       |
+|       name        |      class_type      |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|-------------------|----------------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag              |str                   |    |False    |         |Unique ID                                               |False      |       |
+|name               |str                   |    |False    |         |Name of the device.                                     |False      |       |
+|code               |str                   |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid              |str                   |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action             |enum ActionType       |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge  |bool                  |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment            |str                   |    |False    |         |User comment                                            |False      |       |
+|diff_changes       |MergeInformation      |    |False    |         |                                                        |False      |       |
+|modelling_authority|Modelling Authority   |    |False    |         |Modelling authority of this asset                       |False      |       |
+|commissioned_date  |int                   |    |False    |         |Commissioned date of the asset                          |False      |       |
+|decommissioned_date|int                   |    |False    |         |Decommissioned date of the asset                        |False      |       |
+|build_status       |enum BuildStatus      |    |False    |         |Device build status. Used in expansion planning.        |False      |       |
+|owners             |AssociationsList      |p.u.|False    |         |Owners associations to injections                       |False      |       |
+|bus0               |Bus                   |    |False    |         |Middle point connection bus.                            |False      |       |
+|active             |bool                  |    |False    |         |Is active?                                              |True       |       |
+|winding_count      |int                   |    |False    |         |Number of windings.                                     |False      |       |
+|Pfe                |float                 |kW  |False    |         |Iron loss                                               |False      |       |
+|I0                 |float                 |%   |False    |         |No-load current                                         |False      |       |
+|x                  |float                 |px  |False    |         |x position                                              |False      |       |
+|y                  |float                 |px  |False    |         |y position                                              |False      |       |
+|internal_impedances|Impedance Triplet List|p.u.|False    |         |Internal Impedance List                                 |False      |       |

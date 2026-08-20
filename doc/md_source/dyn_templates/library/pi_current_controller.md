@@ -1,5 +1,14 @@
 # PI current controller
 
+<!-- veragrid-block-introduction:start -->
+**PI current controller** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
 ### Purpose
 
 A PI current controller regulates current components, typically `d` and `q` current channels in vector-controlled converters.

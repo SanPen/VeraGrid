@@ -6,21 +6,19 @@
 from __future__ import annotations
 
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_elements import RoutingNode
-from VeraGrid.Gui.DynamicModelEditor.Routing.routing_elements import RoutingNodeKind
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_elements import RoutingSegment
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_elements import derive_segment_axis
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_geometry import RoutingGeometry
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_validation import RoutingValidationMessage
-from VeraGridEngine.enumerations import RoutingValidationMessageLevel
 from VeraGrid.Gui.DynamicModelEditor.Routing.routing_validation import RoutingValidationReport
-from VeraGridEngine.enumerations import RoutingAxis
+from VeraGridEngine.enumerations import RoutingAxis, RoutingNodeKind, RoutingValidationMessageLevel
 
 
 class RoutingGraph:
     """
     Represent one complete routed connection as one simple graph path.
 
-    :returns: None.
+    :return: None.
     """
 
     __slots__ = ("_nodes_by_id", "_segments_by_id", "_source_node_id", "_destination_node_id", "_geometry")
@@ -31,7 +29,7 @@ class RoutingGraph:
 
         :param source_node_id: Source port node identifier.
         :param destination_node_id: Destination port node identifier.
-        :returns: None.
+        :return: None.
         """
         self._nodes_by_id: dict[int, RoutingNode] = dict()
         self._segments_by_id: dict[int, RoutingSegment] = dict()
@@ -41,25 +39,19 @@ class RoutingGraph:
 
     def get_geometry(self) -> RoutingGeometry:
         """
-        Return the shared routing geometry helper.
-
-        :returns: Shared routing geometry helper.
+        :return: Shared routing geometry helper.
         """
         return self._geometry
 
     def get_source_node_id(self) -> int:
         """
-        Return the source port node identifier.
-
-        :returns: Source port node identifier.
+        :return: Source port node identifier.
         """
         return self._source_node_id
 
     def get_destination_node_id(self) -> int:
         """
-        Return the destination port node identifier.
-
-        :returns: Destination port node identifier.
+        :return: Destination port node identifier.
         """
         return self._destination_node_id
 
@@ -67,7 +59,7 @@ class RoutingGraph:
         """
         Return the source port node.
 
-        :returns: Source port node or ``None``.
+        :return: Source port node or ``None``.
         """
         return self.get_node(self._source_node_id)
 
@@ -75,7 +67,7 @@ class RoutingGraph:
         """
         Return the destination port node.
 
-        :returns: Destination port node or ``None``.
+        :return: Destination port node or ``None``.
         """
         return self.get_node(self._destination_node_id)
 
@@ -84,7 +76,7 @@ class RoutingGraph:
         Return one node by identifier.
 
         :param node_id: Node identifier.
-        :returns: Node or ``None``.
+        :return: Node or ``None``.
         """
         return self._nodes_by_id.get(int(node_id), None)
 
@@ -93,7 +85,7 @@ class RoutingGraph:
         Return one segment by identifier.
 
         :param segment_id: Segment identifier.
-        :returns: Segment or ``None``.
+        :return: Segment or ``None``.
         """
         return self._segments_by_id.get(int(segment_id), None)
 
@@ -101,7 +93,7 @@ class RoutingGraph:
         """
         Return every node in the graph.
 
-        :returns: Graph nodes.
+        :return: Graph nodes.
         """
         return list(self._nodes_by_id.values())
 
@@ -109,7 +101,7 @@ class RoutingGraph:
         """
         Return every segment in the graph.
 
-        :returns: Graph segments.
+        :return: Graph segments.
         """
         return list(self._segments_by_id.values())
 
@@ -118,7 +110,7 @@ class RoutingGraph:
         Return the segments incident to one node.
 
         :param node_id: Node identifier.
-        :returns: Adjacent segments.
+        :return: Adjacent segments.
         """
         adjacent_items: list[RoutingSegment] = list()
         route_node: RoutingNode | None = self.get_node(node_id)
@@ -141,7 +133,7 @@ class RoutingGraph:
         Return the nodes adjacent to one node.
 
         :param node_id: Node identifier.
-        :returns: Adjacent nodes.
+        :return: Adjacent nodes.
         """
         adjacent_items: list[RoutingNode] = list()
         route_segment: RoutingSegment
@@ -162,7 +154,7 @@ class RoutingGraph:
         Return the degree of one node.
 
         :param node_id: Node identifier.
-        :returns: Node degree.
+        :return: Node degree.
         """
         route_node: RoutingNode | None = self.get_node(node_id)
         if route_node is None:
@@ -175,7 +167,7 @@ class RoutingGraph:
         Return the derived axis of one segment.
 
         :param segment_id: Segment identifier.
-        :returns: Derived axis or ``None``.
+        :return: Derived axis or ``None``.
         """
         route_segment: RoutingSegment | None = self.get_segment(segment_id)
         if route_segment is None:
@@ -202,7 +194,7 @@ class RoutingGraph:
         """
         Return the nodes ordered from source to destination.
 
-        :returns: Ordered graph nodes.
+        :return: Ordered graph nodes.
         """
         ordered_items: list[RoutingNode] = list()
         source_node: RoutingNode | None = self.get_source_node()
@@ -240,7 +232,7 @@ class RoutingGraph:
         """
         Return the segments ordered from source to destination.
 
-        :returns: Ordered graph segments.
+        :return: Ordered graph segments.
         """
         ordered_items: list[RoutingSegment] = list()
         ordered_nodes: list[RoutingNode] = self.get_ordered_nodes()
@@ -269,7 +261,7 @@ class RoutingGraph:
 
         :param first_node_id: First node identifier.
         :param second_node_id: Second node identifier.
-        :returns: Connecting segment or ``None``.
+        :return: Connecting segment or ``None``.
         """
         route_segment: RoutingSegment
         for route_segment in self.adjacent_segments(first_node_id):
@@ -284,7 +276,7 @@ class RoutingGraph:
         """
         Build a detached copy of the graph.
 
-        :returns: Graph copy.
+        :return: Graph copy.
         """
         graph_copy: RoutingGraph = RoutingGraph(
             source_node_id=self._source_node_id,
@@ -306,7 +298,7 @@ class RoutingGraph:
         Restore the full graph state from one detached snapshot.
 
         :param other_graph: Snapshot used as the restoration source.
-        :returns: None.
+        :return: None.
         """
         self._nodes_by_id = dict()
         self._segments_by_id = dict()
@@ -333,7 +325,7 @@ class RoutingGraph:
         """
         Validate the graph invariants.
 
-        :returns: Validation report.
+        :return: Validation report.
         """
         report: RoutingValidationReport = RoutingValidationReport()
         self._validate_source_and_destination_nodes(report)
@@ -349,7 +341,7 @@ class RoutingGraph:
         Add one node to the graph.
 
         :param node: Node to add.
-        :returns: ``True`` when the node was added.
+        :return: ``True`` when the node was added.
         """
         node_id: int = node.get_node_id()
         if node_id in self._nodes_by_id:
@@ -363,7 +355,7 @@ class RoutingGraph:
         Remove one isolated node from the graph.
 
         :param node_id: Node identifier.
-        :returns: ``True`` when the node was removed.
+        :return: ``True`` when the node was removed.
         """
         route_node: RoutingNode | None = self.get_node(node_id)
         if route_node is None:
@@ -379,7 +371,7 @@ class RoutingGraph:
         Add one segment to the graph.
 
         :param segment: Segment to add.
-        :returns: ``True`` when the segment was added.
+        :return: ``True`` when the segment was added.
         """
         segment_id: int = segment.get_segment_id()
         if segment_id in self._segments_by_id:
@@ -409,7 +401,7 @@ class RoutingGraph:
         Remove one segment from the graph.
 
         :param segment_id: Segment identifier.
-        :returns: ``True`` when the segment was removed.
+        :return: ``True`` when the segment was removed.
         """
         route_segment: RoutingSegment | None = self.get_segment(segment_id)
         if route_segment is None:
@@ -435,7 +427,7 @@ class RoutingGraph:
 
         :param current_node_id: Current node identifier.
         :param previous_node_id: Previously visited node identifier or ``None``.
-        :returns: Next node identifier or ``None``.
+        :return: Next node identifier or ``None``.
         """
         route_segment: RoutingSegment
         for route_segment in self.adjacent_segments(current_node_id):
@@ -455,7 +447,7 @@ class RoutingGraph:
         Validate the source and destination node definitions.
 
         :param report: Validation report to update.
-        :returns: None.
+        :return: None.
         """
         source_node: RoutingNode | None = self.get_source_node()
         destination_node: RoutingNode | None = self.get_destination_node()
@@ -510,7 +502,7 @@ class RoutingGraph:
         Validate segment endpoint references and orthogonality.
 
         :param report: Validation report to update.
-        :returns: None.
+        :return: None.
         """
         route_segment: RoutingSegment
         for route_segment in self.get_segments():
@@ -554,7 +546,7 @@ class RoutingGraph:
         Validate degree rules for all nodes.
 
         :param report: Validation report to update.
-        :returns: None.
+        :return: None.
         """
         route_node: RoutingNode
         for route_node in self.get_nodes():
@@ -612,7 +604,7 @@ class RoutingGraph:
         Validate that no orphan nodes exist.
 
         :param report: Validation report to update.
-        :returns: None.
+        :return: None.
         """
         route_node: RoutingNode
         for route_node in self.get_nodes():
@@ -634,7 +626,7 @@ class RoutingGraph:
         Validate that the graph is connected.
 
         :param report: Validation report to update.
-        :returns: None.
+        :return: None.
         """
         source_node: RoutingNode | None = self.get_source_node()
         if source_node is None:
@@ -677,7 +669,7 @@ class RoutingGraph:
         Validate that stable source-to-destination traversal exists.
 
         :param report: Validation report to update.
-        :returns: None.
+        :return: None.
         """
         ordered_nodes: list[RoutingNode] = self.get_ordered_nodes()
         ordered_segments: list[RoutingSegment] = self.get_ordered_segments()

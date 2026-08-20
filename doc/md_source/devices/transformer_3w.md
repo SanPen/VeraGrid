@@ -9,47 +9,58 @@ This device links terminals or represents a network element between buses.
 ### Registered properties
 Profile-enabled properties: `active`.
 
-|       name        |    class_type     |unit|mandatory|max_chars|                     descriptions                     |has_profile|comment|
-|-------------------|-------------------|----|---------|---------|------------------------------------------------------|-----------|-------|
-|idtag              |str                |    |False    |         |Unique ID                                             |False      |       |
-|name               |str                |    |False    |         |Name of the device.                                   |False      |       |
-|code               |str                |    |False    |         |Secondary ID                                          |False      |       |
-|rdfid              |str                |    |False    |         |RDF ID for further compatibility                      |False      |       |
-|action             |enum ActionType    |    |False    |         |Object action to perform. Only used for model merging.|False      |       |
-|comment            |str                |    |False    |         |User comment                                          |False      |       |
-|diff_changes       |MergeInformation   |    |False    |         |                                                      |False      |       |
-|modelling_authority|Modelling Authority|    |False    |         |Modelling authority of this asset                     |False      |       |
-|commissioned_date  |int                |    |False    |         |Commissioned date of the asset                        |False      |       |
-|decommissioned_date|int                |    |False    |         |Decommissioned date of the asset                      |False      |       |
-|build_status       |enum BuildStatus   |    |False    |         |Device build status. Used in expansion planning.      |False      |       |
-|owners             |AssociationsList   |p.u.|False    |         |Owners associations to injections                     |False      |       |
-|bus0               |Bus                |    |False    |         |Middle point connection bus.                          |False      |       |
-|bus1               |Bus                |    |False    |         |Bus 1.                                                |False      |       |
-|bus2               |Bus                |    |False    |         |Bus 2.                                                |False      |       |
-|bus3               |Bus                |    |False    |         |Bus 3.                                                |False      |       |
-|active             |bool               |    |False    |         |Is active?                                            |True       |       |
-|winding1           |Winding            |    |False    |         |Winding 1.                                            |False      |       |
-|winding2           |Winding            |    |False    |         |Winding 2.                                            |False      |       |
-|winding3           |Winding            |    |False    |         |Winding 3.                                            |False      |       |
-|V1                 |float              |kV  |False    |         |Side 1 rating                                         |False      |       |
-|V2                 |float              |kV  |False    |         |Side 2 rating                                         |False      |       |
-|V3                 |float              |kV  |False    |         |Side 3 rating                                         |False      |       |
-|r12                |float              |p.u.|False    |         |Resistance measured from 1->2                         |False      |       |
-|r23                |float              |p.u.|False    |         |Resistance measured from 2->3                         |False      |       |
-|r31                |float              |p.u.|False    |         |Resistance measured from 3->1                         |False      |       |
-|x12                |float              |p.u.|False    |         |Reactance measured from 1->2                          |False      |       |
-|x23                |float              |p.u.|False    |         |Reactance measured from 2->3                          |False      |       |
-|x31                |float              |p.u.|False    |         |Reactance measured from 3->1                          |False      |       |
-|rate1              |float              |MVA |False    |         |Rating 1                                              |False      |       |
-|rate2              |float              |MVA |False    |         |Rating 2                                              |False      |       |
-|rate3              |float              |MVA |False    |         |Rating 3                                              |False      |       |
-|Pcu12              |float              |KW  |False    |         |Copper loss between 1->2                              |False      |       |
-|Pcu23              |float              |KW  |False    |         |Copper loss between 2->3                              |False      |       |
-|Pcu31              |float              |KW  |False    |         |Copper loss between 3->1                              |False      |       |
-|Vsc12              |float              |%   |False    |         |Short-circuit voltage between 1->2                    |False      |       |
-|Vsc23              |float              |%   |False    |         |Short-circuit voltage between 2->3                    |False      |       |
-|Vsc31              |float              |%   |False    |         |Short-circuit voltage between 3->1                    |False      |       |
-|Pfe                |float              |KW  |False    |         |Iron loss                                             |False      |       |
-|I0                 |float              |%   |False    |         |No-load current                                       |False      |       |
-|x                  |float              |px  |False    |         |x position                                            |False      |       |
-|y                  |float              |px  |False    |         |y position                                            |False      |       |
+|          name          |    class_type     |unit|mandatory|max_chars|                                  descriptions                                  |has_profile|comment|
+|------------------------|-------------------|----|---------|---------|--------------------------------------------------------------------------------|-----------|-------|
+|idtag                   |str                |    |False    |         |Unique ID                                                                       |False      |       |
+|name                    |str                |    |False    |         |Name of the device.                                                             |False      |       |
+|code                    |str                |    |False    |         |Secondary ID                                                                    |False      |       |
+|rdfid                   |str                |    |False    |         |RDF ID for further compatibility                                                |False      |       |
+|action                  |enum ActionType    |    |False    |         |Object action to perform. Only used for model merging.                          |False      |       |
+|selected_to_merge       |bool               |    |False    |         |Whether this object should be applied during diff merge.                        |False      |       |
+|comment                 |str                |    |False    |         |User comment                                                                    |False      |       |
+|diff_changes            |MergeInformation   |    |False    |         |                                                                                |False      |       |
+|modelling_authority     |Modelling Authority|    |False    |         |Modelling authority of this asset                                               |False      |       |
+|commissioned_date       |int                |    |False    |         |Commissioned date of the asset                                                  |False      |       |
+|decommissioned_date     |int                |    |False    |         |Decommissioned date of the asset                                                |False      |       |
+|build_status            |enum BuildStatus   |    |False    |         |Device build status. Used in expansion planning.                                |False      |       |
+|owners                  |AssociationsList   |p.u.|False    |         |Owners associations to injections                                               |False      |       |
+|rms_model               |DaeBlock           |    |False    |         |RMS dynamic model                                                               |False      |       |
+|emt_model               |DaeBlock           |    |False    |         |EMT dynamic model                                                               |False      |       |
+|rms_template            |RMS template       |    |False    |         |Native RMS template used. Assigning it clears rms_fmu_template.                 |False      |       |
+|emt_template            |EMT template       |    |False    |         |Native EMT template used. Assigning it clears emt_fmu_template.                 |False      |       |
+|rms_fmu_template        |FMU template       |    |False    |         |RMS FMU template used only by RMS simulations. Assigning it clears rms_template.|False      |       |
+|emt_fmu_template        |FMU template       |    |False    |         |EMT FMU template used only by EMT simulations. Assigning it clears emt_template.|False      |       |
+|rms_fmu_import_config   |str                |    |False    |         |Serialized FMU Co-Simulation RMS configuration                                  |False      |       |
+|emt_fmu_import_config   |str                |    |False    |         |Serialized FMU Co-Simulation EMT configuration                                  |False      |       |
+|rms_fmu_me_import_config|str                |    |False    |         |Serialized FMU Model Exchange RMS configuration                                 |False      |       |
+|emt_fmu_me_import_config|str                |    |False    |         |Serialized FMU Model Exchange EMT configuration                                 |False      |       |
+|bus0                    |Bus                |    |False    |         |Middle point connection bus.                                                    |False      |       |
+|bus1                    |Bus                |    |False    |         |Bus 1.                                                                          |False      |       |
+|bus2                    |Bus                |    |False    |         |Bus 2.                                                                          |False      |       |
+|bus3                    |Bus                |    |False    |         |Bus 3.                                                                          |False      |       |
+|active                  |bool               |    |False    |         |Is active?                                                                      |True       |       |
+|winding1                |Winding            |    |False    |         |Winding 1.                                                                      |False      |       |
+|winding2                |Winding            |    |False    |         |Winding 2.                                                                      |False      |       |
+|winding3                |Winding            |    |False    |         |Winding 3.                                                                      |False      |       |
+|V1                      |float              |kV  |False    |         |Side 1 rating                                                                   |False      |       |
+|V2                      |float              |kV  |False    |         |Side 2 rating                                                                   |False      |       |
+|V3                      |float              |kV  |False    |         |Side 3 rating                                                                   |False      |       |
+|r12                     |float              |p.u.|False    |         |Resistance measured from 1->2                                                   |False      |       |
+|r23                     |float              |p.u.|False    |         |Resistance measured from 2->3                                                   |False      |       |
+|r31                     |float              |p.u.|False    |         |Resistance measured from 3->1                                                   |False      |       |
+|x12                     |float              |p.u.|False    |         |Reactance measured from 1->2                                                    |False      |       |
+|x23                     |float              |p.u.|False    |         |Reactance measured from 2->3                                                    |False      |       |
+|x31                     |float              |p.u.|False    |         |Reactance measured from 3->1                                                    |False      |       |
+|rate1                   |float              |MVA |False    |         |Rating 1                                                                        |False      |       |
+|rate2                   |float              |MVA |False    |         |Rating 2                                                                        |False      |       |
+|rate3                   |float              |MVA |False    |         |Rating 3                                                                        |False      |       |
+|Pcu12                   |float              |KW  |False    |         |Copper loss between 1->2                                                        |False      |       |
+|Pcu23                   |float              |KW  |False    |         |Copper loss between 2->3                                                        |False      |       |
+|Pcu31                   |float              |KW  |False    |         |Copper loss between 3->1                                                        |False      |       |
+|Vsc12                   |float              |%   |False    |         |Short-circuit voltage between 1->2                                              |False      |       |
+|Vsc23                   |float              |%   |False    |         |Short-circuit voltage between 2->3                                              |False      |       |
+|Vsc31                   |float              |%   |False    |         |Short-circuit voltage between 3->1                                              |False      |       |
+|Pfe                     |float              |KW  |False    |         |Iron loss                                                                       |False      |       |
+|I0                      |float              |%   |False    |         |No-load current                                                                 |False      |       |
+|x                       |float              |px  |False    |         |x position                                                                      |False      |       |
+|y                       |float              |px  |False    |         |y position                                                                      |False      |       |

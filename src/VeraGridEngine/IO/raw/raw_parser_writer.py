@@ -266,7 +266,10 @@ def interpret_line(raw_line: str, splitter=','):
     pattern = splitter + r"\s*(?=(?:[^']*'[^']*')*[^']*$)"
 
     # Use re.split to apply the pattern
-    elms = re.split(pattern, lne)
+    if ',' in lne:
+        elms = re.split(pattern, lne)
+    else:
+        elms = lne.split()
 
     for elm in elms:
 
@@ -867,13 +870,21 @@ def read_raw(filename, text_func=None, progress_func=None, logger=Logger()) -> P
                         if is_3w(lines[l_count], bus_set):
                             # 3 - windings (5 lines)
                             for k in range(5):
-                                data.append(lines[l_count])
-                                l_count += 1
+                                try:
+                                    data.append(lines[l_count])
+                                    l_count += 1
+                                except IndexError:
+                                    logger.add_error("Incomplete 3W transformer data at the raw file")
+                                    data = list()
                         else:
                             # 2-windings (4 lines)
                             for k in range(4):
-                                data.append(lines[l_count])
-                                l_count += 1
+                                try:
+                                    data.append(lines[l_count])
+                                    l_count += 1
+                                except IndexError:
+                                    logger.add_error("Incomplete 2W transformer data at the raw file")
+                                    data = list()
 
                     elif key == 'induction machine':
                         if is_one_line_for_induction_machine(lines[l_count]):
@@ -911,10 +922,11 @@ def read_raw(filename, text_func=None, progress_func=None, logger=Logger()) -> P
                     # data = [interpret_line(object_lines[k]) for k in range(lines_per_object)]
 
                     # pass the data to the according object to assign it to the matching variables
-                    data2 = format_lines(data1=data, logger=logger)
-                    obj = ObjectT()
-                    obj.parse(data2, version, logger)
-                    objects_list.append(obj)
+                    if len(data) > 0:
+                        data2 = format_lines(data1=data, logger=logger)
+                        obj = ObjectT()
+                        obj.parse(data2, version, logger)
+                        objects_list.append(obj)
 
                     if progress_func is not None:
                         progress_func((l_count / len(lines)) * 100)

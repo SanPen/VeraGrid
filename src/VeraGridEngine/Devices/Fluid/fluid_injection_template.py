@@ -72,7 +72,7 @@ class FluidInjectionTemplate(PhysicalDevice):
             tpe=DeviceType.FacilityDevice,
             definition='Facility where this is located',
             editable=True,
-            cat=[PrpCat.OPF],
+            cat=[PrpCat.OPF, PrpCat.TP],
         ),
     )
 

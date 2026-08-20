@@ -719,7 +719,9 @@ def veragrid_object_to_json(elm: ALL_DEV_TYPES,
 
         elif prop.tpe == SubObjectType.VarType:
             if obj is not None:
-                data[name] = obj.uid
+                # Persist the physical variable identity. The mutable UID can
+                # be shared by every variable connected to the same signal.
+                data[name] = obj.non_mutable_uid
             else:
                 # Persistent dynamic plot entries may keep unresolved legacy Var
                 # hints as ``None`` while semantic fields remain the canonical
@@ -1867,8 +1869,11 @@ def parse_veragrid_data(data: VERAGRID_FILE_TYPE,
             block_parser.parse_diff_vars(symbolic_data["diff_vars"])
             if "connections" in symbolic_data:
                 block_parser.parse_connections(symbolic_data["connections"])
-            for block_uid in symbolic_data["main_block_uids"]:
-                block_parser.parse_block(symbolic_data["blocks"], block_uid)
+            # BlockParser owns compatibility with all historical dynamics
+            # containers, including list-based tables, inline children and
+            # archives created before main_block_uids existed.
+            block_parser.parse_blocks(blocks_data=symbolic_data.get("blocks", dict()),
+                                      main_block_uids=symbolic_data.get("main_block_uids", None))
         else:
             pass  # the symbolic data is empty
     else:

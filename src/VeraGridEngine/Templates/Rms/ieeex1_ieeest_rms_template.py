@@ -367,6 +367,8 @@ def get_ieeex1_rms_template(
     e2_var: Var = _add_parameter(block, vfactory, "E2", 4.0)
     se2_var: Var = _add_parameter(block, vfactory, "SE2", 0.3)
     vref0_var: Var = _add_parameter(block, vfactory, "vref0", None)
+    se_diag_ref_var: Var = _add_parameter(block, vfactory, "Se_diag_ref", None)
+    diag_eps_expr: Expr = sym.Const(1.0e-8)
     saturation_coefficients: tuple[Expr, Expr] = _quadratic_saturation_coefficients(
         e1_var,
         se1_var,
@@ -401,7 +403,8 @@ def get_ieeex1_rms_template(
         sym.heaviside(vp_var - saturation_start)
         * saturation_gain
         * (vp_var - saturation_start) ** 2
-        - se_var * vp_var,
+        - se_var * vp_var
+        + diag_eps_expr * (se_var - se_diag_ref_var),
         kf1_var * (vp_var - washout_state_var)
         - tf1_var * washout_output_var,
         regulator_input - vi_var,
@@ -422,6 +425,7 @@ def get_ieeex1_rms_template(
     block.init_eqs[la_state_var] = initial_regulator
     block.init_eqs[washout_state_var] = vf_var
     block.init_eqs[se_var] = initial_se
+    block.init_eqs[se_diag_ref_var] = initial_se
     block.init_eqs[washout_output_var] = sym.Const(0.0)
     block.init_eqs[vi_var] = initial_input
     block.init_eqs[vref0_var] = vm_var + initial_input

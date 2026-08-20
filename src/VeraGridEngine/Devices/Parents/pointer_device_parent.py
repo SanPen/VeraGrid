@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 from typing import Union, Tuple, TYPE_CHECKING
-from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp
+from VeraGridEngine.Devices.Parents.editable_device import EditableDevice, GCProp, PrpCat
 from VeraGridEngine.enumerations import DeviceType
 
 if TYPE_CHECKING:
@@ -32,6 +32,7 @@ class PointerDeviceParent(EditableDevice):
             tpe=str,
             definition='Unique ID',
             editable=False,
+            cat=[PrpCat.TP],
         ),
         GCProp(
             prop_name='tpe',
@@ -39,6 +40,7 @@ class PointerDeviceParent(EditableDevice):
             tpe=DeviceType,
             definition='Device type',
             editable=False,
+            cat=[PrpCat.TP],
         ),
         GCProp(
             prop_name='device_name',
@@ -46,6 +48,7 @@ class PointerDeviceParent(EditableDevice):
             tpe=str,
             definition='Device name',
             editable=False,
+            cat=[PrpCat.TP],
         ),
     )
 

@@ -17,7 +17,8 @@ from VeraGrid.Gui.results_model import ResultsModel
 from VeraGrid.Gui.general_dialogues import fill_tree_from_logs
 import VeraGridEngine.Utils.Filtering as flt
 from VeraGridEngine.basic_structures import Logger
-from VeraGridEngine.enumerations import ResultTypes, SimulationTypes, PlotSimulationType, DynamicPlotEntryKind, DynamicPlotMode
+from VeraGridEngine.enumerations import (ResultTypes, SimulationTypes, PlotSimulationType, DynamicPlotEntryKind,
+                                         DynamicPlotMode, ResultTablePlotType)
 from VeraGridEngine.Utils.Symbolic.symbolic import Var
 from VeraGridEngine.Simulations.Rms.rms_results import RmsResults
 from VeraGridEngine.Simulations.EMT.emt_results import EmtResults
@@ -716,23 +717,100 @@ class ResultsMain(SimulationsMain):
         """
         self._show_pre_simulation_dynamic_plot_editor(simulation_type=PlotSimulationType.EMT)
 
-    def plot_results(self):
+    def plot_results(self) -> None:
         """
-        Plot the results
+        Plot the visible results according to the table plot contract.
+
+        Complex-vector tables interpret selected cells as mode-column choices.
+        State subsets are selected explicitly through complete rows or through
+        the results filter, preventing a single clicked cell from truncating an
+        entire right eigenvector accidentally. Complex-point tables use cell
+        selection for modes and complete-column selection for coordinate units.
+
+        :return: None.
         """
-        mdl: ResultsModel = self.ui.resultsTableView.model()
+        mdl: ResultsModel | None = self.ui.resultsTableView.model()
 
         if mdl is not None:
 
             plt.rcParams["date.autoformatter.minute"] = "%Y-%m-%d %H:%M:%S"
 
-            # get the selected element
-            obj_idx = self.ui.resultsTableView.selectedIndexes()
-            n_cols = mdl.table.c
+            # Collect the selected cells once so all plot types use the same
+            # visible model after filtering.
+            selected_indexes: list[QtCore.QModelIndex] = self.ui.resultsTableView.selectedIndexes()
+            selected_columns: np.ndarray | None
+            selected_rows: np.ndarray | None
+            if len(selected_indexes) > 0:
+                selected_columns_array: np.ndarray = np.zeros(len(selected_indexes), dtype=np.int64)
+                selected_rows_array: np.ndarray = np.zeros(len(selected_indexes), dtype=np.int64)
 
-            if n_cols > 50:
+                selected_position: int
+                selected_index: QtCore.QModelIndex
+                for selected_position, selected_index in enumerate(selected_indexes):
+                    selected_columns_array[selected_position] = selected_index.column()
+                    selected_rows_array[selected_position] = selected_index.row()
+
+                selection_model: QtCore.QItemSelectionModel = self.ui.resultsTableView.selectionModel()
+                complete_rows: list[QtCore.QModelIndex] = selection_model.selectedRows()
+                complete_columns: list[QtCore.QModelIndex] = selection_model.selectedColumns()
+
+                if mdl.table.plot_type == ResultTablePlotType.COMPLEX_POINTS:
+                    # Cell and row selection chooses modal points. Only an
+                    # explicit complete-column selection changes the complex
+                    # coordinate pair used by the plot.
+                    if len(complete_rows) > 0:
+                        complete_row_indices: np.ndarray = np.zeros(len(complete_rows), dtype=np.int64)
+                        complete_row_position: int
+                        complete_row: QtCore.QModelIndex
+                        for complete_row_position, complete_row in enumerate(complete_rows):
+                            complete_row_indices[complete_row_position] = complete_row.row()
+                        selected_rows = np.unique(complete_row_indices)
+                    else:
+                        selected_rows = np.unique(selected_rows_array)
+
+                    # Selecting every table column normally comes from a row
+                    # selection and therefore means "use the default pair".
+                    if 0 < len(complete_columns) < mdl.table.c:
+                        complete_column_indices: np.ndarray = np.zeros(
+                            len(complete_columns),
+                            dtype=np.int64,
+                        )
+                        complete_column_position: int
+                        complete_column: QtCore.QModelIndex
+                        for complete_column_position, complete_column in enumerate(complete_columns):
+                            complete_column_indices[complete_column_position] = complete_column.column()
+                        selected_columns = np.unique(complete_column_indices)
+                    else:
+                        selected_columns = None
+                elif mdl.table.plot_type == ResultTablePlotType.COMPLEX_VECTORS:
+                    selected_columns = np.unique(selected_columns_array)
+                    if len(complete_rows) > 0:
+                        complete_row_indices: np.ndarray = np.zeros(len(complete_rows), dtype=np.int64)
+                        complete_row_position: int
+                        complete_row: QtCore.QModelIndex
+                        for complete_row_position, complete_row in enumerate(complete_rows):
+                            complete_row_indices[complete_row_position] = complete_row.row()
+                        selected_rows = np.unique(complete_row_indices)
+                    else:
+                        selected_rows = None
+                else:
+                    selected_columns = np.unique(selected_columns_array)
+                    selected_rows = np.unique(selected_rows_array)
+            else:
+                selected_columns = None
+                selected_rows = None
+
+            if mdl.table.plot_type == ResultTablePlotType.COMPLEX_POINTS:
+                number_of_plots: int = 1
+            elif selected_columns is None:
+                number_of_plots: int = mdl.table.c
+            else:
+                number_of_plots = int(selected_columns.size)
+
+            if number_of_plots > 50:
                 ok = yes_no_question(text=self.tr("There are {columns} columns, the plot might take a lot to render.\n"
-                                                  "Are you ok with potentially waiting a lot?").format(columns=n_cols),
+                                                  "Are you ok with potentially waiting a lot?").format(
+                                                      columns=number_of_plots),
                                      title=self.tr("Plot"))
             else:
                 ok = True
@@ -742,35 +820,23 @@ class ResultsMain(SimulationsMain):
                 fig = plt.figure(figsize=(12, 8))
                 ax = fig.add_subplot(111)
 
-                if len(obj_idx):
-
-                    # get the unique columns in the selected cells
-                    cols = np.zeros(len(obj_idx), dtype=int)
-                    rows = np.zeros(len(obj_idx), dtype=int)
-
-                    for i in range(len(obj_idx)):
-                        cols[i] = obj_idx[i].column()
-                        rows[i] = obj_idx[i].row()
-
-                    cols = np.unique(cols)
-                    rows = np.unique(rows)
-
-                else:
-                    # plot all
-                    cols = None
-                    rows = None
-
-                # none selected, plot all
+                # The table dispatches to the series, complex-point, or
+                # complex-vector renderer without simulation-specific GUI code.
                 mdl.plot(
                     ax=ax,
-                    selected_col_idx=cols,
-                    selected_rows=rows,
+                    selected_col_idx=selected_columns,
+                    selected_rows=selected_rows,
                     stacked=self.ui.stacked_plot_checkBox.isChecked()
                 )
 
                 plt.show()
             else:
                 pass
+        else:
+            warning_msg(
+                self.tr("There are no results available to plot."),
+                self.tr("Plot results"),
+            )
 
     def save_results_df(self):
         """
@@ -825,31 +891,34 @@ class ResultsMain(SimulationsMain):
             warning_msg(self.tr("There is no profile displayed, please display one"),
                         self.tr("Copy profile to clipboard"))
 
-    def search_in_results(self):
+    def search_in_results(self) -> None:
         """
         Search in the results model
+
+        :return: None.
         """
 
         if self.results_mdl is not None:
 
-            txt = self.ui.search_results_lineEdit.text().strip()
+            txt: str = self.ui.search_results_lineEdit.text().strip()
 
-            filter_ = flt.FilterResultsTable(self.results_mdl.table)
+            filter_: flt.FilterResultsTable = flt.FilterResultsTable(self.results_mdl.table)
 
             try:
                 filter_.parse(expression=txt)
-                filtered_table = filter_.apply()
+                filtered_model: ResultsModel = ResultsModel(filter_.apply())
             except ValueError as e:
                 error_msg(str(e), self.tr("Filter parse"))
-                return None
+                return
             except Exception as e:
                 error_msg(str(e), self.tr("Filter parse"))
-                return None
+                return
 
-            self.results_mdl = ResultsModel(filtered_table)
-            self.ui.resultsTableView.setModel(self.results_mdl)
+            # Keep the unfiltered model as the stable search source. This makes
+            # each query independent and lets an empty query restore the table.
+            self.ui.resultsTableView.setModel(filtered_model)
         else:
-            return None
+            return
 
     def delete_results_driver(self):
         """

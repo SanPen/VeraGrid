@@ -1,5 +1,14 @@
 # Phase locked loop
 
+<!-- veragrid-block-introduction:start -->
+**Phase locked loop** belongs to the synchronization layer of a power-system controller. A phase-locked loop compares a measured voltage reference with an internally generated angle, filters the phase error, and integrates the resulting frequency correction. It lets grid-following controls express currents and voltages in a rotating frame aligned with the network.
+
+## Typical use
+
+- Use it when a controller must track grid angle and frequency rather than establish them.
+- Check loop bandwidth and damping against grid strength; an aggressive PLL can amplify disturbances or interact with converter current control.
+<!-- veragrid-block-introduction:end -->
+
 ### Purpose
 
 A phase locked loop (PLL) estimates the angle and frequency of an electrical signal so that other control blocks can align themselves to the network reference frame.

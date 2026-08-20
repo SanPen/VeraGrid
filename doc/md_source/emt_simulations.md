@@ -91,7 +91,7 @@ Build a 2-bus EMT model with:
 
 System sketch:
 
-![Two-bus EMT example](figures/system_model.png)
+![Two-bus EMT example](figures/dynamics/system_model.png)
 
 ### Static network data
 
@@ -160,15 +160,15 @@ The editor workflow is preferred when the parameters, equations, or controller s
 
 When opening the EMT editor, the grid connection blocks are already present. For AC devices, the phase terminals appear explicitly.
 
-![EMT editor initial blocks](figures/emt_editor_initial_blocks.png)
+![EMT editor initial blocks](figures/dynamics/emt_editor_initial_blocks.png)
 
 Example generator model using a Thevenin-equivalent representation:
 
-![Generator Thevenin model](figures/generator_thevenin_model.png)
+![Generator Thevenin model](figures/dynamics/generator_thevenin_model.png)
 
-The practical session also shows a more detailed converter build:
+The practical session also shows a more detailed generator build:
 
-![Full converter example](figures/full_converter_example.png)
+![Full converter example](figures/dynamics/full_generator_example.png)
 
 ### EMT event example
 

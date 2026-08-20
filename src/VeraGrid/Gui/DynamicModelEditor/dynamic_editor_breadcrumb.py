@@ -61,9 +61,16 @@ class DynamicEditorBreadcrumb(QtWidgets.QWidget):
     Remaining space is left empty on the right, like a file-manager path bar.
     """
 
+    __slots__ = ()
+
     blockClicked = Signal(object)
 
     def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+        """Create an empty breadcrumb container.
+
+        :param parent: Owning editor tab.
+        :return: None.
+        """
         super().__init__(parent)
         self.setFixedHeight(22)
         self._click_handlers: List[_BreadcrumbClickHandler] = list()
@@ -98,6 +105,8 @@ class DynamicEditorBreadcrumb(QtWidgets.QWidget):
             if i > 0:
                 sep = self._make_separator()
                 self._container_layout.addWidget(sep)
+            else:
+                pass
 
             button = self._make_block_button(block, is_last=(i == len(blocks) - 1))
             self._container_layout.addWidget(button)
@@ -115,7 +124,13 @@ class DynamicEditorBreadcrumb(QtWidgets.QWidget):
     # ------------------------------------------------------------------
 
     def _make_block_button(self, block: Block, is_last: bool = False) -> QtWidgets.QToolButton:
-        """Create a breadcrumb button for *block*."""
+        """
+        Create a breadcrumb button for *block*.
+
+        :param block: Symbolic block used by the operation.
+        :param is_last: Whether this is the final breadcrumb item.
+        :return: Breadcrumb button associated with *block*.
+        """
         button = QtWidgets.QToolButton()
         button.setText(block.name)
         button.setAutoRaise(True)
@@ -137,6 +152,8 @@ class DynamicEditorBreadcrumb(QtWidgets.QWidget):
             bold = QFont(self._font)
             bold.setBold(True)
             button.setFont(bold)
+        else:
+            pass
 
         click_handler = _BreadcrumbClickHandler(self, block)
         self._click_handlers.append(click_handler)
@@ -144,7 +161,11 @@ class DynamicEditorBreadcrumb(QtWidgets.QWidget):
         return button
 
     def _make_separator(self) -> QtWidgets.QToolButton:
-        """Create a disabled separator button showing ``>``."""
+        """
+        Create a disabled separator button showing ``>``.
+
+        :return: Disabled separator button showing ``>``.
+        """
         sep = QtWidgets.QToolButton()
         sep.setText(">")
         sep.setAutoRaise(True)
@@ -164,7 +185,11 @@ class DynamicEditorBreadcrumb(QtWidgets.QWidget):
         return sep
 
     def _clear(self) -> None:
-        """Remove all widgets from the container layout."""
+        """
+        Remove all widgets from the container layout.
+
+        :return: None.
+        """
         self._click_handlers.clear()
         while self._container_layout.count() > 0:
             item = self._container_layout.takeAt(0)

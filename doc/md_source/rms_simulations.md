@@ -4,6 +4,14 @@ Root-mean-square (RMS) simulation is VeraGrid's phasor-domain dynamic-simulation
 
 RMS simulation is usually the first dynamic study to run because it captures the global dynamic picture at moderate computational cost.
 
+The RMS model also provides the operating point and linearization used by VeraGrid's small-signal stability analysis.
+
+```{toctree}
+:maxdepth: 1
+
+small_signal_stability
+```
+
 ## When to use RMS simulation
 
 Use RMS simulation when the study objective is mainly related to:
@@ -86,7 +94,7 @@ Build a 2-bus RMS model with:
 
 System sketch:
 
-![Two-bus RMS example](figures/system_model.png)
+![Two-bus RMS example](figures/dynamics/system_model.png)
 
 ### Static network data
 
@@ -137,11 +145,11 @@ The second workflow is the most flexible when parameters, equations, or control 
 
 When opening the RMS editor, the grid connection blocks are already present. The user then adds the dynamic blocks from the library and connects them to those terminals.
 
-![RMS editor with initial blocks](figures/rms_editor_initial_blocks.png)
+![RMS editor with initial blocks](figures/dynamics/rms_editor_initial_blocks.png)
 
 Example final generator model:
 
-![Final RMS generator model](figures/rms_generator_model.png)
+![Final RMS generator model](figures/dynamics/rms_generator_model.png)
 
 ### RMS event example
 

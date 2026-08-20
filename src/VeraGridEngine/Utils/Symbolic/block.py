@@ -7,103 +7,48 @@ from __future__ import annotations
 
 import copy
 import uuid
-from enum import Enum
 from typing import List, Dict, Any, Tuple
 
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const, Expr, _expr_to_dict, _dict_to_expr, BinOp, UnOp, Func, Func2, Comparison
 from VeraGridEngine.Devices.Diagrams.block_diagram import BlockDiagram
 from VeraGridEngine.enumerations import VarPowerFlowReferenceType, ParamPowerFlowReferenceType
 from VeraGridEngine.Utils.Symbolic.compare_expressions_structure import equivalent_systems
+from VeraGridEngine.Utils.Symbolic.dynamic_connection_intent import (DynamicConnectionIntent,
+                                                                     DynamicConnectionIntentDirection,
+                                                                     DynamicConnectionIntentOrigin,
+                                                                     dynamic_connection_intent_from_dict,
+                                                                     dynamic_connection_intent_to_dict)
 from VeraGridEngine.Utils.Symbolic.variable_alignment_engine import align_variables
-
-
-class DynamicConnectionIntentOrigin(Enum):
-    """
-    Describe why one dynamic root-interface connection exists.
-    """
-
-    USER = "USER"
-    TEMPLATE_DERIVED = "TEMPLATE_DERIVED"
-
-
-def build_dynamic_connection_intent_record(origin: DynamicConnectionIntentOrigin,
-                                           root_ref: VarPowerFlowReferenceType | None,
-                                           root_direction: str,
-                                           internal_block_uid: int,
-                                           internal_port_direction: str,
-                                           internal_port_index: int,
-                                           suppressed: bool = False) -> Dict[str, Any]:
-    """
-    Build one serializable connection-intent record.
-
-    :param origin: Why the connection exists.
-    :param root_ref: Semantic root-side reference.
-    :param root_direction: ``input`` or ``output`` for the root-side wrapper.
-    :param internal_block_uid: Stable internal block UID.
-    :param internal_port_direction: ``input`` or ``output`` on the internal block.
-    :param internal_port_index: Internal block port index.
-    :param suppressed: Whether the intent is intentionally disabled.
-    :return: Serializable record.
-    """
-    root_ref_value: str | None
-
-    if root_ref is None:
-        root_ref_value = None
-    else:
-        root_ref_value = root_ref.value
-
-    return dict({
-        "origin": origin.value,
-        "root_ref": root_ref_value,
-        "root_direction": root_direction,
-        "internal_block_uid": internal_block_uid,
-        "internal_port_direction": internal_port_direction,
-        "internal_port_index": internal_port_index,
-        "suppressed": suppressed,
-    })
-
-
-def is_dynamic_connection_intent_record(entry: Dict[str, Any]) -> bool:
-    """
-    Return whether one dictionary looks like one persisted intent record.
-
-    :param entry: Candidate dictionary.
-    :return: ``True`` when the schema matches.
-    """
-    if "origin" not in entry:
-        return False
-    elif "root_ref" not in entry:
-        return False
-    elif "root_direction" not in entry:
-        return False
-    elif "internal_block_uid" not in entry:
-        return False
-    elif "internal_port_direction" not in entry:
-        return False
-    elif "internal_port_index" not in entry:
-        return False
-    elif "suppressed" not in entry:
-        return False
-    else:
-        return True
 
 
 def normalize_dynamic_connection_intents(block: "Block") -> None:
     """
-    Keep only valid serializable connection-intent entries on one block.
+    Keep one current typed state for each connection-intent identity.
 
     :param block: Block whose intents must be normalized.
     :return: None.
     """
-    normalized_entries: List[Dict[str, Any]] = list()
-    entry: Any
+    normalized_entries: List[DynamicConnectionIntent] = list()
+    entry: object
+    existing_index: int
+    existing_entry: DynamicConnectionIntent
+    matching_index: int | None
 
     for entry in block.connection_intents:
-        if isinstance(entry, dict):
-            if is_dynamic_connection_intent_record(entry):
-                normalized_entries.append(dict(entry))
+        if isinstance(entry, DynamicConnectionIntent):
+            matching_index = None
+            for existing_index, existing_entry in enumerate(normalized_entries):
+                if existing_entry.has_same_identity(entry):
+                    matching_index = existing_index
+                else:
+                    pass
+
+            # Replacing the previous value makes the list represent current
+            # desired state instead of retaining an edit history.
+            if matching_index is None:
+                normalized_entries.append(entry)
             else:
-                pass
+                normalized_entries[matching_index] = entry
         else:
             pass
 
@@ -111,43 +56,51 @@ def normalize_dynamic_connection_intents(block: "Block") -> None:
 
 
 def find_matching_dynamic_connection_intent(block: "Block",
-                                            origin: DynamicConnectionIntentOrigin,
-                                            root_ref_value: str | None,
-                                            root_direction: str,
-                                            internal_block_uid: int,
-                                            internal_port_direction: str,
-                                            internal_port_index: int) -> Dict[str, Any] | None:
+                                             origin: DynamicConnectionIntentOrigin,
+                                             root_reference: VarPowerFlowReferenceType,
+                                             direction: DynamicConnectionIntentDirection,
+                                             internal_block_uid: int,
+                                             internal_variable_uid: int) -> DynamicConnectionIntent | None:
     """
     Find one exact connection-intent record on one block.
 
     :param block: Root block that owns the persisted intents.
     :param origin: Required provenance.
-    :param root_ref_value: Serialized root ref value.
-    :param root_direction: Root-side direction.
+    :param root_reference: Semantic root-interface reference.
+    :param direction: Connection direction.
     :param internal_block_uid: Internal block UID.
-    :param internal_port_direction: Internal port direction.
-    :param internal_port_index: Internal port index.
+    :param internal_variable_uid: Internal variable non-mutable UID.
     :return: Matching record or ``None``.
     """
-    entry: Dict[str, Any]
+    entry: DynamicConnectionIntent
 
     for entry in block.connection_intents:
-        if entry.get("origin", None) != origin.value:
+        if entry.get_origin() != origin:
             pass
-        elif entry.get("root_ref", None) != root_ref_value:
+        elif entry.get_root_reference() != root_reference:
             pass
-        elif entry.get("root_direction", None) != root_direction:
+        elif entry.get_direction() != direction:
             pass
-        elif entry.get("internal_block_uid", None) != internal_block_uid:
+        elif entry.get_internal_block_uid() != internal_block_uid:
             pass
-        elif entry.get("internal_port_direction", None) != internal_port_direction:
-            pass
-        elif entry.get("internal_port_index", None) != internal_port_index:
+        elif entry.get_internal_variable_uid() != internal_variable_uid:
             pass
         else:
             return entry
 
     return None
+
+
+def upsert_dynamic_connection_intent(block: "Block", intent: DynamicConnectionIntent) -> None:
+    """
+    Replace the current state of one connection intent on a block.
+
+    :param block: Root block that owns the connection intents.
+    :param intent: Current desired connection state.
+    :return: None.
+    """
+    block.connection_intents.append(intent)
+    normalize_dynamic_connection_intents(block=block)
 
 
 def rehash_block_var_keyed_dicts(block_model: "Block") -> None:
@@ -181,6 +134,22 @@ def rehash_block_tree_var_keyed_dicts(root_block: "Block") -> None:
     block_model: Block
     for block_model in root_block.get_all_blocks():
         rehash_block_var_keyed_dicts(block_model=block_model)
+
+
+def refresh_block_tree_var_name_mappings(root_block: "Block") -> None:
+    """
+    Rebuild algebraic-variable lookups after connected names change.
+
+    :param root_block: Root of the block tree whose names were propagated.
+    :return: None.
+    """
+    block_model: Block
+    algebraic_var: Var
+
+    for block_model in root_block.get_all_blocks():
+        block_model.var_mapping = dict()
+        for algebraic_var in block_model.algebraic_vars:
+            block_model.var_mapping[algebraic_var.name] = algebraic_var
 
 
 def _new_uid() -> int:
@@ -245,38 +214,48 @@ class Block:
                  mode_dict: Dict[Var, Expr] | None = None,
                  boolean_guards: Dict[Var, Expr | Comparison] | None = None,
                  procedural_logic: List[Any] | None = None,
-                 connection_intents: List[Dict[str, Any]] | None = None,
+                 connection_intents: List[DynamicConnectionIntent] | None = None,
                  external_mapping: Dict[VarPowerFlowReferenceType, Var] | None = None,
                  api_obj_mapping: Dict[ParamPowerFlowReferenceType, Var] | None = None,
                  is_decomposable: bool = True,
                  name: str = "",
-                 uid: int | None = None,
-                 is_root_interface_wrapper: bool = False):
+                 uid: int | None = None):
         """
         This represents a group of equations or a group of blocks
 
-        :param algebraic_vars: List of non-differential variables (AKA algebraic)
-        :param algebraic_eqs: List of equations that provide values for the algebraic variables
-        :param state_vars: List of differential variables (AKA state variables)
-        :param state_eqs: List of equations that provide values for the state variables
-        :param children: List of other blocks to be flattened later into this block
-        :param in_vars: List of variables from other blocks that we use here
-        :param out_vars: List of variables that already exist in algebraic_vars or state_vars that we want to expose
-        :param init_eqs: List of equations that help initializing the block variables (algebraic and state)
-        :param diff_init_eqs: List of equations that help initializing the block derivatives of state variables
-         :param event_dict: Dictionary of parameters that can change during the simulations
-         :param procedural_logic: List of runtime procedural logic objects attached to the block
-         :param external_mapping: Dictionary of vars that are related to the Power flow initialization
-         :param is_root_interface_wrapper: Whether this block is an editor root-interface wrapper
-         :param name: name of the block
-         """
+        :param state_vars: Differential state variables solved by the block.
+        :param state_eqs: Right-hand-side equations associated with ``state_vars``.
+        :param algebraic_vars: Non-differential variables solved by the block.
+        :param algebraic_eqs: Residual equations associated with ``algebraic_vars``.
+        :param inequalities: Inequality constraints enforced by the block.
+        :param diff_vars: Explicit derivative variables associated with state variables.
+        :param reformulated_vars: Auxiliary variables introduced by symbolic reformulation.
+        :param differential_eqs: Legacy differential residual equations retained for compatible model loading.
+        :param parameters: Static symbolic parameters and their constant values.
+        :param init_values: Explicit initial values assigned to symbolic variables.
+        :param init_eqs: Equations used to initialize algebraic and state variables.
+        :param diff_init_eqs: Equations used to initialize state-variable derivatives.
+        :param discrete_eqs: Discrete update equations keyed by their target variables.
+        :param children: Nested blocks flattened with this block during compilation.
+        :param in_vars: Variables consumed from outside the block.
+        :param out_vars: Internal variables exposed to other blocks.
+        :param event_dict: Runtime-changeable parameters and their current expressions.
+        :param mode_dict: Discrete mode variables and their current expressions.
+        :param boolean_guards: Boolean guard variables and the comparisons that drive them.
+        :param procedural_logic: Runtime procedural-logic objects attached to the block.
+        :param connection_intents: Semantic dynamic connections retained across interface reconstruction.
+        :param external_mapping: Variables initialized from power-flow result references.
+        :param api_obj_mapping: Static parameters mapped to properties of the associated grid device.
+        :param is_decomposable: Whether the editor and compiler may expose the block's internal structure.
+        :param name: Human-readable block name.
+        :param uid: Stable block identifier, or ``None`` to allocate a new identifier.
+        """
 
         self.name: str = name
 
         self.uid: int = _new_uid() if uid is None else uid
 
         self.is_decomposable = is_decomposable
-        self.is_root_interface_wrapper: bool = is_root_interface_wrapper
         self.tpe_uid: int | None =  None
         self.vars_glob_name2uid: Dict[str, int] = dict()
 
@@ -322,7 +301,12 @@ class Block:
         self.mode_dict: Dict[Var, Expr | Const] = dict() if mode_dict is None else mode_dict
         self.boolean_guards: Dict[Var, Expr | Comparison] = dict() if boolean_guards is None else boolean_guards
         self.procedural_logic: List[Any] = list() if procedural_logic is None else procedural_logic
-        self.connection_intents: List[Dict[str, Any]] = list() if connection_intents is None else connection_intents
+        # Root-interface intents are current semantic connection states. They
+        # are independent from the graphical wires that happen to be visible
+        # under the current network topology.
+        self.connection_intents: List[DynamicConnectionIntent] = (list()
+                                                                  if connection_intents is None
+                                                                  else connection_intents)
 
         self._diagram: BlockDiagram = BlockDiagram()
 
@@ -365,7 +349,6 @@ class Block:
         return {
             "name": self.name,
             "uid": self.uid,
-            "is_root_interface_wrapper": self.is_root_interface_wrapper,
 
             "state_vars": [_expr_to_dict(v) for v in self.state_vars],
             "algebraic_vars": [_expr_to_dict(v) for v in self.algebraic_vars],
@@ -421,7 +404,7 @@ class Block:
             },
 
             "procedural_logic": self._procedural_logic_to_dict(),
-            "connection_intents": list(self.connection_intents),
+            "connection_intents": [dynamic_connection_intent_to_dict(intent) for intent in self.connection_intents],
 
             "parameters": {
                 k.uid: {
@@ -517,7 +500,6 @@ class Block:
                 for item in data.get("boolean_guards", {}).values()
             },
             procedural_logic=Block._procedural_logic_from_dict(data.get("procedural_logic", [])),
-            connection_intents=list(data.get("connection_intents", list())),
             external_mapping={
                 VarPowerFlowReferenceType(k): (_dict_to_expr(v) if v is not None else None)
                 for k, v in data["external_mapping"].items()
@@ -526,13 +508,29 @@ class Block:
                 ParamPowerFlowReferenceType(k): (_dict_to_expr(v) if v is not None else None)
                 for k, v in data["api_obj_mapping"].items()
             },
-            is_root_interface_wrapper=bool(data.get("is_root_interface_wrapper", False)),
             name=data["name"],
             uid=data["uid"]
         )
 
         # Fill the diagram
         block.diagram.parse(data.get("diagram", {}))
+
+        # Parse intents only after the complete block hierarchy exists because
+        # legacy records identify the internal variable by its port position.
+        persisted_intent: object
+        for persisted_intent in data.get("connection_intents", list()):
+            if isinstance(persisted_intent, dict):
+                parsed_intent: DynamicConnectionIntent | None = dynamic_connection_intent_from_dict(
+                    data=persisted_intent,
+                    root_block=block,
+                )
+                if parsed_intent is not None:
+                    block.connection_intents.append(parsed_intent)
+                else:
+                    pass
+            else:
+                pass
+        normalize_dynamic_connection_intents(block=block)
 
         return block
 
@@ -613,6 +611,7 @@ class Block:
             result.mode_dict = copy.deepcopy(self.mode_dict, memo)
             result.boolean_guards = copy.deepcopy(self.boolean_guards, memo)
             result.procedural_logic = copy.deepcopy(self.procedural_logic, memo)
+            result.connection_intents = copy.deepcopy(self.connection_intents, memo)
             result._diagram = copy.deepcopy(self._diagram, memo)
 
             extra_key: str

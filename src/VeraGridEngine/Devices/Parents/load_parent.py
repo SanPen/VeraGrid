@@ -47,7 +47,7 @@ class LoadParent(InjectionParent):
             tpe=float,
             definition='Active power',
             profile_name='P_prof',
-            cat=[PrpCat.PF],
+            cat=[PrpCat.PF, PrpCat.OPF, PrpCat.NTC],
             dyn_ref=ParamPowerFlowReferenceType.Pl0,
         ),
         GCProp(
@@ -56,7 +56,7 @@ class LoadParent(InjectionParent):
             tpe=float,
             definition='Phase A active power',
             profile_name='Pa_prof',
-            cat=[PrpCat.PF3],
+            cat=[PrpCat.PF3, PrpCat.EMT],
             dyn_ref=ParamPowerFlowReferenceType.Pl0_A,
         ),
         GCProp(
@@ -65,7 +65,7 @@ class LoadParent(InjectionParent):
             tpe=float,
             definition='Phase B active power',
             profile_name='Pb_prof',
-            cat=[PrpCat.PF3],
+            cat=[PrpCat.PF3, PrpCat.EMT],
             dyn_ref=ParamPowerFlowReferenceType.Pl0_B,
         ),
         GCProp(
@@ -74,7 +74,7 @@ class LoadParent(InjectionParent):
             tpe=float,
             definition='Phase C active power',
             profile_name='Pc_prof',
-            cat=[PrpCat.PF3],
+            cat=[PrpCat.PF3, PrpCat.EMT],
             dyn_ref=ParamPowerFlowReferenceType.Pl0_C,
         ),
         GCProp(
@@ -83,7 +83,7 @@ class LoadParent(InjectionParent):
             tpe=float,
             definition='Reactive power',
             profile_name='Q_prof',
-            cat=[PrpCat.PF],
+            cat=[PrpCat.PF, PrpCat.OPF, PrpCat.NTC],
             dyn_ref=ParamPowerFlowReferenceType.Ql0,
         ),
         GCProp(
@@ -101,7 +101,7 @@ class LoadParent(InjectionParent):
             tpe=float,
             definition='Phase B reactive power',
             profile_name='Qb_prof',
-            cat=[PrpCat.PF3],
+            cat=[PrpCat.PF3, PrpCat.EMT],
             dyn_ref=ParamPowerFlowReferenceType.Ql0_B,
         ),
         GCProp(
@@ -110,7 +110,7 @@ class LoadParent(InjectionParent):
             tpe=float,
             definition='Phase C reactive power',
             profile_name='Qc_prof',
-            cat=[PrpCat.PF3],
+            cat=[PrpCat.PF3, PrpCat.EMT],
             dyn_ref=ParamPowerFlowReferenceType.Ql0_C,
         ),
     )

@@ -11,6 +11,8 @@ from VeraGridEngine.Utils.Symbolic.block import Block
 
 if TYPE_CHECKING:
     from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_tab import DynamicEditorDocument
+else:
+    pass
 
 
 class DynamicEditorNavigation:
@@ -23,13 +25,15 @@ class DynamicEditorNavigation:
     document directly.
     """
 
+    __slots__ = ("_document", "_path")
+
     def __init__(self, document: DynamicEditorDocument) -> None:
         """
         :param document: The editing document whose working tree is navigated.
         :return: None.
         """
         self._document: DynamicEditorDocument = document
-        self._path: List[Block] = [document.working_root_block]
+        self._path: List[Block] = list((document.working_root_block,))
 
     # ------------------------------------------------------------------
     # Properties
@@ -37,17 +41,23 @@ class DynamicEditorNavigation:
 
     @property
     def document(self) -> DynamicEditorDocument:
-        """Return the document backing this navigation."""
+        """
+        :return: The document backing this navigation.
+        """
         return self._document
 
     @property
     def root_block(self) -> Block:
-        """Return the root block of the working tree."""
+        """
+        :return: The root block of the working tree.
+        """
         return self._document.working_root_block
 
     @property
     def current_block(self) -> Block:
-        """Return the block currently being edited."""
+        """
+        :return: The block currently being edited.
+        """
         return self._path[-1]
 
     # ------------------------------------------------------------------
@@ -78,28 +88,11 @@ class DynamicEditorNavigation:
             if ancestor.uid == block.uid:
                 self._path = self._path[: index + 1]
                 return
+            else:
+                pass
         raise ValueError(
             f"Block '{block.name}' (uid={block.uid}) is not in the current path."
         )
-
-    def go_to_root(self) -> None:
-        """Navigate back to the root block."""
-        self._path = [self._document.working_root_block]
-
-    def go_to_parent(self) -> None:
-        """
-        Navigate one level up.
-
-        :raises ValueError: If already at the root.
-        :return: None.
-        """
-        if len(self._path) <= 1:
-            raise ValueError("Already at the root block.")
-        self._path.pop()
-
-    # ------------------------------------------------------------------
-    # Breadcrumb helpers
-    # ------------------------------------------------------------------
 
     def breadcrumb_path(self) -> List[Block]:
         """

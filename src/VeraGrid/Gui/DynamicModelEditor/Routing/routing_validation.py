@@ -11,7 +11,7 @@ class RoutingValidationMessage:
     """
     Store one validation message.
 
-    :returns: None.
+    :return: None.
     """
 
     __slots__ = ("_level", "_code", "_message", "_node_id", "_segment_id")
@@ -32,7 +32,7 @@ class RoutingValidationMessage:
         :param message: Human-readable validation message.
         :param node_id: Related node identifier or ``None``.
         :param segment_id: Related segment identifier or ``None``.
-        :returns: None.
+        :return: None.
         """
         self._level: RoutingValidationMessageLevel = level
         self._code: str = str(code)
@@ -42,9 +42,7 @@ class RoutingValidationMessage:
 
     def get_level(self) -> RoutingValidationMessageLevel:
         """
-        Return the validation severity level.
-
-        :returns: Validation severity level.
+        :return: Validation severity level.
         """
         return self._level
 
@@ -52,15 +50,13 @@ class RoutingValidationMessage:
         """
         Return the machine-readable validation code.
 
-        :returns: Validation code.
+        :return: Validation code.
         """
         return self._code
 
     def get_message(self) -> str:
         """
-        Return the human-readable validation message.
-
-        :returns: Human-readable validation message.
+        :return: Human-readable validation message.
         """
         return self._message
 
@@ -68,7 +64,7 @@ class RoutingValidationMessage:
         """
         Return the related node identifier.
 
-        :returns: Related node identifier or ``None``.
+        :return: Related node identifier or ``None``.
         """
         return self._node_id
 
@@ -76,7 +72,7 @@ class RoutingValidationMessage:
         """
         Return the related segment identifier.
 
-        :returns: Related segment identifier or ``None``.
+        :return: Related segment identifier or ``None``.
         """
         return self._segment_id
 
@@ -85,7 +81,7 @@ class RoutingValidationReport:
     """
     Store the full validation result of one routing graph.
 
-    :returns: None.
+    :return: None.
     """
 
     __slots__ = ("_errors", "_warnings")
@@ -94,7 +90,7 @@ class RoutingValidationReport:
         """
         Build one empty validation report.
 
-        :returns: None.
+        :return: None.
         """
         self._errors: list[RoutingValidationMessage] = list()
         self._warnings: list[RoutingValidationMessage] = list()
@@ -104,7 +100,7 @@ class RoutingValidationReport:
         Add one validation message to the report.
 
         :param message: Validation message to add.
-        :returns: None.
+        :return: None.
         """
         if message.get_level() == RoutingValidationMessageLevel.ERROR:
             self._errors.append(message)
@@ -115,7 +111,7 @@ class RoutingValidationReport:
         """
         Return whether the validated object is valid.
 
-        :returns: ``True`` when the report contains no errors.
+        :return: ``True`` when the report contains no errors.
         """
         if len(self._errors) == 0:
             return True
@@ -124,16 +120,12 @@ class RoutingValidationReport:
 
     def get_errors(self) -> list[RoutingValidationMessage]:
         """
-        Return the validation errors.
-
-        :returns: Validation errors.
+        :return: Validation errors.
         """
         return list(self._errors)
 
     def get_warnings(self) -> list[RoutingValidationMessage]:
         """
-        Return the validation warnings.
-
-        :returns: Validation warnings.
+        :return: Validation warnings.
         """
         return list(self._warnings)

@@ -23,7 +23,7 @@ class QtRoutingSession:
     """
     Bridge Qt connection gestures with the new routing engine graph model.
 
-    :returns: None.
+    :return: None.
     """
 
     __slots__ = ("_graphs_by_connection_uid", "_serializer", "_adapter")
@@ -32,7 +32,7 @@ class QtRoutingSession:
         """
         Build one Qt routing session for the new routing engine.
 
-        :returns: None.
+        :return: None.
         """
         self._graphs_by_connection_uid: dict[int, RoutingGraph] = dict()
         self._serializer: RoutingGraphSerializer = RoutingGraphSerializer()
@@ -43,7 +43,7 @@ class QtRoutingSession:
         Return whether one connection graph is registered.
 
         :param connection_uid: Stable connection identifier.
-        :returns: ``True`` when the graph exists in the session.
+        :return: ``True`` when the graph exists in the session.
         """
         if int(connection_uid) in self._graphs_by_connection_uid:
             return True
@@ -55,7 +55,7 @@ class QtRoutingSession:
         Remove one connection graph from the session.
 
         :param connection_uid: Stable connection identifier.
-        :returns: ``True`` when the graph existed and was removed.
+        :return: ``True`` when the graph existed and was removed.
         """
         connection_identifier: int = int(connection_uid)
         if connection_identifier in self._graphs_by_connection_uid:
@@ -69,7 +69,7 @@ class QtRoutingSession:
         Return one registered routing graph.
 
         :param connection_uid: Stable connection identifier.
-        :returns: Registered routing graph or ``None``.
+        :return: Registered routing graph or ``None``.
         """
         return self._graphs_by_connection_uid.get(int(connection_uid), None)
 
@@ -85,7 +85,7 @@ class QtRoutingSession:
         :param connection_uid: Stable connection identifier.
         :param source_port: Source Qt port item.
         :param destination_port: Destination Qt port item.
-        :returns: Created routing graph.
+        :return: Created routing graph.
         """
         source_snapshot: QtRoutingPortSnapshot = build_qt_routing_port_snapshot(source_port)
         destination_snapshot: QtRoutingPortSnapshot = build_qt_routing_port_snapshot(destination_port)
@@ -113,7 +113,7 @@ class QtRoutingSession:
         :param connection_uid: Stable connection identifier.
         :param source_port: Source Qt port item.
         :param destination_port: Destination Qt port item.
-        :returns: Existing or newly created routing graph.
+        :return: Existing or newly created routing graph.
         """
         routing_graph: RoutingGraph | None = self.get_graph(connection_uid)
         if routing_graph is None:
@@ -138,7 +138,7 @@ class QtRoutingSession:
         :param connection_uid: Stable connection identifier.
         :param source_port: Source Qt port item.
         :param destination_port: Destination Qt port item.
-        :returns: Updated routing graph or ``None``.
+        :return: Updated routing graph or ``None``.
         """
         routing_graph: RoutingGraph | None = self.get_graph(connection_uid)
         if routing_graph is None:
@@ -213,7 +213,7 @@ class QtRoutingSession:
         :param connection_uid: Stable connection identifier.
         :param source_port: Source Qt port item.
         :param destination_port: Destination Qt port item.
-        :returns: Synchronized routing graph.
+        :return: Synchronized routing graph.
         """
         routing_graph: RoutingGraph = self.ensure_connection_graph(
             connection_uid=connection_uid,
@@ -237,7 +237,7 @@ class QtRoutingSession:
         :param connection_uid: Stable connection identifier.
         :param segment_id: Segment identifier.
         :param coordinate_offset: Offset along the allowed drag axis.
-        :returns: ``True`` when the segment moved.
+        :return: ``True`` when the segment moved.
         """
         routing_graph: RoutingGraph | None = self.get_graph(connection_uid)
         if routing_graph is None:
@@ -257,7 +257,7 @@ class QtRoutingSession:
         Build one Qt painter path from one registered graph.
 
         :param connection_uid: Stable connection identifier.
-        :returns: Qt painter path or ``None``.
+        :return: Qt painter path or ``None``.
         """
         routing_graph: RoutingGraph | None = self.get_graph(connection_uid)
         if routing_graph is None:
@@ -274,7 +274,7 @@ class QtRoutingSession:
 
         :param connection_uid: Stable connection identifier.
         :param segment_id: Segment identifier.
-        :returns: Segment endpoints or ``None``.
+        :return: Segment endpoints or ``None``.
         """
         routing_graph: RoutingGraph | None = self.get_graph(connection_uid)
         if routing_graph is None:
@@ -287,7 +287,7 @@ class QtRoutingSession:
         Return the path segments of one registered graph in deterministic order.
 
         :param connection_uid: Stable connection identifier.
-        :returns: Ordered path segments.
+        :return: Ordered path segments.
         """
         routing_graph: RoutingGraph | None = self.get_graph(connection_uid)
         if routing_graph is None:
@@ -300,7 +300,7 @@ class QtRoutingSession:
         Export one registered graph to one plain persistence payload.
 
         :param connection_uid: Stable connection identifier.
-        :returns: Plain persistence payload or ``None``.
+        :return: Plain persistence payload or ``None``.
         """
         routing_graph: RoutingGraph | None = self.get_graph(connection_uid)
         if routing_graph is None:
@@ -318,7 +318,7 @@ class QtRoutingSession:
 
         :param connection_uid: Stable connection identifier.
         :param payload: Plain persistence payload.
-        :returns: ``True`` when the payload was imported.
+        :return: ``True`` when the payload was imported.
         """
         serialized_graph: RoutingSerializedGraph | None = self._serializer.build_serialized_graph_from_data(payload)
         if serialized_graph is None:

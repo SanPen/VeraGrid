@@ -3,65 +3,510 @@
 # file, You can see it at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 
-from typing import Dict, Any
+import re
+from enum import Enum
+from typing import Dict, List
 
 from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Devices.Branches.winding import Winding
-from VeraGridEngine.enumerations import BlockType, WindingType
+from VeraGridEngine.enumerations import (
+    BlockType,
+    EmtFaultPlacementSide,
+    FaultType,
+    JMartiDataSourceMode,
+    ShuntConnectionType,
+    WindingType,
+)
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.symbolic import Const, Var
 import VeraGridEngine.Templates.BasicBlockCatalog as basic_block_templates
 import VeraGridEngine.Templates as tem
 import VeraGridEngine.Templates.Emt as emt_templates
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
+from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
+from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
+from VeraGridEngine.Simulations.EMT.JMARTI_Sim.jmarti_fit_options import JMartiFitOptions
 
 
-def get_blocktype2template_builder_dict():
-    return {
+class GenericBlockTemplateDefinition(TemplateDefinition):
+    """GUI-only builder for the configurable generic symbolic block."""
 
-        BlockType.FAULT_EMT: emt_templates.FaultEmtTemplate,
-        BlockType.SWITCH_EMT: emt_templates.SwitchEmtTemplate,
-        BlockType.GROUNDING_LINK_EMT: emt_templates.GroundingLinkEmtTemplate,
-        BlockType.INDUCTION_MOTOR_EMT: emt_templates.InductionMotorEmtTemplate,
+    __slots__ = ()
 
-        BlockType.R_LOAD_EMT: emt_templates.ShuntRComboEmtTemplate,
-        BlockType.L_LOAD_EMT: emt_templates.ShuntLComboEmtTemplate,
-        BlockType.C_LOAD_EMT: emt_templates.ShuntCComboEmtTemplate,
+    def __init__(self, var_factory: VarFactory) -> None:
+        """Create the default one-input/one-output generic definition.
 
-        BlockType.VOLTAGE_SOURCE_EMT: emt_templates.VoltageSourceEmtTemplate,
-        BlockType.CURRENT_SOURCE_EMT: emt_templates.CurrentSourceEmtTemplate,
-        BlockType.CONTROLLED_VOLTAGE_SOURCE_EMT: emt_templates.ControlledVoltageSourceEmtTemplate,
-        BlockType.CONTROLLED_CURRENT_SOURCE_EMT: emt_templates.ControlledCurrentSourceEmtTemplate,
+        :param var_factory: Editor variable factory.
+        :return: None.
+        """
+        super().__init__(
+            var_factory,
+            list((TemplateProp("inputs", "", "Number of input ports.", int, 1), TemplateProp("outputs", "", "Number of output ports.", int, 1), TemplateProp("name", "", "Generated block name.", str, "generic"),)),
+        )
 
-        BlockType.ARBITRARY_WAVEFORM_VOLTAGE_SOURCE_EMT: emt_templates.ArbitraryWaveformVoltageSourceEmtTemplate,
-        BlockType.ARBITRARY_WAVEFORM_CURRENT_SOURCE_EMT: emt_templates.ArbitraryWaveformCurrentSourceEmtTemplate,
+    def eval(self) -> Block:
+        """
+        Build a generic block from the current structural values.
 
-        BlockType.NONLINEAR_RESISTOR_EMT: emt_templates.NonLinearResistorEmtTemplate,
+        :return: Generic block built from the current structural values.
+        """
+        inputs: int = int(self.get_value("inputs"))
+        outputs: int = int(self.get_value("outputs"))
+        name: str = str(self.get_value("name"))
+        if inputs < 1 or outputs < 1:
+            raise ValueError("Generic blocks require at least one input and one output")
+        else:
+            return create_generic_block(self.vf, inputs, outputs, name)
 
-        BlockType.STEP_VOLTAGE_SOURCE_EMT: emt_templates.StepVoltageSourceEmtTemplate,
-        BlockType.STEP_CURRENT_SOURCE_EMT: emt_templates.StepCurrentSourceEmtTemplate,
-        BlockType.RAMP_VOLTAGE_SOURCE_EMT: emt_templates.RampVoltageSourceEmtTemplate,
-        BlockType.RAMP_CURRENT_SOURCE_EMT: emt_templates.RampCurrentSourceEmtTemplate,
-        BlockType.DOUBLE_EXPONENTIAL_CURRENT_SOURCE_EMT: emt_templates.DoubleExponentialCurrentSourceEmtTemplate,
-        BlockType.HEIDLER_CURRENT_SOURCE_EMT: emt_templates.HeidlerCurrentSourceEmtTemplate,
-        BlockType.CIGRE_SURGE_CURRENT_SOURCE_EMT: emt_templates.CigreSurgeCurrentSourceEmtTemplate,
 
-        BlockType.EXP_LOAD_EMT: emt_templates.ExponentialLoadEmtTemplate,
-        BlockType.ZIP_LOAD_EMT: emt_templates.LoadZIPEmtTemplate,
+class RlcComboBlockTemplateDefinition(TemplateDefinition):
+    """GUI-only definition for the combined EMT RLC shunt block."""
 
-        BlockType.TRAFO_EMT: emt_templates.TransformerEmtTemplate,
-        BlockType.XFMR_TRANSFORMER: emt_templates.XfmrEmtTemplate,
+    __slots__ = ()
 
-        BlockType.EMT_PI_LINE: emt_templates.PiLineEmtTemplate,
-        BlockType.EMT_BERGERON_LINE: emt_templates.BergeronLineEmtTemplate,
-        BlockType.EMT_JMARTI_LINE: emt_templates.JmartiLineEmtTemplate,
+    def __init__(self, var_factory: VarFactory) -> None:
+        """Create a complete grounded three-phase RLC default.
 
-        BlockType.INVERSE_LOOKUP_ARRAY: emt_templates.InverseLookupArrayLinearRuntimeTemplate,
-        BlockType.LOOKUP_ARRAY_LINEAR: emt_templates.LookupArrayLinearRuntimeTemplate,
-        BlockType.LOOKUP_ARRAY_SPLINE: emt_templates.LookupArraySplineRuntimeTemplate,
-        BlockType.LOOKUP_MATRIX_LINEAR: emt_templates.LookupMatrixLinearRuntimeTemplate,
-        BlockType.LOOKUP_MATRIX_SPLINE: emt_templates.LookupMatrixSplineRuntimeTemplate
-    }
+        :param var_factory: Editor variable factory.
+        :return: None.
+        """
+        super().__init__(
+            var_factory,
+            list((TemplateProp("include_r", "", "Include the resistive branch.", bool, True), TemplateProp("include_l", "", "Include the inductive branch.", bool, True), TemplateProp("include_c", "", "Include the capacitive branch.", bool, True), TemplateProp("phA", "", "Include phase A.", bool, True), TemplateProp("phB", "", "Include phase B.", bool, True), TemplateProp("phC", "", "Include phase C.", bool, True), TemplateProp(
+                    "connection_type",
+                    "",
+                    "Electrical shunt connection.",
+                    ShuntConnectionType,
+                    ShuntConnectionType.GroundedStar,
+                ), TemplateProp("direct_r_value", "ohm", "Default resistance.", float, 1.0), TemplateProp("direct_l_value", "H", "Default inductance.", float, 1.0e-3), TemplateProp("direct_c_value", "F", "Default capacitance.", float, 1.0e-6), TemplateProp("name", "", "Generated block name.", str, "RLC_combo_emt"),)),
+        )
+
+    def eval(self) -> EmtModelTemplate:
+        """Build the combined RLC template from current options.
+
+        :return: Configured EMT RLC model template.
+        """
+        return emt_templates.get_shunt_rlc_combo_emt_template(
+            vf=self.vf,
+            include_r=bool(self.get_value("include_r")),
+            include_l=bool(self.get_value("include_l")),
+            include_c=bool(self.get_value("include_c")),
+            phA=bool(self.get_value("phA")),
+            phB=bool(self.get_value("phB")),
+            phC=bool(self.get_value("phC")),
+            connection_type=self.get_value("connection_type"),
+            direct_r_value=float(self.get_value("direct_r_value")),
+            direct_l_value=float(self.get_value("direct_l_value")),
+            direct_c_value=float(self.get_value("direct_c_value")),
+            name=str(self.get_value("name")),
+        )
+
+
+class JMartiBlockTemplateDefinition(TemplateDefinition):
+    """GUI builder exposing the complete former JMarti-dialog configuration."""
+
+    __slots__ = ()
+
+    def __init__(self, var_factory: VarFactory) -> None:
+        """Create one ABC JMarti definition with complete fitting defaults.
+
+        :param var_factory: Editor variable factory.
+        :return: None.
+        """
+        options: JMartiFitOptions = JMartiFitOptions()
+        properties: List[TemplateProp] = list((TemplateProp("phN", "", "Include neutral conductor N.", bool, False), TemplateProp("phA", "", "Include phase A.", bool, True), TemplateProp("phB", "", "Include phase B.", bool, True), TemplateProp("phC", "", "Include phase C.", bool, True), TemplateProp("data_source_mode", "", "Frequency-data source.", JMartiDataSourceMode,
+                         JMartiDataSourceMode.AUTOMATIC_TEMPLATE), TemplateProp("nominal_frequency_hz", "Hz", "Nominal source frequency.", float, 50.0), TemplateProp("import_file_path", "", "NPZ frequency-sample file.", str, ""), TemplateProp("import_line_length_m", "m", "Fallback imported line length.", float, 0.0), TemplateProp("sweep_low_hz", "Hz", "Automatic sweep lower frequency.", float, 10.0), TemplateProp("sweep_high_hz", "Hz", "Automatic sweep upper frequency.", float, 10000.0), TemplateProp("sweep_sample_count", "", "Automatic sweep sample count.", int, 48), TemplateProp("reference_frequency_hz", "Hz", "Modal-basis reference frequency.", float,
+                         float(options.reference_frequency_hz)), TemplateProp("use_frequency_exploration_window", "", "Restrict the fitting band.", bool,
+                         bool(options.use_frequency_exploration_window)), TemplateProp("exploration_low_hz", "Hz", "Fitting-band lower frequency.", float,
+                         float(options.exploration_low_hz)), TemplateProp("exploration_high_hz", "Hz", "Fitting-band upper frequency.", float,
+                         float(options.exploration_high_hz)), TemplateProp("use_delay_fit_window", "", "Restrict the delay-fit band.", bool,
+                         bool(options.use_delay_fit_window)), TemplateProp("delay_fit_low_hz", "Hz", "Delay-fit lower frequency.", float,
+                         float(options.delay_fit_low_hz)), TemplateProp("delay_fit_high_hz", "Hz", "Delay-fit upper frequency.", float,
+                         float(options.delay_fit_high_hz)), TemplateProp("decoupling_warning_tolerance", "", "Modal decoupling warning tolerance.", float,
+                         float(options.decoupling_warning_tolerance)), TemplateProp("loewner_relative_tolerance", "", "Loewner order tolerance.", float,
+                         float(options.loewner_relative_tolerance)), TemplateProp("maximum_model_order", "", "Maximum rational model order.", int,
+                         int(options.maximum_model_order)), TemplateProp("forced_model_order", "", "Forced order; zero selects automatic order.", int,
+                         int(options.forced_model_order)), TemplateProp("minimum_frequency_samples", "", "Minimum fitting samples.", int,
+                         int(options.minimum_frequency_samples)), TemplateProp("vf_max_iterations", "", "Vector-fitting iteration limit.", int,
+                         int(options.vf_max_iterations)), TemplateProp("vf_pole_shift_tolerance", "", "Vector-fitting pole-shift tolerance.", float,
+                         float(options.vf_pole_shift_tolerance)), TemplateProp("vf_enforce_stable_poles", "", "Reflect unstable fitted poles.", bool,
+                         bool(options.vf_enforce_stable_poles)), TemplateProp("vf_stability_real_part_floor", "", "Stable-pole real-part floor.", float,
+                         float(options.vf_stability_real_part_floor)), TemplateProp("vf_include_constant_term", "", "Include the rational constant term.", bool,
+                         bool(options.vf_include_constant_term)), TemplateProp("vf_include_proportional_term", "", "Include the proportional s term.", bool,
+                         bool(options.vf_include_proportional_term)), TemplateProp("passivity_frequency_sample_count", "", "Passivity-check sample count.", int,
+                         int(options.passivity_frequency_sample_count)), TemplateProp("passivity_minimum_real_yc_tolerance", "", "Allowed Re(Yc) negativity.", float,
+                         float(options.passivity_minimum_real_yc_tolerance)), TemplateProp("passivity_maximum_hres_gain_tolerance", "", "Allowed |Hres| gain slack.", float,
+                         float(options.passivity_maximum_hres_gain_tolerance)), TemplateProp("name", "", "Generated block name.", str, "J_Marti"),))
+        TemplateDefinition.__init__(self, var_factory, properties)
+
+    def eval(self) -> EmtModelTemplate:
+        """Build the symbolic shell and retain the complete GUI configuration.
+
+        :return: JMarti EMT template with serializable editor metadata.
+        """
+        template: EmtModelTemplate = emt_templates.get_jmarti_line_emt_template(
+            vf=self.vf,
+            phN=bool(self.get_value("phN")),
+            phA=bool(self.get_value("phA")),
+            phB=bool(self.get_value("phB")),
+            phC=bool(self.get_value("phC")),
+            name=str(self.get_value("name")),
+        )
+        configuration: Dict[str, object] = dict()
+        prop: TemplateProp
+        for prop in self.params:
+            if prop.name != "name":
+                if isinstance(prop.value, Enum):
+                    configuration[prop.name] = prop.value.name
+                else:
+                    configuration[prop.name] = prop.value
+            else:
+                pass
+        template.block.__dict__["_modal_template_kind"] = "jmarti_line_emt"
+        template.block.__dict__["_modal_template_config"] = configuration
+        return template
+
+
+def get_blocktype2template_builder_dict() -> Dict[BlockType, type[TemplateDefinition]]:
+    """
+    Return the native block types constructed through template definitions. Only the ones that need more input info
+    apart from VarFactory and name
+
+    :return: Builder class lookup used by drop and properties workflows.
+    """
+    return dict(((BlockType.FAULT_EMT, emt_templates.FaultEmtTemplate), (BlockType.SWITCH_EMT, emt_templates.SwitchEmtTemplate), (BlockType.GROUNDING_LINK_EMT, emt_templates.GroundingLinkEmtTemplate), (BlockType.INDUCTION_MOTOR_EMT, emt_templates.InductionMotorEmtTemplate), (BlockType.R_LOAD_EMT, emt_templates.ShuntRComboEmtTemplate), (BlockType.L_LOAD_EMT, emt_templates.ShuntLComboEmtTemplate), (BlockType.C_LOAD_EMT, emt_templates.ShuntCComboEmtTemplate), (BlockType.VOLTAGE_SOURCE_EMT, emt_templates.VoltageSourceEmtTemplate), (BlockType.CURRENT_SOURCE_EMT, emt_templates.CurrentSourceEmtTemplate), (BlockType.CONTROLLED_VOLTAGE_SOURCE_EMT, emt_templates.ControlledVoltageSourceEmtTemplate), (BlockType.CONTROLLED_CURRENT_SOURCE_EMT, emt_templates.ControlledCurrentSourceEmtTemplate), (BlockType.ARBITRARY_WAVEFORM_VOLTAGE_SOURCE_EMT, emt_templates.ArbitraryWaveformVoltageSourceEmtTemplate), (BlockType.ARBITRARY_WAVEFORM_CURRENT_SOURCE_EMT, emt_templates.ArbitraryWaveformCurrentSourceEmtTemplate), (BlockType.NONLINEAR_RESISTOR_EMT, emt_templates.NonLinearResistorEmtTemplate), (BlockType.STEP_VOLTAGE_SOURCE_EMT, emt_templates.StepVoltageSourceEmtTemplate), (BlockType.STEP_CURRENT_SOURCE_EMT, emt_templates.StepCurrentSourceEmtTemplate), (BlockType.RAMP_VOLTAGE_SOURCE_EMT, emt_templates.RampVoltageSourceEmtTemplate), (BlockType.RAMP_CURRENT_SOURCE_EMT, emt_templates.RampCurrentSourceEmtTemplate), (BlockType.DOUBLE_EXPONENTIAL_CURRENT_SOURCE_EMT, emt_templates.DoubleExponentialCurrentSourceEmtTemplate), (BlockType.HEIDLER_CURRENT_SOURCE_EMT, emt_templates.HeidlerCurrentSourceEmtTemplate), (BlockType.CIGRE_SURGE_CURRENT_SOURCE_EMT, emt_templates.CigreSurgeCurrentSourceEmtTemplate), (BlockType.EXP_LOAD_EMT, emt_templates.ExponentialLoadEmtTemplate), (BlockType.ZIP_LOAD_EMT, emt_templates.LoadZIPEmtTemplate), (BlockType.TRAFO_EMT, emt_templates.TransformerEmtTemplate), (BlockType.XFMR_TRANSFORMER, emt_templates.XfmrEmtTemplate), (BlockType.EMT_PI_LINE, emt_templates.PiLineEmtTemplate), (BlockType.EMT_BERGERON_LINE, emt_templates.BergeronLineEmtTemplate), (BlockType.EMT_JMARTI_LINE, JMartiBlockTemplateDefinition), (BlockType.INVERSE_LOOKUP_ARRAY, emt_templates.InverseLookupArrayLinearRuntimeTemplate), (BlockType.LOOKUP_ARRAY_LINEAR, emt_templates.LookupArrayLinearRuntimeTemplate), (BlockType.LOOKUP_ARRAY_SPLINE, emt_templates.LookupArraySplineRuntimeTemplate), (BlockType.LOOKUP_MATRIX_LINEAR, emt_templates.LookupMatrixLinearRuntimeTemplate), (BlockType.LOOKUP_MATRIX_SPLINE, emt_templates.LookupMatrixSplineRuntimeTemplate),))
+
+
+def create_default_template_builder(var_factory: VarFactory,
+                                    block_type: BlockType,
+                                    item_name: str,
+                                    api_object: ALL_DEV_TYPES | None = None) -> TemplateDefinition | None:
+    """Create one template builder with a complete deterministic default setup.
+
+    Existing template definitions already own almost every default. Only the
+    few builders whose contract intentionally requires a GUI choice are filled
+    here. This gives drag-and-drop a valid result without opening the legacy
+    creation dialogue.
+
+    :param var_factory: Live editor variable factory.
+    :param block_type: Native library block type.
+    :param item_name: Generated diagram item name.
+    :param api_object: Optional transformer-like device supplying winding data.
+    :return: Configured builder or ``None`` for non-builder block types.
+    """
+    builder_classes: Dict[BlockType, type[TemplateDefinition]] = get_blocktype2template_builder_dict()
+    builder_class: type[TemplateDefinition] | None = builder_classes.get(block_type, None)
+    if builder_class is None:
+        return None
+    else:
+        builder: TemplateDefinition = builder_class(var_factory)
+
+    _unused_item_name: str = item_name
+
+    # Every phase-selective library block opens with the same predictable
+    # three-wire AC topology. Neutral stays disabled because it must be an
+    # explicit modelling choice, while A, B and C are all enabled by default.
+    default_phase_values: tuple[tuple[str, bool], ...] = (
+        ("phN", False),
+        ("phA", True),
+        ("phB", True),
+        ("phC", True),
+    )
+    phase_property_name: str
+    phase_default_value: bool
+    for phase_property_name, phase_default_value in default_phase_values:
+        phase_property: TemplateProp | None = builder.params_dict.get(phase_property_name, None)
+        if phase_property is not None:
+            phase_property.value = phase_default_value
+        else:
+            pass
+
+    if block_type == BlockType.FAULT_EMT:
+        fault_type_property: TemplateProp | None = builder.params_dict.get("fault_type", None)
+        placement_property: TemplateProp | None = builder.params_dict.get("placement_side", None)
+        if fault_type_property is not None:
+            # The fault topology must agree with the common ABC phase mask.
+            # LLL is the three-wire choice; grounded LLLG would introduce a
+            # ground path that the default phase policy intentionally avoids.
+            fault_type_property.value = FaultType.LLL
+        else:
+            pass
+        if placement_property is not None:
+            placement_property.value = EmtFaultPlacementSide.FromSide
+        else:
+            pass
+    elif block_type == BlockType.GROUNDING_LINK_EMT:
+        include_r_property: TemplateProp | None = builder.params_dict.get("include_r", None)
+        resistance_property: TemplateProp | None = builder.params_dict.get("direct_r_value", None)
+        if include_r_property is not None:
+            include_r_property.value = True
+        else:
+            pass
+        if resistance_property is not None:
+            resistance_property.value = 1.0
+        else:
+            pass
+    elif block_type == BlockType.TRAFO_EMT or block_type == BlockType.XFMR_TRANSFORMER:
+        connection_from: WindingType | None
+        connection_to: WindingType | None
+        if isinstance(api_object, (Transformer2W, Winding)):
+            connection_from, connection_to = _get_transformer_connection_types(api_object)
+        else:
+            connection_from, connection_to = None, None
+        if connection_from is None:
+            connection_from = WindingType.GroundedStar
+        else:
+            pass
+        if connection_to is None:
+            connection_to = WindingType.GroundedStar
+        else:
+            pass
+        connection_from_property: TemplateProp | None = builder.params_dict.get("conn_f", None)
+        connection_to_property: TemplateProp | None = builder.params_dict.get("conn_t", None)
+        if connection_from_property is not None:
+            connection_from_property.value = connection_from
+        else:
+            pass
+        if connection_to_property is not None:
+            connection_to_property.value = connection_to
+        else:
+            pass
+    elif block_type == BlockType.INVERSE_LOOKUP_ARRAY:
+        points_property: TemplateProp | None = builder.params_dict.get("points", None)
+        if points_property is not None:
+            points_property.value = ((0.0, 0.0), (1.0, 1.0), (2.0, 2.0))
+        else:
+            pass
+    else:
+        pass
+    return builder
+
+
+def create_structural_template_builder(var_factory: VarFactory,
+                                       block_type: BlockType,
+                                       item_name: str,
+                                       api_object: ALL_DEV_TYPES | None = None) -> TemplateDefinition | None:
+    """Create any native structural builder used by the properties modal.
+
+    :param var_factory: Factory receiving variables if the builder evaluates.
+    :param block_type: Native block type.
+    :param item_name: Existing or generated block name.
+    :param api_object: Optional device used for transformer defaults.
+    :return: Configured builder or ``None`` when reconstruction is unsupported.
+    """
+    if block_type == BlockType.GENERIC:
+        builder: TemplateDefinition | None = GenericBlockTemplateDefinition(var_factory)
+    elif block_type == BlockType.RLC_COMBO_EMT:
+        builder = RlcComboBlockTemplateDefinition(var_factory)
+    elif block_type == BlockType.SUM:
+        builder = basic_block_templates.AdderTemplate(vf=var_factory)
+    elif block_type == BlockType.PRODUCT:
+        builder = basic_block_templates.ProductTemplate(vf=var_factory)
+    else:
+        builder = create_default_template_builder(
+            var_factory=var_factory,
+            block_type=block_type,
+            item_name=item_name,
+            api_object=api_object,
+        )
+    return builder
+
+
+def copy_template_builder_values(source: TemplateDefinition,
+                                 target: TemplateDefinition) -> None:
+    """Copy typed builder inputs by name into an independent preflight builder.
+
+    :param source: Modal draft builder.
+    :param target: Fresh builder using an isolated VarFactory.
+    :return: None.
+    """
+    source_property: TemplateProp
+    for source_property in source.params:
+        target_property: TemplateProp | None = target.params_dict.get(source_property.name, None)
+        if target_property is not None:
+            target_property.value = source_property.value
+        else:
+            pass
+
+
+def initialize_template_builder_from_block(builder: TemplateDefinition,
+                                           block: Block,
+                                           block_type: BlockType) -> None:
+    """Recover verified structural builder settings from a generated block.
+
+    :param builder: Default builder that will receive recovered values.
+    :param block: Existing generated block.
+    :param block_type: Native type defining the extraction contract.
+    :return: None.
+    """
+    name_property: TemplateProp | None = builder.params_dict.get("name", None)
+    if name_property is not None:
+        name_property.value = block.name
+    else:
+        pass
+
+    phase_name: str
+    for phase_name in ("N", "A", "B", "C"):
+        phase_property: TemplateProp | None = builder.params_dict.get(f"ph{phase_name}", None)
+        if phase_property is not None:
+            phase_property.value = block_has_phase_port(block, phase_name)
+        else:
+            pass
+
+    if block_type == BlockType.EMT_JMARTI_LINE:
+        stored_configuration: object = block.__dict__.get("_modal_template_config", None)
+        if isinstance(stored_configuration, dict):
+            configuration_name: str
+            configuration_value: object
+            for configuration_name, configuration_value in stored_configuration.items():
+                configuration_property: TemplateProp | None = builder.params_dict.get(configuration_name, None)
+                if configuration_property is not None:
+                    current_value: object = configuration_property.value
+                    if isinstance(current_value, Enum) and isinstance(configuration_value, str):
+                        enum_value: Enum | None = current_value.__class__.__members__.get(configuration_value, None)
+                        if enum_value is not None:
+                            configuration_property.value = enum_value
+                        else:
+                            pass
+                    else:
+                        configuration_property.value = configuration_value
+                else:
+                    pass
+        else:
+            pass
+    else:
+        pass
+
+    if block_type in (
+        BlockType.INVERSE_LOOKUP_ARRAY,
+        BlockType.LOOKUP_ARRAY_LINEAR,
+        BlockType.LOOKUP_ARRAY_SPLINE,
+    ):
+        points_property: TemplateProp | None = builder.params_dict.get("points", None)
+        extracted_points: tuple[tuple[float, float], ...] | None = extract_lookup_array_points(block)
+        if points_property is not None and extracted_points is not None:
+            points_property.value = extracted_points
+        else:
+            pass
+    elif block_type == BlockType.LOOKUP_MATRIX_LINEAR or block_type == BlockType.LOOKUP_MATRIX_SPLINE:
+        matrix_property: TemplateProp | None = builder.params_dict.get("x_y_z_values", None)
+        extracted_matrix: tuple[tuple[float, ...], tuple[float, ...], tuple[tuple[float, ...], ...]] | None = (
+            extract_lookup_matrix_values(block)
+        )
+        if matrix_property is not None and extracted_matrix is not None:
+            matrix_property.value = extracted_matrix
+        else:
+            pass
+    else:
+        pass
+
+
+def block_has_phase_port(block: Block, phase_name: str) -> bool:
+    """Return whether one root input/output exposes the requested EMT phase.
+
+    :param block: Generated block whose root ports are inspected.
+    :param phase_name: One of ``N``, ``A``, ``B`` or ``C``.
+    :return: Whether the phase is present.
+    """
+    result: bool = False
+    variable_groups: tuple[List[Var], List[Var]] = (block.in_vars, block.out_vars)
+    variable_group: List[Var]
+    variable: Var
+    for variable_group in variable_groups:
+        for variable in variable_group:
+            reference_text: str = "" if variable.ref is None else str(variable.ref.value)
+            candidate_texts: tuple[str, str] = (variable.name, reference_text)
+            candidate_text: str
+            for candidate_text in candidate_texts:
+                if re.search(rf"(?:^|_){phase_name}(?:$|_)", candidate_text) is not None:
+                    result = True
+                else:
+                    pass
+    return result
+
+
+def extract_lookup_array_points(block: Block) -> tuple[tuple[float, float], ...] | None:
+    """Recover persisted lookup-array points from event parameters.
+
+    :param block: Lookup block storing ``arr_xN`` and ``arr_yN`` constants.
+    :return: Ordered points or ``None`` when the structure is not recoverable.
+    """
+    x_values: Dict[int, float] = dict()
+    y_values: Dict[int, float] = dict()
+    variable: Var
+    expression: object
+    for variable, expression in block.event_dict.items():
+        if isinstance(expression, Const) and isinstance(expression.value, (int, float)):
+            x_match: re.Match[str] | None = re.search(r"arr_x(\d+)_", variable.name)
+            y_match: re.Match[str] | None = re.search(r"arr_y(\d+)_", variable.name)
+            if x_match is not None:
+                x_values[int(x_match.group(1))] = float(expression.value)
+            elif y_match is not None:
+                y_values[int(y_match.group(1))] = float(expression.value)
+            else:
+                pass
+        else:
+            pass
+    common_indexes: List[int] = sorted(set(x_values.keys()).intersection(y_values.keys()))
+    if len(common_indexes) >= 2:
+        return tuple((x_values[index], y_values[index]) for index in common_indexes)
+    else:
+        return None
+
+
+def extract_lookup_matrix_values(
+        block: Block,
+) -> tuple[tuple[float, ...], tuple[float, ...], tuple[tuple[float, ...], ...]] | None:
+    """Recover persisted lookup-matrix axes and surface from event parameters.
+
+    :param block: Lookup block storing ``arr_xN``, ``arr_yN`` and ``arr_zN_M``.
+    :return: ``(x, y, z)`` tuple or ``None`` when incomplete.
+    """
+    x_values: Dict[int, float] = dict()
+    y_values: Dict[int, float] = dict()
+    z_values: Dict[tuple[int, int], float] = dict()
+    variable: Var
+    expression: object
+    for variable, expression in block.event_dict.items():
+        if isinstance(expression, Const) and isinstance(expression.value, (int, float)):
+            x_match: re.Match[str] | None = re.search(r"arr_x(\d+)_", variable.name)
+            y_match: re.Match[str] | None = re.search(r"arr_y(\d+)_", variable.name)
+            z_match: re.Match[str] | None = re.search(r"arr_z(\d+)_(\d+)_", variable.name)
+            if x_match is not None:
+                x_values[int(x_match.group(1))] = float(expression.value)
+            elif y_match is not None:
+                y_values[int(y_match.group(1))] = float(expression.value)
+            elif z_match is not None:
+                z_values[(int(z_match.group(1)), int(z_match.group(2)))] = float(expression.value)
+            else:
+                pass
+        else:
+            pass
+
+    x_indexes: List[int] = sorted(x_values.keys())
+    y_indexes: List[int] = sorted(y_values.keys())
+    complete: bool = len(x_indexes) >= 2 and len(y_indexes) >= 2
+    y_index: int
+    x_index: int
+    for y_index in y_indexes:
+        for x_index in x_indexes:
+            if (y_index, x_index) not in z_values:
+                complete = False
+            else:
+                pass
+    if complete:
+        z_rows: tuple[tuple[float, ...], ...] = tuple(
+            tuple(z_values[(y_index, x_index)] for x_index in x_indexes)
+            for y_index in y_indexes
+        )
+        return (
+            tuple(x_values[index] for index in x_indexes),
+            tuple(y_values[index] for index in y_indexes),
+            z_rows,
+        )
+    else:
+        return None
 
 
 def _get_transformer_connection_types(api_object: Transformer2W | Winding | None) -> tuple[
@@ -84,6 +529,12 @@ def create_block_of_type(var_factory: VarFactory,
                          api_object: ALL_DEV_TYPES | None = None) -> Block | None:
     """
     Create a Block appropriate for block_type.
+
+    :param var_factory: Factory that owns symbolic variables.
+    :param block_type: Dynamic block catalogue type.
+    :param item_name: Requested visible item name.
+    :param api_object: Static network device associated with the model.
+    :return: Block instance appropriate for ``block_type``, or ``None`` when creation is cancelled.
     """
     # CONST (single output)
     if block_type == BlockType.CONST:
@@ -231,6 +682,27 @@ def create_block_of_type(var_factory: VarFactory,
         blk.name = item_name
         return blk
 
+    # Three-phase RLC shunt. The library exposes this combined block directly,
+    # so it needs a deterministic construction path rather than falling through
+    # to the unsupported-block error raised for genuinely unknown types.
+    elif block_type == BlockType.RLC_COMBO_EMT:
+        blk = emt_templates.get_shunt_rlc_combo_emt_template(
+            vf=var_factory,
+            include_r=True,
+            include_l=True,
+            include_c=True,
+            phA=True,
+            phB=True,
+            phC=True,
+            connection_type=ShuntConnectionType.GroundedStar,
+            direct_r_value=1.0,
+            direct_l_value=1.0e-3,
+            direct_c_value=1.0e-6,
+            name=item_name,
+        ).block
+        blk.name = item_name
+        return blk
+
     # #
     # elif block_type == BlockType.INDUCTION_MOTOR_EMT:
     #     blk = tem.get_induction_motor_emt_template(vf=var_factory, name=item_name).block
@@ -242,11 +714,18 @@ def create_block_of_type(var_factory: VarFactory,
         blk.name = item_name
         return blk
 
-    # TODO: create function for the PV template alone
-    # elif block_type == BlockType.PV_EMT:
-    #     blk = get_pv_avm_grid_following_emt_template(var_factory, item_name).block
-    #     blk.name = item_name
-    #     return blk
+    # The two PV library entries represent the shipped Level-1 and Level-2
+    # averaged-value models. Keeping both routes here makes every draggable
+    # library payload materializable without a legacy creation dialogue.
+    elif block_type == BlockType.PV_EMT:
+        blk = tem.get_pv_avm_grid_following_emt_template(var_factory, item_name).block
+        blk.name = item_name
+        return blk
+
+    elif block_type == BlockType.PV_POWER_PLANT_EMT:
+        blk = tem.get_pv_avm_boost_grid_following_emt_template(var_factory, item_name).block
+        blk.name = item_name
+        return blk
 
     elif block_type == BlockType.BATTERY_EMT:
         blk = tem.get_battery_avm_emt_template(var_factory, item_name).block
@@ -313,209 +792,6 @@ def create_block_of_type(var_factory: VarFactory,
 
     else:
         raise ValueError(f"Unknown block type: {block_type}")
-
-
-def create_emt_wizard_block(phase_n: bool,
-                            phase_a: bool,
-                            phase_b: bool,
-                            phase_c: bool,
-                            var_factory: VarFactory,
-                            block_type: BlockType,
-                            item_name: str) -> Block | None:
-    """
-    :param phase_n:
-    :type phase_n:
-    :param phase_a:
-    :type phase_a:
-    :param phase_b:
-    :type phase_b:
-    :param phase_c:
-    :type phase_c:
-    :param var_factory:
-    :type var_factory:
-    :param block_type:
-    :type block_type:
-    :param item_name:
-    :type item_name:
-    :return: Requested EMT wizard block or ``None``.
-    """
-    # PI LINE (line)
-    if block_type == BlockType.EMT_PI_LINE:
-        blk = tem.get_pi_line_emt_template(vf=var_factory,
-                                           phN=phase_n,
-                                           phA=phase_a,
-                                           phB=phase_b,
-                                           phC=phase_c,
-                                           name=item_name).block
-        blk.name = item_name
-        return blk
-
-    # BERGERON LINE (line)
-    elif block_type == BlockType.EMT_BERGERON_LINE:
-        blk = tem.get_bergeron_line_emt_template(vf=var_factory,
-                                                 phN=phase_n,
-                                                 phA=phase_a,
-                                                 phB=phase_b,
-                                                 phC=phase_c,
-                                                 name=item_name).block
-        blk.name = item_name
-        return blk
-
-    # JMARTI LINE (line)
-    elif block_type == BlockType.EMT_JMARTI_LINE:
-        blk = tem.get_jmarti_line_emt_template(vf=var_factory,
-                                               phN=phase_n,
-                                               phA=phase_a,
-                                               phB=phase_b,
-                                               phC=phase_c,
-                                               name=item_name).block
-        blk.name = item_name
-        return blk
-
-
-    elif block_type == BlockType.VOLTAGE_SOURCE_EMT:
-        blk = tem.get_voltage_source_emt_template(vf=var_factory,
-                                                  phN=phase_n,
-                                                  phA=phase_a,
-                                                  phB=phase_b,
-                                                  phC=phase_c,
-                                                  name=item_name).block
-        blk.name = item_name
-        return blk
-
-    elif block_type == BlockType.CURRENT_SOURCE_EMT:
-        blk = tem.get_current_source_emt_template(vf=var_factory,
-                                                  phN=phase_n,
-                                                  phA=phase_a,
-                                                  phB=phase_b,
-                                                  phC=phase_c,
-                                                  name=item_name).block
-        blk.name = item_name
-        return blk
-
-    elif block_type == BlockType.CONTROLLED_VOLTAGE_SOURCE_EMT:
-        blk = tem.get_controlled_voltage_source_emt_template(vf=var_factory,
-                                                             phN=phase_n,
-                                                             phA=phase_a,
-                                                             phB=phase_b,
-                                                             phC=phase_c,
-                                                             name=item_name).block
-        blk.name = item_name
-        return blk
-
-    elif block_type == BlockType.CONTROLLED_CURRENT_SOURCE_EMT:
-        blk = tem.get_controlled_current_source_emt_template(vf=var_factory,
-                                                             phN=phase_n,
-                                                             phA=phase_a,
-                                                             phB=phase_b,
-                                                             phC=phase_c,
-                                                             name=item_name).block
-        blk.name = item_name
-        return blk
-
-    elif block_type == BlockType.DC_VOLTAGE_SOURCE_EMT:
-        blk = tem.get_dc_voltage_source_emt_template(vf=var_factory, name=item_name).block
-        blk.name = item_name
-        return blk
-
-    elif block_type == BlockType.DC_CURRENT_SOURCE_EMT:
-        blk = tem.get_dc_current_source_emt_template(vf=var_factory, name=item_name).block
-        blk.name = item_name
-        return blk
-
-    elif block_type == BlockType.CONTROLLED_DC_VOLTAGE_SOURCE_EMT:
-        blk = tem.get_controlled_dc_voltage_source_emt_template(vf=var_factory, name=item_name).block
-        blk.name = item_name
-        return blk
-
-    elif block_type == BlockType.CONTROLLED_DC_CURRENT_SOURCE_EMT:
-        blk = tem.get_controlled_dc_current_source_emt_template(vf=var_factory, name=item_name).block
-        blk.name = item_name
-        return blk
-
-    # LOAD
-    elif block_type == BlockType.R_LOAD_EMT:
-        blk = tem.get_shunt_r_emt_template(vf=var_factory,
-                                           phA=phase_a,
-                                           phB=phase_b,
-                                           phC=phase_c,
-                                           name=item_name).block
-        blk.name = item_name
-        return blk
-
-    elif block_type == BlockType.L_LOAD_EMT:
-        blk = tem.get_shunt_l_emt_template(vf=var_factory,
-                                           phA=phase_a,
-                                           phB=phase_b,
-                                           phC=phase_c,
-                                           name=item_name).block
-        blk.name = item_name
-        return blk
-    elif block_type == BlockType.C_LOAD_EMT:
-        blk = tem.get_shunt_c_emt_template(vf=var_factory,
-                                           phA=phase_a,
-                                           phB=phase_b,
-                                           phC=phase_c,
-                                           name=item_name).block
-        blk.name = item_name
-        return blk
-
-    elif block_type == BlockType.EXP_LOAD_EMT:
-        blk = tem.get_exponential_load_emt(vf=var_factory,
-                                           phA=phase_a,
-                                           phB=phase_b,
-                                           phC=phase_c,
-                                           name=item_name).block
-        blk.name = item_name
-        return blk
-
-    elif block_type == BlockType.ZIP_LOAD_EMT:
-        blk = tem.get_load_ZIP_emt_template(vf=var_factory,
-                                            phA=phase_a,
-                                            phB=phase_b,
-                                            phC=phase_c,
-                                            name=item_name).block
-        blk.name = item_name
-        return blk
-
-    else:
-        return None
-
-def create_j_marti_line_block(phase_n: bool,
-                            phase_a: bool,
-                            phase_b: bool,
-                            phase_c: bool,
-                            var_factory: VarFactory,
-                            block_type: BlockType,
-                            item_name: str) -> Block | None:
-    """
-    :param phase_n:
-    :type phase_n:
-    :param phase_a:
-    :type phase_a:
-    :param phase_b:
-    :type phase_b:
-    :param phase_c:
-    :type phase_c:
-    :param var_factory:
-    :type var_factory:
-    :param block_type:
-    :type block_type:
-    :param item_name:
-    :type item_name:
-    :return: Requested EMT wizard block or ``None``.
-    """
-
-
-    blk = tem.get_jmarti_line_emt_template(vf=var_factory,
-                                           phN=phase_n,
-                                           phA=phase_a,
-                                           phB=phase_b,
-                                           phC=phase_c,
-                                           name=item_name).block
-    blk.name = item_name
-    return blk
-
 
 
 def create_generic_block(var_factory: VarFactory,

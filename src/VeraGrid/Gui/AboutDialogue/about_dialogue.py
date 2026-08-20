@@ -15,7 +15,7 @@ from VeraGrid.Gui.AboutDialogue.about_gui import Ui_AboutDialog
 from VeraGrid.__version__ import __VeraGrid_VERSION__
 from VeraGrid.update import check_version, get_upgrade_command
 from VeraGridEngine.__version__ import __VeraGridEngine_VERSION__, copyright_msg, contributors_msg
-from VeraGridEngine.Compilers.Gslv import (GSLV_AVAILABLE,
+from VeraGridEngine.Compilers.Gslv.activation import (GSLV_AVAILABLE,
                                                       GSLV_RECOMMENDED_VERSION,
                                                       GSLV_VERSION)
 from VeraGridEngine.Compilers.circuit_to_pgm import (PGM_AVAILABLE,

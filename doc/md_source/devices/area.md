@@ -7,17 +7,19 @@ An `Area` groups buses for operational aggregation and transfer-capacity workflo
 This device provides geographical or administrative context for topology and reporting.
 
 ### Registered properties
-Profile-enabled properties: none.
+Profile-enabled properties: `spinning_reserve_requirement`.
 
-|    name    |   class_type   |unit|mandatory|max_chars|                     descriptions                     |has_profile|comment|
-|------------|----------------|----|---------|---------|------------------------------------------------------|-----------|-------|
-|idtag       |str             |    |False    |         |Unique ID                                             |False      |       |
-|name        |str             |    |False    |         |Name of the device.                                   |False      |       |
-|code        |str             |    |False    |         |Secondary ID                                          |False      |       |
-|rdfid       |str             |    |False    |         |RDF ID for further compatibility                      |False      |       |
-|action      |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.|False      |       |
-|comment     |str             |    |False    |         |User comment                                          |False      |       |
-|diff_changes|MergeInformation|    |False    |         |                                                      |False      |       |
-|longitude   |float           |deg |False    |         |longitude.                                            |False      |       |
-|latitude    |float           |deg |False    |         |latitude.                                             |False      |       |
-|color       |str             |    |False    |         |Color to paint the element in the map diagram         |False      |       |
+|            name            |   class_type   |unit|mandatory|max_chars|                      descriptions                      |has_profile|comment|
+|----------------------------|----------------|----|---------|---------|--------------------------------------------------------|-----------|-------|
+|idtag                       |str             |    |False    |         |Unique ID                                               |False      |       |
+|name                        |str             |    |False    |         |Name of the device.                                     |False      |       |
+|code                        |str             |    |False    |         |Secondary ID                                            |False      |       |
+|rdfid                       |str             |    |False    |         |RDF ID for further compatibility                        |False      |       |
+|action                      |enum ActionType |    |False    |         |Object action to perform. Only used for model merging.  |False      |       |
+|selected_to_merge           |bool            |    |False    |         |Whether this object should be applied during diff merge.|False      |       |
+|comment                     |str             |    |False    |         |User comment                                            |False      |       |
+|diff_changes                |MergeInformation|    |False    |         |                                                        |False      |       |
+|longitude                   |float           |deg |False    |         |longitude.                                              |False      |       |
+|latitude                    |float           |deg |False    |         |latitude.                                               |False      |       |
+|color                       |str             |    |False    |         |Color to paint the element in the map diagram           |False      |       |
+|spinning_reserve_requirement|float           |MW  |False    |         |Area spinning reserve requirement used in OPF.          |True       |       |

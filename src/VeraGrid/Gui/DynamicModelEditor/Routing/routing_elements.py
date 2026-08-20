@@ -5,15 +5,13 @@
 
 from __future__ import annotations
 
-from enum import Enum
-
-from VeraGridEngine.enumerations import RoutingAxis, RoutingPortSide
+from VeraGridEngine.enumerations import RoutingAxis, RoutingNodeKind, RoutingPortSide
 
 class RoutingPoint:
     """
     Store one engine-space 2D point.
 
-    :returns: None.
+    :return: None.
     """
 
     __slots__ = ("_x", "_y")
@@ -24,24 +22,20 @@ class RoutingPoint:
 
         :param x_pos: Horizontal coordinate.
         :param y_pos: Vertical coordinate.
-        :returns: None.
+        :return: None.
         """
         self._x: float = float(x_pos)
         self._y: float = float(y_pos)
 
     def get_x(self) -> float:
         """
-        Return the horizontal coordinate.
-
-        :returns: Horizontal coordinate.
+        :return: Horizontal coordinate.
         """
         return self._x
 
     def get_y(self) -> float:
         """
-        Return the vertical coordinate.
-
-        :returns: Vertical coordinate.
+        :return: Vertical coordinate.
         """
         return self._y
 
@@ -50,7 +44,7 @@ class RoutingPoint:
         Set the horizontal coordinate.
 
         :param x_pos: New horizontal coordinate.
-        :returns: None.
+        :return: None.
         """
         self._x = float(x_pos)
 
@@ -59,7 +53,7 @@ class RoutingPoint:
         Set the vertical coordinate.
 
         :param y_pos: New vertical coordinate.
-        :returns: None.
+        :return: None.
         """
         self._y = float(y_pos)
 
@@ -67,29 +61,17 @@ class RoutingPoint:
         """
         Build a copy of the point.
 
-        :returns: Point copy.
+        :return: Point copy.
         """
         point_copy: RoutingPoint = RoutingPoint(self._x, self._y)
         return point_copy
-
-
-class RoutingNodeKind(Enum):
-    """
-    Enumerate the supported node kinds in Phase 1.
-
-    :returns: Enumeration values describing supported node kinds.
-    """
-
-    PORT = "port"
-    STUB = "stub"
-    ELBOW = "elbow"
 
 
 class RoutingNode:
     """
     Represent one topological routing node.
 
-    :returns: None.
+    :return: None.
     """
 
     __slots__ = ("_node_id", "_kind", "_position", "_incident_segment_ids", "_port_side")
@@ -108,7 +90,7 @@ class RoutingNode:
         :param kind: Node kind.
         :param position: Node position.
         :param port_side: Physical block side for port nodes.
-        :returns: None.
+        :return: None.
         """
         self._node_id: int = int(node_id)
         self._kind: RoutingNodeKind = kind
@@ -118,25 +100,19 @@ class RoutingNode:
 
     def get_node_id(self) -> int:
         """
-        Return the stable node identifier.
-
-        :returns: Stable node identifier.
+        :return: Stable node identifier.
         """
         return self._node_id
 
     def get_kind(self) -> RoutingNodeKind:
         """
-        Return the node kind.
-
-        :returns: Node kind.
+        :return: Node kind.
         """
         return self._kind
 
     def get_position(self) -> RoutingPoint:
         """
-        Return the node position.
-
-        :returns: Node position.
+        :return: Node position.
         """
         return self._position
 
@@ -145,7 +121,7 @@ class RoutingNode:
         Set the node position.
 
         :param position: New node position.
-        :returns: None.
+        :return: None.
         """
         self._position = position
 
@@ -153,7 +129,7 @@ class RoutingNode:
         """
         Return whether this node carries one physical port-side value.
 
-        :returns: ``True`` when the node stores one physical port side.
+        :return: ``True`` when the node stores one physical port side.
         """
         if self._kind != RoutingNodeKind.PORT:
             return False
@@ -166,24 +142,13 @@ class RoutingNode:
         """
         Return the physical block side for this node when available.
 
-        :returns: Physical port side or ``None``.
+        :return: Physical port side or ``None``.
         """
         return self._port_side
 
-    def set_port_side(self, port_side: RoutingPortSide | None) -> None:
-        """
-        Set the physical block side for this node.
-
-        :param port_side: Physical port side or ``None``.
-        :returns: None.
-        """
-        self._port_side = port_side
-
     def get_incident_segment_ids(self) -> list[int]:
         """
-        Return the incident segment identifiers.
-
-        :returns: Incident segment identifiers.
+        :return: Incident segment identifiers.
         """
         return list(self._incident_segment_ids)
 
@@ -192,7 +157,7 @@ class RoutingNode:
         Attach one incident segment identifier to the node.
 
         :param segment_id: Incident segment identifier.
-        :returns: ``True`` when the identifier was added.
+        :return: ``True`` when the identifier was added.
         """
         segment_identifier: int = int(segment_id)
 
@@ -209,7 +174,7 @@ class RoutingNode:
         Remove one incident segment identifier from the node.
 
         :param segment_id: Incident segment identifier.
-        :returns: ``True`` when the identifier was removed.
+        :return: ``True`` when the identifier was removed.
         """
         segment_identifier: int = int(segment_id)
         if segment_identifier in self._incident_segment_ids:
@@ -222,7 +187,7 @@ class RoutingNode:
         """
         Build a detached copy of the node.
 
-        :returns: Node copy.
+        :return: Node copy.
         """
         node_copy: RoutingNode = RoutingNode(
             node_id=self._node_id,
@@ -240,7 +205,7 @@ class RoutingSegment:
     """
     Represent one routing edge between exactly two nodes.
 
-    :returns: None.
+    :return: None.
     """
 
     __slots__ = ("_segment_id", "_start_node_id", "_end_node_id")
@@ -252,7 +217,7 @@ class RoutingSegment:
         :param segment_id: Stable segment identifier.
         :param start_node_id: Start node identifier.
         :param end_node_id: End node identifier.
-        :returns: None.
+        :return: None.
         """
         self._segment_id: int = int(segment_id)
         self._start_node_id: int = int(start_node_id)
@@ -260,25 +225,19 @@ class RoutingSegment:
 
     def get_segment_id(self) -> int:
         """
-        Return the stable segment identifier.
-
-        :returns: Stable segment identifier.
+        :return: Stable segment identifier.
         """
         return self._segment_id
 
     def get_start_node_id(self) -> int:
         """
-        Return the start node identifier.
-
-        :returns: Start node identifier.
+        :return: Start node identifier.
         """
         return self._start_node_id
 
     def get_end_node_id(self) -> int:
         """
-        Return the end node identifier.
-
-        :returns: End node identifier.
+        :return: End node identifier.
         """
         return self._end_node_id
 
@@ -287,7 +246,7 @@ class RoutingSegment:
         Return the opposite node identifier when the given node belongs to the segment.
 
         :param node_id: Known endpoint identifier.
-        :returns: Opposite endpoint identifier or ``None``.
+        :return: Opposite endpoint identifier or ``None``.
         """
         node_identifier: int = int(node_id)
         if node_identifier == self._start_node_id:
@@ -301,7 +260,7 @@ class RoutingSegment:
         """
         Build a detached copy of the segment.
 
-        :returns: Segment copy.
+        :return: Segment copy.
         """
         segment_copy: RoutingSegment = RoutingSegment(
             segment_id=self._segment_id,
@@ -330,7 +289,7 @@ def derive_segment_axis(
     :param start_y: Start y coordinate.
     :param end_x: End x coordinate.
     :param end_y: End y coordinate.
-    :returns: Derived axis or ``None`` when the segment is diagonal or null.
+    :return: Derived axis or ``None`` when the segment is diagonal or null.
     """
     numerical_epsilon: float = 1.0e-9
     visual_alignment_threshold: float = 3.0

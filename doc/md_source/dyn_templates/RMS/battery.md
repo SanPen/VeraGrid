@@ -1,5 +1,14 @@
 # Battery
 
+<!-- veragrid-block-introduction:start -->
+**Battery** represents an energy resource and its interface controls. Storage and photovoltaic models combine source-side energy or power limits with converter commands, so available active power, DC voltage, and reactive-power control must remain mutually consistent.
+
+## Typical use
+
+- Use it to study renewable or storage response to voltage, frequency, and power-reference disturbances.
+- Respect energy, current, DC-voltage, and active/reactive capability limits during initialization.
+<!-- veragrid-block-introduction:end -->
+
 This model represents an RMS battery energy storage system with converter and DC-side state dynamics.
 
 ### Purpose

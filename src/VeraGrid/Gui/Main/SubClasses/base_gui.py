@@ -60,7 +60,7 @@ from VeraGrid.Session.dynamic_editor_workspace_session import DynamicEditorWorks
 from VeraGrid.Gui.Diagrams.SchematicWidget.diagram_bus_selection_dialogue import DiagramBusSelectorDialogue
 from VeraGrid.Gui.Diagrams.generic_graphics import is_dark_mode
 from VeraGrid.Gui.python_console import PythonConsole
-from VeraGrid.Gui.python_script_editor import PythonCodeEditor
+from VeraGrid.Gui.python_script_editor import ScriptingPythonEditor
 from VeraGrid.Gui.toast_widget import ToastManager
 from VeraGrid.Gui.FileDialogues.PsseDialogue.psse_import import PsseImportDialogue
 from VeraGrid.Gui.ProceduralGrid.procedural_grid import ProceduralGridWindow
@@ -294,7 +294,7 @@ class BaseMainGui(QMainWindow):
         self.console = PythonConsole(banner="VeraGrid Python Console!")
         self.ui.consoleLayout.addWidget(self.console)
 
-        self.code_editor = PythonCodeEditor(vars_dict={
+        self.code_editor = ScriptingPythonEditor(vars_dict={
 
             # "app": self,
             # "np": np,

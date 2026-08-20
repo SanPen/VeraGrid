@@ -140,6 +140,10 @@ class PsseCircuit(RawObject, BaseCircuit):
         elif len(data) == 3:
             self.IC, self.SBASE, self.REV = data
             logger.add_warning("RAW header contains 3 elements instead of the expected 6")
+        elif len(data) == 2:
+            self.IC, self.SBASE = data
+            self.REV = 25
+            logger.add_warning("RAW header contains elements instead of the expected 6")
         else:
             logger.add_warning(f"RAW header contains {len(data)} elements instead of the expected 6")
 

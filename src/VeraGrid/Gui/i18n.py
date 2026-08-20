@@ -35,6 +35,7 @@ class ApplicationLanguage(Enum):
     FRENCH = "fr_FR"
     PORTUGUESE = "pt_PT"
     SPANISH = "es_ES"
+    POLISH = "pl_PL"
 
     def __str__(self) -> str:
         """
@@ -400,6 +401,7 @@ def get_language_display_text(
             ApplicationLanguage.FRENCH: "Français",
             ApplicationLanguage.PORTUGUESE: "Português",
             ApplicationLanguage.SPANISH: "Español",
+            ApplicationLanguage.POLISH: "Polski",
         }
         return endonyms.get(language, "English")
 
@@ -462,7 +464,10 @@ def get_language_flag_icon_path(language: ApplicationLanguage) -> str:
                                                                     if language == ApplicationLanguage.PORTUGUESE:
                                                                         return ":/Icons/icons/flag_pt.png"
                                                                     else:
-                                                                        return ":/Icons/icons/flag_es.png"
+                                                                        if language == ApplicationLanguage.POLISH:
+                                                                            return ":/Icons/icons/flag_pl.png"
+                                                                        else:
+                                                                            return ":/Icons/icons/flag_es.png"
 
 
 def load_translator(prefix: str, directory: str, candidates: list[str]) -> QTranslator | None:
@@ -688,6 +693,20 @@ LEGACY_LANGUAGE_ALIASES: dict[ApplicationLanguage, set[str]] = {
         "Espanhol",
         "西班牙语",
     },
+    ApplicationLanguage.POLISH: {
+        "بولندي",
+        "Polonès",
+        "Polnisch",
+        "Πολωνικά",
+        "Polaco",
+        "Polako",
+        "Polonais",
+        "Polacco",
+        "ポーランド語",
+        "Pools",
+        "Polonês",
+        "波兰语",
+    },
 }
 
 
@@ -723,6 +742,7 @@ def language_from_name(name_text: str | None) -> ApplicationLanguage:
         ApplicationLanguage.FRENCH: "French",
         ApplicationLanguage.PORTUGUESE: "Portuguese",
         ApplicationLanguage.SPANISH: "Español",
+        ApplicationLanguage.POLISH: "Polish",
     }
 
     language: ApplicationLanguage

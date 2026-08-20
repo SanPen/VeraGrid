@@ -12,18 +12,29 @@ from VeraGridEngine.Devices.Injections.load import Load
 from VeraGridEngine.Devices.Injections.generator import Generator
 
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
+from VeraGrid.Gui.DynamicModelEditor.dynamic_block_properties import (
+    BlockStructuralEditRequest,
+    BlockSymbolKind,
+    BlockSymbolDraftRow,
+    DynamicBlockPropertiesDialog,
+    DynamicBlockPropertiesDockWidget,
+)
 import VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor as dynamic_block_editor
 import VeraGrid.Gui.DynamicModelEditor.dynamic_editor_graphics as graph
 import VeraGrid.Gui.DynamicModelEditor.dynamic_editor_models as dialog_models
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_window import DynamicEditorWorkspaceWindow
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_utilities import (
+    create_default_template_builder,
+    initialize_template_builder_from_block,
+)
 from VeraGrid.Session.dynamic_editor_workspace_session import DynamicEditorWorkspaceSession
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.Utils.Symbolic.block import (Block,
-                                                 DynamicConnectionIntentOrigin,
-                                                 build_dynamic_connection_intent_record,
-                                                 find_connections)
+from VeraGridEngine.Utils.Symbolic.block import Block, find_connections
+from VeraGridEngine.Utils.Symbolic.dynamic_connection_intent import (DynamicConnectionIntent,
+                                                                     DynamicConnectionIntentDirection,
+                                                                     DynamicConnectionIntentOrigin)
 from VeraGridEngine.Utils.Symbolic.templates_common_functions import (attach_emt_model_to_buses,
                                                                      _ensure_saved_branch_root_contract_side,
                                                                      _normalize_saved_branch_root_contract_from_live_sides,
@@ -40,6 +51,7 @@ from VeraGridEngine.Utils.Symbolic.bus_emt_template import get_bus_mask
 from VeraGridEngine.Templates.Emt.generator_emt_type_template import get_complete_generator_template_emt
 from VeraGridEngine.Templates.Emt.thevenin_equivalent_emt_generator_template import get_generator_thevenin_rl_emt_template_with_ref
 from VeraGridEngine.Templates.Emt.pi_line_emt_template import get_pi_line_emt_template, EmtLineTypes
+from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
 
 pytestmark = pytest.mark.filterwarnings("error")
 
@@ -48,6 +60,12 @@ class _BusStub:
     __slots__ = ("name", "is_dc", "emt_model", "_connected_emt_models", "_pending_emt_devices")
 
     def __init__(self, name: str, is_dc: bool, emt_model: Block) -> None:
+        """Create a minimal bus object for EMT connection tests.
+
+        :param name: Bus name exposed to connection diagnostics.
+        :param is_dc: Whether the stub represents a DC bus.
+        :param emt_model: Symbolic EMT bus model exposed by the stub.
+        """
         self.name = name
         self.is_dc = is_dc
         self.emt_model = emt_model
@@ -176,17 +194,6 @@ def _get_app() -> QtWidgets.QApplication:
         return QtWidgets.QApplication(sys.argv)
     else:
         return app
-
-
-def _accept_dynamic_template_dialog(dialog: object) -> QtWidgets.QDialog.DialogCode:
-    """
-    Accept one Dynamic Editor template dialog without user interaction.
-
-    :param dialog: Dialog instance being accepted.
-    :return: Qt accepted-dialog code.
-    """
-    _unused_dialog: object = dialog
-    return QtWidgets.QDialog.DialogCode.Accepted
 
 
 def _make_var(name: str, reference: VarPowerFlowReferenceType) -> Var:
@@ -358,6 +365,81 @@ def _dispose_editor(editor: DynamicBlockEditorGUI) -> None:
     """
     editor.prepare_to_delete()
     editor.close()
+
+
+def test_block_properties_right_dock_stacks_vertically_with_library() -> None:
+    """A right-side drop must place properties above or below the Library."""
+    application: QtWidgets.QApplication = _get_app()
+    editor: DynamicBlockEditorGUI = _build_editor(Load(name="Dock load"))
+    try:
+        editor.resize(1500, 900)
+        editor.show()
+        application.processEvents()
+        editor.request_open_block_properties(Block(name="Dockable block"))
+        application.processEvents()
+
+        properties_dock: DynamicBlockPropertiesDockWidget | None = (
+            editor.get_block_properties_dock_widget()
+        )
+        library_dock: QtWidgets.QDockWidget | None = editor.get_library_dock_widget()
+        assert isinstance(properties_dock, DynamicBlockPropertiesDockWidget)
+        assert isinstance(library_dock, QtWidgets.QDockWidget)
+        assert properties_dock.isFloating()
+        floating_flags: QtCore.Qt.WindowType = properties_dock.windowFlags()
+        assert (
+            floating_flags & QtCore.Qt.WindowType.WindowType_Mask
+        ) == QtCore.Qt.WindowType.Window
+        assert floating_flags & QtCore.Qt.WindowType.WindowCloseButtonHint
+        assert not floating_flags & QtCore.Qt.WindowType.WindowMinimizeButtonHint
+        assert not floating_flags & QtCore.Qt.WindowType.WindowMaximizeButtonHint
+        allowed_areas: QtCore.Qt.DockWidgetArea = properties_dock.allowedAreas()
+        assert allowed_areas & QtCore.Qt.DockWidgetArea.LeftDockWidgetArea
+        assert allowed_areas & QtCore.Qt.DockWidgetArea.RightDockWidgetArea
+        assert allowed_areas & QtCore.Qt.DockWidgetArea.BottomDockWidgetArea
+        assert not allowed_areas & QtCore.Qt.DockWidgetArea.TopDockWidgetArea
+        assert editor.dockWidgetArea(library_dock) == QtCore.Qt.DockWidgetArea.RightDockWidgetArea
+        assert library_dock.features() == QtWidgets.QDockWidget.DockWidgetFeature.NoDockWidgetFeatures
+        properties_dock.setFloating(False)
+        editor.addDockWidget(QtCore.Qt.DockWidgetArea.RightDockWidgetArea, properties_dock)
+        editor.splitDockWidget(
+            library_dock,
+            properties_dock,
+            QtCore.Qt.Orientation.Vertical,
+        )
+        application.processEvents()
+        editor.normalize_block_properties_right_dock()
+        application.processEvents()
+
+        properties_geometry: QtCore.QRect = properties_dock.geometry()
+        library_geometry: QtCore.QRect = library_dock.geometry()
+        assert editor.dockWidgetArea(properties_dock) == QtCore.Qt.DockWidgetArea.RightDockWidgetArea
+        assert abs(properties_geometry.left() - library_geometry.left()) <= 2
+        assert abs(properties_geometry.right() - library_geometry.right()) <= 2
+        assert (
+            properties_geometry.bottom() <= library_geometry.top()
+            or library_geometry.bottom() <= properties_geometry.top()
+        )
+
+        # Qt must also retain the inverse legal ordering when the user drops
+        # Block properties in the upper part of the right docking target.
+        editor.splitDockWidget(
+            properties_dock,
+            library_dock,
+            QtCore.Qt.Orientation.Vertical,
+        )
+        application.processEvents()
+        editor.normalize_block_properties_right_dock()
+        application.processEvents()
+        properties_geometry = properties_dock.geometry()
+        library_geometry = library_dock.geometry()
+        assert properties_geometry.bottom() <= library_geometry.top()
+
+        properties_dock.get_properties_widget().request_close()
+        application.processEvents()
+        assert editor.get_block_properties_dock_widget() is None
+    finally:
+        _dispose_editor(editor)
+        application.processEvents()
 
 
 def _build_phase_bus_block(name: str,
@@ -584,7 +666,8 @@ def _collect_wrapper_refs(block: Block) -> tuple[set[VarPowerFlowReferenceType],
     child: Block
 
     for child in block.children:
-        if not dynamic_block_editor.is_root_interface_wrapper_block(child):
+        if not dynamic_block_editor.is_root_interface_wrapper_block(block_model=child,
+                                                                    diagram=block.diagram):
             pass
         elif len(child.out_vars) == 1 and len(child.in_vars) == 0 and child.out_vars[0].ref is not None:
             input_refs.add(child.out_vars[0].ref)
@@ -906,6 +989,145 @@ def _build_connected_gain_phase(editor: DynamicBlockEditorGUI,
     in_connection_uid = input_wrapper.outputs[0].connections[0].con_uid
     out_connection_uid = gain_item.outputs[0].connections[0].con_uid
     return gain_item, input_wrapper.subsys.uid, output_wrapper.subsys.uid, in_connection_uid, out_connection_uid
+
+
+def test_removing_existing_output_disconnects_its_live_arrow_before_scene_rebuild() -> None:
+    """Unchecking Output must remove its wire and VarFactory edge before port mutation."""
+    editor: DynamicBlockEditorGUI
+    load: Load
+    circuit: MultiCircuit
+    remote_bus: object
+    editor, load, circuit, remote_bus = _build_connected_injection_editor(active_phases=list([1, 2, 3]))
+    _unused_load: Load = load
+    _unused_circuit: MultiCircuit = circuit
+    _unused_remote_bus: object = remote_bus
+    dialogue: DynamicBlockPropertiesDialog | None = None
+    try:
+        gain_data: tuple[object, int, int, int, int] = _build_connected_gain_phase(
+            editor=editor,
+            voltage_reference=VarPowerFlowReferenceType.v_A,
+            current_reference=VarPowerFlowReferenceType.i_A,
+            x_pos=260.0,
+            y_pos=180.0,
+        )
+        gain_item_object: object = gain_data[0]
+        incoming_connection_uid: int = gain_data[3]
+        outgoing_connection_uid: int = gain_data[4]
+        assert isinstance(gain_item_object, graph.UnOpItem)
+        assert gain_item_object.subsys is not None
+        gain_block: Block = gain_item_object.subsys
+        exported_variable: Var = gain_block.out_vars[0]
+        dialogue = DynamicBlockPropertiesDialog(
+            block=gain_block,
+            block_type_name=BlockType.GAIN.name,
+            var_factory=editor.var_factory,
+        )
+        dialogue.outputExportChangesRequested.connect(editor.on_output_export_changes_requested)
+        dialogue.blockApplied.connect(editor.on_block_properties_applied)
+
+        output_row: int = -1
+        row_index: int
+        for row_index in range(dialogue._symbol_model.rowCount()):
+            candidate_row: BlockSymbolDraftRow | None = dialogue._symbol_model.get_row(row_index)
+            if candidate_row is not None and candidate_row.get_variable() is exported_variable:
+                output_row = row_index
+            else:
+                pass
+        assert output_row >= 0
+        output_index: QtCore.QModelIndex = dialogue._symbol_model.index(output_row, 3)
+        assert dialogue._symbol_model.setData(
+            output_index,
+            QtCore.Qt.CheckState.Unchecked,
+            QtCore.Qt.ItemDataRole.CheckStateRole,
+        )
+
+        dialogue.apply_changes()
+
+        assert gain_block.out_vars == list()
+        assert incoming_connection_uid in editor.diagram.con_data
+        assert outgoing_connection_uid not in editor.diagram.con_data
+        assert editor._find_var_factory_connection(
+            incoming_non_mutable_uid=editor.main_block.out_vars[0].non_mutable_uid,
+            substituted_non_mutable_uid=exported_variable.non_mutable_uid,
+        ) is None
+    finally:
+        if dialogue is not None:
+            dialogue.close()
+        else:
+            pass
+        _dispose_editor(editor)
+
+
+def test_adding_input_from_properties_rebuilds_the_visible_block_port() -> None:
+    """Applying a staged input must immediately add its graphics-scene port."""
+    editor: DynamicBlockEditorGUI
+    load: Load
+    circuit: MultiCircuit
+    remote_bus: object
+    editor, load, circuit, remote_bus = _build_connected_injection_editor(
+        active_phases=list([1, 2, 3])
+    )
+    _unused_load: Load = load
+    _unused_circuit: MultiCircuit = circuit
+    _unused_remote_bus: object = remote_bus
+    dialogue: DynamicBlockPropertiesDialog | None = None
+    try:
+        generic_item: graph.GenericBlockItem | None = editor.create_block_item_from_blocktype(
+            BlockType.PI_CURRENT_CONTROLLER,
+            260.0,
+            180.0,
+        )
+        assert isinstance(generic_item, graph.GenericBlockItem)
+        assert generic_item.subsys is not None
+        generic_block: Block = generic_item.subsys
+        generic_block_uid: int = generic_block.uid
+        initial_input_count: int = len(generic_item.inputs)
+        dialogue = DynamicBlockPropertiesDialog(
+            block=generic_block,
+            block_type_name=BlockType.PI_CURRENT_CONTROLLER.name,
+            var_factory=editor.var_factory,
+        )
+        dialogue.blockApplied.connect(editor.on_block_properties_applied)
+        dialogue._new_symbol_name.setText("additional_input")
+        dialogue._new_symbol_kind.setCurrentText(BlockSymbolKind.INPUT.value)
+        dialogue.add_staged_symbol()
+
+        dialogue.apply_changes()
+
+        rebuilt_item: graph.BlockItem | graph.GenericBlockItem | None = (
+            editor.get_scene_item_by_block_uid(generic_block_uid)
+        )
+        assert isinstance(rebuilt_item, graph.GenericBlockItem)
+        assert len(rebuilt_item.inputs) == initial_input_count + 1
+        assert rebuilt_item.inputs[-1].base_var is generic_block.in_vars[-1]
+        assert generic_block.in_vars[-1].name == "additional_input"
+
+        added_variable: Var = generic_block.in_vars[-1]
+        added_row: int = -1
+        row_index: int
+        for row_index in range(dialogue._symbol_model.rowCount()):
+            candidate_row: BlockSymbolDraftRow | None = dialogue._symbol_model.get_row(row_index)
+            if candidate_row is not None and candidate_row.get_variable() is added_variable:
+                added_row = row_index
+            else:
+                pass
+        assert added_row >= 0
+        assert dialogue._symbol_model.remove_symbol(added_row)
+
+        dialogue.apply_changes()
+
+        restored_item: graph.BlockItem | graph.GenericBlockItem | None = (
+            editor.get_scene_item_by_block_uid(generic_block_uid)
+        )
+        assert isinstance(restored_item, graph.GenericBlockItem)
+        assert len(restored_item.inputs) == initial_input_count
+        assert added_variable not in generic_block.in_vars
+    finally:
+        if dialogue is not None:
+            dialogue.close()
+        else:
+            pass
+        _dispose_editor(editor)
 
 
 def _active_bus_voltage_refs(bus: object) -> tuple[VarPowerFlowReferenceType, ...]:
@@ -1471,12 +1693,10 @@ def test_saved_injection_editor_topology_change_apply_reopen_matrix() -> None:
             pass
 
 
-def test_manual_exponential_load_partial_connections_survive_apply_and_reopen(
-        monkeypatch: pytest.MonkeyPatch) -> None:
+def test_manual_exponential_load_partial_connections_survive_apply_and_reopen() -> None:
     """
     Preserve a manually added exponential-load block and its partial root wiring.
 
-    :param monkeypatch: Pytest attribute patch helper.
     :return: None.
     """
     generator_editor, generator, circuit, load_bus = _build_template_backed_generator_editor(
@@ -1526,10 +1746,6 @@ def test_manual_exponential_load_partial_connections_survive_apply_and_reopen(
                                    templates_list=list(),
                                    is_root_editor=True,
                                    modal=False)
-    monkeypatch.setattr(dynamic_block_editor.DynTemplatesEditorDialog,
-                        "exec",
-                        _accept_dynamic_template_dialog)
-
     try:
         exponential_load_item = editor.create_item_using_blocktype_wizard(
             blocktype=BlockType.EXP_LOAD_EMT,
@@ -1572,7 +1788,10 @@ def test_manual_exponential_load_partial_connections_survive_apply_and_reopen(
             scene_item for scene_item in reopened_editor.scene.items()
             if (isinstance(scene_item, graph.GenericBlockItem)
                 and scene_item.subsys is not None
-                and not scene_item.subsys.is_root_interface_wrapper)
+                and not dynamic_block_editor.is_root_interface_wrapper_block(
+                    block_model=scene_item.subsys,
+                    diagram=reopened_editor.diagram,
+                ))
         )
         assert len(internal_items) == 1
         assert internal_items[0].subsys.name.startswith("EXP_Load_EMT")
@@ -1587,12 +1806,96 @@ def test_manual_exponential_load_partial_connections_survive_apply_and_reopen(
         _dispose_editor(restored_generator_editor)
 
 
-def test_workspace_exponential_load_partial_connections_survive_tab_close_and_reopen(
-        monkeypatch: pytest.MonkeyPatch) -> None:
+def test_generated_phase_rebuild_preserves_surviving_port_connections() -> None:
+    """A generated ABC-to-AB rebuild must retain the connected A/B identities."""
+    generator_editor: DynamicBlockEditorGUI
+    generator: Generator
+    circuit: MultiCircuit
+    load_bus: gce.Bus
+    generator_editor, generator, circuit, load_bus = _build_template_backed_generator_editor(
+        active_phases=list([1, 2, 3])
+    )
+    load: Load = gce.Load(name="Load structural")
+    circuit.add_load(bus=load_bus, api_obj=load)
+    _dispose_editor(generator_editor)
+    editor: DynamicBlockEditorGUI = DynamicBlockEditorGUI(
+        var_factory=VarFactory(),
+        current_block=load.emt_model,
+        root_block=load.emt_model,
+        api_object=load,
+        current_theme="Light",
+        circuit=circuit,
+        mode=DynamicSimulationMode.EMT,
+        templates_list=list(),
+        is_root_editor=True,
+        modal=False,
+    )
+    try:
+        exponential_load_item: graph.GenericBlockItem | None = editor.create_item_using_blocktype_wizard(
+            blocktype=BlockType.EXP_LOAD_EMT,
+            x_pos=260.0,
+            y_pos=180.0,
+        )
+        assert isinstance(exponential_load_item, graph.GenericBlockItem)
+        assert exponential_load_item.subsys is not None
+        target_block: Block = exponential_load_item.subsys
+        old_input_a: Var = target_block.in_vars[0]
+        old_output_b: Var = target_block.out_vars[1]
+        input_wrapper: graph.ProtectedConnectionBlockItem = _find_wrapper_item(
+            editor=editor,
+            reference=VarPowerFlowReferenceType.v_A,
+            is_input=True,
+        )
+        output_wrapper: graph.ProtectedConnectionBlockItem = _find_wrapper_item(
+            editor=editor,
+            reference=VarPowerFlowReferenceType.i_B,
+            is_input=False,
+        )
+        _connect_port_pair(
+            editor=editor,
+            source_port=input_wrapper.outputs[0],
+            target_port=exponential_load_item.inputs[0],
+        )
+        _connect_port_pair(
+            editor=editor,
+            source_port=exponential_load_item.outputs[1],
+            target_port=output_wrapper.inputs[0],
+        )
+
+        builder: TemplateDefinition | None = create_default_template_builder(
+            var_factory=editor.var_factory,
+            block_type=BlockType.EXP_LOAD_EMT,
+            item_name=target_block.name,
+            api_object=load,
+        )
+        assert builder is not None
+        initialize_template_builder_from_block(builder, target_block, BlockType.EXP_LOAD_EMT)
+        phase_c_property: TemplateProp | None = builder.params_dict.get("phC", None)
+        assert phase_c_property is not None
+        phase_c_property.value = False
+        request: BlockStructuralEditRequest = BlockStructuralEditRequest(
+            block=target_block,
+            block_type=BlockType.EXP_LOAD_EMT,
+            builder=builder,
+            parameter_values=list(),
+        )
+
+        editor.on_structural_rebuild_requested(request)
+
+        assert request.is_successful()
+        assert len(target_block.in_vars) == 2
+        assert len(target_block.out_vars) == 2
+        assert target_block.in_vars[0] is old_input_a
+        assert target_block.out_vars[1] is old_output_b
+        assert len(editor.diagram.con_data) == 2
+    finally:
+        _dispose_editor(editor)
+
+
+def test_workspace_exponential_load_partial_connections_survive_tab_close_and_reopen() -> None:
     """
     Preserve a partially wired exponential load through real workspace tab teardown.
 
-    :param monkeypatch: Pytest attribute patch helper.
     :return: None.
     """
     app = _get_app()
@@ -1628,10 +1931,6 @@ def test_workspace_exponential_load_partial_connections_survive_tab_close_and_re
     assert load_page is not None
     editor = load_page.editor
     assert editor is not None
-    monkeypatch.setattr(dynamic_block_editor.DynTemplatesEditorDialog,
-                        "exec",
-                        _accept_dynamic_template_dialog)
-
     exponential_load_item = editor.create_item_using_blocktype_wizard(
         blocktype=BlockType.EXP_LOAD_EMT,
         x_pos=260.0,
@@ -1677,7 +1976,10 @@ def test_workspace_exponential_load_partial_connections_survive_tab_close_and_re
         scene_item for scene_item in reopened_editor.scene.items()
         if (isinstance(scene_item, graph.GenericBlockItem)
             and scene_item.subsys is not None
-            and not scene_item.subsys.is_root_interface_wrapper)
+            and not dynamic_block_editor.is_root_interface_wrapper_block(
+                block_model=scene_item.subsys,
+                diagram=reopened_editor.diagram,
+            ))
     )
     assert len(internal_items) == 1
     assert internal_items[0].subsys.name.startswith("EXP_Load_EMT")
@@ -2863,13 +3165,14 @@ def test_manual_pi_branch_ab_wires_survive_abc_expansion_and_relayout() -> None:
         VarPowerFlowReferenceType.vt_A.value: VarPowerFlowReferenceType.v_A.value,
         VarPowerFlowReferenceType.vt_B.value: VarPowerFlowReferenceType.v_B.value,
     })
-    intent_entry: dict[str, object]
+    intent_entry: DynamicConnectionIntent
     for intent_entry in line.emt_model.connection_intents:
-        if intent_entry["root_ref"] in legacy_voltage_refs:
-            intent_entry["root_ref"] = legacy_voltage_refs[str(intent_entry["root_ref"])]
-            intent_entry["root_direction"] = "output"
+        root_reference_value: str = intent_entry.get_root_reference().value
+        legacy_reference_value: str | None = legacy_voltage_refs.get(root_reference_value, None)
+        if legacy_reference_value is not None:
+            intent_entry.set_root_reference(VarPowerFlowReferenceType(legacy_reference_value))
         else:
-            intent_entry["root_direction"] = "input"
+            pass
 
     _apply_line_phase_transition(line=line, final_phases=list([1, 2, 3]))
     reopened = DynamicBlockEditorGUI(
@@ -2887,15 +3190,18 @@ def test_manual_pi_branch_ab_wires_survive_abc_expansion_and_relayout() -> None:
     try:
         reopened_pi_item: graph.GenericBlockItem | None = reopened.get_scene_item_by_block_uid(pi_block_uid)
         assert reopened_pi_item is not None
-        user_intents: list[dict[str, object]] = list(
+        user_intents: list[DynamicConnectionIntent] = list(
             intent for intent in line.emt_model.connection_intents
-            if intent.get("origin", None) == DynamicConnectionIntentOrigin.USER.value
+            if intent.get_origin() == DynamicConnectionIntentOrigin.USER
         )
         assert len(user_intents) == 8
-        assert set(str(intent["root_ref"]) for intent in user_intents) == set(
+        assert set(intent.get_root_reference().value for intent in user_intents) == set(
             reference.value for reference in input_refs + output_refs
         )
-        assert set(str(intent["root_direction"]) for intent in user_intents) == {"input", "output"}
+        assert set(intent.get_direction() for intent in user_intents) == set([
+            DynamicConnectionIntentDirection.INPUT,
+            DynamicConnectionIntentDirection.OUTPUT,
+        ])
 
         for reference in input_refs:
             wrapper_item = _find_semantic_wrapper_item(reopened, reference, BlockType.INPUT_CONN)
@@ -3042,6 +3348,132 @@ def test_template_backed_generator_preflight_reconciles_without_reopening_editor
         pass
 
 
+def test_saved_load_preflight_preserves_live_bus_bindings_after_ab_abc_cycle() -> None:
+    """
+    Keep one editor-saved load bound to the live bus after an AB-to-ABC cycle.
+
+    :return: None.
+    """
+    _get_app()
+    circuit: MultiCircuit
+    load: Load
+    remote_bus: object
+    circuit, load, remote_bus, _final_phases = _make_phase_transition_circuit(
+        initial_phases=list([1, 2, 3]),
+        final_phases=list([1, 2]),
+    )
+    line: Line = circuit.lines[0]
+    line_template: EmtModelTemplate = get_pi_line_emt_template(
+        vf=circuit.var_factory,
+        phN=False,
+        phA=True,
+        phB=True,
+        phC=True,
+        name="PiTemplate",
+    )
+    line.emt_template = line_template
+    line.emt_model = duplicate_block(line_template.block, var_factory=circuit.var_factory)
+    load.emt_model = Block()
+
+    editor = DynamicBlockEditorGUI(var_factory=circuit.var_factory,
+                                   current_block=load.emt_model,
+                                   root_block=load.emt_model,
+                                   api_object=load,
+                                   current_theme="Light",
+                                   circuit=circuit,
+                                   mode=DynamicSimulationMode.EMT,
+                                   templates_list=list(),
+                                   is_root_editor=True,
+                                   modal=False)
+    gain_blocks_by_ref: dict[VarPowerFlowReferenceType, Block] = dict()
+    voltage_ref: VarPowerFlowReferenceType
+    current_ref: VarPowerFlowReferenceType
+    gain_item: graph.GenericBlockItem
+    gain_block: Block
+    y_position: float = 80.0
+    try:
+        for voltage_ref, current_ref in [
+            (VarPowerFlowReferenceType.v_A, VarPowerFlowReferenceType.i_A),
+            (VarPowerFlowReferenceType.v_B, VarPowerFlowReferenceType.i_B),
+            (VarPowerFlowReferenceType.v_C, VarPowerFlowReferenceType.i_C),
+        ]:
+            gain_item, _input_uid, _output_uid, _input_connection_uid, _output_connection_uid = (
+                _build_connected_gain_phase(editor=editor,
+                                            voltage_reference=voltage_ref,
+                                            current_reference=current_ref,
+                                            x_pos=260.0,
+                                            y_pos=y_position)
+            )
+            assert gain_item.subsys is not None
+            gain_blocks_by_ref[voltage_ref] = gain_item.subsys
+            y_position += 140.0
+
+        editor.apply_changes()
+    finally:
+        _dispose_editor(editor)
+
+    _apply_bus_phase_transition(circuit=circuit,
+                                bus=load.bus,
+                                remote_bus=remote_bus,
+                                final_phases=list([1, 2]))
+    intermediate_editor = DynamicBlockEditorGUI(var_factory=circuit.var_factory,
+                                                 current_block=load.emt_model,
+                                                 root_block=load.emt_model,
+                                                 api_object=load,
+                                                 current_theme="Light",
+                                                 circuit=circuit,
+                                                 mode=DynamicSimulationMode.EMT,
+                                                 templates_list=list(),
+                                                 is_root_editor=True,
+                                                 modal=False)
+    _dispose_editor(intermediate_editor)
+
+    _apply_bus_phase_transition(circuit=circuit,
+                                bus=load.bus,
+                                remote_bus=remote_bus,
+                                final_phases=list([1, 2, 3]))
+    restored_editor = DynamicBlockEditorGUI(var_factory=circuit.var_factory,
+                                             current_block=load.emt_model,
+                                             root_block=load.emt_model,
+                                             api_object=load,
+                                             current_theme="Light",
+                                             circuit=circuit,
+                                             mode=DynamicSimulationMode.EMT,
+                                             templates_list=list(),
+                                             is_root_editor=True,
+                                             modal=False)
+    _dispose_editor(restored_editor)
+
+    logger: Logger = circuit.check_emt_models()
+    assert logger.has_errors() is False, str(logger)
+    first_connection_count: int = sum(
+        len(connection_list)
+        for connection_list in circuit.var_factory.get_connections_dict().values()
+    )
+    repeated_logger: Logger = circuit.check_emt_models()
+    repeated_connection_count: int = sum(
+        len(connection_list)
+        for connection_list in circuit.var_factory.get_connections_dict().values()
+    )
+    assert repeated_logger.has_errors() is False, str(repeated_logger)
+    assert repeated_connection_count == first_connection_count
+
+    device_var: Var | None
+    bus_var: Var | None
+    for voltage_ref in [
+        VarPowerFlowReferenceType.v_A,
+        VarPowerFlowReferenceType.v_B,
+        VarPowerFlowReferenceType.v_C,
+    ]:
+        device_var = load.emt_model.external_mapping.get(voltage_ref, None)
+        bus_var = load.bus.emt_model.external_mapping.get(voltage_ref, None)
+        assert device_var is not None
+        assert bus_var is not None
+        assert device_var.uid == bus_var.uid
+        gain_block = gain_blocks_by_ref[voltage_ref]
+        assert gain_block.in_vars[0].uid == bus_var.uid
+
+
 def test_template_backed_generator_preflight_does_not_materialize_absent_neutral() -> None:
     """
     Verify an ABC bus keeps template neutral intents dormant during EMT preflight.
@@ -3172,38 +3604,35 @@ def test_branch_preflight_reconciles_without_reopening_editor() -> None:
         VarPowerFlowReferenceType.it_B: it_b,
     })
     line.emt_model.connection_intents = list([
-        build_dynamic_connection_intent_record(DynamicConnectionIntentOrigin.USER,
-                                                             VarPowerFlowReferenceType.vf_A,
-                                                             "input",
-                                                             internal_from.uid,
-                                                             "output",
-                                                             0),
-        build_dynamic_connection_intent_record(DynamicConnectionIntentOrigin.USER,
-                                                             VarPowerFlowReferenceType.if_A,
-                                                             "output",
-                                                             internal_from.uid,
-                                                             "input",
-                                                             0),
-        build_dynamic_connection_intent_record(DynamicConnectionIntentOrigin.USER,
-                                                             VarPowerFlowReferenceType.vt_B,
-                                                             "input",
-                                                             internal_to.uid,
-                                                             "output",
-                                                             0),
-        build_dynamic_connection_intent_record(DynamicConnectionIntentOrigin.USER,
-                                                             VarPowerFlowReferenceType.it_B,
-                                                             "output",
-                                                             internal_to.uid,
-                                                             "input",
-                                                             0),
+        DynamicConnectionIntent(origin=DynamicConnectionIntentOrigin.USER,
+                                root_reference=VarPowerFlowReferenceType.vf_A,
+                                direction=DynamicConnectionIntentDirection.INPUT,
+                                internal_block_uid=internal_from.uid,
+                                internal_variable_uid=internal_in_from.non_mutable_uid),
+        DynamicConnectionIntent(origin=DynamicConnectionIntentOrigin.USER,
+                                root_reference=VarPowerFlowReferenceType.if_A,
+                                direction=DynamicConnectionIntentDirection.OUTPUT,
+                                internal_block_uid=internal_from.uid,
+                                internal_variable_uid=internal_out_from.non_mutable_uid),
+        DynamicConnectionIntent(origin=DynamicConnectionIntentOrigin.USER,
+                                root_reference=VarPowerFlowReferenceType.vt_B,
+                                direction=DynamicConnectionIntentDirection.INPUT,
+                                internal_block_uid=internal_to.uid,
+                                internal_variable_uid=internal_in_to.non_mutable_uid),
+        DynamicConnectionIntent(origin=DynamicConnectionIntentOrigin.USER,
+                                root_reference=VarPowerFlowReferenceType.it_B,
+                                direction=DynamicConnectionIntentDirection.OUTPUT,
+                                internal_block_uid=internal_to.uid,
+                                internal_variable_uid=internal_out_to.non_mutable_uid),
     ])
 
     dialog_models.initialize_connected_bus_models_for_editor_assignment(api_object=line,
                                                                         circuit=circuit,
                                                                         var_factory=var_factory,
                                                                         mode=DynamicSimulationMode.EMT)
-    dialog_models.attach_editor_assigned_emt_branch_model(api_object=line,
-                                                          var_factory=var_factory)
+    attach_emt_model_to_buses(device=line,
+                              model=line.emt_model,
+                              var_factory=var_factory)
 
     _apply_line_phase_transition(line=line,
                                  final_phases=list([1, 2]))
@@ -3267,38 +3696,35 @@ def test_branch_preflight_reconciles_from_and_to_sides_independently() -> None:
         VarPowerFlowReferenceType.it_B: it_b,
     })
     line.emt_model.connection_intents = list([
-        build_dynamic_connection_intent_record(DynamicConnectionIntentOrigin.USER,
-                                                             VarPowerFlowReferenceType.vf_A,
-                                                             "input",
-                                                             internal_from.uid,
-                                                             "output",
-                                                             0),
-        build_dynamic_connection_intent_record(DynamicConnectionIntentOrigin.USER,
-                                                             VarPowerFlowReferenceType.if_A,
-                                                             "output",
-                                                             internal_from.uid,
-                                                             "input",
-                                                             0),
-        build_dynamic_connection_intent_record(DynamicConnectionIntentOrigin.USER,
-                                                             VarPowerFlowReferenceType.vt_B,
-                                                             "input",
-                                                             internal_to.uid,
-                                                             "output",
-                                                             0),
-        build_dynamic_connection_intent_record(DynamicConnectionIntentOrigin.USER,
-                                                             VarPowerFlowReferenceType.it_B,
-                                                             "output",
-                                                             internal_to.uid,
-                                                             "input",
-                                                             0),
+        DynamicConnectionIntent(origin=DynamicConnectionIntentOrigin.USER,
+                                root_reference=VarPowerFlowReferenceType.vf_A,
+                                direction=DynamicConnectionIntentDirection.INPUT,
+                                internal_block_uid=internal_from.uid,
+                                internal_variable_uid=internal_in_from.non_mutable_uid),
+        DynamicConnectionIntent(origin=DynamicConnectionIntentOrigin.USER,
+                                root_reference=VarPowerFlowReferenceType.if_A,
+                                direction=DynamicConnectionIntentDirection.OUTPUT,
+                                internal_block_uid=internal_from.uid,
+                                internal_variable_uid=internal_out_from.non_mutable_uid),
+        DynamicConnectionIntent(origin=DynamicConnectionIntentOrigin.USER,
+                                root_reference=VarPowerFlowReferenceType.vt_B,
+                                direction=DynamicConnectionIntentDirection.INPUT,
+                                internal_block_uid=internal_to.uid,
+                                internal_variable_uid=internal_in_to.non_mutable_uid),
+        DynamicConnectionIntent(origin=DynamicConnectionIntentOrigin.USER,
+                                root_reference=VarPowerFlowReferenceType.it_B,
+                                direction=DynamicConnectionIntentDirection.OUTPUT,
+                                internal_block_uid=internal_to.uid,
+                                internal_variable_uid=internal_out_to.non_mutable_uid),
     ])
 
     dialog_models.initialize_connected_bus_models_for_editor_assignment(api_object=line,
                                                                         circuit=circuit,
                                                                         var_factory=var_factory,
                                                                         mode=DynamicSimulationMode.EMT)
-    dialog_models.attach_editor_assigned_emt_branch_model(api_object=line,
-                                                          var_factory=var_factory)
+    attach_emt_model_to_buses(device=line,
+                              model=line.emt_model,
+                              var_factory=var_factory)
 
     line.bus_from.emt_model = _build_phase_bus_block(name="bus_from_ab", mask=list([False, True, True, False]))
     line.bus_to.emt_model = _build_phase_bus_block(name="bus_to_ab", mask=list([False, True, True, False]))
@@ -3838,7 +4264,7 @@ def test_find_connections_matches_vsc_dc_input_with_generic_dc_port() -> None:
     assert power_flow_pairs[0][1].ref == VarPowerFlowReferenceType.Vdc
 
 
-def test_attach_editor_assigned_emt_branch_model_preserves_side_specific_root_mapping() -> None:
+def test_attach_emt_model_to_buses_preserves_side_specific_root_mapping() -> None:
     """
     Verify that EMT branch attach keeps side-specific root refs on the saved model.
 
@@ -3875,8 +4301,9 @@ def test_attach_editor_assigned_emt_branch_model_preserves_side_specific_root_ma
                                                                         circuit=circuit,
                                                                         var_factory=var_factory,
                                                                         mode=DynamicSimulationMode.EMT)
-    dialog_models.attach_editor_assigned_emt_branch_model(api_object=line,
-                                                           var_factory=var_factory)
+    attach_emt_model_to_buses(device=line,
+                              model=line.emt_model,
+                              var_factory=var_factory)
 
     mapping: dict[VarPowerFlowReferenceType, Var | None] = line.emt_model.external_mapping
 

@@ -1,0 +1,37 @@
+# PI
+
+This is Basic Block Catalog type `58` (`PI`). It evaluates the mathematical function identified by the block name.
+
+<!-- veragrid-block-introduction:start -->
+**PI** implements a feedback-control relation. Such blocks turn tracking error into an actuator command and may contain proportional, integral, filtering, or dynamic compensation terms. Their gains set closed-loop speed and damping rather than changing the underlying network physics directly.
+
+## Typical use
+
+- Use it inside voltage, current, power, speed, excitation, or governor control loops.
+- Coordinate gains, limits, and time constants with the actuator and plant bandwidth.
+<!-- veragrid-block-introduction:end -->
+
+## Behaviour
+
+- Library location: `Native / Math and Functions / Constants and Scaling`.
+- Inputs: 0.
+- Outputs: 1.
+- Declared states: 0.
+- Configurable parameters: 0.
+- The imported definition is fully supported by the Dynamic Editor catalogue.
+
+## Characteristic equations
+
+$$
+0 = (yo - 3.14159)
+$$
+
+## Interface table
+
+| Category | Name | Meaning | Units |
+| --- | --- | --- | --- |
+| Output | `yo` | Output signal produced by the block | model-dependent |
+
+## Editing notes
+
+Use General options for numeric parameter values and the DAE tab for symbolic variables and equations. Changing an Output flag only controls whether a variable is exported; it does not remove the variable from the model.

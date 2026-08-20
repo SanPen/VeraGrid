@@ -1,5 +1,14 @@
 # balanced
 
+<!-- veragrid-block-introduction:start -->
+**balanced** is a mathematical signal-processing primitive. It forms an algebraic relation between inputs, parameters, and outputs and is commonly combined with dynamic and nonlinear blocks to construct larger control equations without introducing an independent physical state.
+
+## Typical use
+
+- Use it to express the exact algebraic operation required by a controller or measurement chain.
+- Check signal dimensions, signs, and zero-division or domain restrictions where applicable.
+<!-- veragrid-block-introduction:end -->
+
 ### Purpose
 
 This block generates balanced multi-phase outputs from one reference quantity.

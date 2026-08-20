@@ -3,6 +3,8 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import io
+from typing import Any
+
 import numpy as np
 import pandas as pd
 from PySide6 import QtCore, QtWidgets
@@ -11,6 +13,29 @@ from VeraGrid.Gui.messages import error_msg
 from VeraGrid.Gui.wrappable_table_model import WrappableTableModel
 from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGridEngine.Utils.Filtering.results_table_filtering import FilterResultsTable
+
+
+def is_missing_result_value(value: Any) -> bool:
+    """
+    Check whether a scalar result value should be displayed as an empty cell.
+
+    :param value: Results-table scalar value.
+    :return: ``True`` for ``None`` or a real/complex NaN value.
+    """
+    if value is None:
+        return True
+    else:
+        pass
+
+    if isinstance(value, (float, np.floating)):
+        return bool(np.isnan(value))
+    else:
+        pass
+
+    if isinstance(value, (complex, np.complexfloating)):
+        return bool(np.isnan(value.real) or np.isnan(value.imag))
+    else:
+        return False
 
 
 def fast_data_to_numpy_text(data: np.ndarray) -> str:
@@ -104,6 +129,13 @@ class ResultsModel(WrappableTableModel):
             val = self.table.data_c[index.row(), index.column()]
 
             if role == QtCore.Qt.ItemDataRole.DisplayRole:
+
+                # Filtered-out values are stored as NaN and rendered as empty
+                # cells so only values satisfying the expression remain visible.
+                if is_missing_result_value(value=val):
+                    return ""
+                else:
+                    pass
 
                 if isinstance(val, str):
                     return val

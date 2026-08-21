@@ -282,8 +282,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>394</width>
-                            <height>323</height>
+                            <width>396</width>
+                            <height>322</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -349,8 +349,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>322</width>
-                            <height>369</height>
+                            <width>382</width>
+                            <height>360</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -744,8 +744,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>174</width>
-                            <height>238</height>
+                            <width>396</width>
+                            <height>322</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -895,8 +895,8 @@
                            <rect>
                             <x>0</x>
                             <y>0</y>
-                            <width>136</width>
-                            <height>248</height>
+                            <width>396</width>
+                            <height>322</height>
                            </rect>
                           </property>
                           <attribute name="icon">
@@ -2381,8 +2381,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>96</width>
-                 <height>73</height>
+                 <width>274</width>
+                 <height>526</height>
                 </rect>
                </property>
                <attribute name="icon">
@@ -2437,8 +2437,8 @@
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>96</width>
-                 <height>76</height>
+                 <width>98</width>
+                 <height>88</height>
                 </rect>
                </property>
                <attribute name="icon">
@@ -10927,7 +10927,7 @@ QProgressBar::chunk{
      <x>0</x>
      <y>0</y>
      <width>1235</width>
-     <height>33</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">
@@ -11326,7 +11326,7 @@ QProgressBar::chunk{
     <font/>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt++</string>
+    <string>Ctrl+Shift++</string>
    </property>
   </action>
   <action name="actionSmaller_nodes">
@@ -11344,7 +11344,7 @@ QProgressBar::chunk{
     <font/>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt+-</string>
+    <string>Ctrl+Shift+-</string>
    </property>
   </action>
   <action name="actionPower_flow_Stochastic">

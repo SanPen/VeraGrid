@@ -23,14 +23,19 @@ from VeraGrid.Gui.DynamicModelEditor.dynamic_block_properties_gui import (
     Ui_DynamicBlockPropertiesDialog,
 )
 from VeraGridEngine.enumerations import (
+    BlockType,
     BlockSymbolCategory,
     BlockSymbolKind,
     EquationExportSection,
-    EquationPdfStyle,
+    ParamPowerFlowReferenceType,
+    ShuntConnectionType,
+    VarPowerFlowReferenceType,
+    WindingType,
 )
 from VeraGrid.Gui.DynamicModelEditor.dynamic_equation_pdf import (
     EquationExportEntry,
     build_equation_pdf_suggested_name,
+    build_latex_source,
     build_list_equation_entries,
     build_mapping_equation_entries,
     build_state_equation_entries,
@@ -44,13 +49,6 @@ from VeraGrid.Gui.DynamicModelEditor.dynamic_procedural_logic import (
 )
 from VeraGridEngine.Utils.procedural_logic import ProceduralLogicBase
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
-from VeraGridEngine.enumerations import (
-    BlockType,
-    ParamPowerFlowReferenceType,
-    ShuntConnectionType,
-    VarPowerFlowReferenceType,
-    WindingType,
-)
 from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
 from VeraGridEngine.Utils.Symbolic.block import Block
 from VeraGridEngine.Utils.Symbolic.latex_printer import symbolic_to_latex
@@ -2297,7 +2295,12 @@ class EquationLatexModel(QtCore.QAbstractTableModel):
         self.beginResetModel()
         self._rows.clear()
         self._append_list("State", draft.get_state_eqs())
-        self._append_list("Algebraic", draft.get_algebraic_eqs())
+        # Algebraic drafts already contain Engine residuals, so the preview
+        # restores the complete mathematical equality expected by the GUI.
+        algebraic_expression: Expr
+        for algebraic_expression in draft.get_algebraic_eqs():
+            algebraic_latex: str = get_safe_expression_latex(algebraic_expression)
+            self._rows.append(("Algebraic", f"0 = {algebraic_latex}"))
         self._append_dict("Initialization", draft.get_init_eqs())
         self._append_dict("Derivative initialization", draft.get_diff_init_eqs())
         self.endResetModel()
@@ -2657,6 +2660,112 @@ def brackets_match(opening_bracket: str, closing_bracket: str) -> bool:
     return result
 
 
+def normalize_algebraic_equality_syntax(code: str) -> str:
+    """Translate visible algebraic ``=`` tokens into a parse-only marker.
+
+    A single equality inside a Python list is not valid Python syntax. The DAE
+    surface language nevertheless uses mathematical ``left = right`` equations.
+    Tokenization identifies only equality signs inside ``algebraic_eqs`` and
+    replaces them with the otherwise unsupported bitwise-or operator. That
+    one-character marker preserves every source line and column for diagnostics
+    and is converted to an Engine residual after the temporary AST is built.
+
+    :param code: User-visible DAE source containing mathematical equalities.
+    :return: Temporary Python-parseable source with identical character positions.
+    :raises ValueError: If the reserved marker is written directly by the user.
+    """
+    normalized_tokens: List[tokenize.TokenInfo] = list()
+    bracket_depth: int = 0
+    waiting_for_assignment: bool = False
+    waiting_for_list: bool = False
+    algebraic_list_depth: int | None = None
+    equality_was_replaced: bool = False
+    insignificant_token_types: set[int] = set((
+        tokenize.NL,
+        tokenize.NEWLINE,
+        tokenize.INDENT,
+        tokenize.DEDENT,
+        tokenize.COMMENT,
+    ))
+
+    try:
+        source_token: tokenize.TokenInfo
+        for source_token in tokenize.generate_tokens(StringIO(code).readline):
+            token_text: str = source_token.string
+            replacement_token: tokenize.TokenInfo = source_token
+
+            if algebraic_list_depth is not None:
+                if source_token.type == tokenize.OP and token_text == "=":
+                    replacement_token = source_token._replace(string="|")
+                    equality_was_replaced = True
+                elif source_token.type == tokenize.OP and token_text == "|":
+                    raise ValueError(
+                        "The '|' operator is not supported inside algebraic_eqs; "
+                        "use one '=' to separate the two equation sides"
+                    )
+                else:
+                    pass
+            else:
+                pass
+            normalized_tokens.append(replacement_token)
+
+            if algebraic_list_depth is not None:
+                if source_token.type == tokenize.OP and token_text in ("(", "[", "{"):
+                    bracket_depth += 1
+                elif source_token.type == tokenize.OP and token_text in (")", "]", "}"):
+                    closes_algebraic_list: bool = (
+                        token_text == "]" and bracket_depth == algebraic_list_depth
+                    )
+                    bracket_depth = max(0, bracket_depth - 1)
+                    if closes_algebraic_list:
+                        algebraic_list_depth = None
+                    else:
+                        pass
+                else:
+                    pass
+            elif waiting_for_list:
+                if source_token.type in insignificant_token_types:
+                    pass
+                elif source_token.type == tokenize.OP and token_text == "[":
+                    bracket_depth += 1
+                    algebraic_list_depth = bracket_depth
+                    waiting_for_list = False
+                else:
+                    waiting_for_list = False
+            elif waiting_for_assignment:
+                if source_token.type in insignificant_token_types:
+                    pass
+                elif source_token.type == tokenize.OP and token_text == "=":
+                    waiting_for_assignment = False
+                    waiting_for_list = True
+                else:
+                    waiting_for_assignment = False
+            else:
+                if (bracket_depth == 0
+                        and source_token.type == tokenize.NAME
+                        and token_text == "algebraic_eqs"):
+                    waiting_for_assignment = True
+                else:
+                    pass
+
+                if source_token.type == tokenize.OP and token_text in ("(", "[", "{"):
+                    bracket_depth += 1
+                elif source_token.type == tokenize.OP and token_text in (")", "]", "}"):
+                    bracket_depth = max(0, bracket_depth - 1)
+                else:
+                    pass
+        normalized_code: str = tokenize.untokenize(normalized_tokens)
+    except (IndentationError, tokenize.TokenError):
+        # Tokenization still yields every complete token before an unfinished
+        # tail. Preserve replacements already made so the Python parser reaches
+        # the actual unmatched bracket instead of stopping at the visible '='.
+        if equality_was_replaced:
+            normalized_code = tokenize.untokenize(normalized_tokens)
+        else:
+            normalized_code = code
+    return normalized_code
+
+
 def build_unmatched_opening_bracket_diagnostic(
         code: str,
         message: str,
@@ -2729,6 +2838,88 @@ def build_unmatched_opening_bracket_diagnostic(
     return None
 
 
+def build_missing_algebraic_comma_diagnostic(
+        code: str,
+        syntax_error_line: int) -> DaeCodeDiagnostic | None:
+    """Identify a new algebraic equality following an unseparated entry.
+
+    Complete equalities are normalized to Python expressions before parsing.
+    Without a comma, the following equality starts where Python expects an
+    operator. This check translates that generic syntax failure into the
+    actionable source location while retaining the original line coordinates.
+
+    :param code: Original user-visible DAE source.
+    :param syntax_error_line: One-based line reported by the temporary parser.
+    :return: Missing-comma diagnostic, or ``None`` when the pattern is absent.
+    """
+    source_lines: List[str] = code.splitlines()
+    if syntax_error_line <= 1 or syntax_error_line > len(source_lines):
+        return None
+    else:
+        pass
+    current_line: str = source_lines[syntax_error_line - 1]
+    previous_line_index: int = syntax_error_line - 2
+    while (previous_line_index >= 0
+           and len(source_lines[previous_line_index].strip()) == 0):
+        previous_line_index -= 1
+    if previous_line_index < 0:
+        previous_line: str = ""
+    else:
+        previous_line = source_lines[previous_line_index].rstrip()
+
+    # CPython can locate an adjacent-expression syntax error either at the new
+    # equation or at the preceding one. First test the reported line directly.
+    source_prefix: str = "\n".join(source_lines[:syntax_error_line])
+    algebraic_start: int = source_prefix.rfind("algebraic_eqs")
+    algebraic_end: int = source_prefix.rfind("]")
+    inside_algebraic_section: bool = algebraic_start >= 0 and algebraic_start > algebraic_end
+    previous_entry_is_open: bool = (
+        len(previous_line) > 0
+        and not previous_line.endswith(",")
+        and not previous_line.endswith("[")
+    )
+    reported_line_starts_equation: bool = "=" in current_line
+    if (inside_algebraic_section
+            and reported_line_starts_equation
+            and previous_entry_is_open):
+        first_source_column: int = len(current_line) - len(current_line.lstrip())
+        return DaeCodeDiagnostic(
+            syntax_error_line,
+            first_source_column,
+            max(1, len(current_line.strip())),
+            "Possible missing comma before this algebraic equation",
+        )
+    else:
+        pass
+
+    # When the parser points at the preceding entry, the actionable location
+    # is the first non-separated equation on the following source line.
+    following_line_number: int = syntax_error_line + 1
+    if following_line_number <= len(source_lines):
+        following_line: str = source_lines[following_line_number - 1]
+        current_entry_is_open: bool = (
+            len(current_line.rstrip()) > 0
+            and not current_line.rstrip().endswith(",")
+            and not current_line.rstrip().endswith("[")
+        )
+        following_line_starts_equation: bool = "=" in following_line
+        if (inside_algebraic_section
+                and current_entry_is_open
+                and following_line_starts_equation):
+            following_source_column: int = len(following_line) - len(following_line.lstrip())
+            return DaeCodeDiagnostic(
+                following_line_number,
+                following_source_column,
+                max(1, len(following_line.strip())),
+                "Possible missing comma before this algebraic equation",
+            )
+        else:
+            pass
+    else:
+        pass
+    return None
+
+
 def build_dae_code_diagnostics(code: str,
                                namespace: Mapping[str, Expr]) -> List[DaeCodeDiagnostic]:
     """Collect syntax and unknown-symbol errors without stopping at the first name.
@@ -2739,7 +2930,11 @@ def build_dae_code_diagnostics(code: str,
     """
     result: List[DaeCodeDiagnostic] = list()
     try:
-        module: ast.Module = ast.parse(code, mode="exec")
+        normalized_code: str = normalize_algebraic_equality_syntax(code)
+        module: ast.Module = ast.parse(normalized_code, mode="exec")
+    except ValueError as error:
+        result.append(find_text_diagnostic(code, "|", str(error)))
+        return result
     except SyntaxError as error:
         line: int = 1 if error.lineno is None else int(error.lineno)
         column: int = 0 if error.offset is None else max(0, int(error.offset) - 1)
@@ -2749,10 +2944,15 @@ def build_dae_code_diagnostics(code: str,
             error_text,
             line,
         )
-        if opening_diagnostic is None:
-            result.append(DaeCodeDiagnostic(line, column, 1, error_text))
-        else:
+        missing_comma_diagnostic: DaeCodeDiagnostic | None = (
+            build_missing_algebraic_comma_diagnostic(code, line)
+        )
+        if opening_diagnostic is not None:
             result.append(opening_diagnostic)
+        elif missing_comma_diagnostic is not None:
+            result.append(missing_comma_diagnostic)
+        else:
+            result.append(DaeCodeDiagnostic(line, column, 1, error_text))
         return result
 
     callable_names: set[str] = set(("abs", "sin", "cos", "tan", "asin", "acos", "atan", "atan2", "sqrt", "exp", "log", "log10", "sinh", "cosh", "tanh", "floor", "ceil", "round", "real", "imag", "conj", "angle", "heaviside", "rand", "min", "max",))
@@ -3145,21 +3345,20 @@ def build_equation_code(block: Block) -> str:
     lines.append(_serialize_variable_list("algebraic_vars", block.algebraic_vars))
     lines.append(_serialize_variable_list("diff_vars", block.diff_vars))
     lines.append("")
-    lines.extend(_serialize_expression_list(
-        name="state_eqs",
-        expressions=block.state_eqs,
+    lines.extend(_serialize_state_equation_dict(
+        state_variables=block.state_vars,
+        state_equations=block.state_eqs,
         comments=list((
-            "State equations follow the order of state_vars. Write only each right-hand side.",
-            "Example: for d_x = -x / T, write: -x / T,",
+            "Map every state variable to the right-hand side of its differential equation.",
+            "Example: for d_x = -x / T, write: x: -x / T,",
         )),
     ))
     lines.append("")
-    lines.extend(_serialize_expression_list(
-        name="algebraic_eqs",
+    lines.extend(_serialize_algebraic_equation_list(
         expressions=block.algebraic_eqs,
         comments=list((
-            "Write each equation as a residual equal to zero.",
-            "Example: for y = K * x, write: y - K * x,",
+            "Write each complete equation with one single '=' between its two sides.",
+            "Examples: 0 = y - K * x, or y = K * x,",
         )),
     ))
     lines.append("")
@@ -3300,18 +3499,20 @@ def serialize_dae_expression(expression: Expr | Comparison) -> str:
         return expression_text
 
 
-def _serialize_expression_list(name: str,
-                               expressions: Sequence[Expr],
-                               comments: Sequence[str] | None = None) -> List[str]:
-    """
-    Serialize one expression sequence in a readable multiline form.
+def _serialize_algebraic_equation_list(
+        expressions: Sequence[Expr],
+        comments: Sequence[str] | None = None) -> List[str]:
+    """Serialize Engine residuals as complete GUI algebraic equalities.
 
-    :param name: Value supplied for ``name``.
-    :param expressions: Value supplied for ``expressions``.
+    The Engine stores each algebraic expression as a residual that must be
+    zero. Placing zero on the visible left side preserves that expression
+    exactly when the GUI parser converts the equality back to a residual.
+
+    :param expressions: Ordered Engine algebraic residual expressions.
     :param comments: Explanatory lines inserted inside the generated list.
-    :return: Expression sequence serialized as readable multiline source lines.
+    :return: Complete algebraic equations serialized as readable source lines.
     """
-    lines: List[str] = list((f"{name} = [",))
+    lines: List[str] = list(("algebraic_eqs = [",))
     if comments is not None:
         comment: str
         for comment in comments:
@@ -3320,8 +3521,57 @@ def _serialize_expression_list(name: str,
         pass
     expression: Expr
     for expression in expressions:
-        lines.append(f"    {serialize_dae_expression(expression)},")
+        lines.append(f"    0 = {serialize_dae_expression(expression)},")
     lines.append("]")
+    return lines
+
+
+def _serialize_state_equation_dict(
+        state_variables: Sequence[Var],
+        state_equations: Sequence[Expr],
+        comments: Sequence[str] | None = None) -> List[str]:
+    """Serialize state-variable/RHS associations as an editable dictionary.
+
+    The Engine stores right-hand sides as a positional list. The GUI exposes
+    the association explicitly so users never need to count list entries to
+    identify a state equation. Inconsistent legacy models remain visible as
+    comments and fail validation until the user repairs the missing pairing.
+
+    :param state_variables: Ordered Engine state variables.
+    :param state_equations: Ordered Engine right-hand-side expressions.
+    :param comments: Explanatory lines inserted inside the generated mapping.
+    :return: State equation mapping serialized as readable source lines.
+    """
+    lines: List[str] = list(("state_eqs = {",))
+    if comments is not None:
+        comment: str
+        for comment in comments:
+            lines.append(f"    # {comment}")
+    else:
+        pass
+
+    paired_count: int = min(len(state_variables), len(state_equations))
+    equation_index: int
+    for equation_index in range(paired_count):
+        state_variable: Var = state_variables[equation_index]
+        state_equation: Expr = state_equations[equation_index]
+        lines.append(
+            f"    {state_variable.name}: {serialize_dae_expression(state_equation)},"
+        )
+
+    missing_index: int
+    for missing_index in range(paired_count, len(state_variables)):
+        lines.append(
+            f"    # Missing equation for state variable: {state_variables[missing_index].name}"
+        )
+
+    extra_index: int
+    for extra_index in range(paired_count, len(state_equations)):
+        extra_equation: Expr = state_equations[extra_index]
+        lines.append(
+            f"    # Unassigned state equation: {serialize_dae_expression(extra_equation)}"
+        )
+    lines.append("}")
     return lines
 
 
@@ -3359,8 +3609,9 @@ def parse_equation_code(code: str, namespace: Mapping[str, Expr]) -> BlockEquati
     :param namespace: Value supplied for ``namespace``.
     :return: Detached equation draft parsed without executing the supplied code.
     """
+    normalized_code: str = normalize_algebraic_equality_syntax(code)
     try:
-        module: ast.Module = ast.parse(code, mode="exec")
+        module: ast.Module = ast.parse(normalized_code, mode="exec")
     except SyntaxError as error:
         raise ValueError(str(error)) from error
 
@@ -3377,12 +3628,42 @@ def parse_equation_code(code: str, namespace: Mapping[str, Expr]) -> BlockEquati
             parsed_variable_lists=parsed_variable_lists,
         )
 
-    required_lists: tuple[str, ...] = ("state_eqs", "algebraic_eqs")
-    required_dicts: tuple[str, ...] = ("init_eqs", "diff_init_eqs")
+    required_lists: tuple[str, ...] = ("algebraic_eqs",)
+    required_dicts: tuple[str, ...] = ("state_eqs", "init_eqs", "diff_init_eqs")
+    required_variable_lists: tuple[str, ...] = ("state_vars",)
     _validate_required_sections(required_lists, parsed_lists)
     _validate_required_sections(required_dicts, parsed_dicts)
+    _validate_required_sections(required_variable_lists, parsed_variable_lists)
+
+    # The GUI mapping is converted back to the Engine's positional list only
+    # after proving that every declared state owns exactly one right-hand side.
+    state_variables: List[Var] = parsed_variable_lists["state_vars"]
+    state_equation_mapping: Dict[Var, Expr] = parsed_dicts["state_eqs"]
+    missing_state_names: List[str] = list()
+    state_variable: Var
+    for state_variable in state_variables:
+        if state_variable not in state_equation_mapping:
+            missing_state_names.append(state_variable.name)
+        else:
+            pass
+    unexpected_state_names: List[str] = list()
+    mapped_state: Var
+    for mapped_state in state_equation_mapping:
+        if mapped_state not in state_variables:
+            unexpected_state_names.append(mapped_state.name)
+        else:
+            pass
+    if len(missing_state_names) > 0 or len(unexpected_state_names) > 0:
+        raise ValueError(
+            "Section 'state_eqs' must map every state_vars entry exactly once; "
+            f"missing={missing_state_names}, unexpected={unexpected_state_names}"
+        )
+    else:
+        ordered_state_equations: List[Expr] = list()
+        for state_variable in state_variables:
+            ordered_state_equations.append(state_equation_mapping[state_variable])
     return BlockEquationDraft(
-        parsed_lists["state_eqs"],
+        ordered_state_equations,
         parsed_lists["algebraic_eqs"],
         parsed_dicts["init_eqs"],
         parsed_dicts["diff_init_eqs"],
@@ -3416,9 +3697,12 @@ def _parse_equation_statement(statement: ast.stmt,
             or section_name in parsed_dicts
             or section_name in parsed_variable_lists):
         raise ValueError(f"Section '{section_name}' is assigned more than once")
-    elif section_name in ("state_eqs", "algebraic_eqs"):
-        parsed_lists[section_name] = _parse_expression_list(statement.value, namespace, section_name)
-    elif section_name in ("init_eqs", "diff_init_eqs"):
+    elif section_name == "algebraic_eqs":
+        parsed_lists[section_name] = _parse_algebraic_equation_list(
+            statement.value,
+            namespace,
+        )
+    elif section_name in ("state_eqs", "init_eqs", "diff_init_eqs"):
         parsed_dicts[section_name] = _parse_expression_dict(statement.value, namespace, section_name)
     elif section_name in ("state_vars", "algebraic_vars", "diff_vars"):
         parsed_variable_lists[section_name] = _parse_variable_list(
@@ -3464,28 +3748,63 @@ def _parse_variable_list(node: ast.expr,
     return result
 
 
-def _parse_expression_list(node: ast.expr,
-                           namespace: Mapping[str, Expr],
-                           section_name: str) -> List[Expr]:
-    """
-    Parse an expression list using the Engine safe symbolic parser.
+def _parse_algebraic_equation_list(node: ast.expr,
+                                   namespace: Mapping[str, Expr]) -> List[Expr]:
+    """Parse complete GUI equalities into Engine algebraic residuals.
 
-    :param node: Value supplied for ``node``.
-    :param namespace: Value supplied for ``namespace``.
-    :param section_name: Value supplied for ``section_name``.
-    :return: Expressions parsed with the Engine safe symbolic parser.
+    The normalization layer represents the visible equality with a root
+    bitwise-or AST node. Exactly one such marker is required per list entry.
+    ``right - left`` follows the GUI convention ``0 = residual``; an explicit
+    zero on either side is simplified so opening and applying an unchanged
+    block preserves its existing symbolic expression.
+
+    :param node: Assignment value expected to be a list.
+    :param namespace: Allowed symbolic identities by name.
+    :return: Ordered algebraic residual expressions for the Engine.
     """
-    if not isinstance(node, (ast.List, ast.Tuple)):
-        raise ValueError(f"Section '{section_name}' must be a list")
+    if not isinstance(node, ast.List):
+        raise ValueError("Section 'algebraic_eqs' must be a list")
     else:
         result: List[Expr] = list()
         element: ast.expr
         for element in node.elts:
-            expression: Expr | Comparison = _parse_symbolic_ast_node(element, namespace)
-            if isinstance(expression, Comparison):
-                raise ValueError(f"Comparisons are not supported in '{section_name}'")
+            equality_marker_count: int = 0
+            child_node: ast.AST
+            for child_node in ast.walk(element):
+                if isinstance(child_node, ast.BinOp) and isinstance(child_node.op, ast.BitOr):
+                    equality_marker_count += 1
+                else:
+                    pass
+
+            if not isinstance(element, ast.BinOp):
+                raise ValueError(
+                    "Every entry in 'algebraic_eqs' must contain exactly one '=' "
+                    "between two complete symbolic expressions"
+                )
+            elif not isinstance(element.op, ast.BitOr) or equality_marker_count != 1:
+                raise ValueError(
+                    "Every entry in 'algebraic_eqs' must contain exactly one '=' "
+                    "between two complete symbolic expressions"
+                )
             else:
-                result.append(expression)
+                left_expression: Expr | Comparison = _parse_symbolic_ast_node(
+                    element.left,
+                    namespace,
+                )
+                right_expression: Expr | Comparison = _parse_symbolic_ast_node(
+                    element.right,
+                    namespace,
+                )
+
+            if not isinstance(left_expression, Expr) or not isinstance(right_expression, Expr):
+                raise ValueError("Algebraic equality sides must be symbolic expressions")
+            elif isinstance(left_expression, Const) and left_expression.value == 0:
+                residual_expression: Expr = right_expression
+            elif isinstance(right_expression, Const) and right_expression.value == 0:
+                residual_expression = left_expression
+            else:
+                residual_expression = right_expression - left_expression
+            result.append(residual_expression)
         return result
 
 
@@ -4106,7 +4425,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         "_latex_selection_tree",
         "_latex_select_all_button",
         "_latex_clear_button",
-        "_export_latex_source_button",
+        "_latex_source_preview",
         "_export_rendered_button",
         "_block_documentation_url",
         "_block_info_button",
@@ -4277,8 +4596,12 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         self._latex_selection_tree: QtWidgets.QTreeWidget = QtWidgets.QTreeWidget(self)
         self._latex_select_all_button: QtWidgets.QPushButton = QtWidgets.QPushButton(self.tr("Select all"), self)
         self._latex_clear_button: QtWidgets.QPushButton = QtWidgets.QPushButton(self.tr("Clear"), self)
-        self._export_latex_source_button: QtWidgets.QPushButton = QtWidgets.QPushButton(
-            self.tr("Download LaTeX source PDF"), self
+        self._latex_source_preview: QtWidgets.QPlainTextEdit = QtWidgets.QPlainTextEdit(self)
+        self._latex_source_preview.setReadOnly(True)
+        self._latex_source_preview.setLineWrapMode(QtWidgets.QPlainTextEdit.LineWrapMode.NoWrap)
+        self._latex_source_preview.setFont(self._dae_editor.font())
+        self._latex_source_preview.setPlaceholderText(
+            self.tr("Select equation groups to generate copyable LaTeX source.")
         )
         self._export_rendered_button: QtWidgets.QPushButton = QtWidgets.QPushButton(
             self.tr("Download rendered PDF"), self
@@ -4566,22 +4889,36 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         return page
 
     def _build_latex_export_page(self, parent: QtWidgets.QWidget) -> QtWidgets.QWidget:
-        """Build equation selection and the two PDF export actions.
+        """Build equation selection, copyable source, and rendered PDF export.
 
         :param parent: Parent equation-tab widget.
         :return: Configured LaTeX export page.
         """
         page: QtWidgets.QWidget = QtWidgets.QWidget(parent)
         layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(page)
+
+        # The equation selection and generated source have independent useful
+        # heights. A vertical splitter lets the user allocate the available
+        # space according to whether they are selecting or copying equations.
+        latex_splitter: QtWidgets.QSplitter = QtWidgets.QSplitter(
+            Qt.Orientation.Vertical,
+            page,
+        )
+        latex_splitter.setChildrenCollapsible(False)
+        latex_splitter.setHandleWidth(6)
+
+        selection_panel: QtWidgets.QWidget = QtWidgets.QWidget(latex_splitter)
+        selection_panel_layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(selection_panel)
+        selection_panel_layout.setContentsMargins(0, 0, 0, 0)
         explanation: QtWidgets.QLabel = QtWidgets.QLabel(
             self.tr(
                 "Select the equation groups to include. Each internal block and each DAE section "
                 "can be selected independently."
             ),
-            page,
+            selection_panel,
         )
         explanation.setWordWrap(True)
-        layout.addWidget(explanation)
+        selection_panel_layout.addWidget(explanation)
 
         self._latex_selection_tree.setColumnCount(2)
         self._latex_selection_tree.setHeaderLabels(list((self.tr("Block / equation group"), self.tr("Equations"),)))
@@ -4590,21 +4927,38 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
             self._latex_selection_tree.header(),
             list((640, 170,)),
         )
-        layout.addWidget(self._latex_selection_tree, 1)
+        selection_panel_layout.addWidget(self._latex_selection_tree, 1)
         self._rebuild_latex_selection_tree()
 
-        selection_layout: QtWidgets.QHBoxLayout = QtWidgets.QHBoxLayout()
-        selection_layout.addWidget(self._latex_select_all_button)
-        selection_layout.addWidget(self._latex_clear_button)
-        selection_layout.addStretch(1)
-        layout.addLayout(selection_layout)
+        selection_button_layout: QtWidgets.QHBoxLayout = QtWidgets.QHBoxLayout()
+        selection_button_layout.addWidget(self._latex_select_all_button)
+        selection_button_layout.addWidget(self._latex_clear_button)
+        selection_button_layout.addStretch(1)
+        selection_panel_layout.addLayout(selection_button_layout)
+
+        source_panel: QtWidgets.QWidget = QtWidgets.QWidget(latex_splitter)
+        source_panel_layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(source_panel)
+        source_panel_layout.setContentsMargins(0, 0, 0, 0)
+
+        source_label: QtWidgets.QLabel = QtWidgets.QLabel(
+            self.tr("LaTeX source"),
+            source_panel,
+        )
+        source_panel_layout.addWidget(source_label)
+        source_panel_layout.addWidget(self._latex_source_preview, 1)
 
         export_layout: QtWidgets.QHBoxLayout = QtWidgets.QHBoxLayout()
-        self._export_latex_source_button.setIcon(QtGui.QIcon(":/Icons/icons/download.png"))
         self._export_rendered_button.setIcon(QtGui.QIcon(":/Icons/icons/download.png"))
-        export_layout.addWidget(self._export_latex_source_button)
+        export_layout.addStretch(1)
         export_layout.addWidget(self._export_rendered_button)
-        layout.addLayout(export_layout)
+        source_panel_layout.addLayout(export_layout)
+
+        latex_splitter.addWidget(selection_panel)
+        latex_splitter.addWidget(source_panel)
+        latex_splitter.setStretchFactor(0, 2)
+        latex_splitter.setStretchFactor(1, 1)
+        latex_splitter.setSizes(list((420, 230,)))
+        layout.addWidget(latex_splitter, 1)
         return page
 
     def _build_symbol_panel(self, parent: QtWidgets.QWidget) -> QtWidgets.QWidget:
@@ -4803,7 +5157,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         self._dae_search_next_button.clicked.connect(self.find_next_dae_code_match)
         self._latex_select_all_button.clicked.connect(self.select_all_latex_sections)
         self._latex_clear_button.clicked.connect(self.clear_latex_sections)
-        self._export_latex_source_button.clicked.connect(self.export_latex_source_pdf)
+        self._latex_selection_tree.itemChanged.connect(self.on_latex_selection_changed)
         self._export_rendered_button.clicked.connect(self.export_rendered_equations_pdf)
 
     @QtCore.Slot()
@@ -4955,6 +5309,10 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
                 else:
                     pass
 
+        # Rebuilding creates and checks several items. Suppress intermediate
+        # change notifications so the source view is regenerated once from the
+        # complete selection tree rather than from partially constructed state.
+        previous_signal_state: bool = self._latex_selection_tree.blockSignals(True)
         self._latex_selection_tree.clear()
         buffer_index: int
         buffer: BlockCodeBuffer
@@ -4993,6 +5351,40 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
                     section_item.setFlags(section_item.flags() & ~Qt.ItemFlag.ItemIsEnabled)
                 root_item.addChild(section_item)
             root_item.setExpanded(True)
+        self._latex_selection_tree.blockSignals(previous_signal_state)
+        self.refresh_latex_source_preview()
+
+    @QtCore.Slot(QtWidgets.QTreeWidgetItem, int)
+    def on_latex_selection_changed(self,
+                                   changed_item: QtWidgets.QTreeWidgetItem,
+                                   changed_column: int) -> None:
+        """Regenerate copyable source after one equation-group selection changes.
+
+        :param changed_item: Tree item whose checked state changed.
+        :param changed_column: Tree column that emitted the change.
+        :return: None.
+        """
+        _unused_changed_item: QtWidgets.QTreeWidgetItem = changed_item
+        _unused_changed_column: int = changed_column
+        self.refresh_latex_source_preview()
+
+    def refresh_latex_source_preview(self) -> None:
+        """Show copy-ready LaTeX for all currently selected valid equations.
+
+        Invalid DAE drafts leave the source view empty. The normal validation
+        action remains responsible for displaying diagnostics, so merely
+        changing a selection never introduces unrelated red error feedback.
+
+        :return: None.
+        """
+        try:
+            drafts: List[BlockEquationDraft] = self._parse_all_equation_buffers_for_export()
+            entries: List[EquationExportEntry] = self._build_selected_equation_entries(drafts)
+        except (TypeError, ValueError):
+            latex_source: str = ""
+        else:
+            latex_source = build_latex_source(entries)
+        self._latex_source_preview.setPlainText(latex_source)
 
     @QtCore.Slot()
     def select_all_latex_sections(self) -> None:
@@ -5001,6 +5393,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
 
         :return: None.
         """
+        previous_signal_state: bool = self._latex_selection_tree.blockSignals(True)
         root_index: int
         for root_index in range(self._latex_selection_tree.topLevelItemCount()):
             root_item: QtWidgets.QTreeWidgetItem = self._latex_selection_tree.topLevelItem(root_index)
@@ -5011,6 +5404,8 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
                     child_item.setCheckState(0, Qt.CheckState.Checked)
                 else:
                     pass
+        self._latex_selection_tree.blockSignals(previous_signal_state)
+        self.refresh_latex_source_preview()
 
     @QtCore.Slot()
     def clear_latex_sections(self) -> None:
@@ -5019,6 +5414,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
 
         :return: None.
         """
+        previous_signal_state: bool = self._latex_selection_tree.blockSignals(True)
         root_index: int
         for root_index in range(self._latex_selection_tree.topLevelItemCount()):
             root_item: QtWidgets.QTreeWidgetItem = self._latex_selection_tree.topLevelItem(root_index)
@@ -5029,6 +5425,8 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
                     child_item.setCheckState(0, Qt.CheckState.Unchecked)
                 else:
                     pass
+        self._latex_selection_tree.blockSignals(previous_signal_state)
+        self.refresh_latex_source_preview()
 
     def _parse_all_equation_buffers_for_export(self) -> List[BlockEquationDraft]:
         """Parse every equation buffer before creating a PDF.
@@ -5118,10 +5516,10 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
             )
         return result
 
-    def _export_equation_pdf(self, style: EquationPdfStyle) -> None:
-        """Validate selected equations, request a destination, and create one PDF.
+    @QtCore.Slot()
+    def export_rendered_equations_pdf(self) -> None:
+        """Validate selected equations and export rendered mathematical notation.
 
-        :param style: Source-code or rendered-equation PDF presentation.
         :return: None.
         """
         try:
@@ -5137,12 +5535,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         else:
             pass
 
-        # Source and rendered exports deliberately use different defaults so
-        # accepting the file dialogue cannot overwrite the other PDF silently.
-        suggested_name: str = build_equation_pdf_suggested_name(
-            self._block.name,
-            style,
-        )
+        suggested_name: str = build_equation_pdf_suggested_name(self._block.name)
         selected_path: str
         selected_filter: str
         selected_path, selected_filter = QtWidgets.QFileDialog.getSaveFileName(
@@ -5164,7 +5557,6 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
                 file_path=selected_path,
                 root_block_name=self._block.name,
                 entries=entries,
-                style=style,
             )
         except (OSError, RuntimeError, TypeError, ValueError) as error:
             self._show_validation_error(
@@ -5175,24 +5567,6 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
             self._status_label.setText(
                 self.tr("Equation PDF created: {path}").format(path=selected_path)
             )
-
-    @QtCore.Slot()
-    def export_latex_source_pdf(self) -> None:
-        """
-        Export selected equations as readable LaTeX source inside a PDF.
-
-        :return: None.
-        """
-        self._export_equation_pdf(EquationPdfStyle.LATEX_SOURCE)
-
-    @QtCore.Slot()
-    def export_rendered_equations_pdf(self) -> None:
-        """
-        Export selected equations as rendered mathematical notation inside a PDF.
-
-        :return: None.
-        """
-        self._export_equation_pdf(EquationPdfStyle.RENDERED)
 
     @QtCore.Slot(QtCore.QModelIndex, QtCore.QModelIndex, list)
     def on_symbol_draft_changed(self,
@@ -5698,6 +6072,10 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         else:
             active_buffer: BlockCodeBuffer = self._equation_buffers[self._active_equation_buffer_index]
             active_buffer.set_code(self._dae_editor.toPlainText())
+            # A source preview must never present LaTeX generated from an older
+            # equation draft. It is rebuilt from the new text when the user
+            # changes the selection or validates the complete DAE model.
+            self._latex_source_preview.clear()
             self._clear_dae_validation_feedback()
             self.update_dae_code_search(self._dae_code_search.text())
 

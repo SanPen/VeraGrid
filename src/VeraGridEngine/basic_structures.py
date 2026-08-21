@@ -217,36 +217,53 @@ def get_time_groups(t_array: pd.DatetimeIndex, grouping: TimeGrouping) -> List[i
     """
     groups: List[int] = list()
     nt = len(t_array)
-    last = -1
+    last: Union[int, Tuple[int, int], Tuple[int, int, int], Tuple[int, int, int, int], None] = None
+
+    if nt == 0:
+        return groups
+    else:
+        pass
+
+    if grouping == TimeGrouping.NoGrouping:
+        groups.append(0)
+        groups.append(nt - 1)
+        return groups
+    else:
+        pass
 
     i = 0
     for i in range(nt):
         t = t_array[i]
 
         if grouping == TimeGrouping.Monthly:
-            if t.month != last:
-                last = t.month
+            current_month: Tuple[int, int] = (t.year, t.month)
+            if current_month != last:
+                last = current_month
                 groups.append(i)
 
         elif grouping == TimeGrouping.Weekly:
-            if t.week != last:
-                last = t.week
+            iso_calendar = t.isocalendar()
+            current_week: Tuple[int, int] = (int(iso_calendar.year), int(iso_calendar.week))
+            if current_week != last:
+                last = current_week
                 groups.append(i)
 
         elif grouping == TimeGrouping.Daily:
-            if t.day != last:
-                last = t.day
+            current_day: Tuple[int, int, int] = (t.year, t.month, t.day)
+            if current_day != last:
+                last = current_day
                 groups.append(i)
 
         elif grouping == TimeGrouping.Hourly:
-            if t.hour != last:
-                last = t.hour
+            current_hour: Tuple[int, int, int, int] = (t.year, t.month, t.day, t.hour)
+            if current_hour != last:
+                last = current_hour
                 groups.append(i)
 
-    # add the last index if it is not already there
-    if nt > 0:
-        if i != groups[len(groups) - 1]:
-            groups.append(i)
+        else:
+            pass
+
+    groups.append(i)
 
     return groups
 

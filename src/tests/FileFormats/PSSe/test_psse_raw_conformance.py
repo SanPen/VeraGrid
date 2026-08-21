@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 """Regression tests for PSSE RAW parser and writer conformance."""
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -32,14 +33,17 @@ from VeraGridEngine.IO.raw.versioned.v35.branch import RawBranchV35
 from VeraGridEngine.IO.raw.versioned.v35.node import RawNodeV35
 from VeraGridEngine.IO.raw.versioned.v35.induction_machine import RawInductionMachineV35
 from VeraGridEngine.IO.raw.versioned.v35.gne_device import RawGneDeviceV35
+from VeraGridEngine.IO.raw.versioned.v35.owner import RawOwnerV35
 from VeraGridEngine.IO.raw.versioned.v36.load import RawLoadV36
 from VeraGridEngine.IO.raw.versioned.v36.fixed_shunt import RawFixedShuntV36
+from VeraGridEngine.IO.raw.versioned.v36.owner import RawOwnerV36
 from VeraGridEngine.IO.raw.versioned.v36.generator import RawGeneratorV36
 from VeraGridEngine.IO.raw.versioned.v34.transformer import RawTransformerV34
 from VeraGridEngine.IO.raw.versioned.v35.transformer import RawTransformerV35
 from VeraGridEngine.IO.raw.versioned.v34.vsc_dc_line import RawVscDCLineV34
 from VeraGridEngine.IO.raw.versioned.v35.vsc_dc_line import RawVscDCLineV35
 from VeraGridEngine.IO.raw.raw_parser_writer import interpret_line, read_and_split, read_raw
+from VeraGridEngine.IO.raw.rawx_parser_writer import parse_rawx
 from VeraGridEngine.IO.raw.raw_to_veragrid import get_veragrid_transformer, psse_to_veragrid
 from VeraGridEngine.IO.raw.veragrid_to_raw import (RawNodeBreakerExportData, append_psse_terminal,
                                                    get_psse_substation_switch, veragrid_to_raw)
@@ -65,6 +69,41 @@ def test_psse35_branch_parser_keeps_ownership_fields() -> None:
     assert branch.F3 == 0.0
     assert branch.O4 == 0
     assert branch.F4 == 0.0
+
+
+def test_parse_rawx_owner_fields_preserve_iowner(tmp_path: Path) -> None:
+    """parse_rawx must map RAWX owner IDs from the ``iowner`` field."""
+
+    rawx = {
+        "network": {
+            "owner": {
+                "fields": ["iowner", "owname"],
+                "data": [
+                    [26, "Electric Power Co"]
+                ]
+            }
+        }
+    }
+    rawx_path = tmp_path / "owner.rawx"
+    rawx_path.write_text(json.dumps(rawx), encoding="utf-8")
+
+    circuit = parse_rawx(str(rawx_path))
+
+    assert len(circuit.owners) == 1
+    assert circuit.owners[0].I == 26
+    assert circuit.owners[0].OWNAME == "Electric Power Co"
+
+
+def test_raw_owner_rawx_schema_is_version_agnostic() -> None:
+    """Owner RAWX schema must keep ``iowner`` for all supported schema subclasses."""
+
+    rawx_key = "iowner"
+
+    for owner_class in (RawOwnerV35, RawOwnerV36):
+        owner = owner_class()
+        owner_rawx_props = owner.get_rawx_dict()
+        assert owner_rawx_props.get(rawx_key) is not None
+        assert owner_rawx_props[rawx_key].property_name == "I"
 
 
 def test_branch_ownership_helper_accepts_single_owner_pair() -> None:

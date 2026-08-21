@@ -258,12 +258,51 @@ class RmsProblemPhasor(RmsProblemTemplate):
                 elm.rms_model.parameters[
                 elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.bsh]] = Const(bsh_val)
 
-                if ParamPowerFlowReferenceType.vtap_f in elm.rms_model.api_obj_mapping:
-                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.vtap_f]] = Const(1.0)
-                if ParamPowerFlowReferenceType.vtap_t in elm.rms_model.api_obj_mapping:
-                    elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.vtap_t]] = Const(
-                        float(elm.bus_from.Vnom / elm.bus_to.Vnom)
-                    )
+                if isinstance(elm, Transformer2W) and ParamPowerFlowReferenceType.gFe in elm.rms_model.api_obj_mapping:
+                    g_fe_val = active_factor * float(elm.G)
+                    elm.rms_model.parameters[
+                        elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.gFe]
+                    ] = Const(g_fe_val)
+                else:
+                    pass
+
+                if isinstance(elm, Transformer2W):
+                    vtap_f_value, vtap_t_value = elm.get_virtual_taps()
+                    if ParamPowerFlowReferenceType.tap_module in elm.rms_model.api_obj_mapping:
+                        elm.rms_model.parameters[
+                            elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.tap_module]
+                        ] = Const(float(elm.tap_module))
+                    else:
+                        pass
+                    if ParamPowerFlowReferenceType.tap_phase in elm.rms_model.api_obj_mapping:
+                        elm.rms_model.parameters[
+                            elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.tap_phase]
+                        ] = Const(float(elm.tap_phase))
+                    else:
+                        pass
+                    if ParamPowerFlowReferenceType.vtap_f in elm.rms_model.api_obj_mapping:
+                        elm.rms_model.parameters[
+                            elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.vtap_f]
+                        ] = Const(float(vtap_f_value))
+                    else:
+                        pass
+                    if ParamPowerFlowReferenceType.vtap_t in elm.rms_model.api_obj_mapping:
+                        elm.rms_model.parameters[
+                            elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.vtap_t]
+                        ] = Const(float(vtap_t_value))
+                    else:
+                        pass
+                else:
+                    if ParamPowerFlowReferenceType.vtap_f in elm.rms_model.api_obj_mapping:
+                        elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.vtap_f]] = Const(1.0)
+                    else:
+                        pass
+                    if ParamPowerFlowReferenceType.vtap_t in elm.rms_model.api_obj_mapping:
+                        elm.rms_model.parameters[elm.rms_model.api_obj_mapping[ParamPowerFlowReferenceType.vtap_t]] = Const(
+                            float(elm.bus_from.Vnom / elm.bus_to.Vnom)
+                        )
+                    else:
+                        pass
 
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
                 register_rms_fmu_cs_device(self, elm, elm.rms_model)

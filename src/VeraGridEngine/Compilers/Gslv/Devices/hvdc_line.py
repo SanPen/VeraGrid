@@ -53,7 +53,6 @@ def convert_hvdc_line(elm: HvdcLine,
 
     fill_profile(hvdc.active, elm.active_prof, use_time_series, time_indices, n_time, elm.active)
     fill_profile(hvdc.Vset_f, elm.Vset_f_prof, use_time_series, time_indices, n_time, elm.Vset_f)
-    fill_profile(hvdc.Vset_f, elm.Vset_f_prof, use_time_series, time_indices, n_time, elm.Vset_f)
     fill_profile(hvdc.Vset_t, elm.Vset_t_prof, use_time_series, time_indices, n_time, elm.Vset_t)
     fill_profile(hvdc.angle_droop, elm.angle_droop_prof, use_time_series, time_indices, n_time, elm.angle_droop)
     fill_profile(hvdc.rate, elm.rate_prof, use_time_series, time_indices, n_time, elm.rate)

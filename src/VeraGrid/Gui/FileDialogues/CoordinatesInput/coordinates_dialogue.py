@@ -9,7 +9,10 @@ from typing import List, Tuple, Union
 from VeraGrid.Gui.FileDialogues.CoordinatesInput.coordinates_input_gui import Ui_Dialog
 from VeraGrid.Gui.FileDialogues.ProfilesInput.excel_dialog import ExcelDialog
 from VeraGrid.Gui.general_dialogues import LogsDialogue
+from VeraGridEngine.Devices.multi_circuit import MultiCircuit
+from VeraGridEngine.Devices.Parents.injection_parent import InjectionParent
 from VeraGridEngine.Devices.Substation import Bus
+from VeraGridEngine.Devices.Substation import Substation
 from VeraGridEngine.basic_structures import Logger
 from VeraGrid.Gui.messages import error_msg
 
@@ -46,6 +49,24 @@ def find_duplicates(arr: List[str]) -> Tuple[List[str], List[str]]:
             seen.add(element)
 
     return list(seen), list(duplicates)
+
+
+def get_matching_key(value: object) -> Union[str, None]:
+    """
+    Convert an imported name/code cell into a matching key.
+
+    :param value: Imported cell value.
+    :return: Matching key, or None when the cell is empty.
+    """
+    if pd.isna(value):
+        matching_key = None
+    else:
+        if isinstance(value, float):
+            matching_key = str(int(value))
+        else:
+            matching_key = str(value)
+
+    return matching_key
 
 
 class CoordinatesInputAssociation:
@@ -182,17 +203,14 @@ class CoordinatesInputGUI(QtWidgets.QDialog):
     CoordinatesInputGUI
     """
 
-    def __init__(self, parent=None, list_of_objects: List[Bus] = list()):
+    def __init__(self, grid: MultiCircuit, parent=None):
         """
 
-        Args:
-            parent:
-            list_of_objects: List of objects to which set a profile to
-            list_of_objects: list ob object to modify
+        :param grid:
+        :param parent:
         """
         QtWidgets.QDialog.__init__(self, parent)
-        if list_of_objects is None:
-            list_of_objects = list()
+        self.grid: MultiCircuit = grid
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         self.setWindowTitle('Coordinates import dialogue')
@@ -200,19 +218,17 @@ class CoordinatesInputGUI(QtWidgets.QDialog):
 
         self.project_directory = None
 
+        self.was_accepted: bool = False
+
         self.assigned_count: int = 0
 
         # dataFrame
         self.original_data_frame: pd.DataFrame | None = None
 
         # initialize the objectives list
-        self.objects: List[Bus] = list_of_objects
+        self.objects: List[Bus | Substation | InjectionParent] = list()
 
         self.associations = CoordinatesInputAssociations()
-        for elm in list_of_objects:
-            self.associations.append(CoordinatesInputAssociation(elm.name, elm.code, elm.x, elm.y, elm.latitude, elm.longitude))
-
-        self.display_associations()
 
         self.accepted_extensions = ['.csv', '.xlsx', '.xls']
 
@@ -223,6 +239,73 @@ class CoordinatesInputGUI(QtWidgets.QDialog):
         self.ui.open_button.clicked.connect(self.import_profile)
         self.ui.acceptButton.clicked.connect(self.do_it)
         self.ui.refreshButton.clicked.connect(self.assign)
+        self.ui.objectTypeComboBox.currentIndexChanged.connect(self.set_object_type)
+
+        self.set_object_type()
+
+    def set_object_type(self, index: int = 0) -> None:
+        """
+        Select the grid objects that receive the imported coordinates.
+        """
+        target_index: int = self.ui.objectTypeComboBox.currentIndex()
+        is_bus_input: bool = target_index == 0
+        is_substation_input: bool = target_index == 1
+
+        # Only buses store Cartesian diagram coordinates in this importer.
+        self.ui.xCheckBox.setEnabled(is_bus_input)
+        self.ui.xComboBox.setEnabled(is_bus_input)
+        self.ui.yCheckBox.setEnabled(is_bus_input)
+        self.ui.yComboBox.setEnabled(is_bus_input)
+        self.ui.propagateBusesCheckBox.setVisible(is_substation_input)
+
+        if is_bus_input:
+            self.ui.latitudeCheckBox.setText("Bus latitude")
+            self.ui.longitudeCheckBox.setText("Bus longitude")
+            self.objects = self.grid.buses
+        elif is_substation_input:
+            self.ui.xCheckBox.setChecked(False)
+            self.ui.yCheckBox.setChecked(False)
+            self.ui.latitudeCheckBox.setText("Substation latitude")
+            self.ui.longitudeCheckBox.setText("Substation longitude")
+            self.objects = self.grid.substations
+        else:
+            self.ui.xCheckBox.setChecked(False)
+            self.ui.yCheckBox.setChecked(False)
+            self.ui.latitudeCheckBox.setText("Injection latitude")
+            self.ui.longitudeCheckBox.setText("Injection longitude")
+            self.objects = list(self.grid.get_injection_devices_iter())
+
+        self.associations = CoordinatesInputAssociations()
+        for elm in self.objects:
+            if isinstance(elm, Bus):
+                self.associations.append(CoordinatesInputAssociation(elm.name,
+                                                                      elm.code,
+                                                                      elm.x,
+                                                                      elm.y,
+                                                                      elm.latitude,
+                                                                      elm.longitude))
+            else:
+                self.associations.append(CoordinatesInputAssociation(elm.name,
+                                                                      elm.code,
+                                                                      0.0,
+                                                                      0.0,
+                                                                      elm.latitude,
+                                                                      elm.longitude))
+
+        self.display_associations()
+        self.ui.assignation_table.setColumnHidden(2, not is_bus_input)
+        self.ui.assignation_table.setColumnHidden(3, not is_bus_input)
+
+        if self.original_data_frame is not None:
+            self.set_combo_boxes()
+            if not is_bus_input:
+                self.ui.xCheckBox.setChecked(False)
+                self.ui.yCheckBox.setChecked(False)
+            else:
+                pass
+            self.assign()
+        else:
+            pass
 
     def msg(self, text, title="Warning"):
         """
@@ -258,9 +341,11 @@ class CoordinatesInputGUI(QtWidgets.QDialog):
                     else:
                         error_msg('The file type ' + file_extension.lower() + ' is not accepted :(')
 
-                if len(file_names) > 0:
+                if len(file_names) == 1:
                     # Just open the file
-                    self.open_file_now(filename=file_names)
+                    self.open_file_now(filename=file_names[0])
+                else:
+                    error_msg('Only one file accepted :(')
 
     def display_associations(self):
 
@@ -314,44 +399,41 @@ class CoordinatesInputGUI(QtWidgets.QDialog):
             for i in range(self.original_data_frame.shape[0]):
 
                 if self.ui.nameRadioButton.isChecked():
-                    if isinstance(self.original_data_frame.values[i, name_idx], float):
-                        dat_name = str(int(self.original_data_frame.values[i, name_idx]))
-                    else:
-                        dat_name = str(self.original_data_frame.values[i, name_idx])
+                    dat_name = get_matching_key(self.original_data_frame.values[i, name_idx])
 
                 elif self.ui.codeRadioButton.isChecked():
-                    if isinstance(self.original_data_frame.values[i, code_idx], float):
-                        dat_name = str(int(self.original_data_frame.values[i, code_idx]))
-                    else:
-                        dat_name = str(self.original_data_frame.values[i, code_idx])
+                    dat_name = get_matching_key(self.original_data_frame.values[i, code_idx])
 
                 else:
-                    dat_name = 'a'
+                    dat_name = None
 
-                # search in the buses
-                for j in range(self.associations.rowCount()):
+                if dat_name is not None:
+                    # search in the buses
+                    for j in range(self.associations.rowCount()):
 
-                    if self.ui.nameRadioButton.isChecked():
-                        name = str(self.associations.get_name_at(j))
-                    elif self.ui.codeRadioButton.isChecked():
-                        name = str(self.associations.get_code_at(j))
-                    else:
-                        name = 'b'
+                        if self.ui.nameRadioButton.isChecked():
+                            name = str(self.associations.get_name_at(j))
+                        elif self.ui.codeRadioButton.isChecked():
+                            name = str(self.associations.get_code_at(j))
+                        else:
+                            name = 'b'
 
-                    # if the search criteria match...
-                    if dat_name.lower() == name.lower():
+                        # if the search criteria match...
+                        if dat_name.lower() == name.lower():
 
-                        if self.ui.xCheckBox.isChecked():
-                            self.associations.set_x_at(j, self.original_data_frame.values[i, x_idx])
+                            if self.ui.xCheckBox.isChecked():
+                                self.associations.set_x_at(j, self.original_data_frame.values[i, x_idx])
 
-                        if self.ui.yCheckBox.isChecked():
-                            self.associations.set_y_at(j, self.original_data_frame.values[i, y_idx])
+                            if self.ui.yCheckBox.isChecked():
+                                self.associations.set_y_at(j, self.original_data_frame.values[i, y_idx])
 
-                        if self.ui.longitudeCheckBox.isChecked():
-                            self.associations.set_longitude_at(j, self.original_data_frame.values[i, lon_idx])
+                            if self.ui.longitudeCheckBox.isChecked():
+                                self.associations.set_longitude_at(j, self.original_data_frame.values[i, lon_idx])
 
-                        if self.ui.latitudeCheckBox.isChecked():
-                            self.associations.set_latitude_at(j, self.original_data_frame.values[i, lat_idx])
+                            if self.ui.latitudeCheckBox.isChecked():
+                                self.associations.set_latitude_at(j, self.original_data_frame.values[i, lat_idx])
+                else:
+                    pass
 
             self.display_associations()
 
@@ -373,7 +455,7 @@ class CoordinatesInputGUI(QtWidgets.QDialog):
 
     def open_file_now(self, filename: str):
         """
-        Opena file
+        Open a file
         :param filename: path of the file
         """
         if len(filename) > 0:
@@ -412,9 +494,7 @@ class CoordinatesInputGUI(QtWidgets.QDialog):
                 self.original_data_frame = self.original_data_frame[unique_hdr]
 
             # set the profile names list
-            self.set_combo_boxes()
-            self.assign()
-            self.display_associations()
+            self.set_object_type()
             self.assigned_count = 0
 
     def do_it(self) -> None:
@@ -427,27 +507,57 @@ class CoordinatesInputGUI(QtWidgets.QDialog):
             self.assign()
 
         # assign the values back
-        for i, bus in enumerate(self.objects):
-            if self.ui.xCheckBox.isChecked():
-                bus.x = self.associations.get_x_at(i)
+        for i, obj in enumerate(self.objects):
+            if isinstance(obj, Bus):
+                if self.ui.xCheckBox.isChecked():
+                    obj.x = self.associations.get_x_at(i)
 
-            if self.ui.yCheckBox.isChecked():
-                bus.y = - self.associations.get_y_at(i)
+                if self.ui.yCheckBox.isChecked():
+                    obj.y = - self.associations.get_y_at(i)
 
-            if self.ui.longitudeCheckBox.isChecked():
-                bus.longitude = self.associations.get_longitude_at(i)
+                if self.ui.longitudeCheckBox.isChecked():
+                    obj.longitude = self.associations.get_longitude_at(i)
 
-                if bus.substation is not None:
-                    if bus.substation.longitude == 0.0:
-                        bus.substation.longitude = bus.longitude
+                    if obj.substation is not None:
+                        if obj.substation.longitude == 0.0:
+                            obj.substation.longitude = obj.longitude
 
-            if self.ui.latitudeCheckBox.isChecked():
-                bus.latitude = self.associations.get_latitude_at(i)
+                if self.ui.latitudeCheckBox.isChecked():
+                    obj.latitude = self.associations.get_latitude_at(i)
 
-                if bus.substation is not None:
-                    if bus.substation.latitude == 0.0:
-                        bus.substation.latitude = bus.latitude
+                    if obj.substation is not None:
+                        if obj.substation.latitude == 0.0:
+                            obj.substation.latitude = obj.latitude
+            else:
+                if self.ui.longitudeCheckBox.isChecked():
+                    obj.longitude = self.associations.get_longitude_at(i)
+                else:
+                    pass
 
+                if self.ui.latitudeCheckBox.isChecked():
+                    obj.latitude = self.associations.get_latitude_at(i)
+                else:
+                    pass
+
+        if self.ui.objectTypeComboBox.currentIndex() == 1 and self.ui.propagateBusesCheckBox.isChecked():
+            for bus in self.grid.buses:
+                substation: Substation | None = bus.get_substation()
+                if substation is not None:
+                    if self.ui.longitudeCheckBox.isChecked():
+                        bus.longitude = substation.longitude
+                    else:
+                        pass
+
+                    if self.ui.latitudeCheckBox.isChecked():
+                        bus.latitude = substation.latitude
+                    else:
+                        pass
+                else:
+                    pass
+        else:
+            pass
+
+        self.was_accepted: bool = True
         self.close()
 
 

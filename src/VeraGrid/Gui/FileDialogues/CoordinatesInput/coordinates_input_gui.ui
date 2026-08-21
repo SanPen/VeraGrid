@@ -23,14 +23,14 @@
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Orientation::Horizontal</enum>
      </property>
      <widget class="QFrame" name="frame_4">
       <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
+       <enum>QFrame::Shape::NoFrame</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+       <enum>QFrame::Shadow::Raised</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="leftMargin">
@@ -48,10 +48,10 @@
        <item>
         <widget class="QFrame" name="frame_2">
          <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
+          <enum>QFrame::Shape::NoFrame</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
+          <enum>QFrame::Shadow::Raised</enum>
          </property>
          <layout class="QGridLayout" name="gridLayout_2">
           <property name="topMargin">
@@ -63,32 +63,51 @@
           <property name="verticalSpacing">
            <number>2</number>
           </property>
-          <item row="5" column="1" colspan="2">
-           <widget class="QComboBox" name="nameComboBox"/>
+          <item row="1" column="1" colspan="2">
+           <widget class="QComboBox" name="objectTypeComboBox">
+            <item>
+             <property name="text">
+              <string>Buses</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Substations</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Injections</string>
+             </property>
+            </item>
+           </widget>
           </item>
-          <item row="15" column="0" rowspan="2">
-           <widget class="QCheckBox" name="longitudeCheckBox">
+          <item row="7" column="0">
+           <widget class="QLabel" name="label_4">
             <property name="text">
-             <string>Bus longitude</string>
+             <string/>
             </property>
            </widget>
           </item>
-          <item row="14" column="1" colspan="2">
-           <widget class="QComboBox" name="latitudeComboBox"/>
+          <item row="10" column="1" colspan="2">
+           <widget class="QComboBox" name="xComboBox"/>
           </item>
-          <item row="2" column="0">
-           <widget class="QPushButton" name="open_button">
+          <item row="6" column="0">
+           <widget class="QRadioButton" name="codeRadioButton">
             <property name="text">
-             <string>Load file</string>
-            </property>
-            <property name="icon">
-             <iconset resource="icons.qrc">
-              <normaloff>:/Icons/icons/import_profiles.png</normaloff>:/Icons/icons/import_profiles.png</iconset>
+             <string>Code</string>
             </property>
            </widget>
           </item>
-          <item row="16" column="1" colspan="2">
-           <widget class="QComboBox" name="longitudeComboBox"/>
+          <item row="12" column="1" colspan="2">
+           <widget class="QComboBox" name="yComboBox"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="objectTypeLabel">
+            <property name="text">
+             <string>Target</string>
+            </property>
+           </widget>
           </item>
           <item row="5" column="0">
            <widget class="QRadioButton" name="nameRadioButton">
@@ -100,25 +119,28 @@
             </property>
            </widget>
           </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
           <item row="6" column="1" colspan="2">
            <widget class="QComboBox" name="codeComboBox"/>
           </item>
-          <item row="11" column="0" rowspan="2">
-           <widget class="QCheckBox" name="yCheckBox">
+          <item row="14" column="1" colspan="2">
+           <widget class="QComboBox" name="latitudeComboBox"/>
+          </item>
+          <item row="15" column="0" rowspan="2">
+           <widget class="QCheckBox" name="longitudeCheckBox">
             <property name="text">
-             <string>Bus y position</string>
+             <string>Bus longitude</string>
             </property>
            </widget>
           </item>
-          <item row="10" column="1" colspan="2">
-           <widget class="QComboBox" name="xComboBox"/>
+          <item row="16" column="1" colspan="2">
+           <widget class="QComboBox" name="longitudeComboBox"/>
+          </item>
+          <item row="17" column="0" colspan="3">
+           <widget class="QCheckBox" name="propagateBusesCheckBox">
+            <property name="text">
+             <string>Also update associated buses latitude and longitude</string>
+            </property>
+           </widget>
           </item>
           <item row="3" column="0">
            <widget class="QLabel" name="label_2">
@@ -127,26 +149,27 @@
             </property>
            </widget>
           </item>
-          <item row="12" column="1" colspan="2">
-           <widget class="QComboBox" name="yComboBox"/>
-          </item>
-          <item row="17" column="0" colspan="3">
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item row="6" column="0">
-           <widget class="QRadioButton" name="codeRadioButton">
+          <item row="4" column="0" colspan="3">
+           <widget class="QLabel" name="label_3">
             <property name="text">
-             <string>Code</string>
+             <string>Match method:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1" colspan="2">
+           <widget class="QComboBox" name="nameComboBox"/>
+          </item>
+          <item row="11" column="0" rowspan="2">
+           <widget class="QCheckBox" name="yCheckBox">
+            <property name="text">
+             <string>Bus y position</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="0" colspan="3">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>Assigning magnitudes</string>
             </property>
            </widget>
           </item>
@@ -164,24 +187,27 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0" colspan="3">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Match mathod:</string>
+          <item row="18" column="0" colspan="3">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Orientation::Vertical</enum>
             </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string/>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
             </property>
-           </widget>
+           </spacer>
           </item>
-          <item row="8" column="0" colspan="3">
-           <widget class="QLabel" name="label_5">
+          <item row="19" column="0" colspan="3">
+           <widget class="QPushButton" name="open_button">
             <property name="text">
-             <string>Assigning magnitudes</string>
+             <string>Load file</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../../Icons/icons.qrc">
+              <normaloff>:/Icons/icons/import_profiles.png</normaloff>:/Icons/icons/import_profiles.png</iconset>
             </property>
            </widget>
           </item>
@@ -192,10 +218,10 @@
      </widget>
      <widget class="QFrame" name="frame_6">
       <property name="frameShape">
-       <enum>QFrame::NoFrame</enum>
+       <enum>QFrame::Shape::NoFrame</enum>
       </property>
       <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
+       <enum>QFrame::Shadow::Raised</enum>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <property name="spacing">
@@ -219,10 +245,10 @@
        <item>
         <widget class="QFrame" name="frame_9">
          <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
+          <enum>QFrame::Shape::NoFrame</enum>
          </property>
          <property name="frameShadow">
-          <enum>QFrame::Raised</enum>
+          <enum>QFrame::Shadow::Raised</enum>
          </property>
          <layout class="QGridLayout" name="gridLayout">
           <property name="leftMargin">
@@ -240,7 +266,7 @@
           <item row="0" column="1">
            <spacer name="horizontalSpacer_3">
             <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+             <enum>Qt::Orientation::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
@@ -262,7 +288,7 @@
              <string>Accept</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="../../Icons/icons.qrc">
               <normaloff>:/Icons/icons/gear.png</normaloff>:/Icons/icons/gear.png</iconset>
             </property>
            </widget>
@@ -273,7 +299,7 @@
              <string>Match</string>
             </property>
             <property name="icon">
-             <iconset resource="icons.qrc">
+             <iconset resource="../../Icons/icons.qrc">
               <normaloff>:/Icons/icons/transform.png</normaloff>:/Icons/icons/transform.png</iconset>
             </property>
            </widget>
@@ -288,7 +314,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="../../Icons/icons.qrc"/>
  </resources>
  <connections/>
 </ui>

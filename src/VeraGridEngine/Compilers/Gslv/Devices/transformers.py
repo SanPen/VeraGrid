@@ -43,76 +43,70 @@ def convert_transformer(elm: Transformer2W,
     :param add_three_phase_data: Export sequence parameters and winding connections.
     :return: GSLV transformer.
     """
-    transformer_r0: float
-    transformer_x0: float
-    transformer_g0: float
-    transformer_b0: float
-    transformer_r2: float
-    transformer_x2: float
-    transformer_g2: float
-    transformer_b2: float
-    transformer_conn: "pg.WindingsConnection"
 
-    if add_three_phase_data:
-        transformer_r0 = float(elm.R0)
-        transformer_x0 = float(elm.X0)
-        transformer_g0 = float(elm.G0)
-        transformer_b0 = float(elm.B0)
-        transformer_r2 = float(elm.R2)
-        transformer_x2 = float(elm.X2)
-        transformer_g2 = float(elm.G2)
-        transformer_b2 = float(elm.B2)
-        transformer_conn = windings_connection_dict[elm.conn]
-    else:
-        transformer_r0 = 1e-20
-        transformer_x0 = 1e-20
-        transformer_g0 = 1e-20
-        transformer_b0 = 1e-20
-        transformer_r2 = 1e-20
-        transformer_x2 = 1e-20
-        transformer_g2 = 1e-20
-        transformer_b2 = 1e-20
-        transformer_conn = pg.WindingsConnection.GG
-
-    branch_rate: float = elm.rate if elm.rate > 0 else 9999
-    tr2 = pg.Transformer2W(n_time, branch_rate, True)
-
-    # The installed wrapper only accepts the short constructor overload, so the
-    # remaining constructor fields are copied through the exposed C++ properties.
-    tr2.set_idtag(elm.idtag)
-    tr2.set_code(str(elm.code))
-    tr2.set_name(elm.name)
-    tr2.bus_from = bus_dict[elm.bus_from.idtag]
-    tr2.bus_to = bus_dict[elm.bus_to.idtag]
-    tr2.HV = elm.HV
-    tr2.LV = elm.LV
-    tr2.nominal_power = elm.Sn
-    tr2.copper_losses = elm.Pcu
-    tr2.iron_losses = elm.Pfe
-    tr2.no_load_current = elm.I0
-    tr2.short_circuit_voltage = elm.Vsc
-    tr2.R = elm.R
-    tr2.X = elm.X
-    tr2.G = elm.G
-    tr2.B = elm.B
-    tr2.R0 = transformer_r0
-    tr2.X0 = transformer_x0
-    tr2.G0 = transformer_g0
-    tr2.B0 = transformer_b0
-    tr2.R2 = transformer_r2
-    tr2.X2 = transformer_x2
-    tr2.G2 = transformer_g2
-    tr2.B2 = transformer_b2
-    tr2.tap_module_max = elm.tap_module_max
-    tr2.tap_module_min = elm.tap_module_min
-    tr2.tap_phase_max = elm.tap_phase_max
-    tr2.tap_phase_min = elm.tap_phase_min
-    tr2.tolerance = elm.tolerance
-    tr2.mttf = elm.mttf
-    tr2.mttr = elm.mttr
-    tr2.temp_base = elm.temp_base
-    tr2.alpha = elm.alpha
-    tr2.conn = transformer_conn
+    tr2 = pg.Transformer2W(
+        nt=n_time,
+        name=elm.name,
+        idtag=elm.idtag,
+        code=str(elm.code),
+        bus_from=bus_dict[elm.bus_from.idtag],
+        bus_to=bus_dict[elm.bus_to.idtag],
+        HV=elm.HV,
+        LV=elm.LV,
+        nominal_power=elm.Sn,
+        copper_losses=elm.Pcu,
+        iron_losses=elm.Pfe,
+        no_load_current=elm.I0,
+        short_circuit_voltage=elm.Vsc,
+        active=elm.active,
+        rate=elm.rate if elm.rate > 0.0 else 9999.0,
+        r=elm.R,
+        x=elm.X,
+        g=elm.G,
+        b=elm.B,
+        tap_module=elm.tap_module,
+        tap_module_max=elm.tap_module_max,
+        tap_module_min=elm.tap_module_min,
+        tap_phase=elm.tap_phase,
+        tap_phase_max=elm.tap_phase_max,
+        tap_phase_min=elm.tap_phase_min,
+        tolerance=elm.tolerance,
+        cost=elm.Cost,
+        mttf=elm.mttf,
+        mttr=elm.mttr,
+        vset=elm.vset,
+        Pset=elm.Pset,
+        Qset=elm.Qset,
+        temp_base=elm.temp_base,
+        temp_oper=elm.temp_oper,
+        alpha=elm.alpha,
+        tap_module_control_mode=tap_module_control_mode_dict[elm.tap_module_control_mode],
+        tap_phase_control_mode=tap_phase_control_mode_dict[elm.tap_phase_control_mode],
+        contingency_factor=elm.contingency_factor,
+        protection_rating_factor=1.4,
+        monitor_loading=True,
+        r0=elm.R0,
+        x0=elm.X0,
+        g0=elm.G0,
+        b0=elm.B0,
+        r2=elm.R2,
+        x2=elm.X2,
+        g2=elm.G2,
+        b2=elm.B2,
+        conn=windings_connection_dict[elm.conn],
+        capex=elm.capex,
+        opex=elm.opex,
+        build_status=pg.BuildStatus.Commissioned,
+        tc_total_positions = elm._tap_changer.total_positions,
+        tc_neutral_position = elm._tap_changer.neutral_position,
+        tc_normal_position = elm._tap_changer.normal_position,
+        tc_dV = elm._tap_changer.dV,
+        tc_asymmetry_angle = elm._tap_changer.asymmetry_angle,
+        tc_type = pg.TapChangerTypes.NoRegulation,
+        # template=None,
+        # design_rate=0.0,
+        # contingency_enabled=True,
+    )
 
     if add_three_phase_data:
         tr2.conn_f = winding_type_dict[elm.conn_f]
@@ -120,13 +114,13 @@ def convert_transformer(elm: Transformer2W,
     else:
         pass
 
-    tr2.tap_phase_min = elm.tap_phase_min
-    tr2.tap_phase_max = elm.tap_phase_max
-    tr2.tap_module_min = elm.tap_module_min
-    tr2.tap_module_max = elm.tap_module_max
-
     if elm.regulation_bus is not None:
         tr2.regulation_bus = bus_dict[elm.regulation_bus.idtag]
+    else:
+        pass
+
+    if elm.group is not None:
+        tr2.group = branch_groups_dict[elm.group]
 
     fill_profile(gslv_profile=tr2.active,
                  gc_profile=elm.active_prof,
@@ -255,4 +249,3 @@ def add_transformers(circuit: MultiCircuit,
                                   override_controls=override_controls,
                                   add_three_phase_data=add_three_phase_data)
         gslv_grid.add_transformer(tr2)
-

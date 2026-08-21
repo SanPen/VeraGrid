@@ -3488,6 +3488,7 @@ class RmsInitializationMethod(Enum):
     Explicit = "Explicit"
     ReducedExplicit = "ReducedExplicit"
     PseudoTransient = "PseudoTransient"
+    Auto = "Auto"
     CustomValues = "CustomValues"
 
     def __str__(self) -> str:
@@ -4532,13 +4533,6 @@ class EquationExportSection(Enum):
     ALGEBRAIC = "Algebraic equations"
     INITIALIZATION = "Initialization equations"
     DERIVATIVE_INITIALIZATION = "Derivative initialization equations"
-
-
-class EquationPdfStyle(Enum):
-    """Visual representation used for equations inside an exported PDF."""
-
-    LATEX_SOURCE = "LaTeX source"
-    RENDERED = "Rendered equations"
 
 
 class JMartiDataSourceMode(Enum):

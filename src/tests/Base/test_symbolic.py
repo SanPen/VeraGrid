@@ -15,7 +15,7 @@ from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Devices.Diagrams.block_diagram import BlockDiagram
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.enumerations import ParamPowerFlowReferenceType, VarPowerFlowReferenceType
-from VeraGridEngine.Utils.procedural_logic import aflipflop
+from VeraGridEngine.Utils.procedural_logic import AnalogFlipFlopLogic, aflipflop
 
 # -----------------------------------------------------------------------------
 # Atomic & basic operations
@@ -518,6 +518,11 @@ def test_block_saver_parser_roundtrip_preserves_dynamic_runtime_fields() -> None
     saver: BlockSaver = BlockSaver(vf)
     saver.save_block(block, main=True)
 
+    # The archive writer JSON-encodes the complete block table.  This check
+    # prevents runtime procedural-logic objects from silently causing the
+    # ``blocks.symbolic`` archive member to be omitted.
+    json.dumps(saver.get_blocks())
+
     parser: BlockParser = BlockParser(VarFactory())
     parser.parse_consts(saver.get_const_to_save())
     parser.parse_vars(saver.get_vars_to_save())
@@ -527,6 +532,7 @@ def test_block_saver_parser_roundtrip_preserves_dynamic_runtime_fields() -> None
     assert len(restored.discrete_eqs) == 1
     assert len(restored.mode_dict) == 1
     assert len(restored.procedural_logic) == 1
+    assert isinstance(restored.procedural_logic[0], AnalogFlipFlopLogic)
 
 
 def test_block_parser_only_warns_for_broken_optional_mapping_references() -> None:

@@ -215,10 +215,19 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
         iq_ = ((p / k) * vq - (q / k) * vd) / den
         return id_, iq_
 
+    dt_vd_f = None
+    dt_vq_f = None
     if current_power_inputs is None:
-        # Grid currents (mapped from converter side)
-        algebraic_eqs.append(id_c - id_g - (Cf * omega * vq_f + vd_f / Rcap))
-        algebraic_eqs.append(iq_c - iq_g - (-Cf * omega * vd_f + vq_f / Rcap))
+        if voltage_inputs is None:
+            # Dynamic shunt-capacitor balance in the synchronous RMS frame.
+            dt_vd_f = vfactory.add_diff_var('dt_vd_f', base_var=vd_f)
+            dt_vq_f = vfactory.add_diff_var('dt_vq_f', base_var=vq_f)
+            algebraic_eqs.append(id_c - id_g + Cf * omega * vq_f - vd_f / Rcap - Cf * dt_vd_f)
+            algebraic_eqs.append(iq_c - iq_g - Cf * omega * vd_f - vq_f / Rcap - Cf * dt_vq_f)
+        else:
+            # Externally supplied filter voltages are not free capacitor states.
+            algebraic_eqs.append(id_c - id_g + Cf * omega * vq_f - vd_f / Rcap)
+            algebraic_eqs.append(iq_c - iq_g - Cf * omega * vd_f - vq_f / Rcap)
     else:
         if reconstruct_filter_voltage:
             P_c, Q_c, _, _ = line_endpoint_powers(vd_c, vq_c, vd_f, vq_f, Rf, Lf)
@@ -288,8 +297,8 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
     res_block.add(block_vq)
 
     # Current reference calculation (with feedforward and decoupling)
-    i_d_ref_raw = id_hat + id_g - Cf * omega * vq_f
-    i_q_ref_raw = iq_hat + iq_g + Cf * omega * vd_f
+    i_d_ref_raw = id_hat + id_g - Cf * omega * vq_f + vd_f / Rcap
+    i_q_ref_raw = iq_hat + iq_g + Cf * omega * vd_f + vq_f / Rcap
 
     # Current limitation with anti-windup (UPC-style back-calculation path):
     # positive feedback through LPF 1/(1+s*tau_aw), tau_aw = Kp_icl/Ki_icl.
@@ -355,8 +364,8 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
         q_init = -Qt_vsc
         id_g_init = ((q_init / k) * vq_g + (p_init / k) * vd_g) / den_g
         iq_g_init = ((p_init / k) * vq_g - (q_init / k) * vd_g) / den_g
-        id_c_init = id_g + Cf * omega * vq_f + vd_f / Rcap
-        iq_c_init = iq_g - Cf * omega * vd_f + vq_f / Rcap
+        id_c_init = id_g - Cf * omega * vq_f + vd_f / Rcap
+        iq_c_init = iq_g + Cf * omega * vd_f + vq_f / Rcap
     else:
         if reconstruct_filter_voltage:
             p_c_init, q_c_init, _, _ = line_endpoint_powers(vd_c, vq_c, vd_f_init, vq_f_init, Rf, Lf)
@@ -371,14 +380,21 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
         id_g_init, iq_g_init = current_from_power(p_init, q_init, vd_g, vq_g, den_g)
         id_c_init, iq_c_init = current_from_power(p_c_init, q_c_init, vd_c, vq_c, den_c)
 
+    diff_vars = [dt_theta]
+    diff_init_eqs = {
+        dt_theta: 2 * math.pi * fn * (omega - 1),
+    }
+    if dt_vd_f is not None and dt_vq_f is not None:
+        diff_vars.extend([dt_vd_f, dt_vq_f])
+        diff_init_eqs[dt_vd_f] = vfactory.add_const(0.0)
+        diff_init_eqs[dt_vq_f] = vfactory.add_const(0.0)
+
     core_block = Block(
         algebraic_eqs=algebraic_eqs,
         algebraic_vars=algebraic_vars,
-        diff_vars=[dt_theta],
+        diff_vars=diff_vars,
         event_dict=event_dict,
-        diff_init_eqs={
-            dt_theta: 2 * math.pi * fn * (omega - 1),
-        },
+        diff_init_eqs=diff_init_eqs,
         init_eqs={
             P: p_init,
             Q: q_init,
@@ -421,8 +437,8 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
             vd_hat: (vd_c_ref) - (vd_f) + (Lf * omega * iq_c),
             vq_hat: (vq_c_ref) - (vq_f) - (Lf * omega * id_c),
             # Voltage PI controller outputs (feedforward currents)
-            id_hat: id_c - id_g + Cf * omega * vq_f,
-            iq_hat: iq_c - iq_g - Cf * omega * vd_f,
+            id_hat: id_c - id_g + Cf * omega * vq_f - vd_f / Rcap,
+            iq_hat: iq_c - iq_g - Cf * omega * vd_f - vq_f / Rcap,
         },
         external_mapping={
             VarPowerFlowReferenceType.P: P,

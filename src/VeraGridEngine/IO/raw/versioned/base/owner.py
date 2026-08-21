@@ -11,7 +11,7 @@ from VeraGridEngine.IO.raw.psse_property import PsseProperty, coerce_psse_int, c
 
 class RawOwner(RawObject):
     LOCAL_PROPERTIES: Tuple[PsseProperty, ...] = (
-        PsseProperty(property_name='I', rawx_key='izone', class_type=int, description='Zone number', min_value=1,
+        PsseProperty(property_name='I', rawx_key='iowner', class_type=int, description='Owner number', min_value=1,
                      max_value=9999, max_chars=4),
         PsseProperty(property_name='OWNAME', rawx_key='owname', class_type=str, description='Owner name', max_chars=12),
     )

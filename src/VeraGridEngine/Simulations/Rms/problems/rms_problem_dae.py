@@ -445,6 +445,86 @@ def setQ(Q: ObjVec, Q_used: BoolVec, k: int, val: object):
         Q[k] += val
 
 
+def _block_has_complete_explicit_initialization(mdl: Block,
+                                                init_guess: Dict[int, float | int | complex | None],
+                                                uid2idx_vars: Dict[int, int]) -> bool:
+    """
+    Return whether a block can be safely initialized by explicit equations only.
+
+    :param mdl: RMS symbolic block to inspect.
+    :param init_guess: Initial values already seeded from power flow or previous blocks.
+    :param uid2idx_vars: Global system variable index map.
+    :return: ``True`` when every local state/algebraic variable has an explicit value source.
+    """
+    explicit_eq_uids: Set[int] = set()
+
+    for blk in mdl.get_all_blocks():
+        for init_var in blk.init_eqs.keys():
+            if isinstance(init_var, Var):
+                explicit_eq_uids.add(init_var.uid)
+            else:
+                pass
+        for init_var in blk.diff_init_eqs.keys():
+            if isinstance(init_var, Var):
+                explicit_eq_uids.add(init_var.uid)
+            else:
+                pass
+
+    for blk in mdl.get_all_blocks():
+        local_vars: List[Var] = list()
+        local_vars.extend(blk.state_vars)
+        local_vars.extend(blk.algebraic_vars)
+
+        for event_var, event_value in blk.event_dict.items():
+            if isinstance(event_var, Var) and isinstance(event_value, Const) and event_value.value is None:
+                if event_var.uid in explicit_eq_uids:
+                    pass
+                else:
+                    return False
+            else:
+                pass
+
+        for var in local_vars:
+            if not isinstance(var, Var):
+                pass
+            elif var.uid not in uid2idx_vars:
+                pass
+            elif var.uid in init_guess and init_guess[var.uid] is not None:
+                pass
+            elif var.uid in explicit_eq_uids:
+                pass
+            else:
+                return False
+
+    return True
+
+
+def _select_rms_initialization_method(configured_method: RmsInitializationMethod,
+                                      mdl: Block,
+                                      init_guess: Dict[int, float | int | complex | None],
+                                      uid2idx_vars: Dict[int, int]) -> RmsInitializationMethod:
+    """
+    Select the concrete initialization method for one RMS block.
+
+    :param configured_method: User-selected initialization method.
+    :param mdl: RMS symbolic block to initialize.
+    :param init_guess: Initial values already seeded from power flow or previous blocks.
+    :param uid2idx_vars: Global system variable index map.
+    :return: Concrete initialization method to execute.
+    """
+    if configured_method == RmsInitializationMethod.Auto:
+        if _block_has_complete_explicit_initialization(mdl=mdl,
+                                                       init_guess=init_guess,
+                                                       uid2idx_vars=uid2idx_vars):
+            selected_method: RmsInitializationMethod = RmsInitializationMethod.Explicit
+        else:
+            selected_method = RmsInitializationMethod.PseudoTransient
+    else:
+        selected_method = configured_method
+
+    return selected_method
+
+
 class RmsProblemDae(RmsProblemTemplate):
     """
     DAE (Differential-Algebraic Equation) class to store and manage.
@@ -678,7 +758,14 @@ class RmsProblemDae(RmsProblemTemplate):
                 # Run explicit initialization for branches to solve algebraic equations
                 if isinstance(elm, Transformer2W):
 
-                    if self.options.initialization_method == RmsInitializationMethod.Explicit:
+                    initialization_method: RmsInitializationMethod = _select_rms_initialization_method(
+                        configured_method=self.options.initialization_method,
+                        mdl=elm.rms_model,
+                        init_guess=self.init_guess,
+                        uid2idx_vars=self._uid2idx_vars,
+                    )
+
+                    if initialization_method == RmsInitializationMethod.Explicit:
                         diff_sys_vars: Dict[int, Var] = {diff_var.uid: diff_var for diff_var in self._diff_vars}
                         rms_compiler_init = RMSCompiler(
                             variables=list(self.sys_vars.values()),
@@ -709,7 +796,7 @@ class RmsProblemDae(RmsProblemTemplate):
                             compile_single_equation=compile_single_equation,
                             verbose=bool(self.options.verbose > 0),
                         )
-                    elif self.options.initialization_method == RmsInitializationMethod.PseudoTransient:
+                    elif initialization_method == RmsInitializationMethod.PseudoTransient:
                         self.init_guess = init_pseudo_transient(
                             mdl=elm.rms_model,
                             sys_vars=self.sys_vars,
@@ -732,6 +819,8 @@ class RmsProblemDae(RmsProblemTemplate):
                             tol=1e-8,
                             verbose=bool(self.options.verbose > 0),
                         )
+                    else:
+                        raise ValueError("Not implemented initialization method")
 
                 # add model to system block
                 self.sys_block.add(elm.rms_model)
@@ -836,7 +925,14 @@ class RmsProblemDae(RmsProblemTemplate):
             else:
 
                 # find init values for the variables of this model
-                if self.options.initialization_method == RmsInitializationMethod.Explicit:
+                initialization_method: RmsInitializationMethod = _select_rms_initialization_method(
+                    configured_method=self.options.initialization_method,
+                    mdl=elm.rms_model,
+                    init_guess=self.init_guess,
+                    uid2idx_vars=self._uid2idx_vars,
+                )
+
+                if initialization_method == RmsInitializationMethod.Explicit:
                     # common initialization to integrate
 
                     # create constant parameters array
@@ -878,7 +974,7 @@ class RmsProblemDae(RmsProblemTemplate):
                         verbose=bool(self.options.verbose > 0),
                     )
 
-                elif self.options.initialization_method == RmsInitializationMethod.PseudoTransient:
+                elif initialization_method == RmsInitializationMethod.PseudoTransient:
                     self.init_guess = init_pseudo_transient(
                         mdl=elm.rms_model,
                         sys_vars=self.sys_vars,
@@ -938,7 +1034,14 @@ class RmsProblemDae(RmsProblemTemplate):
                 if VarPowerFlowReferenceType.Q in elm.rms_model.external_mapping:
                     setQ(Q, Q_used, k, elm.rms_model.E(VarPowerFlowReferenceType.Q))
 
-                if self.options.initialization_method == RmsInitializationMethod.Explicit:
+                initialization_method: RmsInitializationMethod = _select_rms_initialization_method(
+                    configured_method=self.options.initialization_method,
+                    mdl=elm.rms_model,
+                    init_guess=self.init_guess,
+                    uid2idx_vars=self._uid2idx_vars,
+                )
+
+                if initialization_method == RmsInitializationMethod.Explicit:
 
                     if isinstance(elm, InjectionParent):
                         self._seed_rms_input_initialization_from_single_bus_model(mdl=elm.rms_model,
@@ -985,7 +1088,7 @@ class RmsProblemDae(RmsProblemTemplate):
                     # initialize variables with no init equation assigned
                     # run_rms_native_initialization(self, self.options)
 
-                elif self.options.initialization_method == RmsInitializationMethod.PseudoTransient:
+                elif initialization_method == RmsInitializationMethod.PseudoTransient:
                     self.init_guess = init_pseudo_transient(
                         mdl=elm.rms_model,
                         sys_vars=self.sys_vars,
@@ -1067,15 +1170,23 @@ class RmsProblemDae(RmsProblemTemplate):
         for i, eq0 in enumerate(self._event_parameters_eqs0):
             if isinstance(eq0, Const) and eq0.value is not None:
                 self._runtime_all_eqs_source[i] = Const(eq0.value)
+                self.event_params_init_dict[self._variable_parameters[i].uid] = float(eq0.value)
             else:
                 pass
 
         # print("start creating balance equations")
         # add the nodal balance equations
+        # Legacy split VSC models expose terminal reactive power but no AC
+        # angle input because their companion transformer/control model closes
+        # the virtual AC node. A standalone VSC with ``Vat`` is connected to a
+        # physical AC bus and therefore requires the normal P/Q bus balances.
         ac_virtual_buses = [
             elm.bus_to.idtag
             for elm in grid.get_vsc()
-            if VarPowerFlowReferenceType.Qt in elm.rms_model.external_mapping
+            if (
+                VarPowerFlowReferenceType.Qt in elm.rms_model.external_mapping
+                and VarPowerFlowReferenceType.Vat not in elm.rms_model.external_mapping
+            )
         ]
         for i, elm in enumerate(self.grid.buses):
             if not P_used[i] and not Q_used[i]:

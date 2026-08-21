@@ -266,6 +266,7 @@ def DCPVSourceAveraged(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTem
     }
 
     duty_unsat = 1.0 - Vpv_ref / (Vdc + eps_v)
+    duty_limited = sym.max(duty_min, duty_unsat)
 
     dc_block = Block(
         algebraic_eqs=[
@@ -273,7 +274,7 @@ def DCPVSourceAveraged(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTem
             Ipv_av - Isc_stc * (G / G_stc) * (1.0 + alpha_isc * (T - T_stc)),
             Vmp_est - Vmp_stc * (1.0 + beta_vmp * (T - T_stc)),
             Vpv_ref - Vmp_est,
-            duty - duty_unsat,
+            duty - duty_limited,
             Idc_src - eta_boost * (1.0 - duty) * Ipv_av,
             dVdcdt * Cdc + Idc - Idc_src,
         ],
@@ -285,7 +286,7 @@ def DCPVSourceAveraged(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTem
             Ipv_av: Isc_stc * (G / G_stc) * (1.0 + alpha_isc * (T - T_stc)),
             Vmp_est: Vmp_stc * (1.0 + beta_vmp * (T - T_stc)),
             Vpv_ref: Vmp_est,
-            duty: 1.0 - Vpv_ref / (Vdc + eps_v),
+            duty: duty_limited,
             Idc_src: eta_boost * (1.0 - duty) * Ipv_av,
             Idc: Idc_src,
         },

@@ -123,7 +123,11 @@ class RmsProblemTemplate(ABC):
 
     def get_generator_injection_data(self, i: int, elm: ALL_DEV_TYPES) -> complex:
         if elm.active:
-            return complex(self.power_flow_results.gen_p[i], self.power_flow_results.gen_q[i]) / self.grid.Sbase
+            if elm.bus.is_slack:
+                bus_index: int = list(self.grid.buses).index(elm.bus)
+                return self.power_flow_results.Sbus[bus_index] / self.grid.Sbase
+            else:
+                return complex(self.power_flow_results.gen_p[i], self.power_flow_results.gen_q[i]) / self.grid.Sbase
         else:
             return complex(0.0, 0.0)
 

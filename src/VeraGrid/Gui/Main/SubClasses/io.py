@@ -1308,9 +1308,13 @@ class IoMain(ScenariosMain):
 
         :return: None.
         """
-        self.coordinates_window = CoordinatesInputGUI(self, self.circuit.get_buses())
-        self.coordinates_window.exec()
-        self.set_xy_from_lat_lon()
+        self.coordinates_window = CoordinatesInputGUI(grid=self.circuit, parent=self)
+
+        if self.coordinates_window is not None:
+            self.coordinates_window.exec()
+
+            if self.coordinates_window.was_accepted:
+                self.set_xy_from_lat_lon()
 
     def export_object_profiles(self) -> None:
         """

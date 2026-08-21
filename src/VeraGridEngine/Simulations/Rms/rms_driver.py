@@ -273,7 +273,8 @@ class RmsSimulationDriver(DriverTemplate):
 
                 self.results.converged[group_idx] = converged
                 self.results.well_initialized[group_idx] = well_initialized
-                self.results.values[:, :, group_idx] = y
+                sample_count: int = min(self.results.values.shape[0], y.shape[0])
+                self.results.values[:sample_count, :, group_idx] = y[:sample_count, :]
                 self.results.parameter_value_maps[group_idx] = _collect_rms_group_parameter_values(problem=problem)
 
                 if not well_initialized:

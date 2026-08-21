@@ -9,7 +9,47 @@
 - Keep phases, terminal orientation, connection type, and SI/per-unit parameter bases consistent.
 <!-- veragrid-block-introduction:end -->
 
-This model represents the EMT `XFMR` transformer model.
+This is the detailed phase-domain EMT transformer model. It represents winding connections, leakage flux, magnetizing and core-loss behavior, terminal capacitance, grounding, and optional nonlinear core saturation.
+
+## Model structure
+
+The from- and to-side connection matrices map external phase voltages and currents to physical winding quantities. The electrical model is referred consistently to the from side and contains:
+
+- three leakage-current states;
+- three core leg-flux states plus the selected return-flux path;
+- magnetizing and iron-loss branches;
+- from- and to-side terminal capacitance states; and
+- neutral/grounding links required by the chosen winding connections.
+
+This is more detailed than an ideal-ratio or conventional steady-state transformer and is intended for energization, unbalance, grounding, inrush, and fast transient studies.
+
+## Characteristic equations
+
+The leakage branch follows the coupled matrix relation
+
+$$
+\frac{d\boldsymbol{i}_{leak}}{dt}
+=\boldsymbol{L}_{leak}^{-1}
+\left(\boldsymbol{v}_{leak}-R_{sc}\boldsymbol{i}_{leak}\right).
+$$
+
+Core leg flux is obtained by integrating the core voltage,
+
+$$
+\frac{d\lambda_k}{dt}=\omega_{base}v_{core,k},
+$$
+
+and the terminal capacitances retain charge states whose derivatives are the capacitor currents. The iron-loss conductance is derived from open-circuit loss data, while leakage resistance and inductance are derived from short-circuit data.
+
+## Core and connection options
+
+The core can use a linear magnetizing relation or the nonlinear Frolich characteristic. Three-legged and five-legged return paths are represented differently, which matters during zero-sequence excitation and saturation. From- and to-side winding connection matrices determine phase shift and whether neutral ports exist. Grounding impedances or solid grounding must agree with those connection choices.
+
+Do not infer the available neutral terminals from the filename or symbol alone: inspect the selected winding types. A delta winding has no external neutral, while a grounded or accessible-star winding can expose or constrain one.
+
+## Initialization and numerical behavior
+
+The initializer uses solved terminal voltages and power-flow currents to establish leakage current, core flux, magnetizing current, and terminal charge consistently. Energization from a de-energized state is a different study and requires the intended initial flux or switching event. Nonlinear saturation, small leakage inductance, and terminal capacitance can introduce fast time scales; use time-step convergence and inspect flux and inrush current, not only RMS power.
 
 ## Interface table
 
@@ -42,3 +82,13 @@ This model represents the EMT `XFMR` transformer model.
 | Parameter | `X_mag` | Magnetizing reactance parameter of the transformer equivalent circuit | pu |
 | Parameter | `tap_ratio` | Off-nominal tap ratio applied by the transformer model | pu |
 | Parameter | `connection_matrix` | Connection mapping matrix that links physical windings to external EMT ports | topology mapping |
+
+The table lists representative phase ports. Neutral inputs and outputs are present only when the chosen from- or to-side winding connection exposes them.
+
+## How to use it
+
+1. Select the physical from- and to-side winding connections and grounding arrangement.
+2. Map ratings, voltage bases, short-circuit data, open-circuit data, tap, core topology, and capacitance.
+3. Choose linear core behavior for ordinary network transients or nonlinear behavior when saturation and inrush matter.
+4. Verify phase shift, current orientation, neutral availability, and initial flux after initialization.
+5. Repeat sensitive EMT results with a smaller time step, especially for energization and ferroresonance-like cases.

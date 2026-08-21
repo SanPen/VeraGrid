@@ -9,7 +9,7 @@
 - Keep phases, terminal orientation, connection type, and SI/per-unit parameter bases consistent.
 <!-- veragrid-block-introduction:end -->
 
-This model represents a three-phase pi-section transmission line for EMT studies.
+This model represents a conductor-selective pi-section transmission line for EMT studies. It can retain any configured subset of the full NABC conductor set, so ABC is a common case rather than a restriction.
 
 ### Purpose
 
@@ -21,6 +21,7 @@ It is a phase-selective EMT pi-line model with explicit mapped `R`, `L`, and `C`
 - Evolves series-current and shunt-charge-related dynamic variables.
 - Computes branch-port currents on both ends.
 - Reduces the full NABC parameter matrices to the physically active phase set.
+- Creates terminal ports and states only for enabled neutral and phase conductors; examples include A, AB, AC, ABC, NA, NAB, and NABC.
 
 ### Characteristics
 

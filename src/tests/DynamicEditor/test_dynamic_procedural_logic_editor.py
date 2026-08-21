@@ -383,8 +383,9 @@ def test_dialogue_applies_dae_code_and_runtime_logic_together() -> None:
     source_field.set_value("source * 2")
     dialogue._runtime_logic_editor.changed.emit()
     dialogue._dae_editor.setPlainText(
-        "state_eqs = []\n"
-        "algebraic_eqs = [source - held]\n"
+        "state_vars = []\n"
+        "state_eqs = {}\n"
+        "algebraic_eqs = [0 = source - held]\n"
         "init_eqs = {}\n"
         "diff_init_eqs = {}"
     )

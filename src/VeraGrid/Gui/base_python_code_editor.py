@@ -39,7 +39,7 @@ class PythonLineNumberArea(QtWidgets.QWidget):
 
 
 class BasePythonCodeEditor(QtWidgets.QPlainTextEdit):
-    """Common Python editing surface with indentation and line numbers."""
+    """Common Python editing surface with indentation and optional line numbers."""
 
     # PySide/Shiboken does not safely support non-empty ``__slots__`` on an
     # intermediate QWidget class that is subclassed again in Python. Repeated
@@ -47,15 +47,25 @@ class BasePythonCodeEditor(QtWidgets.QPlainTextEdit):
     # editor subclasses remain final and slotted where Shiboken supports it.
     __slots__ = ()
 
-    def __init__(self, parent: QtWidgets.QWidget | None = None) -> None:
+    def __init__(
+            self,
+            parent: QtWidgets.QWidget | None = None,
+            show_line_numbers: bool = True,
+    ) -> None:
         """Create the shared source editor behavior.
 
         :param parent: Optional owning Qt widget.
+        :param show_line_numbers: Whether the editor reserves and paints a gutter.
         :return: None.
         """
         super().__init__(parent)
         self._tab_text: str = "    "
-        self._line_number_area: PythonLineNumberArea = PythonLineNumberArea(self)
+        self._show_line_numbers: bool = show_line_numbers
+        self._line_number_area: PythonLineNumberArea | None = None
+        if self._show_line_numbers:
+            self._line_number_area = PythonLineNumberArea(self)
+        else:
+            pass
 
         # Both specialized editors display Python-like source. A fixed-width
         # font, four-space tabs, and no wrapping preserve source alignment.
@@ -65,9 +75,13 @@ class BasePythonCodeEditor(QtWidgets.QPlainTextEdit):
         self.setLineWrapMode(QtWidgets.QPlainTextEdit.LineWrapMode.NoWrap)
         self.setTabChangesFocus(False)
 
-        # Keep the gutter synchronized with document growth and scrolling.
-        self.blockCountChanged.connect(self.update_line_number_area_width)
-        self.updateRequest.connect(self.update_line_number_area)
+        # Keep the gutter synchronized with document growth and scrolling only
+        # for editors that actually display line numbers.
+        if self._show_line_numbers:
+            self.blockCountChanged.connect(self.update_line_number_area_width)
+            self.updateRequest.connect(self.update_line_number_area)
+        else:
+            pass
         self.update_line_number_area_width(0)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
@@ -105,7 +119,10 @@ class BasePythonCodeEditor(QtWidgets.QPlainTextEdit):
         :return: None.
         """
         _unused_block_count: int = unused_block_count
-        self.setViewportMargins(self.get_line_number_area_width(), 0, 0, 0)
+        if self._show_line_numbers:
+            self.setViewportMargins(self.get_line_number_area_width(), 0, 0, 0)
+        else:
+            self.setViewportMargins(0, 0, 0, 0)
 
     @QtCore.Slot(QtCore.QRect, int)
     def update_line_number_area(self, rectangle: QtCore.QRect, vertical_delta: int) -> None:
@@ -115,7 +132,9 @@ class BasePythonCodeEditor(QtWidgets.QPlainTextEdit):
         :param vertical_delta: Vertical scroll displacement.
         :return: None.
         """
-        if vertical_delta != 0:
+        if not self._show_line_numbers or self._line_number_area is None:
+            pass
+        elif vertical_delta != 0:
             self._line_number_area.scroll(0, vertical_delta)
         else:
             self._line_number_area.update(
@@ -136,15 +155,18 @@ class BasePythonCodeEditor(QtWidgets.QPlainTextEdit):
         :return: None.
         """
         QtWidgets.QPlainTextEdit.resizeEvent(self, event)
-        contents_rectangle: QtCore.QRect = self.contentsRect()
-        self._line_number_area.setGeometry(
-            QtCore.QRect(
-                contents_rectangle.left(),
-                contents_rectangle.top(),
-                self.get_line_number_area_width(),
-                contents_rectangle.height(),
+        if self._show_line_numbers and self._line_number_area is not None:
+            contents_rectangle: QtCore.QRect = self.contentsRect()
+            self._line_number_area.setGeometry(
+                QtCore.QRect(
+                    contents_rectangle.left(),
+                    contents_rectangle.top(),
+                    self.get_line_number_area_width(),
+                    contents_rectangle.height(),
+                )
             )
-        )
+        else:
+            pass
 
     def paint_line_number_area(self, event: QtGui.QPaintEvent) -> None:
         """Paint line numbers for every visible text block.
@@ -152,6 +174,10 @@ class BasePythonCodeEditor(QtWidgets.QPlainTextEdit):
         :param event: Gutter repaint event.
         :return: None.
         """
+        if self._line_number_area is None:
+            return
+        else:
+            pass
         painter: QtGui.QPainter = QtGui.QPainter(self._line_number_area)
         painter.fillRect(event.rect(), self.palette().alternateBase())
         painter.setPen(self.palette().placeholderText().color())

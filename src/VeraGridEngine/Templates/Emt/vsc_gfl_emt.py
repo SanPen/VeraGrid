@@ -81,19 +81,21 @@ def park_transform_block(vfactory: VarFactory, v_abc: list[Var], theta: Var, mul
     x_q = Var(name + '_q')
 
     if not multilinear:
+        x_d_expr = vfactory.add_const(1/3) * (
+            (vfactory.add_const(2) * sym.cos(theta) * v_a)
+            + (-sym.cos(theta) - vfactory.add_const(np.sqrt(3)) * sym.sin(theta)) * v_b
+            + (-sym.cos(theta) + vfactory.add_const(np.sqrt(3)) * sym.sin(theta)) * v_c
+        )
+        x_q_expr = vfactory.add_const(1/3) * (
+            (vfactory.add_const(2) * sym.sin(theta) * v_a)
+            + (-sym.sin(theta) + vfactory.add_const(np.sqrt(3)) * sym.cos(theta)) * v_b
+            + (-sym.sin(theta) - vfactory.add_const(np.sqrt(3)) * sym.cos(theta)) * v_c
+        )
         algebraic_eqs = [
             # dq voltages
-            x_d - (vfactory.add_const(1/3) * (
-                (vfactory.add_const(2) * sym.cos(theta) * v_a)
-                + (-sym.cos(theta) - vfactory.add_const(np.sqrt(3)) * sym.sin(theta)) * v_b
-                + (-sym.cos(theta) + vfactory.add_const(np.sqrt(3)) * sym.sin(theta)) * v_c
-            )),
+            x_d - x_d_expr,
 
-            x_q - (vfactory.add_const(1/3) * (
-                (vfactory.add_const(2) * sym.sin(theta) * v_a)
-                + (-sym.sin(theta) + vfactory.add_const(np.sqrt(3)) * sym.cos(theta)) * v_b
-                + (-sym.sin(theta) - vfactory.add_const(np.sqrt(3)) * sym.cos(theta)) * v_c
-            )),
+            x_q - x_q_expr,
         ]
         algebraic_vars = [x_d, x_q]
         trig_block = Block()
@@ -102,7 +104,8 @@ def park_transform_block(vfactory: VarFactory, v_abc: list[Var], theta: Var, mul
 
     park_block = Block(
         algebraic_eqs=algebraic_eqs,
-        algebraic_vars=algebraic_vars
+        algebraic_vars=algebraic_vars,
+        init_eqs={x_d: x_d_expr, x_q: x_q_expr},
     )
     park_block.add(trig_block)
 
@@ -118,9 +121,9 @@ def pll_transform(vfactory: VarFactory, v_abc, multilinear:bool = False, name:st
     Kp_pll = vfactory.add_var('Kp_pll')      # proportional gain
     Ki_pll = vfactory.add_var('Ki_pll')      # integral gain
 
-    park_theta = vfactory.add_const(0.0) - theta
-    park_block, v_dq, aux_vars = park_transform_block(vfactory, v_abc, park_theta, multilinear=multilinear, name = name) 
-    v_d, v_q = v_dq
+    park_block, v_dq, aux_vars = park_transform_block(vfactory, v_abc, theta, multilinear=multilinear, name = name)
+    v_d_raw, v_q = v_dq
+    v_d = vfactory.add_const(0.0) - v_d_raw
     res_block = Block()
     pll_error = vfactory.add_var('u_PLL_pi')
     xi_pll = vfactory.add_var('xi_PLL')
@@ -204,15 +207,20 @@ def build_gfl_converter_model_emt(vfactory: VarFactory, inputs,
     i_abc = [i_a_line, i_b_line, i_c_line]
 
     pll_block, v_dq, omega, theta, aux_vars = pll_transform(vfactory, vg_abc, multilinear=multilinear, name = 'vg')
-    v_d_g = v_dq[0]
-    v_q_g = v_dq[1]
-    park_theta = vfactory.add_const(0.0) - theta
-    i_park_block, i_dq, _ = park_transform_block(vfactory, i_abc, park_theta, multilinear=multilinear, name='i_line')
-    i_d_line = i_dq[0]
-    i_q_line = i_dq[1]
-    vc_park_block, vc_dq, _ = park_transform_block(vfactory, vc_abc, park_theta, multilinear=multilinear, name='vc')
-    vc_d = vc_dq[0]
-    vc_q = vc_dq[1]
+    v_d_g_raw = v_dq[0]
+    v_d_g = vfactory.add_const(0.0) - v_d_g_raw
+    v_q_g_raw = v_dq[1]
+    v_q_g = vfactory.add_const(0.0) - v_q_g_raw
+    i_park_block, i_dq, _ = park_transform_block(vfactory, i_abc, theta, multilinear=multilinear, name='i_line')
+    i_d_line_raw = i_dq[0]
+    i_d_line = vfactory.add_const(0.0) - i_d_line_raw
+    i_q_line_raw = i_dq[1]
+    i_q_line = vfactory.add_const(0.0) - i_q_line_raw
+    vc_park_block, vc_dq, _ = park_transform_block(vfactory, vc_abc, theta, multilinear=multilinear, name='vc')
+    vc_d_raw = vc_dq[0]
+    vc_d = vfactory.add_const(0.0) - vc_d_raw
+    vc_q_raw = vc_dq[1]
+    vc_q = vfactory.add_const(0.0) - vc_q_raw
 
     # Parameters
     Kp_icl = vfactory.add_var('Kp_icl')     # proportional gain for inner current loop
@@ -350,16 +358,18 @@ def build_gfl_converter_model_emt(vfactory: VarFactory, inputs,
     sqrt3 = vfactory.add_const(np.sqrt(3.0))
     one_third = vfactory.add_const(1.0 / 3.0)
     two = vfactory.add_const(2.0)
-    vc_d_init = one_third * (
-        two * sym.cos(park_theta) * vc_a
-        + (-sym.cos(park_theta) - sqrt3 * sym.sin(park_theta)) * vc_b
-        + (-sym.cos(park_theta) + sqrt3 * sym.sin(park_theta)) * vc_c
+    vc_d_raw_init = one_third * (
+        two * sym.cos(theta) * vc_a
+        + (-sym.cos(theta) - sqrt3 * sym.sin(theta)) * vc_b
+        + (-sym.cos(theta) + sqrt3 * sym.sin(theta)) * vc_c
     )
-    vc_q_init = one_third * (
-        two * sym.sin(park_theta) * vc_a
-        + (-sym.sin(park_theta) + sqrt3 * sym.cos(park_theta)) * vc_b
-        + (-sym.sin(park_theta) - sqrt3 * sym.cos(park_theta)) * vc_c
+    vc_d_init = vfactory.add_const(0.0) - vc_d_raw_init
+    vc_q_raw_init = one_third * (
+        two * sym.sin(theta) * vc_a
+        + (-sym.sin(theta) + sqrt3 * sym.cos(theta)) * vc_b
+        + (-sym.sin(theta) - sqrt3 * sym.cos(theta)) * vc_c
     )
+    vc_q_init = vfactory.add_const(0.0) - vc_q_raw_init
 
     # Build initialization equations based on control modes. P and Q are seeded
     # from power-flow results via external mapping; making them depend on the
@@ -367,16 +377,16 @@ def build_gfl_converter_model_emt(vfactory: VarFactory, inputs,
     init_eqs = {
         theta: phi_v_ref - vfactory.add_const(np.pi),
         omega: vfactory.add_const(1),
-        v_d_g: vfactory.add_const(0),
-        v_q_g: Vpk_ref,
-        i_q: vfactory.add_const(2.0) * P / v_q_g,
-        i_d: vfactory.add_const(2.0) * Q / v_q_g,
-        i_q_ref: i_q,
+        v_d_g_raw: vfactory.add_const(0),
+        v_q_g_raw: vfactory.add_const(0.0) - Vpk_ref,
+        i_q_line_raw: vfactory.add_const(0.0) - (vfactory.add_const(2.0) * P / v_q_g),
+        i_d_line_raw: vfactory.add_const(0.0) - (vfactory.add_const(2.0) * Q / v_q_g),
+        i_q_ref: vfactory.add_const(2.0) * P / v_q_g,
         i_d_ref: i_d,
         v_d_c: vc_d_init,
         v_q_c: vc_q_init,
-        vc_d: vc_d_init,
-        vc_q: vc_q_init,
+        vc_d_raw: vc_d_raw_init,
+        vc_q_raw: vc_q_raw_init,
         vd_hat: v_d_c - (v_d_g - L*(omega)*i_q),
         vq_hat: v_q_c - (v_q_g + L*(omega)*i_d),
     }

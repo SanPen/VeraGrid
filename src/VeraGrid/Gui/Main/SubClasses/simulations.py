@@ -3279,8 +3279,9 @@ class SimulationsMain(TimeEventsMain):
         """
         if self.circuit.valid_for_simulation():
             options = self.get_selected_power_flow_options()
+            t_idx = self.get_diagram_slider_index()
             bus_names = np.array([b.name for b in self.circuit.buses])
-            sigma_driver = sim.SigmaAnalysisDriver(grid=self.circuit, options=options)
+            sigma_driver = sim.SigmaAnalysisDriver(grid=self.circuit, options=options, t_idx=t_idx)
             sigma_driver.run()
 
             if not sigma_driver.results.converged:
@@ -3288,7 +3289,16 @@ class SimulationsMain(TimeEventsMain):
 
             self.sigma_dialogue = SigmaAnalysisGUI(parent=self,
                                                    results=sigma_driver.results,
-                                                   bus_names=bus_names)
+                                                   bus_names=bus_names,
+                                                   grid=self.circuit,
+                                                   options=options,
+                                                   t_idx=t_idx,
+                                                   classical_sigma=False,
+                                                   dpr_use_stored_guess=True,
+                                                   dpr_control_q=options.control_Q,
+                                                   dpr_control_discrete_shunts=True,
+                                                   dpr_control_qv_droop=True,
+                                                   dpr_distributed_slack=options.distributed_slack)
             self.sigma_dialogue.resize(int(1.61 * 600.0), 550)  # golden ratio
             self.sigma_dialogue.show()  # exec leaves the parent on hold
 

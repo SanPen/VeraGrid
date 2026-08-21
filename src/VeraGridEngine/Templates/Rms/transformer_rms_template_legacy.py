@@ -105,14 +105,14 @@ class TrafoRmsTemplate(RmsModelTemplate):
                 algebraic_vars=[Pf, Pt, Qf, Qt],
                 algebraic_eqs=[
                     # From side: Pf = Re(Vf * (Yff*Vf + Yft*Vt)*)
-                    Pf - ((Vmf ** 2 * (gFe + gt)) / (m * vtap_f) ** 2 - gt / (m * vtap_f * vtap_t) * Vmf * Vmt * cos(
+                    Pf - ((Vmf ** 2 * (gFe / 2 + gt)) / (m * vtap_f) ** 2 - gt / (m * vtap_f * vtap_t) * Vmf * Vmt * cos(
                         theta_hk - phi) - bt / (m * vtap_f * vtap_t) * Vmf * Vmt * sin(
                         theta_hk - phi - phase_displacement)),
                     Qf - (-Vmf ** 2 * (bmu / 2 + bt) / (m * vtap_f) ** 2 - gt / (m * vtap_f * vtap_t) * Vmf * Vmt * sin(
                         theta_hk - phi) + bt / (m * vtap_f * vtap_t) * Vmf * Vmt * cos(
                         theta_hk - phi - phase_displacement)),
                     # To side: Pt = Re(Vt * (Ytf*Vf + Ytt*Vt)*)
-                    Pt - ((Vmt ** 2 * (gFe + gt)) / vtap_t ** 2 - gt / (m * vtap_f * vtap_t) * Vmt * Vmf * cos(
+                    Pt - ((Vmt ** 2 * (gFe / 2 + gt)) / vtap_t ** 2 - gt / (m * vtap_f * vtap_t) * Vmt * Vmf * cos(
                         theta_hk - phi) + bt / (m * vtap_f * vtap_t) * Vmt * Vmf * sin(
                         theta_hk - phi - phase_displacement)),
                     Qt - (-Vmt ** 2 * (bmu / 2 + bt) / vtap_t ** 2 + gt / (m * vtap_f * vtap_t) * Vmt * Vmf * sin(
@@ -286,9 +286,9 @@ class TrafoPhasorRmsTemplate(RmsModelTemplate):
             k_to = vtap_t
 
             # Admittance coefficients in rectangular form
-            gff = (gFe + gt) / (k_from ** 2)
+            gff = (gFe / 2 + gt) / (k_from ** 2)
             bff = (bmu / 2 + bt) / (k_from ** 2)
-            gtt = (gFe + gt) / (k_to ** 2)
+            gtt = (gFe / 2 + gt) / (k_to ** 2)
             btt = (bmu / 2 + bt) / (k_to ** 2)
 
             # Yft = -(gt + j*bt) / (m*vtap_f*vtap_t*exp(-j*theta))

@@ -1,7 +1,7 @@
-# Exponential load (ABC)
+# Exponential load
 
 <!-- veragrid-block-introduction:start -->
-**Exponential load (ABC)** describes how electrical demand responds to terminal voltage, frequency, or internal states. Static impedance/current/power components and dynamic load states produce different fault and recovery behavior, so the selected formulation materially changes system damping and voltage stability.
+**Exponential load** describes how electrical demand responds to terminal voltage. Its active- and reactive-power exponents produce different fault and recovery behavior, so the selected formulation materially changes system damping and voltage stability.
 
 ## Typical use
 
@@ -9,7 +9,51 @@
 - Initialize active and reactive demand from the power flow and verify the voltage-dependence convention.
 <!-- veragrid-block-introduction:end -->
 
-This model represents a three-phase EMT load with exponential voltage-dependent behavior.
+This is a phase-selective EMT model. Any non-empty subset of `A`, `B`, and `C` can be enabled, with star or delta connection behavior selected independently. ABC is the default arrangement, not a restriction of the model.
+
+## Model behavior
+
+Each active branch uses a second-order generalized integrator (SOGI) to obtain in-phase and quadrature voltage components. For branch $X$,
+
+$$
+\dot u_X=k_{sogi}\omega(v_X-u_X)-\omega q_X,
+$$
+
+$$
+\dot q_X=\omega u_X.
+$$
+
+The filtered magnitude is regularized close to zero voltage:
+
+$$
+V_X=\sqrt{u_X^2+q_X^2+\varepsilon}.
+$$
+
+Active and reactive demand then follow
+
+$$
+P_X=P_{0,X}\left(\frac{V_X}{V_0}\right)^a,
+\qquad
+Q_X=Q_{0,X}\left(\frac{V_X}{V_0}\right)^b.
+$$
+
+The branch current is reconstructed from the filtered voltage components and the requested complex power. Internal safe denominators keep the expression finite during deep voltage depressions.
+
+## Phase and connection configurations
+
+- Star configurations create one load branch for every enabled phase. The reference can be grounded, externally neutral-connected, or a solved floating star point.
+- Delta configurations create branches only between enabled phase pairs and require at least two active phases.
+- Disabled conductors do not create ports, equations, states, or external mappings.
+
+The generic branch notation in the equations and table applies equally to A, AB, AC, BC, ABC, and the applicable neutral-inclusive star interfaces.
+
+## Exponent selection
+
+An exponent of 0 gives constant power, 1 gives approximately constant current, and 2 gives constant impedance in terms of power-versus-voltage magnitude. Active and reactive demand may use different exponents. Use measured composite-load behavior where available instead of assuming the same exponent for both.
+
+## Initialization and numerical behavior
+
+The SOGI states are initialized from the solved branch voltages and the power setpoints from the operating point. Confirm that `V0`, `P0_X`, and `Q0_X` use the same base and sign convention as the connected device. The `eps` regularization prevents division by zero but does not make a constant-power load physically realistic at zero voltage; inspect fault recovery results when small terminal voltages are expected.
 
 ## Interface table
 
@@ -51,3 +95,13 @@ This model represents a three-phase EMT load with exponential voltage-dependent 
 | Parameter | `Q0_A` | Nominal phase-A reactive power at the reference voltage `V0` | pu |
 | Parameter | `Q0_B` | Nominal phase-B reactive power at the reference voltage `V0` | pu |
 | Parameter | `Q0_C` | Nominal phase-C reactive power at the reference voltage `V0` | pu |
+
+Only rows belonging to enabled phases are instantiated. For a delta model, the same quantities are associated with active phase pairs rather than phase-to-neutral branches.
+
+## How to use it
+
+1. Enable the required phases and choose the physical star or delta connection.
+2. Map the nominal branch powers and reference voltage from the initialized network.
+3. Set `a` and `b` from the intended voltage response.
+4. Verify the initial total active and reactive power, including the load/injection sign.
+5. Apply a small voltage disturbance before relying on severe-fault results, and confirm that the selected exponents give the expected response.

@@ -11,6 +11,38 @@
 
 This model represents a controlled EMT converter with detailed modulation and switching-function behavior short of device-level switching.
 
+## Model structure
+
+The full pseudo converter is a hierarchical, averaged three-wire ABC model. It includes terminal measurements, a PLL, outer reference control, dq current control, modulation limits, an equivalent series filter, and an AC/DC power interface. It retains converter and controller dynamics without generating discrete PWM pulses.
+
+This level of detail is useful when converter controls must interact with phase-domain network transients but switching harmonics are outside the study scope.
+
+## Characteristic behavior
+
+The measured ABC quantities are transformed into the PLL-aligned dq0 frame. The equivalent filter-current states follow representative equations of the form
+
+$$
+\frac{d i_d}{dt}=\frac{\omega_{base}}{L_{eq}}
+\left(v_d-v_{cmd,d}-R_{eq}i_d+\omega_rL_{eq}i_q\right),
+$$
+
+$$
+\frac{d i_q}{dt}=\frac{\omega_{base}}{L_{eq}}
+\left(v_q-v_{cmd,q}-R_{eq}i_q-\omega_rL_{eq}i_d\right).
+$$
+
+The outer controller converts active/reactive-power or DC-voltage error into current references. The inner controller converts current error into dq voltage commands, with current, modulation, and anti-windup limits. The dq currents are transformed back to ABC current injections. `Idc` is obtained from the AC/DC power balance and configured losses.
+
+## Averaged-model boundary
+
+The voltage command is continuous: there is no carrier, gate pulse, or semiconductor switching transition. The model therefore captures controller bandwidth, filter dynamics, saturation, unbalance at the AC terminals, and DC-side interaction, but not PWM ripple, switching-frequency resonance, dead time, or device stress. Use the Switched converter when those effects are required.
+
+## Initialization and numerical behavior
+
+The solved AC power flow and DC voltage establish the initial dq currents, PLL angle, controller integrators, and modulation command. `R_eq`, `L_eq`, ratings, references, and voltage bases must describe the same interface. Confirm that the initial current and voltage command are below their limits; an initially saturated controller often indicates inconsistent data rather than a meaningful transient.
+
+The required time step is normally governed by the filter and fastest controller state, not by a PWM carrier. A time-step convergence check is still required for fast control or weak-grid studies.
+
 ## Interface table
 
 | Category | Name | Meaning | Units |
@@ -45,3 +77,11 @@ This model represents a controlled EMT converter with detailed modulation and sw
 | Parameter | `k_i_pll` | Integral gain of the PLL controller | pu/(pu s) |
 | Parameter | `R_eq` | Equivalent series resistance used in the current-control decoupling equations | pu |
 | Parameter | `L_eq` | Equivalent series inductance used in the current-control decoupling equations | pu |
+
+## How to use it
+
+1. Connect the ABC and DC ports and solve the initial operating point.
+2. Map ratings, AC filter data, DC-link data, references, limits, and all controller gains.
+3. Check PLL alignment, dq current signs, and the AC/DC power balance at initialization.
+4. Apply small reference or voltage steps before severe faults to verify control polarity and saturation behavior.
+5. Select this model for control interaction studies; select the switched model only when waveform-level switching detail justifies its smaller time step.

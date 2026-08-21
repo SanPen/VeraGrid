@@ -12,13 +12,12 @@ import rlcompleter
 import traceback
 
 from PySide6.QtCore import Qt, Signal, QObject
-from PySide6.QtGui import QTextCursor, QFont
-from PySide6.QtWidgets import QPlainTextEdit
+from PySide6.QtGui import QTextCursor
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtWidgets import QCompleter
 from PySide6.QtCore import QStringListModel
+from VeraGrid.Gui.base_python_code_editor import BasePythonCodeEditor
 from VeraGrid.Gui.python_highlighter import PythonHighlighter
-from VeraGrid.Gui.font_config import CONSOLE_TEXT_SIZE
 
 
 class _GuiOutput(QObject):
@@ -55,7 +54,7 @@ class _BufferStream(io.TextIOBase):
         pass
 
 
-class PythonConsole(QPlainTextEdit):
+class PythonConsole(BasePythonCodeEditor):
     PROMPT_PRIMARY = ">>> "
     PROMPT_SECONDARY = "... "
 
@@ -66,17 +65,8 @@ class PythonConsole(QPlainTextEdit):
         :param locals:
         :param parent:
         """
-        super().__init__(parent)
-
-        font = QFont("Consolas", CONSOLE_TEXT_SIZE)
-        self.setFont(font)
-        self._tab_text: str = "    "
+        super().__init__(parent=parent, show_line_numbers=False)
         self.setUndoRedoEnabled(False)
-
-        # Match the visual width of tab characters to four spaces so the
-        # console renders legacy tab-indented text consistently with new input.
-        self.setTabStopDistance(float(self.fontMetrics().horizontalAdvance(self._tab_text)))
-        self.setLineWrapMode(QPlainTextEdit.LineWrapMode.NoWrap)
 
         PythonHighlighter(self.document())
 
@@ -288,7 +278,13 @@ class PythonConsole(QPlainTextEdit):
             return
 
         # Trigger completion popup when Ctrl + Space is pressed
-        elif event.key() == Qt.Key.Key_Space and event.modifiers() & Qt.KeyboardModifier.ControlModifier:
+        elif (
+            event.key() == Qt.Key.Key_Space
+            and event.modifiers() == Qt.KeyboardModifier.ControlModifier
+        ):
+            # Windows reports AltGr as Ctrl+Alt on many layouts. Requiring the
+            # exact Ctrl modifier keeps completion from swallowing text input
+            # for characters such as "]".
             self._autocomplete()
             return
 

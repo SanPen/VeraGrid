@@ -42,6 +42,7 @@ class ScriptingPythonEditor(BasePythonCodeEditor):
         "_completer_backend",
         "_qt_completer",
         "_completion_model",
+        "_completion_shortcut",
         "_last_prefix",
     )
 
@@ -81,6 +82,12 @@ class ScriptingPythonEditor(BasePythonCodeEditor):
         self._qt_completer.activated.connect(self._insert_completion)
         self._completion_model: QtCore.QStringListModel = QtCore.QStringListModel(self)
         self._qt_completer.setModel(self._completion_model)
+        self._completion_shortcut: QtGui.QShortcut = QtGui.QShortcut(
+            QtGui.QKeySequence("Ctrl+Space"),
+            self,
+        )
+        self._completion_shortcut.setContext(QtCore.Qt.ShortcutContext.WidgetShortcut)
+        self._completion_shortcut.activated.connect(self._trigger_completion)
         self._last_prefix: str = ""
 
     def add_var(self, name: str, val: Any) -> None:
@@ -114,6 +121,7 @@ class ScriptingPythonEditor(BasePythonCodeEditor):
         popup: QtWidgets.QAbstractItemView = self._qt_completer.popup()
         pressed_key: int = event.key()
         popup_visible: bool = popup.isVisible()
+        pressed_text: str = event.text()
         completion_keys: tuple[QtCore.Qt.Key, ...] = (
             QtCore.Qt.Key.Key_Tab,
             QtCore.Qt.Key.Key_Return,
@@ -129,8 +137,22 @@ class ScriptingPythonEditor(BasePythonCodeEditor):
             QtCore.Qt.Key.Key_Left,
             QtCore.Qt.Key.Key_Right,
         )
+        inserts_printable_text: bool = (
+            len(pressed_text) > 0
+            and pressed_text.isprintable()
+            and pressed_key not in completion_keys
+            and pressed_key != QtCore.Qt.Key.Key_Escape
+        )
 
-        if popup_visible and pressed_key in completion_keys:
+        # Printable text must always reach the editor first. On Windows many
+        # layouts emit AltGr characters through Ctrl+Alt key events.
+        if inserts_printable_text:
+            BasePythonCodeEditor.keyPressEvent(self, event)
+            if popup_visible:
+                self._trigger_completion()
+            else:
+                pass
+        elif popup_visible and pressed_key in completion_keys:
             completion_index: QtCore.QModelIndex = popup.currentIndex()
             if completion_index.isValid():
                 completion_text: str = str(completion_index.data())
@@ -148,16 +170,39 @@ class ScriptingPythonEditor(BasePythonCodeEditor):
             QtWidgets.QPlainTextEdit.event(self, event)
         elif popup_visible and pressed_key in horizontal_keys:
             event.accept()
-        elif (pressed_key == QtCore.Qt.Key.Key_Space
-              and event.modifiers() & QtCore.Qt.KeyboardModifier.ControlModifier):
-            self._trigger_completion()
-            event.accept()
         else:
             BasePythonCodeEditor.keyPressEvent(self, event)
             if popup_visible:
                 self._trigger_completion()
             else:
                 pass
+
+    def event(self, event: QtCore.QEvent) -> bool:
+        """Keep printable text out of Qt shortcut resolution.
+
+        :param event: Qt event routed to the editor.
+        :return: ``True`` when the event is fully handled.
+        """
+        if event.type() == QtCore.QEvent.Type.ShortcutOverride and isinstance(event, QtGui.QKeyEvent):
+            pressed_text: str = event.text()
+            is_ctrl_space: bool = (
+                event.key() == QtCore.Qt.Key.Key_Space
+                and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier
+            )
+
+            # Accepting ShortcutOverride tells Qt that the editor owns this key
+            # sequence, so AltGr-generated text is not stolen by shortcuts.
+            if is_ctrl_space:
+                return BasePythonCodeEditor.event(self, event)
+            elif len(pressed_text) > 0 and pressed_text.isprintable():
+                event.accept()
+                return True
+            else:
+                pass
+        else:
+            pass
+
+        return BasePythonCodeEditor.event(self, event)
 
     def _trigger_completion(self) -> None:
         """Populate or directly apply matches for the current source prefix.

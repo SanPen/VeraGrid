@@ -6,4 +6,5 @@ from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.fast_decoupled import
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.iwamoto_newton_raphson import IwamotoNR
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.gauss_power_flow import gausspf
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.helm_power_flow import helm_josep, helm_coefficients_josep, helm_coefficients_dY, helm_preparation_dY
+from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.helm_dpr import helm_dpr, helm_coefficients_dpr
 from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.linearized_power_flow import linear_pf, lacpf, acdc_lin_pf

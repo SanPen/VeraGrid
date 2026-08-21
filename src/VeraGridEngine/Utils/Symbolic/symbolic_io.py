@@ -906,7 +906,11 @@ class BlockSaver:
 
             "boolean_guards": boolean_guard_list,
 
-            "procedural_logic": list(blk.procedural_logic),
+            # Procedural-logic entries are runtime objects and cannot be
+            # written to JSON directly.  Persist their typed dictionaries so
+            # saving one sampled controller does not omit ``blocks.symbolic``
+            # and leave every device model pointer unresolved on reload.
+            "procedural_logic": blk._procedural_logic_to_dict(),
 
             "init_values": init_values,
 
@@ -1558,7 +1562,12 @@ class BlockParser:
             event_dict=event_dict,
             mode_dict=mode_dict,
             boolean_guards=boolean_guards,
-            procedural_logic=list(data.get("procedural_logic", list())),
+            # Rebuild the executable procedural-logic objects from the typed
+            # JSON representation emitted by ``BlockSaver``.  The helper also
+            # accepts legacy in-memory objects for backwards compatibility.
+            procedural_logic=Block._procedural_logic_from_dict(
+                data=list(data.get("procedural_logic", list()))
+            ),
             children=children,  # TODO think about this
             parameters=parameters,
             init_values=init_values,

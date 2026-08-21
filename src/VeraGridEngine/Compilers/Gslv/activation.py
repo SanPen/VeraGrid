@@ -23,7 +23,7 @@ from VeraGridEngine.enumerations import (
     BranchGroupTypes,
     ConverterControlType
 )
-GSLV_RECOMMENDED_VERSION: str = "0.7.10"
+GSLV_RECOMMENDED_VERSION: str = "0.7.15"
 GSLV_VERSION: str = ''
 GSLV_AVAILABLE: bool = False
 try:

@@ -351,6 +351,22 @@ class CatalogueElementsSelectionDialogue(QtWidgets.QDialog):
                                        unique_key='rms:build_vsc_rms',
                                        function_ptr=tem.build_vsc_rms)
                        )
+        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
+                                       args=(self._circuit.var_factory,),
+                                       name='HVDC GFL VSC - Vdc/Q',
+                                       voltage_text='',
+                                       power_text='',
+                                       unique_key='rms:get_hvdc_vdc_q_vsc_rms',
+                                       function_ptr=tem.get_hvdc_vdc_q_vsc_rms)
+                       )
+        actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
+                                       args=(self._circuit.var_factory,),
+                                       name='HVDC GFL VSC - Pdc/Q',
+                                       voltage_text='',
+                                       power_text='',
+                                       unique_key='rms:get_hvdc_pdc_q_vsc_rms',
+                                       function_ptr=tem.get_hvdc_pdc_q_vsc_rms)
+                       )
         # actions.append(CatalogueAction(kind=CatalogueActionKind.AddRmsTemplate,
         #                                args=(self._circuit.var_factory,),
         #                                name='DC PV source',

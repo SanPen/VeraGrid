@@ -113,8 +113,9 @@ def test_dae_editor_owns_diagnostics_and_search_state() -> None:
     # The DAE specialization owns safe symbolic parsing; it never executes the
     # Python-looking source as the Scripting specialization does.
     editor.setPlainText(
-        "state_eqs = []\n"
-        "algebraic_eqs = [alpha]\n"
+        "state_vars = []\n"
+        "state_eqs = {}\n"
+        "algebraic_eqs = [0 = alpha]\n"
         "init_eqs = {}\n"
         "diff_init_eqs = {}"
     )

@@ -11,6 +11,51 @@
 
 This model represents a single-cage induction motor in phase-domain EMT form.
 
+## Scope and model level
+
+This is the Level-2 induction-motor model. It has a three-wire ABC stator interface and transforms terminal quantities internally to stationary $\alpha\beta$ coordinates. It represents stator and rotor electromagnetic transients together with shaft acceleration, while omitting zero-sequence and detailed mechanical train modes.
+
+Use it for ordinary motor starting, stalling, fault recovery, voltage-dip, and aggregate motor-load studies when one rotor cage adequately represents the machine.
+
+## State equations
+
+The state vector contains stator flux, rotor flux, and normalized rotor speed. Representative equations are
+
+$$
+\dot\psi_{s,\alpha}=v_\alpha-r_si_{s,\alpha},
+\qquad
+\dot\psi_{s,\beta}=v_\beta-r_si_{s,\beta},
+$$
+
+$$
+\dot\psi_{r,\alpha}=-r_ri_{r,\alpha}-\omega_{r,e}\psi_{r,\beta},
+\qquad
+\dot\psi_{r,\beta}=-r_ri_{r,\beta}+\omega_{r,e}\psi_{r,\alpha}.
+$$
+
+Currents are obtained algebraically by inverting the stator/rotor inductance relation. Electromagnetic torque and shaft speed follow
+
+$$
+T_e=\frac{3}{2}\omega_{base}
+(\psi_{s,\alpha}i_{s,\beta}-\psi_{s,\beta}i_{s,\alpha}),
+$$
+
+$$
+\dot\omega_r=\frac{T_e-T_m-d(\omega_r-1)}{2h+\varepsilon},
+\qquad
+s=1-\omega_r.
+$$
+
+The mechanical load torque varies quadratically with speed around its nominal value.
+
+## Initialization
+
+The model builds a positive-sequence equivalent circuit from the solved three-phase $P$, $Q$, and voltage. It estimates and bounds the initial slip, then initializes currents, fluxes, rotor speed, electromagnetic torque, and mechanical torque at a compatible operating point. Large initial derivatives or a power mismatch normally indicate inconsistent motor data, bases, or load-flow sign conventions.
+
+## Numerical and physical limits
+
+The model assumes a symmetrical three-phase machine even though the EMT terminal voltages may become unbalanced during the simulation. Resistances, leakage reactances, magnetizing reactance, and inertia must be positive. Severe voltage depressions can drive the motor toward stall; check speed, slip, current, and torque together rather than interpreting terminal power alone.
+
 ## Interface table
 
 | Category | Name | Meaning | Units |
@@ -50,3 +95,11 @@ This model represents a single-cage induction motor in phase-domain EMT form.
 | Parameter | `q0_a` | Initial phase-A reactive-power operating point used for initialization | pu |
 | Parameter | `q0_b` | Initial phase-B reactive-power operating point used for initialization | pu |
 | Parameter | `q0_c` | Initial phase-C reactive-power operating point used for initialization | pu |
+
+## How to use it
+
+1. Connect all three stator phases and map the machine data on a consistent base.
+2. Initialize from a converged power flow and verify that total $P$ and $Q$ match the intended motor demand.
+3. Inspect initial slip, speed, torque, and phase currents before applying events.
+4. Use the double-cage model when startup or deep-slip rotor behavior cannot be fitted with one cage.
+5. Perform a time-step convergence check for starts, faults, and near-stall cases.

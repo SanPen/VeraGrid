@@ -8,29 +8,23 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import BinaryIO, List, Mapping, Sequence
+from typing import List, Mapping, Sequence
 
 from PySide6 import QtCore, QtGui, QtSvg
 
 from VeraGrid.Gui.DynamicModelEditor.dynamic_latex_renderer import LatexRenderer, RenderedSvgEquation
-from VeraGridEngine.enumerations import EquationExportSection, EquationPdfStyle
+from VeraGridEngine.enumerations import EquationExportSection
 from VeraGridEngine.Utils.Symbolic.latex_printer import symbolic_to_latex
 from VeraGridEngine.Utils.Symbolic.symbolic import Expr, Var, symbolic_to_string
 
 
-def build_equation_pdf_suggested_name(root_block_name: str,
-                                      style: EquationPdfStyle) -> str:
-    """Return an unambiguous default file name for one equation PDF style.
+def build_equation_pdf_suggested_name(root_block_name: str) -> str:
+    """Return the default file name for one rendered equation document.
 
     :param root_block_name: Top-level block described by the document.
-    :param style: Source-code or rendered-equation presentation.
-    :return: Suggested PDF file name with a style-specific suffix.
+    :return: Suggested PDF file name identifying the rendered presentation.
     """
-    if style == EquationPdfStyle.LATEX_SOURCE:
-        style_suffix: str = "latex_source"
-    else:
-        style_suffix = "latex_rendered"
-    return f"{root_block_name}_dynamic_equations_{style_suffix}.pdf"
+    return f"{root_block_name}_dynamic_equations_latex_rendered.pdf"
 
 
 class EquationExportEntry:
@@ -67,6 +61,43 @@ class EquationExportEntry:
         :return: The equation LaTeX source.
         """
         return self._latex
+
+
+def build_latex_source(entries: Sequence[EquationExportEntry]) -> str:
+    """Build copy-ready LaTeX display blocks for selected equations.
+
+    Block and equation-group headings are emitted as comments, so users can
+    paste the complete result directly into a LaTeX document without removing
+    VeraGrid metadata. Every equation receives its own display-math delimiters
+    to avoid introducing a dependency on an additional alignment package.
+
+    :param entries: Selected equations in their displayed export order.
+    :return: Copy-ready LaTeX source for the selected equation groups.
+    """
+    source_lines: List[str] = list()
+    previous_block_name: str = ""
+    previous_section: EquationExportSection | None = None
+    entry: EquationExportEntry
+    for entry in entries:
+        starts_new_group: bool = (
+            entry.get_block_name() != previous_block_name
+            or entry.get_section() != previous_section
+        )
+        if starts_new_group:
+            if len(source_lines) > 0:
+                source_lines.append("")
+            else:
+                pass
+            safe_block_name: str = entry.get_block_name().replace("\r", " ").replace("\n", " ")
+            source_lines.append(f"% {safe_block_name} - {entry.get_section().value}")
+            previous_block_name = entry.get_block_name()
+            previous_section = entry.get_section()
+        else:
+            pass
+        source_lines.append(r"\[")
+        source_lines.append(entry.get_latex())
+        source_lines.append(r"\]")
+    return "\n".join(source_lines)
 
 
 def get_safe_equation_latex(expression: Expr) -> str:
@@ -424,296 +455,6 @@ def render_wrapped_equation(renderer: LatexRenderer,
     return result
 
 
-def get_pdf_sans_text_width(text: str, font_size: float) -> float:
-    """Estimate standard Helvetica text width in PDF points.
-
-    The source PDF uses the built-in Helvetica face so it remains selectable
-    without a new runtime dependency or an external font file. Conservative
-    glyph widths ensure wrapped lines remain inside the page margin.
-
-    :param text: Literal text to measure.
-    :param font_size: Font size in PDF points.
-    :return: Conservative horizontal extent in PDF points.
-    """
-    width_units: float = 0.0
-    character: str
-    for character in text:
-        if character in " il.,'`|!:;":
-            width_units += 0.32
-        elif character in "mwMW@%":
-            width_units += 0.95
-        elif character.isupper():
-            width_units += 0.76
-        elif character in "[]{}()\\/":
-            width_units += 0.50
-        else:
-            width_units += 0.62
-    return width_units * font_size
-
-
-def wrap_pdf_source_text(text: str, font_size: float, maximum_width: float) -> List[str]:
-    """Wrap LaTeX source without splitting commands or identifiers.
-
-    :param text: Source line to wrap.
-    :param font_size: Helvetica size in points.
-    :param maximum_width: Available width in PDF points.
-    :return: Ordered lines that fit the page.
-    """
-    words: List[str] = text.split()
-    result: List[str] = list()
-    current_line: str = ""
-    word: str
-    for word in words:
-        if len(current_line) == 0:
-            candidate: str = word
-        else:
-            candidate = f"{current_line} {word}"
-        if get_pdf_sans_text_width(candidate, font_size) <= maximum_width:
-            current_line = candidate
-        elif len(current_line) > 0:
-            result.append(current_line)
-            current_line = word
-        else:
-            current_line = word
-    if len(current_line) > 0:
-        result.append(current_line)
-    else:
-        pass
-    if len(result) == 0:
-        result.append("")
-    else:
-        pass
-    return result
-
-
-def encode_pdf_literal(text: str) -> bytes:
-    """Encode one selectable PDF literal string safely.
-
-    :param text: Source text limited to the catalogue's Latin text surface.
-    :return: Parenthesized and escaped PDF string bytes.
-    """
-    escaped: str = text.replace("\\", "\\\\").replace("(", "\\(").replace(")", "\\)")
-    payload: bytes = escaped.encode("latin-1", errors="replace")
-    return b"(" + payload + b")"
-
-
-class SelectableLatexSourcePdfDocument:
-    """Dependency-free PDF writer for selectable LaTeX source."""
-
-    __slots__ = (
-        "_file_path",
-        "_root_block_name",
-        "_created_at",
-        "_pages",
-        "_current_page",
-        "_cursor_y",
-        "_font_size",
-        "_line_height",
-        "_left",
-        "_right",
-        "_body_bottom",
-    )
-
-    def __init__(self, file_path: str, root_block_name: str) -> None:
-        """Initialize a selectable A4 source document.
-
-        :param file_path: Destination PDF path.
-        :param root_block_name: Top-level block represented by the export.
-        :return: None.
-        """
-        self._file_path: str = file_path
-        self._root_block_name: str = root_block_name
-        self._created_at: str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self._pages: List[List[tuple[str, float, float, bool]]] = list()
-        self._current_page: List[tuple[str, float, float, bool]] = list()
-        self._cursor_y: float = 0.0
-        self._font_size: float = 10.0
-        self._line_height: float = 14.0
-        self._left: float = 45.0
-        self._right: float = 550.0
-        self._body_bottom: float = 48.0
-        self._start_new_page()
-
-    def _append_line(self, text: str, bold: bool = False, x_pos: float | None = None) -> None:
-        """Append one positioned line and advance the body cursor.
-
-        :param text: Selectable line text.
-        :param bold: Whether to use the bold VeraGrid-style sans face.
-        :param x_pos: Optional horizontal position.
-        :return: None.
-        """
-        if x_pos is None:
-            line_x: float = self._left
-        else:
-            line_x = x_pos
-        self._current_page.append((text, line_x, self._cursor_y, bold))
-        self._cursor_y -= self._line_height
-
-    def _start_new_page(self) -> None:
-        """
-        Create a page with compact ten-point metadata and no separator rule.
-
-        :return: None.
-        """
-        if len(self._current_page) > 0:
-            self._pages.append(self._current_page)
-        else:
-            pass
-        self._current_page = list()
-        self._cursor_y = 800.0
-        self._append_line("% VeraGrid dynamic equations", bold=True)
-        self._append_line(
-            f"% Block: {self._root_block_name} | Generated: {self._created_at}"
-        )
-        self._append_line("% Format: LaTeX source")
-        self._cursor_y -= 10.0
-
-    def _ensure_line_capacity(self, line_count: int) -> None:
-        """Start a page before a complete source block would overflow.
-
-        :param line_count: Number of body lines required together.
-        :return: None.
-        """
-        required_height: float = line_count * self._line_height
-        if self._cursor_y - required_height < self._body_bottom:
-            self._start_new_page()
-        else:
-            pass
-
-    def draw_group_heading(self, block_name: str, section: EquationExportSection) -> None:
-        """Append one valid LaTeX comment as a section heading.
-
-        :param block_name: Internal equation-owner name.
-        :param section: Selected equation category.
-        :return: None.
-        """
-        self._ensure_line_capacity(2)
-        self._append_line(f"% {block_name} - {section.value}", bold=True)
-        self._cursor_y -= 3.0
-
-    def draw_equation(self, latex: str) -> None:
-        """Append one copy-ready display-math block without boxes or numbering.
-
-        :param latex: Equation LaTeX source.
-        :return: None.
-        """
-        available_width: float = self._right - self._left - 14.0
-        wrapped_lines: List[str] = wrap_pdf_source_text(
-            latex,
-            self._font_size,
-            available_width,
-        )
-        self._ensure_line_capacity(len(wrapped_lines) + 3)
-        self._append_line(r"\[")
-        wrapped_line: str
-        for wrapped_line in wrapped_lines:
-            self._append_line(f"  {wrapped_line}", x_pos=self._left + 8.0)
-        self._append_line(r"\]")
-        self._cursor_y -= 5.0
-
-    def finish(self) -> None:
-        """
-        Serialize all laid-out pages into one standards-compliant PDF.
-
-        :return: None.
-        """
-        if len(self._current_page) > 0:
-            self._pages.append(self._current_page)
-            self._current_page = list()
-        else:
-            pass
-        pdf_payload: bytes = build_selectable_source_pdf_payload(
-            self._pages,
-            self._root_block_name,
-            self._font_size,
-        )
-        stream: BinaryIO
-        with open(self._file_path, "wb") as stream:
-            stream.write(pdf_payload)
-
-
-def build_selectable_source_pdf_payload(
-        pages: Sequence[Sequence[tuple[str, float, float, bool]]],
-        root_block_name: str,
-        font_size: float) -> bytes:
-    """Build a selectable multi-page PDF using standard sans-serif fonts.
-
-    :param pages: Positioned lines for every page.
-    :param root_block_name: Block name stored in document metadata.
-    :param font_size: Text size in PDF points.
-    :return: Complete PDF byte stream.
-    """
-    page_count: int = len(pages)
-    object_count: int = 5 + page_count * 2
-    objects: List[bytes] = list((b"",)) * (object_count + 1)
-    objects[1] = b"<< /Type /Catalog /Pages 2 0 R >>"
-    page_reference_values: List[str] = list(("",)) * page_count
-    page_index: int
-    for page_index in range(page_count):
-        page_reference_values[page_index] = f"{6 + page_index * 2} 0 R"
-    page_references: str = " ".join(page_reference_values)
-    objects[2] = f"<< /Type /Pages /Count {page_count} /Kids [{page_references}] >>".encode("ascii")
-    objects[3] = b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"
-    objects[4] = b"<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>"
-    objects[5] = (
-        b"<< /Title " + encode_pdf_literal(f"Dynamic equations - {root_block_name}")
-        + b" /Creator " + encode_pdf_literal("VeraGrid Dynamic Model Editor") + b" >>"
-    )
-
-    for page_index in range(page_count):
-        page_object_number: int = 6 + page_index * 2
-        content_object_number: int = page_object_number + 1
-        objects[page_object_number] = (
-            f"<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] "
-            f"/Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> "
-            f"/Contents {content_object_number} 0 R >>"
-        ).encode("ascii")
-        content_parts: List[bytes] = list()
-        line: tuple[str, float, float, bool]
-        for line in pages[page_index]:
-            font_name: str
-            if line[3]:
-                font_name = "F2"
-            else:
-                font_name = "F1"
-            content_parts.append(
-                b"BT /" + font_name.encode("ascii") + f" {font_size:.1f} Tf ".encode("ascii")
-                + f"1 0 0 1 {line[1]:.2f} {line[2]:.2f} Tm ".encode("ascii")
-                + encode_pdf_literal(line[0]) + b" Tj ET\n"
-            )
-        footer_text: str = str(page_index + 1)
-        footer_width: float = get_pdf_sans_text_width(footer_text, font_size)
-        content_parts.append(
-            f"BT /F1 {font_size:.1f} Tf 1 0 0 1 {550.0 - footer_width:.2f} 28.0 Tm ".encode("ascii")
-            + encode_pdf_literal(footer_text) + b" Tj ET\n"
-        )
-        content: bytes = b"".join(content_parts)
-        objects[content_object_number] = (
-            f"<< /Length {len(content)} >>\nstream\n".encode("ascii")
-            + content
-            + b"endstream"
-        )
-
-    output: bytearray = bytearray(b"%PDF-1.4\n%\xe2\xe3\xcf\xd3\n")
-    offsets: List[int] = list((0,)) * (object_count + 1)
-    object_number: int
-    for object_number in range(1, object_count + 1):
-        offsets[object_number] = len(output)
-        output.extend(f"{object_number} 0 obj\n".encode("ascii"))
-        output.extend(objects[object_number])
-        output.extend(b"\nendobj\n")
-    xref_offset: int = len(output)
-    output.extend(f"xref\n0 {object_count + 1}\n".encode("ascii"))
-    output.extend(b"0000000000 65535 f \n")
-    for object_number in range(1, object_count + 1):
-        output.extend(f"{offsets[object_number]:010d} 00000 n \n".encode("ascii"))
-    output.extend(
-        f"trailer\n<< /Size {object_count + 1} /Root 1 0 R /Info 5 0 R >>\n"
-        f"startxref\n{xref_offset}\n%%EOF\n".encode("ascii")
-    )
-    return bytes(output)
-
-
 class EquationPdfDocumentPainter:
     """Paginated painter for compiled equation PDF documents."""
 
@@ -724,7 +465,6 @@ class EquationPdfDocumentPainter:
         "_plain_renderer",
         "_root_block_name",
         "_created_at",
-        "_style",
         "_page_number",
         "_content_rect",
         "_cursor_y",
@@ -732,13 +472,11 @@ class EquationPdfDocumentPainter:
 
     def __init__(self,
                  file_path: str,
-                 root_block_name: str,
-                 style: EquationPdfStyle) -> None:
+                 root_block_name: str) -> None:
         """Open an A4 PDF writer and prepare its first page.
 
         :param file_path: Destination PDF path selected by the user.
         :param root_block_name: Top-level block described by the document.
-        :param style: Source-code or rendered-equation presentation.
         :return: None.
         """
         self._writer: QtGui.QPdfWriter = QtGui.QPdfWriter(file_path)
@@ -762,7 +500,6 @@ class EquationPdfDocumentPainter:
         # A stable numeric local timestamp stays compact in every locale and
         # does not let a translated time-zone name overflow the PDF header.
         self._created_at: str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self._style: EquationPdfStyle = style
         self._page_number: int = 1
         full_page_rect: QtCore.QRect = self._writer.pageLayout().fullRectPixels(
             self._writer.resolution()
@@ -833,7 +570,7 @@ class EquationPdfDocumentPainter:
             self._content_rect.width(),
         )
         cursor_y += self._draw_plain_text(
-            f"Format: {self._style.value}",
+            "Format: Rendered equations",
             left,
             cursor_y + 2,
             self._content_rect.width(),
@@ -965,55 +702,29 @@ class EquationPdfDocumentPainter:
 
 def write_equation_pdf(file_path: str,
                        root_block_name: str,
-                       entries: Sequence[EquationExportEntry],
-                       style: EquationPdfStyle) -> None:
-    """Write selected equations to a metadata-rich PDF document.
+                       entries: Sequence[EquationExportEntry]) -> None:
+    """Write selected equations to a rendered metadata-rich PDF document.
 
     :param file_path: Destination selected by the user.
     :param root_block_name: Root block represented by the editor dialogue.
     :param entries: Selected equations in display order.
-    :param style: LaTeX-source or rendered-equation output.
     :return: None.
     """
-    if style == EquationPdfStyle.LATEX_SOURCE:
-        source_document: SelectableLatexSourcePdfDocument | None = SelectableLatexSourcePdfDocument(
-            file_path=file_path,
-            root_block_name=root_block_name,
-        )
-        rendered_document: EquationPdfDocumentPainter | None = None
-    else:
-        source_document = None
-        rendered_document = EquationPdfDocumentPainter(
-            file_path=file_path,
-            root_block_name=root_block_name,
-            style=style,
-        )
+    rendered_document: EquationPdfDocumentPainter = EquationPdfDocumentPainter(
+        file_path=file_path,
+        root_block_name=root_block_name,
+    )
     previous_block_name: str = ""
     previous_section: EquationExportSection | None = None
     equation_index: int = 0
     entry: EquationExportEntry
     for entry in entries:
         if entry.get_block_name() != previous_block_name or entry.get_section() != previous_section:
-            if source_document is not None:
-                source_document.draw_group_heading(entry.get_block_name(), entry.get_section())
-            elif rendered_document is not None:
-                rendered_document.draw_group_heading(entry.get_block_name(), entry.get_section())
-            else:
-                raise RuntimeError("Equation PDF document was not initialized")
+            rendered_document.draw_group_heading(entry.get_block_name(), entry.get_section())
             previous_block_name = entry.get_block_name()
             previous_section = entry.get_section()
         else:
             pass
         equation_index += 1
-        if source_document is not None:
-            source_document.draw_equation(entry.get_latex())
-        elif rendered_document is not None:
-            rendered_document.draw_equation(entry.get_latex(), equation_index)
-        else:
-            raise RuntimeError("Equation PDF document was not initialized")
-    if source_document is not None:
-        source_document.finish()
-    elif rendered_document is not None:
-        rendered_document.finish()
-    else:
-        raise RuntimeError("Equation PDF document was not initialized")
+        rendered_document.draw_equation(entry.get_latex(), equation_index)
+    rendered_document.finish()

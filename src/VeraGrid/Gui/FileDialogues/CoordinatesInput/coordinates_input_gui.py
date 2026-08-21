@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'coordinates_input_gui.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.2
+## Created by: Qt User Interface Compiler version 6.11.0
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -31,49 +31,54 @@ class Ui_Dialog(object):
         self.verticalLayout.setContentsMargins(-1, 0, -1, 9)
         self.splitter = QSplitter(Dialog)
         self.splitter.setObjectName(u"splitter")
-        self.splitter.setOrientation(Qt.Horizontal)
+        self.splitter.setOrientation(Qt.Orientation.Horizontal)
         self.frame_4 = QFrame(self.splitter)
         self.frame_4.setObjectName(u"frame_4")
-        self.frame_4.setFrameShape(QFrame.NoFrame)
-        self.frame_4.setFrameShadow(QFrame.Raised)
+        self.frame_4.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame_4.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayout_2 = QVBoxLayout(self.frame_4)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
         self.frame_2 = QFrame(self.frame_4)
         self.frame_2.setObjectName(u"frame_2")
-        self.frame_2.setFrameShape(QFrame.NoFrame)
-        self.frame_2.setFrameShadow(QFrame.Raised)
+        self.frame_2.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame_2.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout_2 = QGridLayout(self.frame_2)
         self.gridLayout_2.setObjectName(u"gridLayout_2")
         self.gridLayout_2.setVerticalSpacing(2)
         self.gridLayout_2.setContentsMargins(-1, 0, -1, 0)
-        self.nameComboBox = QComboBox(self.frame_2)
-        self.nameComboBox.setObjectName(u"nameComboBox")
+        self.objectTypeComboBox = QComboBox(self.frame_2)
+        self.objectTypeComboBox.addItem("")
+        self.objectTypeComboBox.addItem("")
+        self.objectTypeComboBox.addItem("")
+        self.objectTypeComboBox.setObjectName(u"objectTypeComboBox")
 
-        self.gridLayout_2.addWidget(self.nameComboBox, 5, 1, 1, 2)
+        self.gridLayout_2.addWidget(self.objectTypeComboBox, 1, 1, 1, 2)
 
-        self.longitudeCheckBox = QCheckBox(self.frame_2)
-        self.longitudeCheckBox.setObjectName(u"longitudeCheckBox")
+        self.label_4 = QLabel(self.frame_2)
+        self.label_4.setObjectName(u"label_4")
 
-        self.gridLayout_2.addWidget(self.longitudeCheckBox, 15, 0, 2, 1)
+        self.gridLayout_2.addWidget(self.label_4, 7, 0, 1, 1)
 
-        self.latitudeComboBox = QComboBox(self.frame_2)
-        self.latitudeComboBox.setObjectName(u"latitudeComboBox")
+        self.xComboBox = QComboBox(self.frame_2)
+        self.xComboBox.setObjectName(u"xComboBox")
 
-        self.gridLayout_2.addWidget(self.latitudeComboBox, 14, 1, 1, 2)
+        self.gridLayout_2.addWidget(self.xComboBox, 10, 1, 1, 2)
 
-        self.open_button = QPushButton(self.frame_2)
-        self.open_button.setObjectName(u"open_button")
-        icon = QIcon()
-        icon.addFile(u":/Icons/icons/import_profiles.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.open_button.setIcon(icon)
+        self.codeRadioButton = QRadioButton(self.frame_2)
+        self.codeRadioButton.setObjectName(u"codeRadioButton")
 
-        self.gridLayout_2.addWidget(self.open_button, 2, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.codeRadioButton, 6, 0, 1, 1)
 
-        self.longitudeComboBox = QComboBox(self.frame_2)
-        self.longitudeComboBox.setObjectName(u"longitudeComboBox")
+        self.yComboBox = QComboBox(self.frame_2)
+        self.yComboBox.setObjectName(u"yComboBox")
 
-        self.gridLayout_2.addWidget(self.longitudeComboBox, 16, 1, 1, 2)
+        self.gridLayout_2.addWidget(self.yComboBox, 12, 1, 1, 2)
+
+        self.objectTypeLabel = QLabel(self.frame_2)
+        self.objectTypeLabel.setObjectName(u"objectTypeLabel")
+
+        self.gridLayout_2.addWidget(self.objectTypeLabel, 1, 0, 1, 1)
 
         self.nameRadioButton = QRadioButton(self.frame_2)
         self.nameRadioButton.setObjectName(u"nameRadioButton")
@@ -81,44 +86,55 @@ class Ui_Dialog(object):
 
         self.gridLayout_2.addWidget(self.nameRadioButton, 5, 0, 1, 1)
 
-        self.label_4 = QLabel(self.frame_2)
-        self.label_4.setObjectName(u"label_4")
-
-        self.gridLayout_2.addWidget(self.label_4, 7, 0, 1, 1)
-
         self.codeComboBox = QComboBox(self.frame_2)
         self.codeComboBox.setObjectName(u"codeComboBox")
 
         self.gridLayout_2.addWidget(self.codeComboBox, 6, 1, 1, 2)
 
-        self.yCheckBox = QCheckBox(self.frame_2)
-        self.yCheckBox.setObjectName(u"yCheckBox")
+        self.latitudeComboBox = QComboBox(self.frame_2)
+        self.latitudeComboBox.setObjectName(u"latitudeComboBox")
 
-        self.gridLayout_2.addWidget(self.yCheckBox, 11, 0, 2, 1)
+        self.gridLayout_2.addWidget(self.latitudeComboBox, 14, 1, 1, 2)
 
-        self.xComboBox = QComboBox(self.frame_2)
-        self.xComboBox.setObjectName(u"xComboBox")
+        self.longitudeCheckBox = QCheckBox(self.frame_2)
+        self.longitudeCheckBox.setObjectName(u"longitudeCheckBox")
 
-        self.gridLayout_2.addWidget(self.xComboBox, 10, 1, 1, 2)
+        self.gridLayout_2.addWidget(self.longitudeCheckBox, 15, 0, 2, 1)
+
+        self.longitudeComboBox = QComboBox(self.frame_2)
+        self.longitudeComboBox.setObjectName(u"longitudeComboBox")
+
+        self.gridLayout_2.addWidget(self.longitudeComboBox, 16, 1, 1, 2)
+
+        self.propagateBusesCheckBox = QCheckBox(self.frame_2)
+        self.propagateBusesCheckBox.setObjectName(u"propagateBusesCheckBox")
+
+        self.gridLayout_2.addWidget(self.propagateBusesCheckBox, 17, 0, 1, 3)
 
         self.label_2 = QLabel(self.frame_2)
         self.label_2.setObjectName(u"label_2")
 
         self.gridLayout_2.addWidget(self.label_2, 3, 0, 1, 1)
 
-        self.yComboBox = QComboBox(self.frame_2)
-        self.yComboBox.setObjectName(u"yComboBox")
+        self.label_3 = QLabel(self.frame_2)
+        self.label_3.setObjectName(u"label_3")
 
-        self.gridLayout_2.addWidget(self.yComboBox, 12, 1, 1, 2)
+        self.gridLayout_2.addWidget(self.label_3, 4, 0, 1, 3)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.nameComboBox = QComboBox(self.frame_2)
+        self.nameComboBox.setObjectName(u"nameComboBox")
 
-        self.gridLayout_2.addItem(self.verticalSpacer, 17, 0, 1, 3)
+        self.gridLayout_2.addWidget(self.nameComboBox, 5, 1, 1, 2)
 
-        self.codeRadioButton = QRadioButton(self.frame_2)
-        self.codeRadioButton.setObjectName(u"codeRadioButton")
+        self.yCheckBox = QCheckBox(self.frame_2)
+        self.yCheckBox.setObjectName(u"yCheckBox")
 
-        self.gridLayout_2.addWidget(self.codeRadioButton, 6, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.yCheckBox, 11, 0, 2, 1)
+
+        self.label_5 = QLabel(self.frame_2)
+        self.label_5.setObjectName(u"label_5")
+
+        self.gridLayout_2.addWidget(self.label_5, 8, 0, 1, 3)
 
         self.latitudeCheckBox = QCheckBox(self.frame_2)
         self.latitudeCheckBox.setObjectName(u"latitudeCheckBox")
@@ -130,20 +146,17 @@ class Ui_Dialog(object):
 
         self.gridLayout_2.addWidget(self.xCheckBox, 9, 0, 2, 1)
 
-        self.label_3 = QLabel(self.frame_2)
-        self.label_3.setObjectName(u"label_3")
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
-        self.gridLayout_2.addWidget(self.label_3, 4, 0, 1, 3)
+        self.gridLayout_2.addItem(self.verticalSpacer, 18, 0, 1, 3)
 
-        self.label = QLabel(self.frame_2)
-        self.label.setObjectName(u"label")
+        self.open_button = QPushButton(self.frame_2)
+        self.open_button.setObjectName(u"open_button")
+        icon = QIcon()
+        icon.addFile(u":/Icons/icons/import_profiles.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.open_button.setIcon(icon)
 
-        self.gridLayout_2.addWidget(self.label, 1, 0, 1, 1)
-
-        self.label_5 = QLabel(self.frame_2)
-        self.label_5.setObjectName(u"label_5")
-
-        self.gridLayout_2.addWidget(self.label_5, 8, 0, 1, 3)
+        self.gridLayout_2.addWidget(self.open_button, 19, 0, 1, 3)
 
 
         self.verticalLayout_2.addWidget(self.frame_2)
@@ -151,8 +164,8 @@ class Ui_Dialog(object):
         self.splitter.addWidget(self.frame_4)
         self.frame_6 = QFrame(self.splitter)
         self.frame_6.setObjectName(u"frame_6")
-        self.frame_6.setFrameShape(QFrame.NoFrame)
-        self.frame_6.setFrameShadow(QFrame.Raised)
+        self.frame_6.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame_6.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayout_3 = QVBoxLayout(self.frame_6)
         self.verticalLayout_3.setSpacing(2)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
@@ -164,8 +177,8 @@ class Ui_Dialog(object):
 
         self.frame_9 = QFrame(self.frame_6)
         self.frame_9.setObjectName(u"frame_9")
-        self.frame_9.setFrameShape(QFrame.NoFrame)
-        self.frame_9.setFrameShadow(QFrame.Raised)
+        self.frame_9.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame_9.setFrameShadow(QFrame.Shadow.Raised)
         self.gridLayout = QGridLayout(self.frame_9)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -204,18 +217,23 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
-        self.longitudeCheckBox.setText(QCoreApplication.translate("Dialog", u"Bus longitude", None))
-        self.open_button.setText(QCoreApplication.translate("Dialog", u"Load file", None))
-        self.nameRadioButton.setText(QCoreApplication.translate("Dialog", u"Name", None))
+        self.objectTypeComboBox.setItemText(0, QCoreApplication.translate("Dialog", u"Buses", None))
+        self.objectTypeComboBox.setItemText(1, QCoreApplication.translate("Dialog", u"Substations", None))
+        self.objectTypeComboBox.setItemText(2, QCoreApplication.translate("Dialog", u"Injections", None))
+
         self.label_4.setText("")
-        self.yCheckBox.setText(QCoreApplication.translate("Dialog", u"Bus y position", None))
-        self.label_2.setText("")
         self.codeRadioButton.setText(QCoreApplication.translate("Dialog", u"Code", None))
+        self.objectTypeLabel.setText(QCoreApplication.translate("Dialog", u"Target", None))
+        self.nameRadioButton.setText(QCoreApplication.translate("Dialog", u"Name", None))
+        self.longitudeCheckBox.setText(QCoreApplication.translate("Dialog", u"Bus longitude", None))
+        self.propagateBusesCheckBox.setText(QCoreApplication.translate("Dialog", u"Also update associated buses latitude and longitude", None))
+        self.label_2.setText("")
+        self.label_3.setText(QCoreApplication.translate("Dialog", u"Match method:", None))
+        self.yCheckBox.setText(QCoreApplication.translate("Dialog", u"Bus y position", None))
+        self.label_5.setText(QCoreApplication.translate("Dialog", u"Assigning magnitudes", None))
         self.latitudeCheckBox.setText(QCoreApplication.translate("Dialog", u"Bus latitude", None))
         self.xCheckBox.setText(QCoreApplication.translate("Dialog", u"Bus x position", None))
-        self.label_3.setText(QCoreApplication.translate("Dialog", u"Match mathod:", None))
-        self.label.setText("")
-        self.label_5.setText(QCoreApplication.translate("Dialog", u"Assigning magnitudes", None))
+        self.open_button.setText(QCoreApplication.translate("Dialog", u"Load file", None))
 #if QT_CONFIG(tooltip)
         self.acceptButton.setToolTip(QCoreApplication.translate("Dialog", u"Do it!", None))
 #endif // QT_CONFIG(tooltip)

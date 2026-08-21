@@ -40,11 +40,6 @@ The diagram view is where all the editing is done. It is divided into three diff
 
 In the left panel, you can find the library of elements to drag and drop into your schematics. By then clicking on an element in the schematic and switching to the properties tab, you will be able to observe and edit a specific element's parameters. These properties can be filtered to include only the parameters relevant to the simulation you're conducting.
 
-<p align="center">
-  <img src="figures/Libary_LeftPanel.png" alt="Library left panel" width="20%" style="margin-right: 20px;">
-  <img src="figures/Properties_LeftPanel.png" alt="Properties left panel" width="19.8%">
-</p>
-
 ### Schematic and map editors
 
 In the main panel, you can find the schematics and map diagrams that represent the system currently under study. You can create as many maps and schematics, either of the whole system or of specific portions, as you want. Creating these smaller schematics will allow you to focus on results for specific areas, while still simulating the full system. 
@@ -140,9 +135,7 @@ Linking methods:
 - Assign the selected profile to all objects.
 - Assign the selected profile to the selected objects.
 
-<p align="center">
-  <img src="figures/profiles_import_csv.png" alt="Library left panel" width="55%">
-</p>
+![](figures/profiles_import_csv.png)
 
 The second option is to import from various snapshot models. To complete this, first load a single model. Once completed, you can then load all remaining models in order using the blue button beside the previous mentioned, and the profiles will be completed by reading the model data. 
 

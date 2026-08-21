@@ -7,7 +7,7 @@ import numpy as np
 from typing import Union, Dict, Tuple, TYPE_CHECKING
 
 import VeraGridEngine.Simulations.PowerFlow as pflw
-from VeraGridEngine.enumerations import SolverType, GeneratorControlMode, BusMode, GeneratorType
+from VeraGridEngine.enumerations import SolverType, GeneratorControlMode, BusMode, GeneratorType, ShuntControlMode
 from VeraGridEngine.basic_structures import Logger, ConvergenceReport
 from VeraGridEngine.Simulations.PowerFlow.power_flow_results import PowerFlowResults
 from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
@@ -436,48 +436,39 @@ def __solve_island_limited_support(island: NumericalCircuit,
             if solver_type == SolverType.HELM:
                 adms = island.get_series_admittance_matrices()
 
-                solution = pflw.helm_josep(nc=island,
-                                           Ybus=adm.Ybus,
-                                           Yf=adm.Yf,
-                                           Yt=adm.Yt,
-                                           Yshunt_bus=adm.Yshunt_bus,
-                                           Yseries=adms.Yseries,
-                                           V0=V0,  # take V0 instead of V
-                                           S0=Sbase_plus_hvdc,
-                                           Ysh0=adms.Yshunt,
-                                           pq=indices.pq,
-                                           pv=indices.pv,
-                                           vd=indices.vd,
-                                           no_slack=indices.no_slack,
-                                           tolerance=options.tolerance,
-                                           max_coefficients=options.max_iter,
-                                           use_pade=False,
-                                           verbose=options.verbose,
-                                           logger=logger)
-
-                if options.distributed_slack:
-                    ok, delta = compute_slack_distribution(Scalc=solution.Scalc,
-                                                           vd=indices.vd,
-                                                           bus_installed_power=island.bus_data.installed_power)
-                    if ok:
-                        solution = pflw.helm_josep(nc=island,
-                                                   Ybus=adm.Ybus,
-                                                   Yf=adm.Yf,
-                                                   Yt=adm.Yt,
-                                                   Yshunt_bus=adm.Yshunt_bus,
-                                                   Yseries=adms.Yseries,
-                                                   V0=V0,  # take V0 instead of V
-                                                   S0=Sbase_plus_hvdc + delta,
-                                                   Ysh0=adms.Yshunt,
-                                                   pq=indices.pq,
-                                                   pv=indices.pv,
-                                                   vd=indices.vd,
-                                                   no_slack=indices.no_slack,
-                                                   tolerance=options.tolerance,
-                                                   max_coefficients=options.max_iter,
-                                                   use_pade=False,
-                                                   verbose=options.verbose,
-                                                   logger=logger)
+                solution = pflw.helm_dpr(nc=island,
+                                         Ybus=adm.Ybus,
+                                         Yf=adm.Yf,
+                                         Yt=adm.Yt,
+                                         Yshunt_bus=adm.Yshunt_bus,
+                                         Yseries=adms.Yseries,
+                                         V0=V0,
+                                         S0=Sbase_plus_hvdc,
+                                         Ysh0=adms.Yshunt,
+                                         pq=indices.pq,
+                                         pv=indices.pv,
+                                         vd=indices.vd,
+                                         no_slack=indices.no_slack,
+                                         tolerance=options.tolerance,
+                                         max_coefficients=options.max_iter,
+                                         use_pade=False,
+                                         use_classical_germ=False,
+                                         control_q=options.control_Q,
+                                         pqv=indices.pqv,
+                                         p=indices.p,
+                                         Qmin=Qmin,
+                                         Qmax=Qmax,
+                                         control_discrete_shunts=np.any(
+                                             island.shunt_data.control_mode_int == ShuntControlMode.Discrete.idx()
+                                         ),
+                                         control_qv_droop=np.any(
+                                             island.generator_data.control_mode_int == GeneratorControlMode.QVDroop.idx()
+                                         ),
+                                         distributed_slack=options.distributed_slack,
+                                         bus_installed_power=island.bus_data.installed_power,
+                                         controls_tol=options.controls_start_tolerance,
+                                         verbose=options.verbose,
+                                         logger=logger)
 
             # type DC
             elif solver_type == SolverType.Linear:

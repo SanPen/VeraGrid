@@ -2123,6 +2123,8 @@ def expression2numba(expr: Expr,
             s = f"_heaviside({arg})"
         elif expr.op == "rand":
             s = "np.random.rand()"
+        elif expr.op == "atan":
+            s = f"np.arctan({arg})"
         else:
             s = f"np.{expr.op}({arg})"
 
@@ -2175,6 +2177,8 @@ def _emit_event_params_eq(expr: Expr, uid_map_t: Dict[int, str] | None = None) -
             return f"_heaviside({_emit_event_params_eq(expr.arg, uid_map_t)})"
         elif expr.op == "rand":
             return "np.random.rand()"
+        elif expr.op == "atan":
+            return f"np.arctan({_emit_event_params_eq(expr.arg, uid_map_t)})"
         else:
             return f"np.{expr.op}({_emit_event_params_eq(expr.arg, uid_map_t)})"
     if isinstance(expr, Func2):
@@ -2219,6 +2223,8 @@ def _emit_one(expr: Expr, uid_map_vars: Dict[int, str], uid_map_event_params: Di
             return f"_heaviside({_emit_one(expr.arg, uid_map_vars, uid_map_event_params, uid_map_params)})"
         elif expr.op == "rand":
             return "np.random.rand()"
+        elif expr.op == "atan":
+            return f"np.arctan({_emit_one(expr.arg, uid_map_vars, uid_map_event_params, uid_map_params)})"
         else:
             return f"np.{expr.op}({_emit_one(expr.arg, uid_map_vars, uid_map_event_params, uid_map_params)})"
 

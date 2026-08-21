@@ -78,6 +78,7 @@ Contents
     md_source/short_circuit.md
     md_source/stochastic_power_flow.md
     md_source/continuation_power_flow.md
+    md_source/sigma_analysis.md
     md_source/solar_wizard.md
 
     md_source/contingency_analysis.md

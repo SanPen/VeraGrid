@@ -64,6 +64,17 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="reIndexTimeButton">
+        <property name="text">
+         <string>Re-index time</string>
+        </property>
+        <property name="icon">
+         <iconset resource="../../Icons/icons.qrc">
+          <normaloff>:/Icons/icons/data.png</normaloff>:/Icons/icons/data.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer_5">
         <property name="orientation">
          <enum>Qt::Orientation::Horizontal</enum>

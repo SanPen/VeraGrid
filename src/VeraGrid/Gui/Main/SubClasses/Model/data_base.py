@@ -1059,6 +1059,12 @@ class DataBaseTableMain(DiagramsMain):
                 obj = dev.EmtEventsGroup(name=name)
                 self.circuit.add_emt_events_group(obj)
 
+            elif elm_type == DeviceType.ControlPc:
+
+                name = f'Control PC {len(self.circuit.control_pcs)}'
+                obj = dev.ControlPc(name=name)
+                self.circuit.add_control_pc(obj)
+
             else:
                 info_msg("This object does not support table-like addition.\nUse the schematic instead.")
                 return

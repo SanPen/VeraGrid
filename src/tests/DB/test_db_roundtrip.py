@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any, Sequence
 
 import psycopg
 import pytest
@@ -18,6 +19,7 @@ from VeraGridServer.db.model_ops import (
     delete_file,
     get_file_models_json,
     get_files_with_models_json,
+    get_model_json_payload,
     get_multicircuit_from_database,
     get_multiverse_from_database,
     put_multicircuit_in_database,
@@ -27,6 +29,96 @@ from VeraGridServer.db.user_ops import get_user
 
 
 GRID_FOLDER = Path(__file__).resolve().parents[1] / "data" / "grids"
+
+
+class FakeCursor:
+    """
+    Minimal cursor used to verify generated SQL without a live PostgreSQL server.
+    """
+
+    __slots__ = ("executed_sql", "_missing_table_failures", "_payload_returned")
+
+    def __init__(self) -> None:
+        """
+        Initialize the captured SQL list and payload-row state.
+
+        :return: None.
+        """
+        self.executed_sql: list[str] = list()
+        self._missing_table_failures: int = 0
+        self._payload_returned: bool = False
+
+    def execute(self, operation: str, parameters: Sequence[Any] | None = None) -> None:
+        """
+        Capture one SQL operation.
+
+        :param operation: SQL statement.
+        :param parameters: Optional positional parameters.
+        :return: None.
+        """
+        self.executed_sql.append(operation)
+        if self.should_raise_missing_control_pc(operation=operation):
+            self._missing_table_failures += 1
+            raise psycopg.errors.UndefinedTable('relation "veragrid.control_pc" does not exist')
+        else:
+            pass
+
+    def executemany(self, operation: str, parameters_seq: Sequence[Sequence[Any]]) -> None:
+        """
+        Capture one batched SQL operation.
+
+        :param operation: SQL statement.
+        :param parameters_seq: Batched positional parameters.
+        :return: None.
+        """
+        self.executed_sql.append(operation)
+
+    def should_raise_missing_control_pc(self, operation: str) -> bool:
+        """
+        Decide whether this fake cursor must simulate the first missing typed-table read.
+
+        :param operation: SQL statement.
+        :return: ``True`` when the statement should fail with ``UndefinedTable``.
+        """
+        should_raise: bool = (
+            self._missing_table_failures == 0
+            and "SELECT data" in operation
+            and 'FROM "veragrid"."control_pc"' in operation
+        )
+
+        return should_raise
+
+    def close(self) -> None:
+        """
+        Close the fake cursor.
+
+        :return: None.
+        """
+        pass
+
+    def fetchone(self) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]] | None:
+        """
+        Return one ModelData payload row for the first payload query.
+
+        :return: Payload row or ``None`` after the first row.
+        """
+        if self._payload_returned:
+            return None
+        else:
+            self._payload_returned = True
+            return (
+                {"idtag": "model", "name": "model"},
+                {"unix": list(), "prob": list(), "snapshot_unix": None},
+                dict(),
+            )
+
+    def fetchall(self) -> list[tuple[dict[str, Any]]]:
+        """
+        Return no typed-object rows.
+
+        :return: Empty row list.
+        """
+        return list()
 
 
 def _assert_circuits_equal(grid1: vge.MultiCircuit, grid2: vge.MultiCircuit) -> None:
@@ -170,6 +262,43 @@ def test_all_generated_device_table_names_are_snake_case() -> None:
     assert all(" " not in table_name for table_name in table_names)
     assert all(table_name == table_name.lower() for table_name in table_names)
     assert all("__" not in table_name for table_name in table_names)
+
+
+def test_get_model_json_payload_lazily_creates_missing_object_tables() -> None:
+    """
+    Verify JSON rebuild creates newly-added typed tables only after PostgreSQL reports them missing.
+
+    :return: None.
+    """
+    cursor: FakeCursor = FakeCursor()
+
+    payload: dict[str, Any] = get_model_json_payload(
+        cursor=cursor,
+        schema_name="veragrid",
+        model_idtag="model",
+        table_mappings=(("control_pc", "control_pc"),),
+    )
+
+    create_table_index: int = -1
+    select_table_indices: list[int] = list()
+    sql_index: int
+    sql_statement: str
+    for sql_index, sql_statement in enumerate(cursor.executed_sql):
+        if 'CREATE TABLE IF NOT EXISTS "veragrid"."control_pc"' in sql_statement:
+            create_table_index = sql_index
+        else:
+            pass
+
+        if 'FROM "veragrid"."control_pc"' in sql_statement:
+            select_table_indices.append(sql_index)
+        else:
+            pass
+
+    assert payload["model_data"]["control_pc"] == list()
+    assert len(select_table_indices) == 2
+    assert create_table_index >= 0
+    assert select_table_indices[0] < create_table_index
+    assert create_table_index < select_table_indices[1]
 
 
 def test_multiverse_db_roundtrip_and_file_json_when_local_db_is_available() -> None:

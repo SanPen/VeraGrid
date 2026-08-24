@@ -13,7 +13,10 @@ from VeraGridEngine.Compilers.Gslv.common import (
     apply_three_phase_shunt_data,
     fill_profile,
     get_single_three_phase_snapshot_index,
+    set_injection_associations,
 )
+from VeraGridEngine.Devices.Aggregation.facility import Facility
+from VeraGridEngine.Devices.Associations.technology import Technology
 from VeraGridEngine.Devices.Injections.controllable_shunt import ControllableShunt
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.basic_structures import IntVec
@@ -22,6 +25,8 @@ from VeraGridEngine.enumerations import ShuntControlMode
 
 def convert_controllable_shunt(elm: ControllableShunt,
                                bus_dict: Dict[str, "pg.Bus"],
+                               facility_dict: Dict[Facility, "pg.Facility"],
+                               technology_dict: Dict[Technology, "pg.Technology"],
                                n_time: int,
                                use_time_series: bool,
                                shunt_control_mode_dict: Dict[ShuntControlMode, "pg.ShuntControlMode"],
@@ -32,6 +37,8 @@ def convert_controllable_shunt(elm: ControllableShunt,
 
     :param elm: VeraGrid controllable shunt.
     :param bus_dict: Bus lookup by VeraGrid id tag.
+    :param facility_dict: VeraGrid-to-GSLV facility lookup.
+    :param technology_dict: VeraGrid-to-GSLV technology lookup.
     :param n_time: Number of exported time steps.
     :param use_time_series: Whether the export is time-series based.
     :param shunt_control_mode_dict: Shunt-control enum translator.
@@ -96,6 +103,12 @@ def convert_controllable_shunt(elm: ControllableShunt,
         control_mode=shunt_control_mode_dict[elm.control_mode],
         build_status=build_status_dict[elm.build_status],
     )
+    set_injection_associations(
+        gslv_elm=sh,
+        elm=elm,
+        facility_dict=facility_dict,
+        technology_dict=technology_dict,
+    )
 
     sh.g_steps = g_steps.tolist()
     sh.b_steps = b_steps.tolist()
@@ -122,6 +135,8 @@ def convert_controllable_shunt(elm: ControllableShunt,
 def add_controllable_shunts(circuit: MultiCircuit,
                             gslv_grid: "pg.MultiCircuit",
                             bus_dict: Dict[str, "pg.Bus"],
+                            facility_dict: Dict[Facility, "pg.Facility"],
+                            technology_dict: Dict[Technology, "pg.Technology"],
                             time_series: bool,
                             n_time: int = 1,
                             time_indices: IntVec | None = None,
@@ -132,6 +147,8 @@ def add_controllable_shunts(circuit: MultiCircuit,
     :param circuit: VeraGrid circuit.
     :param gslv_grid: GSLV circuit.
     :param bus_dict: Bus lookup by VeraGrid id tag.
+    :param facility_dict: VeraGrid-to-GSLV facility lookup.
+    :param technology_dict: VeraGrid-to-GSLV technology lookup.
     :param time_series: Whether the export is time-series based.
     :param n_time: Number of exported time steps.
     :param time_indices: Optional time-series selection.
@@ -149,6 +166,8 @@ def add_controllable_shunts(circuit: MultiCircuit,
         sh = convert_controllable_shunt(
             elm=elm,
             bus_dict=bus_dict,
+            facility_dict=facility_dict,
+            technology_dict=technology_dict,
             n_time=n_time,
             use_time_series=time_series,
             time_indices=time_indices,

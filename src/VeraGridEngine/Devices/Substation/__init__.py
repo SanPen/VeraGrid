@@ -8,3 +8,4 @@ from VeraGridEngine.Devices.Substation.substation import Substation
 from VeraGridEngine.Devices.Substation.busbar import BusBar
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
 from VeraGridEngine.Devices.Substation.voltage_level_template import VoltageLevelTemplate
+from VeraGridEngine.Devices.Substation.control_pc import ControlPc

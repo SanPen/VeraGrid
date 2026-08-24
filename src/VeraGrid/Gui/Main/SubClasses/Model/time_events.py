@@ -553,18 +553,17 @@ class TimeEventsMain(DataBaseTableMain):
 
         mdl: ProfilesModel = self.ui.profiles_tableView.model()
 
-        cols = set()
-        if len(self.ui.profiles_tableView.selectedIndexes()) > 0:
-            for index in self.ui.profiles_tableView.selectedIndexes():
-                row_idx = index.row()
-                col_idx = index.column()
-                cols.add(col_idx)
-        else:
-            row_idx = 0
-            col_idx = 0
-
         if mdl is not None:
-            ok = mdl.copy_to_clipboard(cols=list(cols))
+            selected_indexes = self.ui.profiles_tableView.selectedIndexes()
+            total_cells: int = mdl.rowCount() * mdl.columnCount()
+
+            if len(selected_indexes) == 0 or len(selected_indexes) == total_cells:
+                ok = mdl.copy_to_clipboard()
+            else:
+                rows: List[int] = sorted(set(index.row() for index in selected_indexes))
+                cols: List[int] = sorted(set(index.column() for index in selected_indexes))
+                ok = mdl.copy_to_clipboard(cols=cols, rows=rows, include_headers=False)
+
             if ok:
                 self.show_info_toast('Copied!')
             else:
@@ -580,14 +579,21 @@ class TimeEventsMain(DataBaseTableMain):
         mdl = self.ui.profiles_tableView.model()
         if mdl is not None:
 
-            if len(self.ui.profiles_tableView.selectedIndexes()) > 0:
-                index = self.ui.profiles_tableView.selectedIndexes()[0]
-                row_idx = index.row()
-                col_idx = index.column()
+            selected_indexes = self.ui.profiles_tableView.selectedIndexes()
+            if len(selected_indexes) > 0:
+                rows: List[int] = sorted(set(index.row() for index in selected_indexes))
+                cols: List[int] = sorted(set(index.column() for index in selected_indexes))
+                row_idx = rows[0]
+                col_idx = cols[0]
             else:
+                rows = list()
+                cols = list()
                 row_idx = 0
                 col_idx = 0
 
-            mdl.paste_from_clipboard(row_idx=row_idx, col_idx=col_idx)
+            mdl.paste_from_clipboard(row_idx=row_idx,
+                                     col_idx=col_idx,
+                                     selected_rows=rows,
+                                     selected_cols=cols)
         else:
             warning_msg('There is no profile displayed, please display one', 'Paste profile to clipboard')

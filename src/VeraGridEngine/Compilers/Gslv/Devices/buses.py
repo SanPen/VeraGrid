@@ -59,7 +59,7 @@ def convert_bus(elm: Bus, n_time: int,
                  area=area_dict.get(elm.area, None),
                  zone=zone_dict.get(elm.zone, None),
                  substation=substation_dict.get(elm.substation, None),
-                 voltage_level=voltage_level_dict.get(elm.substation, None),
+                 voltage_level=voltage_level_dict.get(elm.voltage_level, None),
                  country=country_dict.get(elm.country, None),
                  latitude=elm.latitude,
                  longitude=elm.longitude,
@@ -138,4 +138,3 @@ def add_buses(
         bus_dict[bus.idtag] = elm
 
     return bus_dict
-

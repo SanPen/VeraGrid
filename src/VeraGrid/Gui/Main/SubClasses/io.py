@@ -1130,6 +1130,17 @@ class IoMain(ScenariosMain):
         self.file_name = ''
         self.save_file()
 
+    @staticmethod
+    def is_direct_veragrid_save_path(file_name: str) -> bool:
+        """
+        Check whether the current file path is safe for direct VeraGrid overwrite.
+
+        :param file_name: Current GUI file path.
+        :return: ``True`` only for native VeraGrid archive files.
+        """
+        file_extension: str = pathlib.Path(file_name).suffix.lower()
+        return file_extension in (".veragrid", ".gridcal")
+
     def save_file(self) -> None:
         """
         Save the current project to disk using the active file target.
@@ -1150,7 +1161,7 @@ class IoMain(ScenariosMain):
             # gather comments
             self.circuit.comments = self.ui.comments_textEdit.toPlainText()
 
-            if self.file_name == '':
+            if self.file_name == '' or not self.is_direct_veragrid_save_path(file_name=self.file_name):
                 # if the global file_name is empty, ask where to save
                 fname = os.path.join(self.project_directory, self.ui.grid_name_line_edit.text())
 

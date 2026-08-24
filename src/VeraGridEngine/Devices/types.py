@@ -119,6 +119,7 @@ ALL_DEV_TYPES = Union[
     RmsModelTemplate,
     EmtModelTemplate,
     FmuTemplate,
+    ControlPc,
     RmsEvent,
     RmsEventsGroup,
     ShortCircuitEvent,

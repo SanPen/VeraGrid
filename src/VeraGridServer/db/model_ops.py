@@ -22,6 +22,7 @@ from VeraGridServer.db.database import (
     CursorLike,
     PostgreSqlConnectionSettings,
     build_connection_kwargs,
+    ensure_veragrid_object_table,
     get_veragrid_object_table_names,
     log_database_operation,
     normalize_device_table_name,
@@ -607,6 +608,121 @@ def delete_file(settings: PostgreSqlConnectionSettings,
         release_database_file_lock(settings=settings, file_idtag=file_idtag)
 
 
+def execute_object_table_statement(cursor: CursorLike,
+                                   schema_name: str,
+                                   table_name: str,
+                                   operation: str,
+                                   parameters: Sequence[Any] | None) -> None:
+    """
+    Execute one object-table statement, creating the table only after PostgreSQL reports it missing.
+
+    :param cursor: Open database cursor.
+    :param schema_name: Target schema name.
+    :param table_name: Object table name.
+    :param operation: SQL statement to execute.
+    :param parameters: Optional positional parameters.
+    :return: None.
+    """
+    savepoint_name: str = "veragrid_lazy_object_table"
+
+    # The failed SQL statement must be isolated because PostgreSQL aborts the
+    # transaction after UndefinedTable until the failure is rolled back.
+    cursor.execute(f"SAVEPOINT {savepoint_name}")
+    try:
+        cursor.execute(operation, parameters)
+        cursor.execute(f"RELEASE SAVEPOINT {savepoint_name}")
+    except psycopg.errors.UndefinedTable:
+        cursor.execute(f"ROLLBACK TO SAVEPOINT {savepoint_name}")
+        cursor.execute(f"RELEASE SAVEPOINT {savepoint_name}")
+
+        # The schema repair is intentionally lazy: normal queries avoid DDL,
+        # and newly introduced device tables are created only on real demand.
+        ensure_veragrid_object_table(
+            cursor=cursor,
+            schema_name=schema_name,
+            table_name=table_name,
+        )
+        cursor.execute(operation, parameters)
+
+
+def executemany_object_table_statement(cursor: CursorLike,
+                                       schema_name: str,
+                                       table_name: str,
+                                       operation: str,
+                                       parameters_seq: Sequence[Sequence[Any]]) -> None:
+    """
+    Execute one object-table batch, creating the table only after PostgreSQL reports it missing.
+
+    :param cursor: Open database cursor.
+    :param schema_name: Target schema name.
+    :param table_name: Object table name.
+    :param operation: SQL statement to execute.
+    :param parameters_seq: Batched positional parameters.
+    :return: None.
+    """
+    savepoint_name: str = "veragrid_lazy_object_table"
+
+    # Batched inserts need the same transaction isolation as single statements
+    # because a missing typed table otherwise poisons the whole transaction.
+    cursor.execute(f"SAVEPOINT {savepoint_name}")
+    try:
+        cursor.executemany(operation, parameters_seq)
+        cursor.execute(f"RELEASE SAVEPOINT {savepoint_name}")
+    except psycopg.errors.UndefinedTable:
+        cursor.execute(f"ROLLBACK TO SAVEPOINT {savepoint_name}")
+        cursor.execute(f"RELEASE SAVEPOINT {savepoint_name}")
+
+        # Create exactly the one table that the batch proved is missing, then
+        # retry the original insert without adding work to healthy tables.
+        ensure_veragrid_object_table(
+            cursor=cursor,
+            schema_name=schema_name,
+            table_name=table_name,
+        )
+        cursor.executemany(operation, parameters_seq)
+
+
+def fetchall_object_table_statement(cursor: CursorLike,
+                                    schema_name: str,
+                                    table_name: str,
+                                    operation: str,
+                                    parameters: Sequence[Any]) -> Any:
+    """
+    Execute one object-table query and fetch its rows before releasing the savepoint.
+
+    :param cursor: Open database cursor.
+    :param schema_name: Target schema name.
+    :param table_name: Object table name.
+    :param operation: SQL statement to execute.
+    :param parameters: Positional parameters.
+    :return: Fetched SQL rows.
+    """
+    savepoint_name: str = "veragrid_lazy_object_table"
+
+    # SELECT results must be fetched before releasing the savepoint because
+    # psycopg stores only the latest command result on the cursor.
+    cursor.execute(f"SAVEPOINT {savepoint_name}")
+    try:
+        cursor.execute(operation, parameters)
+        rows: Any = cursor.fetchall()
+        cursor.execute(f"RELEASE SAVEPOINT {savepoint_name}")
+    except psycopg.errors.UndefinedTable:
+        cursor.execute(f"ROLLBACK TO SAVEPOINT {savepoint_name}")
+        cursor.execute(f"RELEASE SAVEPOINT {savepoint_name}")
+
+        # Existing databases from older versions may miss new typed tables.
+        # Create only the missing table reported by the query and retry once.
+        ensure_veragrid_object_table(
+            cursor=cursor,
+            schema_name=schema_name,
+            table_name=table_name,
+        )
+        cursor.execute(operation, parameters)
+        rows = cursor.fetchall()
+
+    return rows
+
+
 def delete_model(settings: PostgreSqlConnectionSettings,
                  file_idtag: str,
                  model_idtag: str,
@@ -683,9 +799,12 @@ def delete_existing_model_object_rows(cursor: CursorLike,
         log_database_operation(
             f"Deleting previous rows for model '{model_idtag}' from '{schema_name}.{table_name}' (bucket '{json_key}')."
         )
-        cursor.execute(
-            f"DELETE FROM {quoted_schema_name}.{quoted_table_name} WHERE model_idtag = %s",
-            (model_idtag,),
+        execute_object_table_statement(
+            cursor=cursor,
+            schema_name=schema_name,
+            table_name=table_name,
+            operation=f"DELETE FROM {quoted_schema_name}.{quoted_table_name} WHERE model_idtag = %s",
+            parameters=(model_idtag,),
         )
 
 
@@ -730,15 +849,18 @@ def insert_model_object_rows(cursor: CursorLike,
                 object_idtag: str = str(entry["idtag"])
                 batch_parameters.append((object_idtag, Json(entry), object_index, model_idtag))
 
-            cursor.executemany(
-                f"""
+            executemany_object_table_statement(
+                cursor=cursor,
+                schema_name=schema_name,
+                table_name=table_name,
+                operation=f"""
                 INSERT INTO {quoted_schema_name}.{quoted_table_name} (idtag, data, object_index, model_idtag)
                 VALUES (%s, %s, %s, %s)
                 ON CONFLICT (model_idtag, idtag) DO UPDATE
                 SET data = EXCLUDED.data,
                     object_index = EXCLUDED.object_index
                 """,
-                batch_parameters,
+                parameters_seq=batch_parameters,
             )
         else:
             pass
@@ -952,16 +1074,18 @@ def get_model_json_payload(cursor: CursorLike,
         log_database_operation(
             f"Reading rows from '{schema_name}.{table_name}' for model '{model_idtag}'."
         )
-        cursor.execute(
-            f'''
+        rows: Any = fetchall_object_table_statement(
+            cursor=cursor,
+            schema_name=schema_name,
+            table_name=table_name,
+            operation=f'''
             SELECT data
             FROM {quoted_schema_name}.{quoted_table_name}
             WHERE model_idtag = %s
             ORDER BY object_index
             ''',
-            (model_idtag,),
+            parameters=(model_idtag,),
         )
-        rows: Any = cursor.fetchall()
         model_data[json_key] = [row[0] for row in rows]
 
     return {

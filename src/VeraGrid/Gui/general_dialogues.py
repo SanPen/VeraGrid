@@ -401,7 +401,8 @@ class TimeReIndexDialogue(CenteredDialog):
         # year
         d2 = datetime.now()
         self.date_time_editor = QtWidgets.QDateTimeEdit()
-        self.date_time_editor.setDateTime(QtCore.QDateTime(d2.year, d2.month, d2.day, d2.hour, d2.minute, d2.second))
+        self.date_time_editor.setDisplayFormat("yyyy-MM-dd HH:mm:ss")
+        self.date_time_editor.setDateTime(QtCore.QDateTime(d2.year, d2.month, d2.day, d2.hour, d2.minute, 0))
 
         # time step length
         self.step_length = QtWidgets.QDoubleSpinBox()

@@ -154,6 +154,8 @@ def get_objects_dictionary() -> Dict[str, ALL_DEV_TYPES]:
         'va_measurement': dev.VaMeasurement(),
         'pg_measurement': dev.PgMeasurement(),
         'qg_measurement': dev.QgMeasurement(),
+
+        'control_pc': dev.ControlPc(),
     }
 
 

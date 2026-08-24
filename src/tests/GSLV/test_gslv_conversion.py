@@ -3,11 +3,75 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import os
+from typing import Dict
 import numpy as np
 import VeraGridEngine.api as vg
 from VeraGridEngine.Compilers.Gslv.activation import GSLV_AVAILABLE, pg
 from VeraGridEngine.Compilers.Gslv.compare import compare_nc, CheckArr
+from VeraGridEngine.Compilers.Gslv.common import set_generator_associations, set_injection_associations
 from VeraGridEngine.Compilers.Gslv.conversion import to_gslv
+
+
+class AssociationRecorder:
+    """
+    Record GSLV-style association insertions made through ``add_object``.
+    """
+
+    __slots__ = ("values",)
+
+    def __init__(self) -> None:
+        """
+        Initialize an empty association value lookup.
+
+        :return: None.
+        """
+        self.values: Dict[object, float] = dict()
+
+    def add_object(self, api_obj: object, val: float) -> None:
+        """
+        Store one association exactly as the GSLV wrapper receives it.
+
+        :param api_obj: Target associated object.
+        :param val: Association value.
+        :return: None.
+        """
+        self.values[api_obj] = float(val)
+
+
+class GslvInjectionRecorder:
+    """
+    Minimal GSLV injection stand-in exposing the copied association fields.
+    """
+
+    __slots__ = ("facility", "technologies")
+
+    def __init__(self) -> None:
+        """
+        Initialize empty association targets.
+
+        :return: None.
+        """
+        self.facility: object | None = None
+        self.technologies: AssociationRecorder = AssociationRecorder()
+
+
+class GslvGeneratorRecorder:
+    """
+    Minimal GSLV generator stand-in exposing generator association fields.
+    """
+
+    __slots__ = ("facility", "technologies", "fuels", "emissions")
+
+    def __init__(self) -> None:
+        """
+        Initialize empty generator association targets.
+
+        :return: None.
+        """
+        self.facility: object | None = None
+        self.technologies: AssociationRecorder = AssociationRecorder()
+        self.fuels: AssociationRecorder = AssociationRecorder()
+        self.emissions: AssociationRecorder = AssociationRecorder()
 
 
 def compare_inputs(grid_gslv: "pg.MultiCircuit", grid_gc: vg.MultiCircuit, tol=1e-6, t_idx=None):
@@ -236,6 +300,251 @@ def test_bus_voltage_guess_profiles_are_exported_to_gslv():
     converted = grid_gslv.buses[0]
     assert converted.Vm0.to_list() == [1.01, 1.02, 1.03]
     assert converted.Va0.to_list() == [0.02, 0.03, 0.04]
+
+
+def test_gslv_conversion_exports_bus_voltage_level() -> None:
+    """
+    Check that bus voltage-level references are exported to GSLV.
+
+    :return: None.
+    """
+    if not GSLV_AVAILABLE:
+        return
+    else:
+        pass
+
+    grid: vg.MultiCircuit = vg.MultiCircuit(name="gslv-voltage-level-export")
+    substation: vg.Substation = vg.Substation(name="Substation")
+    voltage_level: vg.VoltageLevel = vg.VoltageLevel(name="VL", substation=substation, Vnom=110.0)
+    bus: vg.Bus = vg.Bus(name="Bus", Vnom=110.0)
+
+    bus.substation = substation
+    bus.voltage_level = voltage_level
+
+    grid.add_substation(obj=substation)
+    grid.add_voltage_level(obj=voltage_level)
+    grid.add_bus(obj=bus)
+
+    grid_gslv, gslv_dict = to_gslv(
+        circuit=grid,
+        use_time_series=False,
+        time_indices=None,
+        override_branch_controls=False,
+        opf_results=None,
+    )
+
+    converted_bus = grid_gslv.buses[0]
+    assert converted_bus.voltage_level.get_idtag() == voltage_level.idtag
+    assert gslv_dict.voltage_level_dict[voltage_level] in grid_gslv.voltage_levels
+
+
+def test_gslv_conversion_exports_injection_association_assets_and_facility() -> None:
+    """
+    Check that injection associations are exported as GSLV assets and device references.
+
+    :return: None.
+    """
+    if not GSLV_AVAILABLE:
+        return
+    else:
+        pass
+
+    grid: vg.MultiCircuit = vg.MultiCircuit(name="gslv-association-export")
+    bus: vg.Bus = vg.Bus(name="Bus")
+    facility: vg.Facility = vg.Facility(name="Plant", code="PL")
+    weak_technology: vg.Technology = vg.Technology(name="Weak", code="WK")
+    strong_technology: vg.Technology = vg.Technology(name="Strong", code="ST")
+    fuel: vg.Fuel = vg.Fuel(name="Gas", code="GAS", cost=3.0)
+    emission_gas: vg.EmissionGas = vg.EmissionGas(name="CO2", code="CO2", cost=9.0)
+    generator: vg.Generator = vg.Generator(name="Generator", P=10.0)
+
+    # The source grid owns the association master objects before injections refer to them.
+    grid.add_bus(obj=bus)
+    grid.add_facility(obj=facility)
+    grid.add_technology(obj=weak_technology)
+    grid.add_technology(obj=strong_technology)
+    grid.add_fuel(obj=fuel)
+    grid.add_emission_gas(obj=emission_gas)
+
+    # The generator carries all association kinds that GSLV supports for generator-like devices.
+    generator.facility = facility
+    generator.technologies.add_object(api_object=weak_technology, val=0.25)
+    generator.technologies.add_object(api_object=strong_technology, val=0.75)
+    generator.fuels.add_object(api_object=fuel, val=0.50)
+    generator.emissions.add_object(api_object=emission_gas, val=0.20)
+    grid.add_generator(bus=bus, api_obj=generator)
+
+    grid_gslv, gslv_dict = to_gslv(
+        circuit=grid,
+        use_time_series=False,
+        time_indices=None,
+        override_branch_controls=False,
+        opf_results=None,
+    )
+    converted_generator = grid_gslv.generators[0]
+
+    assert len(grid_gslv.technologies) == 2
+    assert len(grid_gslv.fuels) == 1
+    assert len(grid_gslv.emission_gases) == 1
+    assert converted_generator.facility.get_idtag() == facility.idtag
+    assert converted_generator.tpe == "Strong"
+    assert gslv_dict.technology_dict[weak_technology] in grid_gslv.technologies
+    assert gslv_dict.technology_dict[strong_technology] in grid_gslv.technologies
+    assert gslv_dict.fuel_dict[fuel] in grid_gslv.fuels
+    assert gslv_dict.emission_gas_dict[emission_gas] in grid_gslv.emission_gases
+
+
+def test_gslv_conversion_exports_generator_market_unit_and_control_bus() -> None:
+    """
+    Check that generator market-unit and remote-control bus references are exported.
+
+    :return: None.
+    """
+    if not GSLV_AVAILABLE:
+        return
+    else:
+        pass
+
+    grid: vg.MultiCircuit = vg.MultiCircuit(name="gslv-generator-market-unit-export")
+    bus: vg.Bus = vg.Bus(name="Bus")
+    control_bus: vg.Bus = vg.Bus(name="Control bus")
+    market_unit: vg.MarketUnit = vg.MarketUnit(name="Market unit", code="MU", color="#123456")
+    generator: vg.Generator = vg.Generator(name="Generator", P=10.0, market_unit=market_unit, market_unit_share=0.7)
+
+    generator.control_bus = control_bus
+
+    grid.add_bus(obj=bus)
+    grid.add_bus(obj=control_bus)
+    grid.add_market_unit(obj=market_unit)
+    grid.add_generator(bus=bus, api_obj=generator)
+
+    grid_gslv, gslv_dict = to_gslv(
+        circuit=grid,
+        use_time_series=False,
+        time_indices=None,
+        override_branch_controls=False,
+        opf_results=None,
+    )
+
+    converted_generator = grid_gslv.generators[0]
+    assert converted_generator.market_unit.get_idtag() == market_unit.idtag
+    assert converted_generator.market_unit_share.to_list() == [0.7]
+    assert converted_generator.control_bus.to_list()[0].get_idtag() == control_bus.idtag
+    assert gslv_dict.market_unit_dict[market_unit].get_idtag() == market_unit.idtag
+
+
+def test_gslv_conversion_exports_battery_storage_and_market_unit_fields() -> None:
+    """
+    Check that battery-specific storage fields and generator-like market data are exported.
+
+    :return: None.
+    """
+    if not GSLV_AVAILABLE:
+        return
+    else:
+        pass
+
+    grid: vg.MultiCircuit = vg.MultiCircuit(name="gslv-battery-export")
+    bus: vg.Bus = vg.Bus(name="Bus")
+    control_bus: vg.Bus = vg.Bus(name="Control bus")
+    market_unit: vg.MarketUnit = vg.MarketUnit(name="Battery unit")
+    battery: vg.Battery = vg.Battery(name="Battery",
+                                     soc=0.42,
+                                     charge_per_cycle=0.23,
+                                     discharge_per_cycle=0.34,
+                                     r1=0.01,
+                                     x1=0.02)
+
+    battery.control_bus = control_bus
+    battery.market_unit = market_unit
+    battery.market_unit_share = 0.4
+    battery.min_soc_charge = 0.55
+
+    grid.add_bus(obj=bus)
+    grid.add_bus(obj=control_bus)
+    grid.add_market_unit(obj=market_unit)
+    grid.add_battery(bus=bus, api_obj=battery)
+
+    grid_gslv, _ = to_gslv(
+        circuit=grid,
+        use_time_series=False,
+        time_indices=None,
+        override_branch_controls=False,
+        opf_results=None,
+        add_three_phase_data=True,
+    )
+
+    converted_battery = grid_gslv.batteries[0]
+    assert converted_battery.soc == 0.42
+    assert converted_battery.charge_per_cycle == 0.23
+    assert converted_battery.discharge_per_cycle == 0.34
+    assert converted_battery.min_soc_charge == 0.55
+    assert converted_battery.R1 == 0.01
+    assert converted_battery.X1 == 0.02
+    assert converted_battery.market_unit.get_idtag() == market_unit.idtag
+    assert converted_battery.market_unit_share.to_list() == [0.4]
+    assert converted_battery.control_bus.to_list()[0].get_idtag() == control_bus.idtag
+
+
+def test_gslv_association_helpers_copy_exact_values() -> None:
+    """
+    Check the association copier calls the GSLV association API with the source values.
+
+    :return: None.
+    """
+    facility: vg.Facility = vg.Facility(name="Plant")
+    technology: vg.Technology = vg.Technology(name="Solar")
+    fuel: vg.Fuel = vg.Fuel(name="Gas")
+    emission_gas: vg.EmissionGas = vg.EmissionGas(name="CO2")
+    load: vg.Load = vg.Load(name="Load")
+    generator: vg.Generator = vg.Generator(name="Generator")
+
+    gslv_facility: object = object()
+    gslv_technology: object = object()
+    gslv_fuel: object = object()
+    gslv_emission_gas: object = object()
+
+    facility_dict: Dict[vg.Facility, object] = dict()
+    facility_dict[facility] = gslv_facility
+    technology_dict: Dict[vg.Technology, object] = dict()
+    technology_dict[technology] = gslv_technology
+    fuel_dict: Dict[vg.Fuel, object] = dict()
+    fuel_dict[fuel] = gslv_fuel
+    emission_gas_dict: Dict[vg.EmissionGas, object] = dict()
+    emission_gas_dict[emission_gas] = gslv_emission_gas
+
+    # Common injection associations must preserve the referenced target and weight.
+    load.facility = facility
+    load.technologies.add_object(api_object=technology, val=0.30)
+    gslv_load: GslvInjectionRecorder = GslvInjectionRecorder()
+    set_injection_associations(
+        gslv_elm=gslv_load,
+        elm=load,
+        facility_dict=facility_dict,
+        technology_dict=technology_dict,
+    )
+
+    # Generator-like devices add fuel and emission associations on top of common injection associations.
+    generator.facility = facility
+    generator.technologies.add_object(api_object=technology, val=0.70)
+    generator.fuels.add_object(api_object=fuel, val=0.40)
+    generator.emissions.add_object(api_object=emission_gas, val=0.10)
+    gslv_generator: GslvGeneratorRecorder = GslvGeneratorRecorder()
+    set_generator_associations(
+        gslv_elm=gslv_generator,
+        elm=generator,
+        facility_dict=facility_dict,
+        technology_dict=technology_dict,
+        fuel_dict=fuel_dict,
+        emission_gas_dict=emission_gas_dict,
+    )
+
+    assert gslv_load.facility is gslv_facility
+    assert gslv_load.technologies.values[gslv_technology] == 0.30
+    assert gslv_generator.facility is gslv_facility
+    assert gslv_generator.technologies.values[gslv_technology] == 0.70
+    assert gslv_generator.fuels.values[gslv_fuel] == 0.40
+    assert gslv_generator.emissions.values[gslv_emission_gas] == 0.10
 
 
 def test_power_flow_ts_ny_activs():

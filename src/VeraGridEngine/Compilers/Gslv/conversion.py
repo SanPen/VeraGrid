@@ -8,10 +8,14 @@ from VeraGridEngine.Devices.Aggregation.branch_group import BranchGroup
 from VeraGridEngine.Devices.Aggregation.country import Country
 from VeraGridEngine.Devices.Aggregation.facility import Facility
 from VeraGridEngine.Devices.Aggregation.investments_group import InvestmentsGroup
+from VeraGridEngine.Devices.Aggregation.market_unit import MarketUnit
 from VeraGridEngine.Devices.Aggregation.modelling_authority import ModellingAuthority
 from VeraGridEngine.Devices.Aggregation.municipality import Municipality
 from VeraGridEngine.Devices.Aggregation.region import Region
 from VeraGridEngine.Devices.Aggregation.zone import Zone
+from VeraGridEngine.Devices.Associations.emission_gas import EmissionGas
+from VeraGridEngine.Devices.Associations.fuel import Fuel
+from VeraGridEngine.Devices.Associations.technology import Technology
 from VeraGridEngine.Devices.Events.contingency_group import ContingencyGroup
 from VeraGridEngine.Devices.Substation.substation import Substation
 from VeraGridEngine.Devices.Substation.voltage_level import VoltageLevel
@@ -38,7 +42,9 @@ from VeraGridEngine.Compilers.Gslv.Devices.voltage_levels import add_voltage_lev
 from VeraGridEngine.Compilers.Gslv.Devices.contingencies import add_contingency_groups, add_contingencies
 from VeraGridEngine.Compilers.Gslv.Devices.investments import add_investment_groups, add_investments
 from VeraGridEngine.Compilers.Gslv.Devices.facilities import add_facilities
+from VeraGridEngine.Compilers.Gslv.Devices.market_units import add_market_units
 from VeraGridEngine.Compilers.Gslv.Devices.modelling_authorities import add_modelling_authorities
+from VeraGridEngine.Compilers.Gslv.Devices.associations import add_emission_gases, add_fuels, add_technologies
 from VeraGridEngine.Compilers.Gslv.Devices.buses import add_buses
 from VeraGridEngine.Compilers.Gslv.Devices.loads import add_loads
 from VeraGridEngine.Compilers.Gslv.Devices.static_generators import add_static_generators
@@ -68,12 +74,16 @@ class GslvDicts:
         "voltage_level_dict",
         "country_dict",
         "facility_dict",
+        "market_unit_dict",
         "modelling_authorities_dict",
         "branch_groups_dict",
         "municipalities_dict",
         "regions_dict",
         "con_groups_dict",
         "inv_groups_dict",
+        "technology_dict",
+        "fuel_dict",
+        "emission_gas_dict",
     )
 
     def __init__(self) -> None:
@@ -94,6 +104,8 @@ class GslvDicts:
 
         self.facility_dict: Dict[Facility, "pg.Facility"] = dict()
 
+        self.market_unit_dict: Dict[MarketUnit, "pg.MarketUnit"] = dict()
+
         self.modelling_authorities_dict: Dict[ModellingAuthority, "pg.ModellingAuthority"] = dict()
 
         self.branch_groups_dict: Dict[BranchGroup, "pg.BranchGroup"] = dict()
@@ -105,6 +117,12 @@ class GslvDicts:
         self.con_groups_dict: Dict[ContingencyGroup, "pg.ContingencyGroup"] = dict()
 
         self.inv_groups_dict: Dict[InvestmentsGroup, "pg.InvestmentGroup"] = dict()
+
+        self.technology_dict: Dict[Technology, "pg.Technology"] = dict()
+
+        self.fuel_dict: Dict[Fuel, "pg.Fuel"] = dict()
+
+        self.emission_gas_dict: Dict[EmissionGas, "pg.EmissionGas"] = dict()
 
 
 def to_gslv(circuit: MultiCircuit,
@@ -150,7 +168,21 @@ def to_gslv(circuit: MultiCircuit,
 
     dicts.country_dict = add_countries(circuit=circuit, gslv_grid=pg_grid)
 
+    for substation in circuit.substations:
+        if substation.country is None:
+            pass
+        else:
+            dicts.substation_dict[substation].country = dicts.country_dict[substation.country]
+
     dicts.facility_dict = add_facilities(circuit=circuit, gslv_grid=pg_grid)
+
+    dicts.market_unit_dict = add_market_units(circuit=circuit)
+
+    dicts.technology_dict = add_technologies(circuit=circuit, gslv_grid=pg_grid)
+
+    dicts.fuel_dict = add_fuels(circuit=circuit, gslv_grid=pg_grid)
+
+    dicts.emission_gas_dict = add_emission_gases(circuit=circuit, gslv_grid=pg_grid)
 
     dicts.modelling_authorities_dict = add_modelling_authorities(circuit=circuit, gslv_grid=pg_grid)
 
@@ -185,6 +217,8 @@ def to_gslv(circuit: MultiCircuit,
         circuit=circuit,
         gslv_grid=pg_grid,
         bus_dict=bus_dict,
+        facility_dict=dicts.facility_dict,
+        technology_dict=dicts.technology_dict,
         use_time_series=use_time_series,
         n_time=n_time,
         time_indices=time_indices,
@@ -195,6 +229,8 @@ def to_gslv(circuit: MultiCircuit,
         circuit=circuit,
         gslv_grid=pg_grid,
         bus_dict=bus_dict,
+        facility_dict=dicts.facility_dict,
+        technology_dict=dicts.technology_dict,
         time_series=use_time_series,
         n_time=n_time,
         time_indices=time_indices,
@@ -204,6 +240,8 @@ def to_gslv(circuit: MultiCircuit,
         circuit=circuit,
         gslv_grid=pg_grid,
         bus_dict=bus_dict,
+        facility_dict=dicts.facility_dict,
+        technology_dict=dicts.technology_dict,
         time_series=use_time_series,
         n_time=n_time,
         time_indices=time_indices,
@@ -214,6 +252,8 @@ def to_gslv(circuit: MultiCircuit,
         circuit=circuit,
         gslv_grid=pg_grid,
         bus_dict=bus_dict,
+        facility_dict=dicts.facility_dict,
+        technology_dict=dicts.technology_dict,
         time_series=use_time_series,
         n_time=n_time,
         time_indices=time_indices,
@@ -224,6 +264,11 @@ def to_gslv(circuit: MultiCircuit,
         circuit=circuit,
         gslv_grid=pg_grid,
         bus_dict=bus_dict,
+        facility_dict=dicts.facility_dict,
+        technology_dict=dicts.technology_dict,
+        fuel_dict=dicts.fuel_dict,
+        emission_gas_dict=dicts.emission_gas_dict,
+        market_unit_dict=dicts.market_unit_dict,
         time_series=use_time_series,
         n_time=n_time,
         time_indices=time_indices,
@@ -235,6 +280,11 @@ def to_gslv(circuit: MultiCircuit,
         circuit=circuit,
         gslv_grid=pg_grid,
         bus_dict=bus_dict,
+        facility_dict=dicts.facility_dict,
+        technology_dict=dicts.technology_dict,
+        fuel_dict=dicts.fuel_dict,
+        emission_gas_dict=dicts.emission_gas_dict,
+        market_unit_dict=dicts.market_unit_dict,
         time_series=use_time_series,
         n_time=n_time,
         time_indices=time_indices,

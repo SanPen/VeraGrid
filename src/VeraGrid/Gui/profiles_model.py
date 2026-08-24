@@ -303,12 +303,19 @@ class ProfilesModel(WrappableTableModel):
 
         return None
 
-    def paste_from_clipboard(self, row_idx=0, col_idx=0):
+    def paste_from_clipboard(self,
+                             row_idx: int = 0,
+                             col_idx: int = 0,
+                             selected_rows: Union[None, List[int]] = None,
+                             selected_cols: Union[None, List[int]] = None) -> None:
         """
+        Paste clipboard data into the profile table.
 
-        Args:
-            row_idx:
-            col_idx:
+        :param row_idx: Row where the paste starts.
+        :param col_idx: Column where the paste starts.
+        :param selected_rows: Selected rows used for single-cell fill.
+        :param selected_cols: Selected columns used for single-cell fill.
+        :return: None.
         """
         n = len(self.elements)
         nt = len(self.time_array)
@@ -320,14 +327,59 @@ class ProfilesModel(WrappableTableModel):
             cb = QtWidgets.QApplication.clipboard()
             text = cb.text()
 
-            rows = text.split('\n')
+            rows = [line for line in text.splitlines() if len(line) > 0]
+            parsed_rows: List[List[str]] = list()
+            row: str
 
-            mod_cols = list()
+            for row in rows:
+                parsed_rows.append(row.split('\t'))
+
+            if len(parsed_rows) == 0:
+                return
+            else:
+                pass
+
+            mod_cols: List[int] = list()
+
+            if (len(parsed_rows) == 1 and len(parsed_rows[0]) == 1 and
+                    selected_rows is not None and selected_cols is not None and
+                    len(selected_rows) * len(selected_cols) > 1):
+                try:
+                    val2 = formatter(parsed_rows[0][0])
+                    parsed = True
+                except ValueError:
+                    warn("could not parse '" + str(parsed_rows[0][0]) + "'")
+                    parsed = False
+                    val2 = ''
+
+                if parsed:
+                    selected_row: int
+                    selected_col: int
+                    for selected_col in selected_cols:
+                        if selected_col < n:
+                            prof = self.elements[selected_col].get_profile(magnitude=self.magnitude)
+                            arr = prof.toarray()
+                            for selected_row in selected_rows:
+                                if selected_row < nt:
+                                    mod_cols.append(selected_col)
+                                    arr[selected_row] = val2
+                                else:
+                                    print('Out of profile bounds')
+                            prof.set(arr)
+                        else:
+                            print('Out of profile bounds')
+                else:
+                    pass
+
+                return
+            else:
+                pass
 
             # gather values
-            for r, row in enumerate(rows):
+            values: List[str]
+            val: str
+            for r, values in enumerate(parsed_rows):
 
-                values = row.split('\t')
                 r2 = r + row_idx
                 for c, val in enumerate(values):
 
@@ -336,7 +388,7 @@ class ProfilesModel(WrappableTableModel):
                     try:
                         val2 = formatter(val)
                         parsed = True
-                    except:
+                    except ValueError:
                         warn("could not parse '" + str(val) + "'")
                         parsed = False
                         val2 = ''
@@ -355,42 +407,67 @@ class ProfilesModel(WrappableTableModel):
             # there are no elements
             pass
 
-    def copy_to_clipboard(self, cols: Union[None, List[int]] = None) -> bool:
+    def copy_to_clipboard(self,
+                          cols: Union[None, List[int]] = None,
+                          rows: Union[None, List[int]] = None,
+                          include_headers: bool = True) -> bool:
         """
         Copy profiles to clipboard
-        :param cols:
+        :param cols: Columns to copy.
+        :param rows: Rows to copy.
+        :param include_headers: Include table headers and time index.
         :return:
         """
 
         if cols is None:
-            elements = self.elements
+            col_indices: List[int] = list(range(len(self.elements)))
         else:
             if len(cols) > 0:
-                elements = [self.elements[i] for i in cols]
+                col_indices = cols
             else:
-                elements = self.elements
+                col_indices = list(range(len(self.elements)))
 
-        n = len(elements)
+        if rows is None:
+            row_indices: List[int] = list(range(len(self.time_array)))
+        else:
+            if len(rows) > 0:
+                row_indices = rows
+            else:
+                row_indices = list(range(len(self.time_array)))
+
+        n = len(col_indices)
 
         if n > 0:
 
-            nt = len(self.time_array)
+            nt = len(row_indices)
 
             # gather values
             names = np.empty(n, dtype=object)
             values = np.empty((nt, n), dtype=object)
 
-            for c in range(n):
-                names[c] = elements[c].name
-                prof = elements[c].get_profile(self.magnitude)
-                values[:, c] = prof.toarray().astype(str)
+            c: int
+            column_index: int
+            row_position: int
+            row_index: int
+            for c, column_index in enumerate(col_indices):
+                names[c] = self.elements[column_index].name
+                prof = self.elements[column_index].get_profile(self.magnitude)
+                arr = prof.toarray().astype(str)
+                for row_position, row_index in enumerate(row_indices):
+                    values[row_position, c] = arr[row_index]
 
             # header first
-            data = '\t' + '\t'.join(names) + '\n'
+            if include_headers:
+                data = '\t' + '\t'.join(names) + '\n'
+            else:
+                data = ''
 
             # data
-            for t, date in enumerate(self.time_array):
-                data += str(date) + '\t' + '\t'.join(values[t, :]) + '\n'
+            for t, row_index in enumerate(row_indices):
+                if include_headers:
+                    data += str(self.time_array[row_index]) + '\t' + '\t'.join(values[t, :]) + '\n'
+                else:
+                    data += '\t'.join(values[t, :]) + '\n'
 
             # copy to clipboard
             cb = QtWidgets.QApplication.clipboard()

@@ -375,6 +375,7 @@ def run_dense_small_signal_stability(problem: RmsProblemTemplate,
 
     if verbose:
         print("Eigenvalues:", eigenvalues)
+        print("Participation Factors:", participation_factors)
 
     return eigenvalues,v, participation_factors, damping_ratios, conjugate_freq, A_orig, None
 

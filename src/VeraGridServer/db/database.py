@@ -483,6 +483,66 @@ def ensure_device_table_composite_primary_key(cursor: CursorLike,
     )
 
 
+def ensure_veragrid_object_table(cursor: CursorLike,
+                                 schema_name: str,
+                                 table_name: str) -> None:
+    """
+    Ensure one VeraGrid typed-object table exists with the current generic schema.
+
+    :param cursor: Open database cursor.
+    :param schema_name: Target schema name.
+    :param table_name: Target typed-object table name.
+    :return: None.
+    """
+    quoted_schema_name: str = quote_sql_identifier(schema_name)
+    quoted_table_name: str = quote_sql_identifier(table_name)
+    constraint_name: str = f"{table_name}_model_fk".lower().replace(" ", "_")
+    primary_key_name: str = f"{table_name}_pkey".lower().replace(" ", "_")
+
+    # New VeraGrid device types should not require a full database rebuild. The
+    # typed object table stores opaque JSONB payloads, so creating the missing
+    # table lazily is equivalent to the normal schema bootstrap path.
+    log_database_operation(
+        f"Creating table '{schema_name}.{table_name}' if it does not exist."
+    )
+    cursor.execute(
+        f"""
+        CREATE TABLE IF NOT EXISTS {quoted_schema_name}.{quoted_table_name} (
+            model_idtag TEXT NOT NULL,
+            idtag TEXT NOT NULL,
+            data JSONB NOT NULL,
+            object_index INTEGER NOT NULL,
+            CONSTRAINT {quote_sql_identifier(primary_key_name)}
+                PRIMARY KEY (model_idtag, idtag),
+            CONSTRAINT {quote_sql_identifier(constraint_name)}
+                FOREIGN KEY (model_idtag)
+                REFERENCES {quoted_schema_name}."Models"(idtag)
+                ON DELETE CASCADE
+        )
+        """
+    )
+    add_column_if_not_exists(cursor, schema_name, table_name, "idtag", "TEXT")
+    add_column_if_not_exists(cursor, schema_name, table_name, "data", "JSONB")
+    add_column_if_not_exists(cursor, schema_name, table_name, "object_index", "INTEGER")
+    add_column_if_not_exists(cursor, schema_name, table_name, "model_idtag", "TEXT")
+    ensure_device_table_composite_primary_key(
+        cursor=cursor,
+        schema_name=schema_name,
+        table_name=table_name,
+        constraint_name=primary_key_name,
+    )
+    add_constraint_if_not_exists(
+        cursor=cursor,
+        schema_name=schema_name,
+        table_name=table_name,
+        constraint_name=constraint_name,
+        constraint_sql=(
+            f'FOREIGN KEY (model_idtag) REFERENCES {quoted_schema_name}."Models"(idtag) '
+            f'ON DELETE CASCADE'
+        ),
+    )
+
+
 def backfill_legacy_model_file_rows(cursor: CursorLike,
                                     schema_name: str) -> None:
     """
@@ -955,48 +1015,10 @@ def create_veragrid_schema(settings: PostgreSqlConnectionSettings,
         # as JSONB so the object structure can evolve without forcing a table redesign
         # for every engine-side property change.
         for table_name in object_table_names:
-            quoted_table_name: str = quote_sql_identifier(table_name)
-            constraint_name: str = f"{table_name}_model_fk".lower().replace(" ", "_")
-            primary_key_name: str = f"{table_name}_pkey".lower().replace(" ", "_")
-
-            log_database_operation(
-                f"Creating table '{schema_name}.{table_name}' if it does not exist."
-            )
-            cursor.execute(
-                f"""
-                CREATE TABLE IF NOT EXISTS {quoted_schema_name}.{quoted_table_name} (
-                    model_idtag TEXT NOT NULL,
-                    idtag TEXT NOT NULL,
-                    data JSONB NOT NULL,
-                    object_index INTEGER NOT NULL,
-                    CONSTRAINT {quote_sql_identifier(primary_key_name)}
-                        PRIMARY KEY (model_idtag, idtag),
-                    CONSTRAINT {quote_sql_identifier(constraint_name)}
-                        FOREIGN KEY (model_idtag)
-                        REFERENCES {quoted_schema_name}."Models"(idtag)
-                        ON DELETE CASCADE
-                )
-                """
-            )
-            add_column_if_not_exists(cursor, schema_name, table_name, "idtag", "TEXT")
-            add_column_if_not_exists(cursor, schema_name, table_name, "data", "JSONB")
-            add_column_if_not_exists(cursor, schema_name, table_name, "object_index", "INTEGER")
-            add_column_if_not_exists(cursor, schema_name, table_name, "model_idtag", "TEXT")
-            ensure_device_table_composite_primary_key(
+            ensure_veragrid_object_table(
                 cursor=cursor,
                 schema_name=schema_name,
                 table_name=table_name,
-                constraint_name=primary_key_name,
-            )
-            add_constraint_if_not_exists(
-                cursor=cursor,
-                schema_name=schema_name,
-                table_name=table_name,
-                constraint_name=constraint_name,
-                constraint_sql=(
-                    f'FOREIGN KEY (model_idtag) REFERENCES {quoted_schema_name}."Models"(idtag) '
-                    f'ON DELETE CASCADE'
-                ),
             )
 
         log_database_operation(

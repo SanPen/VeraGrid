@@ -15,11 +15,73 @@ from datetime import datetime, timedelta
 
 import VeraGrid.Gui.gui_functions as gf
 from VeraGrid.Gui.messages import yes_no_question
+from VeraGrid.Gui.general_dialogues import TimeReIndexDialogue
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.IO.file_open import FileOpen
 from VeraGridEngine.basic_structures import Logger
 from VeraGridEngine.Utils.progress_bar import print_progress_bar
 from VeraGrid.Gui.FileDialogues.ProfilesInput.profiles_from_models_gui import Ui_Dialog
+
+
+class GridsModelTimeDelegate(QtWidgets.QStyledItemDelegate):
+    """
+    Date-time editor delegate for the imported-model time column.
+    """
+
+    def createEditor(self,
+                     parent: QtWidgets.QWidget,
+                     option: QtWidgets.QStyleOptionViewItem,
+                     index: QtCore.QModelIndex) -> QtWidgets.QDateTimeEdit:
+        """
+        Create the date-time editor used when editing a model-row timestamp.
+
+        :param parent: Parent widget supplied by Qt.
+        :param option: Style option supplied by Qt.
+        :param index: Edited model index.
+        :return: Configured date-time editor.
+        """
+        del option
+        del index
+
+        editor: QtWidgets.QDateTimeEdit = QtWidgets.QDateTimeEdit(parent)
+        editor.setCalendarPopup(True)
+        editor.setDisplayFormat("yyyy-MM-dd HH:mm:ss")
+        return editor
+
+    def setEditorData(self, editor: QtWidgets.QDateTimeEdit, index: QtCore.QModelIndex) -> None:
+        """
+        Load the current model timestamp into the editor.
+
+        :param editor: Date-time editor created by this delegate.
+        :param index: Edited model index.
+        :return: None.
+        """
+        value: object = index.model().data(index, QtCore.Qt.ItemDataRole.EditRole)
+        timestamp: pd.Timestamp = pd.to_datetime(value, errors='coerce')
+
+        if pd.isna(timestamp):
+            editor.setDateTime(QtCore.QDateTime.currentDateTime())
+        else:
+            editor.setDateTime(QtCore.QDateTime(timestamp.year,
+                                                timestamp.month,
+                                                timestamp.day,
+                                                timestamp.hour,
+                                                timestamp.minute,
+                                                timestamp.second))
+
+    def setModelData(self,
+                     editor: QtWidgets.QDateTimeEdit,
+                     model: QtCore.QAbstractItemModel,
+                     index: QtCore.QModelIndex) -> None:
+        """
+        Store the edited date-time back into the model.
+
+        :param editor: Date-time editor containing the selected value.
+        :param model: Table model receiving the edited value.
+        :param index: Edited model index.
+        :return: None.
+        """
+        model.setData(index, editor.dateTime().toPython(), QtCore.Qt.ItemDataRole.EditRole)
 
 
 def extract_and_convert_to_datetime(filename, logger: Logger) -> pd.Timestamp | None:
@@ -230,7 +292,93 @@ class GridsModel(QtCore.QAbstractTableModel):
             if role == QtCore.Qt.ItemDataRole.DisplayRole:
                 # return self.formatter(self._data[index.row(), index.column()])
                 return str(self._values_[index.row()].get_at(index.column()))
+            elif role == QtCore.Qt.ItemDataRole.EditRole:
+                return self._values_[index.row()].get_at(index.column())
+            else:
+                pass
         return None
+
+    def setData(self,
+                index: QtCore.QModelIndex,
+                value: object,
+                role: int = QtCore.Qt.ItemDataRole.EditRole) -> bool:
+        """
+        Set the edited table value.
+
+        :param index: Edited model index.
+        :param value: New value supplied by the Qt editor.
+        :param role: Qt edit role.
+        :return: ``True`` when the value was accepted.
+        """
+        edited_time: pd.Timestamp | None
+        row: int
+        column: int
+
+        if not index.isValid():
+            return False
+        else:
+            pass
+
+        if role != QtCore.Qt.ItemDataRole.EditRole:
+            return False
+        else:
+            pass
+
+        row = index.row()
+        column = index.column()
+
+        if row < 0 or row >= len(self._values_):
+            return False
+        else:
+            pass
+
+        if column == 0:
+            edited_time = pd.to_datetime(value, errors='coerce')
+            if pd.isna(edited_time):
+                return False
+            else:
+                pass
+            self._values_[row].time = edited_time
+        elif column == 2:
+            self._values_[row].path = str(value)
+            self._values_[row].name = os.path.basename(str(value))
+        elif column == 1:
+            self._values_[row].name = str(value)
+        else:
+            return False
+
+        self.dataChanged.emit(index, index, [role])
+        return True
+
+    def re_index_time(self, t0: datetime, step_size: float, step_unit: str) -> None:
+        """
+        Rebuild the item times as an evenly spaced time index.
+
+        :param t0: First timestamp.
+        :param step_size: Step size in the selected unit.
+        :param step_unit: Time unit: ``h``, ``m`` or ``s``.
+        :return: None.
+        """
+        row: int
+        item: GridsModelItem
+        delta: timedelta
+        base_time: datetime
+
+        if step_unit == 'h':
+            delta = timedelta(hours=step_size)
+        elif step_unit == 'm':
+            delta = timedelta(minutes=step_size)
+        elif step_unit == 's':
+            delta = timedelta(seconds=step_size)
+        else:
+            return
+
+        base_time = t0.replace(second=0, microsecond=0)
+
+        for row, item in enumerate(self._values_):
+            item.time = pd.Timestamp(base_time + row * delta)
+
+        self.update()
 
     def headerData(self,
                    section: int,
@@ -257,11 +405,14 @@ class GridsModel(QtCore.QAbstractTableModel):
         :return:
         """
         if index.isValid():
-            return (QtCore.Qt.ItemFlag.ItemIsDropEnabled |
-                    QtCore.Qt.ItemFlag.ItemIsEnabled |
-                    QtCore.Qt.ItemFlag.ItemIsEditable |
-                    QtCore.Qt.ItemFlag.ItemIsSelectable |
-                    QtCore.Qt.ItemFlag.ItemIsDragEnabled)
+            flags: QtCore.Qt.ItemFlag = (QtCore.Qt.ItemFlag.ItemIsDropEnabled |
+                                          QtCore.Qt.ItemFlag.ItemIsEnabled |
+                                          QtCore.Qt.ItemFlag.ItemIsSelectable |
+                                          QtCore.Qt.ItemFlag.ItemIsDragEnabled)
+            if index.column() == 2:
+                return flags
+            else:
+                return flags | QtCore.Qt.ItemFlag.ItemIsEditable
         else:
             return QtCore.Qt.ItemFlag.ItemIsDropEnabled
 
@@ -529,12 +680,15 @@ class ModelsInputGUI(QtWidgets.QDialog):
         self.ui.modelsTableView.setDropIndicatorShown(True)
         self.ui.modelsTableView.setDragDropMode(QtWidgets.QAbstractItemView.DragDrop)
         self.ui.modelsTableView.setDefaultDropAction(QtCore.Qt.DropAction.CopyAction)
+        self.ui.modelsTableView.setItemDelegateForColumn(0, GridsModelTimeDelegate(self.ui.modelsTableView))
         self.ui.modelsTableView.repaint()
 
         # click
         self.ui.addModelsButton.clicked.connect(self.add_models)
         self.ui.acceptModelsButton.clicked.connect(self.start_process)
         self.ui.deleteModelsButton.clicked.connect(self.clear_model)
+        self.ui.reIndexTimeButton.clicked.connect(self.re_index_time)
+        self.ui.modelsTableView.doubleClicked.connect(self.models_table_double_clicked)
 
     def accept(self) -> None:
         """
@@ -596,6 +750,42 @@ class ModelsInputGUI(QtWidgets.QDialog):
             self.ui.modelsTableView.setModel(self.grids_model)
             self.ui.modelsTableView.repaint()
 
+    def models_table_double_clicked(self, index: QtCore.QModelIndex) -> None:
+        """
+        Handle double-click actions that need a full dialogue.
+
+        :param index: Double-clicked table index.
+        :return: None.
+        """
+        files_types: str
+        current_path: str
+        start_folder: str
+        filename: str
+        type_selected: str
+
+        if index.isValid():
+            if index.column() == 2:
+                files_types = "Formats (*.raw *.RAW *.rawx *.xml *.m *.matpower *.epc *.EPC *.dgs *.p *.uct *.UCT)"
+                current_path = str(self.grids_model.items()[index.row()].path)
+                start_folder = os.path.dirname(current_path)
+                filename, type_selected = QtWidgets.QFileDialog.getOpenFileName(self,
+                                                                                'Select file',
+                                                                                start_folder,
+                                                                                filter=files_types)
+                del type_selected
+
+                if filename != "":
+                    self.grids_model.setData(index=index,
+                                             value=filename,
+                                             role=QtCore.Qt.ItemDataRole.EditRole)
+                    self.ui.modelsTableView.repaint()
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+
     def start_process(self) -> None:
         """
         Start the import in a background thread and report progress in the dialogue.
@@ -621,6 +811,7 @@ class ModelsInputGUI(QtWidgets.QDialog):
             self.ui.acceptModelsButton.setEnabled(False)
             self.ui.addModelsButton.setEnabled(False)
             self.ui.deleteModelsButton.setEnabled(False)
+            self.ui.reIndexTimeButton.setEnabled(False)
             self.ui.modelsTableView.setEnabled(False)
             self.ui.matchUsingCodeCheckBox.setEnabled(False)
             # Keep the worker object on the dialogue so Qt signals stay valid
@@ -649,6 +840,7 @@ class ModelsInputGUI(QtWidgets.QDialog):
         self.ui.acceptModelsButton.setEnabled(True)
         self.ui.addModelsButton.setEnabled(True)
         self.ui.deleteModelsButton.setEnabled(True)
+        self.ui.reIndexTimeButton.setEnabled(True)
         self.ui.modelsTableView.setEnabled(True)
         self.ui.matchUsingCodeCheckBox.setEnabled(True)
 
@@ -678,6 +870,7 @@ class ModelsInputGUI(QtWidgets.QDialog):
             self.ui.acceptModelsButton.setEnabled(False)
             self.ui.addModelsButton.setEnabled(False)
             self.ui.deleteModelsButton.setEnabled(False)
+            self.ui.reIndexTimeButton.setEnabled(False)
             self.ui.modelsTableView.setEnabled(False)
             self.ui.matchUsingCodeCheckBox.setEnabled(False)
 
@@ -688,6 +881,24 @@ class ModelsInputGUI(QtWidgets.QDialog):
             return True
         else:
             return False
+
+    def re_index_time(self) -> None:
+        """
+        Re-index the imported model rows with an evenly spaced time profile.
+
+        :return: None.
+        """
+        dlg: TimeReIndexDialogue = TimeReIndexDialogue()
+        dlg.setModal(True)
+        dlg.exec()
+
+        if dlg.is_accepted:
+            self.grids_model.re_index_time(t0=dlg.date_time_editor.dateTime().toPython(),
+                                           step_size=dlg.step_length.value(),
+                                           step_unit=dlg.units.currentData())
+            self.ui.modelsTableView.repaint()
+        else:
+            pass
 
     def generate_time_array(self,
                             main_grid: MultiCircuit,

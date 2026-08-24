@@ -1917,6 +1917,143 @@ def test_ntc_free_mode_dominates_droop_mode() -> None:
             f"dominance violated (ctg={consider_contingencies}): free={ntc_free} < droop={ntc_droop}"
 
 
+def _vsc_control_state(vsc: gce.VSC) -> tuple:
+    """
+    Capture the VSC control snapshot that the GUI objects inspector shows.
+
+    :param vsc: Converter whose control pair is recorded.
+    :return: Control modes, set-points and remote devices.
+    """
+    control1_dev_id: str | None
+    control2_dev_id: str | None
+    if vsc.control1_dev is None:
+        control1_dev_id = None
+    else:
+        control1_dev_id = vsc.control1_dev.idtag
+    if vsc.control2_dev is None:
+        control2_dev_id = None
+    else:
+        control2_dev_id = vsc.control2_dev.idtag
+    return (vsc.control1, vsc.control2, vsc.control1_val, vsc.control2_val,
+            vsc.control1_val_droop, vsc.control2_val_droop,
+            control1_dev_id, control2_dev_id)
+
+
+def _assert_vsc_time_series_controls_match_snapshot(grid: gce.MultiCircuit) -> None:
+    """
+    Profiles and compilation at t = 0 must keep the snapshot VSC control pair.
+
+    :param grid: Circuit whose converters are checked.
+    :return: None
+    """
+    for vsc in grid.vsc_devices:
+        assert vsc.get_control1_at(0) == vsc.control1
+        assert vsc.get_control2_at(0) == vsc.control2
+        assert vsc.get_control1_val_at(0) == vsc.control1_val
+        assert vsc.get_control2_val_at(0) == vsc.control2_val
+        assert vsc.control1_prof[0] == vsc.control1
+        assert vsc.control2_prof[0] == vsc.control2
+
+    nc_snap = gce.compile_numerical_circuit_at(circuit=grid, t_idx=None)
+    nc_t0 = gce.compile_numerical_circuit_at(circuit=grid, t_idx=0)
+    assert np.array_equal(nc_snap.vsc_data.control1_int, nc_t0.vsc_data.control1_int)
+    assert np.array_equal(nc_snap.vsc_data.control2_int, nc_t0.vsc_data.control2_int)
+    assert np.allclose(nc_snap.vsc_data.control1_val, nc_t0.vsc_data.control1_val)
+    assert np.allclose(nc_snap.vsc_data.control2_val, nc_t0.vsc_data.control2_val)
+
+
+def test_ntc_ts_does_not_mutate_vsc_controls() -> None:
+    """
+    NTC time series must not write back into the VSC control modes or set-points.
+
+    This is the Pmode1 (Pac + Pdc) arrangement used on the large 6000h grids.
+    """
+    grid = gce.open_file(get_grid_path("NTC_8_bus_2pmode3_dc_bottleneck.veragrid"))
+    for vsc in grid.vsc_devices:
+        if vsc.control1 == ConverterControlType.Pdc_angle_droop:
+            vsc.control2 = ConverterControlType.Pdc
+            vsc.control2_val = 0.0
+            vsc.control1 = ConverterControlType.Pac
+            vsc.control1_val = 0.0
+            vsc.control1_dev = None
+        else:
+            pass
+
+    before = [_vsc_control_state(vsc) for vsc in grid.vsc_devices]
+    grid.create_profiles(3, step_length=1.0, step_unit='h')
+    _assert_vsc_time_series_controls_match_snapshot(grid)
+
+    area_from, area_to = grid.areas[0], grid.areas[1]
+    info = grid.get_inter_aggregation_info(objects_from=[area_from], objects_to=[area_to])
+    options = gce.OptimalNetTransferCapacityOptions(
+        sending_bus_idx=info.idx_bus_from,
+        receiving_bus_idx=info.idx_bus_to,
+        transfer_method=gce.AvailableTransferMode.InstalledPower,
+        skip_generation_limits=True,
+        consider_contingencies=True,
+        corrective_contingencies=True,
+        opf_options=gce.OptimalPowerFlowOptions(
+            contingency_groups_used=grid.get_contingency_groups_active()),
+        lin_options=gce.LinearAnalysisOptions(),
+    )
+    drv = gce.OptimalNetTransferCapacityTimeSeriesDriver(
+        grid=grid,
+        options=options,
+        time_indices=list(range(3)),
+    )
+    drv.run()
+
+    after = [_vsc_control_state(vsc) for vsc in grid.vsc_devices]
+    assert before == after
+    _assert_vsc_time_series_controls_match_snapshot(grid)
+
+
+def test_ntc_ts_does_not_mutate_pmode3_vsc_controls() -> None:
+    """
+    NTC time series must not write back into Pmode3 VSC control modes or set-points.
+
+    The 8-bus fixture already has the angle-droop pair (Pdc_angle_droop + Pac)
+    with a remote AC reference bus, matching the 6000h Pmode3 FR converters.
+    """
+    grid = gce.open_file(get_grid_path("NTC_8_bus_2pmode3_dc_bottleneck.veragrid"))
+    n_droop: int = 0
+    for vsc in grid.vsc_devices:
+        if vsc.control1 == ConverterControlType.Pdc_angle_droop:
+            n_droop += 1
+        else:
+            pass
+    assert n_droop >= 1
+
+    before = [_vsc_control_state(vsc) for vsc in grid.vsc_devices]
+    grid.create_profiles(3, step_length=1.0, step_unit='h')
+    _assert_vsc_time_series_controls_match_snapshot(grid)
+
+    area_from, area_to = grid.areas[0], grid.areas[1]
+    info = grid.get_inter_aggregation_info(objects_from=[area_from], objects_to=[area_to])
+    options = gce.OptimalNetTransferCapacityOptions(
+        sending_bus_idx=info.idx_bus_from,
+        receiving_bus_idx=info.idx_bus_to,
+        transfer_method=gce.AvailableTransferMode.InstalledPower,
+        skip_generation_limits=True,
+        consider_contingencies=True,
+        corrective_contingencies=True,
+        opf_options=gce.OptimalPowerFlowOptions(
+            contingency_groups_used=grid.get_contingency_groups_active()),
+        lin_options=gce.LinearAnalysisOptions(),
+    )
+    drv = gce.OptimalNetTransferCapacityTimeSeriesDriver(
+        grid=grid,
+        options=options,
+        time_indices=list(range(3)),
+    )
+    drv.run()
+
+    after = [_vsc_control_state(vsc) for vsc in grid.vsc_devices]
+    assert before == after
+    assert bool(np.all(drv.results.converged))
+    _assert_vsc_time_series_controls_match_snapshot(grid)
+
+
 def test_ntc_structural_n1_overload_is_relaxed_not_infeasible() -> None:
     """
     A structurally unavoidable N-1 overload must relax the limit (penalized slack, reported)

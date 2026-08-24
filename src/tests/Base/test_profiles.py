@@ -5,6 +5,8 @@
 import math
 import os
 import numpy as np
+import pandas as pd
+from VeraGridEngine.Devices.Branches.vsc import VSC
 from VeraGridEngine.Devices.Profiles import check_if_sparse
 from VeraGridEngine.Devices.Profiles.profile_bool import ProfileBool
 from VeraGridEngine.Devices.Profiles.profile_device import ProfileDevice
@@ -16,7 +18,7 @@ from VeraGridEngine.Devices.Profiles.sparse_array_device import SparseArrayDevic
 from VeraGridEngine.Devices.Profiles.sparse_array_enum import SparseArrayEnum
 from VeraGridEngine.Devices.Profiles.sparse_array_float import SparseArrayFloat
 from VeraGridEngine.Devices.Profiles.sparse_array_int import SparseArrayInt
-from VeraGridEngine.enumerations import DeviceType, TapPhaseControl
+from VeraGridEngine.enumerations import ConverterControlType, DeviceType, TapPhaseControl
 
 
 class DummyDevice:
@@ -342,3 +344,83 @@ def test_grid_profile_initialization() -> None:
                 logger.print()
 
             assert ok
+
+
+def test_empty_vsc_control_profile_follows_snapshot() -> None:
+    """
+    An empty VSC control profile must not leak the constructor default (Q_droop)
+    into get_at, the objects inspector, or create_profiles.
+
+    :return: None
+    """
+    vsc: VSC = VSC(name="vsc")
+
+    # the constructor default is Q_droop; the user then sets the snapshot to P-mode 3
+    assert vsc.control1 == ConverterControlType.Q_droop
+    vsc.control1 = ConverterControlType.Pdc_angle_droop
+    vsc.control1_val = 349.0
+    vsc.control2 = ConverterControlType.Pac
+    vsc.control2_val = 0.0
+
+    # the profile is still the empty constructor leftover
+    assert vsc.control1_prof.size() == 0
+    assert vsc.control1_prof.default_value == ConverterControlType.Q_droop
+
+    # compilation and the objects inspector must read the snapshot, not Q_droop
+    assert vsc.get_control1_at(0) == ConverterControlType.Pdc_angle_droop
+    assert vsc.get_control1_val_at(0) == 349.0
+    assert vsc.get_control2_at(0) == ConverterControlType.Pac
+    assert vsc.get_value(vsc.registered_properties["control1"], 0) == ConverterControlType.Pdc_angle_droop
+    assert vsc.get_property_value(vsc.registered_properties["control1"], 0) == ConverterControlType.Pdc_angle_droop
+
+    # creating a real time series must copy the snapshot, not Q_droop
+    index: pd.DatetimeIndex = pd.DatetimeIndex(
+        ["2026-01-01", "2026-01-01 01:00:00", "2026-01-01 02:00:00"]
+    )
+    vsc.ensure_profiles_exist(index, set_profile_default_as_snapshot=True)
+
+    assert vsc.control1_prof.size() == 3
+    assert vsc.control1_prof[0] == ConverterControlType.Pdc_angle_droop
+    assert vsc.control1_prof[1] == ConverterControlType.Pdc_angle_droop
+    assert vsc.control1_prof[2] == ConverterControlType.Pdc_angle_droop
+    assert vsc.control1_val_prof[0] == 349.0
+    assert vsc.control2_prof[0] == ConverterControlType.Pac
+    assert vsc.get_control1_at(0) == ConverterControlType.Pdc_angle_droop
+    assert vsc.control1 != ConverterControlType.Q_droop
+
+
+def test_loaded_vsc_profiles_match_snapshot_after_create_profiles() -> None:
+    """
+    Loading a P-mode 3 VSC grid and creating profiles must keep the snapshot
+    control pair at every time step, including compilation at t = 0.
+
+    :return: None
+    """
+    import VeraGridEngine.api as gce
+
+    fname: str = os.path.join('data', 'grids', 'NTC_8_bus_2pmode3_dc_bottleneck.veragrid')
+    grid = gce.open_file(fname)
+
+    n_droop: int = 0
+    for vsc in grid.vsc_devices:
+        if vsc.control1 == ConverterControlType.Pdc_angle_droop:
+            n_droop += 1
+        else:
+            pass
+    assert n_droop >= 1
+
+    grid.create_profiles(steps=3, step_length=1.0, step_unit="h")
+
+    nc_base = gce.compile_numerical_circuit_at(circuit=grid, t_idx=None)
+    nc_t0 = gce.compile_numerical_circuit_at(circuit=grid, t_idx=0)
+
+    assert np.array_equal(nc_base.vsc_data.control1_int, nc_t0.vsc_data.control1_int)
+    assert np.array_equal(nc_base.vsc_data.control2_int, nc_t0.vsc_data.control2_int)
+    assert np.allclose(nc_base.vsc_data.control1_val, nc_t0.vsc_data.control1_val)
+    assert np.allclose(nc_base.vsc_data.control2_val, nc_t0.vsc_data.control2_val)
+
+    for vsc in grid.vsc_devices:
+        assert vsc.control1_prof[0] == vsc.control1
+        assert vsc.control2_prof[0] == vsc.control2
+        assert vsc.control1_val_prof[0] == vsc.control1_val
+        assert vsc.control1 != ConverterControlType.Q_droop

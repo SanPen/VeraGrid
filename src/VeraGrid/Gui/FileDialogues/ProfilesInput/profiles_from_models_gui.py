@@ -52,6 +52,14 @@ class Ui_Dialog(object):
 
         self.horizontalLayout_6.addWidget(self.deleteModelsButton)
 
+        self.reIndexTimeButton = QPushButton(self.frame_3)
+        self.reIndexTimeButton.setObjectName(u"reIndexTimeButton")
+        icon2 = QIcon()
+        icon2.addFile(u":/Icons/icons/data.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.reIndexTimeButton.setIcon(icon2)
+
+        self.horizontalLayout_6.addWidget(self.reIndexTimeButton)
+
         self.horizontalSpacer_5 = QSpacerItem(725, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.horizontalLayout_6.addItem(self.horizontalSpacer_5)
@@ -101,9 +109,9 @@ class Ui_Dialog(object):
 
         self.acceptModelsButton = QPushButton(self.frame_7)
         self.acceptModelsButton.setObjectName(u"acceptModelsButton")
-        icon2 = QIcon()
-        icon2.addFile(u":/Icons/icons/gear.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.acceptModelsButton.setIcon(icon2)
+        icon3 = QIcon()
+        icon3.addFile(u":/Icons/icons/gear.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.acceptModelsButton.setIcon(icon3)
 
         self.horizontalLayout_8.addWidget(self.acceptModelsButton)
 
@@ -120,6 +128,7 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
         self.addModelsButton.setText(QCoreApplication.translate("Dialog", u"Add", None))
         self.deleteModelsButton.setText(QCoreApplication.translate("Dialog", u"Clear", None))
+        self.reIndexTimeButton.setText(QCoreApplication.translate("Dialog", u"Re-index time", None))
 #if QT_CONFIG(tooltip)
         self.matchUsingCodeCheckBox.setToolTip(QCoreApplication.translate("Dialog", u"If checked, the objects are match using the code property, otherwise the idtag property is used", None))
 #endif // QT_CONFIG(tooltip)

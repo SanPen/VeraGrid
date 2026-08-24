@@ -6,8 +6,13 @@ from __future__ import annotations
 
 from typing import Dict, TYPE_CHECKING
 
-from VeraGridEngine.Compilers.Gslv.activation import pg
-from VeraGridEngine.Compilers.Gslv.common import fill_profile, fill_profile_with_array
+from VeraGridEngine.Compilers.Gslv.activation import build_status_dict, pg
+from VeraGridEngine.Compilers.Gslv.common import fill_profile, fill_profile_with_array, set_generator_associations
+from VeraGridEngine.Devices.Aggregation.facility import Facility
+from VeraGridEngine.Devices.Aggregation.market_unit import MarketUnit
+from VeraGridEngine.Devices.Associations.emission_gas import EmissionGas
+from VeraGridEngine.Devices.Associations.fuel import Fuel
+from VeraGridEngine.Devices.Associations.technology import Technology
 from VeraGridEngine.Devices.Injections.battery import Battery
 from VeraGridEngine.Devices.multi_circuit import MultiCircuit
 from VeraGridEngine.basic_structures import IntVec
@@ -16,9 +21,24 @@ if TYPE_CHECKING:
     from VeraGridEngine.Simulations.OPF.opf_results import OptimalPowerFlowResults
 
 
+def battery_control_mode(elm: Battery) -> "pg.GeneratorControlMode":
+    """
+    Convert one VeraGrid battery control mode to pygslv.
+
+    :param elm: VeraGrid battery.
+    :return: Equivalent pygslv control mode.
+    """
+    return pg.GeneratorControlMode.__members__[elm.control_mode.name]
+
+
 def convert_battery(k: int,
                     elm: Battery,
                     bus_dict: Dict[str, "pg.Bus"],
+                    facility_dict: Dict[Facility, "pg.Facility"],
+                    market_unit_dict: Dict[MarketUnit, "pg.MarketUnit"],
+                    technology_dict: Dict[Technology, "pg.Technology"],
+                    fuel_dict: Dict[Fuel, "pg.Fuel"],
+                    emission_gas_dict: Dict[EmissionGas, "pg.EmissionGas"],
                     n_time: int,
                     use_time_series: bool,
                     time_indices: IntVec | None = None,
@@ -30,6 +50,11 @@ def convert_battery(k: int,
     :param k: Battery index.
     :param elm: VeraGrid battery.
     :param bus_dict: Bus lookup by VeraGrid id tag.
+    :param facility_dict: VeraGrid-to-GSLV facility lookup.
+    :param market_unit_dict: VeraGrid-to-GSLV market-unit lookup.
+    :param technology_dict: VeraGrid-to-GSLV technology lookup.
+    :param fuel_dict: VeraGrid-to-GSLV fuel lookup.
+    :param emission_gas_dict: VeraGrid-to-GSLV emission gas lookup.
     :param n_time: Number of exported time steps.
     :param use_time_series: Whether the export is time-series based.
     :param time_indices: Optional time-series selection.
@@ -58,9 +83,12 @@ def convert_battery(k: int,
         bus=None if elm.bus is None else bus_dict[elm.bus.idtag],
         name=elm.name,
         idtag=elm.idtag,
+        code=elm.code,
         P=elm.P,
+        Q=elm.Q,
         power_factor=elm.Pf,
         vset=elm.Vset,
+        active=elm.active,
         max_soc=elm.max_soc,
         min_soc=elm.min_soc,
         Qmin=elm.Qmin,
@@ -69,16 +97,65 @@ def convert_battery(k: int,
         Pmax=elm.Pmax,
         Snom=elm.Snom,
         Enom=elm.Enom,
+        Cost=elm.Cost,
+        Sbase=elm.Sbase,
+        enabled_dispatch=elm.enabled_dispatch,
+        mttf=elm.mttf,
+        mttr=elm.mttr,
         charge_efficiency=elm.charge_efficiency,
         discharge_efficiency=elm.discharge_efficiency,
         is_controlled=elm.is_controlled,
+        soc=elm.soc,
+        charge_per_cycle=elm.charge_per_cycle,
+        discharge_per_cycle=elm.discharge_per_cycle,
+        r1=elm.R1,
+        x1=elm.X1,
         r0=battery_r0,
         x0=battery_x0,
         r2=battery_r2,
         x2=battery_x2,
+        capex=elm.capex,
+        opex=elm.opex,
+        srap_enabled=elm.srap_enabled,
+        build_status=build_status_dict[elm.build_status],
+        control_mode=battery_control_mode(elm=elm),
+    )
+    gen.min_soc_charge = elm.min_soc_charge
+    gen.market_unit = market_unit_dict.get(elm.market_unit, None)
+    gen.startup_cost = elm.startup_cost
+    gen.shutdown_cost = elm.shutdown_cost
+    gen.min_time_up = elm.min_time_up
+    gen.min_time_down = elm.min_time_down
+    gen.ramp_up = elm.ramp_up
+    gen.ramp_down = elm.ramp_down
+
+    if elm.control_bus is None:
+        pass
+    else:
+        gen.set_control_bus_val(bus_dict[elm.control_bus.idtag])
+
+    set_generator_associations(
+        gslv_elm=gen,
+        elm=elm,
+        facility_dict=facility_dict,
+        technology_dict=technology_dict,
+        fuel_dict=fuel_dict,
+        emission_gas_dict=emission_gas_dict,
     )
 
     fill_profile(gen.active, elm.active_prof, use_time_series, time_indices, n_time, elm.active)
+    fill_profile(gen.srap_enabled, elm.srap_enabled_prof, use_time_series, time_indices, n_time, elm.srap_enabled)
+
+    gen.enabled_dispatch = fill_profile(
+        gen.enabled_dispatch,
+        elm.enabled_dispatch_prof,
+        use_time_series,
+        time_indices,
+        n_time,
+        elm.enabled_dispatch,
+    )
+
+    gen.must_run = fill_profile(gen.must_run, elm.must_run_prof, use_time_series, time_indices, n_time, elm.must_run)
 
     if opf_results is None:
         fill_profile(gen.P, elm.P_prof, use_time_series, time_indices, n_time, elm.P)
@@ -93,10 +170,23 @@ def convert_battery(k: int,
         )
 
     fill_profile(gen.Q, elm.Q_prof, use_time_series, time_indices, n_time, elm.Q)
+    fill_profile(gen.power_factor, elm.Pf_prof, use_time_series, time_indices, n_time, elm.Pf)
+
+    gen.Pmin = fill_profile(gen.Pmin, elm.Pmin_prof, use_time_series, time_indices, n_time, elm.Pmin)
+    gen.Pmax = fill_profile(gen.Pmax, elm.Pmax_prof, use_time_series, time_indices, n_time, elm.Pmax)
+    gen.qmin_set = fill_profile(gen.qmin_set, elm.Qmin_prof, use_time_series, time_indices, n_time, elm.Qmin)
+    gen.qmax_set = fill_profile(gen.qmax_set, elm.Qmax_prof, use_time_series, time_indices, n_time, elm.Qmax)
+
     fill_profile(gen.Vset, elm.Vset_prof, use_time_series, time_indices, n_time, elm.Vset)
     fill_profile(gen.cost, elm.Cost_prof, use_time_series, time_indices, n_time, elm.Cost)
     fill_profile(gen.Cost0, elm.Cost0_prof, use_time_series, time_indices, n_time, elm.Cost0)
     fill_profile(gen.Cost2, elm.Cost2_prof, use_time_series, time_indices, n_time, elm.Cost2)
+    fill_profile(gen.market_unit_share,
+                 elm.market_unit_share_prof,
+                 use_time_series,
+                 time_indices,
+                 n_time,
+                 elm.market_unit_share)
 
     return gen
 
@@ -104,6 +194,11 @@ def convert_battery(k: int,
 def add_battery_data(circuit: MultiCircuit,
                      gslv_grid: "pg.MultiCircuit",
                      bus_dict: Dict[str, "pg.Bus"],
+                     facility_dict: Dict[Facility, "pg.Facility"],
+                     market_unit_dict: Dict[MarketUnit, "pg.MarketUnit"],
+                     technology_dict: Dict[Technology, "pg.Technology"],
+                     fuel_dict: Dict[Fuel, "pg.Fuel"],
+                     emission_gas_dict: Dict[EmissionGas, "pg.EmissionGas"],
                      time_series: bool,
                      n_time: int = 1,
                      time_indices: IntVec | None = None,
@@ -115,6 +210,11 @@ def add_battery_data(circuit: MultiCircuit,
     :param circuit: VeraGrid circuit.
     :param gslv_grid: GSLV circuit.
     :param bus_dict: Bus lookup by VeraGrid id tag.
+    :param facility_dict: VeraGrid-to-GSLV facility lookup.
+    :param market_unit_dict: VeraGrid-to-GSLV market-unit lookup.
+    :param technology_dict: VeraGrid-to-GSLV technology lookup.
+    :param fuel_dict: VeraGrid-to-GSLV fuel lookup.
+    :param emission_gas_dict: VeraGrid-to-GSLV emission gas lookup.
     :param time_series: Whether the export is time-series based.
     :param n_time: Number of exported time steps.
     :param time_indices: Optional time-series selection.
@@ -129,6 +229,11 @@ def add_battery_data(circuit: MultiCircuit,
             k=k,
             elm=elm,
             bus_dict=bus_dict,
+            facility_dict=facility_dict,
+            market_unit_dict=market_unit_dict,
+            technology_dict=technology_dict,
+            fuel_dict=fuel_dict,
+            emission_gas_dict=emission_gas_dict,
             n_time=n_time,
             use_time_series=time_series,
             time_indices=time_indices,

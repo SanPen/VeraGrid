@@ -20,6 +20,14 @@ VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.black\_box\_problem\_t
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear\_opf\_ts\_problem module
+-----------------------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.linear_opf_ts_problem
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Simulations.InvestmentsEvaluation.Problems.power\_flow\_problem module
 -------------------------------------------------------------------------------------
 

@@ -68,6 +68,14 @@ VeraGridEngine.Devices.Aggregation.investments\_group module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Devices.Aggregation.market\_unit module
+------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Devices.Aggregation.market_unit
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Devices.Aggregation.modelling\_authority module
 --------------------------------------------------------------
 

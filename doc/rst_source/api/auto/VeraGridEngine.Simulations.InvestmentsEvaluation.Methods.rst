@@ -36,6 +36,14 @@ VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.stop\_crits module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot\_pint\_cba module
+-------------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.InvestmentsEvaluation.Methods.toot_pint_cba
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 Module contents
 ---------------
 

@@ -12,6 +12,14 @@ VeraGridEngine.Simulations.SigmaAnalysis.sigma\_analysis\_driver module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Simulations.SigmaAnalysis.sigma\_dpr module
+----------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.SigmaAnalysis.sigma_dpr
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 Module contents
 ---------------
 

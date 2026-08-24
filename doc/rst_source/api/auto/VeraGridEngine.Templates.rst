@@ -14,10 +14,10 @@ Subpackages
 Submodules
 ----------
 
-VeraGridEngine.Templates.predefined\_blocks module
---------------------------------------------------
+VeraGridEngine.Templates.template\_definition module
+----------------------------------------------------
 
-.. automodule:: VeraGridEngine.Templates.predefined_blocks
+.. automodule:: VeraGridEngine.Templates.template_definition
    :members:
    :show-inheritance:
    :undoc-members:

@@ -4,6 +4,14 @@ VeraGridEngine.Templates.Rms package
 Submodules
 ----------
 
+VeraGridEngine.Templates.Rms.basic\_devices module
+--------------------------------------------------
+
+.. automodule:: VeraGridEngine.Templates.Rms.basic_devices
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Templates.Rms.bus\_complex\_rms\_template module
 ---------------------------------------------------------------
 
@@ -36,10 +44,34 @@ VeraGridEngine.Templates.Rms.dc\_voltage\_source module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Templates.Rms.empty\_rms\_template module
+--------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Templates.Rms.empty_rms_template
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Templates.Rms.esd1\_rms\_template module
 -------------------------------------------------------
 
 .. automodule:: VeraGridEngine.Templates.Rms.esd1_rms_template
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Templates.Rms.esdc2a\_exciter\_rms\_template module
+------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Templates.Rms.esdc2a_exciter_rms_template
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Templates.Rms.gencls\_rms\_template module
+---------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Templates.Rms.gencls_rms_template
    :members:
    :show-inheritance:
    :undoc-members:
@@ -80,6 +112,14 @@ VeraGridEngine.Templates.Rms.genqec\_phasor\_rms\_template module
 -----------------------------------------------------------------
 
 .. automodule:: VeraGridEngine.Templates.Rms.genqec_phasor_rms_template
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Templates.Rms.genrou\_exc\_gov\_rms\_template module
+-------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Templates.Rms.genrou_exc_gov_rms_template
    :members:
    :show-inheritance:
    :undoc-members:
@@ -128,6 +168,30 @@ VeraGridEngine.Templates.Rms.hvdc\_rms\_template module
 -------------------------------------------------------
 
 .. automodule:: VeraGridEngine.Templates.Rms.hvdc_rms_template
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Templates.Rms.hvdc\_vsc\_gfl\_rms\_template module
+-----------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Templates.Rms.hvdc_vsc_gfl_rms_template
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Templates.Rms.ieeeg1\_governor\_rms\_template module
+-------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Templates.Rms.ieeeg1_governor_rms_template
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Templates.Rms.ieeex1\_ieeest\_rms\_template module
+-----------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Templates.Rms.ieeex1_ieeest_rms_template
    :members:
    :show-inheritance:
    :undoc-members:
@@ -276,6 +340,14 @@ VeraGridEngine.Templates.Rms.shunt\_template module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Templates.Rms.st2cut\_stabilizer\_rms\_template module
+---------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Templates.Rms.st2cut_stabilizer_rms_template
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Templates.Rms.transformer\_rms\_template module
 --------------------------------------------------------------
 
@@ -320,6 +392,14 @@ VeraGridEngine.Templates.Rms.vsc\_gfl\_dclinked module
 ------------------------------------------------------
 
 .. automodule:: VeraGridEngine.Templates.Rms.vsc_gfl_dclinked
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Templates.Rms.vsc\_gfl\_new module
+-------------------------------------------------
+
+.. automodule:: VeraGridEngine.Templates.Rms.vsc_gfl_new
    :members:
    :show-inheritance:
    :undoc-members:

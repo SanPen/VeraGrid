@@ -8,14 +8,32 @@ Subpackages
    :maxdepth: 4
 
    VeraGridEngine.Utils.Filtering
+   VeraGridEngine.Utils.GeographicalMethods
    VeraGridEngine.Utils.MIP
    VeraGridEngine.Utils.NumericalMethods
    VeraGridEngine.Utils.Sparse
+   VeraGridEngine.Utils.SugiyamaLayered
    VeraGridEngine.Utils.Symbolic
    VeraGridEngine.Utils.ThirdParty
 
 Submodules
 ----------
+
+VeraGridEngine.Utils.charatcter\_detection module
+-------------------------------------------------
+
+.. automodule:: VeraGridEngine.Utils.charatcter_detection
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Utils.compare module
+-----------------------------------
+
+.. automodule:: VeraGridEngine.Utils.compare
+   :members:
+   :show-inheritance:
+   :undoc-members:
 
 VeraGridEngine.Utils.emt\_boundary\_update\_wrapper module
 ----------------------------------------------------------

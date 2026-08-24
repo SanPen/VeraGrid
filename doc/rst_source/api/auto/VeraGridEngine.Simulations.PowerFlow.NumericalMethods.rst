@@ -52,6 +52,14 @@ VeraGridEngine.Simulations.PowerFlow.NumericalMethods.gauss\_power\_flow module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Simulations.PowerFlow.NumericalMethods.helm\_dpr module
+----------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.PowerFlow.NumericalMethods.helm_dpr
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Simulations.PowerFlow.NumericalMethods.helm\_power\_flow module
 ------------------------------------------------------------------------------
 

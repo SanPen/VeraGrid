@@ -29,14 +29,6 @@ VeraGridEngine.Simulations.PowerFlow.power\_flow\_driver module
    :show-inheritance:
    :undoc-members:
 
-VeraGridEngine.Simulations.PowerFlow.power\_flow\_driver\_3ph module
---------------------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Simulations.PowerFlow.power_flow_driver_3ph
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 VeraGridEngine.Simulations.PowerFlow.power\_flow\_options module
 ----------------------------------------------------------------
 
@@ -49,14 +41,6 @@ VeraGridEngine.Simulations.PowerFlow.power\_flow\_results module
 ----------------------------------------------------------------
 
 .. automodule:: VeraGridEngine.Simulations.PowerFlow.power_flow_results
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.Simulations.PowerFlow.power\_flow\_results\_3ph module
----------------------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Simulations.PowerFlow.power_flow_results_3ph
    :members:
    :show-inheritance:
    :undoc-members:
@@ -89,14 +73,6 @@ VeraGridEngine.Simulations.PowerFlow.power\_flow\_worker module
 ---------------------------------------------------------------
 
 .. automodule:: VeraGridEngine.Simulations.PowerFlow.power_flow_worker
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.Simulations.PowerFlow.power\_flow\_worker\_3ph module
---------------------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Simulations.PowerFlow.power_flow_worker_3ph
    :members:
    :show-inheritance:
    :undoc-members:

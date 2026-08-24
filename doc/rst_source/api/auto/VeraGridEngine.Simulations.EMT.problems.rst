@@ -12,6 +12,22 @@ VeraGridEngine.Simulations.EMT.problems.emt\_problem\_dae module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Simulations.EMT.problems.emt\_problem\_mti module
+----------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.EMT.problems.emt_problem_mti
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Simulations.EMT.problems.emt\_problem\_multilinear module
+------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.EMT.problems.emt_problem_multilinear
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Simulations.EMT.problems.emt\_problem\_template module
 ---------------------------------------------------------------------
 

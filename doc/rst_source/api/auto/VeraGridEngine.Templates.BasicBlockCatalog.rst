@@ -44,6 +44,14 @@ VeraGridEngine.Templates.BasicBlockCatalog.module\_regeneration module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Templates.BasicBlockCatalog.predefined\_blocks module
+--------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Templates.BasicBlockCatalog.predefined_blocks
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 Module contents
 ---------------
 

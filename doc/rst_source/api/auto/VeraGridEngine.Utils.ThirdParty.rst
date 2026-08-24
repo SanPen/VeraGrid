@@ -8,7 +8,6 @@ Subpackages
    :maxdepth: 4
 
    VeraGridEngine.Utils.ThirdParty.SyntheticNetworks
-   VeraGridEngine.Utils.ThirdParty.gslv
 
 Module contents
 ---------------

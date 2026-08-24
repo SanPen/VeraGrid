@@ -1,6 +1,14 @@
 VeraGridEngine.Utils.Symbolic package
 =====================================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   VeraGridEngine.Utils.Symbolic.Compiler
+
 Submodules
 ----------
 
@@ -60,6 +68,22 @@ VeraGridEngine.Utils.Symbolic.diagnostic module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Utils.Symbolic.dynamic\_connection\_intent module
+----------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Utils.Symbolic.dynamic_connection_intent
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Utils.Symbolic.equation\_decomposer module
+---------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Utils.Symbolic.equation_decomposer
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Utils.Symbolic.explicit\_initialization\_symbolic module
 -----------------------------------------------------------------------
 
@@ -76,26 +100,18 @@ VeraGridEngine.Utils.Symbolic.jit\_compiler module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Utils.Symbolic.latex\_printer module
+---------------------------------------------------
+
+.. automodule:: VeraGridEngine.Utils.Symbolic.latex_printer
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Utils.Symbolic.lp\_model module
 ----------------------------------------------
 
 .. automodule:: VeraGridEngine.Utils.Symbolic.lp_model
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.Utils.Symbolic.static\_parameter\_mapping module
----------------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Utils.Symbolic.static_parameter_mapping
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.Utils.Symbolic.static\_parameter\_mapping\_rms module
---------------------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Utils.Symbolic.static_parameter_mapping_rms
    :members:
    :show-inheritance:
    :undoc-members:

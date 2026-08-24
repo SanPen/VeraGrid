@@ -20,14 +20,6 @@ VeraGridEngine.Simulations.Rms.problems.rms\_problem\_MTI module
    :show-inheritance:
    :undoc-members:
 
-VeraGridEngine.Simulations.Rms.problems.rms\_problem\_complex module
---------------------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Simulations.Rms.problems.rms_problem_complex
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 VeraGridEngine.Simulations.Rms.problems.rms\_problem\_dae module
 ----------------------------------------------------------------
 
@@ -36,10 +28,26 @@ VeraGridEngine.Simulations.Rms.problems.rms\_problem\_dae module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Simulations.Rms.problems.rms\_problem\_dae\_full\_vectorized module
+----------------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_full_vectorized
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Simulations.Rms.problems.rms\_problem\_dae\_vectorized module
 ----------------------------------------------------------------------------
 
 .. automodule:: VeraGridEngine.Simulations.Rms.problems.rms_problem_dae_vectorized
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Simulations.Rms.problems.rms\_problem\_multilinear module
+------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.Rms.problems.rms_problem_multilinear
    :members:
    :show-inheritance:
    :undoc-members:
@@ -56,14 +64,6 @@ VeraGridEngine.Simulations.Rms.problems.rms\_problem\_template module
 ---------------------------------------------------------------------
 
 .. automodule:: VeraGridEngine.Simulations.Rms.problems.rms_problem_template
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.Simulations.Rms.problems.rms\_problem\_tensygrid module
-----------------------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Simulations.Rms.problems.rms_problem_tensygrid
    :members:
    :show-inheritance:
    :undoc-members:

@@ -20,6 +20,14 @@ VeraGridEngine.Devices.Substation.busbar module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Devices.Substation.control\_pc module
+----------------------------------------------------
+
+.. automodule:: VeraGridEngine.Devices.Substation.control_pc
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Devices.Substation.substation module
 ---------------------------------------------------
 

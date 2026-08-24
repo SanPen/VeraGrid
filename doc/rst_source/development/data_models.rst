@@ -14098,7 +14098,7 @@ RawOwner
     property_name  class_type  units  descriptions
     =============  ==========  =====  ============
     idtag          str                Element UUID
-    I              int                Zone number 
+    I              int                Owner number
     OWNAME         str                Owner name  
     =============  ==========  =====  ============
 
@@ -14498,20 +14498,22 @@ Area
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    longitude     float             deg   False                 longitude.                                              False               
-    latitude      float             deg   False                 latitude.                                               False               
-    color         str                     False                 Color to paint the element in the map diagram           False               
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    ============================  ================  ====  =========  =========  ========================================================  ===========  =======
+                name                 class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    ============================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag                         str                     False                 Unique ID                                                 False               
+    name                          str                     False                 Name of the device.                                       False               
+    code                          str                     False                 Secondary ID                                              False               
+    rdfid                         str                     False                 RDF ID for further compatibility                          False               
+    action                        enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge             bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment                       str                     False                 User comment                                              False               
+    diff_changes                  MergeInformation        False                                                                           False               
+    longitude                     float             deg   False                 longitude.                                                False               
+    latitude                      float             deg   False                 latitude.                                                 False               
+    color                         str                     False                 Color to paint the element in the map diagram             False               
+    spinning_reserve_requirement  float             MW    False                 Area spinning reserve requirement used in OPF.            True                
+    ============================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 Battery
@@ -14519,94 +14521,104 @@ Battery
 
 .. table::
 
-    ========================  ========================  =======  =========  =========  ================================================================================  ===========  =======
-              name                   class_type          unit    mandatory  max_chars                                    descriptions                                    has_profile  comment
-    ========================  ========================  =======  =========  =========  ================================================================================  ===========  =======
-    idtag                     str                                False                 Unique ID                                                                         False               
-    name                      str                                False                 Name of the device.                                                               False               
-    code                      str                                False                 Secondary ID                                                                      False               
-    rdfid                     str                                False                 RDF ID for further compatibility                                                  False               
-    action                    enum ActionType                    False                 Object action to perform. Only used for model merging.                            False               
-    comment                   str                                False                 User comment                                                                      False               
-    diff_changes              MergeInformation                   False                                                                                                   False               
-    modelling_authority       Modelling Authority                False                 Modelling authority of this asset                                                 False               
-    commissioned_date         int                                False                 Commissioned date of the asset                                                    False               
-    decommissioned_date       int                                False                 Decommissioned date of the asset                                                  False               
-    build_status              enum BuildStatus                   False                 Device build status. Used in expansion planning.                                  False               
-    owners                    AssociationsList          p.u.     False                 Owners associations to injections                                                 False               
-    rms_model                 DaeBlock                           False                 RMS dynamic model                                                                 False               
-    emt_model                 DaeBlock                           False                 EMT dynamic model                                                                 False               
-    rms_template              RMS template                       False                 Native RMS template used. Assigning it clears rms_fmu_template.                   False               
-    emt_template              EMT template                       False                 Native EMT template used. Assigning it clears emt_fmu_template.                   False               
-    rms_fmu_template          FMU template                       False                 RMS FMU template used only by RMS simulations. Assigning it clears rms_template.  False               
-    emt_fmu_template          FMU template                       False                 EMT FMU template used only by EMT simulations. Assigning it clears emt_template.  False               
-    rms_fmu_import_config     str                                False                 Serialized FMU Co-Simulation RMS configuration                                    False               
-    emt_fmu_import_config     str                                False                 Serialized FMU Co-Simulation EMT configuration                                    False               
-    rms_fmu_me_import_config  str                                False                 Serialized FMU Model Exchange RMS configuration                                   False               
-    emt_fmu_me_import_config  str                                False                 Serialized FMU Model Exchange EMT configuration                                   False               
-    bus                       Bus                                False                 Connection bus                                                                    False               
-    active                    bool                               False                 Is the load active?                                                               True                
-    color                     str                                False                 Color to paint the element in the map diagram                                     False               
-    mttf                      float                     h        False                 Mean time to failure                                                              False               
-    mttr                      float                     h        False                 Mean time to recovery                                                             False               
-    capex                     float                     e/MW     False                 Cost of investment. Used in expansion planning.                                   False               
-    opex                      float                     e/MWh    False                 Cost of operation. Used in expansion planning.                                    False               
-    Cost                      float                     e/MWh    False                 Cost of not served energy. Used in OPF.                                           True                
-    facility                  Facility                           False                 Facility where this is located                                                    False               
-    technologies              AssociationsList          p.u.     False                 Technologies associations to injections                                           False               
-    scalable                  bool                               False                 Is the injection scalable?                                                        False               
-    shift_key                 float                              False                 Shift key for net transfer capacity                                               True                
-    longitude                 float                     deg      False                 longitude of the injection.                                                       False               
-    latitude                  float                     deg      False                 latitude of the injection.                                                        False               
-    use_kw                    bool                               False                 Consider the injections in kW and kVAr?                                           False               
-    conn                      enum ShuntConnectionType           False                 Connection type for 3-phase studies                                               False               
-    bus_pos                   int                                False                 Aid to locate devices on a busbar                                                 False               
-    P                         float                     MW       False                 Active power                                                                      True                
-    Pmin                      float                     MW       False                 Minimum active power. Used in OPF.                                                True                
-    Pmax                      float                     MW       False                 Maximum active power. Used in OPF.                                                True                
-    Q                         float                     MVAr     False                 Reactive power                                                                    True                
-    Qmin                      float                     MVAr     False                 Minimum reactive power.                                                           True                
-    Qmax                      float                     MVAr     False                 Maximum reactive power.                                                           True                
-    is_controlled             bool                               False                 Is this generator voltage-controlled?                                             False               
-    control_bus               Bus                                False                 Control bus                                                                       False               
-    Pf                        float                              False                 Power factor (cos(phi)). This is used for non-controlled generators.              True                
-    Vset                      float                     p.u.     False                 Set voltage. This is used for controlled generators.                              True                
-    Snom                      float                     MVA      False                 Nominal power.                                                                    False               
-    use_reactive_power_curve  bool                               False                 Use the reactive power capability curve?                                          False               
-    q_curve                   Generator Q curve         MVAr     False                 Capability curve data (double click on the generator to edit)                     False               
-    R1                        float                     p.u.     False                 Total positive sequence resistance.                                               False               
-    X1                        float                     p.u.     False                 Total positive sequence reactance.                                                False               
-    R0                        float                     p.u.     False                 Total zero sequence resistance.                                                   False               
-    X0                        float                     p.u.     False                 Total zero sequence reactance.                                                    False               
-    R2                        float                     p.u.     False                 Total negative sequence resistance.                                               False               
-    X2                        float                     p.u.     False                 Total negative sequence reactance.                                                False               
-    Rs                        float                     p.u.     False                 Stator winding resistance (AG).                                                   False               
-    Xs                        float                     p.u.     False                 Stator leakage reactance (AG).                                                    False               
-    Xm                        float                     p.u.     False                 Magnetizing reactance (AG).                                                       False               
-    Rr                        float                     p.u.     False                 Rotor resistance (AG).                                                            False               
-    Xr                        float                     p.u.     False                 Rotor reactance (AG).                                                             False               
-    Cost2                     float                     e/MW²/h  False                 Generation quadratic cost. Used in OPF.                                           True                
-    Cost0                     float                     e/h      False                 Generation constant cost. Used in OPF.                                            True                
-    startup_cost              float                     e/h      False                 Generation start-up cost. Used in OPF.                                            False               
-    shutdown_cost             float                     e/h      False                 Generation shut-down cost. Used in OPF.                                           False               
-    min_time_up               float                     h        False                 Minimum time that the generator has to be on when started. Used in OPF.           False               
-    min_time_down             float                     h        False                 Minimum time that the generator has to be off when shut down. Used in OPF.        False               
-    ramp_up                   float                     MW/h     False                 Maximum amount of generation increase per hour.                                   False               
-    ramp_down                 float                     MW/h     False                 Maximum amount of generation decrease per hour.                                   False               
-    enabled_dispatch          bool                               False                 Enabled for dispatch? Used in OPF.                                                True                
-    must_run                  bool                               False                 P >= Pmin constraint. Used in OPF with unit commitment active.                    True                
-    emissions                 AssociationsList          t/MWh    False                 List of emissions                                                                 False               
-    fuels                     AssociationsList          t/MWh    False                 List of fuels                                                                     False               
-    srap_enabled              bool                               False                 Is the unit available for SRAP participation?                                     True                
-    tpe                       enum GeneratorType                 False                 Machine type of the generator.                                                    False               
-    Enom                      float                     MWh      False                 Nominal energy capacity.                                                          False               
-    max_soc                   float                     p.u.     False                 Minimum state of charge.                                                          False               
-    min_soc                   float                     p.u.     False                 Maximum state of charge.                                                          False               
-    soc_0                     float                     p.u.     False                 Initial state of charge.                                                          False               
-    charge_efficiency         float                     p.u.     False                 Charging efficiency.                                                              False               
-    discharge_efficiency      float                     p.u.     False                 Discharge efficiency.                                                             False               
-    discharge_per_cycle       float                     p.u.     False                                                                                                   False               
-    ========================  ========================  =======  =========  =========  ================================================================================  ===========  =======
+    ========================  =========================  =======  =========  =========  ================================================================================  ===========  =======
+              name                   class_type           unit    mandatory  max_chars                                    descriptions                                    has_profile  comment
+    ========================  =========================  =======  =========  =========  ================================================================================  ===========  =======
+    idtag                     str                                 False                 Unique ID                                                                         False               
+    name                      str                                 False                 Name of the device.                                                               False               
+    code                      str                                 False                 Secondary ID                                                                      False               
+    rdfid                     str                                 False                 RDF ID for further compatibility                                                  False               
+    action                    enum ActionType                     False                 Object action to perform. Only used for model merging.                            False               
+    selected_to_merge         bool                                False                 Whether this object should be applied during diff merge.                          False               
+    comment                   str                                 False                 User comment                                                                      False               
+    diff_changes              MergeInformation                    False                                                                                                   False               
+    modelling_authority       Modelling Authority                 False                 Modelling authority of this asset                                                 False               
+    commissioned_date         int                                 False                 Commissioned date of the asset                                                    False               
+    decommissioned_date       int                                 False                 Decommissioned date of the asset                                                  False               
+    build_status              enum BuildStatus                    False                 Device build status. Used in expansion planning.                                  False               
+    owners                    AssociationsList           p.u.     False                 Owners associations to injections                                                 False               
+    rms_model                 DaeBlock                            False                 RMS dynamic model                                                                 False               
+    emt_model                 DaeBlock                            False                 EMT dynamic model                                                                 False               
+    rms_template              RMS template                        False                 Native RMS template used. Assigning it clears rms_fmu_template.                   False               
+    emt_template              EMT template                        False                 Native EMT template used. Assigning it clears emt_fmu_template.                   False               
+    rms_fmu_template          FMU template                        False                 RMS FMU template used only by RMS simulations. Assigning it clears rms_template.  False               
+    emt_fmu_template          FMU template                        False                 EMT FMU template used only by EMT simulations. Assigning it clears emt_template.  False               
+    rms_fmu_import_config     str                                 False                 Serialized FMU Co-Simulation RMS configuration                                    False               
+    emt_fmu_import_config     str                                 False                 Serialized FMU Co-Simulation EMT configuration                                    False               
+    rms_fmu_me_import_config  str                                 False                 Serialized FMU Model Exchange RMS configuration                                   False               
+    emt_fmu_me_import_config  str                                 False                 Serialized FMU Model Exchange EMT configuration                                   False               
+    bus                       Bus                                 False                 Connection bus                                                                    False               
+    active                    bool                                False                 Is the load active?                                                               True                
+    color                     str                                 False                 Color to paint the element in the map diagram                                     False               
+    mttf                      float                      h        False                 Mean time to failure                                                              False               
+    mttr                      float                      h        False                 Mean time to recovery                                                             False               
+    capex                     float                      e/MW     False                 Cost of investment. Used in expansion planning.                                   False               
+    opex                      float                      e/MWh    False                 Cost of operation. Used in expansion planning.                                    False               
+    Cost                      float                      e/MWh    False                 Cost of not served energy. Used in OPF.                                           True                
+    facility                  Facility                            False                 Facility where this is located                                                    False               
+    technologies              AssociationsList           p.u.     False                 Technologies associations to injections                                           False               
+    scalable                  bool                                False                 Is the injection scalable?                                                        False               
+    shift_key                 float                               False                 Shift key for net transfer capacity                                               True                
+    longitude                 float                      deg      False                 longitude of the injection.                                                       False               
+    latitude                  float                      deg      False                 latitude of the injection.                                                        False               
+    use_kw                    bool                                False                 Consider the injections in kW and kVAr?                                           False               
+    conn                      enum ShuntConnectionType            False                 Connection type for 3-phase studies                                               False               
+    phN                       bool                                False                 Is the neutral connected?                                                         False               
+    phA                       bool                                False                 Is phase A connected?                                                             False               
+    phB                       bool                                False                 Is phase B connected?                                                             False               
+    phC                       bool                                False                 Is phase C connected?                                                             False               
+    bus_pos                   int                                 False                 Aid to locate devices on a busbar                                                 False               
+    P                         float                      MW       False                 Active power                                                                      True                
+    Pmin                      float                      MW       False                 Minimum active power. Used in OPF.                                                True                
+    Pmax                      float                      MW       False                 Maximum active power. Used in OPF.                                                True                
+    Q                         float                      MVAr     False                 Reactive power                                                                    True                
+    Qmin                      float                      MVAr     False                 Minimum reactive power.                                                           True                
+    Qmax                      float                      MVAr     False                 Maximum reactive power.                                                           True                
+    control_mode              enum GeneratorControlMode           False                 Generator control mode                                                            False               
+    control_bus               Bus                                 False                 Control bus                                                                       False               
+    Pf                        float                               False                 Power factor (cos(phi)). This is used for non-controlled generators.              True                
+    Vset                      float                      p.u.     False                 Set voltage. This is used for controlled generators.                              True                
+    k_droop                   float                               False                 QV droop constant.                                                                False               
+    dead_band                 float                      kV       False                 Droop dead band.                                                                  False               
+    Snom                      float                      MVA      False                 Nominal power.                                                                    False               
+    use_reactive_power_curve  bool                                False                 Use the reactive power capability curve?                                          False               
+    q_curve                   Generator Q curve          MVAr     False                 Capability curve data (double click on the generator to edit)                     False               
+    R1                        float                      p.u.     False                 Total positive sequence resistance.                                               False               
+    X1                        float                      p.u.     False                 Total positive sequence reactance.                                                False               
+    R0                        float                      p.u.     False                 Total zero sequence resistance.                                                   False               
+    X0                        float                      p.u.     False                 Total zero sequence reactance.                                                    False               
+    R2                        float                      p.u.     False                 Total negative sequence resistance.                                               False               
+    X2                        float                      p.u.     False                 Total negative sequence reactance.                                                False               
+    Rs                        float                      p.u.     False                 Stator winding resistance (AG).                                                   False               
+    Xs                        float                      p.u.     False                 Stator leakage reactance (AG).                                                    False               
+    Xm                        float                      p.u.     False                 Magnetizing reactance (AG).                                                       False               
+    Rr                        float                      p.u.     False                 Rotor resistance (AG).                                                            False               
+    Xr                        float                      p.u.     False                 Rotor reactance (AG).                                                             False               
+    Cost2                     float                      e/MW²/h  False                 Generation quadratic cost. Used in OPF.                                           True                
+    Cost0                     float                      e/h      False                 Generation constant cost. Used in OPF.                                            True                
+    startup_cost              float                      e/h      False                 Generation start-up cost. Used in OPF.                                            False               
+    shutdown_cost             float                      e/h      False                 Generation shut-down cost. Used in OPF.                                           False               
+    min_time_up               float                      h        False                 Minimum time that the generator has to be on when started. Used in OPF.           False               
+    min_time_down             float                      h        False                 Minimum time that the generator has to be off when shut down. Used in OPF.        False               
+    ramp_up                   float                      MW/h     False                 Maximum amount of generation increase per hour.                                   False               
+    ramp_down                 float                      MW/h     False                 Maximum amount of generation decrease per hour.                                   False               
+    enabled_dispatch          bool                                False                 Enabled for dispatch? Used in OPF.                                                True                
+    must_run                  bool                                False                 P >= Pmin constraint. Used in OPF with unit commitment active.                    True                
+    emissions                 AssociationsList           t/MWh    False                 List of emissions                                                                 False               
+    fuels                     AssociationsList           t/MWh    False                 List of fuels                                                                     False               
+    market_unit               Market unit                         False                 Market unit associated to this generator.                                         True                
+    market_unit_share         float                      p.u.     False                 Participation share of the generator inside the market unit.                      True                
+    srap_enabled              bool                                False                 Is the unit available for SRAP participation?                                     True                
+    tpe                       enum GeneratorType                  False                 Machine type of the generator.                                                    False               
+    is_static_generator       bool                                False                 Use the static generator short-circuit model.                                     False               
+    Enom                      float                      MWh      False                 Nominal energy capacity.                                                          False               
+    max_soc                   float                      p.u.     False                 Minimum state of charge.                                                          False               
+    min_soc                   float                      p.u.     False                 Maximum state of charge.                                                          False               
+    soc_0                     float                      p.u.     False                 Initial state of charge.                                                          False               
+    charge_efficiency         float                      p.u.     False                 Charging efficiency.                                                              False               
+    discharge_efficiency      float                      p.u.     False                 Discharge efficiency.                                                             False               
+    discharge_per_cycle       float                      p.u.     False                                                                                                   False               
+    ========================  =========================  =======  =========  =========  ================================================================================  ===========  =======
 
 
 Branch
@@ -14622,6 +14634,7 @@ Branch
     code                      str                         False                 Secondary ID                                                                                                                                                                                                                               False               
     rdfid                     str                         False                 RDF ID for further compatibility                                                                                                                                                                                                           False               
     action                    enum ActionType             False                 Object action to perform. Only used for model merging.                                                                                                                                                                                     False               
+    selected_to_merge         bool                        False                 Whether this object should be applied during diff merge.                                                                                                                                                                                   False               
     comment                   str                         False                 User comment                                                                                                                                                                                                                               False               
     diff_changes              MergeInformation            False                                                                                                                                                                                                                                                            False               
     modelling_authority       Modelling Authority         False                 Modelling authority of this asset                                                                                                                                                                                                          False               
@@ -14643,7 +14656,8 @@ Branch
     bus_to                    Bus                         False                 Name of the bus at the "to" side                                                                                                                                                                                                           False               
     active                    bool                        False                 Is active?                                                                                                                                                                                                                                 True                
     reducible                 bool                        False                 Is the branch to be reduced by the topology preprocessor?                                                                                                                                                                                  False               
-    rate                      float                MVA    False                 Thermal rating power                                                                                                                                                                                                                       True                
+    design_rate               float                MVA    False                 Design thermal rating power that is not modified for operational reasons or otherwise                                                                                                                                                      False               
+    rate                      float                MVA    False                 Operational thermal rating power                                                                                                                                                                                                           True                
     contingency_factor        float                p.u.   False                 Rating multiplier for contingencies                                                                                                                                                                                                        True                
     protection_rating_factor  float                p.u.   False                 Rating multiplier that indicates the maximum flow before the protections tripping                                                                                                                                                          True                
     monitor_loading           bool                        False                 Monitor this device loading for OPF, NTC or contingency studies.                                                                                                                                                                           False               
@@ -14680,19 +14694,20 @@ BranchGroup
 
 .. table::
 
-    ============  =====================  ====  =========  =========  ======================================================  ===========  =======
-        name           class_type        unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  =====================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                          False                 Unique ID                                               False               
-    name          str                          False                 Name of the device.                                     False               
-    code          str                          False                 Secondary ID                                            False               
-    rdfid         str                          False                 RDF ID for further compatibility                        False               
-    action        enum ActionType              False                 Object action to perform. Only used for model merging.  False               
-    comment       str                          False                 User comment                                            False               
-    diff_changes  MergeInformation             False                                                                         False               
-    group_type    enum BranchGroupTypes        False                 Type of branch group                                    False               
-    color         str                          False                 Color to paint                                          False               
-    ============  =====================  ====  =========  =========  ======================================================  ===========  =======
+    =================  =====================  ====  =========  =========  ========================================================  ===========  =======
+          name              class_type        unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  =====================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                          False                 Unique ID                                                 False               
+    name               str                          False                 Name of the device.                                       False               
+    code               str                          False                 Secondary ID                                              False               
+    rdfid              str                          False                 RDF ID for further compatibility                          False               
+    action             enum ActionType              False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                         False                 Whether this object should be applied during diff merge.  False               
+    comment            str                          False                 User comment                                              False               
+    diff_changes       MergeInformation             False                                                                           False               
+    group_type         enum BranchGroupTypes        False                 Type of branch group                                      False               
+    color              str                          False                 Color to paint                                            False               
+    =================  =====================  ====  =========  =========  ========================================================  ===========  =======
 
 
 Bus
@@ -14700,51 +14715,52 @@ Bus
 
 .. table::
 
-    ===================  ===================  ======  =========  =========  ======================================================  ===========  =======
-           name              class_type        unit   mandatory  max_chars                       descriptions                       has_profile  comment
-    ===================  ===================  ======  =========  =========  ======================================================  ===========  =======
-    idtag                str                          False                 Unique ID                                               False               
-    name                 str                          False                 Name of the device.                                     False               
-    code                 str                          False                 Secondary ID                                            False               
-    rdfid                str                          False                 RDF ID for further compatibility                        False               
-    action               enum ActionType              False                 Object action to perform. Only used for model merging.  False               
-    comment              str                          False                 User comment                                            False               
-    diff_changes         MergeInformation             False                                                                         False               
-    modelling_authority  Modelling Authority          False                 Modelling authority of this asset                       False               
-    commissioned_date    int                          False                 Commissioned date of the asset                          False               
-    decommissioned_date  int                          False                 Decommissioned date of the asset                        False               
-    build_status         enum BuildStatus             False                 Device build status. Used in expansion planning.        False               
-    owners               AssociationsList     p.u.    False                 Owners associations to injections                       False               
-    rms_model            DaeBlock                     False                 RMS dynamic model                                       False               
-    emt_model            DaeBlock                     False                 EMT dynamic model                                       False               
-    active               bool                         False                 Is the bus active? used to disable the bus.             True                
-    is_slack             bool                         False                 Force the bus to be of slack type.                      False               
-    is_dc                bool                         False                 Is this bus of DC type?.                                False               
-    is_grounded          bool                         False                 Is this bus connected to ground?.                       False               
-    graphic_type         enum BusGraphicType          False                 Graphic to use in the schematic.                        False               
-    Vnom                 float                kV      False                 Nominal line voltage of the bus.                        False               
-    Vm0                  float                p.u.    False                 Voltage module guess.                                   False               
-    Va0                  float                rad.    False                 Voltage angle guess.                                    False               
-    Vmin                 float                p.u.    False                 Lower range of allowed voltage module.                  True                
-    Vmax                 float                p.u.    False                 Higher range of allowed voltage module.                 True                
-    Vm_cost              float                e/unit  False                 Cost of over and under voltages                         False               
-    angle_min            float                rad.    False                 Lower range of allowed voltage angle.                   False               
-    angle_max            float                rad.    False                 Higher range of allowed voltage angle.                  False               
-    angle_cost           float                e/unit  False                 Cost of over and under angles                           False               
-    x                    float                px      False                 x position in pixels.                                   False               
-    y                    float                px      False                 y position in pixels.                                   False               
-    h                    float                px      False                 height of the bus in pixels.                            False               
-    w                    float                px      False                 Width of the bus in pixels.                             False               
-    country              Country                      False                 Country of the bus                                      False               
-    area                 Area                         False                 Area of the bus                                         False               
-    zone                 Zone                         False                 Zone of the bus                                         False               
-    substation           Substation                   False                 Substation of the bus.                                  False               
-    voltage_level        Voltage level                False                 Voltage level of the bus.                               False               
-    bus_bar              BusBar                       False                 Busbar associated to the bus.                           False               
-    longitude            float                deg     False                 longitude of the bus.                                   False               
-    latitude             float                deg     False                 latitude of the bus.                                    False               
-    color                str                          False                 Color to paint the element in the diagram               False               
-    ===================  ===================  ======  =========  =========  ======================================================  ===========  =======
+    ===================  ===================  ======  =========  =========  ========================================================  ===========  =======
+           name              class_type        unit   mandatory  max_chars                        descriptions                        has_profile  comment
+    ===================  ===================  ======  =========  =========  ========================================================  ===========  =======
+    idtag                str                          False                 Unique ID                                                 False               
+    name                 str                          False                 Name of the device.                                       False               
+    code                 str                          False                 Secondary ID                                              False               
+    rdfid                str                          False                 RDF ID for further compatibility                          False               
+    action               enum ActionType              False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge    bool                         False                 Whether this object should be applied during diff merge.  False               
+    comment              str                          False                 User comment                                              False               
+    diff_changes         MergeInformation             False                                                                           False               
+    modelling_authority  Modelling Authority          False                 Modelling authority of this asset                         False               
+    commissioned_date    int                          False                 Commissioned date of the asset                            False               
+    decommissioned_date  int                          False                 Decommissioned date of the asset                          False               
+    build_status         enum BuildStatus             False                 Device build status. Used in expansion planning.          False               
+    owners               AssociationsList     p.u.    False                 Owners associations to injections                         False               
+    rms_model            DaeBlock                     False                 RMS dynamic model                                         False               
+    emt_model            DaeBlock                     False                 EMT dynamic model                                         False               
+    active               bool                         False                 Is the bus active? used to disable the bus.               True                
+    is_slack             bool                         False                 Force the bus to be of slack type.                        True                
+    is_dc                bool                         False                 Is this bus of DC type?.                                  False               
+    is_grounded          bool                         False                 Is this bus connected to ground?.                         False               
+    graphic_type         enum BusGraphicType          False                 Graphic to use in the schematic.                          False               
+    Vnom                 float                kV      False                 Nominal line voltage of the bus.                          False               
+    Vm0                  float                p.u.    False                 Voltage module guess.                                     True                
+    Va0                  float                rad.    False                 Voltage angle guess.                                      True                
+    Vmin                 float                p.u.    False                 Lower range of allowed voltage module.                    True                
+    Vmax                 float                p.u.    False                 Higher range of allowed voltage module.                   True                
+    Vm_cost              float                e/unit  False                 Cost of over and under voltages                           False               
+    angle_min            float                rad.    False                 Lower range of allowed voltage angle.                     False               
+    angle_max            float                rad.    False                 Higher range of allowed voltage angle.                    False               
+    angle_cost           float                e/unit  False                 Cost of over and under angles                             False               
+    x                    float                px      False                 x position in pixels.                                     False               
+    y                    float                px      False                 y position in pixels.                                     False               
+    h                    float                px      False                 height of the bus in pixels.                              False               
+    w                    float                px      False                 Width of the bus in pixels.                               False               
+    country              Country                      False                 Country of the bus                                        False               
+    area                 Area                         False                 Area of the bus                                           False               
+    zone                 Zone                         False                 Zone of the bus                                           False               
+    substation           Substation                   False                 Substation of the bus.                                    False               
+    voltage_level        Voltage level                False                 Voltage level of the bus.                                 False               
+    bus_bar              BusBar                       False                 Busbar associated to the bus.                             False               
+    longitude            float                deg     False                 longitude of the bus.                                     False               
+    latitude             float                deg     False                 latitude of the bus.                                      False               
+    color                str                          False                 Color to paint the element in the diagram                 False               
+    ===================  ===================  ======  =========  =========  ========================================================  ===========  =======
 
 
 BusBar
@@ -14752,23 +14768,24 @@ BusBar
 
 .. table::
 
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
-           name              class_type       unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
-    idtag                str                        False                 Unique ID                                               False               
-    name                 str                        False                 Name of the device.                                     False               
-    code                 str                        False                 Secondary ID                                            False               
-    rdfid                str                        False                 RDF ID for further compatibility                        False               
-    action               enum ActionType            False                 Object action to perform. Only used for model merging.  False               
-    comment              str                        False                 User comment                                            False               
-    diff_changes         MergeInformation           False                                                                         False               
-    modelling_authority  Modelling Authority        False                 Modelling authority of this asset                       False               
-    commissioned_date    int                        False                 Commissioned date of the asset                          False               
-    decommissioned_date  int                        False                 Decommissioned date of the asset                        False               
-    build_status         enum BuildStatus           False                 Device build status. Used in expansion planning.        False               
-    owners               AssociationsList     p.u.  False                 Owners associations to injections                       False               
-    voltage_level        Bus                        False                 Voltage level of this BusBar                            False               
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
+    ===================  ===================  ====  =========  =========  ========================================================  ===========  =======
+           name              class_type       unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    ===================  ===================  ====  =========  =========  ========================================================  ===========  =======
+    idtag                str                        False                 Unique ID                                                 False               
+    name                 str                        False                 Name of the device.                                       False               
+    code                 str                        False                 Secondary ID                                              False               
+    rdfid                str                        False                 RDF ID for further compatibility                          False               
+    action               enum ActionType            False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge    bool                       False                 Whether this object should be applied during diff merge.  False               
+    comment              str                        False                 User comment                                              False               
+    diff_changes         MergeInformation           False                                                                           False               
+    modelling_authority  Modelling Authority        False                 Modelling authority of this asset                         False               
+    commissioned_date    int                        False                 Commissioned date of the asset                            False               
+    decommissioned_date  int                        False                 Decommissioned date of the asset                          False               
+    build_status         enum BuildStatus           False                 Device build status. Used in expansion planning.          False               
+    owners               AssociationsList     p.u.  False                 Owners associations to injections                         False               
+    voltage_level        Bus                        False                 Voltage level of this BusBar                              False               
+    ===================  ===================  ====  =========  =========  ========================================================  ===========  =======
 
 
 Community
@@ -14776,21 +14793,22 @@ Community
 
 .. table::
 
-    ============  ================  ====  =========  =========  =========================================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                                descriptions                                 has_profile  comment
-    ============  ================  ====  =========  =========  =========================================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                                                  False               
-    name          str                     False                 Name of the device.                                                        False               
-    code          str                     False                 Secondary ID                                                               False               
-    rdfid         str                     False                 RDF ID for further compatibility                                           False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.                     False               
-    comment       str                     False                 User comment                                                               False               
-    diff_changes  MergeInformation        False                                                                                            False               
-    longitude     float             deg   False                 longitude.                                                                 False               
-    latitude      float             deg   False                 latitude.                                                                  False               
-    color         str                     False                 Color to paint the element in the map diagram                              False               
-    country       Country                 False                 Substation country, altenativelly this can be obtained from the community  False               
-    ============  ================  ====  =========  =========  =========================================================================  ===========  =======
+    =================  ================  ====  =========  =========  =========================================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                                descriptions                                 has_profile  comment
+    =================  ================  ====  =========  =========  =========================================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                                  False               
+    name               str                     False                 Name of the device.                                                        False               
+    code               str                     False                 Secondary ID                                                               False               
+    rdfid              str                     False                 RDF ID for further compatibility                                           False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.                     False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.                   False               
+    comment            str                     False                 User comment                                                               False               
+    diff_changes       MergeInformation        False                                                                                            False               
+    longitude          float             deg   False                 longitude.                                                                 False               
+    latitude           float             deg   False                 latitude.                                                                  False               
+    color              str                     False                 Color to paint the element in the map diagram                              False               
+    country            Country                 False                 Substation country, altenativelly this can be obtained from the community  False               
+    =================  ================  ====  =========  =========  =========================================================================  ===========  =======
 
 
 Contingency
@@ -14798,23 +14816,24 @@ Contingency
 
 .. table::
 
-    ============  ==============================  ====  =========  =========  ======================================================  ===========  =======
-        name                class_type            unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ==============================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                                   False                 Unique ID                                               False               
-    name          str                                   False                 Name of the device.                                     False               
-    code          str                                   False                 Secondary ID                                            False               
-    rdfid         str                                   False                 RDF ID for further compatibility                        False               
-    action        enum ActionType                       False                 Object action to perform. Only used for model merging.  False               
-    comment       str                                   False                 User comment                                            False               
-    diff_changes  MergeInformation                      False                                                                         False               
-    device_idtag  str                                   False                 Unique ID                                               False               
-    tpe           enum DeviceType                       False                 Device type                                             False               
-    device_name   str                                   False                 Device name                                             False               
-    prop          enum ContingencyOperationTypes        False                 Object property to change                               False               
-    value         float                                 False                 Property value                                          False               
-    group         Contingency Group                     False                 Contingency group                                       False               
-    ============  ==============================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ==============================  ====  =========  =========  ========================================================  ===========  =======
+          name                   class_type            unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ==============================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                                   False                 Unique ID                                                 False               
+    name               str                                   False                 Name of the device.                                       False               
+    code               str                                   False                 Secondary ID                                              False               
+    rdfid              str                                   False                 RDF ID for further compatibility                          False               
+    action             enum ActionType                       False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                                  False                 Whether this object should be applied during diff merge.  False               
+    comment            str                                   False                 User comment                                              False               
+    diff_changes       MergeInformation                      False                                                                           False               
+    device_idtag       str                                   False                 Unique ID                                                 False               
+    tpe                enum DeviceType                       False                 Device type                                               False               
+    device_name        str                                   False                 Device name                                               False               
+    prop               enum ContingencyOperationTypes        False                 Object property to change                                 False               
+    value              float                                 False                 Property value                                            False               
+    group              Contingency Group                     False                 Contingency group                                         False               
+    =================  ==============================  ====  =========  =========  ========================================================  ===========  =======
 
 
 ContingencyGroup
@@ -14822,19 +14841,54 @@ ContingencyGroup
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    category      str                     False                 Some tag to category the contingency group              False               
-    active        bool                    False                 Is the contingency group active for consideration?      False               
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    category           str                     False                 Some tag to category the contingency group                False               
+    active             bool                    False                 Is the contingency group active for consideration?        False               
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+
+
+ControlPc
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. table::
+
+    ========================  ===================  ====  =========  =========  ================================================================================  ===========  =======
+              name                class_type       unit  mandatory  max_chars                                    descriptions                                    has_profile  comment
+    ========================  ===================  ====  =========  =========  ================================================================================  ===========  =======
+    idtag                     str                        False                 Unique ID                                                                         False               
+    name                      str                        False                 Name of the device.                                                               False               
+    code                      str                        False                 Secondary ID                                                                      False               
+    rdfid                     str                        False                 RDF ID for further compatibility                                                  False               
+    action                    enum ActionType            False                 Object action to perform. Only used for model merging.                            False               
+    selected_to_merge         bool                       False                 Whether this object should be applied during diff merge.                          False               
+    comment                   str                        False                 User comment                                                                      False               
+    diff_changes              MergeInformation           False                                                                                                   False               
+    modelling_authority       Modelling Authority        False                 Modelling authority of this asset                                                 False               
+    commissioned_date         int                        False                 Commissioned date of the asset                                                    False               
+    decommissioned_date       int                        False                 Decommissioned date of the asset                                                  False               
+    build_status              enum BuildStatus           False                 Device build status. Used in expansion planning.                                  False               
+    owners                    AssociationsList     p.u.  False                 Owners associations to injections                                                 False               
+    rms_model                 DaeBlock                   False                 RMS dynamic model                                                                 False               
+    emt_model                 DaeBlock                   False                 EMT dynamic model                                                                 False               
+    rms_template              RMS template               False                 Native RMS template used. Assigning it clears rms_fmu_template.                   False               
+    emt_template              EMT template               False                 Native EMT template used. Assigning it clears emt_fmu_template.                   False               
+    rms_fmu_template          FMU template               False                 RMS FMU template used only by RMS simulations. Assigning it clears rms_template.  False               
+    emt_fmu_template          FMU template               False                 EMT FMU template used only by EMT simulations. Assigning it clears emt_template.  False               
+    rms_fmu_import_config     str                        False                 Serialized FMU Co-Simulation RMS configuration                                    False               
+    emt_fmu_import_config     str                        False                 Serialized FMU Co-Simulation EMT configuration                                    False               
+    rms_fmu_me_import_config  str                        False                 Serialized FMU Model Exchange RMS configuration                                   False               
+    emt_fmu_me_import_config  str                        False                 Serialized FMU Model Exchange EMT configuration                                   False               
+    ========================  ===================  ====  =========  =========  ================================================================================  ===========  =======
 
 
 ControllableShunt
@@ -14850,6 +14904,7 @@ ControllableShunt
     code                      str                                     False                 Secondary ID                                                                      False               
     rdfid                     str                                     False                 RDF ID for further compatibility                                                  False               
     action                    enum ActionType                         False                 Object action to perform. Only used for model merging.                            False               
+    selected_to_merge         bool                                    False                 Whether this object should be applied during diff merge.                          False               
     comment                   str                                     False                 User comment                                                                      False               
     diff_changes              MergeInformation                        False                                                                                                   False               
     modelling_authority       Modelling Authority                     False                 Modelling authority of this asset                                                 False               
@@ -14883,6 +14938,10 @@ ControllableShunt
     latitude                  float                     deg           False                 latitude of the injection.                                                        False               
     use_kw                    bool                                    False                 Consider the injections in kW and kVAr?                                           False               
     conn                      enum ShuntConnectionType                False                 Connection type for 3-phase studies                                               False               
+    phN                       bool                                    False                 Is the neutral connected?                                                         False               
+    phA                       bool                                    False                 Is phase A connected?                                                             False               
+    phB                       bool                                    False                 Is phase B connected?                                                             False               
+    phC                       bool                                    False                 Is phase C connected?                                                             False               
     bus_pos                   int                                     False                 Aid to locate devices on a busbar                                                 False               
     G                         float                     MW            False                 Active power                                                                      True                
     G0                        float                     MW            False                 Zero sequence active power of the impedance component at V=1.0 p.u.               True                
@@ -14916,20 +14975,21 @@ Country
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    longitude     float             deg   False                 longitude.                                              False               
-    latitude      float             deg   False                 latitude.                                               False               
-    color         str                     False                 Color to paint the element in the map diagram           False               
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    longitude          float             deg   False                 longitude.                                                False               
+    latitude           float             deg   False                 latitude.                                                 False               
+    color              str                     False                 Color to paint the element in the map diagram             False               
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 CurrentInjection
@@ -14945,6 +15005,7 @@ CurrentInjection
     code                      str                              False                 Secondary ID                                                                      False               
     rdfid                     str                              False                 RDF ID for further compatibility                                                  False               
     action                    enum ActionType                  False                 Object action to perform. Only used for model merging.                            False               
+    selected_to_merge         bool                             False                 Whether this object should be applied during diff merge.                          False               
     comment                   str                              False                 User comment                                                                      False               
     diff_changes              MergeInformation                 False                                                                                                   False               
     modelling_authority       Modelling Authority              False                 Modelling authority of this asset                                                 False               
@@ -14978,6 +15039,10 @@ CurrentInjection
     latitude                  float                     deg    False                 latitude of the injection.                                                        False               
     use_kw                    bool                             False                 Consider the injections in kW and kVAr?                                           False               
     conn                      enum ShuntConnectionType         False                 Connection type for 3-phase studies                                               False               
+    phN                       bool                             False                 Is the neutral connected?                                                         False               
+    phA                       bool                             False                 Is phase A connected?                                                             False               
+    phB                       bool                             False                 Is phase B connected?                                                             False               
+    phC                       bool                             False                 Is phase C connected?                                                             False               
     bus_pos                   int                              False                 Aid to locate devices on a busbar                                                 False               
     Ir                        float                     MW     False                 Active power of the current component at V=1.0 p.u.                               True                
     Ir1                       float                     MW     False                 Active power of the current component at V=1.0 p.u.                               True                
@@ -15003,6 +15068,7 @@ DcLine
     code                      str                         False                 Secondary ID                                                                                                                                                                                                                               False               
     rdfid                     str                         False                 RDF ID for further compatibility                                                                                                                                                                                                           False               
     action                    enum ActionType             False                 Object action to perform. Only used for model merging.                                                                                                                                                                                     False               
+    selected_to_merge         bool                        False                 Whether this object should be applied during diff merge.                                                                                                                                                                                   False               
     comment                   str                         False                 User comment                                                                                                                                                                                                                               False               
     diff_changes              MergeInformation            False                                                                                                                                                                                                                                                            False               
     modelling_authority       Modelling Authority         False                 Modelling authority of this asset                                                                                                                                                                                                          False               
@@ -15024,7 +15090,8 @@ DcLine
     bus_to                    Bus                         False                 Name of the bus at the "to" side                                                                                                                                                                                                           False               
     active                    bool                        False                 Is active?                                                                                                                                                                                                                                 True                
     reducible                 bool                        False                 Is the branch to be reduced by the topology preprocessor?                                                                                                                                                                                  False               
-    rate                      float                MVA    False                 Thermal rating power                                                                                                                                                                                                                       True                
+    design_rate               float                MVA    False                 Design thermal rating power that is not modified for operational reasons or otherwise                                                                                                                                                      False               
+    rate                      float                MVA    False                 Operational thermal rating power                                                                                                                                                                                                           True                
     contingency_factor        float                p.u.   False                 Rating multiplier for contingencies                                                                                                                                                                                                        True                
     protection_rating_factor  float                p.u.   False                 Rating multiplier that indicates the maximum flow before the protections tripping                                                                                                                                                          True                
     monitor_loading           bool                        False                 Monitor this device loading for OPF, NTC or contingency studies.                                                                                                                                                                           False               
@@ -15054,18 +15121,20 @@ DynamicPlot
 
 .. table::
 
-    ===============  =======================  ====  =========  =========  ==============================================================  ===========  =======
-         name              class_type         unit  mandatory  max_chars                           descriptions                           has_profile  comment
-    ===============  =======================  ====  =========  =========  ==============================================================  ===========  =======
-    idtag            str                            False                 Unique ID                                                       False               
-    name             str                            False                 Name of the device.                                             False               
-    code             str                            False                 Secondary ID                                                    False               
-    rdfid            str                            False                 RDF ID for further compatibility                                False               
-    action           enum ActionType                False                 Object action to perform. Only used for model merging.          False               
-    comment          str                            False                 User comment                                                    False               
-    diff_changes     MergeInformation               False                                                                                 False               
-    simulation_type  enum PlotSimulationType        False                 Simulation family for this persistent dynamic plot definition.  False               
-    ===============  =======================  ====  =========  =========  ==============================================================  ===========  =======
+    =================  =======================  ====  =========  =========  ==============================================================  ===========  =======
+          name               class_type         unit  mandatory  max_chars                           descriptions                           has_profile  comment
+    =================  =======================  ====  =========  =========  ==============================================================  ===========  =======
+    idtag              str                            False                 Unique ID                                                       False               
+    name               str                            False                 Name of the device.                                             False               
+    code               str                            False                 Secondary ID                                                    False               
+    rdfid              str                            False                 RDF ID for further compatibility                                False               
+    action             enum ActionType                False                 Object action to perform. Only used for model merging.          False               
+    selected_to_merge  bool                           False                 Whether this object should be applied during diff merge.        False               
+    comment            str                            False                 User comment                                                    False               
+    diff_changes       MergeInformation               False                                                                                 False               
+    simulation_type    enum PlotSimulationType        False                 Simulation family for this persistent dynamic plot definition.  False               
+    mode               enum DynamicPlotMode           False                 Plotting mode for this persistent dynamic plot definition.      False               
+    =================  =======================  ====  =========  =========  ==============================================================  ===========  =======
 
 
 DynamicPlotEntry
@@ -15073,31 +15142,34 @@ DynamicPlotEntry
 
 .. table::
 
-    ==========================  =======================  ====  =========  =========  ==============================================================================  ===========  =======
-               name                   class_type         unit  mandatory  max_chars                                   descriptions                                   has_profile  comment
-    ==========================  =======================  ====  =========  =========  ==============================================================================  ===========  =======
-    idtag                       str                            False                 Unique ID                                                                       False               
-    name                        str                            False                 Name of the device.                                                             False               
-    code                        str                            False                 Secondary ID                                                                    False               
-    rdfid                       str                            False                 RDF ID for further compatibility                                                False               
-    action                      enum ActionType                False                 Object action to perform. Only used for model merging.                          False               
-    comment                     str                            False                 User comment                                                                    False               
-    diff_changes                MergeInformation               False                                                                                                 False               
-    variable                    VarType                        False                 parameter that the event changes                                                False               
-    plot                        Plot Group                     False                 Plot group                                                                      False               
-    group                       Rms Events Group               False                 RmsEvent group                                                                  False               
-    simulation_type             enum PlotSimulationType        False                 Simulation family for this persistent curve reference.                          False               
-    event_group_idtag           str                            False                 Stable event-group identifier preferred for result binding.                     False               
-    event_group_name            str                            False                 Event-group visible name used as display text and fallback binding hint.        False               
-    curve_device_type           enum DeviceType                False                 Device type that owns the referenced dynamic variable.                          False               
-    device_idtag                str                            False                 Stable device identifier preferred for result binding.                          False               
-    device_name_hint            str                            False                 Visible device-name hint used only for display and diagnostics.                 False               
-    variable_name               str                            False                 Dynamic variable name requested by the user.                                    False               
-    result_path_kind            str                            False                 Result namespace such as values or diff_values.                                 False               
-    variable_custom_name        str                            False                 Optional custom visible name remembered for this variable.                      False               
-    enabled                     bool                           False                 Whether this persistent curve definition is enabled.                            False               
-    runtime_series_key_payload  str                            False                 Optional cached runtime series identity payload used as an exact binding hint.  False               
-    ==========================  =======================  ====  =========  =========  ==============================================================================  ===========  =======
+    ==========================  =========================  ====  =========  =========  =================================================================================  ===========  =======
+               name                    class_type          unit  mandatory  max_chars                                    descriptions                                     has_profile  comment
+    ==========================  =========================  ====  =========  =========  =================================================================================  ===========  =======
+    idtag                       str                              False                 Unique ID                                                                          False               
+    name                        str                              False                 Name of the device.                                                                False               
+    code                        str                              False                 Secondary ID                                                                       False               
+    rdfid                       str                              False                 RDF ID for further compatibility                                                   False               
+    action                      enum ActionType                  False                 Object action to perform. Only used for model merging.                             False               
+    selected_to_merge           bool                             False                 Whether this object should be applied during diff merge.                           False               
+    comment                     str                              False                 User comment                                                                       False               
+    diff_changes                MergeInformation                 False                                                                                                    False               
+    variable                    VarType                          False                 parameter that the event changes                                                   False               
+    plot                        Plot Group                       False                 Plot group                                                                         False               
+    group                       Rms Events Group                 False                 RmsEvent group                                                                     False               
+    simulation_type             enum PlotSimulationType          False                 Simulation family for this persistent curve reference.                             False               
+    entry_kind                  enum DynamicPlotEntryKind        False                 Whether this persistent entry references a dynamic variable or a model parameter.  False               
+    role                        enum DynamicPlotEntryRole        False                 Role played by this persistent entry inside the owning dynamic plot.               False               
+    event_group_idtag           str                              False                 Stable event-group identifier preferred for result binding.                        False               
+    event_group_name            str                              False                 Event-group visible name used as display text and fallback binding hint.           False               
+    curve_device_type           enum DeviceType                  False                 Device type that owns the referenced dynamic variable.                             False               
+    device_idtag                str                              False                 Stable device identifier preferred for result binding.                             False               
+    device_name_hint            str                              False                 Visible device-name hint used only for display and diagnostics.                    False               
+    variable_name               str                              False                 Dynamic variable name requested by the user.                                       False               
+    result_path_kind            str                              False                 Result namespace such as values or diff_values.                                    False               
+    variable_custom_name        str                              False                 Optional custom visible name remembered for this variable.                         False               
+    enabled                     bool                             False                 Whether this persistent curve definition is enabled.                               False               
+    runtime_series_key_payload  str                              False                 Optional cached runtime series identity payload used as an exact binding hint.     False               
+    ==========================  =========================  ====  =========  =========  =================================================================================  ===========  =======
 
 
 EmissionGas
@@ -15105,19 +15177,20 @@ EmissionGas
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    cost          float             e/t   False                 Cost of emissions (e / ton)                             True                
-    color         str                     False                 Color to paint                                          False               
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    cost               float             e/t   False                 Cost of emissions (e / ton)                               True                
+    color              str                     False                 Color to paint                                            False               
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 EmtEvent
@@ -15125,27 +15198,28 @@ EmtEvent
 
 .. table::
 
-    ====================  ===============================  ====  =========  =========  ======================================================  ===========  =======
-            name                    class_type             unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ====================  ===============================  ====  =========  =========  ======================================================  ===========  =======
-    idtag                 str                                    False                 Unique ID                                               False               
-    name                  str                                    False                 Name of the device.                                     False               
-    code                  str                                    False                 Secondary ID                                            False               
-    rdfid                 str                                    False                 RDF ID for further compatibility                        False               
-    action                enum ActionType                        False                 Object action to perform. Only used for model merging.  False               
-    comment               str                                    False                 User comment                                            False               
-    diff_changes          MergeInformation                       False                                                                         False               
-    device_idtag          str                                    False                 Unique ID                                               False               
-    tpe                   enum DeviceType                        False                 Device type                                             False               
-    device_name           str                                    False                 Device name                                             False               
-    parameter             VarType                                False                 parameter that the event changes                        False               
-    time                  float                                  False                 Time when the event occurs                              False               
-    end_time              float                                  False                 End time used by ramp events                            False               
-    value                 float                                  False                 New value for the parameter                             False               
-    group                 Emt Events Group                       False                 EmtEvent group                                          False               
-    force_step_alignment  bool                                   False                 Force step alignment                                    False               
-    transition_type       enum DynamicEventTransitionType        False                 Transition profile for the event                        False               
-    ====================  ===============================  ====  =========  =========  ======================================================  ===========  =======
+    ====================  ===============================  ====  =========  =========  ========================================================  ===========  =======
+            name                    class_type             unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    ====================  ===============================  ====  =========  =========  ========================================================  ===========  =======
+    idtag                 str                                    False                 Unique ID                                                 False               
+    name                  str                                    False                 Name of the device.                                       False               
+    code                  str                                    False                 Secondary ID                                              False               
+    rdfid                 str                                    False                 RDF ID for further compatibility                          False               
+    action                enum ActionType                        False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge     bool                                   False                 Whether this object should be applied during diff merge.  False               
+    comment               str                                    False                 User comment                                              False               
+    diff_changes          MergeInformation                       False                                                                           False               
+    device_idtag          str                                    False                 Unique ID                                                 False               
+    tpe                   enum DeviceType                        False                 Device type                                               False               
+    device_name           str                                    False                 Device name                                               False               
+    parameter             VarType                                False                 parameter that the event changes                          False               
+    time                  float                                  False                 Time when the event occurs                                False               
+    end_time              float                                  False                 End time used by ramp events                              False               
+    value                 float                                  False                 New value for the parameter                               False               
+    group                 Emt Events Group                       False                 EmtEvent group                                            False               
+    force_step_alignment  bool                                   False                 Force step alignment                                      False               
+    transition_type       enum DynamicEventTransitionType        False                 Transition profile for the event                          False               
+    ====================  ===============================  ====  =========  =========  ========================================================  ===========  =======
 
 
 EmtEventsGroup
@@ -15153,18 +15227,19 @@ EmtEventsGroup
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    active        bool                    False                 True if this EMT events group must be simulated.        False               
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    active             bool                    False                 True if this EMT events group must be simulated.          False               
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 EmtModelTemplate
@@ -15172,21 +15247,22 @@ EmtModelTemplate
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    device_idtag  str                     False                 Unique ID                                               False               
-    tpe           enum DeviceType         False                 Device type                                             False               
-    device_name   str                     False                 Device name                                             False               
-    block         DaeBlock                False                 DAE block                                               False               
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    device_idtag       str                     False                 Unique ID                                                 False               
+    tpe                enum DeviceType         False                 Device type                                               False               
+    device_name        str                     False                 Device name                                               False               
+    block              DaeBlock                False                 DAE block                                                 False               
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 ExternalGrid
@@ -15202,6 +15278,7 @@ ExternalGrid
     code                      str                                False                 Secondary ID                                                                      False               
     rdfid                     str                                False                 RDF ID for further compatibility                                                  False               
     action                    enum ActionType                    False                 Object action to perform. Only used for model merging.                            False               
+    selected_to_merge         bool                               False                 Whether this object should be applied during diff merge.                          False               
     comment                   str                                False                 User comment                                                                      False               
     diff_changes              MergeInformation                   False                                                                                                   False               
     modelling_authority       Modelling Authority                False                 Modelling authority of this asset                                                 False               
@@ -15235,6 +15312,10 @@ ExternalGrid
     latitude                  float                     deg      False                 latitude of the injection.                                                        False               
     use_kw                    bool                               False                 Consider the injections in kW and kVAr?                                           False               
     conn                      enum ShuntConnectionType           False                 Connection type for 3-phase studies                                               False               
+    phN                       bool                               False                 Is the neutral connected?                                                         False               
+    phA                       bool                               False                 Is phase A connected?                                                             False               
+    phB                       bool                               False                 Is phase B connected?                                                             False               
+    phC                       bool                               False                 Is phase C connected?                                                             False               
     bus_pos                   int                                False                 Aid to locate devices on a busbar                                                 False               
     P                         float                     MW       False                 Active power                                                                      True                
     Pa                        float                     MW       False                 Phase A active power                                                              True                
@@ -15256,20 +15337,21 @@ Facility
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    longitude     float             deg   False                 longitude.                                              False               
-    latitude      float             deg   False                 latitude.                                               False               
-    color         str                     False                 Color to paint the element in the map diagram           False               
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    longitude          float             deg   False                 longitude.                                                False               
+    latitude           float             deg   False                 latitude.                                                 False               
+    color              str                     False                 Color to paint the element in the map diagram             False               
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 FluidNode
@@ -15277,31 +15359,32 @@ FluidNode
 
 .. table::
 
-    ===================  ===================  ========  =========  =========  ======================================================  ===========  =======
-           name              class_type         unit    mandatory  max_chars                       descriptions                       has_profile  comment
-    ===================  ===================  ========  =========  =========  ======================================================  ===========  =======
-    idtag                str                            False                 Unique ID                                               False               
-    name                 str                            False                 Name of the device.                                     False               
-    code                 str                            False                 Secondary ID                                            False               
-    rdfid                str                            False                 RDF ID for further compatibility                        False               
-    action               enum ActionType                False                 Object action to perform. Only used for model merging.  False               
-    comment              str                            False                 User comment                                            False               
-    diff_changes         MergeInformation               False                                                                         False               
-    modelling_authority  Modelling Authority            False                 Modelling authority of this asset                       False               
-    commissioned_date    int                            False                 Commissioned date of the asset                          False               
-    decommissioned_date  int                            False                 Decommissioned date of the asset                        False               
-    build_status         enum BuildStatus               False                 Device build status. Used in expansion planning.        False               
-    owners               AssociationsList     p.u.      False                 Owners associations to injections                       False               
-    min_level            float                hm3       False                 Minimum amount of fluid at the node/reservoir           False               
-    max_level            float                hm3       False                 Maximum amount of fluid at the node/reservoir           False               
-    min_soc              float                p.u.      False                 Minimum SOC of fluid at the node/reservoir              True                
-    max_soc              float                p.u.      False                 Maximum SOC of fluid at the node/reservoir              True                
-    initial_level        float                hm3       False                 Initial level of the node/reservoir                     False               
-    bus                  Bus                            False                 Electrical bus.                                         False               
-    spillage_cost        float                e/(m3/s)  False                 Cost of nodal spillage                                  True                
-    inflow               float                m3/s      False                 Flow of fluid coming from the rain                      True                
-    color                str                            False                 Color to paint the device in the map diagram            False               
-    ===================  ===================  ========  =========  =========  ======================================================  ===========  =======
+    ===================  ===================  ========  =========  =========  ========================================================  ===========  =======
+           name              class_type         unit    mandatory  max_chars                        descriptions                        has_profile  comment
+    ===================  ===================  ========  =========  =========  ========================================================  ===========  =======
+    idtag                str                            False                 Unique ID                                                 False               
+    name                 str                            False                 Name of the device.                                       False               
+    code                 str                            False                 Secondary ID                                              False               
+    rdfid                str                            False                 RDF ID for further compatibility                          False               
+    action               enum ActionType                False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge    bool                           False                 Whether this object should be applied during diff merge.  False               
+    comment              str                            False                 User comment                                              False               
+    diff_changes         MergeInformation               False                                                                           False               
+    modelling_authority  Modelling Authority            False                 Modelling authority of this asset                         False               
+    commissioned_date    int                            False                 Commissioned date of the asset                            False               
+    decommissioned_date  int                            False                 Decommissioned date of the asset                          False               
+    build_status         enum BuildStatus               False                 Device build status. Used in expansion planning.          False               
+    owners               AssociationsList     p.u.      False                 Owners associations to injections                         False               
+    min_level            float                hm3       False                 Minimum amount of fluid at the node/reservoir             False               
+    max_level            float                hm3       False                 Maximum amount of fluid at the node/reservoir             False               
+    min_soc              float                p.u.      False                 Minimum SOC of fluid at the node/reservoir                True                
+    max_soc              float                p.u.      False                 Maximum SOC of fluid at the node/reservoir                True                
+    initial_level        float                hm3       False                 Initial level of the node/reservoir                       False               
+    bus                  Bus                            False                 Electrical bus.                                           False               
+    spillage_cost        float                e/(m3/s)  False                 Cost of nodal spillage                                    True                
+    inflow               float                m3/s      False                 Flow of fluid coming from the rain                        True                
+    color                str                            False                 Color to paint the device in the map diagram              False               
+    ===================  ===================  ========  =========  =========  ========================================================  ===========  =======
 
 
 FluidP2x
@@ -15309,28 +15392,29 @@ FluidP2x
 
 .. table::
 
-    ===================  ===================  ======  =========  =========  ======================================================  ===========  =======
-           name              class_type        unit   mandatory  max_chars                       descriptions                       has_profile  comment
-    ===================  ===================  ======  =========  =========  ======================================================  ===========  =======
-    idtag                str                          False                 Unique ID                                               False               
-    name                 str                          False                 Name of the device.                                     False               
-    code                 str                          False                 Secondary ID                                            False               
-    rdfid                str                          False                 RDF ID for further compatibility                        False               
-    action               enum ActionType              False                 Object action to perform. Only used for model merging.  False               
-    comment              str                          False                 User comment                                            False               
-    diff_changes         MergeInformation             False                                                                         False               
-    modelling_authority  Modelling Authority          False                 Modelling authority of this asset                       False               
-    commissioned_date    int                          False                 Commissioned date of the asset                          False               
-    decommissioned_date  int                          False                 Decommissioned date of the asset                        False               
-    build_status         enum BuildStatus             False                 Device build status. Used in expansion planning.        False               
-    owners               AssociationsList     p.u.    False                 Owners associations to injections                       False               
-    active               bool                         False                 Is the load active?                                     True                
-    efficiency           float                MWh/m3  False                 Power plant energy production per fluid unit            False               
-    max_flow_rate        float                m3/s    False                 maximum fluid flow                                      False               
-    plant                Fluid node                   False                 Connection reservoir/node                               False               
-    generator            Generator                    False                 Electrical machine                                      False               
-    facility             Facility                     False                 Facility where this is located                          False               
-    ===================  ===================  ======  =========  =========  ======================================================  ===========  =======
+    ===================  ===================  ======  =========  =========  ========================================================  ===========  =======
+           name              class_type        unit   mandatory  max_chars                        descriptions                        has_profile  comment
+    ===================  ===================  ======  =========  =========  ========================================================  ===========  =======
+    idtag                str                          False                 Unique ID                                                 False               
+    name                 str                          False                 Name of the device.                                       False               
+    code                 str                          False                 Secondary ID                                              False               
+    rdfid                str                          False                 RDF ID for further compatibility                          False               
+    action               enum ActionType              False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge    bool                         False                 Whether this object should be applied during diff merge.  False               
+    comment              str                          False                 User comment                                              False               
+    diff_changes         MergeInformation             False                                                                           False               
+    modelling_authority  Modelling Authority          False                 Modelling authority of this asset                         False               
+    commissioned_date    int                          False                 Commissioned date of the asset                            False               
+    decommissioned_date  int                          False                 Decommissioned date of the asset                          False               
+    build_status         enum BuildStatus             False                 Device build status. Used in expansion planning.          False               
+    owners               AssociationsList     p.u.    False                 Owners associations to injections                         False               
+    active               bool                         False                 Is the load active?                                       True                
+    efficiency           float                MWh/m3  False                 Power plant energy production per fluid unit              False               
+    max_flow_rate        float                m3/s    False                 maximum fluid flow                                        False               
+    plant                Fluid node                   False                 Connection reservoir/node                                 False               
+    generator            Generator                    False                 Electrical machine                                        False               
+    facility             Facility                     False                 Facility where this is located                            False               
+    ===================  ===================  ======  =========  =========  ========================================================  ===========  =======
 
 
 FluidPath
@@ -15338,28 +15422,29 @@ FluidPath
 
 .. table::
 
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
-           name              class_type       unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
-    idtag                str                        False                 Unique ID                                               False               
-    name                 str                        False                 Name of the device.                                     False               
-    code                 str                        False                 Secondary ID                                            False               
-    rdfid                str                        False                 RDF ID for further compatibility                        False               
-    action               enum ActionType            False                 Object action to perform. Only used for model merging.  False               
-    comment              str                        False                 User comment                                            False               
-    diff_changes         MergeInformation           False                                                                         False               
-    modelling_authority  Modelling Authority        False                 Modelling authority of this asset                       False               
-    commissioned_date    int                        False                 Commissioned date of the asset                          False               
-    decommissioned_date  int                        False                 Decommissioned date of the asset                        False               
-    build_status         enum BuildStatus           False                 Device build status. Used in expansion planning.        False               
-    owners               AssociationsList     p.u.  False                 Owners associations to injections                       False               
-    source               Fluid node                 False                 Source node                                             False               
-    target               Fluid node                 False                 Target node                                             False               
-    min_flow             float                m3/s  False                 Minimum flow                                            False               
-    max_flow             float                m3/s  False                 Maximum flow                                            False               
-    locations            Line locations             False                 Locations                                               False               
-    color                str                        False                 Color to paint the device in the map diagram            False               
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
+    ===================  ===================  ====  =========  =========  ========================================================  ===========  =======
+           name              class_type       unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    ===================  ===================  ====  =========  =========  ========================================================  ===========  =======
+    idtag                str                        False                 Unique ID                                                 False               
+    name                 str                        False                 Name of the device.                                       False               
+    code                 str                        False                 Secondary ID                                              False               
+    rdfid                str                        False                 RDF ID for further compatibility                          False               
+    action               enum ActionType            False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge    bool                       False                 Whether this object should be applied during diff merge.  False               
+    comment              str                        False                 User comment                                              False               
+    diff_changes         MergeInformation           False                                                                           False               
+    modelling_authority  Modelling Authority        False                 Modelling authority of this asset                         False               
+    commissioned_date    int                        False                 Commissioned date of the asset                            False               
+    decommissioned_date  int                        False                 Decommissioned date of the asset                          False               
+    build_status         enum BuildStatus           False                 Device build status. Used in expansion planning.          False               
+    owners               AssociationsList     p.u.  False                 Owners associations to injections                         False               
+    source               Fluid node                 False                 Source node                                               False               
+    target               Fluid node                 False                 Target node                                               False               
+    min_flow             float                m3/s  False                 Minimum flow                                              False               
+    max_flow             float                m3/s  False                 Maximum flow                                              False               
+    locations            Line locations             False                 Locations                                                 False               
+    color                str                        False                 Color to paint the device in the map diagram              False               
+    ===================  ===================  ====  =========  =========  ========================================================  ===========  =======
 
 
 FluidPump
@@ -15367,28 +15452,29 @@ FluidPump
 
 .. table::
 
-    ===================  ===================  ======  =========  =========  ======================================================  ===========  =======
-           name              class_type        unit   mandatory  max_chars                       descriptions                       has_profile  comment
-    ===================  ===================  ======  =========  =========  ======================================================  ===========  =======
-    idtag                str                          False                 Unique ID                                               False               
-    name                 str                          False                 Name of the device.                                     False               
-    code                 str                          False                 Secondary ID                                            False               
-    rdfid                str                          False                 RDF ID for further compatibility                        False               
-    action               enum ActionType              False                 Object action to perform. Only used for model merging.  False               
-    comment              str                          False                 User comment                                            False               
-    diff_changes         MergeInformation             False                                                                         False               
-    modelling_authority  Modelling Authority          False                 Modelling authority of this asset                       False               
-    commissioned_date    int                          False                 Commissioned date of the asset                          False               
-    decommissioned_date  int                          False                 Decommissioned date of the asset                        False               
-    build_status         enum BuildStatus             False                 Device build status. Used in expansion planning.        False               
-    owners               AssociationsList     p.u.    False                 Owners associations to injections                       False               
-    active               bool                         False                 Is the load active?                                     True                
-    efficiency           float                MWh/m3  False                 Power plant energy production per fluid unit            False               
-    max_flow_rate        float                m3/s    False                 maximum fluid flow                                      False               
-    plant                Fluid node                   False                 Connection reservoir/node                               False               
-    generator            Generator                    False                 Electrical machine                                      False               
-    facility             Facility                     False                 Facility where this is located                          False               
-    ===================  ===================  ======  =========  =========  ======================================================  ===========  =======
+    ===================  ===================  ======  =========  =========  ========================================================  ===========  =======
+           name              class_type        unit   mandatory  max_chars                        descriptions                        has_profile  comment
+    ===================  ===================  ======  =========  =========  ========================================================  ===========  =======
+    idtag                str                          False                 Unique ID                                                 False               
+    name                 str                          False                 Name of the device.                                       False               
+    code                 str                          False                 Secondary ID                                              False               
+    rdfid                str                          False                 RDF ID for further compatibility                          False               
+    action               enum ActionType              False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge    bool                         False                 Whether this object should be applied during diff merge.  False               
+    comment              str                          False                 User comment                                              False               
+    diff_changes         MergeInformation             False                                                                           False               
+    modelling_authority  Modelling Authority          False                 Modelling authority of this asset                         False               
+    commissioned_date    int                          False                 Commissioned date of the asset                            False               
+    decommissioned_date  int                          False                 Decommissioned date of the asset                          False               
+    build_status         enum BuildStatus             False                 Device build status. Used in expansion planning.          False               
+    owners               AssociationsList     p.u.    False                 Owners associations to injections                         False               
+    active               bool                         False                 Is the load active?                                       True                
+    efficiency           float                MWh/m3  False                 Power plant energy production per fluid unit              False               
+    max_flow_rate        float                m3/s    False                 maximum fluid flow                                        False               
+    plant                Fluid node                   False                 Connection reservoir/node                                 False               
+    generator            Generator                    False                 Electrical machine                                        False               
+    facility             Facility                     False                 Facility where this is located                            False               
+    ===================  ===================  ======  =========  =========  ========================================================  ===========  =======
 
 
 FluidTurbine
@@ -15396,28 +15482,29 @@ FluidTurbine
 
 .. table::
 
-    ===================  ===================  ======  =========  =========  ======================================================  ===========  =======
-           name              class_type        unit   mandatory  max_chars                       descriptions                       has_profile  comment
-    ===================  ===================  ======  =========  =========  ======================================================  ===========  =======
-    idtag                str                          False                 Unique ID                                               False               
-    name                 str                          False                 Name of the device.                                     False               
-    code                 str                          False                 Secondary ID                                            False               
-    rdfid                str                          False                 RDF ID for further compatibility                        False               
-    action               enum ActionType              False                 Object action to perform. Only used for model merging.  False               
-    comment              str                          False                 User comment                                            False               
-    diff_changes         MergeInformation             False                                                                         False               
-    modelling_authority  Modelling Authority          False                 Modelling authority of this asset                       False               
-    commissioned_date    int                          False                 Commissioned date of the asset                          False               
-    decommissioned_date  int                          False                 Decommissioned date of the asset                        False               
-    build_status         enum BuildStatus             False                 Device build status. Used in expansion planning.        False               
-    owners               AssociationsList     p.u.    False                 Owners associations to injections                       False               
-    active               bool                         False                 Is the load active?                                     True                
-    efficiency           float                MWh/m3  False                 Power plant energy production per fluid unit            False               
-    max_flow_rate        float                m3/s    False                 maximum fluid flow                                      False               
-    plant                Fluid node                   False                 Connection reservoir/node                               False               
-    generator            Generator                    False                 Electrical machine                                      False               
-    facility             Facility                     False                 Facility where this is located                          False               
-    ===================  ===================  ======  =========  =========  ======================================================  ===========  =======
+    ===================  ===================  ======  =========  =========  ========================================================  ===========  =======
+           name              class_type        unit   mandatory  max_chars                        descriptions                        has_profile  comment
+    ===================  ===================  ======  =========  =========  ========================================================  ===========  =======
+    idtag                str                          False                 Unique ID                                                 False               
+    name                 str                          False                 Name of the device.                                       False               
+    code                 str                          False                 Secondary ID                                              False               
+    rdfid                str                          False                 RDF ID for further compatibility                          False               
+    action               enum ActionType              False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge    bool                         False                 Whether this object should be applied during diff merge.  False               
+    comment              str                          False                 User comment                                              False               
+    diff_changes         MergeInformation             False                                                                           False               
+    modelling_authority  Modelling Authority          False                 Modelling authority of this asset                         False               
+    commissioned_date    int                          False                 Commissioned date of the asset                            False               
+    decommissioned_date  int                          False                 Decommissioned date of the asset                          False               
+    build_status         enum BuildStatus             False                 Device build status. Used in expansion planning.          False               
+    owners               AssociationsList     p.u.    False                 Owners associations to injections                         False               
+    active               bool                         False                 Is the load active?                                       True                
+    efficiency           float                MWh/m3  False                 Power plant energy production per fluid unit              False               
+    max_flow_rate        float                m3/s    False                 maximum fluid flow                                        False               
+    plant                Fluid node                   False                 Connection reservoir/node                                 False               
+    generator            Generator                    False                 Electrical machine                                        False               
+    facility             Facility                     False                 Facility where this is located                            False               
+    ===================  ===================  ======  =========  =========  ========================================================  ===========  =======
 
 
 FmuTemplate
@@ -15433,6 +15520,7 @@ FmuTemplate
     code               str                           False                 Secondary ID                                                   False               
     rdfid              str                           False                 RDF ID for further compatibility                               False               
     action             enum ActionType               False                 Object action to perform. Only used for model merging.         False               
+    selected_to_merge  bool                          False                 Whether this object should be applied during diff merge.       False               
     comment            str                           False                 User comment                                                   False               
     diff_changes       MergeInformation              False                                                                                False               
     device_idtag       str                           False                 Unique ID                                                      False               
@@ -15451,19 +15539,20 @@ Fuel
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    cost          float             e/t   False                 Cost of fuel (e / ton)                                  True                
-    color         str                     False                 Color to paint                                          False               
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    cost               float             e/t   False                 Cost of fuel (e / ton)                                    True                
+    color              str                     False                 Color to paint                                            False               
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 Generator
@@ -15471,87 +15560,97 @@ Generator
 
 .. table::
 
-    ========================  ========================  =======  =========  =========  ================================================================================  ===========  =======
-              name                   class_type          unit    mandatory  max_chars                                    descriptions                                    has_profile  comment
-    ========================  ========================  =======  =========  =========  ================================================================================  ===========  =======
-    idtag                     str                                False                 Unique ID                                                                         False               
-    name                      str                                False                 Name of the device.                                                               False               
-    code                      str                                False                 Secondary ID                                                                      False               
-    rdfid                     str                                False                 RDF ID for further compatibility                                                  False               
-    action                    enum ActionType                    False                 Object action to perform. Only used for model merging.                            False               
-    comment                   str                                False                 User comment                                                                      False               
-    diff_changes              MergeInformation                   False                                                                                                   False               
-    modelling_authority       Modelling Authority                False                 Modelling authority of this asset                                                 False               
-    commissioned_date         int                                False                 Commissioned date of the asset                                                    False               
-    decommissioned_date       int                                False                 Decommissioned date of the asset                                                  False               
-    build_status              enum BuildStatus                   False                 Device build status. Used in expansion planning.                                  False               
-    owners                    AssociationsList          p.u.     False                 Owners associations to injections                                                 False               
-    rms_model                 DaeBlock                           False                 RMS dynamic model                                                                 False               
-    emt_model                 DaeBlock                           False                 EMT dynamic model                                                                 False               
-    rms_template              RMS template                       False                 Native RMS template used. Assigning it clears rms_fmu_template.                   False               
-    emt_template              EMT template                       False                 Native EMT template used. Assigning it clears emt_fmu_template.                   False               
-    rms_fmu_template          FMU template                       False                 RMS FMU template used only by RMS simulations. Assigning it clears rms_template.  False               
-    emt_fmu_template          FMU template                       False                 EMT FMU template used only by EMT simulations. Assigning it clears emt_template.  False               
-    rms_fmu_import_config     str                                False                 Serialized FMU Co-Simulation RMS configuration                                    False               
-    emt_fmu_import_config     str                                False                 Serialized FMU Co-Simulation EMT configuration                                    False               
-    rms_fmu_me_import_config  str                                False                 Serialized FMU Model Exchange RMS configuration                                   False               
-    emt_fmu_me_import_config  str                                False                 Serialized FMU Model Exchange EMT configuration                                   False               
-    bus                       Bus                                False                 Connection bus                                                                    False               
-    active                    bool                               False                 Is the load active?                                                               True                
-    color                     str                                False                 Color to paint the element in the map diagram                                     False               
-    mttf                      float                     h        False                 Mean time to failure                                                              False               
-    mttr                      float                     h        False                 Mean time to recovery                                                             False               
-    capex                     float                     e/MW     False                 Cost of investment. Used in expansion planning.                                   False               
-    opex                      float                     e/MWh    False                 Cost of operation. Used in expansion planning.                                    False               
-    Cost                      float                     e/MWh    False                 Cost of not served energy. Used in OPF.                                           True                
-    facility                  Facility                           False                 Facility where this is located                                                    False               
-    technologies              AssociationsList          p.u.     False                 Technologies associations to injections                                           False               
-    scalable                  bool                               False                 Is the injection scalable?                                                        False               
-    shift_key                 float                              False                 Shift key for net transfer capacity                                               True                
-    longitude                 float                     deg      False                 longitude of the injection.                                                       False               
-    latitude                  float                     deg      False                 latitude of the injection.                                                        False               
-    use_kw                    bool                               False                 Consider the injections in kW and kVAr?                                           False               
-    conn                      enum ShuntConnectionType           False                 Connection type for 3-phase studies                                               False               
-    bus_pos                   int                                False                 Aid to locate devices on a busbar                                                 False               
-    P                         float                     MW       False                 Active power                                                                      True                
-    Pmin                      float                     MW       False                 Minimum active power. Used in OPF.                                                True                
-    Pmax                      float                     MW       False                 Maximum active power. Used in OPF.                                                True                
-    Q                         float                     MVAr     False                 Reactive power                                                                    True                
-    Qmin                      float                     MVAr     False                 Minimum reactive power.                                                           True                
-    Qmax                      float                     MVAr     False                 Maximum reactive power.                                                           True                
-    is_controlled             bool                               False                 Is this generator voltage-controlled?                                             False               
-    control_bus               Bus                                False                 Control bus                                                                       False               
-    Pf                        float                              False                 Power factor (cos(phi)). This is used for non-controlled generators.              True                
-    Vset                      float                     p.u.     False                 Set voltage. This is used for controlled generators.                              True                
-    Snom                      float                     MVA      False                 Nominal power.                                                                    False               
-    use_reactive_power_curve  bool                               False                 Use the reactive power capability curve?                                          False               
-    q_curve                   Generator Q curve         MVAr     False                 Capability curve data (double click on the generator to edit)                     False               
-    R1                        float                     p.u.     False                 Total positive sequence resistance.                                               False               
-    X1                        float                     p.u.     False                 Total positive sequence reactance.                                                False               
-    R0                        float                     p.u.     False                 Total zero sequence resistance.                                                   False               
-    X0                        float                     p.u.     False                 Total zero sequence reactance.                                                    False               
-    R2                        float                     p.u.     False                 Total negative sequence resistance.                                               False               
-    X2                        float                     p.u.     False                 Total negative sequence reactance.                                                False               
-    Rs                        float                     p.u.     False                 Stator winding resistance (AG).                                                   False               
-    Xs                        float                     p.u.     False                 Stator leakage reactance (AG).                                                    False               
-    Xm                        float                     p.u.     False                 Magnetizing reactance (AG).                                                       False               
-    Rr                        float                     p.u.     False                 Rotor resistance (AG).                                                            False               
-    Xr                        float                     p.u.     False                 Rotor reactance (AG).                                                             False               
-    Cost2                     float                     e/MW²/h  False                 Generation quadratic cost. Used in OPF.                                           True                
-    Cost0                     float                     e/h      False                 Generation constant cost. Used in OPF.                                            True                
-    startup_cost              float                     e/h      False                 Generation start-up cost. Used in OPF.                                            False               
-    shutdown_cost             float                     e/h      False                 Generation shut-down cost. Used in OPF.                                           False               
-    min_time_up               float                     h        False                 Minimum time that the generator has to be on when started. Used in OPF.           False               
-    min_time_down             float                     h        False                 Minimum time that the generator has to be off when shut down. Used in OPF.        False               
-    ramp_up                   float                     MW/h     False                 Maximum amount of generation increase per hour.                                   False               
-    ramp_down                 float                     MW/h     False                 Maximum amount of generation decrease per hour.                                   False               
-    enabled_dispatch          bool                               False                 Enabled for dispatch? Used in OPF.                                                True                
-    must_run                  bool                               False                 P >= Pmin constraint. Used in OPF with unit commitment active.                    True                
-    emissions                 AssociationsList          t/MWh    False                 List of emissions                                                                 False               
-    fuels                     AssociationsList          t/MWh    False                 List of fuels                                                                     False               
-    srap_enabled              bool                               False                 Is the unit available for SRAP participation?                                     True                
-    tpe                       enum GeneratorType                 False                 Machine type of the generator.                                                    False               
-    ========================  ========================  =======  =========  =========  ================================================================================  ===========  =======
+    ========================  =========================  =======  =========  =========  ================================================================================  ===========  =======
+              name                   class_type           unit    mandatory  max_chars                                    descriptions                                    has_profile  comment
+    ========================  =========================  =======  =========  =========  ================================================================================  ===========  =======
+    idtag                     str                                 False                 Unique ID                                                                         False               
+    name                      str                                 False                 Name of the device.                                                               False               
+    code                      str                                 False                 Secondary ID                                                                      False               
+    rdfid                     str                                 False                 RDF ID for further compatibility                                                  False               
+    action                    enum ActionType                     False                 Object action to perform. Only used for model merging.                            False               
+    selected_to_merge         bool                                False                 Whether this object should be applied during diff merge.                          False               
+    comment                   str                                 False                 User comment                                                                      False               
+    diff_changes              MergeInformation                    False                                                                                                   False               
+    modelling_authority       Modelling Authority                 False                 Modelling authority of this asset                                                 False               
+    commissioned_date         int                                 False                 Commissioned date of the asset                                                    False               
+    decommissioned_date       int                                 False                 Decommissioned date of the asset                                                  False               
+    build_status              enum BuildStatus                    False                 Device build status. Used in expansion planning.                                  False               
+    owners                    AssociationsList           p.u.     False                 Owners associations to injections                                                 False               
+    rms_model                 DaeBlock                            False                 RMS dynamic model                                                                 False               
+    emt_model                 DaeBlock                            False                 EMT dynamic model                                                                 False               
+    rms_template              RMS template                        False                 Native RMS template used. Assigning it clears rms_fmu_template.                   False               
+    emt_template              EMT template                        False                 Native EMT template used. Assigning it clears emt_fmu_template.                   False               
+    rms_fmu_template          FMU template                        False                 RMS FMU template used only by RMS simulations. Assigning it clears rms_template.  False               
+    emt_fmu_template          FMU template                        False                 EMT FMU template used only by EMT simulations. Assigning it clears emt_template.  False               
+    rms_fmu_import_config     str                                 False                 Serialized FMU Co-Simulation RMS configuration                                    False               
+    emt_fmu_import_config     str                                 False                 Serialized FMU Co-Simulation EMT configuration                                    False               
+    rms_fmu_me_import_config  str                                 False                 Serialized FMU Model Exchange RMS configuration                                   False               
+    emt_fmu_me_import_config  str                                 False                 Serialized FMU Model Exchange EMT configuration                                   False               
+    bus                       Bus                                 False                 Connection bus                                                                    False               
+    active                    bool                                False                 Is the load active?                                                               True                
+    color                     str                                 False                 Color to paint the element in the map diagram                                     False               
+    mttf                      float                      h        False                 Mean time to failure                                                              False               
+    mttr                      float                      h        False                 Mean time to recovery                                                             False               
+    capex                     float                      e/MW     False                 Cost of investment. Used in expansion planning.                                   False               
+    opex                      float                      e/MWh    False                 Cost of operation. Used in expansion planning.                                    False               
+    Cost                      float                      e/MWh    False                 Cost of not served energy. Used in OPF.                                           True                
+    facility                  Facility                            False                 Facility where this is located                                                    False               
+    technologies              AssociationsList           p.u.     False                 Technologies associations to injections                                           False               
+    scalable                  bool                                False                 Is the injection scalable?                                                        False               
+    shift_key                 float                               False                 Shift key for net transfer capacity                                               True                
+    longitude                 float                      deg      False                 longitude of the injection.                                                       False               
+    latitude                  float                      deg      False                 latitude of the injection.                                                        False               
+    use_kw                    bool                                False                 Consider the injections in kW and kVAr?                                           False               
+    conn                      enum ShuntConnectionType            False                 Connection type for 3-phase studies                                               False               
+    phN                       bool                                False                 Is the neutral connected?                                                         False               
+    phA                       bool                                False                 Is phase A connected?                                                             False               
+    phB                       bool                                False                 Is phase B connected?                                                             False               
+    phC                       bool                                False                 Is phase C connected?                                                             False               
+    bus_pos                   int                                 False                 Aid to locate devices on a busbar                                                 False               
+    P                         float                      MW       False                 Active power                                                                      True                
+    Pmin                      float                      MW       False                 Minimum active power. Used in OPF.                                                True                
+    Pmax                      float                      MW       False                 Maximum active power. Used in OPF.                                                True                
+    Q                         float                      MVAr     False                 Reactive power                                                                    True                
+    Qmin                      float                      MVAr     False                 Minimum reactive power.                                                           True                
+    Qmax                      float                      MVAr     False                 Maximum reactive power.                                                           True                
+    control_mode              enum GeneratorControlMode           False                 Generator control mode                                                            False               
+    control_bus               Bus                                 False                 Control bus                                                                       False               
+    Pf                        float                               False                 Power factor (cos(phi)). This is used for non-controlled generators.              True                
+    Vset                      float                      p.u.     False                 Set voltage. This is used for controlled generators.                              True                
+    k_droop                   float                               False                 QV droop constant.                                                                False               
+    dead_band                 float                      kV       False                 Droop dead band.                                                                  False               
+    Snom                      float                      MVA      False                 Nominal power.                                                                    False               
+    use_reactive_power_curve  bool                                False                 Use the reactive power capability curve?                                          False               
+    q_curve                   Generator Q curve          MVAr     False                 Capability curve data (double click on the generator to edit)                     False               
+    R1                        float                      p.u.     False                 Total positive sequence resistance.                                               False               
+    X1                        float                      p.u.     False                 Total positive sequence reactance.                                                False               
+    R0                        float                      p.u.     False                 Total zero sequence resistance.                                                   False               
+    X0                        float                      p.u.     False                 Total zero sequence reactance.                                                    False               
+    R2                        float                      p.u.     False                 Total negative sequence resistance.                                               False               
+    X2                        float                      p.u.     False                 Total negative sequence reactance.                                                False               
+    Rs                        float                      p.u.     False                 Stator winding resistance (AG).                                                   False               
+    Xs                        float                      p.u.     False                 Stator leakage reactance (AG).                                                    False               
+    Xm                        float                      p.u.     False                 Magnetizing reactance (AG).                                                       False               
+    Rr                        float                      p.u.     False                 Rotor resistance (AG).                                                            False               
+    Xr                        float                      p.u.     False                 Rotor reactance (AG).                                                             False               
+    Cost2                     float                      e/MW²/h  False                 Generation quadratic cost. Used in OPF.                                           True                
+    Cost0                     float                      e/h      False                 Generation constant cost. Used in OPF.                                            True                
+    startup_cost              float                      e/h      False                 Generation start-up cost. Used in OPF.                                            False               
+    shutdown_cost             float                      e/h      False                 Generation shut-down cost. Used in OPF.                                           False               
+    min_time_up               float                      h        False                 Minimum time that the generator has to be on when started. Used in OPF.           False               
+    min_time_down             float                      h        False                 Minimum time that the generator has to be off when shut down. Used in OPF.        False               
+    ramp_up                   float                      MW/h     False                 Maximum amount of generation increase per hour.                                   False               
+    ramp_down                 float                      MW/h     False                 Maximum amount of generation decrease per hour.                                   False               
+    enabled_dispatch          bool                                False                 Enabled for dispatch? Used in OPF.                                                True                
+    must_run                  bool                                False                 P >= Pmin constraint. Used in OPF with unit commitment active.                    True                
+    emissions                 AssociationsList           t/MWh    False                 List of emissions                                                                 False               
+    fuels                     AssociationsList           t/MWh    False                 List of fuels                                                                     False               
+    market_unit               Market unit                         False                 Market unit associated to this generator.                                         True                
+    market_unit_share         float                      p.u.     False                 Participation share of the generator inside the market unit.                      True                
+    srap_enabled              bool                                False                 Is the unit available for SRAP participation?                                     True                
+    tpe                       enum GeneratorType                  False                 Machine type of the generator.                                                    False               
+    is_static_generator       bool                                False                 Use the static generator short-circuit model.                                     False               
+    ========================  =========================  =======  =========  =========  ================================================================================  ===========  =======
 
 
 HvdcLine
@@ -15567,6 +15666,7 @@ HvdcLine
     code                      str                           False                 Secondary ID                                                                                                                                                                                                                               False               
     rdfid                     str                           False                 RDF ID for further compatibility                                                                                                                                                                                                           False               
     action                    enum ActionType               False                 Object action to perform. Only used for model merging.                                                                                                                                                                                     False               
+    selected_to_merge         bool                          False                 Whether this object should be applied during diff merge.                                                                                                                                                                                   False               
     comment                   str                           False                 User comment                                                                                                                                                                                                                               False               
     diff_changes              MergeInformation              False                                                                                                                                                                                                                                                            False               
     modelling_authority       Modelling Authority           False                 Modelling authority of this asset                                                                                                                                                                                                          False               
@@ -15588,7 +15688,8 @@ HvdcLine
     bus_to                    Bus                           False                 Name of the bus at the "to" side                                                                                                                                                                                                           False               
     active                    bool                          False                 Is active?                                                                                                                                                                                                                                 True                
     reducible                 bool                          False                 Is the branch to be reduced by the topology preprocessor?                                                                                                                                                                                  False               
-    rate                      float                 MVA     False                 Thermal rating power                                                                                                                                                                                                                       True                
+    design_rate               float                 MVA     False                 Design thermal rating power that is not modified for operational reasons or otherwise                                                                                                                                                      False               
+    rate                      float                 MVA     False                 Operational thermal rating power                                                                                                                                                                                                           True                
     contingency_factor        float                 p.u.    False                 Rating multiplier for contingencies                                                                                                                                                                                                        True                
     protection_rating_factor  float                 p.u.    False                 Rating multiplier that indicates the maximum flow before the protections tripping                                                                                                                                                          True                
     monitor_loading           bool                          False                 Monitor this device loading for OPF, NTC or contingency studies.                                                                                                                                                                           False               
@@ -15626,22 +15727,23 @@ IfMeasurement
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    device_idtag  str                     False                 Unique ID                                               False               
-    tpe           enum DeviceType         False                 Device type                                             False               
-    device_name   str                     False                 Device name                                             False               
-    value         float                   False                 Value of the measurement                                True                
-    sigma         float                   False                 Uncertainty of the measurement                          True                
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    device_idtag       str                     False                 Unique ID                                                 False               
+    tpe                enum DeviceType         False                 Device type                                               False               
+    device_name        str                     False                 Device name                                               False               
+    value              float                   False                 Value of the measurement                                  True                
+    sigma              float                   False                 Uncertainty of the measurement                            True                
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 Investment
@@ -15657,6 +15759,7 @@ Investment
     code                  str                      False                 Secondary ID                                                                                                 False               
     rdfid                 str                      False                 RDF ID for further compatibility                                                                             False               
     action                enum ActionType          False                 Object action to perform. Only used for model merging.                                                       False               
+    selected_to_merge     bool                     False                 Whether this object should be applied during diff merge.                                                     False               
     comment               str                      False                 User comment                                                                                                 False               
     diff_changes          MergeInformation         False                                                                                                                              False               
     device_idtag          str                      False                 Unique ID                                                                                                    False               
@@ -15677,21 +15780,22 @@ InvestmentsGroup
 
 .. table::
 
-    =============  ================  ====  =========  =========  =============================================================================  ===========  =======
-        name          class_type     unit  mandatory  max_chars                                  descriptions                                   has_profile  comment
-    =============  ================  ====  =========  =========  =============================================================================  ===========  =======
-    idtag          str                     False                 Unique ID                                                                      False               
-    name           str                     False                 Name of the device.                                                            False               
-    code           str                     False                 Secondary ID                                                                   False               
-    rdfid          str                     False                 RDF ID for further compatibility                                               False               
-    action         enum ActionType         False                 Object action to perform. Only used for model merging.                         False               
-    comment        str                     False                 User comment                                                                   False               
-    diff_changes   MergeInformation        False                                                                                                False               
-    category       str                     False                 Some tag to category the investment group                                      False               
-    discount_rate  float             %     False                 Investment group discount rate                                                 False               
-    CAPEX          float             €     False                 Capital Expenditure of the group (added to the individual investments' capex)  False               
-    color          str                     False                 Color to paint                                                                 False               
-    =============  ================  ====  =========  =========  =============================================================================  ===========  =======
+    =================  ================  ====  =========  =========  =============================================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                                  descriptions                                   has_profile  comment
+    =================  ================  ====  =========  =========  =============================================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                                      False               
+    name               str                     False                 Name of the device.                                                            False               
+    code               str                     False                 Secondary ID                                                                   False               
+    rdfid              str                     False                 RDF ID for further compatibility                                               False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.                         False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.                       False               
+    comment            str                     False                 User comment                                                                   False               
+    diff_changes       MergeInformation        False                                                                                                False               
+    category           str                     False                 Some tag to category the investment group                                      False               
+    discount_rate      float             %     False                 Investment group discount rate                                                 False               
+    CAPEX              float             €     False                 Capital Expenditure of the group (added to the individual investments' capex)  False               
+    color              str                     False                 Color to paint                                                                 False               
+    =================  ================  ====  =========  =========  =============================================================================  ===========  =======
 
 
 ItMeasurement
@@ -15699,22 +15803,23 @@ ItMeasurement
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    device_idtag  str                     False                 Unique ID                                               False               
-    tpe           enum DeviceType         False                 Device type                                             False               
-    device_name   str                     False                 Device name                                             False               
-    value         float                   False                 Value of the measurement                                True                
-    sigma         float                   False                 Uncertainty of the measurement                          True                
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    device_idtag       str                     False                 Unique ID                                                 False               
+    tpe                enum DeviceType         False                 Device type                                               False               
+    device_name        str                     False                 Device name                                               False               
+    value              float                   False                 Value of the measurement                                  True                
+    sigma              float                   False                 Uncertainty of the measurement                            True                
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 Line
@@ -15730,6 +15835,7 @@ Line
     code                             str                         False                 Secondary ID                                                                                                                                                                                                                               False               
     rdfid                            str                         False                 RDF ID for further compatibility                                                                                                                                                                                                           False               
     action                           enum ActionType             False                 Object action to perform. Only used for model merging.                                                                                                                                                                                     False               
+    selected_to_merge                bool                        False                 Whether this object should be applied during diff merge.                                                                                                                                                                                   False               
     comment                          str                         False                 User comment                                                                                                                                                                                                                               False               
     diff_changes                     MergeInformation            False                                                                                                                                                                                                                                                            False               
     modelling_authority              Modelling Authority         False                 Modelling authority of this asset                                                                                                                                                                                                          False               
@@ -15751,7 +15857,8 @@ Line
     bus_to                           Bus                         False                 Name of the bus at the "to" side                                                                                                                                                                                                           False               
     active                           bool                        False                 Is active?                                                                                                                                                                                                                                 True                
     reducible                        bool                        False                 Is the branch to be reduced by the topology preprocessor?                                                                                                                                                                                  False               
-    rate                             float                MVA    False                 Thermal rating power                                                                                                                                                                                                                       True                
+    design_rate                      float                MVA    False                 Design thermal rating power that is not modified for operational reasons or otherwise                                                                                                                                                      False               
+    rate                             float                MVA    False                 Operational thermal rating power                                                                                                                                                                                                           True                
     contingency_factor               float                p.u.   False                 Rating multiplier for contingencies                                                                                                                                                                                                        True                
     protection_rating_factor         float                p.u.   False                 Rating multiplier that indicates the maximum flow before the protections tripping                                                                                                                                                          True                
     monitor_loading                  bool                        False                 Monitor this device loading for OPF, NTC or contingency studies.                                                                                                                                                                           False               
@@ -15802,6 +15909,7 @@ Load
     code                      str                              False                 Secondary ID                                                                      False               
     rdfid                     str                              False                 RDF ID for further compatibility                                                  False               
     action                    enum ActionType                  False                 Object action to perform. Only used for model merging.                            False               
+    selected_to_merge         bool                             False                 Whether this object should be applied during diff merge.                          False               
     comment                   str                              False                 User comment                                                                      False               
     diff_changes              MergeInformation                 False                                                                                                   False               
     modelling_authority       Modelling Authority              False                 Modelling authority of this asset                                                 False               
@@ -15835,6 +15943,10 @@ Load
     latitude                  float                     deg    False                 latitude of the injection.                                                        False               
     use_kw                    bool                             False                 Consider the injections in kW and kVAr?                                           False               
     conn                      enum ShuntConnectionType         False                 Connection type for 3-phase studies                                               False               
+    phN                       bool                             False                 Is the neutral connected?                                                         False               
+    phA                       bool                             False                 Is phase A connected?                                                             False               
+    phB                       bool                             False                 Is phase B connected?                                                             False               
+    phC                       bool                             False                 Is phase C connected?                                                             False               
     bus_pos                   int                              False                 Aid to locate devices on a busbar                                                 False               
     P                         float                     MW     False                 Active power                                                                      True                
     Pa                        float                     MW     False                 Phase A active power                                                              True                
@@ -15865,22 +15977,43 @@ Load
     ========================  ========================  =====  =========  =========  ================================================================================  ===========  =======
 
 
+MarketUnit
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. table::
+
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    color              str                     False                 Color to paint the element in the map diagram             False               
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+
+
 ModellingAuthority
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 Municipality
@@ -15888,21 +16021,22 @@ Municipality
 
 .. table::
 
-    ============  ================  ====  =========  =========  ===========================================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                                 descriptions                                  has_profile  comment
-    ============  ================  ====  =========  =========  ===========================================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                                                    False               
-    name          str                     False                 Name of the device.                                                          False               
-    code          str                     False                 Secondary ID                                                                 False               
-    rdfid         str                     False                 RDF ID for further compatibility                                             False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.                       False               
-    comment       str                     False                 User comment                                                                 False               
-    diff_changes  MergeInformation        False                                                                                              False               
-    longitude     float             deg   False                 longitude.                                                                   False               
-    latitude      float             deg   False                 latitude.                                                                    False               
-    color         str                     False                 Color to paint the element in the map diagram                                False               
-    region        Region                  False                 Substation region, alternatively this can be obtained from the municipality  False               
-    ============  ================  ====  =========  =========  ===========================================================================  ===========  =======
+    =================  ================  ====  =========  =========  ===========================================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                                 descriptions                                  has_profile  comment
+    =================  ================  ====  =========  =========  ===========================================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                                    False               
+    name               str                     False                 Name of the device.                                                          False               
+    code               str                     False                 Secondary ID                                                                 False               
+    rdfid              str                     False                 RDF ID for further compatibility                                             False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.                       False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.                     False               
+    comment            str                     False                 User comment                                                                 False               
+    diff_changes       MergeInformation        False                                                                                              False               
+    longitude          float             deg   False                 longitude.                                                                   False               
+    latitude           float             deg   False                 latitude.                                                                    False               
+    color              str                     False                 Color to paint the element in the map diagram                                False               
+    region             Region                  False                 Substation region, alternatively this can be obtained from the municipality  False               
+    =================  ================  ====  =========  =========  ===========================================================================  ===========  =======
 
 
 OverheadLineType
@@ -15918,6 +16052,7 @@ OverheadLineType
     code                      str                                False                 Secondary ID                                                                      False               
     rdfid                     str                                False                 RDF ID for further compatibility                                                  False               
     action                    enum ActionType                    False                 Object action to perform. Only used for model merging.                            False               
+    selected_to_merge         bool                               False                 Whether this object should be applied during diff merge.                          False               
     comment                   str                                False                 User comment                                                                      False               
     diff_changes              MergeInformation                   False                                                                                                   False               
     modelling_authority       Modelling Authority                False                 Modelling authority of this asset                                                 False               
@@ -15949,19 +16084,20 @@ Owner
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    address       str                     False                 Owner address                                           False               
-    color         str                     False                 Color to paint                                          False               
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    address            str                     False                 Owner address                                             False               
+    color              str                     False                 Color to paint                                            False               
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 PfMeasurement
@@ -15969,22 +16105,23 @@ PfMeasurement
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    device_idtag  str                     False                 Unique ID                                               False               
-    tpe           enum DeviceType         False                 Device type                                             False               
-    device_name   str                     False                 Device name                                             False               
-    value         float                   False                 Value of the measurement                                True                
-    sigma         float                   False                 Uncertainty of the measurement                          True                
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    device_idtag       str                     False                 Unique ID                                                 False               
+    tpe                enum DeviceType         False                 Device type                                               False               
+    device_name        str                     False                 Device name                                               False               
+    value              float                   False                 Value of the measurement                                  True                
+    sigma              float                   False                 Uncertainty of the measurement                            True                
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 PgMeasurement
@@ -15992,22 +16129,23 @@ PgMeasurement
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    device_idtag  str                     False                 Unique ID                                               False               
-    tpe           enum DeviceType         False                 Device type                                             False               
-    device_name   str                     False                 Device name                                             False               
-    value         float                   False                 Value of the measurement                                True                
-    sigma         float                   False                 Uncertainty of the measurement                          True                
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    device_idtag       str                     False                 Unique ID                                                 False               
+    tpe                enum DeviceType         False                 Device type                                               False               
+    device_name        str                     False                 Device name                                               False               
+    value              float                   False                 Value of the measurement                                  True                
+    sigma              float                   False                 Uncertainty of the measurement                            True                
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 PiMeasurement
@@ -16015,22 +16153,23 @@ PiMeasurement
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    device_idtag  str                     False                 Unique ID                                               False               
-    tpe           enum DeviceType         False                 Device type                                             False               
-    device_name   str                     False                 Device name                                             False               
-    value         float                   False                 Value of the measurement                                True                
-    sigma         float                   False                 Uncertainty of the measurement                          True                
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    device_idtag       str                     False                 Unique ID                                                 False               
+    tpe                enum DeviceType         False                 Device type                                               False               
+    device_name        str                     False                 Device name                                               False               
+    value              float                   False                 Value of the measurement                                  True                
+    sigma              float                   False                 Uncertainty of the measurement                            True                
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 PtMeasurement
@@ -16038,22 +16177,23 @@ PtMeasurement
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    device_idtag  str                     False                 Unique ID                                               False               
-    tpe           enum DeviceType         False                 Device type                                             False               
-    device_name   str                     False                 Device name                                             False               
-    value         float                   False                 Value of the measurement                                True                
-    sigma         float                   False                 Uncertainty of the measurement                          True                
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    device_idtag       str                     False                 Unique ID                                                 False               
+    tpe                enum DeviceType         False                 Device type                                               False               
+    device_name        str                     False                 Device name                                               False               
+    value              float                   False                 Value of the measurement                                  True                
+    sigma              float                   False                 Uncertainty of the measurement                            True                
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 QfMeasurement
@@ -16061,22 +16201,23 @@ QfMeasurement
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    device_idtag  str                     False                 Unique ID                                               False               
-    tpe           enum DeviceType         False                 Device type                                             False               
-    device_name   str                     False                 Device name                                             False               
-    value         float                   False                 Value of the measurement                                True                
-    sigma         float                   False                 Uncertainty of the measurement                          True                
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    device_idtag       str                     False                 Unique ID                                                 False               
+    tpe                enum DeviceType         False                 Device type                                               False               
+    device_name        str                     False                 Device name                                               False               
+    value              float                   False                 Value of the measurement                                  True                
+    sigma              float                   False                 Uncertainty of the measurement                            True                
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 QgMeasurement
@@ -16084,22 +16225,23 @@ QgMeasurement
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    device_idtag  str                     False                 Unique ID                                               False               
-    tpe           enum DeviceType         False                 Device type                                             False               
-    device_name   str                     False                 Device name                                             False               
-    value         float                   False                 Value of the measurement                                True                
-    sigma         float                   False                 Uncertainty of the measurement                          True                
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    device_idtag       str                     False                 Unique ID                                                 False               
+    tpe                enum DeviceType         False                 Device type                                               False               
+    device_name        str                     False                 Device name                                               False               
+    value              float                   False                 Value of the measurement                                  True                
+    sigma              float                   False                 Uncertainty of the measurement                            True                
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 QiMeasurement
@@ -16107,22 +16249,23 @@ QiMeasurement
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    device_idtag  str                     False                 Unique ID                                               False               
-    tpe           enum DeviceType         False                 Device type                                             False               
-    device_name   str                     False                 Device name                                             False               
-    value         float                   False                 Value of the measurement                                True                
-    sigma         float                   False                 Uncertainty of the measurement                          True                
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    device_idtag       str                     False                 Unique ID                                                 False               
+    tpe                enum DeviceType         False                 Device type                                               False               
+    device_name        str                     False                 Device name                                               False               
+    value              float                   False                 Value of the measurement                                  True                
+    sigma              float                   False                 Uncertainty of the measurement                            True                
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 QtMeasurement
@@ -16130,22 +16273,23 @@ QtMeasurement
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    device_idtag  str                     False                 Unique ID                                               False               
-    tpe           enum DeviceType         False                 Device type                                             False               
-    device_name   str                     False                 Device name                                             False               
-    value         float                   False                 Value of the measurement                                True                
-    sigma         float                   False                 Uncertainty of the measurement                          True                
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    device_idtag       str                     False                 Unique ID                                                 False               
+    tpe                enum DeviceType         False                 Device type                                               False               
+    device_name        str                     False                 Device name                                               False               
+    value              float                   False                 Value of the measurement                                  True                
+    sigma              float                   False                 Uncertainty of the measurement                            True                
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 Region
@@ -16153,21 +16297,22 @@ Region
 
 .. table::
 
-    ============  ================  ====  =========  =========  ========================================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                                descriptions                                has_profile  comment
-    ============  ================  ====  =========  =========  ========================================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                                                 False               
-    name          str                     False                 Name of the device.                                                       False               
-    code          str                     False                 Secondary ID                                                              False               
-    rdfid         str                     False                 RDF ID for further compatibility                                          False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.                    False               
-    comment       str                     False                 User comment                                                              False               
-    diff_changes  MergeInformation        False                                                                                           False               
-    longitude     float             deg   False                 longitude.                                                                False               
-    latitude      float             deg   False                 latitude.                                                                 False               
-    color         str                     False                 Color to paint the element in the map diagram                             False               
-    community     Community               False                 Substation community, altenativelly this can be obtained from the region  False               
-    ============  ================  ====  =========  =========  ========================================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                                descriptions                                has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                                 False               
+    name               str                     False                 Name of the device.                                                       False               
+    code               str                     False                 Secondary ID                                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.                    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.                  False               
+    comment            str                     False                 User comment                                                              False               
+    diff_changes       MergeInformation        False                                                                                           False               
+    longitude          float             deg   False                 longitude.                                                                False               
+    latitude           float             deg   False                 latitude.                                                                 False               
+    color              str                     False                 Color to paint the element in the map diagram                             False               
+    community          Community               False                 Substation community, altenativelly this can be obtained from the region  False               
+    =================  ================  ====  =========  =========  ========================================================================  ===========  =======
 
 
 RemedialAction
@@ -16175,23 +16320,24 @@ RemedialAction
 
 .. table::
 
-    ============  ==============================  ====  =========  =========  ======================================================  ===========  =======
-        name                class_type            unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ==============================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                                   False                 Unique ID                                               False               
-    name          str                                   False                 Name of the device.                                     False               
-    code          str                                   False                 Secondary ID                                            False               
-    rdfid         str                                   False                 RDF ID for further compatibility                        False               
-    action        enum ActionType                       False                 Object action to perform. Only used for model merging.  False               
-    comment       str                                   False                 User comment                                            False               
-    diff_changes  MergeInformation                      False                                                                         False               
-    device_idtag  str                                   False                 Unique ID                                               False               
-    tpe           enum DeviceType                       False                 Device type                                             False               
-    device_name   str                                   False                 Device name                                             False               
-    prop          enum ContingencyOperationTypes        False                 Object property to change                               False               
-    value         float                                 False                 Property value                                          False               
-    group         Remedial action Group                 False                 Remedial action group                                   False               
-    ============  ==============================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ==============================  ====  =========  =========  ========================================================  ===========  =======
+          name                   class_type            unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ==============================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                                   False                 Unique ID                                                 False               
+    name               str                                   False                 Name of the device.                                       False               
+    code               str                                   False                 Secondary ID                                              False               
+    rdfid              str                                   False                 RDF ID for further compatibility                          False               
+    action             enum ActionType                       False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                                  False                 Whether this object should be applied during diff merge.  False               
+    comment            str                                   False                 User comment                                              False               
+    diff_changes       MergeInformation                      False                                                                           False               
+    device_idtag       str                                   False                 Unique ID                                                 False               
+    tpe                enum DeviceType                       False                 Device type                                               False               
+    device_name        str                                   False                 Device name                                               False               
+    prop               enum ContingencyOperationTypes        False                 Object property to change                                 False               
+    value              float                                 False                 Property value                                            False               
+    group              Remedial action Group                 False                 Remedial action group                                     False               
+    =================  ==============================  ====  =========  =========  ========================================================  ===========  =======
 
 
 RemedialActionGroup
@@ -16199,19 +16345,20 @@ RemedialActionGroup
 
 .. table::
 
-    ============  =================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type      unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  =================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                      False                 Unique ID                                               False               
-    name          str                      False                 Name of the device.                                     False               
-    code          str                      False                 Secondary ID                                            False               
-    rdfid         str                      False                 RDF ID for further compatibility                        False               
-    action        enum ActionType          False                 Object action to perform. Only used for model merging.  False               
-    comment       str                      False                 User comment                                            False               
-    diff_changes  MergeInformation         False                                                                         False               
-    category      str                      False                 Some tag to category the contingency group              False               
-    conn_group    Contingency Group        False                 Contingency group                                       False               
-    ============  =================  ====  =========  =========  ======================================================  ===========  =======
+    =================  =================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type      unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  =================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                      False                 Unique ID                                                 False               
+    name               str                      False                 Name of the device.                                       False               
+    code               str                      False                 Secondary ID                                              False               
+    rdfid              str                      False                 RDF ID for further compatibility                          False               
+    action             enum ActionType          False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                     False                 Whether this object should be applied during diff merge.  False               
+    comment            str                      False                 User comment                                              False               
+    diff_changes       MergeInformation         False                                                                           False               
+    category           str                      False                 Some tag to category the contingency group                False               
+    conn_group         Contingency Group        False                 Contingency group                                         False               
+    =================  =================  ====  =========  =========  ========================================================  ===========  =======
 
 
 RmsEvent
@@ -16219,27 +16366,28 @@ RmsEvent
 
 .. table::
 
-    ====================  ===============================  ====  =========  =========  ======================================================  ===========  =======
-            name                    class_type             unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ====================  ===============================  ====  =========  =========  ======================================================  ===========  =======
-    idtag                 str                                    False                 Unique ID                                               False               
-    name                  str                                    False                 Name of the device.                                     False               
-    code                  str                                    False                 Secondary ID                                            False               
-    rdfid                 str                                    False                 RDF ID for further compatibility                        False               
-    action                enum ActionType                        False                 Object action to perform. Only used for model merging.  False               
-    comment               str                                    False                 User comment                                            False               
-    diff_changes          MergeInformation                       False                                                                         False               
-    device_idtag          str                                    False                 Unique ID                                               False               
-    tpe                   enum DeviceType                        False                 Device type                                             False               
-    device_name           str                                    False                 Device name                                             False               
-    parameter             VarType                                False                 parameter that the event changes                        False               
-    time                  float                                  False                 Time when the event occurs                              False               
-    end_time              float                                  False                 End time used by ramp events                            False               
-    value                 float                                  False                 New value for the parameter                             False               
-    group                 Rms Events Group                       False                 RmsEvent group                                          False               
-    force_step_alignment  bool                                   False                 Force step alignment                                    False               
-    transition_type       enum DynamicEventTransitionType        False                 Transition profile for the event                        False               
-    ====================  ===============================  ====  =========  =========  ======================================================  ===========  =======
+    ====================  ===============================  ====  =========  =========  ========================================================  ===========  =======
+            name                    class_type             unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    ====================  ===============================  ====  =========  =========  ========================================================  ===========  =======
+    idtag                 str                                    False                 Unique ID                                                 False               
+    name                  str                                    False                 Name of the device.                                       False               
+    code                  str                                    False                 Secondary ID                                              False               
+    rdfid                 str                                    False                 RDF ID for further compatibility                          False               
+    action                enum ActionType                        False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge     bool                                   False                 Whether this object should be applied during diff merge.  False               
+    comment               str                                    False                 User comment                                              False               
+    diff_changes          MergeInformation                       False                                                                           False               
+    device_idtag          str                                    False                 Unique ID                                                 False               
+    tpe                   enum DeviceType                        False                 Device type                                               False               
+    device_name           str                                    False                 Device name                                               False               
+    parameter             VarType                                False                 parameter that the event changes                          False               
+    time                  float                                  False                 Time when the event occurs                                False               
+    end_time              float                                  False                 End time used by ramp events                              False               
+    value                 float                                  False                 New value for the parameter                               False               
+    group                 Rms Events Group                       False                 RmsEvent group                                            False               
+    force_step_alignment  bool                                   False                 Force step alignment                                      False               
+    transition_type       enum DynamicEventTransitionType        False                 Transition profile for the event                          False               
+    ====================  ===============================  ====  =========  =========  ========================================================  ===========  =======
 
 
 RmsEventsGroup
@@ -16247,18 +16395,19 @@ RmsEventsGroup
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    active        bool                    False                 True if this RMS events group must be simulated.        False               
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    active             bool                    False                 True if this RMS events group must be simulated.          False               
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 RmsModelTemplate
@@ -16266,21 +16415,22 @@ RmsModelTemplate
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    device_idtag  str                     False                 Unique ID                                               False               
-    tpe           enum DeviceType         False                 Device type                                             False               
-    device_name   str                     False                 Device name                                             False               
-    block         DaeBlock                False                 DAE block                                               False               
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    device_idtag       str                     False                 Unique ID                                                 False               
+    tpe                enum DeviceType         False                 Device type                                               False               
+    device_name        str                     False                 Device name                                               False               
+    block              DaeBlock                False                 DAE block                                                 False               
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 SequenceLineType
@@ -16296,6 +16446,7 @@ SequenceLineType
     code                      str                                False                 Secondary ID                                                                      False               
     rdfid                     str                                False                 RDF ID for further compatibility                                                  False               
     action                    enum ActionType                    False                 Object action to perform. Only used for model merging.                            False               
+    selected_to_merge         bool                               False                 Whether this object should be applied during diff merge.                          False               
     comment                   str                                False                 User comment                                                                      False               
     diff_changes              MergeInformation                   False                                                                                                   False               
     modelling_authority       Modelling Authority                False                 Modelling authority of this asset                                                 False               
@@ -16343,6 +16494,7 @@ SeriesReactance
     code                      str                         False                 Secondary ID                                                                                                                                                                                                                               False               
     rdfid                     str                         False                 RDF ID for further compatibility                                                                                                                                                                                                           False               
     action                    enum ActionType             False                 Object action to perform. Only used for model merging.                                                                                                                                                                                     False               
+    selected_to_merge         bool                        False                 Whether this object should be applied during diff merge.                                                                                                                                                                                   False               
     comment                   str                         False                 User comment                                                                                                                                                                                                                               False               
     diff_changes              MergeInformation            False                                                                                                                                                                                                                                                            False               
     modelling_authority       Modelling Authority         False                 Modelling authority of this asset                                                                                                                                                                                                          False               
@@ -16364,7 +16516,8 @@ SeriesReactance
     bus_to                    Bus                         False                 Name of the bus at the "to" side                                                                                                                                                                                                           False               
     active                    bool                        False                 Is active?                                                                                                                                                                                                                                 True                
     reducible                 bool                        False                 Is the branch to be reduced by the topology preprocessor?                                                                                                                                                                                  False               
-    rate                      float                MVA    False                 Thermal rating power                                                                                                                                                                                                                       True                
+    design_rate               float                MVA    False                 Design thermal rating power that is not modified for operational reasons or otherwise                                                                                                                                                      False               
+    rate                      float                MVA    False                 Operational thermal rating power                                                                                                                                                                                                           True                
     contingency_factor        float                p.u.   False                 Rating multiplier for contingencies                                                                                                                                                                                                        True                
     protection_rating_factor  float                p.u.   False                 Rating multiplier that indicates the maximum flow before the protections tripping                                                                                                                                                          True                
     monitor_loading           bool                        False                 Monitor this device loading for OPF, NTC or contingency studies.                                                                                                                                                                           False               
@@ -16395,26 +16548,28 @@ ShortCircuitEvent
 
 .. table::
 
-    ============  =======================  ====  =========  =========  ==============================================================================  ===========  =======
-        name            class_type         unit  mandatory  max_chars                                   descriptions                                   has_profile  comment
-    ============  =======================  ====  =========  =========  ==============================================================================  ===========  =======
-    idtag         str                            False                 Unique ID                                                                       False               
-    name          str                            False                 Name of the device.                                                             False               
-    code          str                            False                 Secondary ID                                                                    False               
-    rdfid         str                            False                 RDF ID for further compatibility                                                False               
-    action        enum ActionType                False                 Object action to perform. Only used for model merging.                          False               
-    comment       str                            False                 User comment                                                                    False               
-    diff_changes  MergeInformation               False                                                                                                 False               
-    device_idtag  str                            False                 Unique ID                                                                       False               
-    tpe           enum DeviceType                False                 Device type                                                                     False               
-    device_name   str                            False                 Device name                                                                     False               
-    fault_type    enum FaultType                 False                 Type of short circuit                                                           False               
-    method        enum MethodShortCircuit        False                 Method of short circuit                                                         False               
-    phases        enum PhasesShortCircuit        False                 Phases involved                                                                 False               
-    active        bool                           False                 If true the short-circuit activates when calculated, otherwise is deactivated.  False               
-    r_fault       float                    p.u.  False                 Resistance of the fault.This is used for short circuit studies.                 False               
-    x_fault       float                    p.u.  False                 Reactance of the fault.This is used for short circuit studies.                  False               
-    ============  =======================  ====  =========  =========  ==============================================================================  ===========  =======
+    =================  =======================  ====  =========  =========  ==============================================================================  ===========  =======
+          name               class_type         unit  mandatory  max_chars                                   descriptions                                   has_profile  comment
+    =================  =======================  ====  =========  =========  ==============================================================================  ===========  =======
+    idtag              str                            False                 Unique ID                                                                       False               
+    name               str                            False                 Name of the device.                                                             False               
+    code               str                            False                 Secondary ID                                                                    False               
+    rdfid              str                            False                 RDF ID for further compatibility                                                False               
+    action             enum ActionType                False                 Object action to perform. Only used for model merging.                          False               
+    selected_to_merge  bool                           False                 Whether this object should be applied during diff merge.                        False               
+    comment            str                            False                 User comment                                                                    False               
+    diff_changes       MergeInformation               False                                                                                                 False               
+    device_idtag       str                            False                 Unique ID                                                                       False               
+    tpe                enum DeviceType                False                 Device type                                                                     False               
+    device_name        str                            False                 Device name                                                                     False               
+    fault_type         enum FaultType                 False                 Type of short circuit                                                           False               
+    method             enum MethodShortCircuit        False                 Method of short circuit                                                         False               
+    phases             enum PhasesShortCircuit        False                 Phases involved                                                                 False               
+    active             bool                           False                 If true the short-circuit activates when calculated, otherwise is deactivated.  False               
+    constz             bool                           False                 If true the constant power and current loads are linearised.                    False               
+    r_fault            float                    p.u.  False                 Resistance of the fault.This is used for short circuit studies.                 False               
+    x_fault            float                    p.u.  False                 Reactance of the fault.This is used for short circuit studies.                  False               
+    =================  =======================  ====  =========  =========  ==============================================================================  ===========  =======
 
 
 Shunt
@@ -16430,6 +16585,7 @@ Shunt
     code                      str                              False                 Secondary ID                                                                      False               
     rdfid                     str                              False                 RDF ID for further compatibility                                                  False               
     action                    enum ActionType                  False                 Object action to perform. Only used for model merging.                            False               
+    selected_to_merge         bool                             False                 Whether this object should be applied during diff merge.                          False               
     comment                   str                              False                 User comment                                                                      False               
     diff_changes              MergeInformation                 False                                                                                                   False               
     modelling_authority       Modelling Authority              False                 Modelling authority of this asset                                                 False               
@@ -16463,6 +16619,10 @@ Shunt
     latitude                  float                     deg    False                 latitude of the injection.                                                        False               
     use_kw                    bool                             False                 Consider the injections in kW and kVAr?                                           False               
     conn                      enum ShuntConnectionType         False                 Connection type for 3-phase studies                                               False               
+    phN                       bool                             False                 Is the neutral connected?                                                         False               
+    phA                       bool                             False                 Is phase A connected?                                                             False               
+    phB                       bool                             False                 Is phase B connected?                                                             False               
+    phC                       bool                             False                 Is phase C connected?                                                             False               
     bus_pos                   int                              False                 Aid to locate devices on a busbar                                                 False               
     G                         float                     MW     False                 Active power                                                                      True                
     G0                        float                     MW     False                 Zero sequence active power of the impedance component at V=1.0 p.u.               True                
@@ -16491,6 +16651,7 @@ StaticGenerator
     code                      str                              False                 Secondary ID                                                                      False               
     rdfid                     str                              False                 RDF ID for further compatibility                                                  False               
     action                    enum ActionType                  False                 Object action to perform. Only used for model merging.                            False               
+    selected_to_merge         bool                             False                 Whether this object should be applied during diff merge.                          False               
     comment                   str                              False                 User comment                                                                      False               
     diff_changes              MergeInformation                 False                                                                                                   False               
     modelling_authority       Modelling Authority              False                 Modelling authority of this asset                                                 False               
@@ -16524,6 +16685,10 @@ StaticGenerator
     latitude                  float                     deg    False                 latitude of the injection.                                                        False               
     use_kw                    bool                             False                 Consider the injections in kW and kVAr?                                           False               
     conn                      enum ShuntConnectionType         False                 Connection type for 3-phase studies                                               False               
+    phN                       bool                             False                 Is the neutral connected?                                                         False               
+    phA                       bool                             False                 Is phase A connected?                                                             False               
+    phB                       bool                             False                 Is phase B connected?                                                             False               
+    phC                       bool                             False                 Is phase C connected?                                                             False               
     bus_pos                   int                              False                 Aid to locate devices on a busbar                                                 False               
     P                         float                     MW     False                 Active power                                                                      True                
     Pa                        float                     MW     False                 Phase A active power                                                              True                
@@ -16550,6 +16715,7 @@ Substation
     code                 str                         False                 Secondary ID                                                                                                                                                                                                                    False               
     rdfid                str                         False                 RDF ID for further compatibility                                                                                                                                                                                                False               
     action               enum ActionType             False                 Object action to perform. Only used for model merging.                                                                                                                                                                          False               
+    selected_to_merge    bool                        False                 Whether this object should be applied during diff merge.                                                                                                                                                                        False               
     comment              str                         False                 User comment                                                                                                                                                                                                                    False               
     diff_changes         MergeInformation            False                                                                                                                                                                                                                                                 False               
     modelling_authority  Modelling Authority         False                 Modelling authority of this asset                                                                                                                                                                                               False               
@@ -16587,6 +16753,7 @@ Switch
     code                      str                            False                 Secondary ID                                                                                                                                                                                                                               False               
     rdfid                     str                            False                 RDF ID for further compatibility                                                                                                                                                                                                           False               
     action                    enum ActionType                False                 Object action to perform. Only used for model merging.                                                                                                                                                                                     False               
+    selected_to_merge         bool                           False                 Whether this object should be applied during diff merge.                                                                                                                                                                                   False               
     comment                   str                            False                 User comment                                                                                                                                                                                                                               False               
     diff_changes              MergeInformation               False                                                                                                                                                                                                                                                            False               
     modelling_authority       Modelling Authority            False                 Modelling authority of this asset                                                                                                                                                                                                          False               
@@ -16608,7 +16775,8 @@ Switch
     bus_to                    Bus                            False                 Name of the bus at the "to" side                                                                                                                                                                                                           False               
     active                    bool                           False                 Is active?                                                                                                                                                                                                                                 True                
     reducible                 bool                           False                 Is the branch to be reduced by the topology preprocessor?                                                                                                                                                                                  False               
-    rate                      float                   MVA    False                 Thermal rating power                                                                                                                                                                                                                       True                
+    design_rate               float                   MVA    False                 Design thermal rating power that is not modified for operational reasons or otherwise                                                                                                                                                      False               
+    rate                      float                   MVA    False                 Operational thermal rating power                                                                                                                                                                                                           True                
     contingency_factor        float                   p.u.   False                 Rating multiplier for contingencies                                                                                                                                                                                                        True                
     protection_rating_factor  float                   p.u.   False                 Rating multiplier that indicates the maximum flow before the protections tripping                                                                                                                                                          True                
     monitor_loading           bool                           False                 Monitor this device loading for OPF, NTC or contingency studies.                                                                                                                                                                           False               
@@ -16638,21 +16806,23 @@ Technology
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    name2         str                     False                 Name 2 of the technology                                False               
-    name3         str                     False                 Name 3 of the technology                                False               
-    name4         str                     False                 Name 4 of the technology                                False               
-    color         str                     False                 Color to paint                                          False               
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ============  =========  =========  ========================================================  ===========  =======
+          name            class_type         unit      mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ============  =========  =========  ========================================================  ===========  =======
+    idtag              str                             False                 Unique ID                                                 False               
+    name               str                             False                 Name of the device.                                       False               
+    code               str                             False                 Secondary ID                                              False               
+    rdfid              str                             False                 RDF ID for further compatibility                          False               
+    action             enum ActionType                 False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                            False                 Whether this object should be applied during diff merge.  False               
+    comment            str                             False                 User comment                                              False               
+    diff_changes       MergeInformation                False                                                                           False               
+    reference_cost     float             Currency/MWh  False                 Reference cost for the technology                         True                
+    name2              str                             False                 Name 2 of the technology                                  False               
+    name3              str                             False                 Name 3 of the technology                                  False               
+    name4              str                             False                 Name 4 of the technology                                  False               
+    color              str                             False                 Color to paint                                            False               
+    =================  ================  ============  =========  =========  ========================================================  ===========  =======
 
 
 Transformer2W
@@ -16668,6 +16838,7 @@ Transformer2W
     code                      str                             False                 Secondary ID                                                                                                                                                                                                                               False               
     rdfid                     str                             False                 RDF ID for further compatibility                                                                                                                                                                                                           False               
     action                    enum ActionType                 False                 Object action to perform. Only used for model merging.                                                                                                                                                                                     False               
+    selected_to_merge         bool                            False                 Whether this object should be applied during diff merge.                                                                                                                                                                                   False               
     comment                   str                             False                 User comment                                                                                                                                                                                                                               False               
     diff_changes              MergeInformation                False                                                                                                                                                                                                                                                            False               
     modelling_authority       Modelling Authority             False                 Modelling authority of this asset                                                                                                                                                                                                          False               
@@ -16689,7 +16860,8 @@ Transformer2W
     bus_to                    Bus                             False                 Name of the bus at the "to" side                                                                                                                                                                                                           False               
     active                    bool                            False                 Is active?                                                                                                                                                                                                                                 True                
     reducible                 bool                            False                 Is the branch to be reduced by the topology preprocessor?                                                                                                                                                                                  False               
-    rate                      float                    MVA    False                 Thermal rating power                                                                                                                                                                                                                       True                
+    design_rate               float                    MVA    False                 Design thermal rating power that is not modified for operational reasons or otherwise                                                                                                                                                      False               
+    rate                      float                    MVA    False                 Operational thermal rating power                                                                                                                                                                                                           True                
     contingency_factor        float                    p.u.   False                 Rating multiplier for contingencies                                                                                                                                                                                                        True                
     protection_rating_factor  float                    p.u.   False                 Rating multiplier that indicates the maximum flow before the protections tripping                                                                                                                                                          True                
     monitor_loading           bool                            False                 Monitor this device loading for OPF, NTC or contingency studies.                                                                                                                                                                           False               
@@ -16751,52 +16923,63 @@ Transformer3W
 
 .. table::
 
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
-           name              class_type       unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
-    idtag                str                        False                 Unique ID                                               False               
-    name                 str                        False                 Name of the device.                                     False               
-    code                 str                        False                 Secondary ID                                            False               
-    rdfid                str                        False                 RDF ID for further compatibility                        False               
-    action               enum ActionType            False                 Object action to perform. Only used for model merging.  False               
-    comment              str                        False                 User comment                                            False               
-    diff_changes         MergeInformation           False                                                                         False               
-    modelling_authority  Modelling Authority        False                 Modelling authority of this asset                       False               
-    commissioned_date    int                        False                 Commissioned date of the asset                          False               
-    decommissioned_date  int                        False                 Decommissioned date of the asset                        False               
-    build_status         enum BuildStatus           False                 Device build status. Used in expansion planning.        False               
-    owners               AssociationsList     p.u.  False                 Owners associations to injections                       False               
-    bus0                 Bus                        False                 Middle point connection bus.                            False               
-    bus1                 Bus                        False                 Bus 1.                                                  False               
-    bus2                 Bus                        False                 Bus 2.                                                  False               
-    bus3                 Bus                        False                 Bus 3.                                                  False               
-    active               bool                       False                 Is active?                                              True                
-    winding1             Winding                    False                 Winding 1.                                              False               
-    winding2             Winding                    False                 Winding 2.                                              False               
-    winding3             Winding                    False                 Winding 3.                                              False               
-    V1                   float                kV    False                 Side 1 rating                                           False               
-    V2                   float                kV    False                 Side 2 rating                                           False               
-    V3                   float                kV    False                 Side 3 rating                                           False               
-    r12                  float                p.u.  False                 Resistance measured from 1->2                           False               
-    r23                  float                p.u.  False                 Resistance measured from 2->3                           False               
-    r31                  float                p.u.  False                 Resistance measured from 3->1                           False               
-    x12                  float                p.u.  False                 Reactance measured from 1->2                            False               
-    x23                  float                p.u.  False                 Reactance measured from 2->3                            False               
-    x31                  float                p.u.  False                 Reactance measured from 3->1                            False               
-    rate1                float                MVA   False                 Rating 1                                                False               
-    rate2                float                MVA   False                 Rating 2                                                False               
-    rate3                float                MVA   False                 Rating 3                                                False               
-    Pcu12                float                KW    False                 Copper loss between 1->2                                False               
-    Pcu23                float                KW    False                 Copper loss between 2->3                                False               
-    Pcu31                float                KW    False                 Copper loss between 3->1                                False               
-    Vsc12                float                %     False                 Short-circuit voltage between 1->2                      False               
-    Vsc23                float                %     False                 Short-circuit voltage between 2->3                      False               
-    Vsc31                float                %     False                 Short-circuit voltage between 3->1                      False               
-    Pfe                  float                KW    False                 Iron loss                                               False               
-    I0                   float                %     False                 No-load current                                         False               
-    x                    float                px    False                 x position                                              False               
-    y                    float                px    False                 y position                                              False               
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
+    ========================  ===================  ====  =========  =========  ================================================================================  ===========  =======
+              name                class_type       unit  mandatory  max_chars                                    descriptions                                    has_profile  comment
+    ========================  ===================  ====  =========  =========  ================================================================================  ===========  =======
+    idtag                     str                        False                 Unique ID                                                                         False               
+    name                      str                        False                 Name of the device.                                                               False               
+    code                      str                        False                 Secondary ID                                                                      False               
+    rdfid                     str                        False                 RDF ID for further compatibility                                                  False               
+    action                    enum ActionType            False                 Object action to perform. Only used for model merging.                            False               
+    selected_to_merge         bool                       False                 Whether this object should be applied during diff merge.                          False               
+    comment                   str                        False                 User comment                                                                      False               
+    diff_changes              MergeInformation           False                                                                                                   False               
+    modelling_authority       Modelling Authority        False                 Modelling authority of this asset                                                 False               
+    commissioned_date         int                        False                 Commissioned date of the asset                                                    False               
+    decommissioned_date       int                        False                 Decommissioned date of the asset                                                  False               
+    build_status              enum BuildStatus           False                 Device build status. Used in expansion planning.                                  False               
+    owners                    AssociationsList     p.u.  False                 Owners associations to injections                                                 False               
+    rms_model                 DaeBlock                   False                 RMS dynamic model                                                                 False               
+    emt_model                 DaeBlock                   False                 EMT dynamic model                                                                 False               
+    rms_template              RMS template               False                 Native RMS template used. Assigning it clears rms_fmu_template.                   False               
+    emt_template              EMT template               False                 Native EMT template used. Assigning it clears emt_fmu_template.                   False               
+    rms_fmu_template          FMU template               False                 RMS FMU template used only by RMS simulations. Assigning it clears rms_template.  False               
+    emt_fmu_template          FMU template               False                 EMT FMU template used only by EMT simulations. Assigning it clears emt_template.  False               
+    rms_fmu_import_config     str                        False                 Serialized FMU Co-Simulation RMS configuration                                    False               
+    emt_fmu_import_config     str                        False                 Serialized FMU Co-Simulation EMT configuration                                    False               
+    rms_fmu_me_import_config  str                        False                 Serialized FMU Model Exchange RMS configuration                                   False               
+    emt_fmu_me_import_config  str                        False                 Serialized FMU Model Exchange EMT configuration                                   False               
+    bus0                      Bus                        False                 Middle point connection bus.                                                      False               
+    bus1                      Bus                        False                 Bus 1.                                                                            False               
+    bus2                      Bus                        False                 Bus 2.                                                                            False               
+    bus3                      Bus                        False                 Bus 3.                                                                            False               
+    active                    bool                       False                 Is active?                                                                        True                
+    winding1                  Winding                    False                 Winding 1.                                                                        False               
+    winding2                  Winding                    False                 Winding 2.                                                                        False               
+    winding3                  Winding                    False                 Winding 3.                                                                        False               
+    V1                        float                kV    False                 Side 1 rating                                                                     False               
+    V2                        float                kV    False                 Side 2 rating                                                                     False               
+    V3                        float                kV    False                 Side 3 rating                                                                     False               
+    r12                       float                p.u.  False                 Resistance measured from 1->2                                                     False               
+    r23                       float                p.u.  False                 Resistance measured from 2->3                                                     False               
+    r31                       float                p.u.  False                 Resistance measured from 3->1                                                     False               
+    x12                       float                p.u.  False                 Reactance measured from 1->2                                                      False               
+    x23                       float                p.u.  False                 Reactance measured from 2->3                                                      False               
+    x31                       float                p.u.  False                 Reactance measured from 3->1                                                      False               
+    rate1                     float                MVA   False                 Rating 1                                                                          False               
+    rate2                     float                MVA   False                 Rating 2                                                                          False               
+    rate3                     float                MVA   False                 Rating 3                                                                          False               
+    Pcu12                     float                KW    False                 Copper loss between 1->2                                                          False               
+    Pcu23                     float                KW    False                 Copper loss between 2->3                                                          False               
+    Pcu31                     float                KW    False                 Copper loss between 3->1                                                          False               
+    Vsc12                     float                %     False                 Short-circuit voltage between 1->2                                                False               
+    Vsc23                     float                %     False                 Short-circuit voltage between 2->3                                                False               
+    Vsc31                     float                %     False                 Short-circuit voltage between 3->1                                                False               
+    Pfe                       float                KW    False                 Iron loss                                                                         False               
+    I0                        float                %     False                 No-load current                                                                   False               
+    x                         float                px    False                 x position                                                                        False               
+    y                         float                px    False                 y position                                                                        False               
+    ========================  ===================  ====  =========  =========  ================================================================================  ===========  =======
 
 
 TransformerNW
@@ -16804,29 +16987,31 @@ TransformerNW
 
 .. table::
 
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
-           name              class_type       unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
-    idtag                str                        False                 Unique ID                                               False               
-    name                 str                        False                 Name of the device.                                     False               
-    code                 str                        False                 Secondary ID                                            False               
-    rdfid                str                        False                 RDF ID for further compatibility                        False               
-    action               enum ActionType            False                 Object action to perform. Only used for model merging.  False               
-    comment              str                        False                 User comment                                            False               
-    diff_changes         MergeInformation           False                                                                         False               
-    modelling_authority  Modelling Authority        False                 Modelling authority of this asset                       False               
-    commissioned_date    int                        False                 Commissioned date of the asset                          False               
-    decommissioned_date  int                        False                 Decommissioned date of the asset                        False               
-    build_status         enum BuildStatus           False                 Device build status. Used in expansion planning.        False               
-    owners               AssociationsList     p.u.  False                 Owners associations to injections                       False               
-    bus0                 Bus                        False                 Middle point connection bus.                            False               
-    active               bool                       False                 Is active?                                              True                
-    winding_count        int                        False                 Number of windings.                                     False               
-    Pfe                  float                kW    False                 Iron loss                                               False               
-    I0                   float                %     False                 No-load current                                         False               
-    x                    float                px    False                 x position                                              False               
-    y                    float                px    False                 y position                                              False               
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
+    ===================  ======================  ====  =========  =========  ========================================================  ===========  =======
+           name                class_type        unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    ===================  ======================  ====  =========  =========  ========================================================  ===========  =======
+    idtag                str                           False                 Unique ID                                                 False               
+    name                 str                           False                 Name of the device.                                       False               
+    code                 str                           False                 Secondary ID                                              False               
+    rdfid                str                           False                 RDF ID for further compatibility                          False               
+    action               enum ActionType               False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge    bool                          False                 Whether this object should be applied during diff merge.  False               
+    comment              str                           False                 User comment                                              False               
+    diff_changes         MergeInformation              False                                                                           False               
+    modelling_authority  Modelling Authority           False                 Modelling authority of this asset                         False               
+    commissioned_date    int                           False                 Commissioned date of the asset                            False               
+    decommissioned_date  int                           False                 Decommissioned date of the asset                          False               
+    build_status         enum BuildStatus              False                 Device build status. Used in expansion planning.          False               
+    owners               AssociationsList        p.u.  False                 Owners associations to injections                         False               
+    bus0                 Bus                           False                 Middle point connection bus.                              False               
+    active               bool                          False                 Is active?                                                True                
+    winding_count        int                           False                 Number of windings.                                       False               
+    Pfe                  float                   kW    False                 Iron loss                                                 False               
+    I0                   float                   %     False                 No-load current                                           False               
+    x                    float                   px    False                 x position                                                False               
+    y                    float                   px    False                 y position                                                False               
+    internal_impedances  Impedance Triplet List  p.u.  False                 Internal Impedance List                                   False               
+    ===================  ======================  ====  =========  =========  ========================================================  ===========  =======
 
 
 TransformerType
@@ -16842,6 +17027,7 @@ TransformerType
     code                      str                                 False                 Secondary ID                                                                              False               
     rdfid                     str                                 False                 RDF ID for further compatibility                                                          False               
     action                    enum ActionType                     False                 Object action to perform. Only used for model merging.                                    False               
+    selected_to_merge         bool                                False                 Whether this object should be applied during diff merge.                                  False               
     comment                   str                                 False                 User comment                                                                              False               
     diff_changes              MergeInformation                    False                                                                                                           False               
     modelling_authority       Modelling Authority                 False                 Modelling authority of this asset                                                         False               
@@ -16896,6 +17082,7 @@ UPFC
     code                      str                         False                 Secondary ID                                                                                                                                                                                                                               False               
     rdfid                     str                         False                 RDF ID for further compatibility                                                                                                                                                                                                           False               
     action                    enum ActionType             False                 Object action to perform. Only used for model merging.                                                                                                                                                                                     False               
+    selected_to_merge         bool                        False                 Whether this object should be applied during diff merge.                                                                                                                                                                                   False               
     comment                   str                         False                 User comment                                                                                                                                                                                                                               False               
     diff_changes              MergeInformation            False                                                                                                                                                                                                                                                            False               
     modelling_authority       Modelling Authority         False                 Modelling authority of this asset                                                                                                                                                                                                          False               
@@ -16917,7 +17104,8 @@ UPFC
     bus_to                    Bus                         False                 Name of the bus at the "to" side                                                                                                                                                                                                           False               
     active                    bool                        False                 Is active?                                                                                                                                                                                                                                 True                
     reducible                 bool                        False                 Is the branch to be reduced by the topology preprocessor?                                                                                                                                                                                  False               
-    rate                      float                MVA    False                 Thermal rating power                                                                                                                                                                                                                       True                
+    design_rate               float                MVA    False                 Design thermal rating power that is not modified for operational reasons or otherwise                                                                                                                                                      False               
+    rate                      float                MVA    False                 Operational thermal rating power                                                                                                                                                                                                           True                
     contingency_factor        float                p.u.   False                 Rating multiplier for contingencies                                                                                                                                                                                                        True                
     protection_rating_factor  float                p.u.   False                 Rating multiplier that indicates the maximum flow before the protections tripping                                                                                                                                                          True                
     monitor_loading           bool                        False                 Monitor this device loading for OPF, NTC or contingency studies.                                                                                                                                                                           False               
@@ -16964,6 +17152,7 @@ UndergroundLineType
     code                      str                                False                 Secondary ID                                                                      False               
     rdfid                     str                                False                 RDF ID for further compatibility                                                  False               
     action                    enum ActionType                    False                 Object action to perform. Only used for model merging.                            False               
+    selected_to_merge         bool                               False                 Whether this object should be applied during diff merge.                          False               
     comment                   str                                False                 User comment                                                                      False               
     diff_changes              MergeInformation                   False                                                                                                   False               
     modelling_authority       Modelling Authority                False                 Modelling authority of this asset                                                 False               
@@ -17011,6 +17200,7 @@ VSC
     code                      str                                    False                 Secondary ID                                                                                                                                                                                                                               False               
     rdfid                     str                                    False                 RDF ID for further compatibility                                                                                                                                                                                                           False               
     action                    enum ActionType                        False                 Object action to perform. Only used for model merging.                                                                                                                                                                                     False               
+    selected_to_merge         bool                                   False                 Whether this object should be applied during diff merge.                                                                                                                                                                                   False               
     comment                   str                                    False                 User comment                                                                                                                                                                                                                               False               
     diff_changes              MergeInformation                       False                                                                                                                                                                                                                                                            False               
     modelling_authority       Modelling Authority                    False                 Modelling authority of this asset                                                                                                                                                                                                          False               
@@ -17032,7 +17222,8 @@ VSC
     bus_to                    Bus                                    False                 Name of the bus at the "to" side                                                                                                                                                                                                           False               
     active                    bool                                   False                 Is active?                                                                                                                                                                                                                                 True                
     reducible                 bool                                   False                 Is the branch to be reduced by the topology preprocessor?                                                                                                                                                                                  False               
-    rate                      float                           MVA    False                 Thermal rating power                                                                                                                                                                                                                       True                
+    design_rate               float                           MVA    False                 Design thermal rating power that is not modified for operational reasons or otherwise                                                                                                                                                      False               
+    rate                      float                           MVA    False                 Operational thermal rating power                                                                                                                                                                                                           True                
     contingency_factor        float                           p.u.   False                 Rating multiplier for contingencies                                                                                                                                                                                                        True                
     protection_rating_factor  float                           p.u.   False                 Rating multiplier that indicates the maximum flow before the protections tripping                                                                                                                                                          True                
     monitor_loading           bool                                   False                 Monitor this device loading for OPF, NTC or contingency studies.                                                                                                                                                                           False               
@@ -17052,6 +17243,10 @@ VSC
     alpha1                    float                                  False                 Losses constant parameter (IEC 62751-2 loss Correction, idle loss).                                                                                                                                                                        False               
     alpha2                    float                                  False                 Losses linear parameter (IEC 62751-2 loss Correction, Switching loss).                                                                                                                                                                     False               
     alpha3                    float                                  False                 Losses quadratic parameter (IEC 62751-2 loss Correction, resistive loss).                                                                                                                                                                  False               
+    phN                       bool                                   False                 Is the neutral connected?                                                                                                                                                                                                                  False               
+    phA                       bool                                   False                 Is phase A connected?                                                                                                                                                                                                                      False               
+    phB                       bool                                   False                 Is phase B connected?                                                                                                                                                                                                                      False               
+    phC                       bool                                   False                 Is phase C connected?                                                                                                                                                                                                                      False               
     control1                  enum ConverterControlType              False                 Control mode 1.                                                                                                                                                                                                                            True                
     control1_dev              BusOrBranch                            False                 Controlled device, None to apply to this converter                                                                                                                                                                                         True                
     control1_val              float                                  False                 Control value 1.p.u. for voltage rad for angles MW for P MVAr for Q                                                                                                                                                                        True                
@@ -17083,22 +17278,23 @@ VaMeasurement
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    device_idtag  str                     False                 Unique ID                                               False               
-    tpe           enum DeviceType         False                 Device type                                             False               
-    device_name   str                     False                 Device name                                             False               
-    value         float                   False                 Value of the measurement                                True                
-    sigma         float                   False                 Uncertainty of the measurement                          True                
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    device_idtag       str                     False                 Unique ID                                                 False               
+    tpe                enum DeviceType         False                 Device type                                               False               
+    device_name        str                     False                 Device name                                               False               
+    value              float                   False                 Value of the measurement                                  True                
+    sigma              float                   False                 Uncertainty of the measurement                            True                
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 VmMeasurement
@@ -17106,22 +17302,23 @@ VmMeasurement
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    device_idtag  str                     False                 Unique ID                                               False               
-    tpe           enum DeviceType         False                 Device type                                             False               
-    device_name   str                     False                 Device name                                             False               
-    value         float                   False                 Value of the measurement                                True                
-    sigma         float                   False                 Uncertainty of the measurement                          True                
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    device_idtag       str                     False                 Unique ID                                                 False               
+    tpe                enum DeviceType         False                 Device type                                               False               
+    device_name        str                     False                 Device name                                               False               
+    value              float                   False                 Value of the measurement                                  True                
+    sigma              float                   False                 Uncertainty of the measurement                            True                
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 
 VoltageLevel
@@ -17129,24 +17326,25 @@ VoltageLevel
 
 .. table::
 
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
-           name              class_type       unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
-    idtag                str                        False                 Unique ID                                               False               
-    name                 str                        False                 Name of the device.                                     False               
-    code                 str                        False                 Secondary ID                                            False               
-    rdfid                str                        False                 RDF ID for further compatibility                        False               
-    action               enum ActionType            False                 Object action to perform. Only used for model merging.  False               
-    comment              str                        False                 User comment                                            False               
-    diff_changes         MergeInformation           False                                                                         False               
-    modelling_authority  Modelling Authority        False                 Modelling authority of this asset                       False               
-    commissioned_date    int                        False                 Commissioned date of the asset                          False               
-    decommissioned_date  int                        False                 Decommissioned date of the asset                        False               
-    build_status         enum BuildStatus           False                 Device build status. Used in expansion planning.        False               
-    owners               AssociationsList     p.u.  False                 Owners associations to injections                       False               
-    Vnom                 float                kV    False                 Nominal voltage                                         False               
-    substation           Substation                 False                 Substation of this Voltage level (optional)             False               
-    ===================  ===================  ====  =========  =========  ======================================================  ===========  =======
+    ===================  ===================  ====  =========  =========  ========================================================  ===========  =======
+           name              class_type       unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    ===================  ===================  ====  =========  =========  ========================================================  ===========  =======
+    idtag                str                        False                 Unique ID                                                 False               
+    name                 str                        False                 Name of the device.                                       False               
+    code                 str                        False                 Secondary ID                                              False               
+    rdfid                str                        False                 RDF ID for further compatibility                          False               
+    action               enum ActionType            False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge    bool                       False                 Whether this object should be applied during diff merge.  False               
+    comment              str                        False                 User comment                                              False               
+    diff_changes         MergeInformation           False                                                                           False               
+    modelling_authority  Modelling Authority        False                 Modelling authority of this asset                         False               
+    commissioned_date    int                        False                 Commissioned date of the asset                            False               
+    decommissioned_date  int                        False                 Decommissioned date of the asset                          False               
+    build_status         enum BuildStatus           False                 Device build status. Used in expansion planning.          False               
+    owners               AssociationsList     p.u.  False                 Owners associations to injections                         False               
+    Vnom                 float                kV    False                 Nominal voltage                                           False               
+    substation           Substation                 False                 Substation of this Voltage level (optional)               False               
+    ===================  ===================  ====  =========  =========  ========================================================  ===========  =======
 
 
 Winding
@@ -17162,6 +17360,7 @@ Winding
     code                      str                             False                 Secondary ID                                                                                                                                                                                                                               False               
     rdfid                     str                             False                 RDF ID for further compatibility                                                                                                                                                                                                           False               
     action                    enum ActionType                 False                 Object action to perform. Only used for model merging.                                                                                                                                                                                     False               
+    selected_to_merge         bool                            False                 Whether this object should be applied during diff merge.                                                                                                                                                                                   False               
     comment                   str                             False                 User comment                                                                                                                                                                                                                               False               
     diff_changes              MergeInformation                False                                                                                                                                                                                                                                                            False               
     modelling_authority       Modelling Authority             False                 Modelling authority of this asset                                                                                                                                                                                                          False               
@@ -17183,7 +17382,8 @@ Winding
     bus_to                    Bus                             False                 Name of the bus at the "to" side                                                                                                                                                                                                           False               
     active                    bool                            False                 Is active?                                                                                                                                                                                                                                 True                
     reducible                 bool                            False                 Is the branch to be reduced by the topology preprocessor?                                                                                                                                                                                  False               
-    rate                      float                    MVA    False                 Thermal rating power                                                                                                                                                                                                                       True                
+    design_rate               float                    MVA    False                 Design thermal rating power that is not modified for operational reasons or otherwise                                                                                                                                                      False               
+    rate                      float                    MVA    False                 Operational thermal rating power                                                                                                                                                                                                           True                
     contingency_factor        float                    p.u.   False                 Rating multiplier for contingencies                                                                                                                                                                                                        True                
     protection_rating_factor  float                    p.u.   False                 Rating multiplier that indicates the maximum flow before the protections tripping                                                                                                                                                          True                
     monitor_loading           bool                            False                 Monitor this device loading for OPF, NTC or contingency studies.                                                                                                                                                                           False               
@@ -17245,24 +17445,25 @@ Wire
 
 .. table::
 
-    =================  ================  ======  =========  =========  ======================================================  ===========  =======
-          name            class_type      unit   mandatory  max_chars                       descriptions                       has_profile  comment
-    =================  ================  ======  =========  =========  ======================================================  ===========  =======
-    idtag              str                       False                 Unique ID                                               False               
-    name               str                       False                 Name of the device.                                     False               
-    code               str                       False                 Secondary ID                                            False               
-    rdfid              str                       False                 RDF ID for further compatibility                        False               
-    action             enum ActionType           False                 Object action to perform. Only used for model merging.  False               
-    comment            str                       False                 User comment                                            False               
-    diff_changes       MergeInformation          False                                                                         False               
-    R                  float             Ohm/km  False                 resistance of the conductor                             False               
-    diameter           float             mm      False                 Diameter of wire                                        False               
-    diameter_internal  float             mm      False                 Internal radius of the conductor                        False               
-    is_tube            bool                      False                 Is it a tubular conductor?                              False               
-    max_current        float             kA      False                 Maximum current of the conductor                        False               
-    stranding          str                       False                 Stranding of wire                                       False               
-    material           str                       False                 Material of wire                                        False               
-    =================  ================  ======  =========  =========  ======================================================  ===========  =======
+    =================  ================  ======  =========  =========  ========================================================  ===========  =======
+          name            class_type      unit   mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ======  =========  =========  ========================================================  ===========  =======
+    idtag              str                       False                 Unique ID                                                 False               
+    name               str                       False                 Name of the device.                                       False               
+    code               str                       False                 Secondary ID                                              False               
+    rdfid              str                       False                 RDF ID for further compatibility                          False               
+    action             enum ActionType           False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                      False                 Whether this object should be applied during diff merge.  False               
+    comment            str                       False                 User comment                                              False               
+    diff_changes       MergeInformation          False                                                                           False               
+    R                  float             Ohm/km  False                 resistance of the conductor                               False               
+    diameter           float             mm      False                 Diameter of wire                                          False               
+    diameter_internal  float             mm      False                 Internal radius of the conductor                          False               
+    is_tube            bool                      False                 Is it a tubular conductor?                                False               
+    max_current        float             kA      False                 Maximum current of the conductor                          False               
+    stranding          str                       False                 Stranding of wire                                         False               
+    material           str                       False                 Material of wire                                          False               
+    =================  ================  ======  =========  =========  ========================================================  ===========  =======
 
 
 Zone
@@ -17270,20 +17471,21 @@ Zone
 
 .. table::
 
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-        name         class_type     unit  mandatory  max_chars                       descriptions                       has_profile  comment
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
-    idtag         str                     False                 Unique ID                                               False               
-    name          str                     False                 Name of the device.                                     False               
-    code          str                     False                 Secondary ID                                            False               
-    rdfid         str                     False                 RDF ID for further compatibility                        False               
-    action        enum ActionType         False                 Object action to perform. Only used for model merging.  False               
-    comment       str                     False                 User comment                                            False               
-    diff_changes  MergeInformation        False                                                                         False               
-    longitude     float             deg   False                 longitude.                                              False               
-    latitude      float             deg   False                 latitude.                                               False               
-    color         str                     False                 Color to paint the element in the map diagram           False               
-    area          Area                    False                 Area of this zone.                                      False               
-    ============  ================  ====  =========  =========  ======================================================  ===========  =======
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+          name            class_type     unit  mandatory  max_chars                        descriptions                        has_profile  comment
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
+    idtag              str                     False                 Unique ID                                                 False               
+    name               str                     False                 Name of the device.                                       False               
+    code               str                     False                 Secondary ID                                              False               
+    rdfid              str                     False                 RDF ID for further compatibility                          False               
+    action             enum ActionType         False                 Object action to perform. Only used for model merging.    False               
+    selected_to_merge  bool                    False                 Whether this object should be applied during diff merge.  False               
+    comment            str                     False                 User comment                                              False               
+    diff_changes       MergeInformation        False                                                                           False               
+    longitude          float             deg   False                 longitude.                                                False               
+    latitude           float             deg   False                 latitude.                                                 False               
+    color              str                     False                 Color to paint the element in the map diagram             False               
+    area               Area                    False                 Area of this zone.                                        False               
+    =================  ================  ====  =========  =========  ========================================================  ===========  =======
 
 

@@ -20,6 +20,14 @@ VeraGridEngine.Simulations.OPF.NumericalMethods.newton\_raphson\_ips\_fx module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Simulations.OPF.NumericalMethods.newton\_raphson\_ips\_pc module
+-------------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.OPF.NumericalMethods.newton_raphson_ips_pc
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 Module contents
 ---------------
 

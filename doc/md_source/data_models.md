@@ -320,6 +320,35 @@
 |active           |bool            |    |False    |         |Is the contingency group active for consideration?      |False      |       |
 
 
+### ControlPc
+
+|          name          |    class_type     |unit|mandatory|max_chars|                                  descriptions                                  |has_profile|comment|
+|------------------------|-------------------|----|---------|---------|--------------------------------------------------------------------------------|-----------|-------|
+|idtag                   |str                |    |False    |         |Unique ID                                                                       |False      |       |
+|name                    |str                |    |False    |         |Name of the device.                                                             |False      |       |
+|code                    |str                |    |False    |         |Secondary ID                                                                    |False      |       |
+|rdfid                   |str                |    |False    |         |RDF ID for further compatibility                                                |False      |       |
+|action                  |enum ActionType    |    |False    |         |Object action to perform. Only used for model merging.                          |False      |       |
+|selected_to_merge       |bool               |    |False    |         |Whether this object should be applied during diff merge.                        |False      |       |
+|comment                 |str                |    |False    |         |User comment                                                                    |False      |       |
+|diff_changes            |MergeInformation   |    |False    |         |                                                                                |False      |       |
+|modelling_authority     |Modelling Authority|    |False    |         |Modelling authority of this asset                                               |False      |       |
+|commissioned_date       |int                |    |False    |         |Commissioned date of the asset                                                  |False      |       |
+|decommissioned_date     |int                |    |False    |         |Decommissioned date of the asset                                                |False      |       |
+|build_status            |enum BuildStatus   |    |False    |         |Device build status. Used in expansion planning.                                |False      |       |
+|owners                  |AssociationsList   |p.u.|False    |         |Owners associations to injections                                               |False      |       |
+|rms_model               |DaeBlock           |    |False    |         |RMS dynamic model                                                               |False      |       |
+|emt_model               |DaeBlock           |    |False    |         |EMT dynamic model                                                               |False      |       |
+|rms_template            |RMS template       |    |False    |         |Native RMS template used. Assigning it clears rms_fmu_template.                 |False      |       |
+|emt_template            |EMT template       |    |False    |         |Native EMT template used. Assigning it clears emt_fmu_template.                 |False      |       |
+|rms_fmu_template        |FMU template       |    |False    |         |RMS FMU template used only by RMS simulations. Assigning it clears rms_template.|False      |       |
+|emt_fmu_template        |FMU template       |    |False    |         |EMT FMU template used only by EMT simulations. Assigning it clears emt_template.|False      |       |
+|rms_fmu_import_config   |str                |    |False    |         |Serialized FMU Co-Simulation RMS configuration                                  |False      |       |
+|emt_fmu_import_config   |str                |    |False    |         |Serialized FMU Co-Simulation EMT configuration                                  |False      |       |
+|rms_fmu_me_import_config|str                |    |False    |         |Serialized FMU Model Exchange RMS configuration                                 |False      |       |
+|emt_fmu_me_import_config|str                |    |False    |         |Serialized FMU Model Exchange EMT configuration                                 |False      |       |
+
+
 ### ControllableShunt
 
 |          name          |       class_type       |    unit    |mandatory|max_chars|                                  descriptions                                  |has_profile|comment|
@@ -1177,15 +1206,12 @@
 |R                              |float              |p.u. |False    |         |Total positive sequence resistance.                                                                                                                                                                                                      |False      |       |
 |X                              |float              |p.u. |False    |         |Total positive sequence reactance.                                                                                                                                                                                                       |False      |       |
 |B                              |float              |p.u. |False    |         |Total positive sequence shunt susceptance.                                                                                                                                                                                               |False      |       |
-|G                              |float              |p.u. |False    |         |Total positive sequence shunt conductance.                                                                                                                                                                                               |False      |       |
 |R0                             |float              |p.u. |False    |         |Total zero sequence resistance.                                                                                                                                                                                                          |False      |       |
 |X0                             |float              |p.u. |False    |         |Total zero sequence reactance.                                                                                                                                                                                                           |False      |       |
 |B0                             |float              |p.u. |False    |         |Total zero sequence shunt susceptance.                                                                                                                                                                                                   |False      |       |
-|G0                             |float              |p.u. |False    |         |Total zero sequence shunt conductance.                                                                                                                                                                                                   |False      |       |
 |R2                             |float              |p.u. |False    |         |Total negative sequence resistance.                                                                                                                                                                                                      |False      |       |
 |X2                             |float              |p.u. |False    |         |Total negative sequence reactance.                                                                                                                                                                                                       |False      |       |
 |B2                             |float              |p.u. |False    |         |Total negative sequence shunt susceptance.                                                                                                                                                                                               |False      |       |
-|G2                             |float              |p.u. |False    |         |Total negative sequence shunt conductance.                                                                                                                                                                                               |False      |       |
 |ys                             |Admittance Matrix  |p.u. |False    |         |Series admittance matrix of the branch                                                                                                                                                                                                   |False      |       |
 |ysh                            |Admittance Matrix  |p.u. |False    |         |Shunt admittance matrix of the branch                                                                                                                                                                                                    |False      |       |
 |tolerance                      |float              |%    |False    |         |Tolerance expected for the impedance values % is expected for transformers0% for lines.                                                                                                                                                  |False      |       |
@@ -1667,11 +1693,9 @@
 |R                       |float              |Ohm/km      |False    |         |Positive-sequence resistance per km                                             |False      |       |
 |X                       |float              |Ohm/km      |False    |         |Positive-sequence reactance per km                                              |False      |       |
 |B                       |float              |uS/km       |False    |         |Positive-sequence shunt susceptance per km                                      |False      |       |
-|G                       |float              |uS/km       |False    |         |Positive-sequence shunt conductance per km                                      |False      |       |
 |R0                      |float              |Ohm/km      |False    |         |Zero-sequence resistance per km                                                 |False      |       |
 |X0                      |float              |Ohm/km      |False    |         |Zero-sequence reactance per km                                                  |False      |       |
 |B0                      |float              |uS/km       |False    |         |Zero-sequence shunt susceptance per km                                          |False      |       |
-|G0                      |float              |uS/km       |False    |         |Zero-sequence shunt conductance per km                                          |False      |       |
 |Cnf                     |float              |nF/km       |False    |         |Positive-sequence shunt conductance per km                                      |False      |       |
 |Cnf0                    |float              |nF/km       |False    |         |Zero-sequence shunt conductance per km                                          |False      |       |
 |use_conductance         |bool               |            |False    |         |Use conductance? else the susceptance is used                                   |False      |       |

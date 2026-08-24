@@ -12,6 +12,22 @@ VeraGridEngine.Simulations.Rms.numerical.back\_euler\_fx module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Simulations.Rms.numerical.back\_euler\_fx\_full\_vectorized module
+---------------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_full_vectorized
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Simulations.Rms.numerical.back\_euler\_fx\_vectorized module
+---------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Simulations.Rms.numerical.back_euler_fx_vectorized
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Simulations.Rms.numerical.back\_euler\_mti module
 ----------------------------------------------------------------
 

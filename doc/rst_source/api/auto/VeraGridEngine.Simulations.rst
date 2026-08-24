@@ -23,6 +23,7 @@ Subpackages
    VeraGridEngine.Simulations.NodalCapacity
    VeraGridEngine.Simulations.OPF
    VeraGridEngine.Simulations.PowerFlow
+   VeraGridEngine.Simulations.PowerFlow3ph
    VeraGridEngine.Simulations.Reliability
    VeraGridEngine.Simulations.Rms
    VeraGridEngine.Simulations.ShortCircuitStudies

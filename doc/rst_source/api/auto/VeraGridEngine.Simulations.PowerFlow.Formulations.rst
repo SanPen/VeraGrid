@@ -20,14 +20,6 @@ VeraGridEngine.Simulations.PowerFlow.Formulations.pf\_basic\_formulation module
    :show-inheritance:
    :undoc-members:
 
-VeraGridEngine.Simulations.PowerFlow.Formulations.pf\_basic\_formulation\_3ph module
-------------------------------------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Simulations.PowerFlow.Formulations.pf_basic_formulation_3ph
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
 VeraGridEngine.Simulations.PowerFlow.Formulations.pf\_formulation\_template module
 ----------------------------------------------------------------------------------
 

@@ -28,6 +28,30 @@ VeraGridEngine.Devices.Dynamic.rms\_template module
    :show-inheritance:
    :undoc-members:
 
+VeraGridEngine.Devices.Dynamic.static\_parameter\_mapping module
+----------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Devices.Dynamic.static_parameter_mapping
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Devices.Dynamic.static\_parameter\_mapping\_rms module
+---------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Devices.Dynamic.static_parameter_mapping_rms
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+VeraGridEngine.Devices.Dynamic.static\_parameter\_mapping\_unified module
+-------------------------------------------------------------------------
+
+.. automodule:: VeraGridEngine.Devices.Dynamic.static_parameter_mapping_unified
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 VeraGridEngine.Devices.Dynamic.var\_factory module
 --------------------------------------------------
 

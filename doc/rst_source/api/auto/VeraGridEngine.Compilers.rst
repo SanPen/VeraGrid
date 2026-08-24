@@ -1,37 +1,21 @@
 VeraGridEngine.Compilers package
 ================================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   VeraGridEngine.Compilers.Gslv
+
 Submodules
 ----------
-
-VeraGridEngine.Compilers.circuit\_to\_bentayga module
------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Compilers.circuit_to_bentayga
-   :members:
-   :show-inheritance:
-   :undoc-members:
 
 VeraGridEngine.Compilers.circuit\_to\_data module
 -------------------------------------------------
 
 .. automodule:: VeraGridEngine.Compilers.circuit_to_data
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.Compilers.circuit\_to\_gslv module
--------------------------------------------------
-
-.. automodule:: VeraGridEngine.Compilers.circuit_to_gslv
-   :members:
-   :show-inheritance:
-   :undoc-members:
-
-VeraGridEngine.Compilers.circuit\_to\_newton\_pa module
--------------------------------------------------------
-
-.. automodule:: VeraGridEngine.Compilers.circuit_to_newton_pa
    :members:
    :show-inheritance:
    :undoc-members:

@@ -39,11 +39,9 @@ Profile-enabled properties: none.
 |R                       |float              |Ohm/km      |False    |         |Positive-sequence resistance per km                                             |False      |       |
 |X                       |float              |Ohm/km      |False    |         |Positive-sequence reactance per km                                              |False      |       |
 |B                       |float              |uS/km       |False    |         |Positive-sequence shunt susceptance per km                                      |False      |       |
-|G                       |float              |uS/km       |False    |         |Positive-sequence shunt conductance per km                                      |False      |       |
 |R0                      |float              |Ohm/km      |False    |         |Zero-sequence resistance per km                                                 |False      |       |
 |X0                      |float              |Ohm/km      |False    |         |Zero-sequence reactance per km                                                  |False      |       |
 |B0                      |float              |uS/km       |False    |         |Zero-sequence shunt susceptance per km                                          |False      |       |
-|G0                      |float              |uS/km       |False    |         |Zero-sequence shunt conductance per km                                          |False      |       |
 |Cnf                     |float              |nF/km       |False    |         |Positive-sequence shunt conductance per km                                      |False      |       |
 |Cnf0                    |float              |nF/km       |False    |         |Zero-sequence shunt conductance per km                                          |False      |       |
 |use_conductance         |bool               |            |False    |         |Use conductance? else the susceptance is used                                   |False      |       |

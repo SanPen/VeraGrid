@@ -468,11 +468,11 @@ class Assets:
         }
 
         # dictionary of profile magnitudes per object
-        self.profile_magnitudes: Dict[str, Tuple[List[str], List[GCPROP_TYPES]]] = dict()
+        self.profile_magnitudes: Dict[DeviceType, Tuple[List[str], List[GCPROP_TYPES]]] = dict()
 
-        self.device_type_name_dict: Dict[str, DeviceType] = dict()
+        self.device_type_name_dict: Dict[DeviceType, DeviceType] = dict()
 
-        self.device_associations: Dict[str, List[str]] = dict()
+        self.device_associations: Dict[DeviceType, List[str]] = dict()
 
         """
         self.type_name = 'Shunt'
@@ -482,7 +482,7 @@ class Assets:
         for key, elm_list in self.template_objects_dict.items():
             for elm in elm_list:
 
-                key = str(elm.device_type.value)
+                key: DeviceType = elm.device_type
 
                 associated_props, indices = elm.get_association_properties()
                 self.device_type_name_dict[key] = elm.device_type

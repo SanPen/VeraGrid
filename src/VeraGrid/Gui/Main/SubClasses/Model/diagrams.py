@@ -72,8 +72,8 @@ class VideoExportWorker(QtCore.QThread):
     done_signal = QtCore.Signal()
 
     def __init__(self, filename, diagram: ALL_EDITORS,
-                 fps: int, start_idx: int, end_idx: int, current_study: str,
-                 grid_colour_function: Callable[[ALL_EDITORS, str, int, bool], None], ):
+                 fps: int, start_idx: int, end_idx: int, current_study: SimulationTypes,
+                 grid_colour_function: Callable[[ALL_EDITORS, SimulationTypes, int, bool], None], ):
         """
 
         :param filename:
@@ -92,7 +92,7 @@ class VideoExportWorker(QtCore.QThread):
         self.start_idx: int = start_idx
         self.end_idx: int = end_idx
         self.current_study = current_study
-        self.grid_colour_function: Callable[[ALL_EDITORS, str, int, bool], None] = grid_colour_function
+        self.grid_colour_function: Callable[[ALL_EDITORS, SimulationTypes, int, bool], None] = grid_colour_function
 
         self.logger: Logger = Logger()
 
@@ -420,7 +420,7 @@ class DiagramsMain(CompiledArraysMain):
                 for idx in sel_idx:
                     unique.add(idx.row())
 
-                return [model.objects[i] for i in unique]
+                return model.get_objects_at_proxy_rows(proxy_rows=sorted(unique))
             else:
                 info_msg('Select some cells')
                 return list()
@@ -1736,7 +1736,7 @@ class DiagramsMain(CompiledArraysMain):
 
     def grid_colour_function(self,
                              diagram_widget: ALL_EDITORS,
-                             current_study: str,
+                             current_study: SimulationTypes,
                              t_idx: Union[None, int],
                              allow_popups: bool = True) -> None:
         """
@@ -1753,8 +1753,9 @@ class DiagramsMain(CompiledArraysMain):
         max_bus_width = self.ui.max_node_size_spinBox.value()
 
         cmap = self.ui.palette_comboBox.currentData()
+        current_study_label: str = str(current_study.value)
 
-        if current_study == sim.PowerFlowDriver.tpe.value:
+        if current_study == sim.PowerFlowDriver.tpe:
             if t_idx is None:
                 results: sim.PowerFlowResults = self.session.get_results(SimulationTypes.PowerFlow_run)
                 self.pf_colouring(diagram_widget=diagram_widget,
@@ -1768,9 +1769,9 @@ class DiagramsMain(CompiledArraysMain):
 
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} only has values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} only has values for the snapshot")
 
-        elif current_study == sim.PowerFlowDriver3Ph.tpe.value:
+        elif current_study == sim.PowerFlowDriver3Ph.tpe:
             if t_idx is None:
                 results: sim.PowerFlowResults3Ph = self.session.get_results(SimulationTypes.PowerFlow3ph_run)
                 self.pf_3ph_colouring(diagram_widget=diagram_widget,
@@ -1784,9 +1785,9 @@ class DiagramsMain(CompiledArraysMain):
 
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} only has values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} only has values for the snapshot")
 
-        elif current_study == sim.PowerFlowTimeSeriesDriver.tpe.value:
+        elif current_study == sim.PowerFlowTimeSeriesDriver.tpe:
             if t_idx is not None:
                 drv, results = self.session.power_flow_ts
                 self.pf_ts_colouring(t_idx=t_idx,
@@ -1801,9 +1802,9 @@ class DiagramsMain(CompiledArraysMain):
 
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} does not have values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} does not have values for the snapshot")
 
-        elif current_study == sim.PowerFlowTimeSeriesDriver3Ph.tpe.value:
+        elif current_study == sim.PowerFlowTimeSeriesDriver3Ph.tpe:
             if t_idx is not None:
                 _, results = self.session.power_flow_3ph_ts
                 self.pf_3ph_ts_colouring(t_idx=t_idx,
@@ -1818,9 +1819,9 @@ class DiagramsMain(CompiledArraysMain):
 
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} does not have values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} does not have values for the snapshot")
 
-        elif current_study == sim.StateEstimationDriver.tpe.value:
+        elif current_study == sim.StateEstimationDriver.tpe:
             if t_idx is None:
                 results: sim.StateEstimationResults = self.session.get_results(SimulationTypes.StateEstimation_run)
                 self.se_colouring(diagram_widget=diagram_widget,
@@ -1834,9 +1835,9 @@ class DiagramsMain(CompiledArraysMain):
 
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} only has values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} only has values for the snapshot")
 
-        elif current_study == sim.ContinuationPowerFlowDriver.tpe.value:
+        elif current_study == sim.ContinuationPowerFlowDriver.tpe:
             if t_idx is None:
                 results: sim.ContinuationPowerFlowResults = self.session.get_results(
                     SimulationTypes.ContinuationPowerFlow_run
@@ -1851,9 +1852,9 @@ class DiagramsMain(CompiledArraysMain):
                                    max_bus_width=max_bus_width)
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} only has values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} only has values for the snapshot")
 
-        elif current_study == sim.StochasticPowerFlowDriver.tpe.value:
+        elif current_study == sim.StochasticPowerFlowDriver.tpe:
 
             # the time is not relevant in this study
             results: sim.StochasticPowerFlowResults = self.session.get_results(
@@ -1868,7 +1869,7 @@ class DiagramsMain(CompiledArraysMain):
                                min_bus_width=min_bus_width,
                                max_bus_width=max_bus_width)
 
-        elif current_study == sim.ShortCircuitDriver.tpe.value:
+        elif current_study == sim.ShortCircuitDriver.tpe:
             if t_idx is None:
                 results: sim.ShortCircuitResults = self.session.get_results(SimulationTypes.ShortCircuit_run)
                 self.sc_colouring(diagram_widget=diagram_widget,
@@ -1881,9 +1882,9 @@ class DiagramsMain(CompiledArraysMain):
                                   max_bus_width=max_bus_width)
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} only has values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} only has values for the snapshot")
 
-        elif current_study == sim.OptimalPowerFlowDriver.tpe.value:
+        elif current_study == sim.OptimalPowerFlowDriver.tpe:
             if t_idx is None:
                 results: sim.OptimalPowerFlowResults = self.session.get_results(SimulationTypes.OPF_run)
                 self.opf_colouring(diagram_widget=diagram_widget,
@@ -1896,9 +1897,9 @@ class DiagramsMain(CompiledArraysMain):
                                    max_bus_width=max_bus_width)
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} only has values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} only has values for the snapshot")
 
-        elif current_study == sim.OptimalPowerFlowTimeSeriesDriver.tpe.value:
+        elif current_study == sim.OptimalPowerFlowTimeSeriesDriver.tpe:
 
             if t_idx is not None:
                 results: sim.OptimalPowerFlowTimeSeriesResults = self.session.get_results(
@@ -1915,9 +1916,9 @@ class DiagramsMain(CompiledArraysMain):
                                       max_bus_width=max_bus_width)
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} does not have values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} does not have values for the snapshot")
 
-        elif current_study == sim.NodalCapacityDriver.tpe.value:
+        elif current_study == sim.NodalCapacityDriver.tpe:
 
             _, results = self.session.nodal_capacity_optimization
             self.nc_colouring(diagram_widget=diagram_widget,
@@ -1929,7 +1930,7 @@ class DiagramsMain(CompiledArraysMain):
                               min_bus_width=min_bus_width,
                               max_bus_width=max_bus_width)
 
-        elif current_study == sim.NodalCapacityTimeSeriesDriver.tpe.value:
+        elif current_study == sim.NodalCapacityTimeSeriesDriver.tpe:
 
             _, results = self.session.nodal_capacity_optimization_ts
             self.nc_ts_colouring(t_idx=t_idx,
@@ -1942,7 +1943,7 @@ class DiagramsMain(CompiledArraysMain):
                                  min_bus_width=min_bus_width,
                                  max_bus_width=max_bus_width)
 
-        elif current_study == sim.LinearAnalysisDriver.tpe.value:
+        elif current_study == sim.LinearAnalysisDriver.tpe:
             if t_idx is None:
                 results: sim.LinearAnalysisResults = self.session.get_results(SimulationTypes.LinearAnalysis_run)
                 self.linpf_colouring(diagram_widget=diagram_widget,
@@ -1955,9 +1956,9 @@ class DiagramsMain(CompiledArraysMain):
                                      max_bus_width=max_bus_width)
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} only has values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} only has values for the snapshot")
 
-        elif current_study == sim.LinearAnalysisTimeSeriesDriver.tpe.value:
+        elif current_study == sim.LinearAnalysisTimeSeriesDriver.tpe:
             if t_idx is not None:
                 results: sim.LinearAnalysisTimeSeriesResults = self.session.get_results(
                     SimulationTypes.LinearAnalysis_TS_run
@@ -1973,9 +1974,9 @@ class DiagramsMain(CompiledArraysMain):
                                         max_bus_width=max_bus_width)
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} does not have values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} does not have values for the snapshot")
 
-        elif current_study == sim.ContingencyAnalysisDriver.tpe.value:
+        elif current_study == sim.ContingencyAnalysisDriver.tpe:
 
             if t_idx is None:
                 results: sim.ContingencyAnalysisResults = self.session.get_results(
@@ -1992,9 +1993,9 @@ class DiagramsMain(CompiledArraysMain):
 
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} only has values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} only has values for the snapshot")
 
-        elif current_study == sim.ContingencyAnalysisTimeSeriesDriver.tpe.value:
+        elif current_study == sim.ContingencyAnalysisTimeSeriesDriver.tpe:
             if t_idx is not None:
                 results: sim.ContingencyAnalysisTimeSeriesResults = self.session.get_results(
                     SimulationTypes.ContingencyAnalysisTS_run
@@ -2010,9 +2011,9 @@ class DiagramsMain(CompiledArraysMain):
                                       max_bus_width=max_bus_width)
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} does not have values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} does not have values for the snapshot")
 
-        elif current_study == sim.AvailableTransferCapacityDriver.tpe.value:
+        elif current_study == sim.AvailableTransferCapacityDriver.tpe:
             self.default_colouring(t_idx=t_idx,
                                    diagram_widget=diagram_widget,
                                    cmap=cmap,
@@ -2022,7 +2023,7 @@ class DiagramsMain(CompiledArraysMain):
                                    min_bus_width=min_bus_width,
                                    max_bus_width=max_bus_width)
 
-        elif current_study == sim.AvailableTransferCapacityTimeSeriesDriver.tpe.value:
+        elif current_study == sim.AvailableTransferCapacityTimeSeriesDriver.tpe:
             self.default_colouring(t_idx=t_idx,
                                    diagram_widget=diagram_widget,
                                    cmap=cmap,
@@ -2032,7 +2033,7 @@ class DiagramsMain(CompiledArraysMain):
                                    min_bus_width=min_bus_width,
                                    max_bus_width=max_bus_width)
 
-        elif current_study == sim.OptimalNetTransferCapacityDriver.tpe.value:
+        elif current_study == sim.OptimalNetTransferCapacityDriver.tpe:
             if t_idx is None:
                 results: sim.OptimalNetTransferCapacityResults = self.session.get_results(
                     SimulationTypes.OPF_NTC_run
@@ -2047,9 +2048,9 @@ class DiagramsMain(CompiledArraysMain):
                                    max_bus_width=max_bus_width)
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} only has values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} only has values for the snapshot")
 
-        elif current_study == sim.OptimalNetTransferCapacityTimeSeriesDriver.tpe.value:
+        elif current_study == sim.OptimalNetTransferCapacityTimeSeriesDriver.tpe:
             if t_idx is not None:
                 results: sim.OptimalNetTransferCapacityTimeSeriesResults = self.session.get_results(
                     SimulationTypes.OPF_NTC_TS_run
@@ -2065,20 +2066,9 @@ class DiagramsMain(CompiledArraysMain):
                                       max_bus_width=max_bus_width)
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} does not have values for the snapshot")
+                    self.show_warning_toast(f"{current_study_label} does not have values for the snapshot")
 
-        elif current_study == sim.InputsAnalysisDriver.tpe.value:
-
-            self.default_colouring(t_idx=t_idx,
-                                   diagram_widget=diagram_widget,
-                                   cmap=cmap,
-                                   use_flow_based_width=use_flow_based_width,
-                                   min_branch_width=min_branch_width,
-                                   max_branch_width=max_branch_width,
-                                   min_bus_width=min_bus_width,
-                                   max_bus_width=max_bus_width)
-
-        elif current_study == SimulationTypes.DesignView.value:
+        elif current_study == sim.InputsAnalysisDriver.tpe:
 
             self.default_colouring(t_idx=t_idx,
                                    diagram_widget=diagram_widget,
@@ -2089,7 +2079,18 @@ class DiagramsMain(CompiledArraysMain):
                                    min_bus_width=min_bus_width,
                                    max_bus_width=max_bus_width)
 
-        elif current_study == SimulationTypes.NodeGrouping_run.value:
+        elif current_study == SimulationTypes.DesignView:
+
+            self.default_colouring(t_idx=t_idx,
+                                   diagram_widget=diagram_widget,
+                                   cmap=cmap,
+                                   use_flow_based_width=use_flow_based_width,
+                                   min_branch_width=min_branch_width,
+                                   max_branch_width=max_branch_width,
+                                   min_bus_width=min_bus_width,
+                                   max_bus_width=max_bus_width)
+
+        elif current_study == SimulationTypes.NodeGrouping_run:
             if t_idx is None:
                 results: sim.OptimalNetTransferCapacityResults = self.session.get_results(
                     SimulationTypes.NodeGrouping_run
@@ -2098,13 +2099,10 @@ class DiagramsMain(CompiledArraysMain):
                                           results=results)
             else:
                 if allow_popups:
-                    self.show_warning_toast(f"{current_study} only has values for the snapshot")
-
-        elif current_study == 'Transient stability':
-            raise Exception('Not implemented :(')
+                    self.show_warning_toast(f"{current_study_label} only has values for the snapshot")
 
         else:
-            print('grid_colour_function: <' + current_study + '> Not implemented :(')
+            print("grid_colour_function: <" + current_study_label + "> Not implemented :(")
 
     def colour_diagrams(self, allow_popups: bool = True) -> None:
         """
@@ -3798,7 +3796,7 @@ class DiagramsMain(CompiledArraysMain):
             if self.ui.available_results_to_color_comboBox.currentIndex() > -1 and sel_idx > -1:
                 current_study = self.ui.available_results_to_color_comboBox.currentData()
 
-                if current_study == sim.ShortCircuitDriver.tpe.value:
+                if current_study == sim.ShortCircuitDriver.tpe:
                     results: sim.ShortCircuitResults = self.session.get_results(SimulationTypes.ShortCircuit_run)
                     self.sc_colouring(diagram_widget=diagram_widget,
                                       results=results,
@@ -3810,11 +3808,11 @@ class DiagramsMain(CompiledArraysMain):
                                       max_bus_width=max_bus_width,
                                       sc_index=sel_idx)
 
-                elif current_study == sim.InvestmentsEvaluationDriver.tpe.value:
+                elif current_study == sim.InvestmentsEvaluationDriver.tpe:
                     # delegate to the dedicated handler so this dispatcher stays small
                     self.apply_investments_combination(clicked_index=indices[0])
 
-                elif current_study == sim.CatalogueOptimizationDriver.tpe.value:
+                elif current_study == sim.CatalogueOptimizationDriver.tpe:
                     # delegate to the dedicated catalogue handler
                     self.apply_catalogue_combination(clicked_index=indices[0])
 

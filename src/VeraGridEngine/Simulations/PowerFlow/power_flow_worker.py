@@ -228,6 +228,12 @@ def __solve_island_complete_support(nc: NumericalCircuit,
                 indices = nc.get_simulation_indices(Sbus=S0)
                 lin_adm = nc.get_linear_admittance_matrices(indices=indices)
 
+                # The HVDC devices have to enter as bus injections externally
+                s_hvdc, losses_hvdc, pf_hvdc, pt_hvdc, load_hvdc, n_free_hvdc = nc.hvdc_data.get_power(
+                    Sbase=nc.Sbase,
+                    theta=np.zeros(nc.nbus)
+                )
+
                 solution = pflw.acdc_lin_pf(
                     nc=nc,
                     Bbus=lin_adm.Bbus,
@@ -238,7 +244,7 @@ def __solve_island_complete_support(nc: NumericalCircuit,
                     dc=indices.dc,
                     vd=indices.vd,
                     pv=indices.pv,
-                    S0=S0,
+                    S0=S0 + s_hvdc,
                     I0=I0,
                     Y0=Y0,
                     V0=V0,

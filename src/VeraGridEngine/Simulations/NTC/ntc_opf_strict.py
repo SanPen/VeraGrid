@@ -2018,9 +2018,11 @@ def run_linear_ntc_opf_strict(grid: MultiCircuit,
     if zonal_grouping == ZonalGrouping.NoGrouping:
 
         # declare the linear analysis and compute the PTDF and LODF
+        # converters_as_setpoint keeps the monitoring independent from the control
         ls = LinearAnalysis(nc=nc,
                             distributed_slack=False,
                             correct_values=True,
+                            converters_as_setpoint=True,
                             logger=logger)
 
         # compute the sensitivity to the exchange

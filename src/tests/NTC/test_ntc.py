@@ -169,7 +169,7 @@ def test_issue_372_1():
         Monitored & selected by the exchange sensitivity criteria branches must not be overloaded beyond 100%
 
     """
-    # fname = os.path.join('data', 'grids', 'ntc_test.gridcal')
+    # fname = get_grid_path('ntc_test.gridcal')
     fname = get_grid_path('IEEE14 - ntc areas_voltages_hvdc_shifter_l10free.gridcal')
 
     grid = gce.open_file(fname)
@@ -270,7 +270,7 @@ def test_issue_372_2():
         The total exchange should be greater than in _test1.
 
     """
-    # fname = os.path.join('data', 'grids', 'ntc_test.gridcal')
+    # fname = get_grid_path('ntc_test.gridcal')
     fname = get_grid_path('IEEE14 - ntc areas_voltages_hvdc_shifter_l10free.gridcal')
 
     grid = gce.open_file(fname)
@@ -504,7 +504,7 @@ def test_issue_372_4():
         TODO: Monitored & selected by the exchange sensitivity criteria branches contingency flow must be lower than contingency rate.
 
     """
-    # fname = os.path.join('data', 'grids', 'ntc_test.gridcal')
+    # fname = get_grid_path('ntc_test.gridcal')
     fname = get_grid_path('IEEE14 - ntc areas_voltages_hvdc_shifter_l10free.gridcal')
 
     grid = gce.open_file(fname)
@@ -623,7 +623,7 @@ def test_issue_372_5():
         TODO: Monitored & selected by the exchange sensitivity criteria branches contingency flow must be lower than contingency rate.
 
     """
-    # fname = os.path.join('data', 'grids', 'ntc_test.gridcal')
+    # fname = get_grid_path('ntc_test.gridcal')
     fname = get_grid_path('IEEE14 - ntc areas_voltages_hvdc_shifter_l10free.gridcal')
 
     grid = gce.open_file(fname)
@@ -1873,6 +1873,48 @@ def test_ntc_pmode3_saturates_at_dc_bottleneck() -> None:
 
     tie_idx = [i for i, rate in enumerate(res.rates) if rate == 8000.0]
     assert np.allclose(res.Sf[tie_idx].real, 3000.0, atol=1.0)
+
+
+def test_ntc_free_mode_dominates_droop_mode() -> None:
+    """
+    On the same grid, converters with free power (Pmode1: Pac + Pdc) must reach an NTC at
+    least as high as converters on an angle droop (Pmode3) as the droop law only adds
+    constraints. 
+    """
+    def solve_mode(free_mode: bool, consider_contingencies: bool) -> float:
+        grid = gce.open_file(get_grid_path("NTC_8_bus_2pmode3_dc_bottleneck.veragrid"))
+        if free_mode:
+            for v in grid.vsc_devices:
+                if v.control1 == ConverterControlType.Pdc_angle_droop:
+                    # order matters: move control2 off Pac before assigning control1 = Pac,
+                    # otherwise the duplicate-control guard refuses the change
+                    v.control2 = ConverterControlType.Pdc
+                    v.control2_val = 0.0
+                    v.control1 = ConverterControlType.Pac
+                    v.control1_val = 0.0
+                    v.control1_dev = None
+                    assert (v.control1, v.control2) == (ConverterControlType.Pac,
+                                                        ConverterControlType.Pdc)
+        a1, a2 = grid.areas[0], grid.areas[1]
+        opts = gce.OptimalNetTransferCapacityOptions(
+            sending_bus_idx=np.array([i for i, b in enumerate(grid.buses) if b.area == a1]),
+            receiving_bus_idx=np.array([i for i, b in enumerate(grid.buses) if b.area == a2]),
+            transfer_method=gce.AvailableTransferMode.InstalledPower,
+            consider_contingencies=consider_contingencies,
+            opf_options=gce.OptimalPowerFlowOptions(),
+        )
+        drv = gce.OptimalNetTransferCapacityDriver(grid, opts)
+        drv.run()
+        assert bool(np.all(drv.results.converged))
+        return float(sum(drv.results.Sf[k].real * s
+                         for k, s in drv.results.inter_space_branches))
+
+    for consider_contingencies in (False, True):
+        ntc_droop = solve_mode(free_mode=False, consider_contingencies=consider_contingencies)
+        ntc_free = solve_mode(free_mode=True, consider_contingencies=consider_contingencies)
+        # 1 MW tolerance for solver noise
+        assert ntc_free >= ntc_droop - 1.0, \
+            f"dominance violated (ctg={consider_contingencies}): free={ntc_free} < droop={ntc_droop}"
 
 
 def test_ntc_structural_n1_overload_is_relaxed_not_infeasible() -> None:

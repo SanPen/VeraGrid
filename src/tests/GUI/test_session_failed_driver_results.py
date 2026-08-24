@@ -53,6 +53,10 @@ def test_failed_worker_discards_placeholder_and_blocks_result_access() -> None:
     assert driver.results is None
     assert driver.logger.has_errors()
     assert thread.logger.has_errors()
+    assert session.get_results_model(
+        driver_type=driver.tpe,
+        result_type=ResultTypes.Modes,
+    ) is None
     assert session.get_results_model_by_name(
         study_name=driver.name,
         study_type=ResultTypes.Modes,

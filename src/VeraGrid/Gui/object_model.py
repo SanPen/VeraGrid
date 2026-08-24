@@ -420,9 +420,9 @@ class ObjectsModel(WrappableTableModel):
             if obj_idx < len(self.objects):
                 if self.attributes[attr_idx] not in self.non_editable_attributes:
 
-                    if prop.tpe is ContingencyGroup and value != "":
-                        # if isinstance(value, RmsModelTemplate):
-                        value2 = ContingencyGroup(value)
+                    if isinstance(value, str) and value != "":
+                        # try casting to the type
+                        value2 = prop.tpe(value)
                     else:
                         value2 = value
 

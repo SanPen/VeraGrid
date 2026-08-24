@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
+import warnings
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
@@ -701,6 +702,10 @@ class VSC(BranchParent):
                 if (value in (ConverterControlType.Vm_dc, ConverterControlType.Vm_ac) and
                         not (0.9 < self.control1_val <= 1.1)):
                     self.control1_val = 1.0
+            else:
+                # a silent refusal here leaves the converter in its old mode
+                warnings.warn(f"VSC {self.name}: control1 = {value} refused because control2 "
+                              f"already holds that control. Change control2 first.")
         else:
             self._control1 = value
 
@@ -746,6 +751,10 @@ class VSC(BranchParent):
                 if (value in (ConverterControlType.Vm_dc, ConverterControlType.Vm_ac) and
                         not (0.9 < self.control2_val <= 1.1)):
                     self.control2_val = 1.0
+            else:
+                # loud refusal, see the control1 setter for the reasoning
+                warnings.warn(f"VSC {self.name}: control2 = {value} refused because control1 "
+                              f"already holds that control. Change control1 first.")
         else:
             self._control2 = value
 

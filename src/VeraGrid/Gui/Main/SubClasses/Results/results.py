@@ -44,7 +44,7 @@ class ResultsMain(SimulationsMain):
         self.current_results_logger: Union[None, Logger] = None
 
         self.dynamic_results_handler: DynamicsResultsHandler | None = None
-        self.dynamic_results_handlers: Dict[str, DynamicsResultsHandler] = dict()
+        self.dynamic_results_handlers: Dict[SimulationTypes, DynamicsResultsHandler] = dict()
 
         # --------------------------------------------------------------------------------------------------------------
         self.ui.actionSet_OPF_generation_to_profiles.triggered.connect(self.copy_opf_to_profiles)
@@ -104,11 +104,10 @@ class ResultsMain(SimulationsMain):
         """
         tree_mdl = self.ui.results_treeView.model()
         item = tree_mdl.itemFromIndex(index)
-        path = gf.get_tree_item_path(item)
+        study_type: SimulationTypes | None = self.get_results_tree_study_type(item=item)
 
-        if len(path) > 0:
-            study_name = path[0]
-            driver = self.session.get_driver_by_name(study_name=study_name)
+        if study_type is not None:
+            driver = self.session.get_driver(driver_type=study_type)
 
             if driver is None:
                 # set the logs
@@ -128,7 +127,7 @@ class ResultsMain(SimulationsMain):
             # set the dynamics model handler
             if driver.tpe == SimulationTypes.RmsDynamic_run:
                 self.dynamic_results_handler = self.get_or_create_dynamic_results_handler(
-                    study_name=study_name,
+                    study_type=study_type,
                     results=driver.results
                 )
 
@@ -143,7 +142,7 @@ class ResultsMain(SimulationsMain):
             elif driver.tpe == SimulationTypes.EmtDynamic_run:
 
                 self.dynamic_results_handler = self.get_or_create_dynamic_results_handler(
-                    study_name=study_name,
+                    study_type=study_type,
                     results=driver.results
                 )
 
@@ -158,25 +157,18 @@ class ResultsMain(SimulationsMain):
                 self.ui.resultsTabWidget.setCurrentIndex(0)
                 self.clear_dynamic_results_view()
 
-            if len(path) > 1:
-
-                if len(path) == 2:
-                    result_name = path[1]
-                elif len(path) == 3:
-                    result_name = path[2]
-                else:
-                    raise Exception('Path len ' + str(len(path)) + ' not supported')
-
-                study_results = self.available_results_dict.get(study_name, None)
+            result_type: ResultTypes | None = self.get_results_tree_result_type(item=item)
+            if result_type is not None:
+                study_results = self.available_results_dict.get(study_type, None)
 
                 if study_results is not None:
 
-                    study_type: ResultTypes = study_results.get(result_name, None)
+                    study_result_type: ResultTypes = study_results.get(result_type, None)
 
-                    if study_type is not None:
+                    if study_result_type is not None:
 
-                        self.results_mdl = self.session.get_results_model_by_name(study_name=study_name,
-                                                                                  study_type=study_type)
+                        self.results_mdl = self.session.get_results_model(driver_type=study_type,
+                                                                          result_type=study_result_type)
 
                         if self.results_mdl is not None:
 
@@ -220,6 +212,38 @@ class ResultsMain(SimulationsMain):
             # set the logs
             self.current_results_logger = None
             self.ui.resultsLogsTreeView.setModel(None)
+
+    def get_results_tree_study_type(self, item: QtGui.QStandardItem | None) -> SimulationTypes | None:
+        """
+        Resolve a results tree item to its simulation type.
+
+        :param item: Tree item.
+        :return: Simulation type or None.
+        """
+        current_item: QtGui.QStandardItem | None = item
+        while current_item is not None:
+            item_data: object = current_item.data(QtCore.Qt.ItemDataRole.UserRole)
+            if isinstance(item_data, SimulationTypes):
+                return item_data
+            else:
+                current_item = current_item.parent()
+        return None
+
+    def get_results_tree_result_type(self, item: QtGui.QStandardItem | None) -> ResultTypes | None:
+        """
+        Resolve a results tree item to its result type.
+
+        :param item: Tree item.
+        :return: Result type or None.
+        """
+        if item is not None:
+            item_data: object = item.data(QtCore.Qt.ItemDataRole.UserRole)
+            if isinstance(item_data, ResultTypes):
+                return item_data
+            else:
+                return None
+        else:
+            return None
 
     def dynamic_results_tree_view_click(self, index: QtCore.QModelIndex) -> Var | None:
         """
@@ -640,12 +664,12 @@ class ResultsMain(SimulationsMain):
             pass
 
     def get_or_create_dynamic_results_handler(self,
-                                              study_name: str,
+                                              study_type: SimulationTypes,
                                               results: RmsResults|EmtResults) -> DynamicsResultsHandler:
         """
         Get a cached dynamic-results handler for the given study, or create/update it.
 
-        :param study_name: Study name shown in the results tree.
+        :param study_type: Study simulation type.
         :param results: Dynamic results object associated with the study.
         :return: Cached or newly created dynamics-results handler.
 
@@ -655,12 +679,12 @@ class ResultsMain(SimulationsMain):
         handler is created because RMS and EMT expose different event-group and
         array layouts.
         """
-        handler: DynamicsResultsHandler | None = self.dynamic_results_handlers.get(study_name, None)
+        handler: DynamicsResultsHandler | None = self.dynamic_results_handlers.get(study_type, None)
 
         if handler is None:
             handler = DynamicsResultsHandler(results=results, circuit=self.circuit)
             handler.dialog_parent = self
-            self.dynamic_results_handlers[study_name] = handler
+            self.dynamic_results_handlers[study_type] = handler
             handler.get_plots_model().rowsInserted.connect(self.expand_dynamic_plots_tree)
             return handler
 
@@ -677,7 +701,7 @@ class ResultsMain(SimulationsMain):
             # different event-group fields and value-array layouts.
             handler = DynamicsResultsHandler(results=results, circuit=self.circuit)
             handler.dialog_parent = self
-            self.dynamic_results_handlers[study_name] = handler
+            self.dynamic_results_handlers[study_type] = handler
             handler.get_plots_model().rowsInserted.connect(self.expand_dynamic_plots_tree)
             return handler
 
@@ -929,14 +953,12 @@ class ResultsMain(SimulationsMain):
         if len(idx) > 0:
             tree_mdl = self.ui.results_treeView.model()
             item = tree_mdl.itemFromIndex(idx[0])
-            path = gf.get_tree_item_path(item)
+            study_type: SimulationTypes | None = self.get_results_tree_study_type(item=item)
 
-            if len(path) > 0:
-                study_name = path[0]
-                study_type = self.available_results_dict[study_name]
+            if study_type is not None:
 
                 quit_msg = self.tr("Do you want to delete the results driver {study_name}?").format(
-                    study_name=study_name
+                    study_name=study_type.value
                 )
                 reply = QtWidgets.QMessageBox.question(self, self.tr("Message"),
                                                        quit_msg,
@@ -944,13 +966,21 @@ class ResultsMain(SimulationsMain):
                                                        QtWidgets.QMessageBox.StandardButton.No)
 
                 if reply == QtWidgets.QMessageBox.StandardButton.Yes.value:
-                    if study_name == SimulationTypes.RmsDynamic_run.value or study_name == SimulationTypes.EmtDynamic_run.value:
-                        if study_name in self.dynamic_results_handlers:
-                            del self.dynamic_results_handlers[study_name]
+                    if study_type == SimulationTypes.RmsDynamic_run or study_type == SimulationTypes.EmtDynamic_run:
+                        if study_type in self.dynamic_results_handlers:
+                            del self.dynamic_results_handlers[study_type]
+                        else:
+                            pass
                         self.clear_dynamic_results_view()
+                    else:
+                        pass
 
-                    self.session.delete_driver_by_name(study_name)
+                    self.session.delete_driver(study_type)
                     self.update_available_results()
+            else:
+                pass
+        else:
+            pass
 
     def clear_dynamic_results_view(self):
         """

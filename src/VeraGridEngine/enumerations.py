@@ -495,6 +495,34 @@ class MIPFramework(Enum):
             return MIPFramework.PuLP
 
 
+class SolutionState(Enum):
+    """
+    Quality of an NTC solution: strictly optimal, optimal but with relaxed (slacked)
+    limits, or not solved to optimality at all
+    """
+    Optimal = 'Optimal'
+    Relaxed = 'Optimal with relaxed limits'
+    NotOptimal = 'Not optimal'
+
+    def __str__(self):
+        return self.value
+
+    def __repr__(self):
+        return str(self)
+
+    @staticmethod
+    def argparse(s):
+        """
+
+        :param s:
+        :return:
+        """
+        try:
+            return SolutionState[s]
+        except KeyError:
+            return SolutionState.NotOptimal
+
+
 class TimeGrouping(Enum):
     """
     Time groupings enumeration

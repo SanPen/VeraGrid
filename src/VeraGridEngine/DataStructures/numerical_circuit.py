@@ -392,6 +392,18 @@ class NumericalCircuit:
         """
         return self.get_power_injections() / self.Sbase
 
+    def get_linear_power_injections(self) -> CxVec:
+        """
+        Compute the bus power injections seen by the linear studies (DC PF, PTDF).
+
+        Those models assume a flat voltage of 1 p.u.
+
+        :return: array of power injections in MW
+        """
+        return (self.get_power_injections()
+                + np.conj(self.load_data.get_current_injections_per_bus()
+                          + self.load_data.get_admittance_injections_per_bus()))
+
     def get_current_injections_pu(self) -> CxVec:
         """
 

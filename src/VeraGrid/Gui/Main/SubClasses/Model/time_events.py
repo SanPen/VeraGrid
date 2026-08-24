@@ -112,13 +112,12 @@ class TimeEventsMain(DataBaseTableMain):
         """
         Profile importer
         """
-        dev_type_text = self.get_db_object_selected_type()
+        dev_type: DeviceType | None = self.get_db_object_selected_type()
 
-        if dev_type_text is not None:
+        if dev_type is not None:
             idx = self.ui.device_type_magnitude_comboBox.currentIndex()
 
-            magnitudes, mag_types = self.circuit.profile_magnitudes[dev_type_text]
-            dev_type = self.circuit.device_type_name_dict[dev_type_text]
+            magnitudes, mag_types = self.circuit.profile_magnitudes[dev_type]
             objects: List[ALL_DEV_TYPES] = self.circuit.get_elements_by_type(dev_type)
             magnitude = magnitudes[idx]
 
@@ -265,16 +264,14 @@ class TimeEventsMain(DataBaseTableMain):
         """
         value = self.ui.profile_factor_doubleSpinBox.value()
 
-        dev_type_text = self.get_db_object_selected_type()
+        dev_type: DeviceType | None = self.get_db_object_selected_type()
 
-        if dev_type_text is not None:
-            magnitudes, mag_types = self.circuit.profile_magnitudes[dev_type_text]
+        if dev_type is not None:
+            magnitudes, mag_types = self.circuit.profile_magnitudes[dev_type]
             idx = self.ui.device_type_magnitude_comboBox.currentIndex()
 
             if idx > -1:
                 magnitude = magnitudes[idx]
-
-                dev_type = self.circuit.device_type_name_dict[dev_type_text]
                 objects: List[ALL_DEV_TYPES] = self.circuit.get_elements_by_type(dev_type)
                 # Assign profiles
                 if len(objects) > 0:
@@ -380,9 +377,9 @@ class TimeEventsMain(DataBaseTableMain):
         logger: Logger = Logger()
         # value = self.ui.profile_factor_doubleSpinBox.value()
 
-        dev_type_text = self.get_db_object_selected_type()
-        if dev_type_text is not None:
-            magnitudes, mag_types = self.circuit.profile_magnitudes[dev_type_text]
+        dev_type: DeviceType | None = self.get_db_object_selected_type()
+        if dev_type is not None:
+            magnitudes, mag_types = self.circuit.profile_magnitudes[dev_type]
             idx_from = self.ui.device_type_magnitude_comboBox.currentIndex()
             magnitude_from = magnitudes[idx_from]
 
@@ -399,8 +396,6 @@ class TimeEventsMain(DataBaseTableMain):
                                                        QtWidgets.QMessageBox.StandardButton.No)
 
                 if reply == QtWidgets.QMessageBox.StandardButton.Yes.value:
-
-                    dev_type = self.circuit.device_type_name_dict[dev_type_text]
                     objects: List[ALL_DEV_TYPES] = self.circuit.get_elements_by_type(dev_type)
 
                     # Assign profiles
@@ -448,10 +443,10 @@ class TimeEventsMain(DataBaseTableMain):
         """
         Plot profiles from the time events
         """
-        dev_type_text = self.get_db_object_selected_type()
+        dev_type: DeviceType | None = self.get_db_object_selected_type()
 
-        if dev_type_text is not None:
-            magnitudes, mag_types = self.circuit.profile_magnitudes[dev_type_text]
+        if dev_type is not None:
+            magnitudes, mag_types = self.circuit.profile_magnitudes[dev_type]
             idx = self.ui.device_type_magnitude_comboBox.currentIndex()
             magnitude = magnitudes[idx]
 
@@ -461,7 +456,7 @@ class TimeEventsMain(DataBaseTableMain):
             # NOTE: we use the (filtered or not) objects table model
             #       to get the objects for the (filtered or not) time series
             proxy_model: ObjectModelFilterProxy = self.ui.dataStructureTableView.model()
-            objects = proxy_model.objects
+            objects = proxy_model.get_objects_in_display_order()
 
             t = self.circuit.time_profile
 

@@ -1330,6 +1330,22 @@ class Ui_mainWindow(object):
         self.verticalLayout_27 = QVBoxLayout(self.frame_26)
         self.verticalLayout_27.setObjectName(u"verticalLayout_27")
         self.verticalLayout_27.setContentsMargins(-1, 6, 0, 6)
+        self.frame_62 = QFrame(self.frame_26)
+        self.frame_62.setObjectName(u"frame_62")
+        self.frame_62.setFrameShape(QFrame.Shape.NoFrame)
+        self.frame_62.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_21 = QHBoxLayout(self.frame_62)
+        self.horizontalLayout_21.setObjectName(u"horizontalLayout_21")
+        self.horizontalLayout_21.setContentsMargins(0, 0, 0, 0)
+        self.device_tree_search_lineEdit = QLineEdit(self.frame_62)
+        self.device_tree_search_lineEdit.setObjectName(u"device_tree_search_lineEdit")
+        self.device_tree_search_lineEdit.setMinimumSize(QSize(120, 0))
+
+        self.horizontalLayout_21.addWidget(self.device_tree_search_lineEdit)
+
+
+        self.verticalLayout_27.addWidget(self.frame_62)
+
         self.dataStructuresTreeView = QTreeView(self.frame_26)
         self.dataStructuresTreeView.setObjectName(u"dataStructuresTreeView")
         self.dataStructuresTreeView.setMinimumSize(QSize(230, 0))
@@ -1869,7 +1885,7 @@ class Ui_mainWindow(object):
         self.toolBox_3.addItem(self.toolBox_3Page1, icon121, u"Results")
         self.toolBox_3Page2 = QWidget()
         self.toolBox_3Page2.setObjectName(u"toolBox_3Page2")
-        self.toolBox_3Page2.setGeometry(QRect(0, 0, 98, 88))
+        self.toolBox_3Page2.setGeometry(QRect(0, 0, 86, 88))
         self.verticalLayout_44 = QVBoxLayout(self.toolBox_3Page2)
         self.verticalLayout_44.setObjectName(u"verticalLayout_44")
         self.verticalLayout_44.setContentsMargins(0, 0, 6, 0)
@@ -6146,6 +6162,9 @@ class Ui_mainWindow(object):
         self.tabWidget_6.setTabToolTip(self.tabWidget_6.indexOf(self.tab), QCoreApplication.translate("mainWindow", u"Results variations control", None))
 #endif // QT_CONFIG(tooltip)
         self.modelTabWidget.setTabText(self.modelTabWidget.indexOf(self.GridSectionTab), QCoreApplication.translate("mainWindow", u"Diagrams", None))
+#if QT_CONFIG(tooltip)
+        self.device_tree_search_lineEdit.setToolTip(QCoreApplication.translate("mainWindow", u"<html><head/><body><p>Type anything to search the device. </p></body></html>", None))
+#endif // QT_CONFIG(tooltip)
 #if QT_CONFIG(tooltip)
         self.smart_search_lineEdit.setToolTip(QCoreApplication.translate("mainWindow", u"<html><head/><body><p>Type anything to search on the name property. </p><p><br/></p><p>For more advanced searches you can compose a filter expression:</p><p><span style=\" font-weight:700;\">Subjects:</span></p><p>col, idx, val, colobj, idxobj</p><p>colobj and idxobj allow accessing the objects that may be represented at the index or the columns. With these you can access their internal properties for filtering.</p><p>If none is specified idxobj is taken</p><p><span style=\" font-weight:700;\">Operators:</span></p><p>&gt;, &lt;, &gt;=, &lt;=, !=, =, like, notlike, starts, ends</p><p><span style=\" font-weight:700;\">Examples:</span></p><p>Filter all object names that are similar to 'alba' and their Vnom property &gt; 200</p><p>-&gt; idx<span style=\" font-style:italic;\">obj.name like alba and idxobj.Vnom &gt; 200</span></p><p><span style=\" font-style:italic;\">Equivalently:</span></p><p><span style=\" font-style:italic;\">-&gt; name like alba and Vnom &gt; 200</span></p><p>[Enter] to search </p></body></html"
                         ">", None))

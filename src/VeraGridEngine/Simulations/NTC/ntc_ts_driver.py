@@ -160,7 +160,10 @@ class OptimalNetTransferCapacityTimeSeriesDriver(TimeSeriesDriverTemplate):
             self.results.alpha[t_idx, :] = opf_vars.branch_vars.alpha[0, :]
             self.results.monitor_logic[t_idx, :] = opf_vars.branch_vars.monitor_logic[0, :]
 
-            self.results.contingency_flows_list += opf_vars.branch_vars.contingency_flow_data
+            # the snapshot LP always runs at its internal t = 0, so re-stamp every report
+            # entry with the time series step index before accumulating
+            for report_entry in opf_vars.branch_vars.contingency_flow_data:
+                self.results.contingency_flows_list.append((t_idx,) + tuple(report_entry[1:]))
 
             self.results.hvdc_Pf[t_idx, :] = opf_vars.hvdc_vars.flows[0, :]
             self.results.hvdc_loading[t_idx, :] = opf_vars.hvdc_vars.loading[0, :]

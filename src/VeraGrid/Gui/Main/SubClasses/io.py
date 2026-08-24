@@ -7,7 +7,7 @@ import gc
 import os
 import pathlib
 import tempfile
-from typing import Union, List, Callable
+from typing import Dict, Union, List, Callable
 from PySide6 import QtWidgets, QtGui
 
 import VeraGrid.Gui.gui_functions as gf
@@ -42,6 +42,39 @@ from VeraGridEngine.IO.veragrid.contingency_parser import import_contingencies_f
 from VeraGridEngine.IO.veragrid.catalogue import save_catalogue, load_catalogue
 from VeraGridEngine.Compilers.Gslv.activation import install_gslv_license
 from VeraGrid.Gui.CatalogueElementsDialogue.catalogue_elements_dialogue import CatalogueElementsSelectionDialogue
+
+
+def get_session_tree_icon_map(session_data_dict: Dict[str, Dict[str, List[str]]]) -> Dict[str, str]:
+    """
+    Build an icon map for persisted session trees without polluting runtime icon keys.
+
+    Persisted session metadata stores study names as strings because they are file-format
+    identifiers used again when loading results from disk. The GUI converts those strings
+    to enums only for icon lookup.
+
+    :param session_data_dict: Persisted session tree data.
+    :return: Icon map keyed by persisted study name strings.
+    """
+    simulation_icons: Dict[SimulationTypes, str] = gf.get_simulation_tree_icons()
+    icon_map: Dict[str, str] = dict()
+    studies: Dict[str, List[str]]
+    study_name: str
+    simulation_type: SimulationTypes
+
+    for studies in session_data_dict.values():
+        for study_name in studies.keys():
+            try:
+                simulation_type = SimulationTypes(study_name)
+            except ValueError:
+                pass
+            else:
+                icon_path: str | None = simulation_icons.get(simulation_type, None)
+                if icon_path is not None:
+                    icon_map[study_name] = icon_path
+                else:
+                    pass
+
+    return icon_map
 
 
 class IoMain(ScenariosMain):
@@ -851,7 +884,11 @@ class IoMain(ScenariosMain):
 
                 # get the session tree structure
                 session_data_dict = self.open_file_thread_object.get_session_tree()
-                mdl = gf.get_tree_model(session_data_dict, self.tr('Sessions'), icons=gf.get_simulation_tree_icons())
+                mdl = gf.get_tree_model(
+                    session_data_dict,
+                    self.tr('Sessions'),
+                    icons=get_session_tree_icon_map(session_data_dict=session_data_dict)
+                )
                 self.ui.diskSessionsTreeView.setModel(mdl)
 
                 # apply the GUI settings if found:
@@ -1243,7 +1280,11 @@ class IoMain(ScenariosMain):
 
         # get the session tree structure
         session_data_dict = self.save_file_thread_object.get_session_tree()
-        mdl = gf.get_tree_model(session_data_dict, self.tr('Sessions'), icons=gf.get_simulation_tree_icons())
+        mdl = gf.get_tree_model(
+            session_data_dict,
+            self.tr('Sessions'),
+            icons=get_session_tree_icon_map(session_data_dict=session_data_dict)
+        )
         self.ui.diskSessionsTreeView.setModel(mdl)
 
         # call the garbage collector to free memory

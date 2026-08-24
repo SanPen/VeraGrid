@@ -726,6 +726,17 @@ class MultiCircuit(Assets):
             d[key] = [o.device_type.value for o in elm_list]
         return d
 
+    def get_template_objects_type_dict(self) -> Dict[str, List[DeviceType]]:
+        """
+        Get the template objects grouped by category with stable device types.
+
+        :return: Dictionary of category names and device type lists.
+        """
+        d: Dict[str, List[DeviceType]] = dict()
+        for key, elm_list in self.template_objects_dict.items():
+            d[key] = [o.device_type for o in elm_list]
+        return d
+
     def get_bus_default_types(self) -> IntVec:
         """
         Return an array of bus types

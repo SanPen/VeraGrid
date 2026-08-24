@@ -119,57 +119,57 @@ li.checked::marker { content: &quot;\2612&quot;; }&lt;/style&gt;&lt;/head&gt;&lt
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="19"/>
         <source>Phases:</source>
-        <translation type="unfinished"></translation>
+        <translation>الأطوار:</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="26"/>
         <source>N</source>
-        <translation type="unfinished"></translation>
+        <translation>N</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="33"/>
         <source>A</source>
-        <translation type="unfinished"></translation>
+        <translation>A</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="40"/>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="47"/>
         <source>C</source>
-        <translation type="unfinished"></translation>
+        <translation>C</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="103"/>
         <source>Compute from sequence values</source>
-        <translation type="unfinished"></translation>
+        <translation>الحساب من قيم التتابع</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="130"/>
         <source>Accept</source>
-        <translation type="unfinished">يقبل</translation>
+        <translation>يقبل</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="148"/>
         <source>Admittance matrix</source>
-        <translation type="unfinished"></translation>
+        <translation>مصفوفة التوصيل</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="158"/>
         <source>Dense complex admittance matrix.</source>
-        <translation type="unfinished"></translation>
+        <translation>مصفوفة التوصيل المعقدة الكثيفة.</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="173"/>
         <source>Shunt admittance</source>
-        <translation type="unfinished"></translation>
+        <translation>التوصيل العائم</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="185"/>
         <source>Series admittance</source>
-        <translation type="unfinished"></translation>
+        <translation>التوصيل المتسلسل</translation>
     </message>
 </context>
 <context>
@@ -1373,60 +1373,89 @@ li.checked::marker { content: &quot;\2612&quot;; }&lt;/style&gt;&lt;/head&gt;&lt
         <translation>التعريف حسب نقاط البيانات</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="72"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="131"/>
         <source>Bus longitude</source>
         <translation>خط طول الحافلة</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="82"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="206"/>
         <source>Load file</source>
         <translation>تحميل الملف</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="96"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="115"/>
         <location filename="../SubstationDesigner/substation_designer_gui.ui" line="133"/>
         <source>Name</source>
         <translation>اسم</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="116"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="165"/>
         <source>Bus y position</source>
         <translation>موقف الحافلة</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="149"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="98"/>
         <location filename="../SubstationDesigner/substation_designer_gui.ui" line="40"/>
         <source>Code</source>
         <translation>شفرة</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="156"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="70"/>
+        <source>Buses</source>
+        <translation>العُقد</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="75"/>
+        <source>Substations</source>
+        <translation>المحطات الفرعية</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="80"/>
+        <source>Injections</source>
+        <translation>الحقن</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="108"/>
+        <source>Target</source>
+        <translation>هدف</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="141"/>
+        <source>Also update associated buses latitude and longitude</source>
+        <translation>تحديث خطوط الطول والعرض للعُقد المرتبطة أيضًا</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="155"/>
+        <source>Match method:</source>
+        <translation>طريقة المطابقة:</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="179"/>
         <source>Bus latitude</source>
         <translation>خط عرض الحافلة</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="163"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="186"/>
         <source>Bus x position</source>
         <translation>موقف الحافلة X</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="170"/>
         <source>Match mathod:</source>
-        <translation>طريقة المطابقة:</translation>
+        <translation type="vanished">طريقة المطابقة:</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="184"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="172"/>
         <source>Assigning magnitudes</source>
         <translation>إسناد المقادير</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="256"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="282"/>
         <location filename="../FileDialogues/ProfilesInput/profiles_from_data_gui.ui" line="390"/>
         <source>Do it!</source>
         <translation>افعلها!</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="262"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="288"/>
         <location filename="../FileDialogues/ProfilesInput/profiles_from_data_gui.ui" line="396"/>
         <location filename="../FileDialogues/ProfilesInput/profiles_from_models_gui.ui" line="169"/>
         <location filename="../ProceduralGrid/procedural_grid_ui.ui" line="233"/>
@@ -1434,7 +1463,7 @@ li.checked::marker { content: &quot;\2612&quot;; }&lt;/style&gt;&lt;/head&gt;&lt
         <translation>يقبل</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="273"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="299"/>
         <source>Match</source>
         <translation>مباراة</translation>
     </message>
@@ -1749,17 +1778,16 @@ li.checked::marker { content: &quot;\2612&quot;; }&lt;/style&gt;&lt;/head&gt;&lt
     <message>
         <location filename="../DynamicModelEditor/dynamic_block_properties.ui" line="14"/>
         <source>Block properties</source>
-        <translation type="unfinished"></translation>
+        <translation>خصائص الكتلة</translation>
     </message>
     <message>
         <location filename="../DynamicModelEditor/dynamic_block_properties.ui" line="67"/>
         <source>Apply changes</source>
-        <translation type="unfinished"></translation>
+        <translation>تطبيق التغييرات</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_block_properties.ui" line="78"/>
         <source>Close</source>
-        <translation type="unfinished">يغلق</translation>
+        <translation type="obsolete">يغلق</translation>
     </message>
 </context>
 <context>
@@ -1830,32 +1858,32 @@ li.checked::marker { content: &quot;\2612&quot;; }&lt;/style&gt;&lt;/head&gt;&lt
     <message>
         <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="14"/>
         <source>Dynamic Event Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>محرر الأحداث الديناميكية</translation>
     </message>
     <message>
         <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="20"/>
         <source>&lt;b&gt;Target device:&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;الجهاز المستهدف:&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="58"/>
         <source>➕ New Event Group</source>
-        <translation type="unfinished"></translation>
+        <translation>➕ مجموعة حدث جديدة</translation>
     </message>
     <message>
         <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="69"/>
         <source>➕ Add New Event</source>
-        <translation type="unfinished"></translation>
+        <translation>➕ إضافة حدث جديد</translation>
     </message>
     <message>
         <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="76"/>
         <source>❌ Remove Selected Rows</source>
-        <translation type="unfinished"></translation>
+        <translation>❌ إزالة الصفوف المحددة</translation>
     </message>
     <message>
         <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="85"/>
         <source>Switch Sequence Wizard</source>
-        <translation type="unfinished"></translation>
+        <translation>معالج تسلسل التبديل</translation>
     </message>
 </context>
 <context>
@@ -2408,32 +2436,32 @@ Cancel and retry?</source>
     <message>
         <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="19"/>
         <source>Add point</source>
-        <translation type="unfinished">أضف نقطة</translation>
+        <translation>أضف نقطة</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="33"/>
         <source>Remove selected</source>
-        <translation type="unfinished"></translation>
+        <translation>إزالة المحدد</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="47"/>
         <source>Import CSV</source>
-        <translation type="unfinished"></translation>
+        <translation>استيراد CSV</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="61"/>
         <source>Export CSV</source>
-        <translation type="unfinished"></translation>
+        <translation>تصدير CSV</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="75"/>
         <source>Copy</source>
-        <translation type="unfinished">ينسخ</translation>
+        <translation>ينسخ</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="89"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>لصق</translation>
     </message>
 </context>
 <context>
@@ -2660,7 +2688,7 @@ Cancel and retry?</source>
     </message>
     <message>
         <location filename="../Analysis/analysis_gui.ui" line="1163"/>
-        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="71"/>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="206"/>
         <source>Actions</source>
         <translation>الإجراءات</translation>
     </message>
@@ -2780,7 +2808,7 @@ Cancel and retry?</source>
         <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="218"/>
         <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="296"/>
         <location filename="../GridGenerator/grid_generator_gui.ui" line="630"/>
-        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="85"/>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="220"/>
         <source>Copy to clipboard</source>
         <translation>نسخ إلى الحافظة</translation>
     </message>
@@ -2789,7 +2817,7 @@ Cancel and retry?</source>
         <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="227"/>
         <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="305"/>
         <location filename="../GridGenerator/grid_generator_gui.ui" line="639"/>
-        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="94"/>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="229"/>
         <source>Save</source>
         <translation>يحفظ</translation>
     </message>
@@ -2899,6 +2927,7 @@ Cancel and retry?</source>
     </message>
     <message>
         <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="258"/>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="169"/>
         <source>Plot</source>
         <translation>حبكة</translation>
     </message>
@@ -3040,6 +3069,71 @@ Cancel and retry?</source>
         <location filename="../GridGenerator/grid_generator_gui.ui" line="609"/>
         <source>Create Grid</source>
         <translation>إنشاء الشبكة</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="41"/>
+        <source>Method</source>
+        <translation>طريقة</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="49"/>
+        <source>DPR HELM</source>
+        <translation>DPR HELM</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="54"/>
+        <source>Classical HELM</source>
+        <translation>Classical HELM</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="62"/>
+        <source>DPR start</source>
+        <translation>بدء DPR</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="70"/>
+        <source>Stored guess</source>
+        <translation>التخمين المخزن</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="75"/>
+        <source>Classical no-load</source>
+        <translation>الحالة غير المحملة الكلاسيكية</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="83"/>
+        <source>Q limits</source>
+        <translation>حدود Q</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="90"/>
+        <source>Discrete shunts</source>
+        <translation>المحولات المنفصلة</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="100"/>
+        <source>QV droop</source>
+        <translation>انخفاض QV</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="110"/>
+        <source>Distributed slack</source>
+        <translation>الركود الموزع</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="130"/>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="144"/>
+        <source>Re-run</source>
+        <translation>إعادة التشغيل</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="179"/>
+        <source>Data</source>
+        <translation>بيانات</translation>
     </message>
 </context>
 <context>
@@ -3713,17 +3807,17 @@ Monte Carlo power flow results:</source>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="14"/>
         <source>Server Files</source>
-        <translation type="unfinished"></translation>
+        <translation>ملفات الخادم</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="91"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>التحديد</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="97"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>النوع</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="104"/>
@@ -3734,107 +3828,107 @@ Monte Carlo power flow results:</source>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="189"/>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="206"/>
         <source>-</source>
-        <translation type="unfinished">-</translation>
+        <translation>-</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="114"/>
         <source>File name</source>
-        <translation type="unfinished"></translation>
+        <translation>اسم الملف</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="131"/>
         <source>File idtag</source>
-        <translation type="unfinished"></translation>
+        <translation>معرّف الملف</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="148"/>
         <source>Model name</source>
-        <translation type="unfinished"></translation>
+        <translation>اسم النموذج</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="165"/>
         <source>Model idtag</source>
-        <translation type="unfinished"></translation>
+        <translation>معرّف النموذج</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="182"/>
         <source>Owner user</source>
-        <translation type="unfinished"></translation>
+        <translation>المستخدم المالك</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="199"/>
         <source>Created at</source>
-        <translation type="unfinished"></translation>
+        <translation>تاريخ الإنشاء</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="219"/>
         <source>Actions</source>
-        <translation type="unfinished">الإجراءات</translation>
+        <translation>الإجراءات</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="225"/>
         <source>Delete removes the selected file or the selected model branch from the server database after confirmation.</source>
-        <translation type="unfinished"></translation>
+        <translation>يزيل الملف المحدد أو الفرع المحدد للنموذج من قاعدة بيانات الخادم بعد التأكيد.</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="246"/>
         <source>Refresh</source>
-        <translation type="unfinished">ينعش</translation>
+        <translation>ينعش</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="249"/>
         <source>Reload the server file tree</source>
-        <translation type="unfinished"></translation>
+        <translation>إعادة تحميل شجرة ملفات الخادم</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="258"/>
         <source>Load File</source>
-        <translation type="unfinished"></translation>
+        <translation>تحميل ملف</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="261"/>
         <source>Load the full selected multiverse</source>
-        <translation type="unfinished"></translation>
+        <translation>تحميل الكون المتعدد المحدد بالكامل</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="270"/>
         <source>Load Base Model</source>
-        <translation type="unfinished"></translation>
+        <translation>تحميل النموذج الأساسي</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="273"/>
         <source>Load only the selected file base model</source>
-        <translation type="unfinished"></translation>
+        <translation>تحميل نموذج قاعدة الملف المحدد فقط</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="282"/>
         <source>Load Selected Model</source>
-        <translation type="unfinished"></translation>
+        <translation>تحميل النموذج المحدد</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="285"/>
         <source>Load the selected scenario branch as one flat circuit</source>
-        <translation type="unfinished"></translation>
+        <translation>تحميل فرع السيناريو المحدد كدائرة مسطحة واحدة</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="294"/>
         <source>Save Current Project</source>
-        <translation type="unfinished"></translation>
+        <translation>حفظ المشروع الحالي</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="297"/>
         <source>Upload the current project into the selected server file or model</source>
-        <translation type="unfinished"></translation>
+        <translation>تحميل المشروع الحالي في ملف أو نموذج الخادم المحدد</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="306"/>
         <source>Delete Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>حذف المحدد</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="309"/>
         <source>Delete the selected file or model from the server database</source>
-        <translation type="unfinished"></translation>
+        <translation>حذف الملف أو النموذج المحدد من قاعدة بيانات الخادم</translation>
     </message>
 </context>
 <context>
@@ -4482,6 +4576,2205 @@ Monte Carlo power flow results:</source>
     </message>
 </context>
 <context>
+    <name>VeraGridTreeLabels</name>
+    <message>
+        <source>ATC Report</source>
+        <translation>تقرير ATC</translation>
+    </message>
+    <message>
+        <source>Active power flow per area</source>
+        <translation>تدفق القدرة الفعالة لكل منطقة</translation>
+    </message>
+    <message>
+        <source>Any line template</source>
+        <translation>قالب أي خط</translation>
+    </message>
+    <message>
+        <source>Area</source>
+        <translation>المنطقة</translation>
+    </message>
+    <message>
+        <source>Area analysis</source>
+        <translation>تحليل المنطقة</translation>
+    </message>
+    <message>
+        <source>Area balance analysis</source>
+        <translation>تحليل توازن المنطقة</translation>
+    </message>
+    <message>
+        <source>Area generation analysis</source>
+        <translation>تحليل توليد المنطقة</translation>
+    </message>
+    <message>
+        <source>Area load analysis</source>
+        <translation>تحليل حمل المنطقة</translation>
+    </message>
+    <message>
+        <source>Associations</source>
+        <translation>الجمعيات</translation>
+    </message>
+    <message>
+        <source>Available transfer capacity</source>
+        <translation>سعة النقل المتاحة</translation>
+    </message>
+    <message>
+        <source>Available transfer capacity (N)</source>
+        <translation>سعة النقل المتاحة (N)</translation>
+    </message>
+    <message>
+        <source>Available transfer capacity (final)</source>
+        <translation>سعة النقل المتاحة (نهائي)</translation>
+    </message>
+    <message>
+        <source>Available transfer capacity time series</source>
+        <translation>السلسلة الزمنية لسعة النقل المتاحة</translation>
+    </message>
+    <message>
+        <source>AvailableTransferCapacity</source>
+        <translation>السعة المتاحة للنقل</translation>
+    </message>
+    <message>
+        <source>AvailableTransferCapacityTimeSeries</source>
+        <translation>السلسلة الزمنية للسعة المتاحة للنقل</translation>
+    </message>
+    <message>
+        <source>Balance plot</source>
+        <translation>مخطط التوازن</translation>
+    </message>
+    <message>
+        <source>Base flow report</source>
+        <translation>تقرير التدفق الأساسي</translation>
+    </message>
+    <message>
+        <source>Batteries</source>
+        <translation>البطاريات</translation>
+    </message>
+    <message>
+        <source>Battery</source>
+        <translation>بطارية</translation>
+    </message>
+    <message>
+        <source>Battery energy</source>
+        <translation>طاقة البطارية</translation>
+    </message>
+    <message>
+        <source>Battery invested</source>
+        <translation>استثمار البطارية</translation>
+    </message>
+    <message>
+        <source>Battery power</source>
+        <translation>قدرة البطارية</translation>
+    </message>
+    <message>
+        <source>Battery reactive power</source>
+        <translation>القدرة التفاعلية للبطارية</translation>
+    </message>
+    <message>
+        <source>Battery reactive power A</source>
+        <translation>القدرة التفاعلية للبطارية A</translation>
+    </message>
+    <message>
+        <source>Battery reactive power B</source>
+        <translation>القدرة التفاعلية للبطارية B</translation>
+    </message>
+    <message>
+        <source>Battery reactive power C</source>
+        <translation>القدرة التفاعلية للبطارية C</translation>
+    </message>
+    <message>
+        <source>Beq: Equivalent susceptance</source>
+        <translation>Beq: القابلة المكافئة</translation>
+    </message>
+    <message>
+        <source>Branch</source>
+        <translation>الفرع</translation>
+    </message>
+    <message>
+        <source>Branch Loading</source>
+        <translation>تحميل الفرع</translation>
+    </message>
+    <message>
+        <source>Branch Loading A</source>
+        <translation>تحميل الفرع A</translation>
+    </message>
+    <message>
+        <source>Branch Loading B</source>
+        <translation>تحميل الفرع B</translation>
+    </message>
+    <message>
+        <source>Branch Loading C</source>
+        <translation>تحميل الفرع C</translation>
+    </message>
+    <message>
+        <source>Branch active current &quot;from&quot; (0)</source>
+        <translation>التيار الفعال للفرع &quot;من&quot; (0)</translation>
+    </message>
+    <message>
+        <source>Branch active current &quot;from&quot; (1)</source>
+        <translation>التيار الفعال للفرع &quot;من&quot; (1)</translation>
+    </message>
+    <message>
+        <source>Branch active current &quot;from&quot; (2)</source>
+        <translation>التيار الفعال للفرع &quot;من&quot; (2)</translation>
+    </message>
+    <message>
+        <source>Branch active losses (0)</source>
+        <translation>خسائر الفرع الفعالة (0)</translation>
+    </message>
+    <message>
+        <source>Branch active losses (1)</source>
+        <translation>خسائر الفرع الفعالة (1)</translation>
+    </message>
+    <message>
+        <source>Branch active losses (2)</source>
+        <translation>خسائر الفرع الفعالة (2)</translation>
+    </message>
+    <message>
+        <source>Branch active power &quot;from&quot; (0)</source>
+        <translation>القدرة الفعالة للفرع &quot;من&quot; (0)</translation>
+    </message>
+    <message>
+        <source>Branch active power &quot;from&quot; (1)</source>
+        <translation>القدرة الفعالة للفرع &quot;من&quot; (1)</translation>
+    </message>
+    <message>
+        <source>Branch active power &quot;from&quot; (2)</source>
+        <translation>القدرة الفعالة للفرع &quot;من&quot; (2)</translation>
+    </message>
+    <message>
+        <source>Branch group</source>
+        <translation>مجموعة الفرع</translation>
+    </message>
+    <message>
+        <source>Branch loading (0)</source>
+        <translation>تحميل الفرع (0)</translation>
+    </message>
+    <message>
+        <source>Branch loading (1)</source>
+        <translation>تحميل الفرع (1)</translation>
+    </message>
+    <message>
+        <source>Branch loading (2)</source>
+        <translation>تحميل الفرع (2)</translation>
+    </message>
+    <message>
+        <source>Branch losses</source>
+        <translation>خسائر الفرع</translation>
+    </message>
+    <message>
+        <source>Branch monitoring logic</source>
+        <translation>منطق مراقبة الفرع</translation>
+    </message>
+    <message>
+        <source>Branch overloads</source>
+        <translation>الحمل الزائد للفرع</translation>
+    </message>
+    <message>
+        <source>Branch overloads cost</source>
+        <translation>تكلفة التحميل الزائد للفرع</translation>
+    </message>
+    <message>
+        <source>Branch power CDF</source>
+        <translation>دالة التوزيع التراكمي لقدرة الفرع</translation>
+    </message>
+    <message>
+        <source>Branch power avg</source>
+        <translation>متوسط قدرة الفرع</translation>
+    </message>
+    <message>
+        <source>Branch power std</source>
+        <translation>الانحراف المعياري لقدرة الفرع</translation>
+    </message>
+    <message>
+        <source>Branch reactive current &quot;from&quot; (0)</source>
+        <translation>التيار التفاعلي للفرع &quot;من&quot; (0)</translation>
+    </message>
+    <message>
+        <source>Branch reactive current &quot;from&quot; (1)</source>
+        <translation>Branch reactive current &quot;from&quot; (1)</translation>
+    </message>
+    <message>
+        <source>Branch reactive current &quot;from&quot; (2)</source>
+        <translation>Branch reactive current &quot;from&quot; (2)</translation>
+    </message>
+    <message>
+        <source>Branch reactive losses (0)</source>
+        <translation>Branch reactive losses (0)</translation>
+    </message>
+    <message>
+        <source>Branch reactive losses (1)</source>
+        <translation>Branch reactive losses (1)</translation>
+    </message>
+    <message>
+        <source>Branch reactive losses (2)</source>
+        <translation>Branch reactive losses (2)</translation>
+    </message>
+    <message>
+        <source>Branch reactive power &quot;from&quot; (0)</source>
+        <translation>Branch reactive power &quot;from&quot; (0)</translation>
+    </message>
+    <message>
+        <source>Branch reactive power &quot;from&quot; (1)</source>
+        <translation>Branch reactive power &quot;from&quot; (1)</translation>
+    </message>
+    <message>
+        <source>Branch reactive power &quot;from&quot; (2)</source>
+        <translation>Branch reactive power &quot;from&quot; (2)</translation>
+    </message>
+    <message>
+        <source>Branch template</source>
+        <translation>قالب الفرع</translation>
+    </message>
+    <message>
+        <source>Branches</source>
+        <translation>الفروع</translation>
+    </message>
+    <message>
+        <source>Bus</source>
+        <translation>قضيب</translation>
+    </message>
+    <message>
+        <source>Bus nodal capacity</source>
+        <translation>سعة العقدة</translation>
+    </message>
+    <message>
+        <source>Bus power</source>
+        <translation>قدرة العقدة</translation>
+    </message>
+    <message>
+        <source>Bus power CDF</source>
+        <translation>دالة التوزيع التراكمي لقدرة العقدة (CDF)</translation>
+    </message>
+    <message>
+        <source>Bus voltage CDF</source>
+        <translation>دالة التوزيع التراكمي لجهد العقدة</translation>
+    </message>
+    <message>
+        <source>Bus voltage avg</source>
+        <translation>متوسط جهد العقدة</translation>
+    </message>
+    <message>
+        <source>Bus voltage sensitivity</source>
+        <translation>حساسية جهد العقدة</translation>
+    </message>
+    <message>
+        <source>Bus voltage std</source>
+        <translation>الانحراف المعياري لجهد العقدة (std)</translation>
+    </message>
+    <message>
+        <source>BusBar</source>
+        <translation>قضيب العقدة (BusBar)</translation>
+    </message>
+    <message>
+        <source>BusOrBranch</source>
+        <translation>العقدة أو الفرع</translation>
+    </message>
+    <message>
+        <source>CAIDI</source>
+        <translation>CAIDI</translation>
+    </message>
+    <message>
+        <source>Cascade</source>
+        <translation>التتابع</translation>
+    </message>
+    <message>
+        <source>Catalogue</source>
+        <translation>كتالوج</translation>
+    </message>
+    <message>
+        <source>Catalogue optimization</source>
+        <translation>تحسين الكتالوج</translation>
+    </message>
+    <message>
+        <source>Circuit</source>
+        <translation>الدائرة</translation>
+    </message>
+    <message>
+        <source>Clean room</source>
+        <translation>غرفة نظيفة</translation>
+    </message>
+    <message>
+        <source>Clustering</source>
+        <translation>التجميع</translation>
+    </message>
+    <message>
+        <source>Clustering Analysis</source>
+        <translation>تحليل التجميع</translation>
+    </message>
+    <message>
+        <source>Clustering time series report</source>
+        <translation>تقرير تحليل السلاسل الزمنية للتجميع</translation>
+    </message>
+    <message>
+        <source>Combinations</source>
+        <translation>التوليفات</translation>
+    </message>
+    <message>
+        <source>Community</source>
+        <translation>المجتمع</translation>
+    </message>
+    <message>
+        <source>Community analysis</source>
+        <translation>تحليل المجتمع</translation>
+    </message>
+    <message>
+        <source>Community balance analysis</source>
+        <translation>تحليل توازن المجتمع</translation>
+    </message>
+    <message>
+        <source>Community generation analysis</source>
+        <translation>تحليل توليد المجتمع</translation>
+    </message>
+    <message>
+        <source>Community load analysis</source>
+        <translation>تحليل حمل المجتمع</translation>
+    </message>
+    <message>
+        <source>Contingencies</source>
+        <translation>الطوارئ</translation>
+    </message>
+    <message>
+        <source>Contingencies report</source>
+        <translation>تقرير الأعطال</translation>
+    </message>
+    <message>
+        <source>Contingencies statistical report</source>
+        <translation>التقرير الإحصائي للأعطال</translation>
+    </message>
+    <message>
+        <source>Contingency</source>
+        <translation>العطل</translation>
+    </message>
+    <message>
+        <source>Contingency Group</source>
+        <translation>مجموعة العطل</translation>
+    </message>
+    <message>
+        <source>Contingency analysis</source>
+        <translation>تحليل الطوارئ</translation>
+    </message>
+    <message>
+        <source>Contingency analysis time series</source>
+        <translation>سلسلة زمنية لتحليل الطوارئ</translation>
+    </message>
+    <message>
+        <source>Contingency flow</source>
+        <translation>تدفق العطل</translation>
+    </message>
+    <message>
+        <source>Contingency flow report</source>
+        <translation>تقرير تدفق العطل</translation>
+    </message>
+    <message>
+        <source>Contingency frequency</source>
+        <translation>تردد العطل</translation>
+    </message>
+    <message>
+        <source>Contingency loading</source>
+        <translation>تحميل العطل</translation>
+    </message>
+    <message>
+        <source>Contingency overload sum</source>
+        <translation>مجموع التحميل الزائد للعطل</translation>
+    </message>
+    <message>
+        <source>Contingency relative frequency</source>
+        <translation>التردد النسبي للعطل</translation>
+    </message>
+    <message>
+        <source>ContingencyAnalysis</source>
+        <translation>تحليل العطل</translation>
+    </message>
+    <message>
+        <source>ContingencyAnalysisTimeSeries</source>
+        <translation>تحليل العطل للسلاسل الزمنية</translation>
+    </message>
+    <message>
+        <source>ContinuationPowerFlow</source>
+        <translation>تدفق القدرة المستمر</translation>
+    </message>
+    <message>
+        <source>Controllable shunt</source>
+        <translation>Shunt قابل للتحكم</translation>
+    </message>
+    <message>
+        <source>Country</source>
+        <translation>الدولة</translation>
+    </message>
+    <message>
+        <source>Country analysis</source>
+        <translation>تحليل الدولة</translation>
+    </message>
+    <message>
+        <source>Country balance analysis</source>
+        <translation>تحليل توازن الدولة</translation>
+    </message>
+    <message>
+        <source>Country generation analysis</source>
+        <translation>تحليل توليد الدولة</translation>
+    </message>
+    <message>
+        <source>Country load analysis</source>
+        <translation>تحليل حمل الدولة</translation>
+    </message>
+    <message>
+        <source>Current injection</source>
+        <translation>حقن التيار</translation>
+    </message>
+    <message>
+        <source>DC line</source>
+        <translation>خط تيار مستمر</translation>
+    </message>
+    <message>
+        <source>Delete and reduce</source>
+        <translation>حذف وتقليل</translation>
+    </message>
+    <message>
+        <source>Design View</source>
+        <translation>عرض التصميم</translation>
+    </message>
+    <message>
+        <source>Diagram</source>
+        <translation>رسم بياني</translation>
+    </message>
+    <message>
+        <source>Dispatch</source>
+        <translation>التوزيع</translation>
+    </message>
+    <message>
+        <source>Dynamic</source>
+        <translation>ديناميكي</translation>
+    </message>
+    <message>
+        <source>Dynamic Model Host</source>
+        <translation>مضيف النموذج الديناميكي</translation>
+    </message>
+    <message>
+        <source>EMT Dynamic</source>
+        <translation>ديناميكي EMT</translation>
+    </message>
+    <message>
+        <source>EMT Small Signal stability</source>
+        <translation>استقرار الإشارة الصغيرة EMT</translation>
+    </message>
+    <message>
+        <source>EMT template</source>
+        <translation>قالب EMT</translation>
+    </message>
+    <message>
+        <source>ENS</source>
+        <translation>ENS</translation>
+    </message>
+    <message>
+        <source>Emission</source>
+        <translation>الانبعاث</translation>
+    </message>
+    <message>
+        <source>Emt Event</source>
+        <translation>حدث EMT</translation>
+    </message>
+    <message>
+        <source>Emt Events Group</source>
+        <translation>مجموعة أحداث EMT</translation>
+    </message>
+    <message>
+        <source>EmtSimulation</source>
+        <translation>محاكاة EMT</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>خطأ</translation>
+    </message>
+    <message>
+        <source>Evaluation report</source>
+        <translation>تقرير التقييم</translation>
+    </message>
+    <message>
+        <source>Exciter</source>
+        <translation>المُثير</translation>
+    </message>
+    <message>
+        <source>External grid</source>
+        <translation>شبكة خارجية</translation>
+    </message>
+    <message>
+        <source>FMU template</source>
+        <translation>قالب FMU</translation>
+    </message>
+    <message>
+        <source>Facility</source>
+        <translation>المنشأة</translation>
+    </message>
+    <message>
+        <source>Flow Reports</source>
+        <translation>تقارير التدفق</translation>
+    </message>
+    <message>
+        <source>Flow circulating in the device</source>
+        <translation>التدفق المتداول في الجهاز</translation>
+    </message>
+    <message>
+        <source>Flow entering the node</source>
+        <translation>التدفق الداخل إلى العقدة</translation>
+    </message>
+    <message>
+        <source>Flow exiting the node</source>
+        <translation>التدفق الخارج من العقدة</translation>
+    </message>
+    <message>
+        <source>Flow from the P2X</source>
+        <translation>التدفق من P2X</translation>
+    </message>
+    <message>
+        <source>Flow in the river</source>
+        <translation>التدفق في النهر</translation>
+    </message>
+    <message>
+        <source>Fluid</source>
+        <translation>المائع</translation>
+    </message>
+    <message>
+        <source>Fluid Injection</source>
+        <translation>حقن المائع</translation>
+    </message>
+    <message>
+        <source>Fluid P2X</source>
+        <translation>المائع P2X</translation>
+    </message>
+    <message>
+        <source>Fluid P2Xs</source>
+        <translation>الموائع P2X</translation>
+    </message>
+    <message>
+        <source>Fluid Pump</source>
+        <translation>مضخة المائع</translation>
+    </message>
+    <message>
+        <source>Fluid Turbine</source>
+        <translation>توربينة المائع</translation>
+    </message>
+    <message>
+        <source>Fluid injections</source>
+        <translation>حقن الموائع</translation>
+    </message>
+    <message>
+        <source>Fluid node</source>
+        <translation>عقدة السوائل</translation>
+    </message>
+    <message>
+        <source>Fluid nodes</source>
+        <translation>عُقد المائع</translation>
+    </message>
+    <message>
+        <source>Fluid path</source>
+        <translation>مسار المائع</translation>
+    </message>
+    <message>
+        <source>Fluid paths</source>
+        <translation>مسارات الموائع</translation>
+    </message>
+    <message>
+        <source>Fluid pumps</source>
+        <translation>مضخات المائع</translation>
+    </message>
+    <message>
+        <source>Fluid turbines</source>
+        <translation>توربينات المائع</translation>
+    </message>
+    <message>
+        <source>Frequency</source>
+        <translation>تكرار</translation>
+    </message>
+    <message>
+        <source>Fuel</source>
+        <translation>الوقود</translation>
+    </message>
+    <message>
+        <source>Generation delta slacks</source>
+        <translation>دلتا التوليد المتبقية</translation>
+    </message>
+    <message>
+        <source>Generation deltas</source>
+        <translation>دلتا التوليد</translation>
+    </message>
+    <message>
+        <source>Generator</source>
+        <translation>مولد</translation>
+    </message>
+    <message>
+        <source>Generator Emission</source>
+        <translation>انبعاث المولد</translation>
+    </message>
+    <message>
+        <source>Generator Fuel</source>
+        <translation>وقود المولد</translation>
+    </message>
+    <message>
+        <source>Generator Technology</source>
+        <translation>تكنولوجيا المولد</translation>
+    </message>
+    <message>
+        <source>Generator cost</source>
+        <translation>تكلفة المولد</translation>
+    </message>
+    <message>
+        <source>Generator emissions</source>
+        <translation>انبعاثات المولد</translation>
+    </message>
+    <message>
+        <source>Generator fuels</source>
+        <translation>وقود المولدات</translation>
+    </message>
+    <message>
+        <source>Generator invested</source>
+        <translation>استثمار المولد</translation>
+    </message>
+    <message>
+        <source>Generator power</source>
+        <translation>طاقة المولد</translation>
+    </message>
+    <message>
+        <source>Generator producing</source>
+        <translation>التوليد من قبل المولد</translation>
+    </message>
+    <message>
+        <source>Generator reactive power</source>
+        <translation>القدرة التفاعلية للمولد</translation>
+    </message>
+    <message>
+        <source>Generator reactive power A</source>
+        <translation>القدرة التفاعلية للمولد A</translation>
+    </message>
+    <message>
+        <source>Generator reactive power B</source>
+        <translation>الطاقة التفاعلية للمولد B</translation>
+    </message>
+    <message>
+        <source>Generator reactive power C</source>
+        <translation>الطاقة التفاعلية للمولد C</translation>
+    </message>
+    <message>
+        <source>Generator reserve</source>
+        <translation>احتياطي المولد</translation>
+    </message>
+    <message>
+        <source>Generator shedding</source>
+        <translation>تفريغ المولد</translation>
+    </message>
+    <message>
+        <source>Generator shutting down</source>
+        <translation>إيقاف تشغيل المولد</translation>
+    </message>
+    <message>
+        <source>Generator starting up</source>
+        <translation>بدء تشغيل المولد</translation>
+    </message>
+    <message>
+        <source>Generators</source>
+        <translation>المولدات</translation>
+    </message>
+    <message>
+        <source>Generic Area</source>
+        <translation>المنطقة العامة</translation>
+    </message>
+    <message>
+        <source>Governor</source>
+        <translation>الحاكم</translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <translation>المجموعات</translation>
+    </message>
+    <message>
+        <source>HVDC Line</source>
+        <translation>خط HVDC</translation>
+    </message>
+    <message>
+        <source>HVDC ODF</source>
+        <translation>ODF الخاص بـ HVDC</translation>
+    </message>
+    <message>
+        <source>HVDC PTDF</source>
+        <translation>PTDF الخاص بـ HVDC</translation>
+    </message>
+    <message>
+        <source>HVDC loading</source>
+        <translation>تحميل HVDC</translation>
+    </message>
+    <message>
+        <source>HVDC losses</source>
+        <translation>خسائر HVDC</translation>
+    </message>
+    <message>
+        <source>HVDC overloads</source>
+        <translation>التحميل الزائد لـ HVDC</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;from&quot;</source>
+        <translation>طاقة HVDC &quot;من&quot;</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;from&quot; A</source>
+        <translation>طاقة HVDC &quot;من&quot; A</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;from&quot; B</source>
+        <translation>طاقة HVDC &quot;من&quot; B</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;from&quot; C</source>
+        <translation>طاقة HVDC &quot;من&quot; C</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;to&quot;</source>
+        <translation>طاقة HVDC &quot;إلى&quot;</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;to&quot; A</source>
+        <translation>طاقة HVDC &quot;إلى&quot; A</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;to&quot; B</source>
+        <translation>طاقة HVDC &quot;إلى&quot; B</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;to&quot; C</source>
+        <translation>طاقة HVDC &quot;إلى&quot; C</translation>
+    </message>
+    <message>
+        <source>Hvdc</source>
+        <translation>Hvdc</translation>
+    </message>
+    <message>
+        <source>If Measurement</source>
+        <translation>قياس Iif</translation>
+    </message>
+    <message>
+        <source>Iif: Reactive current &quot;from&quot;</source>
+        <translation>Iif: التيار التفاعلي &quot;من&quot;</translation>
+    </message>
+    <message>
+        <source>Iif: Reactive current &quot;from&quot; A</source>
+        <translation>Iif: التيار التفاعلي &quot;من&quot; A</translation>
+    </message>
+    <message>
+        <source>Iif: Reactive current &quot;from&quot; B</source>
+        <translation>Iif: التيار التفاعلي &quot;من&quot; B</translation>
+    </message>
+    <message>
+        <source>Iif: Reactive current &quot;from&quot; C</source>
+        <translation>Iif: التيار التفاعلي &quot;من&quot; C</translation>
+    </message>
+    <message>
+        <source>Iit: Reactive current &quot;to&quot;</source>
+        <translation>Iit: التيار التفاعلي &quot;إلى&quot;</translation>
+    </message>
+    <message>
+        <source>Iit: Reactive current &quot;to&quot; A</source>
+        <translation>Iit: التيار التفاعلي &quot;إلى&quot; A</translation>
+    </message>
+    <message>
+        <source>Iit: Reactive current &quot;to&quot; B</source>
+        <translation>Iit: التيار التفاعلي &quot;إلى&quot; B</translation>
+    </message>
+    <message>
+        <source>Iit: Reactive current &quot;to&quot; C</source>
+        <translation>Iit: التيار التفاعلي &quot;إلى&quot; C</translation>
+    </message>
+    <message>
+        <source>Information</source>
+        <translation>معلومة</translation>
+    </message>
+    <message>
+        <source>Injections</source>
+        <translation>الحقن</translation>
+    </message>
+    <message>
+        <source>Inputs Analysis</source>
+        <translation>تحليل المدخلات</translation>
+    </message>
+    <message>
+        <source>InputsAnalysis</source>
+        <translation>تحليل المدخلات</translation>
+    </message>
+    <message>
+        <source>Inter-Area exchange</source>
+        <translation>التبادل بين المناطق</translation>
+    </message>
+    <message>
+        <source>Inter-space branch loading</source>
+        <translation>تحميل الفرع بين المساحات</translation>
+    </message>
+    <message>
+        <source>Inter-space branch power</source>
+        <translation>طاقة الفرع بين المساحات</translation>
+    </message>
+    <message>
+        <source>InterAggregationInfo</source>
+        <translation>معلومات التجميع البيني</translation>
+    </message>
+    <message>
+        <source>Investment</source>
+        <translation>الاستثمار</translation>
+    </message>
+    <message>
+        <source>InvestmentEvaluations</source>
+        <translation>تقييمات الاستثمار</translation>
+    </message>
+    <message>
+        <source>Investments</source>
+        <translation>الاستثمارات</translation>
+    </message>
+    <message>
+        <source>Investments Group</source>
+        <translation>مجموعة الاستثمارات</translation>
+    </message>
+    <message>
+        <source>Investments evaluation</source>
+        <translation>تقييم الاستثمارات</translation>
+    </message>
+    <message>
+        <source>Irf: Active current &quot;from&quot;</source>
+        <translation>Irf: التيار النشط &quot;من&quot;</translation>
+    </message>
+    <message>
+        <source>Irf: Active current &quot;from&quot; A</source>
+        <translation>Irf: التيار النشط &quot;من&quot; A</translation>
+    </message>
+    <message>
+        <source>Irf: Active current &quot;from&quot; B</source>
+        <translation>Irf: التيار النشط &quot;من&quot; B</translation>
+    </message>
+    <message>
+        <source>Irf: Active current &quot;from&quot; C</source>
+        <translation>Irf: التيار النشط &quot;من&quot; C</translation>
+    </message>
+    <message>
+        <source>Irt: Active current &quot;to&quot;</source>
+        <translation>Irt: التيار النشط &quot;إلى&quot;</translation>
+    </message>
+    <message>
+        <source>Irt: Active current &quot;to&quot; A</source>
+        <translation>Irt: التيار النشط إلى A</translation>
+    </message>
+    <message>
+        <source>Irt: Active current &quot;to&quot; B</source>
+        <translation>Irt: التيار النشط إلى B</translation>
+    </message>
+    <message>
+        <source>Irt: Active current &quot;to&quot; C</source>
+        <translation>Irt: التيار النشط إلى C</translation>
+    </message>
+    <message>
+        <source>It Measurement</source>
+        <translation>قياسات التيار</translation>
+    </message>
+    <message>
+        <source>Iterations plot</source>
+        <translation>مخطط التكرارات</translation>
+    </message>
+    <message>
+        <source>LODF</source>
+        <translation>LODF</translation>
+    </message>
+    <message>
+        <source>LOLE</source>
+        <translation>LOLE</translation>
+    </message>
+    <message>
+        <source>LOLET</source>
+        <translation>LOLET</translation>
+    </message>
+    <message>
+        <source>LOLF</source>
+        <translation>LOLF</translation>
+    </message>
+    <message>
+        <source>LOLFT</source>
+        <translation>LOLFT</translation>
+    </message>
+    <message>
+        <source>Latin Hypercube</source>
+        <translation>المكعب الفائق اللاتيني</translation>
+    </message>
+    <message>
+        <source>Line</source>
+        <translation>خط</translation>
+    </message>
+    <message>
+        <source>Line Location</source>
+        <translation>موقع الخط</translation>
+    </message>
+    <message>
+        <source>Line Locations</source>
+        <translation>مواقع الخطوط</translation>
+    </message>
+    <message>
+        <source>Line Template</source>
+        <translation>قالب الخط</translation>
+    </message>
+    <message>
+        <source>Linear analysis</source>
+        <translation>التحليل الخطي</translation>
+    </message>
+    <message>
+        <source>Linear analysis time series</source>
+        <translation>سلسلة زمنية للتحليل الخطي</translation>
+    </message>
+    <message>
+        <source>LinearAnalysis</source>
+        <translation>التحليل الخطي</translation>
+    </message>
+    <message>
+        <source>LinearAnalysisTimeSeries</source>
+        <translation>سلسلة زمنية للتحليل الخطي</translation>
+    </message>
+    <message>
+        <source>Load</source>
+        <translation>حمولة</translation>
+    </message>
+    <message>
+        <source>Load like</source>
+        <translation>مثل الحمل</translation>
+    </message>
+    <message>
+        <source>Load neutral voltage</source>
+        <translation>جهد الحيادي للحمل</translation>
+    </message>
+    <message>
+        <source>Load power</source>
+        <translation>طاقة الحمل</translation>
+    </message>
+    <message>
+        <source>Load shedding</source>
+        <translation>تخفيف الحمل</translation>
+    </message>
+    <message>
+        <source>Load shedding cost</source>
+        <translation>تكلفة تخفيف الحمل</translation>
+    </message>
+    <message>
+        <source>Loading CDF</source>
+        <translation>التوزيع التراكمي لتحميل الحمل</translation>
+    </message>
+    <message>
+        <source>Loading from the base situation ($\lambda$)</source>
+        <translation>التحميل من الوضع الأساسي ($\lambda$)</translation>
+    </message>
+    <message>
+        <source>Loading std</source>
+        <translation>الانحراف المعياري للتحميل</translation>
+    </message>
+    <message>
+        <source>Loads</source>
+        <translation>الأحمال</translation>
+    </message>
+    <message>
+        <source>Losses % per area</source>
+        <translation>الخسائر % لكل منطقة</translation>
+    </message>
+    <message>
+        <source>Losses CDF</source>
+        <translation>التوزيع التراكمي للخسائر</translation>
+    </message>
+    <message>
+        <source>Losses avg</source>
+        <translation>متوسط الخسائر</translation>
+    </message>
+    <message>
+        <source>Losses per area</source>
+        <translation>الخسائر لكل منطقة</translation>
+    </message>
+    <message>
+        <source>Losses per generation unit in area</source>
+        <translation>الخسائر لكل وحدة توليد في المنطقة</translation>
+    </message>
+    <message>
+        <source>Losses std</source>
+        <translation>الانحراف المعياري للخسائر</translation>
+    </message>
+    <message>
+        <source>Market</source>
+        <translation>السوق</translation>
+    </message>
+    <message>
+        <source>Market unit</source>
+        <translation>وحدة السوق</translation>
+    </message>
+    <message>
+        <source>Max contingency flow</source>
+        <translation>أقصى تدفق طارئ</translation>
+    </message>
+    <message>
+        <source>Max contingency loading</source>
+        <translation>أقصى تحميل طارئ</translation>
+    </message>
+    <message>
+        <source>Maximum contingency flow</source>
+        <translation>أقصى تدفق طارئ</translation>
+    </message>
+    <message>
+        <source>Mean contingency overloading</source>
+        <translation>متوسط التحميل الزائد الطارئ</translation>
+    </message>
+    <message>
+        <source>Measurements</source>
+        <translation>القياسات</translation>
+    </message>
+    <message>
+        <source>Modelling Authority</source>
+        <translation>سلطة النمذجة</translation>
+    </message>
+    <message>
+        <source>Modes</source>
+        <translation>وسائط</translation>
+    </message>
+    <message>
+        <source>Monte Carlo</source>
+        <translation>مونت كارلو</translation>
+    </message>
+    <message>
+        <source>Municipality</source>
+        <translation>البلدية</translation>
+    </message>
+    <message>
+        <source>Municipality analysis</source>
+        <translation>تحليل البلدية</translation>
+    </message>
+    <message>
+        <source>Municipality balance analysis</source>
+        <translation>تحليل توازن البلدية</translation>
+    </message>
+    <message>
+        <source>Municipality generation analysis</source>
+        <translation>تحليل توليد البلدية</translation>
+    </message>
+    <message>
+        <source>Municipality load analysis</source>
+        <translation>تحليل حمل البلدية</translation>
+    </message>
+    <message>
+        <source>NTC</source>
+        <translation>NTC</translation>
+    </message>
+    <message>
+        <source>Net transfer capacity</source>
+        <translation>صافي القدرة على النقل</translation>
+    </message>
+    <message>
+        <source>NetTransferCapacity</source>
+        <translation>القدرة الصافية للنقل</translation>
+    </message>
+    <message>
+        <source>NetTransferCapacityTimeSeries</source>
+        <translation>سلسلة زمنية للقدرة الصافية للنقل</translation>
+    </message>
+    <message>
+        <source>No simulation</source>
+        <translation>لا محاكاة</translation>
+    </message>
+    <message>
+        <source>NoDevice</source>
+        <translation>لا جهاز</translation>
+    </message>
+    <message>
+        <source>Nodal capacity</source>
+        <translation>السعة العقدية</translation>
+    </message>
+    <message>
+        <source>Nodal capacity time series</source>
+        <translation>السلسلة الزمنية للسعة العقدية</translation>
+    </message>
+    <message>
+        <source>Nodal shadow prices</source>
+        <translation>أسعار الظل العقدية</translation>
+    </message>
+    <message>
+        <source>Nodal slacks</source>
+        <translation>الفراغات العقدية</translation>
+    </message>
+    <message>
+        <source>Node groups</source>
+        <translation>مجموعات العقد</translation>
+    </message>
+    <message>
+        <source>NodeGroups</source>
+        <translation>مجموعات العقد</translation>
+    </message>
+    <message>
+        <source>Nonlinear analysis</source>
+        <translation>التحليل غير الخطي</translation>
+    </message>
+    <message>
+        <source>Nonlinear analysis time series</source>
+        <translation>السلسلة الزمنية للتحليل غير الخطي</translation>
+    </message>
+    <message>
+        <source>Ntc: Base flow report</source>
+        <translation>Ntc: تقرير التدفق الأساسي</translation>
+    </message>
+    <message>
+        <source>Ntc: Contingency flow report</source>
+        <translation>Ntc: تقرير تدفق الطوارئ</translation>
+    </message>
+    <message>
+        <source>Ntc: Contingency flow report. (Branch)</source>
+        <translation>Ntc: تقرير تدفق الطوارئ. (الفرع)</translation>
+    </message>
+    <message>
+        <source>Ntc: Contingency flow report. (Generation)</source>
+        <translation>Ntc: تقرير تدفق الطوارئ. (التوليد)</translation>
+    </message>
+    <message>
+        <source>Ntc: Contingency flow report. (Hvdc)</source>
+        <translation>Ntc: تقرير تدفق الطوارئ. (Hvdc)</translation>
+    </message>
+    <message>
+        <source>Objectives</source>
+        <translation>الأهداف</translation>
+    </message>
+    <message>
+        <source>Objects</source>
+        <translation>أشياء</translation>
+    </message>
+    <message>
+        <source>Optimal net transfer capacity</source>
+        <translation>قدرة النقل الصافية المثلى</translation>
+    </message>
+    <message>
+        <source>Optimal net transfer capacity time series</source>
+        <translation>السلسلة الزمنية لسعة النقل الصافية المثلى</translation>
+    </message>
+    <message>
+        <source>Optimal power flow</source>
+        <translation>تدفق الطاقة الأمثل</translation>
+    </message>
+    <message>
+        <source>Optimal power flow time series</source>
+        <translation>السلسلة الزمنية لتدفق الطاقة الأمثل</translation>
+    </message>
+    <message>
+        <source>Owner</source>
+        <translation>المالك</translation>
+    </message>
+    <message>
+        <source>P: Active power</source>
+        <translation>P: القدرة النشطة</translation>
+    </message>
+    <message>
+        <source>PA: Active power A</source>
+        <translation>PA: القدرة النشطة A</translation>
+    </message>
+    <message>
+        <source>PB: Active power B</source>
+        <translation>PB: القدرة النشطة B</translation>
+    </message>
+    <message>
+        <source>PC: Active power C</source>
+        <translation>PC: القدرة النشطة C</translation>
+    </message>
+    <message>
+        <source>PTDF</source>
+        <translation>PTDF</translation>
+    </message>
+    <message>
+        <source>Pareto</source>
+        <translation>باريتو</translation>
+    </message>
+    <message>
+        <source>Pareto combinations</source>
+        <translation>تركيبات باريتو</translation>
+    </message>
+    <message>
+        <source>Pareto evaluation report</source>
+        <translation>تقرير تقييم باريتو</translation>
+    </message>
+    <message>
+        <source>Pareto frequency</source>
+        <translation>تردد باريتو</translation>
+    </message>
+    <message>
+        <source>Pareto objectives</source>
+        <translation>أهداف باريتو</translation>
+    </message>
+    <message>
+        <source>Pareto plot NSGA2</source>
+        <translation>رسم باريتو NSGA2</translation>
+    </message>
+    <message>
+        <source>Pareto plots</source>
+        <translation>رسوم باريتو</translation>
+    </message>
+    <message>
+        <source>Participation Factors</source>
+        <translation>عوامل المشاركة</translation>
+    </message>
+    <message>
+        <source>Pf Measurement</source>
+        <translation>قياس Pf</translation>
+    </message>
+    <message>
+        <source>Pf: Active power &quot;from&quot;</source>
+        <translation>Pf: القدرة النشطة &quot;من&quot;</translation>
+    </message>
+    <message>
+        <source>Pf: Active power &quot;from&quot; base case</source>
+        <translation>Pf: القدرة النشطة &quot;من&quot; الحالة الأساسية</translation>
+    </message>
+    <message>
+        <source>PfA: Active power &quot;from&quot; A</source>
+        <translation>PfA: القدرة النشطة &quot;من&quot; A</translation>
+    </message>
+    <message>
+        <source>PfB: Active power &quot;from&quot; B</source>
+        <translation>PfB: القدرة النشطة &quot;من&quot; B</translation>
+    </message>
+    <message>
+        <source>PfC: Active power &quot;from&quot; C</source>
+        <translation>PfC: القدرة النشطة &quot;من&quot; C</translation>
+    </message>
+    <message>
+        <source>Pg Measurement</source>
+        <translation>قياس Pg</translation>
+    </message>
+    <message>
+        <source>Pi Measurement</source>
+        <translation>قياس Pi</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses</source>
+        <translation>Pl: الخسائر النشطة</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses (%)</source>
+        <translation>Pl: الخسائر النشطة (%)</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses (%) A</source>
+        <translation>Pl: الخسائر النشطة (%) A</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses (%) B</source>
+        <translation>Pl: الخسائر النشطة (%) B</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses (%) C</source>
+        <translation>Pl: الخسائر النشطة (%) C</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses A</source>
+        <translation>Pl: الخسائر النشطة A</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses B</source>
+        <translation>Pl: الخسائر النشطة B</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses C</source>
+        <translation>Pl: الخسائر النشطة C</translation>
+    </message>
+    <message>
+        <source>Plot Event</source>
+        <translation>حدث الرسم</translation>
+    </message>
+    <message>
+        <source>Plot Group</source>
+        <translation>مجموعة الرسم</translation>
+    </message>
+    <message>
+        <source>Power by technology</source>
+        <translation>الطاقة حسب التكنولوجيا</translation>
+    </message>
+    <message>
+        <source>Power flow</source>
+        <translation>تدفق الطاقة</translation>
+    </message>
+    <message>
+        <source>Power flow 3ph</source>
+        <translation>تدفق الطاقة 3أطوار</translation>
+    </message>
+    <message>
+        <source>Power flow time series</source>
+        <translation>سلسلة زمنية لتدفق الطاقة</translation>
+    </message>
+    <message>
+        <source>Power flow time series 3ph</source>
+        <translation>سلسلة زمنية لتدفق الطاقة 3 أطوار</translation>
+    </message>
+    <message>
+        <source>PowerFlow</source>
+        <translation>تدفق الطاقة</translation>
+    </message>
+    <message>
+        <source>PowerFlowTimeSeries</source>
+        <translation>السلسلة الزمنية لتدفق الطاقة</translation>
+    </message>
+    <message>
+        <source>Pt Measurement</source>
+        <translation>قياس القدرة النشطة (P_t)</translation>
+    </message>
+    <message>
+        <source>Pt: Active power &quot;to&quot;</source>
+        <translation>القدرة النشطة (P_t): &quot;إلى&quot;</translation>
+    </message>
+    <message>
+        <source>Pt: Active power &quot;to&quot; A</source>
+        <translation>القدرة النشطة (P_t): &quot;إلى&quot; A</translation>
+    </message>
+    <message>
+        <source>Pt: Active power &quot;to&quot; B</source>
+        <translation>القدرة النشطة (P_t): &quot;إلى&quot; B</translation>
+    </message>
+    <message>
+        <source>Pt: Active power &quot;to&quot; C</source>
+        <translation>القدرة النشطة (P_t): &quot;إلى&quot; C</translation>
+    </message>
+    <message>
+        <source>Q: Reactive power</source>
+        <translation>القدرة التفاعلية (Q)</translation>
+    </message>
+    <message>
+        <source>QA: Reactive power A</source>
+        <translation>القدرة التفاعلية (Q_A): A</translation>
+    </message>
+    <message>
+        <source>QB: Reactive power B</source>
+        <translation>القدرة التفاعلية (Q_B): B</translation>
+    </message>
+    <message>
+        <source>QC: Reactive power C</source>
+        <translation>القدرة التفاعلية (Q_C): C</translation>
+    </message>
+    <message>
+        <source>Qf Measurement</source>
+        <translation>قياس القدرة التفاعلية (Q_f)</translation>
+    </message>
+    <message>
+        <source>Qf: Reactive power &quot;from&quot;</source>
+        <translation>القدرة التفاعلية (Q_f): &quot;من&quot;</translation>
+    </message>
+    <message>
+        <source>QfA: Reactive power &quot;from&quot; A</source>
+        <translation>القدرة التفاعلية (Q_f_A): &quot;من&quot; A</translation>
+    </message>
+    <message>
+        <source>QfB: Reactive power &quot;from&quot; B</source>
+        <translation>القدرة التفاعلية (Q_f_B): &quot;من&quot; B</translation>
+    </message>
+    <message>
+        <source>QfC: Reactive power &quot;from&quot; C</source>
+        <translation>القدرة التفاعلية (Q_f_C): &quot;من&quot; C</translation>
+    </message>
+    <message>
+        <source>Qg Measurement</source>
+        <translation>قياس القدرة التفاعلية (Q_g)</translation>
+    </message>
+    <message>
+        <source>Qi Measurement</source>
+        <translation>قياس التيار التفاعلي (Q_i)</translation>
+    </message>
+    <message>
+        <source>Ql: Reactive losses</source>
+        <translation>الفقد التفاعلي (Q_l)</translation>
+    </message>
+    <message>
+        <source>Ql: Reactive losses A</source>
+        <translation>الفقد التفاعلي (Q_l): A</translation>
+    </message>
+    <message>
+        <source>Ql: Reactive losses B</source>
+        <translation>الفقد التفاعلي (Q_l): B</translation>
+    </message>
+    <message>
+        <source>Ql: Reactive losses C</source>
+        <translation>الفقد التفاعلي (Q_l): C</translation>
+    </message>
+    <message>
+        <source>Qt Measurement</source>
+        <translation>قياس القدرة التفاعلية (Q_t)</translation>
+    </message>
+    <message>
+        <source>Qt: Reactive power &quot;to&quot;</source>
+        <translation>القدرة التفاعلية (Q_t): &quot;إلى&quot;</translation>
+    </message>
+    <message>
+        <source>Qt: Reactive power &quot;to&quot; A</source>
+        <translation>القدرة التفاعلية (Q_t): &quot;إلى&quot; A</translation>
+    </message>
+    <message>
+        <source>Qt: Reactive power &quot;to&quot; B</source>
+        <translation>القدرة التفاعلية (Q_t): &quot;إلى&quot; B</translation>
+    </message>
+    <message>
+        <source>Qt: Reactive power &quot;to&quot; C</source>
+        <translation>القدرة التفاعلية (Q_t): &quot;إلى&quot; C</translation>
+    </message>
+    <message>
+        <source>RMS Dynamic</source>
+        <translation>الديناميكي RMS</translation>
+    </message>
+    <message>
+        <source>RMS Small Signal stability</source>
+        <translation>استقرار الإشارة الصغيرة RMS</translation>
+    </message>
+    <message>
+        <source>RMS template</source>
+        <translation>قالب RMS</translation>
+    </message>
+    <message>
+        <source>Region</source>
+        <translation>المنطقة</translation>
+    </message>
+    <message>
+        <source>Region analysis</source>
+        <translation>تحليل المنطقة</translation>
+    </message>
+    <message>
+        <source>Region balance analysis</source>
+        <translation>تحليل توازن المنطقة</translation>
+    </message>
+    <message>
+        <source>Region generation analysis</source>
+        <translation>تحليل توليد المنطقة</translation>
+    </message>
+    <message>
+        <source>Region load analysis</source>
+        <translation>تحليل حمل المنطقة</translation>
+    </message>
+    <message>
+        <source>Regions</source>
+        <translation>المناطق</translation>
+    </message>
+    <message>
+        <source>Reliability</source>
+        <translation>مصداقية</translation>
+    </message>
+    <message>
+        <source>Remedial action</source>
+        <translation>الإجراء التصحيحي</translation>
+    </message>
+    <message>
+        <source>Remedial action Group</source>
+        <translation>مجموعة الإجراءات التصحيحية</translation>
+    </message>
+    <message>
+        <source>Reports</source>
+        <translation>التقارير</translation>
+    </message>
+    <message>
+        <source>Reservoir fluid level</source>
+        <translation>مستوى السائل في الخزان</translation>
+    </message>
+    <message>
+        <source>Results</source>
+        <translation>نتائج</translation>
+    </message>
+    <message>
+        <source>Right Eigenvectors</source>
+        <translation>المتجهات الذاتية اليمنى</translation>
+    </message>
+    <message>
+        <source>Rms Event</source>
+        <translation>حدث RMS</translation>
+    </message>
+    <message>
+        <source>Rms Events Group</source>
+        <translation>مجموعة أحداث RMS</translation>
+    </message>
+    <message>
+        <source>Rms Generator results</source>
+        <translation>نتائج المولدات RMS</translation>
+    </message>
+    <message>
+        <source>Rms Genqec delta results</source>
+        <translation>نتائج دلتا التردد للمولدات RMS</translation>
+    </message>
+    <message>
+        <source>Rms Genqec omega results</source>
+        <translation>نتائج أوميغا التردد للمولدات RMS</translation>
+    </message>
+    <message>
+        <source>Rms Line results</source>
+        <translation>نتائج الخطوط RMS</translation>
+    </message>
+    <message>
+        <source>Rms Load P results</source>
+        <translation>نتائج حمل القدرة P RMS</translation>
+    </message>
+    <message>
+        <source>Rms Load Q results</source>
+        <translation>نتائج حمل القدرة Q RMS</translation>
+    </message>
+    <message>
+        <source>Rms Simple Line P results</source>
+        <translation>نتائج P لخط بسيط RMS</translation>
+    </message>
+    <message>
+        <source>Rms Simple Line Q results</source>
+        <translation>نتائج Q لخط بسيط RMS</translation>
+    </message>
+    <message>
+        <source>Rms load results</source>
+        <translation>نتائج الحمل RMS</translation>
+    </message>
+    <message>
+        <source>Rms plot results</source>
+        <translation>نتائج رسم RMS</translation>
+    </message>
+    <message>
+        <source>Rms time series report</source>
+        <translation>تقرير السلسلة الزمنية RMS</translation>
+    </message>
+    <message>
+        <source>RmsSimulation</source>
+        <translation>محاكاة RMS</translation>
+    </message>
+    <message>
+        <source>S-Domain Plot</source>
+        <translation>رسم نطاق S</translation>
+    </message>
+    <message>
+        <source>S-Domain Plot in Hz</source>
+        <translation>رسم نطاق S بالهرتز</translation>
+    </message>
+    <message>
+        <source>SAIDI</source>
+        <translation>SAIDI</translation>
+    </message>
+    <message>
+        <source>SAIFI</source>
+        <translation>SAIFI</translation>
+    </message>
+    <message>
+        <source>Sensibilities</source>
+        <translation>الحساسيات</translation>
+    </message>
+    <message>
+        <source>Sensitivity to the exchange</source>
+        <translation>الحساسية للتبادل</translation>
+    </message>
+    <message>
+        <source>Sensitivity to the exchange (N-1)</source>
+        <translation>الحساسية للتبادل (N-1)</translation>
+    </message>
+    <message>
+        <source>Sequence line</source>
+        <translation>خط التسلسل</translation>
+    </message>
+    <message>
+        <source>Series</source>
+        <translation>التوالي</translation>
+    </message>
+    <message>
+        <source>Series reactance</source>
+        <translation>مفاعلة السلسلة</translation>
+    </message>
+    <message>
+        <source>Short circuit</source>
+        <translation>قصر الدائرة</translation>
+    </message>
+    <message>
+        <source>Short circuit active current</source>
+        <translation>التيار الفعال لقصر الدائرة</translation>
+    </message>
+    <message>
+        <source>Short circuit active current A</source>
+        <translation>التيار الفعال لقصر الدائرة A</translation>
+    </message>
+    <message>
+        <source>Short circuit active current B</source>
+        <translation>التيار الفعال لقصر الدائرة B</translation>
+    </message>
+    <message>
+        <source>Short circuit active current C</source>
+        <translation>التيار الفعال لقصر الدائرة C</translation>
+    </message>
+    <message>
+        <source>Short circuit active power</source>
+        <translation>القدرة الفعالة لقصر الدائرة</translation>
+    </message>
+    <message>
+        <source>Short circuit active power A</source>
+        <translation>القدرة الفعالة لقصر الدائرة A</translation>
+    </message>
+    <message>
+        <source>Short circuit active power B</source>
+        <translation>القدرة الفعالة لقصر الدائرة B</translation>
+    </message>
+    <message>
+        <source>Short circuit active power C</source>
+        <translation>القدرة الفعالة لقصر الدائرة C</translation>
+    </message>
+    <message>
+        <source>Short circuit event</source>
+        <translation>حدث قصر الدائرة</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive current</source>
+        <translation>التيار التفاعلي لقصر الدائرة</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive current A</source>
+        <translation>التيار التفاعلي لقصر الدائرة A</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive current B</source>
+        <translation>التيار التفاعلي لقصر الدائرة B</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive current C</source>
+        <translation>التيار التفاعلي لقصر الدائرة C</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive power</source>
+        <translation>القدرة التفاعلية لقصر الدائرة</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive power A</source>
+        <translation>القدرة التفاعلية لقصر الدائرة A</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive power B</source>
+        <translation>القدرة التفاعلية لقصر الدائرة B</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive power C</source>
+        <translation>القدرة التفاعلية لقصر الدائرة C</translation>
+    </message>
+    <message>
+        <source>Short-circuit information</source>
+        <translation>معلومات قصر الدائرة</translation>
+    </message>
+    <message>
+        <source>ShortCircuit</source>
+        <translation>قصر الدائرة</translation>
+    </message>
+    <message>
+        <source>Shunt</source>
+        <translation>Shunt</translation>
+    </message>
+    <message>
+        <source>Shunt like devices</source>
+        <translation>الأجهزة الشبيهة بالوصلة الفرعية</translation>
+    </message>
+    <message>
+        <source>Shunt neutral voltage</source>
+        <translation>جهد التعادل الفرعي</translation>
+    </message>
+    <message>
+        <source>Shunt reactive power</source>
+        <translation>القدرة التفاعلية الفرعية</translation>
+    </message>
+    <message>
+        <source>Shunt reactive power A</source>
+        <translation>القدرة التفاعلية الفرعية A</translation>
+    </message>
+    <message>
+        <source>Shunt reactive power B</source>
+        <translation>القدرة التفاعلية الفرعية B</translation>
+    </message>
+    <message>
+        <source>Shunt reactive power C</source>
+        <translation>القدرة التفاعلية الفرعية C</translation>
+    </message>
+    <message>
+        <source>Sigma + distances</source>
+        <translation>مسافات سيجما +</translation>
+    </message>
+    <message>
+        <source>Sigma Analysis</source>
+        <translation>تحليل سيجما</translation>
+    </message>
+    <message>
+        <source>Sigma distances</source>
+        <translation>مسافات سيجما</translation>
+    </message>
+    <message>
+        <source>Sigma imaginary</source>
+        <translation>سيجما التخيلي</translation>
+    </message>
+    <message>
+        <source>Sigma real</source>
+        <translation>سيجما الحقيقي</translation>
+    </message>
+    <message>
+        <source>SigmaAnalysis</source>
+        <translation>تحليل سيجما</translation>
+    </message>
+    <message>
+        <source>SimulationOptionsDevice</source>
+        <translation>خيارات المحاكاة للجهاز</translation>
+    </message>
+    <message>
+        <source>Slacks</source>
+        <translation>الأحمال المرجعية</translation>
+    </message>
+    <message>
+        <source>SmallSignalStability</source>
+        <translation>استقرار الإشارة الصغيرة</translation>
+    </message>
+    <message>
+        <source>Snapshot</source>
+        <translation>لقطة</translation>
+    </message>
+    <message>
+        <source>Special plots</source>
+        <translation>الرسوم البيانية الخاصة</translation>
+    </message>
+    <message>
+        <source>Spillage flow leaving</source>
+        <translation>تدفق التبديد المتبقي</translation>
+    </message>
+    <message>
+        <source>Srap used power</source>
+        <translation>الطاقة المستخدمة لـ Srap</translation>
+    </message>
+    <message>
+        <source>Stabilizer</source>
+        <translation>المثبت</translation>
+    </message>
+    <message>
+        <source>State Matrix</source>
+        <translation>مصفوفة الحالة</translation>
+    </message>
+    <message>
+        <source>State estimation</source>
+        <translation>تقدير الدولة</translation>
+    </message>
+    <message>
+        <source>StateEstimation</source>
+        <translation>تقدير الحالة</translation>
+    </message>
+    <message>
+        <source>Static Generator</source>
+        <translation>المولد الثابت</translation>
+    </message>
+    <message>
+        <source>Statistics</source>
+        <translation>الإحصائيات</translation>
+    </message>
+    <message>
+        <source>Std-dev contingency overloading</source>
+        <translation>الانحراف المعياري للحمل الزائد في حالة الطوارئ</translation>
+    </message>
+    <message>
+        <source>Stochastic Power Flow</source>
+        <translation>تدفق الطاقة العشوائي</translation>
+    </message>
+    <message>
+        <source>StochasticPowerFlow</source>
+        <translation>تدفق_الطاقة_العشوائي</translation>
+    </message>
+    <message>
+        <source>Substation</source>
+        <translation>محطة فرعية</translation>
+    </message>
+    <message>
+        <source>Substation analysis</source>
+        <translation>تحليل المحطة الفرعية</translation>
+    </message>
+    <message>
+        <source>Substation balance analysis</source>
+        <translation>تحليل توازن المحطة الفرعية</translation>
+    </message>
+    <message>
+        <source>Substation generation analysis</source>
+        <translation>تحليل توليد المحطة الفرعية</translation>
+    </message>
+    <message>
+        <source>Substation load analysis</source>
+        <translation>تحليل حمل المحطة الفرعية</translation>
+    </message>
+    <message>
+        <source>Switch</source>
+        <translation>مفتاح</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>النظام</translation>
+    </message>
+    <message>
+        <source>System emissions</source>
+        <translation>انبعاثات النظام</translation>
+    </message>
+    <message>
+        <source>System energy cost</source>
+        <translation>تكلفة طاقة النظام</translation>
+    </message>
+    <message>
+        <source>System energy total cost</source>
+        <translation>إجمالي تكلفة طاقة النظام</translation>
+    </message>
+    <message>
+        <source>System fuel consumption</source>
+        <translation>استهلاك وقود النظام</translation>
+    </message>
+    <message>
+        <source>Technology</source>
+        <translation>التكنولوجيا</translation>
+    </message>
+    <message>
+        <source>Technology Category</source>
+        <translation>فئة التكنولوجيا</translation>
+    </message>
+    <message>
+        <source>Technology Group</source>
+        <translation>مجموعة التكنولوجيا</translation>
+    </message>
+    <message>
+        <source>Technology plot</source>
+        <translation>رسم بياني للتكنولوجيا</translation>
+    </message>
+    <message>
+        <source>Template</source>
+        <translation>نموذج</translation>
+    </message>
+    <message>
+        <source>Templates</source>
+        <translation>القوالب</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation>الوقت</translation>
+    </message>
+    <message>
+        <source>Time series Contingency flow report (Branches)</source>
+        <translation>تقرير تدفق الطوارئ لسلسلة زمنية (الفروع)</translation>
+    </message>
+    <message>
+        <source>Time series base flow report</source>
+        <translation>تقرير التدفق الأساسي لسلسلة زمنية</translation>
+    </message>
+    <message>
+        <source>Time series branch monitoring logic report</source>
+        <translation>تقرير منطق مراقبة الفروع لسلسلة زمنية</translation>
+    </message>
+    <message>
+        <source>Time series contingency Branches report</source>
+        <translation>تقرير فروع الطوارئ لسلسلة زمنية</translation>
+    </message>
+    <message>
+        <source>Time series contingency flow report</source>
+        <translation>تقرير تدفق الطوارئ لسلسلة زمنية</translation>
+    </message>
+    <message>
+        <source>Time series contingency flow report. (Generation)</source>
+        <translation>تقرير تدفق الطوارئ لسلسلة زمنية. (التوليد)</translation>
+    </message>
+    <message>
+        <source>Time series contingency flow report. (Hvdc)</source>
+        <translation>تقرير تدفق الطوارئ لسلسلة زمنية. (HVDC)</translation>
+    </message>
+    <message>
+        <source>Time series critical Branches report</source>
+        <translation>تقرير الفروع الحرجة لسلسلة زمنية</translation>
+    </message>
+    <message>
+        <source>Time series generation delta power report</source>
+        <translation>تقرير طاقة التوليد دلتا لسلسلة زمنية</translation>
+    </message>
+    <message>
+        <source>Time series generation power report</source>
+        <translation>تقرير طاقة التوليد لسلسلة زمنية</translation>
+    </message>
+    <message>
+        <source>Time series sensitivity to the exchange report</source>
+        <translation>تقرير الحساسية للتبادل لسلسلة زمنية</translation>
+    </message>
+    <message>
+        <source>Time series worst sensitivity to the exchange report (N-1)</source>
+        <translation>تقرير أسوأ حساسية للتبادل لسلسلة زمنية (N-1)</translation>
+    </message>
+    <message>
+        <source>Topology Processor</source>
+        <translation>معالج الطوبولوجيا</translation>
+    </message>
+    <message>
+        <source>Topology reduction</source>
+        <translation>تقليل الطوبولوجيا</translation>
+    </message>
+    <message>
+        <source>Tower</source>
+        <translation>برج</translation>
+    </message>
+    <message>
+        <source>Transformer</source>
+        <translation>محول</translation>
+    </message>
+    <message>
+        <source>Transformer type</source>
+        <translation>نوع المحول</translation>
+    </message>
+    <message>
+        <source>Transformer3W</source>
+        <translation>المحول 3W</translation>
+    </message>
+    <message>
+        <source>TransformerNw</source>
+        <translation>المحول Nw</translation>
+    </message>
+    <message>
+        <source>Transient stability</source>
+        <translation>الاستقرار العابر</translation>
+    </message>
+    <message>
+        <source>UPFC</source>
+        <translation>UPFC</translation>
+    </message>
+    <message>
+        <source>Underground line</source>
+        <translation>الخط تحت الأرض</translation>
+    </message>
+    <message>
+        <source>V: Voltage module</source>
+        <translation>V: وحدة الجهد</translation>
+    </message>
+    <message>
+        <source>VA: Voltage module A</source>
+        <translation>VA: وحدة الجهد A</translation>
+    </message>
+    <message>
+        <source>VB: Voltage module B</source>
+        <translation>VB: وحدة الجهد B</translation>
+    </message>
+    <message>
+        <source>VC: Voltage module C</source>
+        <translation>VC: وحدة الجهد C</translation>
+    </message>
+    <message>
+        <source>VSC</source>
+        <translation>VSC</translation>
+    </message>
+    <message>
+        <source>Va Measurement</source>
+        <translation>قياس Va</translation>
+    </message>
+    <message>
+        <source>Var Factory</source>
+        <translation>مصنع المتغيرات</translation>
+    </message>
+    <message>
+        <source>Vm Measurement</source>
+        <translation>قياس الجهد</translation>
+    </message>
+    <message>
+        <source>Voltage angle (0)</source>
+        <translation>زاوية الجهد (0)</translation>
+    </message>
+    <message>
+        <source>Voltage angle (1)</source>
+        <translation>زاوية الجهد (1)</translation>
+    </message>
+    <message>
+        <source>Voltage angle (2)</source>
+        <translation>زاوية الجهد (2)</translation>
+    </message>
+    <message>
+        <source>Voltage collapse</source>
+        <translation>انهيار الجهد</translation>
+    </message>
+    <message>
+        <source>Voltage level</source>
+        <translation>مستوى الجهد</translation>
+    </message>
+    <message>
+        <source>Voltage level analysis</source>
+        <translation>تحليل مستوى الجهد</translation>
+    </message>
+    <message>
+        <source>Voltage level balance analysis</source>
+        <translation>تحليل توازن مستوى الجهد</translation>
+    </message>
+    <message>
+        <source>Voltage level generation analysis</source>
+        <translation>تحليل توليد مستوى الجهد</translation>
+    </message>
+    <message>
+        <source>Voltage level load analysis</source>
+        <translation>تحليل حمل مستوى الجهد</translation>
+    </message>
+    <message>
+        <source>Voltage level template</source>
+        <translation>قالب مستوى الجهد</translation>
+    </message>
+    <message>
+        <source>Voltage module (0)</source>
+        <translation>وحدة الجهد (0)</translation>
+    </message>
+    <message>
+        <source>Voltage module (1)</source>
+        <translation>وحدة الجهد (1)</translation>
+    </message>
+    <message>
+        <source>Voltage module (2)</source>
+        <translation>وحدة الجهد (2)</translation>
+    </message>
+    <message>
+        <source>Voltage plot</source>
+        <translation>رسم الجهد</translation>
+    </message>
+    <message>
+        <source>Vsc</source>
+        <translation>Vsc</translation>
+    </message>
+    <message>
+        <source>Vsc ODF</source>
+        <translation>Vsc ODF</translation>
+    </message>
+    <message>
+        <source>Vsc PTDF</source>
+        <translation>Vsc PTDF</translation>
+    </message>
+    <message>
+        <source>Vsc Pdc</source>
+        <translation>Vsc Pdc</translation>
+    </message>
+    <message>
+        <source>Vsc Vdc</source>
+        <translation>Vsc Vdc</translation>
+    </message>
+    <message>
+        <source>Vsc loading</source>
+        <translation>تحميل Vsc</translation>
+    </message>
+    <message>
+        <source>Vsc losses</source>
+        <translation>خسائر Vsc</translation>
+    </message>
+    <message>
+        <source>Vsc power &quot;from&quot; negative pole</source>
+        <translation>طاقة Vsc &quot;من&quot; القطب السالب</translation>
+    </message>
+    <message>
+        <source>Vsc power &quot;from&quot; positive pole</source>
+        <translation>طاقة Vsc &quot;من&quot; القطب الموجب</translation>
+    </message>
+    <message>
+        <source>Vsc power &quot;to&quot;</source>
+        <translation>طاقة Vsc &quot;إلى&quot;</translation>
+    </message>
+    <message>
+        <source>Vsc power &quot;to&quot; A</source>
+        <translation>طاقة Vsc &quot;إلى&quot; A</translation>
+    </message>
+    <message>
+        <source>Vsc power &quot;to&quot; B</source>
+        <translation>طاقة Vsc &quot;إلى&quot; B</translation>
+    </message>
+    <message>
+        <source>Vsc power &quot;to&quot; C</source>
+        <translation>طاقة Vsc &quot;إلى&quot; C</translation>
+    </message>
+    <message>
+        <source>When to make them plot</source>
+        <translation>متى يتم رسمها</translation>
+    </message>
+    <message>
+        <source>Winding</source>
+        <translation>ملف</translation>
+    </message>
+    <message>
+        <source>Wire</source>
+        <translation>السلك</translation>
+    </message>
+    <message>
+        <source>Zone</source>
+        <translation>المنطقة</translation>
+    </message>
+    <message>
+        <source>Zone analysis</source>
+        <translation>تحليل المنطقة</translation>
+    </message>
+    <message>
+        <source>Zone balance analysis</source>
+        <translation>تحليل توازن المنطقة</translation>
+    </message>
+    <message>
+        <source>Zone generation analysis</source>
+        <translation>تحليل توليد المنطقة</translation>
+    </message>
+    <message>
+        <source>Zone load analysis</source>
+        <translation>تحليل حمل المنطقة</translation>
+    </message>
+    <message>
+        <source>export all</source>
+        <translation>تصدير الكل</translation>
+    </message>
+    <message>
+        <source>file open</source>
+        <translation>فتح الملف</translation>
+    </message>
+    <message>
+        <source>file save</source>
+        <translation>حفظ الملف</translation>
+    </message>
+    <message>
+        <source>loading avg</source>
+        <translation>متوسط التحميل</translation>
+    </message>
+    <message>
+        <source>m: Tap module</source>
+        <translation>m: وحدة التوصيل</translation>
+    </message>
+    <message>
+        <source>ΔP: Active power increment</source>
+        <translation>ΔP: زيادة الطاقة الفعالة</translation>
+    </message>
+    <message>
+        <source>ΔV: Voltage modules drop</source>
+        <translation>ΔV: انخفاض وحدات الجهد</translation>
+    </message>
+    <message>
+        <source>ΔV: Voltage modules drop A</source>
+        <translation>ΔV: انخفاض وحدات الجهد A</translation>
+    </message>
+    <message>
+        <source>ΔV: Voltage modules drop B</source>
+        <translation>ΔV: انخفاض وحدات الجهد B</translation>
+    </message>
+    <message>
+        <source>ΔV: Voltage modules drop C</source>
+        <translation>ΔV: انخفاض وحدات الجهد C</translation>
+    </message>
+    <message>
+        <source>Δθ: Voltage angles drop</source>
+        <translation>Δθ: انخفاض زوايا الجهد</translation>
+    </message>
+    <message>
+        <source>Δθ: Voltage angles drop A</source>
+        <translation>Δθ: انخفاض زوايا الجهد A</translation>
+    </message>
+    <message>
+        <source>Δθ: Voltage angles drop B</source>
+        <translation>Δθ: انخفاض زوايا الجهد B</translation>
+    </message>
+    <message>
+        <source>Δθ: Voltage angles drop C</source>
+        <translation>Δθ: انخفاض زوايا الجهد C</translation>
+    </message>
+    <message>
+        <source>θ: Voltage angle</source>
+        <translation>θ: زاوية الجهد</translation>
+    </message>
+    <message>
+        <source>θA: Voltage angle A</source>
+        <translation>θA: زاوية الجهد A</translation>
+    </message>
+    <message>
+        <source>θB: Voltage angle B</source>
+        <translation>θB: زاوية الجهد B</translation>
+    </message>
+    <message>
+        <source>θC: Voltage angle C</source>
+        <translation>θC: زاوية الجهد C</translation>
+    </message>
+    <message>
+        <source>𝜏: Tap angle</source>
+        <translation>𝜏: Tap angle</translation>
+    </message>
+</context>
+<context>
     <name>VscDeviceEditorWidget</name>
     <message>
         <location filename="../DeviceEditors/VscEditor/vsc_editor_widget.ui" line="14"/>
@@ -4543,7 +6836,7 @@ Monte Carlo power flow results:</source>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="86"/>
-        <location filename="../Main/MainWindow.ui" line="11059"/>
+        <location filename="../Main/MainWindow.ui" line="11096"/>
         <source>Model</source>
         <translation>نموذج</translation>
     </message>
@@ -4723,8 +7016,8 @@ Monte Carlo power flow results:</source>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="907"/>
-        <location filename="../Main/MainWindow.ui" line="3608"/>
-        <location filename="../Main/MainWindow.ui" line="5887"/>
+        <location filename="../Main/MainWindow.ui" line="3645"/>
+        <location filename="../Main/MainWindow.ui" line="5924"/>
         <source>General settings</source>
         <translation>الإعدادات العامة</translation>
     </message>
@@ -4790,15 +7083,15 @@ Monte Carlo power flow results:</source>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="1118"/>
-        <location filename="../Main/MainWindow.ui" line="1528"/>
-        <location filename="../Main/MainWindow.ui" line="2218"/>
+        <location filename="../Main/MainWindow.ui" line="1565"/>
+        <location filename="../Main/MainWindow.ui" line="2255"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Time slider&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Move this time slider to select the appropriate time slot to view.&lt;/p&gt;&lt;p&gt;The first position sets the snapshot values, the rest attend to the time series values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;شريط تمرير الوقت&lt;/span&gt;&lt;/p&gt;&lt;p&gt;حرك شريط التمرير الزمني هذا لتحديد الفترة الزمنية المناسبة للعرض.&lt;/p&gt;&lt;p&gt;يقوم الموضع الأول بتعيين قيم اللقطة، بينما يحضر الباقي قيم السلاسل الزمنية.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="1133"/>
-        <location filename="../Main/MainWindow.ui" line="1544"/>
-        <location filename="../Main/MainWindow.ui" line="2287"/>
+        <location filename="../Main/MainWindow.ui" line="1581"/>
+        <location filename="../Main/MainWindow.ui" line="2324"/>
         <source>Snapshot</source>
         <translation>لقطة</translation>
     </message>
@@ -4814,13 +7107,13 @@ Monte Carlo power flow results:</source>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="1204"/>
-        <location filename="../Main/MainWindow.ui" line="1658"/>
-        <location filename="../Main/MainWindow.ui" line="2623"/>
-        <location filename="../Main/MainWindow.ui" line="10547"/>
-        <location filename="../Main/MainWindow.ui" line="10561"/>
-        <location filename="../Main/MainWindow.ui" line="10568"/>
-        <location filename="../Main/MainWindow.ui" line="10631"/>
-        <location filename="../Main/MainWindow.ui" line="10833"/>
+        <location filename="../Main/MainWindow.ui" line="1695"/>
+        <location filename="../Main/MainWindow.ui" line="2660"/>
+        <location filename="../Main/MainWindow.ui" line="10584"/>
+        <location filename="../Main/MainWindow.ui" line="10598"/>
+        <location filename="../Main/MainWindow.ui" line="10605"/>
+        <location filename="../Main/MainWindow.ui" line="10668"/>
+        <location filename="../Main/MainWindow.ui" line="10870"/>
         <source>...</source>
         <translation>...</translation>
     </message>
@@ -4840,266 +7133,271 @@ Monte Carlo power flow results:</source>
         <translation>قاعدة البيانات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1358"/>
+        <location filename="../Main/MainWindow.ui" line="1330"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type anything to search the device. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;اكتب أي شيء للبحث عن الجهاز. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="1395"/>
         <source>Objects</source>
         <translation>أشياء</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1409"/>
+        <location filename="../Main/MainWindow.ui" line="1446"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type anything to search on the name property. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;For more advanced searches you can compose a filter expression:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Subjects:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;col, idx, val, colobj, idxobj&lt;/p&gt;&lt;p&gt;colobj and idxobj allow accessing the objects that may be represented at the index or the columns. With these you can access their internal properties for filtering.&lt;/p&gt;&lt;p&gt;If none is specified idxobj is taken&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Operators:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&amp;gt;, &amp;lt;, &amp;gt;=, &amp;lt;=, !=, =, like, notlike, starts, ends&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Examples:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Filter all object names that are similar to &apos;alba&apos; and their Vnom property &amp;gt; 200&lt;/p&gt;&lt;p&gt;-&amp;gt; idx&lt;span style=&quot; font-style:italic;&quot;&gt;obj.name like alba and idxobj.Vnom &amp;gt; 200&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Equivalently:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;-&amp;gt; name like alba and Vnom &amp;gt; 200&lt;/span&gt;&lt;/p&gt;&lt;p&gt;[Enter] to search &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;اكتب أي شيء للبحث في خاصية الاسم.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;لمزيد من عمليات البحث المتقدمة، يمكنك إنشاء تعبير مرشح:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;المواضيع:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;col، idx، val، colobj، idxobj&lt;/p&gt;&lt;p&gt;يسمح colobj وidxobj بالوصول إلى الكائنات التي قد يتم تمثيلها في الفهرس أو الأعمدة. مع هذه يمكنك الوصول إلى خصائصها الداخلية للتصفية.&lt;/p&gt;&lt;p&gt;إذا لم يتم تحديد أي شيء، فسيتم أخذ idxobj&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;المشغلين:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&gt;، &lt;، &gt;=، &lt;=، !=، =، مثل، ليس مثل، يبدأ، ينتهي&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;أمثلة:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بتصفية جميع أسماء الكائنات المشابهة لـ &quot;alba&quot; وخاصية Vnom الخاصة بها &gt; 200&lt;/p&gt;&lt;p&gt;-&gt; آي دي إكس&lt;span style=&quot; font-style:italic;&quot;&gt;obj.name مثل alba وidxobj.Vnom &gt; 200&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;على قدم المساواة:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;-&gt; اسم مثل ألبا وفنوم &gt; 200&lt;/span&gt;&lt;/p&gt;&lt;p&gt;[أدخل] للبحث&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1416"/>
+        <location filename="../Main/MainWindow.ui" line="1453"/>
         <source>Smart filter</source>
         <translation>مرشح ذكي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1446"/>
+        <location filename="../Main/MainWindow.ui" line="1483"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Histogram&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the histogram analysis of the selected data structure&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;الرسم البياني&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بتشغيل تحليل الرسم البياني لبنية البيانات المحددة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1493"/>
+        <location filename="../Main/MainWindow.ui" line="1530"/>
         <source>Select the time series point to search</source>
         <translation>حدد نقطة السلسلة الزمنية للبحث</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1500"/>
+        <location filename="../Main/MainWindow.ui" line="1537"/>
         <source>Search and navigate to the selected time series point</source>
         <translation>ابحث وانتقل إلى نقطة السلسلة الزمنية المحددة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1514"/>
+        <location filename="../Main/MainWindow.ui" line="1551"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Snapshot&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Assign the values of the selected time step into the snapshot&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;لقطة&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بتعيين قيم الخطوة الزمنية المحددة في اللقطة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1567"/>
+        <location filename="../Main/MainWindow.ui" line="1604"/>
         <source>Add new object</source>
         <translation>إضافة كائن جديد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1581"/>
+        <location filename="../Main/MainWindow.ui" line="1618"/>
         <source>Delete selection</source>
         <translation>حذف التحديد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1603"/>
+        <location filename="../Main/MainWindow.ui" line="1640"/>
         <source>Associations</source>
         <translation>الجمعيات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1713"/>
+        <location filename="../Main/MainWindow.ui" line="1750"/>
         <source>Time series</source>
         <translation>سلسلة زمنية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1758"/>
+        <location filename="../Main/MainWindow.ui" line="1795"/>
         <source>Magnitude with profile</source>
         <translation>الحجم مع الملف الشخصي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1765"/>
+        <location filename="../Main/MainWindow.ui" line="1802"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Create profiles&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This will create all the object&apos;s profiles&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;إنشاء ملفات التعريف&lt;/span&gt;&lt;/p&gt;&lt;p&gt;سيؤدي هذا إلى إنشاء جميع ملفات تعريف الكائن&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1779"/>
+        <location filename="../Main/MainWindow.ui" line="1816"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Delete profiles&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This will delete all the profiles and leave the snapshot.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;حذف الملفات الشخصية&lt;/span&gt;&lt;/p&gt;&lt;p&gt;سيؤدي هذا إلى حذف جميع الملفات الشخصية وترك اللقطة.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1793"/>
+        <location filename="../Main/MainWindow.ui" line="1830"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Import profiles&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Import from data in CSV or Excel files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;استيراد الملفات الشخصية&lt;/span&gt;&lt;/p&gt;&lt;p&gt;الاستيراد من البيانات الموجودة في ملفات CSV أو Excel&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1810"/>
+        <location filename="../Main/MainWindow.ui" line="1847"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Import profiles from grid models. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;This is, load many individual grids in any of the supported VeraGrid formats and take the operational data from them, aplying them to all the profiles.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;استيراد ملفات التعريف من نماذج الشبكة.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;وهذا يعني تحميل العديد من الشبكات الفردية بأي من تنسيقات VeraGrid المدعومة وأخذ البيانات التشغيلية منها وتطبيقها على جميع ملفات التعريف.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1827"/>
+        <location filename="../Main/MainWindow.ui" line="1864"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Time series  crop to the selected time interval&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;اقتصاص السلاسل الزمنية إلى الفاصل الزمني المحدد&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1844"/>
+        <location filename="../Main/MainWindow.ui" line="1881"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Time series crop to the clusteres time indices.&lt;/p&gt;&lt;p&gt;For that you need cluster simulation in memory&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;اقتصاص السلاسل الزمنية إلى المؤشرات الزمنية للمجموعات.&lt;/p&gt;&lt;p&gt;لذلك تحتاج إلى محاكاة الكتلة في الذاكرة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1874"/>
+        <location filename="../Main/MainWindow.ui" line="1911"/>
         <source>Plot the selected object&apos;s profile</source>
         <translation>رسم ملف تعريف الكائن المحدد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1925"/>
+        <location filename="../Main/MainWindow.ui" line="1962"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Copy displayed profile&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;نسخ البيانات&lt;/span&gt;&lt;/p&gt;&lt;p&gt;انسخ الملف الشخصي المعروض&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1942"/>
+        <location filename="../Main/MainWindow.ui" line="1979"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Paste data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Paste clipboard into the displayed profile&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;لصق البيانات&lt;/span&gt;&lt;/p&gt;&lt;p&gt;لصق الحافظة في ملف التعريف المعروض&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1956"/>
+        <location filename="../Main/MainWindow.ui" line="1993"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy profile&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Copy the current profile into the profile selected by the drop-down selector&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;نسخ الملف الشخصي&lt;/span&gt;&lt;/p&gt;&lt;p&gt;انسخ ملف التعريف الحالي إلى ملف التعريف المحدد بواسطة محدد القائمة المنسدلة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1976"/>
+        <location filename="../Main/MainWindow.ui" line="2013"/>
         <source>Profile where to copy the current profile</source>
         <translation>الملف الشخصي حيث لنسخ الملف الشخصي الحالي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1996"/>
+        <location filename="../Main/MainWindow.ui" line="2033"/>
         <source>Add value to the profile</source>
         <translation>أضف قيمة إلى الملف الشخصي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2010"/>
+        <location filename="../Main/MainWindow.ui" line="2047"/>
         <source>Subtract value from the profile</source>
         <translation>اطرح القيمة من الملف الشخصي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2024"/>
+        <location filename="../Main/MainWindow.ui" line="2061"/>
         <source>Multiply the profile by a value</source>
         <translation>اضرب ملف التعريف بقيمة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2038"/>
+        <location filename="../Main/MainWindow.ui" line="2075"/>
         <source>Divide the profile by a value</source>
         <translation>قم بتقسيم ملف التعريف على قيمة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2052"/>
+        <location filename="../Main/MainWindow.ui" line="2089"/>
         <source>Set the value to all or to the selection</source>
         <translation>قم بتعيين القيمة على الكل أو على التحديد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2095"/>
+        <location filename="../Main/MainWindow.ui" line="2132"/>
         <source>Compiled arrays</source>
         <translation>المصفوفات المجمعة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2144"/>
+        <location filename="../Main/MainWindow.ui" line="2181"/>
         <source>Export simulation data</source>
         <translation>تصدير بيانات المحاكاة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2164"/>
+        <location filename="../Main/MainWindow.ui" line="2201"/>
         <source>Update the islands dispayed</source>
         <translation>تحديث الجزر dispayed</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2204"/>
+        <location filename="../Main/MainWindow.ui" line="2241"/>
         <source>Copy to data frame to clipboard in array format</source>
         <translation>نسخ إلى إطار البيانات إلى الحافظة بتنسيق الصفيف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2247"/>
+        <location filename="../Main/MainWindow.ui" line="2284"/>
         <source>Plot values</source>
         <translation>قيم المؤامرة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2270"/>
+        <location filename="../Main/MainWindow.ui" line="2307"/>
         <source>Copy array to clipboard</source>
         <translation>نسخ المصفوفة إلى الحافظة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2306"/>
+        <location filename="../Main/MainWindow.ui" line="2343"/>
         <source>Comments</source>
         <translation>تعليقات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2312"/>
+        <location filename="../Main/MainWindow.ui" line="2349"/>
         <source>Write here some comments about the grid</source>
         <translation>اكتب هنا بعض التعليقات حول الشبكة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2328"/>
-        <location filename="../Main/MainWindow.ui" line="2393"/>
-        <location filename="../Main/MainWindow.ui" line="12841"/>
+        <location filename="../Main/MainWindow.ui" line="2365"/>
+        <location filename="../Main/MainWindow.ui" line="2430"/>
+        <location filename="../Main/MainWindow.ui" line="12878"/>
         <source>Results</source>
         <translation>نتائج</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2449"/>
+        <location filename="../Main/MainWindow.ui" line="2486"/>
         <source>Saved results in this file</source>
         <translation>النتائج المحفوظة في هذا الملف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2505"/>
+        <location filename="../Main/MainWindow.ui" line="2542"/>
         <source>Tables</source>
         <translation>الجداول</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2589"/>
+        <location filename="../Main/MainWindow.ui" line="2626"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Subjects:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;col, idx, val, colobj, idxobj&lt;/p&gt;&lt;p&gt;colobj and idxobj allow accessing the objects that may be represented at the index or the columns. With these you can access their internal properties for filtering.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Operators:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&amp;gt;, &amp;lt;, &amp;gt;=, &amp;lt;=, !=, =, like, notlike, starts, ends&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Examples:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The columns should not be column1 or column2, the values should be &amp;gt; 5 and the index be like ab of mn&lt;/span&gt;&lt;/p&gt;&lt;p&gt;-&amp;gt; &lt;span style=&quot; font-style:italic;&quot;&gt;col != [column1, column2] and val &amp;gt; 5 or idx like [ab, mn]&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Filter the table values that are between 0.5 and 20&lt;/span&gt;&lt;/p&gt;&lt;p&gt;-&amp;gt; &lt;span style=&quot; font-style:italic;&quot;&gt;val &amp;gt; 0.5 and val &amp;lt; 20.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;المواضيع:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;col، idx، val، colobj، idxobj&lt;/p&gt;&lt;p&gt;يسمح colobj وidxobj بالوصول إلى الكائنات التي قد يتم تمثيلها في الفهرس أو الأعمدة. مع هذه يمكنك الوصول إلى خصائصها الداخلية للتصفية.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;المشغلين:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&gt;، &lt;، &gt;=، &lt;=، !=، =، مثل، ليس مثل، يبدأ، ينتهي&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;أمثلة:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;يجب ألا تكون الأعمدة column1 أو column2، ويجب أن تكون القيم &gt; 5 ويكون الفهرس مثل ab من mn&lt;/span&gt;&lt;/p&gt;&lt;p&gt;-&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;col != [column1, column2] و val &gt; 5 أو idx مثل [ab, mn]&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;قم بتصفية قيم الجدول التي تتراوح بين 0.5 و20&lt;/span&gt;&lt;/p&gt;&lt;p&gt;-&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;فال&gt; 0.5 و فال &lt;20.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2596"/>
-        <location filename="../Main/MainWindow.ui" line="2830"/>
+        <location filename="../Main/MainWindow.ui" line="2633"/>
+        <location filename="../Main/MainWindow.ui" line="2867"/>
         <source>Smart search</source>
         <translation>بحث ذكي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2630"/>
+        <location filename="../Main/MainWindow.ui" line="2667"/>
         <source>Transpose the results</source>
         <translation>تبديل النتائج</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2644"/>
+        <location filename="../Main/MainWindow.ui" line="2681"/>
         <source>Results as cummulative density functions</source>
         <translation>النتائج كوظائف الكثافة التراكمية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2661"/>
+        <location filename="../Main/MainWindow.ui" line="2698"/>
         <source>Results as absolute values</source>
         <translation>النتائج كقيم مطلقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2678"/>
+        <location filename="../Main/MainWindow.ui" line="2715"/>
         <source>Stacked plot</source>
         <translation>مؤامرة مكدسة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2695"/>
+        <location filename="../Main/MainWindow.ui" line="2732"/>
         <source>Copy to data frame to clipboard</source>
         <translation>نسخ إلى إطار البيانات إلى الحافظة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2709"/>
+        <location filename="../Main/MainWindow.ui" line="2746"/>
         <source>Copy data in numpy format to clipboard</source>
         <translation>انسخ البيانات بتنسيق numpy إلى الحافظة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2723"/>
-        <location filename="../Main/MainWindow.ui" line="10961"/>
+        <location filename="../Main/MainWindow.ui" line="2760"/>
+        <location filename="../Main/MainWindow.ui" line="10998"/>
         <source>Export data</source>
         <translation>تصدير البيانات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2737"/>
+        <location filename="../Main/MainWindow.ui" line="2774"/>
         <source>Plot the data in a separated window</source>
         <translation>رسم البيانات في نافذة منفصلة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2775"/>
+        <location filename="../Main/MainWindow.ui" line="2812"/>
         <source>Dynamics</source>
         <translation>ديناميات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2823"/>
+        <location filename="../Main/MainWindow.ui" line="2860"/>
         <source>Type the search term</source>
         <translation>اكتب مصطلح البحث</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2844"/>
+        <location filename="../Main/MainWindow.ui" line="2881"/>
         <source>Open the RMS pre-simulation dynamic plot editor</source>
         <translation>افتح محرر المؤامرة الديناميكية للمحاكاة المسبقة RMS</translation>
     </message>
@@ -5108,7 +7406,7 @@ Monte Carlo power flow results:</source>
         <translation type="vanished">مؤامرات RMS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2858"/>
+        <location filename="../Main/MainWindow.ui" line="2895"/>
         <source>Open the EMT pre-simulation dynamic plot editor</source>
         <translation>افتح محرر المؤامرة الديناميكية للمحاكاة المسبقة EMT</translation>
     </message>
@@ -5117,229 +7415,229 @@ Monte Carlo power flow results:</source>
         <translation type="vanished">مؤامرات EMT</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2885"/>
+        <location filename="../Main/MainWindow.ui" line="2922"/>
         <source>Add new plot</source>
         <translation>إضافة مؤامرة جديدة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2899"/>
+        <location filename="../Main/MainWindow.ui" line="2936"/>
         <source>Remove selected plot</source>
         <translation>إزالة قطعة الأرض المحددة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2913"/>
+        <location filename="../Main/MainWindow.ui" line="2950"/>
         <source>Display selected plot</source>
         <translation>عرض المؤامرة المحددة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2958"/>
+        <location filename="../Main/MainWindow.ui" line="2995"/>
         <source>Drag and drop the Var to the desired plot. Double click to plot directly.</source>
         <translation>قم بسحب وإسقاط Var إلى المؤامرة المطلوبة. انقر مرتين للرسم مباشرة.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3029"/>
+        <location filename="../Main/MainWindow.ui" line="3066"/>
         <source>Logs</source>
         <translation>سجلات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3072"/>
+        <location filename="../Main/MainWindow.ui" line="3109"/>
         <source>Save the logs to a file</source>
         <translation>احفظ السجلات في ملف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3101"/>
+        <location filename="../Main/MainWindow.ui" line="3138"/>
         <source>Report</source>
         <translation>تقرير</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3126"/>
+        <location filename="../Main/MainWindow.ui" line="3163"/>
         <source>Scripting</source>
         <translation>البرمجة النصية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3211"/>
+        <location filename="../Main/MainWindow.ui" line="3248"/>
         <source>New script, will delete the existing code.</source>
         <translation>البرنامج النصي الجديد، سوف يحذف الكود الموجود.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3225"/>
+        <location filename="../Main/MainWindow.ui" line="3262"/>
         <source>Save the current source code</source>
         <translation>احفظ كود المصدر الحالي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3246"/>
+        <location filename="../Main/MainWindow.ui" line="3283"/>
         <source>Name of the source code file</source>
         <translation>اسم ملف التعليمات البرمجية المصدر</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3260"/>
+        <location filename="../Main/MainWindow.ui" line="3297"/>
         <source>Run the source code in the console</source>
         <translation>قم بتشغيل التعليمات البرمجية المصدر في وحدة التحكم</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3326"/>
+        <location filename="../Main/MainWindow.ui" line="3363"/>
         <source>Python console</source>
         <translation>وحدة تحكم بايثون</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3399"/>
+        <location filename="../Main/MainWindow.ui" line="3436"/>
         <source>Clear the console</source>
         <translation>امسح وحدة التحكم</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3427"/>
+        <location filename="../Main/MainWindow.ui" line="3464"/>
         <source>Source code</source>
         <translation>كود المصدر</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3469"/>
+        <location filename="../Main/MainWindow.ui" line="3506"/>
         <source>Settings</source>
         <translation>إعدادات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3698"/>
+        <location filename="../Main/MainWindow.ui" line="3735"/>
         <source>Frequency</source>
         <translation>تكرار</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3705"/>
+        <location filename="../Main/MainWindow.ui" line="3742"/>
         <source>Snapshot time</source>
         <translation>وقت اللقطة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3736"/>
+        <location filename="../Main/MainWindow.ui" line="3773"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;System frequency&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This only has an effect in the program when computing lines&apos; per-unit impedance from ohm values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تردد النظام&lt;/span&gt;&lt;/p&gt;&lt;p&gt;وهذا له تأثير فقط في البرنامج عند حساب مقاومة الخطوط لكل وحدة من قيم الأوم.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3739"/>
+        <location filename="../Main/MainWindow.ui" line="3776"/>
         <source> Hz</source>
         <translation>Hz</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3765"/>
+        <location filename="../Main/MainWindow.ui" line="3802"/>
         <source>Base power</source>
         <translation>القوة الأساسية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3772"/>
+        <location filename="../Main/MainWindow.ui" line="3809"/>
         <source>Name of the grid model</source>
         <translation>اسم نموذج الشبكة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3786"/>
+        <location filename="../Main/MainWindow.ui" line="3823"/>
         <source>Grid name</source>
         <translation>اسم الشبكة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3793"/>
+        <location filename="../Main/MainWindow.ui" line="3830"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Base power&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Despite all the bibliography, changing this number to anything other than 100 MVA, might change the meaning of what sensible per-unit voltage are.&lt;/p&gt;&lt;p&gt;So, don&apos;t touch it. To have power in kW, use the option at the loads, geneerators, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;القوة الأساسية&lt;/span&gt;&lt;/p&gt;&lt;p&gt;على الرغم من كل المراجع، فإن تغيير هذا الرقم إلى أي شيء آخر غير 100 MVA، قد يغير معنى الجهد المعقول لكل وحدة.&lt;/p&gt;&lt;p&gt;لذا، لا تلمسها. للحصول على الطاقة في kW، استخدم الخيار عند الأحمال والمولدات وما إلى ذلك.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3796"/>
+        <location filename="../Main/MainWindow.ui" line="3833"/>
         <source> MVA</source>
         <translation>MVA</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3815"/>
+        <location filename="../Main/MainWindow.ui" line="3852"/>
         <source>Engine to be used when available</source>
         <translation>المحرك الذي سيتم استخدامه عند توفره</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3822"/>
+        <location filename="../Main/MainWindow.ui" line="3859"/>
         <source>Engine</source>
         <translation>محرك</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3829"/>
+        <location filename="../Main/MainWindow.ui" line="3866"/>
         <source>Language</source>
         <translation>لغة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3839"/>
+        <location filename="../Main/MainWindow.ui" line="3876"/>
         <source>Dark mode</source>
         <translation>الوضع المظلم</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3868"/>
+        <location filename="../Main/MainWindow.ui" line="3905"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Settings for state estimation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;إعدادات تقدير الحالة.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3905"/>
-        <location filename="../Main/MainWindow.ui" line="3915"/>
+        <location filename="../Main/MainWindow.ui" line="3942"/>
+        <location filename="../Main/MainWindow.ui" line="3952"/>
         <source>Power flow settings</source>
         <translation>إعدادات تدفق الطاقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3912"/>
+        <location filename="../Main/MainWindow.ui" line="3949"/>
         <source>Pf</source>
         <translation>الجبهة الوطنية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3988"/>
+        <location filename="../Main/MainWindow.ui" line="4025"/>
         <source>Power flow</source>
         <translation>تدفق الطاقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4128"/>
+        <location filename="../Main/MainWindow.ui" line="4165"/>
         <source>PTDF / LODF</source>
         <translation>بتف / لودف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4200"/>
+        <location filename="../Main/MainWindow.ui" line="4237"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Theoretically PTDF and LODF values should be in the range (-1, 1)&lt;br/&gt;However, this is not true in general for any grid due to the existence of antennas.&lt;br/&gt;With this option the values are truncated to the range (-1, 1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;نظريًا، يجب أن تكون قيم PTDF وLODF في النطاق (-1، 1)&lt;br/&gt;إلا أن هذا لا ينطبق بشكل عام على أي شبكة بسبب وجود الهوائيات.&lt;br/&gt;باستخدام هذا الخيار، يتم اقتطاع القيم إلى النطاق (-1، 1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4203"/>
+        <location filename="../Main/MainWindow.ui" line="4240"/>
         <source>Correct nonsense values</source>
         <translation>تصحيح القيم الهراء</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4213"/>
+        <location filename="../Main/MainWindow.ui" line="4250"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;With this option, the PTDF is computed such that the slack effects are distributed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;باستخدام هذا الخيار، يتم حساب PTDF بحيث يتم توزيع تأثيرات الركود&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4216"/>
-        <location filename="../Main/MainWindow.ui" line="4445"/>
+        <location filename="../Main/MainWindow.ui" line="4253"/>
+        <location filename="../Main/MainWindow.ui" line="4482"/>
         <source>Distributed slack</source>
         <translation>الركود الموزع</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4226"/>
+        <location filename="../Main/MainWindow.ui" line="4263"/>
         <source>Threshold under which sensitivities are ignored when the PTDF is converted to sparse</source>
         <translation>العتبة التي يتم بموجبها تجاهل الحساسيات عندما يتم تحويل PTDF إلى متفرق</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4245"/>
+        <location filename="../Main/MainWindow.ui" line="4282"/>
         <source>LODF threshold</source>
         <translation>عتبة LODF</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4289"/>
+        <location filename="../Main/MainWindow.ui" line="4326"/>
         <source>Threshold under which sensitivities are ignored when the LODF is converted to sparse</source>
         <translation>العتبة التي يتم بموجبها تجاهل الحساسيات عندما يتم تحويل LODF إلى متفرق</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4308"/>
+        <location filename="../Main/MainWindow.ui" line="4345"/>
         <source>PTDF threshold</source>
         <translation>عتبة PTDF</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4334"/>
+        <location filename="../Main/MainWindow.ui" line="4371"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum numberof iterations to use.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Tipical values: &lt;/p&gt;&lt;p&gt;Newton Raphson: 5&lt;/p&gt;&lt;p&gt;Levenberg-Marquards: 20&lt;/p&gt;&lt;p&gt;Fast decoupled: 10&lt;/p&gt;&lt;p&gt;Others: 20&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;الحد الأقصى لعدد التكرارات للاستخدام.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;القيم النموذجية:&lt;/p&gt;&lt;p&gt;نيوتن رافسون: 5&lt;/p&gt;&lt;p&gt;ليفنبرج-ماركاردز: 20&lt;/p&gt;&lt;p&gt;فصل سريع: 10&lt;/p&gt;&lt;p&gt;أخرى: 20&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4337"/>
+        <location filename="../Main/MainWindow.ui" line="4374"/>
         <source> iterations</source>
         <translation>التكرارات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4359"/>
+        <location filename="../Main/MainWindow.ui" line="4396"/>
         <source>Find the tolerance that best represents the load values for power flow</source>
         <translation>ابحث عن التسامح الذي يمثل قيم الحمل لتدفق الطاقة بشكل أفضل</translation>
     </message>
@@ -5348,2516 +7646,2524 @@ Monte Carlo power flow results:</source>
         <translation type="vanished">يجد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4386"/>
+        <location filename="../Main/MainWindow.ui" line="4423"/>
         <source>Max. iterations</source>
         <translation>الأعلى. التكرارات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4402"/>
+        <location filename="../Main/MainWindow.ui" line="4439"/>
         <source>General switch for generators remote voltage control</source>
         <translation>مفتاح عام للمولدات للتحكم في الجهد عن بعد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4405"/>
+        <location filename="../Main/MainWindow.ui" line="4442"/>
         <source>Control remote voltage</source>
         <translation>التحكم في الجهد عن بعد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4412"/>
+        <location filename="../Main/MainWindow.ui" line="4449"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the selected method does not converge, try a list of methods that may help&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;إذا لم تتقارب الطريقة المحددة، فجرب قائمة الطرق التي قد تساعد&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4415"/>
+        <location filename="../Main/MainWindow.ui" line="4452"/>
         <source>Retry with other methods</source>
         <translation>أعد المحاولة بطرق أخرى</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4425"/>
+        <location filename="../Main/MainWindow.ui" line="4462"/>
         <source>General switch for branches tap module control</source>
         <translation>مفتاح عام للفروع، اضغط على وحدة التحكم</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4428"/>
+        <location filename="../Main/MainWindow.ui" line="4465"/>
         <source>Control tap module</source>
         <translation>وحدة التحكم في الصنبور</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4435"/>
+        <location filename="../Main/MainWindow.ui" line="4472"/>
         <source>Apply impedance tolerances</source>
         <translation>تطبيق التحمل مقاومة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4442"/>
+        <location filename="../Main/MainWindow.ui" line="4479"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If active, the slack power is distributed among the generators according to their installed power &amp;quot;Snom&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;في حالة تفعيلها يتم توزيع الطاقة الراكدة بين المولدات حسب الطاقة المركبة لها &quot;سنوم&quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4452"/>
+        <location filename="../Main/MainWindow.ui" line="4489"/>
         <source>If checked, the power flow solution is initialized with a linear (so called DC) power flow first</source>
         <translation>في حالة تحديده، تتم تهيئة حل تدفق الطاقة بتدفق طاقة خطي (يسمى DC) أولاً</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4455"/>
+        <location filename="../Main/MainWindow.ui" line="4492"/>
         <source>Initialize angles</source>
         <translation>تهيئة الزوايا</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4462"/>
+        <location filename="../Main/MainWindow.ui" line="4499"/>
         <source>If active, the islands of a single node are ignored.</source>
         <translation>إذا كانت نشطة، فسيتم تجاهل جزر العقدة الواحدة.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4465"/>
+        <location filename="../Main/MainWindow.ui" line="4502"/>
         <source>Ignore single node islands</source>
         <translation>تجاهل جزر العقدة الواحدة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4475"/>
+        <location filename="../Main/MainWindow.ui" line="4512"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If active, the Vm0 and Va0 properties of the bus objects are used to initialize the power flow simulation.&lt;/p&gt;&lt;p&gt;If you need this it is a sign of grid ill conditioning by something else like incorrect impedances of too much loading, specially reactive power that cannot be transported.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;إذا كانت نشطة، يتم استخدام خصائص Vm0 وVa0 لكائنات الناقل لتهيئة محاكاة تدفق الطاقة.&lt;/p&gt;&lt;p&gt;إذا كنت بحاجة إلى ذلك، فهذه علامة على سوء تكييف الشبكة بسبب شيء آخر مثل الممانعات غير الصحيحة للتحميل الزائد، وخاصة الطاقة التفاعلية التي لا يمكن نقلها.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4478"/>
+        <location filename="../Main/MainWindow.ui" line="4515"/>
         <source>Use voltage guess</source>
         <translation>استخدام تخمين الجهد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4485"/>
-        <location filename="../Main/MainWindow.ui" line="5971"/>
+        <location filename="../Main/MainWindow.ui" line="4522"/>
+        <location filename="../Main/MainWindow.ui" line="6008"/>
         <source>Add a results report in the logs</source>
         <translation>إضافة تقرير النتائج في السجلات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4488"/>
-        <location filename="../Main/MainWindow.ui" line="5974"/>
+        <location filename="../Main/MainWindow.ui" line="4525"/>
+        <location filename="../Main/MainWindow.ui" line="6011"/>
         <source>Add report</source>
         <translation>إضافة تقرير</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4495"/>
+        <location filename="../Main/MainWindow.ui" line="4532"/>
         <source>General switch for reactive power limits control</source>
         <translation>مفتاح عام للتحكم في حدود الطاقة التفاعلية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4498"/>
-        <location filename="../Main/MainWindow.ui" line="5871"/>
+        <location filename="../Main/MainWindow.ui" line="4535"/>
+        <location filename="../Main/MainWindow.ui" line="5908"/>
         <source>Control Q limits</source>
         <translation>التحكم في حدود Q</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4505"/>
+        <location filename="../Main/MainWindow.ui" line="4542"/>
         <source>General switch for branches tap phase control</source>
         <translation>مفتاح عام للتحكم في مرحلة الحنفية للفروع</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4508"/>
+        <location filename="../Main/MainWindow.ui" line="4545"/>
         <source>Control tap phase</source>
         <translation>التحكم في مرحلة الصنبور</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4515"/>
+        <location filename="../Main/MainWindow.ui" line="4552"/>
         <source>If checked, the controls are adjusted to their closest tap</source>
         <translation>إذا تم تحديده، فسيتم ضبط عناصر التحكم على أقرب نقرة لها</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4518"/>
+        <location filename="../Main/MainWindow.ui" line="4555"/>
         <source>Orthogonalize controls</source>
         <translation>تعامد الضوابط</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4525"/>
+        <location filename="../Main/MainWindow.ui" line="4562"/>
         <source>Correct the branches resistance using the temperature</source>
         <translation>تصحيح مقاومة الفروع باستخدام درجة الحرارة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4528"/>
+        <location filename="../Main/MainWindow.ui" line="4565"/>
         <source>Apply temperature correction</source>
         <translation>تطبيق تصحيح درجة الحرارة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4538"/>
-        <location filename="../Main/MainWindow.ui" line="5830"/>
+        <location filename="../Main/MainWindow.ui" line="4575"/>
+        <location filename="../Main/MainWindow.ui" line="5867"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Factor that multiplies each increment solution. &lt;/p&gt;&lt;p&gt;In practice this is used to slow down troublesome solutions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;العامل الذي يضاعف كل حل الزيادة.&lt;/p&gt;&lt;p&gt;في الممارسة العملية، يتم استخدام هذا لإبطاء الحلول المزعجة.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4541"/>
-        <location filename="../Main/MainWindow.ui" line="4590"/>
-        <location filename="../Main/MainWindow.ui" line="4643"/>
+        <location filename="../Main/MainWindow.ui" line="4578"/>
+        <location filename="../Main/MainWindow.ui" line="4627"/>
+        <location filename="../Main/MainWindow.ui" line="4680"/>
         <source> p.u.</source>
         <translation>بو.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4563"/>
+        <location filename="../Main/MainWindow.ui" line="4600"/>
         <source>Level of console information. 0: None, 1: some information, 2: all the information</source>
         <translation>مستوى معلومات وحدة التحكم. 0: لا شيء، 1: بعض المعلومات، 2: جميع المعلومات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4573"/>
-        <location filename="../Main/MainWindow.ui" line="5115"/>
-        <location filename="../Main/MainWindow.ui" line="8549"/>
+        <location filename="../Main/MainWindow.ui" line="4610"/>
+        <location filename="../Main/MainWindow.ui" line="5152"/>
+        <location filename="../Main/MainWindow.ui" line="8586"/>
         <source>Solver</source>
         <translation>حلالا</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4580"/>
-        <location filename="../Main/MainWindow.ui" line="5855"/>
+        <location filename="../Main/MainWindow.ui" line="4617"/>
+        <location filename="../Main/MainWindow.ui" line="5892"/>
         <source>Trust radius</source>
         <translation>دائرة نصف قطرها الثقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4587"/>
-        <location filename="../Main/MainWindow.ui" line="5243"/>
-        <location filename="../Main/MainWindow.ui" line="5789"/>
-        <location filename="../Main/MainWindow.ui" line="8039"/>
-        <location filename="../Main/MainWindow.ui" line="8457"/>
+        <location filename="../Main/MainWindow.ui" line="4624"/>
+        <location filename="../Main/MainWindow.ui" line="5280"/>
+        <location filename="../Main/MainWindow.ui" line="5826"/>
+        <location filename="../Main/MainWindow.ui" line="8076"/>
+        <location filename="../Main/MainWindow.ui" line="8494"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Error tolerance of the method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;التسامح مع الخطأ في الطريقة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4593"/>
-        <location filename="../Main/MainWindow.ui" line="4646"/>
-        <location filename="../Main/MainWindow.ui" line="5246"/>
-        <location filename="../Main/MainWindow.ui" line="5792"/>
-        <location filename="../Main/MainWindow.ui" line="8042"/>
-        <location filename="../Main/MainWindow.ui" line="8460"/>
-        <location filename="../Main/MainWindow.ui" line="9968"/>
-        <location filename="../Main/MainWindow.ui" line="10230"/>
+        <location filename="../Main/MainWindow.ui" line="4630"/>
+        <location filename="../Main/MainWindow.ui" line="4683"/>
+        <location filename="../Main/MainWindow.ui" line="5283"/>
+        <location filename="../Main/MainWindow.ui" line="5829"/>
+        <location filename="../Main/MainWindow.ui" line="8079"/>
+        <location filename="../Main/MainWindow.ui" line="8497"/>
+        <location filename="../Main/MainWindow.ui" line="10005"/>
+        <location filename="../Main/MainWindow.ui" line="10267"/>
         <source>1e-</source>
         <translation>1ه-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4619"/>
+        <location filename="../Main/MainWindow.ui" line="4656"/>
         <source>Verbosity</source>
         <translation>الإسهاب</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4626"/>
-        <location filename="../Main/MainWindow.ui" line="5223"/>
-        <location filename="../Main/MainWindow.ui" line="5776"/>
-        <location filename="../Main/MainWindow.ui" line="8113"/>
-        <location filename="../Main/MainWindow.ui" line="8496"/>
+        <location filename="../Main/MainWindow.ui" line="4663"/>
+        <location filename="../Main/MainWindow.ui" line="5260"/>
+        <location filename="../Main/MainWindow.ui" line="5813"/>
+        <location filename="../Main/MainWindow.ui" line="8150"/>
+        <location filename="../Main/MainWindow.ui" line="8533"/>
         <source>Tolerance</source>
         <translation>تسامح</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4633"/>
+        <location filename="../Main/MainWindow.ui" line="4670"/>
         <source>Controls apply after</source>
         <translation>تنطبق الضوابط بعد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4640"/>
+        <location filename="../Main/MainWindow.ui" line="4677"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;VeraGrid does not have an &amp;quot;outer loop&amp;quot;&lt;br/&gt;Instead, in iterative numerical methods (Newton-Raphson, Levenberg-Marquardt, Powell Dog Leg) the controls apply after a certain error threshold has been reached.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;VeraGrid لا يحتوي على &quot;حلقة خارجية&quot;&lt;br/&gt;بدلاً من ذلك، في الطرق العددية التكرارية (نيوتن-رافسون، ليفينبيرج-ماركوارت، باول دوج ليج) يتم تطبيق الضوابط بعد الوصول إلى حد خطأ معين.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4666"/>
+        <location filename="../Main/MainWindow.ui" line="4703"/>
         <source>Continuation power flow settings</source>
         <translation>استمرار إعدادات تدفق الطاقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4673"/>
+        <location filename="../Main/MainWindow.ui" line="4710"/>
         <source>Cpf</source>
         <translation>CPF</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4676"/>
+        <location filename="../Main/MainWindow.ui" line="4713"/>
         <source>Continuation power flow related settings</source>
         <translation>استمرار الإعدادات المتعلقة بتدفق الطاقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4707"/>
+        <location filename="../Main/MainWindow.ui" line="4744"/>
         <source>Stop at</source>
         <translation>توقف عند</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4714"/>
+        <location filename="../Main/MainWindow.ui" line="4751"/>
         <source>Refer to the NTC areas (Linear tab)</source>
         <translation>الرجوع إلى مناطق NTC (علامة التبويب الخطية)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4794"/>
+        <location filename="../Main/MainWindow.ui" line="4831"/>
         <source>Now</source>
         <translation>الآن</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4801"/>
+        <location filename="../Main/MainWindow.ui" line="4838"/>
         <source>Use departure and target points from time series</source>
         <translation>استخدم نقاط المغادرة والهدف من السلاسل الزمنية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4811"/>
+        <location filename="../Main/MainWindow.ui" line="4848"/>
         <source>Available transfer capacity</source>
         <translation>سعة النقل المتاحة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4825"/>
+        <location filename="../Main/MainWindow.ui" line="4862"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lambda factor&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;عامل لامدا&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4832"/>
-        <location filename="../Main/MainWindow.ui" line="5028"/>
+        <location filename="../Main/MainWindow.ui" line="4869"/>
+        <location filename="../Main/MainWindow.ui" line="5065"/>
         <source>Max. Iterations</source>
         <translation>الأعلى. التكرارات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4839"/>
+        <location filename="../Main/MainWindow.ui" line="4876"/>
         <source>Target</source>
         <translation>هدف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4941"/>
-        <location filename="../Main/MainWindow.ui" line="11371"/>
+        <location filename="../Main/MainWindow.ui" line="4978"/>
+        <location filename="../Main/MainWindow.ui" line="11408"/>
         <source>Continuation power flow</source>
         <translation>استمرار تدفق الطاقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4959"/>
+        <location filename="../Main/MainWindow.ui" line="4996"/>
         <source>Simulation mode</source>
         <translation>وضع المحاكاة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4966"/>
+        <location filename="../Main/MainWindow.ui" line="5003"/>
         <source>Increase system loading</source>
         <translation>زيادة تحميل النظام</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5010"/>
+        <location filename="../Main/MainWindow.ui" line="5047"/>
         <source>SE</source>
         <translation>SE</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5038"/>
+        <location filename="../Main/MainWindow.ui" line="5075"/>
         <source>Observability analysis</source>
         <translation>تحليل إمكانية الملاحظة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5108"/>
+        <location filename="../Main/MainWindow.ui" line="5145"/>
         <source>Fixed slack</source>
         <translation>الركود الثابت</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5210"/>
-        <location filename="../Main/MainWindow.ui" line="12697"/>
+        <location filename="../Main/MainWindow.ui" line="5247"/>
+        <location filename="../Main/MainWindow.ui" line="12734"/>
         <source>State estimation</source>
         <translation>تقدير الدولة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5262"/>
+        <location filename="../Main/MainWindow.ui" line="5299"/>
         <source>Prefer correct</source>
         <translation>تفضل الصحيح</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5269"/>
+        <location filename="../Main/MainWindow.ui" line="5306"/>
         <source>Add pseudo measurements</source>
         <translation>إضافة قياسات زائفة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5276"/>
+        <location filename="../Main/MainWindow.ui" line="5313"/>
         <source>Measurements profiling</source>
         <translation>قياسات التنميط</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5300"/>
-        <location filename="../Main/MainWindow.ui" line="5310"/>
+        <location filename="../Main/MainWindow.ui" line="5337"/>
+        <location filename="../Main/MainWindow.ui" line="5347"/>
         <source>Optimal power flow settings</source>
         <translation>إعدادات تدفق الطاقة الأمثل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5307"/>
+        <location filename="../Main/MainWindow.ui" line="5344"/>
         <source>Opf</source>
         <translation>مقابل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5322"/>
+        <location filename="../Main/MainWindow.ui" line="5359"/>
         <source>Linear settings</source>
         <translation>الإعدادات الخطية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5458"/>
+        <location filename="../Main/MainWindow.ui" line="5495"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the time grouping to possibly shorten the solution time.&lt;/p&gt;&lt;p&gt;This splits the time series by week, month, etc. and the subproblems are solved sequentially.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;اختر التجميع الزمني لتقصير وقت الحل.&lt;/p&gt;&lt;p&gt;يؤدي هذا إلى تقسيم السلسلة الزمنية حسب الأسبوع والشهر وما إلى ذلك ويتم حل المشكلات الفرعية بالتسلسل.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5492"/>
+        <location filename="../Main/MainWindow.ui" line="5529"/>
         <source>Consider per-area generation spinning reserve</source>
         <translation>ضع في اعتبارك احتياطي الغزل لكل منطقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5495"/>
+        <location filename="../Main/MainWindow.ui" line="5532"/>
         <source>Spinning reserve</source>
         <translation>احتياطي الغزل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5607"/>
+        <location filename="../Main/MainWindow.ui" line="5644"/>
         <source>Instead of using the generation, loads cost for dispatching, use the GLSK (Generation, Load Shift Keys)</source>
         <translation>بدلاً من استخدام التوليد، وتكلفة التحميل للإرسال، استخدم GLSK (التوليد، تحميل مفاتيح التحول)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5610"/>
+        <location filename="../Main/MainWindow.ui" line="5647"/>
         <source>Use GSLK as costs</source>
         <translation>استخدم GSLK كتكاليف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5373"/>
+        <location filename="../Main/MainWindow.ui" line="5410"/>
         <source>MIP framework</source>
         <translation>إطار عمل MIP</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5591"/>
+        <location filename="../Main/MainWindow.ui" line="5628"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When checked, the generation costs will use the quadratic coefficients cost, which will trigger a more complex formulation to approximate the quadratic thermal generation curve. Otherwise a linear model is used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;عند التحديد، ستستخدم تكاليف التوليد معاملات التكلفة التربيعية، مما يؤدي إلى تفعيل صياغة أكثر تعقيدًا لتقريب منحنى التوليد الحراري التربيعي. وإلا فسيُستخدم نموذج خطي.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5594"/>
+        <location filename="../Main/MainWindow.ui" line="5631"/>
         <source>Use quadratic costs</source>
         <translation>استخدام التكاليف التربيعية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5419"/>
+        <location filename="../Main/MainWindow.ui" line="5456"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the zonal grouping.&lt;br/&gt;When All (Copper plate) is selected, the branch restrictions are ignored&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;اختر التجمع المناطقي.&lt;br/&gt;عند تحديد الكل (لوحة نحاسية)، يتم تجاهل قيود الفروع&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5432"/>
+        <location filename="../Main/MainWindow.ui" line="5469"/>
         <source>Choose the external mixed integer framework</source>
         <translation>اختر الإطار الصحيح المختلط الخارجي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5399"/>
+        <location filename="../Main/MainWindow.ui" line="5436"/>
         <source>Time grouping</source>
         <translation>تجميع الوقت</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5508"/>
+        <location filename="../Main/MainWindow.ui" line="5545"/>
         <source>Consider generation minimum up/down time</source>
         <translation>ضع في اعتبارك الحد الأدنى من وقت التوليد لأعلى/لأسفل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5511"/>
+        <location filename="../Main/MainWindow.ui" line="5548"/>
         <source>Consider min up/down time</source>
         <translation>النظر في الحد الأدنى من الوقت لأعلى / لأسفل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5623"/>
+        <location filename="../Main/MainWindow.ui" line="5660"/>
         <source>When checked, the branch losses will be aproximated by a factor r * rate / (V^2)</source>
         <translation>عند تحديده، سيتم تقريب خسائر الفروع بعامل r * Rate / (V^2)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5626"/>
+        <location filename="../Main/MainWindow.ui" line="5663"/>
         <source>Approximate losses</source>
         <translation>خسائر تقريبية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5347"/>
+        <location filename="../Main/MainWindow.ui" line="5384"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select how the generation dispatch should behave&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;حدد الطريقة التي يجب أن يتصرف بها إرسال الجيل&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5578"/>
+        <location filename="../Main/MainWindow.ui" line="5615"/>
         <source>Contingency tolerance</source>
         <translation>التسامح في حالات الطوارئ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5540"/>
+        <location filename="../Main/MainWindow.ui" line="5577"/>
         <source>LODF matrix tolerance choosing contingencies</source>
         <translation>LODF مصفوفة التسامح اختيار الحالات الطارئة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5524"/>
+        <location filename="../Main/MainWindow.ui" line="5561"/>
         <source>Consider the contingencies when dispatching</source>
         <translation>النظر في الحالات الطارئة عند الإرسال</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5527"/>
+        <location filename="../Main/MainWindow.ui" line="5564"/>
         <source>Compute contingencies</source>
         <translation>حساب الطوارئ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5655"/>
+        <location filename="../Main/MainWindow.ui" line="5692"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The program will save the MIP formulation and be displayed in the text tab of the results&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;سيقوم البرنامج بحفظ صيغة MIP وسيتم عرضها في علامة تبويب النص الخاصة بالنتائج&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5658"/>
+        <location filename="../Main/MainWindow.ui" line="5695"/>
         <source>Report MIP formulation</source>
         <translation>تقرير صياغة MIP</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5639"/>
+        <location filename="../Main/MainWindow.ui" line="5676"/>
         <source>Fix infeasible problems and rey with the relaxed problem. Applies to OPF and NTC</source>
         <translation>أصلح المشاكل غير الممكنة وتخلص من المشكلة المريحة. ينطبق على OPF وNTC</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5642"/>
+        <location filename="../Main/MainWindow.ui" line="5679"/>
         <source>Fix infeasibilities and retry</source>
         <translation>إصلاح عدم الجدوى وإعادة المحاولة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5562"/>
+        <location filename="../Main/MainWindow.ui" line="5599"/>
         <source>Consider generation ramps</source>
         <translation>النظر في سلالم الجيل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5565"/>
+        <location filename="../Main/MainWindow.ui" line="5602"/>
         <source>Consider ramps</source>
         <translation>خذ بعين الاعتبار المنحدرات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5360"/>
+        <location filename="../Main/MainWindow.ui" line="5397"/>
         <source>Dispatch mode</source>
         <translation>وضع الإرسال</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5386"/>
+        <location filename="../Main/MainWindow.ui" line="5423"/>
         <source>Choose the external mixed integer programming solver</source>
         <translation>اختر حل برمجة الأعداد الصحيحة المختلطة الخارجية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5334"/>
+        <location filename="../Main/MainWindow.ui" line="5371"/>
         <source>Zone grouping</source>
         <translation>تجميع المنطقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5677"/>
+        <location filename="../Main/MainWindow.ui" line="5714"/>
         <source>Nonlinear settings</source>
         <translation>الإعدادات غير الخطية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5702"/>
+        <location filename="../Main/MainWindow.ui" line="5739"/>
         <source>Interior point solver maximum number of iterations</source>
         <translation>الحد الأقصى لعدد حلالا النقاط الداخلية من التكرارات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5705"/>
+        <location filename="../Main/MainWindow.ui" line="5742"/>
         <source>Iterations</source>
         <translation>التكرارات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5718"/>
+        <location filename="../Main/MainWindow.ui" line="5755"/>
         <source>Initialize the interior point OPF with the power flow solution</source>
         <translation>قم بتهيئة النقطة الداخلية OPF باستخدام حل تدفق الطاقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5721"/>
+        <location filename="../Main/MainWindow.ui" line="5758"/>
         <source>Initialize with power flow</source>
         <translation>التهيئة مع تدفق الطاقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5744"/>
+        <location filename="../Main/MainWindow.ui" line="5781"/>
         <source>Number of iterations of the method</source>
         <translation>عدد تكرارات الطريقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5773"/>
+        <location filename="../Main/MainWindow.ui" line="5810"/>
         <source>Interior point solver tolerance</source>
         <translation>التسامح حلالا نقطة الداخلية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5814"/>
+        <location filename="../Main/MainWindow.ui" line="5851"/>
         <source>Interior point solver method</source>
         <translation>طريقة حل النقاط الداخلية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5817"/>
+        <location filename="../Main/MainWindow.ui" line="5854"/>
         <source>IPS method</source>
         <translation>طريقة اي بي اس</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5852"/>
+        <location filename="../Main/MainWindow.ui" line="5889"/>
         <source>Interior point trust radius</source>
         <translation>نصف قطر الثقة للنقطة الداخلية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5868"/>
+        <location filename="../Main/MainWindow.ui" line="5905"/>
         <source>General switch for reactive power limits control in the nonlinear optimal power flow</source>
         <translation>التبديل العام للتحكم في حدود الطاقة التفاعلية في تدفق الطاقة الأمثل غير الخطي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5899"/>
+        <location filename="../Main/MainWindow.ui" line="5936"/>
         <source>Verbosity level</source>
         <translation>مستوى الإسهاب</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5912"/>
-        <location filename="../Main/MainWindow.ui" line="6188"/>
+        <location filename="../Main/MainWindow.ui" line="5949"/>
+        <location filename="../Main/MainWindow.ui" line="6225"/>
         <source>Skip generation limits</source>
         <translation>تخطي حدود الجيل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5925"/>
+        <location filename="../Main/MainWindow.ui" line="5962"/>
         <source>Verbose</source>
         <translation>مطول</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5945"/>
+        <location filename="../Main/MainWindow.ui" line="5982"/>
         <source>Choose the optimal power flow method</source>
         <translation>اختر الطريقة المثلى لتدفق الطاقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5958"/>
-        <location filename="../Main/MainWindow.ui" line="6848"/>
-        <location filename="../Main/MainWindow.ui" line="9021"/>
-        <location filename="../Main/MainWindow.ui" line="9926"/>
-        <location filename="../Main/MainWindow.ui" line="9991"/>
+        <location filename="../Main/MainWindow.ui" line="5995"/>
+        <location filename="../Main/MainWindow.ui" line="6885"/>
+        <location filename="../Main/MainWindow.ui" line="9058"/>
+        <location filename="../Main/MainWindow.ui" line="9963"/>
+        <location filename="../Main/MainWindow.ui" line="10028"/>
         <source>Method</source>
         <translation>طريقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6127"/>
+        <location filename="../Main/MainWindow.ui" line="6164"/>
         <source>Optimal Power Flow</source>
         <translation>تدفق الطاقة الأمثل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6138"/>
+        <location filename="../Main/MainWindow.ui" line="6175"/>
         <source>Net transfer capacity settings</source>
         <translation>إعدادات سعة النقل الصافية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6145"/>
+        <location filename="../Main/MainWindow.ui" line="6182"/>
         <source>Ntc</source>
         <translation>إن تي سي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6148"/>
+        <location filename="../Main/MainWindow.ui" line="6185"/>
         <source>Network transfer capacity related settings</source>
         <translation>الإعدادات المتعلقة بسعة نقل الشبكة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6159"/>
+        <location filename="../Main/MainWindow.ui" line="6196"/>
         <source>Optimization</source>
         <translation>تحسين</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6170"/>
+        <location filename="../Main/MainWindow.ui" line="6207"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This criteria springs from the ACER (Agency for the Cooperation for Energy Regulators).&lt;/p&gt;&lt;p&gt;It determines that a branch is only relevant to be considered in a NTC calculation if the flow due to the exchange is over a percentage (70%) &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;A branch is monitored only if:&lt;/p&gt;&lt;p&gt;(branch_rate * 70%) / branch_alpha &amp;lt;= total exchange rating&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;تنبع هذه المعايير من ACER (وكالة التعاون لمنظمي الطاقة).&lt;/p&gt;&lt;p&gt;ويحدد أن الفرع مناسب فقط ليتم أخذه في الاعتبار في حساب NTC إذا كان التدفق الناتج عن التبادل يزيد عن نسبة مئوية (70%)&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;تتم مراقبة الفرع فقط إذا:&lt;/p&gt;&lt;p&gt;(branch_rate * 70%) / Branch_alpha &lt;= إجمالي تصنيف الصرف&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6173"/>
+        <location filename="../Main/MainWindow.ui" line="6210"/>
         <source>Branch rating contribution (ACER)</source>
         <translation>مساهمة تصنيف الفرع (ACER)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6185"/>
+        <location filename="../Main/MainWindow.ui" line="6222"/>
         <source>If activated, the generation limits are not considered</source>
         <translation>في حالة تفعيلها، لا يتم أخذ حدود التوليد بعين الاعتبار</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6203"/>
-        <location filename="../Main/MainWindow.ui" line="7546"/>
+        <location filename="../Main/MainWindow.ui" line="6240"/>
+        <location filename="../Main/MainWindow.ui" line="7583"/>
         <source> MW</source>
         <translation>MW</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6227"/>
+        <location filename="../Main/MainWindow.ui" line="6264"/>
         <source>If checked, the NTC optimization will use the system declared contingencies</source>
         <translation>إذا تم تحديده، فإن تحسين NTC سيستخدم حالات الطوارئ المعلنة للنظام</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6230"/>
+        <location filename="../Main/MainWindow.ui" line="6267"/>
         <source>Consider constingencies</source>
         <translation>النظر في الحالات الطارئة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6242"/>
+        <location filename="../Main/MainWindow.ui" line="6279"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A branch is monitored solely based on its contribution to the inter-area excahge sensitivity. Therefore a branch is selected if it&apos;s alpha value is greater than the set alpha %&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;تتم مراقبة الفرع فقط بناءً على مساهمته في حساسية الصرف بين المناطق. لذلك يتم تحديد الفرع إذا كانت قيمة ألفا أكبر من نسبة ألفا المحددة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6245"/>
+        <location filename="../Main/MainWindow.ui" line="6282"/>
         <source>Branch exchange sensitivity (α)</source>
         <translation>حساسية تبادل الفروع (α)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6260"/>
-        <location filename="../Main/MainWindow.ui" line="6410"/>
-        <location filename="../Main/MainWindow.ui" line="6509"/>
+        <location filename="../Main/MainWindow.ui" line="6297"/>
+        <location filename="../Main/MainWindow.ui" line="6447"/>
+        <location filename="../Main/MainWindow.ui" line="6546"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6343"/>
+        <location filename="../Main/MainWindow.ui" line="6380"/>
         <source>Determine the branches that enter the optimization</source>
         <translation>تحديد الفروع التي تدخل في التحسين</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6346"/>
+        <location filename="../Main/MainWindow.ui" line="6383"/>
         <source>Branch monitoring selection criteria</source>
         <translation>معايير اختيار مراقبة الفروع</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6395"/>
-        <location filename="../Main/MainWindow.ui" line="7467"/>
-        <location filename="../Main/MainWindow.ui" line="12832"/>
-        <location filename="../Main/MainWindow.ui" line="12859"/>
+        <location filename="../Main/MainWindow.ui" line="6432"/>
+        <location filename="../Main/MainWindow.ui" line="7504"/>
+        <location filename="../Main/MainWindow.ui" line="12869"/>
+        <location filename="../Main/MainWindow.ui" line="12896"/>
         <source>Contingencies</source>
         <translation>الطوارئ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6407"/>
+        <location filename="../Main/MainWindow.ui" line="6444"/>
         <source>Minimum exchange contribution (Alpha)</source>
         <translation>الحد الأدنى لمساهمة الصرف (ألفا)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6428"/>
-        <location filename="../Main/MainWindow.ui" line="6431"/>
+        <location filename="../Main/MainWindow.ui" line="6465"/>
+        <location filename="../Main/MainWindow.ui" line="6468"/>
         <source>Transmission reliability margin (TRM)</source>
         <translation>هامش موثوقية الإرسال (TRM)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6443"/>
+        <location filename="../Main/MainWindow.ui" line="6480"/>
         <source>More strict NTC Formulation: No slacks of any type and specific monitoring criteria</source>
         <translation>صياغة NTC أكثر صرامة: لا يوجد أي تباطؤ من أي نوع ومعايير مراقبة محددة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6446"/>
+        <location filename="../Main/MainWindow.ui" line="6483"/>
         <source>Strict formulation</source>
         <translation>صياغة صارمة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6461"/>
-        <location filename="../Main/MainWindow.ui" line="6798"/>
+        <location filename="../Main/MainWindow.ui" line="6498"/>
+        <location filename="../Main/MainWindow.ui" line="6835"/>
         <source>General</source>
         <translation>عام</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6485"/>
+        <location filename="../Main/MainWindow.ui" line="6522"/>
         <source>Loading threshold to report</source>
         <translation>حد التحميل للإبلاغ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6497"/>
+        <location filename="../Main/MainWindow.ui" line="6534"/>
         <source>Transfer method</source>
         <translation>طريقة النقل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6627"/>
+        <location filename="../Main/MainWindow.ui" line="6664"/>
         <source>Linear</source>
         <translation>خطي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6644"/>
+        <location filename="../Main/MainWindow.ui" line="6681"/>
         <source>Transfer sensitivity threshold</source>
         <translation>نقل عتبة الحساسية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6656"/>
+        <location filename="../Main/MainWindow.ui" line="6693"/>
         <source>n-1 sensibility consideration</source>
         <translation>اعتبارات الحساسية n-1</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6684"/>
+        <location filename="../Main/MainWindow.ui" line="6721"/>
         <source>Threshold used to discard insensitive branches</source>
         <translation>العتبة المستخدمة للتخلص من الفروع غير الحساسة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6708"/>
+        <location filename="../Main/MainWindow.ui" line="6745"/>
         <source>Use existing power flow values for the contingency initialization in the net transfer capacity and contingency simulations</source>
         <translation>استخدم قيم تدفق الطاقة الحالية لتهيئة الطوارئ في صافي سعة النقل ومحاكاة الطوارئ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6711"/>
+        <location filename="../Main/MainWindow.ui" line="6748"/>
         <source>Use power flow values for initialization</source>
         <translation>استخدم قيم تدفق الطاقة للتهيئة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6766"/>
-        <location filename="../Main/MainWindow.ui" line="7010"/>
+        <location filename="../Main/MainWindow.ui" line="6803"/>
+        <location filename="../Main/MainWindow.ui" line="7047"/>
         <source>Select the solver in the OPF tab and the areas in the areas tab</source>
         <translation>حدد الحل في علامة التبويب OPF والمناطق الموجودة في علامة تبويب المناطق</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6769"/>
+        <location filename="../Main/MainWindow.ui" line="6806"/>
         <source>Net transfer capacity</source>
         <translation>صافي القدرة على النقل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6777"/>
+        <location filename="../Main/MainWindow.ui" line="6814"/>
         <source>Nodal capacity hosting options</source>
         <translation>خيارات استضافة السعة العقدية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6784"/>
+        <location filename="../Main/MainWindow.ui" line="6821"/>
         <source>Nhc</source>
         <translation>ان اتش سي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6787"/>
+        <location filename="../Main/MainWindow.ui" line="6824"/>
         <source>Nodal hosting capacity related settings</source>
         <translation>الإعدادات المتعلقة بسعة الاستضافة العقدية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6809"/>
-        <location filename="../Main/MainWindow.ui" line="6827"/>
+        <location filename="../Main/MainWindow.ui" line="6846"/>
+        <location filename="../Main/MainWindow.ui" line="6864"/>
         <source>If the sense is positive, the algorithm will assess the maximum generation capacity in the selected nodes. If it is negative it will asses the maximum loading capacity in the selected nodes.</source>
         <translation>إذا كان المعنى إيجابيًا، فستقوم الخوارزمية بتقييم قدرة التوليد القصوى في العقد المحددة. إذا كانت سلبية، فسيتم تقييم سعة التحميل القصوى في العقد المحددة.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6815"/>
+        <location filename="../Main/MainWindow.ui" line="6852"/>
         <source>Sense</source>
         <translation>حاسة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6860"/>
+        <location filename="../Main/MainWindow.ui" line="6897"/>
         <source>Optimization method to use</source>
         <translation>طريقة الاستخدام الأمثل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7013"/>
+        <location filename="../Main/MainWindow.ui" line="7050"/>
         <source>Nodal hosting capacity</source>
         <translation>قدرة الاستضافة العقدية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7034"/>
+        <location filename="../Main/MainWindow.ui" line="7071"/>
         <source>Area transfer settings</source>
         <translation>إعدادات نقل المنطقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7041"/>
+        <location filename="../Main/MainWindow.ui" line="7078"/>
         <source>Txfr</source>
         <translation>Txfr</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7044"/>
+        <location filename="../Main/MainWindow.ui" line="7081"/>
         <source>Area, Zone, etc related settings</source>
         <translation>المنطقة والمنطقة وغيرها من الإعدادات ذات الصلة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7151"/>
+        <location filename="../Main/MainWindow.ui" line="7188"/>
         <source>Transfer configuration</source>
         <translation>نقل التكوين</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7196"/>
+        <location filename="../Main/MainWindow.ui" line="7233"/>
         <source>From</source>
         <translation>من</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7219"/>
+        <location filename="../Main/MainWindow.ui" line="7256"/>
         <source>To</source>
         <translation>ل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7240"/>
+        <location filename="../Main/MainWindow.ui" line="7277"/>
         <source>Contingencies settings</source>
         <translation>إعدادات الطوارئ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7247"/>
+        <location filename="../Main/MainWindow.ui" line="7284"/>
         <source>Con</source>
         <translation>يخدع</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7250"/>
+        <location filename="../Main/MainWindow.ui" line="7287"/>
         <source>Contingencies related settings</source>
         <translation>الإعدادات المتعلقة بالطوارئ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7277"/>
+        <location filename="../Main/MainWindow.ui" line="7314"/>
         <source>Contingency filter</source>
         <translation>مرشح الطوارئ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7290"/>
+        <location filename="../Main/MainWindow.ui" line="7327"/>
         <source>Filter by</source>
         <translation>تصفية حسب</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7306"/>
+        <location filename="../Main/MainWindow.ui" line="7343"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Filter contingencies&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This option allows you to only consider the contingencies that fall in ceratain groupings such as Area, Zone or Country. The filtering is performed based on the information stored in the Buses.&lt;/p&gt;&lt;p&gt;This is highly discouraged. We trully advise you to not to filter the contingencies and select All Contingencies. Use this feature at your own risk.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تصفية الطوارئ&lt;/span&gt;&lt;/p&gt;&lt;p&gt;يسمح لك هذا الخيار بالنظر فقط في الحالات الطارئة التي تقع في مجموعات معينة مثل المنطقة أو المنطقة أو البلد. يتم إجراء التصفية بناءً على المعلومات المخزنة في الحافلات.&lt;/p&gt;&lt;p&gt;هذا أمر محبط للغاية. ننصحك حقًا بعدم تصفية الحالات الطارئة واختيار كافة الحالات الطارئة. استخدم هذه الميزة على مسؤوليتك الخاصة.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7489"/>
+        <location filename="../Main/MainWindow.ui" line="7526"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dead band over the SRAP rating.&lt;/p&gt;&lt;p&gt;If greater than zero, the SRAP is investigated for values over the branch protections rating until the specified value.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;الفرقة الميتة على تصنيف SRAP.&lt;/p&gt;&lt;p&gt;إذا كانت أكبر من الصفر، يتم فحص SRAP بحثًا عن قيم تتجاوز تصنيف حماية الفرع حتى القيمة المحددة.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7492"/>
+        <location filename="../Main/MainWindow.ui" line="7529"/>
         <source>SRAP dead band</source>
         <translation>SRAP الفرقة الميتة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7506"/>
+        <location filename="../Main/MainWindow.ui" line="7543"/>
         <source>SRAP limit</source>
         <translation>حد SRAP</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7513"/>
+        <location filename="../Main/MainWindow.ui" line="7550"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked the SRAP objective solution is the branch nominal rate. Otherwise, the objective rating is the contingency rating.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;إذا تم تحديد الحل الهدف SRAP هو المعدل الاسمي للفرع. وبخلاف ذلك، فإن التصنيف الموضوعي هو تصنيف الطوارئ.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7516"/>
+        <location filename="../Main/MainWindow.ui" line="7553"/>
         <source>Revert to nominal rating</source>
         <translation>العودة إلى التصنيف الاسمي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7523"/>
+        <location filename="../Main/MainWindow.ui" line="7560"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Activate SRAP (Sistema de reducción automática de potencia)&lt;/p&gt;&lt;p&gt;It is a mechanism that helps avoiding considering a contingency if it would be eventually resolved by nearby generation shifting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;تنشيط SRAP (نظام التخفيض التلقائي للطاقة)&lt;/p&gt;&lt;p&gt;إنها آلية تساعد على تجنب النظر في حالة الطوارئ إذا كان سيتم حلها في النهاية عن طريق تحويل الأجيال القريبة.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7526"/>
+        <location filename="../Main/MainWindow.ui" line="7563"/>
         <source>Use SRAP</source>
         <translation>استخدم سراب</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7533"/>
+        <location filename="../Main/MainWindow.ui" line="7570"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked, a massive posibly intractable report is generated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;إذا تم تحديده، فسيتم إنشاء تقرير ضخم قد يكون مستعصيًا على الحل.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7536"/>
+        <location filename="../Main/MainWindow.ui" line="7573"/>
         <source>Detailed report</source>
         <translation>تقرير مفصل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7543"/>
+        <location filename="../Main/MainWindow.ui" line="7580"/>
         <source>Maximum overload power that is solvable using the SRAP technique.</source>
         <translation>الحد الأقصى من قدرة التحميل الزائد التي يمكن حلها باستخدام تقنية SRAP.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7575"/>
-        <location filename="../Main/MainWindow.ui" line="7615"/>
-        <location filename="../Main/MainWindow.ui" line="9083"/>
+        <location filename="../Main/MainWindow.ui" line="7612"/>
+        <location filename="../Main/MainWindow.ui" line="7652"/>
+        <location filename="../Main/MainWindow.ui" line="9120"/>
         <source> %</source>
         <translation> %</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7588"/>
+        <location filename="../Main/MainWindow.ui" line="7625"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Amount of contingency loading with respect to the base situation loading that triggers the report of the contingency. This is specially useful when we want to avoig reporting contingencies that are not significant with respect to the base situation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;مقدار تحميل الطوارئ فيما يتعلق بتحميل الحالة الأساسية الذي يؤدي إلى تشغيل تقرير الطوارئ. يعد هذا مفيدًا بشكل خاص عندما نريد تجنب الإبلاغ عن حالات الطوارئ التي ليست مهمة فيما يتعلق بالوضع الأساسي.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7591"/>
+        <location filename="../Main/MainWindow.ui" line="7628"/>
         <source>Contingency dead band</source>
         <translation>الفرقة الميتة للطوارئ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7598"/>
+        <location filename="../Main/MainWindow.ui" line="7635"/>
         <source>Maximum number of generation nodes to participate in the SRAP</source>
         <translation>الحد الأقصى لعدد عقد التوليد للمشاركة في برنامج SRAP</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7601"/>
+        <location filename="../Main/MainWindow.ui" line="7638"/>
         <source>SRAP top N</source>
         <translation>SRAP أعلى N</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7608"/>
+        <location filename="../Main/MainWindow.ui" line="7645"/>
         <source>Contingency engine</source>
         <translation>محرك الطوارئ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7658"/>
+        <location filename="../Main/MainWindow.ui" line="7695"/>
         <source>Dyn</source>
         <translation>داين</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7661"/>
+        <location filename="../Main/MainWindow.ui" line="7698"/>
         <source>Rms simulation settings</source>
         <translation>إعدادات محاكاة Rms</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7789"/>
+        <location filename="../Main/MainWindow.ui" line="7826"/>
         <source>RMS</source>
         <translation>RMS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7897"/>
-        <location filename="../Main/MainWindow.ui" line="7943"/>
-        <location filename="../Main/MainWindow.ui" line="8058"/>
-        <location filename="../Main/MainWindow.ui" line="8400"/>
-        <location filename="../Main/MainWindow.ui" line="8425"/>
-        <location filename="../Main/MainWindow.ui" line="8754"/>
+        <location filename="../Main/MainWindow.ui" line="7934"/>
+        <location filename="../Main/MainWindow.ui" line="7980"/>
+        <location filename="../Main/MainWindow.ui" line="8095"/>
+        <location filename="../Main/MainWindow.ui" line="8437"/>
+        <location filename="../Main/MainWindow.ui" line="8462"/>
+        <location filename="../Main/MainWindow.ui" line="8791"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Initial time for the simulation. &lt;/p&gt;&lt;p&gt;In practice this is used to slow down troublesome solutions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;الوقت الأولي للمحاكاة.&lt;/p&gt;&lt;p&gt;في الممارسة العملية، يتم استخدام هذا لإبطاء الحلول المزعجة.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7946"/>
-        <location filename="../Main/MainWindow.ui" line="8061"/>
-        <location filename="../Main/MainWindow.ui" line="8403"/>
-        <location filename="../Main/MainWindow.ui" line="8428"/>
-        <location filename="../Main/MainWindow.ui" line="8757"/>
+        <location filename="../Main/MainWindow.ui" line="7983"/>
+        <location filename="../Main/MainWindow.ui" line="8098"/>
+        <location filename="../Main/MainWindow.ui" line="8440"/>
+        <location filename="../Main/MainWindow.ui" line="8465"/>
+        <location filename="../Main/MainWindow.ui" line="8794"/>
         <source> s</source>
         <translation>ق</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8032"/>
-        <location filename="../Main/MainWindow.ui" line="8620"/>
+        <location filename="../Main/MainWindow.ui" line="8069"/>
+        <location filename="../Main/MainWindow.ui" line="8657"/>
         <source>Assessment time</source>
         <translation>وقت التقييم</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7890"/>
-        <location filename="../Main/MainWindow.ui" line="8779"/>
+        <location filename="../Main/MainWindow.ui" line="7927"/>
+        <location filename="../Main/MainWindow.ui" line="8816"/>
         <source>Initialization</source>
         <translation>التهيئة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8133"/>
-        <location filename="../Main/MainWindow.ui" line="8627"/>
+        <location filename="../Main/MainWindow.ui" line="8170"/>
+        <location filename="../Main/MainWindow.ui" line="8664"/>
         <source>Time step</source>
         <translation>خطوة زمنية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7922"/>
-        <location filename="../Main/MainWindow.ui" line="8556"/>
+        <location filename="../Main/MainWindow.ui" line="7959"/>
+        <location filename="../Main/MainWindow.ui" line="8593"/>
         <source>Integration</source>
         <translation>اندماج</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7900"/>
+        <location filename="../Main/MainWindow.ui" line="7937"/>
         <source>s</source>
         <translation>ق</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8093"/>
-        <location filename="../Main/MainWindow.ui" line="8563"/>
+        <location filename="../Main/MainWindow.ui" line="8130"/>
+        <location filename="../Main/MainWindow.ui" line="8600"/>
         <source>Simulation time</source>
         <translation>وقت المحاكاة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8189"/>
+        <location filename="../Main/MainWindow.ui" line="8226"/>
         <source>RMS Small-Signal</source>
         <translation>RMS إشارة صغيرة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7877"/>
-        <location filename="../Main/MainWindow.ui" line="8512"/>
-        <location filename="../Main/MainWindow.ui" line="8516"/>
+        <location filename="../Main/MainWindow.ui" line="7914"/>
+        <location filename="../Main/MainWindow.ui" line="8549"/>
+        <location filename="../Main/MainWindow.ui" line="8553"/>
         <source>trapezoid</source>
         <translation>شبه منحرف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7882"/>
-        <location filename="../Main/MainWindow.ui" line="8521"/>
+        <location filename="../Main/MainWindow.ui" line="7919"/>
+        <location filename="../Main/MainWindow.ui" line="8558"/>
         <source>implicit euler</source>
         <translation>أويلر الضمني</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8086"/>
-        <location filename="../Main/MainWindow.ui" line="8532"/>
+        <location filename="../Main/MainWindow.ui" line="8123"/>
+        <location filename="../Main/MainWindow.ui" line="8569"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of modes.&lt;br/&gt;If zero, all modes are included and the calculation is done using dense matrices.&lt;br/&gt;If a number of modes greater than zero is given the calculation is sparse.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;عدد الأوضاع.&lt;br/&gt;إذا كان الصفر، يتم تضمين جميع الأوضاع ويتم الحساب باستخدام المصفوفات الكثيفة.&lt;br/&gt;إذا تم إعطاء عدد من الأوضاع أكبر من الصفر، فسيكون الحساب متناثرًا.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7968"/>
-        <location filename="../Main/MainWindow.ui" line="8634"/>
+        <location filename="../Main/MainWindow.ui" line="8005"/>
+        <location filename="../Main/MainWindow.ui" line="8671"/>
         <source>Modes</source>
         <translation>وسائط</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7930"/>
-        <location filename="../Main/MainWindow.ui" line="8725"/>
+        <location filename="../Main/MainWindow.ui" line="7967"/>
+        <location filename="../Main/MainWindow.ui" line="8762"/>
         <source>standard</source>
-        <translation type="unfinished"></translation>
+        <translation>قياسي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7935"/>
-        <location filename="../Main/MainWindow.ui" line="8730"/>
+        <location filename="../Main/MainWindow.ui" line="7972"/>
+        <location filename="../Main/MainWindow.ui" line="8767"/>
         <source>vectorized</source>
-        <translation type="unfinished"></translation>
+        <translation>مُتّجه</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8140"/>
-        <location filename="../Main/MainWindow.ui" line="8489"/>
+        <location filename="../Main/MainWindow.ui" line="8177"/>
+        <location filename="../Main/MainWindow.ui" line="8526"/>
         <source>Problem</source>
-        <translation type="unfinished"></translation>
+        <translation>مشكلة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8327"/>
+        <location filename="../Main/MainWindow.ui" line="8364"/>
         <source>EMT</source>
         <translation>EMT</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8380"/>
+        <location filename="../Main/MainWindow.ui" line="8417"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Subspace build type. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;نوع بناء الفضاء الفرعي. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8383"/>
-        <location filename="../Main/MainWindow.ui" line="8387"/>
+        <location filename="../Main/MainWindow.ui" line="8420"/>
+        <location filename="../Main/MainWindow.ui" line="8424"/>
         <source>Arnoldi</source>
-        <translation type="unfinished"></translation>
+        <translation>أرنولدي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8392"/>
+        <location filename="../Main/MainWindow.ui" line="8429"/>
         <source>Hybrid Arnoldi</source>
-        <translation type="unfinished"></translation>
+        <translation>أرنولدي الهجين</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8450"/>
+        <location filename="../Main/MainWindow.ui" line="8487"/>
         <source>Build type</source>
-        <translation type="unfinished"></translation>
+        <translation>نوع البناء</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8542"/>
+        <location filename="../Main/MainWindow.ui" line="8579"/>
         <source>Target period</source>
-        <translation type="unfinished"></translation>
+        <translation>الفترة المستهدفة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8683"/>
+        <location filename="../Main/MainWindow.ui" line="8720"/>
         <source>EMT Small-Signal</source>
         <translation>EMT إشارة صغيرة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8738"/>
+        <location filename="../Main/MainWindow.ui" line="8775"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Period of the periodic orbit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;فترة المدار الدوري. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8741"/>
+        <location filename="../Main/MainWindow.ui" line="8778"/>
         <source>Hz</source>
-        <translation type="unfinished"></translation>
+        <translation>Hz</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8822"/>
+        <location filename="../Main/MainWindow.ui" line="8859"/>
         <source>Machine-learning related settings</source>
         <translation>الإعدادات المتعلقة بالتعلم الآلي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8829"/>
+        <location filename="../Main/MainWindow.ui" line="8866"/>
         <source>ML</source>
         <translation>مل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8832"/>
+        <location filename="../Main/MainWindow.ui" line="8869"/>
         <source>Machine learning related settings</source>
         <translation>الإعدادات المتعلقة بالتعلم الآلي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8850"/>
+        <location filename="../Main/MainWindow.ui" line="8887"/>
         <source>Objective function</source>
         <translation>وظيفة موضوعية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9014"/>
+        <location filename="../Main/MainWindow.ui" line="9051"/>
         <source>Minimum form capacity</source>
         <translation>الحد الأدنى لسعة النموذج</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9070"/>
+        <location filename="../Main/MainWindow.ui" line="9107"/>
         <source>Node grouping</source>
         <translation>تجميع العقدة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9080"/>
+        <location filename="../Main/MainWindow.ui" line="9117"/>
         <source>In adequecy and simple dispatch indicated the minimum share of total firm capacity of the system to be in desirable, less is penalized</source>
         <translation>في الكفاية والإرسال البسيط، يُشار إلى الحد الأدنى من حصة إجمالي قدرة الشركة للنظام ليكون مرغوبًا فيه، ويتم معاقبة أقل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9099"/>
+        <location filename="../Main/MainWindow.ui" line="9136"/>
         <source>Number of maximum evaluations for the optimization methods</source>
         <translation>عدد التقييمات القصوى لطرق التحسين</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9102"/>
+        <location filename="../Main/MainWindow.ui" line="9139"/>
         <source> x number of investments</source>
         <translation>× عدد الاستثمارات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9181"/>
-        <location filename="../Main/MainWindow.ui" line="12172"/>
+        <location filename="../Main/MainWindow.ui" line="9218"/>
+        <location filename="../Main/MainWindow.ui" line="12209"/>
         <source>Clustering</source>
         <translation>التجميع</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9194"/>
+        <location filename="../Main/MainWindow.ui" line="9231"/>
         <source>Nodal distances</source>
         <translation>المسافات العقدية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9201"/>
+        <location filename="../Main/MainWindow.ui" line="9238"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of clusters, this affects all the simulations that deal with clustering&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;عدد العناقيد، وهذا يؤثر على جميع عمليات المحاكاة التي تتناول العنقدة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9204"/>
+        <location filename="../Main/MainWindow.ui" line="9241"/>
         <source> Clusters</source>
         <translation>مجموعات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9220"/>
+        <location filename="../Main/MainWindow.ui" line="9257"/>
         <source>Maximum evaluations</source>
         <translation>الحد الأقصى للتقييمات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9254"/>
+        <location filename="../Main/MainWindow.ui" line="9291"/>
         <source>Máximum standard deviation to determine the groups</source>
         <translation>الحد الأقصى للانحراف المعياري لتحديد المجموعات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9257"/>
+        <location filename="../Main/MainWindow.ui" line="9294"/>
         <source> σ</source>
         <translation> σ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9273"/>
+        <location filename="../Main/MainWindow.ui" line="9310"/>
         <source>Min. group size</source>
         <translation>دقيقة. حجم المجموعة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9280"/>
+        <location filename="../Main/MainWindow.ui" line="9317"/>
         <source>Select the investment evaluation method</source>
         <translation>اختيار طريقة تقييم الاستثمار</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9287"/>
+        <location filename="../Main/MainWindow.ui" line="9324"/>
         <source>Minimum size of the group</source>
         <translation>الحد الأدنى لحجم المجموعة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9293"/>
+        <location filename="../Main/MainWindow.ui" line="9330"/>
         <source> elements</source>
         <translation>عناصر</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9351"/>
+        <location filename="../Main/MainWindow.ui" line="9388"/>
         <source>Investment evaluation</source>
         <translation>تقييم الاستثمار</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9361"/>
+        <location filename="../Main/MainWindow.ui" line="9398"/>
         <source>Number of clusters</source>
         <translation>عدد المجموعات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9467"/>
+        <location filename="../Main/MainWindow.ui" line="9504"/>
         <source>Number of islands produced until the analysis stops</source>
         <translation>عدد الجزر المنتجة حتى يتوقف التحليل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9508"/>
+        <location filename="../Main/MainWindow.ui" line="9545"/>
         <source>Reliability evaluation method</source>
         <translation>طريقة تقييم الموثوقية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9515"/>
+        <location filename="../Main/MainWindow.ui" line="9552"/>
         <source>Maximum number of samples</source>
         <translation>الحد الأقصى لعدد العينات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9573"/>
+        <location filename="../Main/MainWindow.ui" line="9610"/>
         <source>Reliability</source>
         <translation>مصداقية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9583"/>
-        <location filename="../Main/MainWindow.ui" line="9919"/>
+        <location filename="../Main/MainWindow.ui" line="9620"/>
+        <location filename="../Main/MainWindow.ui" line="9956"/>
         <source>Samples</source>
         <translation>عينات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9632"/>
+        <location filename="../Main/MainWindow.ui" line="9669"/>
         <source>Cascading</source>
         <translation>المتتالية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9829"/>
-        <location filename="../Main/MainWindow.ui" line="11356"/>
+        <location filename="../Main/MainWindow.ui" line="9866"/>
+        <location filename="../Main/MainWindow.ui" line="11393"/>
         <source>Stochastic power flow</source>
         <translation>تدفق الطاقة العشوائية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9839"/>
+        <location filename="../Main/MainWindow.ui" line="9876"/>
         <source>Maximum number of Monte Carlo samples</source>
         <translation>الحد الأقصى لعدد عينات مونت كارلو</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9855"/>
+        <location filename="../Main/MainWindow.ui" line="9892"/>
         <source>Aditional islands until stop</source>
         <translation>جزر إضافية حتى التوقف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9862"/>
+        <location filename="../Main/MainWindow.ui" line="9899"/>
         <source>Voltage variance</source>
         <translation>تباين الجهد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9933"/>
+        <location filename="../Main/MainWindow.ui" line="9970"/>
         <source>Stochastic power flow method</source>
         <translation>طريقة تدفق الطاقة العشوائية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9965"/>
+        <location filename="../Main/MainWindow.ui" line="10002"/>
         <source>Monte Carlo variance until stop</source>
         <translation>تباين مونت كارلو حتى التوقف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10015"/>
+        <location filename="../Main/MainWindow.ui" line="10052"/>
         <source>Topology settings</source>
         <translation>إعدادات الطوبولوجيا</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10022"/>
+        <location filename="../Main/MainWindow.ui" line="10059"/>
         <source>Tplgy</source>
         <translation>تبلجي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10025"/>
+        <location filename="../Main/MainWindow.ui" line="10062"/>
         <source>Topology related settings</source>
         <translation>الإعدادات المتعلقة بالطوبولوجيا</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10144"/>
-        <location filename="../Main/MainWindow.ui" line="12589"/>
+        <location filename="../Main/MainWindow.ui" line="10181"/>
+        <location filename="../Main/MainWindow.ui" line="12626"/>
         <source>Grid reduction</source>
         <translation>تخفيض الشبكة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10207"/>
+        <location filename="../Main/MainWindow.ui" line="10244"/>
         <source>Select branch types to reduce</source>
         <translation>حدد أنواع الفروع لتقليلها</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10217"/>
+        <location filename="../Main/MainWindow.ui" line="10254"/>
         <source>Filter by r+x under threshold</source>
         <translation>التصفية حسب r+x تحت العتبة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10227"/>
+        <location filename="../Main/MainWindow.ui" line="10264"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Exponent of the threshold to use.&lt;/p&gt;&lt;p&gt;threshold = 1x10^-factor&lt;/p&gt;&lt;p&gt;i.e.&lt;/p&gt;&lt;p&gt;factor=3&lt;/p&gt;&lt;p&gt;threshold = 1e-3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;أس عتبة الاستخدام.&lt;/p&gt;&lt;p&gt;العتبة = 1x10^-عامل&lt;/p&gt;&lt;p&gt;أي.&lt;/p&gt;&lt;p&gt;العامل=3&lt;/p&gt;&lt;p&gt;العتبة = 1e-3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10356"/>
+        <location filename="../Main/MainWindow.ui" line="10393"/>
         <source>Branch rating</source>
         <translation>تصنيف الفرع</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10428"/>
+        <location filename="../Main/MainWindow.ui" line="10465"/>
         <source>Branch rating factor</source>
         <translation>عامل تصنيف الفرع</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10435"/>
+        <location filename="../Main/MainWindow.ui" line="10472"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Factor to aply to the branch calculated power to use as rating&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;عامل ينطبق على الفرع المحسوب لاستخدامه كتصنيف&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10454"/>
+        <location filename="../Main/MainWindow.ui" line="10491"/>
         <source>override values</source>
         <translation>تجاوز القيم</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10481"/>
+        <location filename="../Main/MainWindow.ui" line="10518"/>
         <source>File settings</source>
         <translation>إعدادات الملف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10488"/>
-        <location filename="../Main/MainWindow.ui" line="10940"/>
+        <location filename="../Main/MainWindow.ui" line="10525"/>
+        <location filename="../Main/MainWindow.ui" line="10977"/>
         <source>File</source>
         <translation>ملف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10491"/>
+        <location filename="../Main/MainWindow.ui" line="10528"/>
         <source>File related settings</source>
         <translation>الإعدادات المتعلقة بالملف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10512"/>
+        <location filename="../Main/MainWindow.ui" line="10549"/>
         <source>If checked, the results are stored inside the VeraGrid file in a compressed format.</source>
         <translation>إذا تم تحديده، فسيتم تخزين النتائج داخل ملف VeraGrid بتنسيق مضغوط.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10515"/>
+        <location filename="../Main/MainWindow.ui" line="10552"/>
         <source>Save results in .veragrid files</source>
         <translation>حفظ النتائج في ملفات .veragrid</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10554"/>
+        <location filename="../Main/MainWindow.ui" line="10591"/>
         <source>File path</source>
         <translation>مسار الملف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10680"/>
+        <location filename="../Main/MainWindow.ui" line="10717"/>
         <source>File Information</source>
         <translation>معلومات الملف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10728"/>
+        <location filename="../Main/MainWindow.ui" line="10765"/>
         <source>Server</source>
         <translation>الخادم</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10734"/>
+        <location filename="../Main/MainWindow.ui" line="10771"/>
         <source>Server jobs currently on cue</source>
         <translation>وظائف الخادم حاليا على جديلة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10762"/>
+        <location filename="../Main/MainWindow.ui" line="10799"/>
         <source>Url</source>
         <translation>عنوان URL</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10769"/>
+        <location filename="../Main/MainWindow.ui" line="10806"/>
         <source>Type here the VeraGrid server URL (ask your IT team)</source>
         <translation>اكتب هنا عنوان URL لخادم VeraGrid (اسأل فريق تكنولوجيا المعلومات لديك)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10776"/>
+        <location filename="../Main/MainWindow.ui" line="10813"/>
         <source>Port</source>
         <translation>ميناء</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10783"/>
+        <location filename="../Main/MainWindow.ui" line="10820"/>
         <source>Type here the VeraGrid server Port (ask your IT team)</source>
         <translation>اكتب هنا منفذ خادم VeraGrid (اسأل فريق تكنولوجيا المعلومات الخاص بك)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10796"/>
+        <location filename="../Main/MainWindow.ui" line="10833"/>
         <source>Password</source>
         <translation>كلمة المرور</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10803"/>
+        <location filename="../Main/MainWindow.ui" line="10840"/>
         <source>Type here the VeraGrid server password (ask your IT team)</source>
         <translation>اكتب هنا كلمة مرور خادم VeraGrid (اسأل فريق تكنولوجيا المعلومات الخاص بك)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10813"/>
+        <location filename="../Main/MainWindow.ui" line="10850"/>
         <source>Secure</source>
         <translation>يؤمن</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10871"/>
+        <location filename="../Main/MainWindow.ui" line="10908"/>
         <source>Cancel process</source>
         <translation>إلغاء العملية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10944"/>
+        <location filename="../Main/MainWindow.ui" line="10981"/>
         <source>Export grid</source>
         <translation>شبكة التصدير</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10970"/>
+        <location filename="../Main/MainWindow.ui" line="11007"/>
         <source>Import data</source>
         <translation>استيراد البيانات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10991"/>
+        <location filename="../Main/MainWindow.ui" line="11028"/>
         <source>Help</source>
         <translation>يساعد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10999"/>
+        <location filename="../Main/MainWindow.ui" line="11036"/>
         <source>Actions</source>
         <translation>الإجراءات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11012"/>
+        <location filename="../Main/MainWindow.ui" line="11049"/>
         <source>Simulations</source>
         <translation>المحاكاة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11087"/>
+        <location filename="../Main/MainWindow.ui" line="11124"/>
         <source>Diagram</source>
         <translation>رسم بياني</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11091"/>
+        <location filename="../Main/MainWindow.ui" line="11128"/>
         <source>Branches drawing style</source>
         <translation>أسلوب رسم الفروع</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11131"/>
+        <location filename="../Main/MainWindow.ui" line="11168"/>
         <source>plugins</source>
         <translation>الإضافات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11136"/>
+        <location filename="../Main/MainWindow.ui" line="11173"/>
         <source>Events</source>
         <translation>الأحداث</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11157"/>
+        <location filename="../Main/MainWindow.ui" line="11194"/>
         <source>toolBar</source>
         <translation>toolBar</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11224"/>
+        <location filename="../Main/MainWindow.ui" line="11261"/>
         <source>Open file</source>
         <translation>افتح الملف</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11230"/>
+        <location filename="../Main/MainWindow.ui" line="11267"/>
         <source>Ctrl+O</source>
         <translation>السيطرة + O</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11239"/>
+        <location filename="../Main/MainWindow.ui" line="11276"/>
         <source>Save</source>
         <translation>يحفظ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11245"/>
-        <location filename="../Main/MainWindow.ui" line="13058"/>
+        <location filename="../Main/MainWindow.ui" line="11282"/>
+        <location filename="../Main/MainWindow.ui" line="13095"/>
         <source>Ctrl+S</source>
         <translation>السيطرة + س</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11254"/>
+        <location filename="../Main/MainWindow.ui" line="11291"/>
         <source>Take picture</source>
         <translation>التقاط صورة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11266"/>
+        <location filename="../Main/MainWindow.ui" line="11303"/>
         <source>New project</source>
         <translation>مشروع جديد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11272"/>
+        <location filename="../Main/MainWindow.ui" line="11309"/>
         <source>Ctrl+N</source>
         <translation>السيطرة + ن</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11281"/>
+        <location filename="../Main/MainWindow.ui" line="11318"/>
         <source>Power Flow</source>
         <translation>تدفق الطاقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11284"/>
+        <location filename="../Main/MainWindow.ui" line="11321"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power Flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a power flow analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تدفق الطاقة&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بإجراء تحليل تدفق الطاقة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11290"/>
+        <location filename="../Main/MainWindow.ui" line="11327"/>
         <source>F5</source>
         <translation>F5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11302"/>
+        <location filename="../Main/MainWindow.ui" line="11339"/>
         <source>Power flow time series</source>
         <translation>سلسلة زمنية لتدفق الطاقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11305"/>
+        <location filename="../Main/MainWindow.ui" line="11342"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the power flow study with time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تدفق الطاقة&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بإجراء دراسة تدفق الطاقة باستخدام بيانات السلاسل الزمنية&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11311"/>
+        <location filename="../Main/MainWindow.ui" line="11348"/>
         <source>Ctrl+F5</source>
         <translation>السيطرة+F5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11320"/>
+        <location filename="../Main/MainWindow.ui" line="11357"/>
         <source>Expand</source>
         <translation>يوسع</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11323"/>
+        <location filename="../Main/MainWindow.ui" line="11360"/>
         <source>Expand distances</source>
         <translation>توسيع المسافات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11329"/>
         <source>Ctrl+Alt++</source>
-        <translation>السيطرة + البديل ++</translation>
+        <translation type="vanished">السيطرة + البديل ++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11338"/>
+        <location filename="../Main/MainWindow.ui" line="11375"/>
         <source>Shrink</source>
         <translation>يتقلص</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11341"/>
+        <location filename="../Main/MainWindow.ui" line="11378"/>
         <source>Shrink distances</source>
         <translation>تقليص المسافات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11347"/>
         <source>Ctrl+Alt+-</source>
-        <translation>Ctrl+Alt+-</translation>
+        <translation type="vanished">Ctrl+Alt+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11359"/>
+        <location filename="../Main/MainWindow.ui" line="11366"/>
+        <source>Ctrl+Shift++</source>
+        <translation>Ctrl+Shift++</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="11384"/>
+        <source>Ctrl+Shift+-</source>
+        <translation>Ctrl+Shift+-</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="11396"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Stochastic power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a stochastic power flow over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تدفق الطاقة العشوائية&lt;/span&gt;&lt;/p&gt;&lt;p&gt;تنفيذ تدفق الطاقة العشوائية على بيانات السلاسل الزمنية&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11374"/>
+        <location filename="../Main/MainWindow.ui" line="11411"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Continuation power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a continuation power flow over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;استمرار تدفق الطاقة&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بتشغيل تدفق طاقة مستمر عبر بيانات اللقطة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11386"/>
+        <location filename="../Main/MainWindow.ui" line="11423"/>
         <source>About</source>
         <translation>عن</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11398"/>
+        <location filename="../Main/MainWindow.ui" line="11435"/>
         <source>center view</source>
         <translation>عرض المركز</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11401"/>
+        <location filename="../Main/MainWindow.ui" line="11438"/>
         <source>Center view</source>
         <translation>عرض المركز</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11407"/>
+        <location filename="../Main/MainWindow.ui" line="11444"/>
         <source>Ctrl+E</source>
         <translation>السيطرة+E</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11416"/>
+        <location filename="../Main/MainWindow.ui" line="11453"/>
         <source>Short Circuit</source>
         <translation>ماس كهربائى</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11419"/>
+        <location filename="../Main/MainWindow.ui" line="11456"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Short Circuit&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a short circuit study over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;ماس كهربائى&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بإجراء دراسة ماس كهربائى على بيانات اللقطة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11431"/>
+        <location filename="../Main/MainWindow.ui" line="11468"/>
         <source>Automatic grid layout</source>
         <translation>تخطيط الشبكة التلقائي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11434"/>
+        <location filename="../Main/MainWindow.ui" line="11471"/>
         <source>Automatic layout the of the grid</source>
         <translation>التخطيط التلقائي للشبكة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11449"/>
+        <location filename="../Main/MainWindow.ui" line="11486"/>
         <source>Blackout cascade</source>
         <translation>سلسلة التعتيم</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11452"/>
+        <location filename="../Main/MainWindow.ui" line="11489"/>
         <source>Run a simulation or step by step blackout cascade</source>
         <translation>قم بإجراء محاكاة أو سلسلة من التعتيم خطوة بخطوة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11464"/>
+        <location filename="../Main/MainWindow.ui" line="11501"/>
         <source>Optimal power flow</source>
         <translation>تدفق الطاقة الأمثل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11467"/>
+        <location filename="../Main/MainWindow.ui" line="11504"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This runs an optimal power flow&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تدفق الطاقة الأمثل&lt;/span&gt;&lt;/p&gt;&lt;p&gt;يؤدي هذا إلى تشغيل تدفق الطاقة الأمثل&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11473"/>
+        <location filename="../Main/MainWindow.ui" line="11510"/>
         <source>F6</source>
         <translation>F6</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11482"/>
+        <location filename="../Main/MainWindow.ui" line="11519"/>
         <source>Optimal power flow time series</source>
         <translation>السلسلة الزمنية لتدفق الطاقة الأمثل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11485"/>
+        <location filename="../Main/MainWindow.ui" line="11522"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This runs an optimal power flow for the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تدفق الطاقة الأمثل&lt;/span&gt;&lt;/p&gt;&lt;p&gt;يؤدي هذا إلى تشغيل تدفق الطاقة الأمثل لبيانات السلاسل الزمنية&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11491"/>
+        <location filename="../Main/MainWindow.ui" line="11528"/>
         <source>Ctrl+F6</source>
         <translation>السيطرة + F6</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11500"/>
+        <location filename="../Main/MainWindow.ui" line="11537"/>
         <source>Detect transformers</source>
         <translation>كشف المحولات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11503"/>
+        <location filename="../Main/MainWindow.ui" line="11540"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Detect transformers.&lt;/p&gt;&lt;p&gt;Use the nodes nominal voltage to determine which branches should be a transformer.&lt;/p&gt;&lt;p&gt;If a branch joins two nodes with different voltage levels, the branch should be a transformer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;كشف المحولات.&lt;/p&gt;&lt;p&gt;استخدم الجهد الاسمي للعقد لتحديد الفروع التي يجب أن تكون محولاً.&lt;/p&gt;&lt;p&gt;إذا قام فرع بربط عقدتين بمستويات جهد مختلفة، فيجب أن يكون الفرع محولاً.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11515"/>
+        <location filename="../Main/MainWindow.ui" line="11552"/>
         <source>Auto rate branches</source>
         <translation>فروع معدل السيارات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11518"/>
+        <location filename="../Main/MainWindow.ui" line="11555"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatic rating of the branches.&lt;/p&gt;&lt;p&gt;Use the branches calculated power to establish a rate, if the branch rate is unknown. A factor is available in the settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;التصنيف التلقائي للفروع.&lt;/p&gt;&lt;p&gt;استخدم القوة المحسوبة للفروع لتحديد المعدل، إذا كان معدل الفرع غير معروف. هناك عامل متاح في الإعدادات.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11533"/>
+        <location filename="../Main/MainWindow.ui" line="11570"/>
         <source>Storage location suggestion</source>
         <translation>اقتراح موقع التخزين</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11536"/>
+        <location filename="../Main/MainWindow.ui" line="11573"/>
         <source>Suggest places where storage devices are useful</source>
         <translation>اقترح الأماكن التي تكون فيها أجهزة التخزين مفيدة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11548"/>
+        <location filename="../Main/MainWindow.ui" line="11585"/>
         <source>Launch data analysis tool</source>
         <translation>إطلاق أداة تحليل البيانات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11551"/>
+        <location filename="../Main/MainWindow.ui" line="11588"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Data analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Launch the data analysis tool that finds and tries to repair common grid modelling issues&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تحليل البيانات&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بتشغيل أداة تحليل البيانات التي تبحث عن مشكلات نمذجة الشبكة الشائعة وتحاول إصلاحها&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11557"/>
+        <location filename="../Main/MainWindow.ui" line="11594"/>
         <source>F12</source>
         <translation>F12</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11566"/>
+        <location filename="../Main/MainWindow.ui" line="11603"/>
         <source>Online documentation</source>
         <translation>التوثيق عبر الإنترنت</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11572"/>
+        <location filename="../Main/MainWindow.ui" line="11609"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11581"/>
+        <location filename="../Main/MainWindow.ui" line="11618"/>
         <source>Save as</source>
         <translation>حفظ باسم</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11593"/>
+        <location filename="../Main/MainWindow.ui" line="11630"/>
         <source>Delete selected</source>
         <translation>حذف المحدد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11596"/>
+        <location filename="../Main/MainWindow.ui" line="11633"/>
         <source>Delete selected objects from the diagrams and optionally from the database</source>
         <translation>احذف الكائنات المحددة من المخططات واختياريًا من قاعدة البيانات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11602"/>
+        <location filename="../Main/MainWindow.ui" line="11639"/>
         <source>Del</source>
         <translation>ديل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11611"/>
+        <location filename="../Main/MainWindow.ui" line="11648"/>
         <source>Linear analysis</source>
         <translation>التحليل الخطي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11614"/>
+        <location filename="../Main/MainWindow.ui" line="11651"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Linear analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform linear analysis with distribution factors (PTDF, LODF)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;التحليل الخطي&lt;/span&gt;&lt;/p&gt;&lt;p&gt;إجراء تحليل خطي مع عوامل التوزيع (PTDF، LODF)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11620"/>
+        <location filename="../Main/MainWindow.ui" line="11657"/>
         <source>F7</source>
         <translation>F7</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11629"/>
+        <location filename="../Main/MainWindow.ui" line="11666"/>
         <source>Reset console</source>
         <translation>إعادة ضبط وحدة التحكم</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11644"/>
+        <location filename="../Main/MainWindow.ui" line="11681"/>
         <source>Set OPF results to power flow (non destructive)</source>
         <translation>اضبط نتائج OPF على تدفق الطاقة (غير مدمر)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11647"/>
+        <location filename="../Main/MainWindow.ui" line="11684"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy OPF data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Set the OPF results into the power flow or time series simulations (non destructive)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;انسخ بيانات OPF&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بتعيين نتائج OPF في محاكاة تدفق الطاقة أو السلاسل الزمنية (غير مدمرة)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11659"/>
+        <location filename="../Main/MainWindow.ui" line="11696"/>
         <source>Correct buses location</source>
         <translation>الموقع الصحيح للحافلات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11662"/>
+        <location filename="../Main/MainWindow.ui" line="11699"/>
         <source>Set selected buses location closer to their neighbours</source>
         <translation>قم بتعيين موقع الحافلات المحددة بالقرب من جيرانهم</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11674"/>
+        <location filename="../Main/MainWindow.ui" line="11711"/>
         <source>Copy OPF generation to database (destructive)</source>
         <translation>نسخ جيل OPF إلى قاعدة البيانات (مدمر)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11677"/>
+        <location filename="../Main/MainWindow.ui" line="11714"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy OPF data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Destructive copy of the OPF generation results to the input profiles&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;انسخ بيانات OPF&lt;/span&gt;&lt;/p&gt;&lt;p&gt;نسخة مدمرة من نتائج توليد OPF لملفات تعريف الإدخال&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11689"/>
+        <location filename="../Main/MainWindow.ui" line="11726"/>
         <source>Linear analysis time series power flow</source>
         <translation>التحليل الخطي لتدفق الطاقة للسلسلة الزمنية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11692"/>
+        <location filename="../Main/MainWindow.ui" line="11729"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Linear analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;PTDF based time series power flow&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;التحليل الخطي&lt;/span&gt;&lt;/p&gt;&lt;p&gt;تدفق الطاقة على أساس سلسلة زمنية PTDF&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11698"/>
+        <location filename="../Main/MainWindow.ui" line="11735"/>
         <source>Ctrl+F7</source>
         <translation>السيطرة+F7</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11707"/>
+        <location filename="../Main/MainWindow.ui" line="11744"/>
         <source>Import circuit</source>
         <translation>دائرة الاستيراد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11710"/>
+        <location filename="../Main/MainWindow.ui" line="11747"/>
         <source>Add circuit to the current circuit</source>
         <translation>إضافة الدائرة إلى الدائرة الحالية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11716"/>
+        <location filename="../Main/MainWindow.ui" line="11753"/>
         <source>Ctrl+N, Ctrl+O</source>
         <translation>السيطرة + N، السيطرة + O</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11728"/>
+        <location filename="../Main/MainWindow.ui" line="11765"/>
         <source>Sync</source>
         <translation>مزامنة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11731"/>
+        <location filename="../Main/MainWindow.ui" line="11768"/>
         <source>Sync with the file for colaborative editing of the grid</source>
         <translation>قم بالمزامنة مع الملف للتحرير التعاوني للشبكة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11740"/>
+        <location filename="../Main/MainWindow.ui" line="11777"/>
         <source>Draw schematic</source>
         <translation>رسم تخطيطي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11749"/>
+        <location filename="../Main/MainWindow.ui" line="11786"/>
         <source>Sigma analysis</source>
         <translation>تحليل سيجما</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11752"/>
+        <location filename="../Main/MainWindow.ui" line="11789"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Sigma analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform HELM-Sigma analysis over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تحليل سيجما&lt;/span&gt;&lt;/p&gt;&lt;p&gt;إجراء تحليل HELM-Sigma على بيانات اللقطة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11764"/>
+        <location filename="../Main/MainWindow.ui" line="11801"/>
         <source>Clear &quot;stuff running right now&quot;</source>
         <translation>مسح &quot;الأشياء قيد التشغيل الآن&quot;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11776"/>
+        <location filename="../Main/MainWindow.ui" line="11813"/>
         <source>Add default catalogue</source>
         <translation>إضافة الكتالوج الافتراضي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11791"/>
+        <location filename="../Main/MainWindow.ui" line="11828"/>
         <source>Find node groups</source>
         <translation>ابحث عن مجموعات العقدة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11794"/>
+        <location filename="../Main/MainWindow.ui" line="11831"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Finds the electrically related nodes by using their electrical distance and the DBSCAN clustering method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;يبحث عن العقد المرتبطة كهربائيًا باستخدام المسافة الكهربائية الخاصة بها وطريقة التجميع DBSCAN&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11806"/>
+        <location filename="../Main/MainWindow.ui" line="11843"/>
         <source>Grid Generator</source>
         <translation>مولد الشبكة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11812"/>
+        <location filename="../Main/MainWindow.ui" line="11849"/>
         <source>Ctrl+G</source>
         <translation>السيطرة+ز</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11821"/>
+        <location filename="../Main/MainWindow.ui" line="11858"/>
         <source>Node load</source>
         <translation>تحميل العقدة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11830"/>
+        <location filename="../Main/MainWindow.ui" line="11867"/>
         <source>Generator generation</source>
         <translation>جيل المولدات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11839"/>
+        <location filename="../Main/MainWindow.ui" line="11876"/>
         <source>Contingency analysis time series</source>
         <translation>سلسلة زمنية لتحليل الطوارئ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11842"/>
+        <location filename="../Main/MainWindow.ui" line="11879"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingency analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Per form a contingency analysis with the selected method over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تحليل الطوارئ&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بإجراء تحليل للطوارئ باستخدام الطريقة المحددة عبر بيانات السلاسل الزمنية&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11848"/>
+        <location filename="../Main/MainWindow.ui" line="11885"/>
         <source>Ctrl+F8</source>
         <translation>السيطرة+F8</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11857"/>
+        <location filename="../Main/MainWindow.ui" line="11894"/>
         <source>Branch rates</source>
         <translation>أسعار الفروع</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11866"/>
+        <location filename="../Main/MainWindow.ui" line="11903"/>
         <source>Set selected buses&apos; Area</source>
         <translation>ضبط منطقة الحافلات المحددة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11878"/>
+        <location filename="../Main/MainWindow.ui" line="11915"/>
         <source>Set selected buses&apos; Zone</source>
         <translation>ضبط منطقة الحافلات المحددة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11890"/>
+        <location filename="../Main/MainWindow.ui" line="11927"/>
         <source>Set seleted buses&apos; Country</source>
         <translation>تعيين بلد الحافلات المختارة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11902"/>
+        <location filename="../Main/MainWindow.ui" line="11939"/>
         <source>Import bus coordinates</source>
         <translation>استيراد إحداثيات الحافلة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11914"/>
+        <location filename="../Main/MainWindow.ui" line="11951"/>
         <source>Available Transfer Capacity</source>
         <translation>سعة النقل المتاحة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11917"/>
+        <location filename="../Main/MainWindow.ui" line="11954"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a linear net transfer capacity assesment for the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;صافي سعة النقل&lt;/span&gt;&lt;/p&gt;&lt;p&gt;إجراء تقييم قدرة النقل الصافي الخطي لبيانات اللقطة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11929"/>
+        <location filename="../Main/MainWindow.ui" line="11966"/>
         <source>Available Transfer Capacity Time Series</source>
         <translation>السلسلة الزمنية لسعة النقل المتوفرة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11932"/>
+        <location filename="../Main/MainWindow.ui" line="11969"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a linear net transfer capacity assesment for the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;صافي سعة النقل&lt;/span&gt;&lt;/p&gt;&lt;p&gt;إجراء تقييم قدرة النقل الصافي الخطي لبيانات السلاسل الزمنية&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11944"/>
+        <location filename="../Main/MainWindow.ui" line="11981"/>
         <source>Contingency analysis</source>
         <translation>تحليل الطوارئ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11947"/>
+        <location filename="../Main/MainWindow.ui" line="11984"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingency analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a contingency analysis with the selected method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تحليل الطوارئ&lt;/span&gt;&lt;/p&gt;&lt;p&gt;إجراء تحليل للطوارئ بالطريقة المحددة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11953"/>
+        <location filename="../Main/MainWindow.ui" line="11990"/>
         <source>F8</source>
         <translation>F8</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11962"/>
+        <location filename="../Main/MainWindow.ui" line="11999"/>
         <source>Optimal net transfer capacity</source>
         <translation>قدرة النقل الصافية المثلى</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11965"/>
+        <location filename="../Main/MainWindow.ui" line="12002"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform an optimal net transfer capacity optimization&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;سعة النقل الصافية المثالية&lt;/span&gt;&lt;/p&gt;&lt;p&gt;إجراء التحسين الأمثل لسعة النقل الصافي&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11977"/>
+        <location filename="../Main/MainWindow.ui" line="12014"/>
         <source>Set schematic (x,y) from (lat,lon)</source>
         <translation>تعيين التخطيطي (x،y) من (lat،lon)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11989"/>
+        <location filename="../Main/MainWindow.ui" line="12026"/>
         <source>Inputs analysis</source>
         <translation>تحليل المدخلات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11992"/>
+        <location filename="../Main/MainWindow.ui" line="12029"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Inputs analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform an analysis of the inputs for both the snapshot and time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تحليل المدخلات&lt;/span&gt;&lt;/p&gt;&lt;p&gt;إجراء تحليل للمدخلات لكل من بيانات اللقطة والسلاسل الزمنية&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11998"/>
+        <location filename="../Main/MainWindow.ui" line="12035"/>
         <source>F11</source>
         <translation>F11</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12007"/>
+        <location filename="../Main/MainWindow.ui" line="12044"/>
         <source>Fuse devices</source>
         <translation>أجهزة الصمامات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12010"/>
+        <location filename="../Main/MainWindow.ui" line="12047"/>
         <source>Fuse devices into a single device of each category per node</source>
         <translation>دمج الأجهزة في جهاز واحد من كل فئة لكل عقدة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12022"/>
-        <location filename="../Main/MainWindow.ui" line="12025"/>
+        <location filename="../Main/MainWindow.ui" line="12059"/>
+        <location filename="../Main/MainWindow.ui" line="12062"/>
         <source>Delete inconsistencies</source>
         <translation>حذف التناقضات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12037"/>
+        <location filename="../Main/MainWindow.ui" line="12074"/>
         <source>Optimal NTC time series</source>
         <translation>السلسلة الزمنية الأمثل لـ NTC</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12040"/>
+        <location filename="../Main/MainWindow.ui" line="12077"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a net transfer capacity optimization over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;صافي سعة النقل&lt;/span&gt;&lt;/p&gt;&lt;p&gt;إجراء تحسين صافي قدرة النقل عبر بيانات السلاسل الزمنية&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12052"/>
+        <location filename="../Main/MainWindow.ui" line="12089"/>
         <source>re-index time</source>
         <translation>إعادة فهرسة الوقت</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12064"/>
+        <location filename="../Main/MainWindow.ui" line="12101"/>
         <source>Fix generators active based on the power</source>
         <translation>إصلاح المولدات النشطة على أساس الطاقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12076"/>
-        <location filename="../Main/MainWindow.ui" line="12079"/>
+        <location filename="../Main/MainWindow.ui" line="12113"/>
+        <location filename="../Main/MainWindow.ui" line="12116"/>
         <source>Fix loads active based on the power</source>
         <translation>إصلاح الأحمال النشطة على أساس الطاقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12091"/>
+        <location filename="../Main/MainWindow.ui" line="12128"/>
         <source>Initialize contingencies</source>
         <translation>تهيئة الطوارئ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12094"/>
+        <location filename="../Main/MainWindow.ui" line="12131"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingencies wizard&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Launch the contingencies wizard to automatically set up the contingency objects&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;معالج الطوارئ&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بتشغيل معالج الحالات الطارئة لإعداد كائنات الطوارئ تلقائيًا&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12106"/>
+        <location filename="../Main/MainWindow.ui" line="12143"/>
         <source>Add selected as new contingency</source>
         <translation>إضافة المحدد كحالة طوارئ جديدة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12109"/>
+        <location filename="../Main/MainWindow.ui" line="12146"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add contingency&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new contingency from the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;أضف الطوارئ&lt;/span&gt;&lt;/p&gt;&lt;p&gt;إنشاء حالة طوارئ جديدة من التحديد التخطيطي&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12115"/>
+        <location filename="../Main/MainWindow.ui" line="12152"/>
         <source>Ctrl+A, Ctrl+C</source>
         <translation>السيطرة + أ، السيطرة + C</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12124"/>
+        <location filename="../Main/MainWindow.ui" line="12161"/>
         <source>Add selected as new investment</source>
         <translation>إضافة المحدد كاستثمار جديد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12127"/>
+        <location filename="../Main/MainWindow.ui" line="12164"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Investments&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create new investment with the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;الاستثمارات&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بإنشاء استثمار جديد باستخدام التحديد التخطيطي&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12133"/>
+        <location filename="../Main/MainWindow.ui" line="12170"/>
         <source>Ctrl+A, Ctrl+I</source>
         <translation>السيطرة + أ، السيطرة + أنا</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12142"/>
+        <location filename="../Main/MainWindow.ui" line="12179"/>
         <source>Zoom in</source>
         <translation>تكبير</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12148"/>
+        <location filename="../Main/MainWindow.ui" line="12185"/>
         <source>Ctrl++</source>
         <translation>السيطرة ++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12157"/>
+        <location filename="../Main/MainWindow.ui" line="12194"/>
         <source>Zoom out</source>
         <translation>تصغير</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12163"/>
+        <location filename="../Main/MainWindow.ui" line="12200"/>
         <source>Ctrl+-</source>
         <translation>السيطرة+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12175"/>
+        <location filename="../Main/MainWindow.ui" line="12212"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a clustering study of the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;التجميع&lt;/span&gt;&lt;/p&gt;&lt;p&gt;إجراء دراسة تجميعية لبيانات السلاسل الزمنية&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12193"/>
+        <location filename="../Main/MainWindow.ui" line="12230"/>
         <source>Use clustering</source>
         <translation>استخدم التجميع</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12196"/>
+        <location filename="../Main/MainWindow.ui" line="12233"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;If active, the available clustering results are used in all the simulations that handle time series data non-destructivelly&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;التجميع&lt;/span&gt;&lt;/p&gt;&lt;p&gt;إذا كانت نشطة، يتم استخدام نتائج التجميع المتاحة في جميع عمليات المحاكاة التي تتعامل مع بيانات السلاسل الزمنية بشكل غير مدمر&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12208"/>
+        <location filename="../Main/MainWindow.ui" line="12245"/>
         <source>Investments evaluation</source>
         <translation>تقييم الاستثمارات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12211"/>
+        <location filename="../Main/MainWindow.ui" line="12248"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Investments&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform the investments evaluation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;الاستثمارات&lt;/span&gt;&lt;/p&gt;&lt;p&gt;إجراء تقييم الاستثمارات&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12217"/>
+        <location filename="../Main/MainWindow.ui" line="12254"/>
         <source>Ctrl+I, Ctrl+E</source>
         <translation>السيطرة + أنا، السيطرة + E</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12226"/>
+        <location filename="../Main/MainWindow.ui" line="12263"/>
         <source>New schematic from selection</source>
         <translation>تخطيطي جديد من التحديد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12238"/>
+        <location filename="../Main/MainWindow.ui" line="12275"/>
         <source>New schematic</source>
         <translation>تخطيطي جديد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12250"/>
+        <location filename="../Main/MainWindow.ui" line="12287"/>
         <source>New map</source>
         <translation>خريطة جديدة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12262"/>
+        <location filename="../Main/MainWindow.ui" line="12299"/>
         <source>Remove selected diagram</source>
         <translation>إزالة الرسم التخطيطي المحدد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12271"/>
+        <location filename="../Main/MainWindow.ui" line="12308"/>
         <source>Report a bug or feature</source>
         <translation>الإبلاغ عن خطأ أو ميزة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12283"/>
+        <location filename="../Main/MainWindow.ui" line="12320"/>
         <source>Search</source>
         <translation>يبحث</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12295"/>
+        <location filename="../Main/MainWindow.ui" line="12332"/>
         <source>Process topology</source>
         <translation>طوبولوجيا العملية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12307"/>
+        <location filename="../Main/MainWindow.ui" line="12344"/>
         <source>Edit simulation time limits</source>
         <translation>تعديل الحدود الزمنية للمحاكاة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12310"/>
+        <location filename="../Main/MainWindow.ui" line="12347"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Time series&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Edit simulation time limits&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;سلسلة زمنية&lt;/span&gt;&lt;/p&gt;&lt;p&gt;تعديل الحدود الزمنية للمحاكاة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12325"/>
+        <location filename="../Main/MainWindow.ui" line="12362"/>
         <source>activate time series</source>
         <translation>تفعيل السلسلة الزمنية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12328"/>
+        <location filename="../Main/MainWindow.ui" line="12365"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Time series mode&lt;/span&gt;&lt;/p&gt;&lt;p&gt;When activated, the simulations run their time series version&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;وضع السلسلة الزمنية&lt;/span&gt;&lt;/p&gt;&lt;p&gt;عند تفعيلها، تقوم عمليات المحاكاة بتشغيل إصدار السلاسل الزمنية الخاصة بها&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12334"/>
+        <location filename="../Main/MainWindow.ui" line="12371"/>
         <source>Ctrl+T</source>
         <translation>السيطرة + T</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12343"/>
+        <location filename="../Main/MainWindow.ui" line="12380"/>
         <source>Clean database</source>
         <translation>قاعدة بيانات نظيفة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12349"/>
+        <location filename="../Main/MainWindow.ui" line="12386"/>
         <source>Ctrl+C, Ctrl+D</source>
         <translation>السيطرة+C، السيطرة+د</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12358"/>
+        <location filename="../Main/MainWindow.ui" line="12395"/>
         <source>Scale</source>
         <translation>حجم</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12361"/>
+        <location filename="../Main/MainWindow.ui" line="12398"/>
         <source>Scale the system load and or generation</source>
         <translation>قم بقياس تحميل النظام و/أو توليده</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12373"/>
+        <location filename="../Main/MainWindow.ui" line="12410"/>
         <source>Disable all results tags</source>
         <translation>تعطيل كافة علامات النتائج</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12385"/>
+        <location filename="../Main/MainWindow.ui" line="12422"/>
         <source>Enable all results tags</source>
         <translation>تمكين جميع علامات النتائج</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12397"/>
+        <location filename="../Main/MainWindow.ui" line="12434"/>
         <source>Detect substations</source>
         <translation>كشف المحطات الفرعية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12409"/>
+        <location filename="../Main/MainWindow.ui" line="12446"/>
         <source>Optimal hosting capacity</source>
         <translation>سعة الاستضافة المثالية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12412"/>
+        <location filename="../Main/MainWindow.ui" line="12449"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Nodal hosting capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the nodal hosting capacity calculation using the selected optimization method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;قدرة الاستضافة العقدية&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بتشغيل حساب سعة الاستضافة العقدية باستخدام طريقة التحسين المحددة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12427"/>
+        <location filename="../Main/MainWindow.ui" line="12464"/>
         <source>Enable server mode</source>
         <translation>تمكين وضع الخادم</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12439"/>
+        <location filename="../Main/MainWindow.ui" line="12476"/>
         <source>Record video</source>
         <translation>سجل الفيديو</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12442"/>
+        <location filename="../Main/MainWindow.ui" line="12479"/>
         <source>Record video of the schematic</source>
         <translation>تسجيل فيديو للتخطيطي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12454"/>
+        <location filename="../Main/MainWindow.ui" line="12491"/>
         <source>Save  differential</source>
         <translation>حفظ التفاضلية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12466"/>
+        <location filename="../Main/MainWindow.ui" line="12503"/>
         <source>Consolidate coordinates</source>
         <translation>توحيد الإحداثيات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12478"/>
+        <location filename="../Main/MainWindow.ui" line="12515"/>
         <source>Add selected as new remedial action</source>
         <translation>إضافة المحدد كإجراء علاجي جديد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12481"/>
+        <location filename="../Main/MainWindow.ui" line="12518"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add remedial action&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new remedial action from the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;أضف الإجراء العلاجي&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بإنشاء إجراء علاجي جديد من التحديد التخطيطي&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12487"/>
+        <location filename="../Main/MainWindow.ui" line="12524"/>
         <source>Ctrl+A, Ctrl+R</source>
         <translation>السيطرة + أ، السيطرة + ر</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12496"/>
+        <location filename="../Main/MainWindow.ui" line="12533"/>
         <source>Detect facilities</source>
         <translation>كشف المرافق</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12505"/>
+        <location filename="../Main/MainWindow.ui" line="12542"/>
         <source>Rotate</source>
         <translation>تناوب</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12517"/>
+        <location filename="../Main/MainWindow.ui" line="12554"/>
         <source>Reset diagram coordinates to database values</source>
         <translation>إعادة تعيين إحداثيات الرسم البياني لقيم قاعدة البيانات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12529"/>
+        <location filename="../Main/MainWindow.ui" line="12566"/>
         <source>Reliability analysis</source>
         <translation>تحليل الموثوقية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12532"/>
+        <location filename="../Main/MainWindow.ui" line="12569"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Reliability study&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the reliability calculation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;دراسة الموثوقية&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بتشغيل حساب الموثوقية&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12547"/>
+        <location filename="../Main/MainWindow.ui" line="12584"/>
         <source>Color buses by...</source>
         <translation>الحافلات الملونة ...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12559"/>
+        <location filename="../Main/MainWindow.ui" line="12596"/>
         <source>Color substations by...</source>
         <translation>محطات فرعية ملونة بواسطة ...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12574"/>
+        <location filename="../Main/MainWindow.ui" line="12611"/>
         <source>Select buses by...</source>
         <translation>اختر الحافلات حسب...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12601"/>
+        <location filename="../Main/MainWindow.ui" line="12638"/>
         <source>Substation wizard</source>
         <translation>معالج المحطة الفرعية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12604"/>
+        <location filename="../Main/MainWindow.ui" line="12641"/>
         <source>Add substation with a wizard form</source>
         <translation>إضافة محطة فرعية مع نموذج المعالج</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12607"/>
+        <location filename="../Main/MainWindow.ui" line="12644"/>
         <source>Ctrl+A, Ctrl+S</source>
         <translation>السيطرة + أ، السيطرة + S</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12619"/>
+        <location filename="../Main/MainWindow.ui" line="12656"/>
         <source>Dynamic RMS Simulation</source>
         <translation>محاكاة ديناميكية RMS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12622"/>
+        <location filename="../Main/MainWindow.ui" line="12659"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMS Simulation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a dynamic RMS simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;محاكاة RMS&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بتشغيل محاكاة RMS الديناميكية&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12634"/>
+        <location filename="../Main/MainWindow.ui" line="12671"/>
         <source>Prepare RMS dynamic plots</source>
         <translation>إعداد المؤامرات الديناميكية RMS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12637"/>
+        <location filename="../Main/MainWindow.ui" line="12674"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepare RMS dynamic plots&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the RMS dynamic plot editor before running the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;إعداد المؤامرات الديناميكية RMS&lt;/span&gt;&lt;/p&gt;&lt;p&gt;افتح محرر الرسم الديناميكي RMS قبل تشغيل المحاكاة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12649"/>
-        <location filename="../Main/MainWindow.ui" line="12652"/>
+        <location filename="../Main/MainWindow.ui" line="12686"/>
+        <location filename="../Main/MainWindow.ui" line="12689"/>
         <source>Small-Signal RMS Simulation</source>
         <translation>محاكاة الإشارة الصغيرة RMS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12655"/>
+        <location filename="../Main/MainWindow.ui" line="12692"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Small Signal Simulation (RMS)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an RMS Small Signal stability analysis simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;محاكاة الإشارة الصغيرة (RMS)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بتشغيل محاكاة تحليل استقرار الإشارة الصغيرة RMS&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12667"/>
+        <location filename="../Main/MainWindow.ui" line="12704"/>
         <source>Add rms event to selected</source>
         <translation>إضافة حدث rms إلى المحدد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12670"/>
+        <location filename="../Main/MainWindow.ui" line="12707"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add RMS event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new RMS event to the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;إضافة حدث RMS&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بإنشاء حدث RMS جديد للاختيار التخطيطي&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12685"/>
+        <location filename="../Main/MainWindow.ui" line="12722"/>
         <source>Clear highlights</source>
         <translation>أبرز واضحة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12700"/>
+        <location filename="../Main/MainWindow.ui" line="12737"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;State estimation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a state estimation analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تقدير الدولة&lt;/span&gt;&lt;/p&gt;&lt;p&gt;تشغيل تحليل تقدير الحالة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12712"/>
+        <location filename="../Main/MainWindow.ui" line="12749"/>
         <source>Add short circuit events</source>
         <translation>إضافة أحداث الدائرة القصيرة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12724"/>
+        <location filename="../Main/MainWindow.ui" line="12761"/>
         <source>PSS/e Raw / Rawx</source>
         <translation>PSS/e الخام / الخام</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12733"/>
+        <location filename="../Main/MainWindow.ui" line="12770"/>
         <source>Power Factory DGS</source>
         <translation>مصنع الطاقة DGS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12742"/>
+        <location filename="../Main/MainWindow.ui" line="12779"/>
         <source>Matpower</source>
         <translation>ماتبوور</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12751"/>
+        <location filename="../Main/MainWindow.ui" line="12788"/>
         <source>UCTE</source>
         <translation>UCTE</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12760"/>
+        <location filename="../Main/MainWindow.ui" line="12797"/>
         <source>CGMES</source>
         <translation>CGMES</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12769"/>
+        <location filename="../Main/MainWindow.ui" line="12806"/>
         <source>Power Grid Models</source>
         <translation>نماذج شبكات الطاقة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12778"/>
+        <location filename="../Main/MainWindow.ui" line="12815"/>
         <source>CIM</source>
         <translation>CIM</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12787"/>
+        <location filename="../Main/MainWindow.ui" line="12824"/>
         <source>H5</source>
         <translation>ح5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12796"/>
+        <location filename="../Main/MainWindow.ui" line="12833"/>
         <source>JSON</source>
         <translation>JSON</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12805"/>
+        <location filename="../Main/MainWindow.ui" line="12842"/>
         <source>Microsoft Excel</source>
         <translation>مايكروسوفت اكسل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12814"/>
+        <location filename="../Main/MainWindow.ui" line="12851"/>
         <source>SQLite</source>
         <translation>SQLite</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12823"/>
+        <location filename="../Main/MainWindow.ui" line="12860"/>
         <source>Profiles</source>
         <translation>الملفات الشخصية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12850"/>
-        <location filename="../Main/MainWindow.ui" line="12868"/>
+        <location filename="../Main/MainWindow.ui" line="12887"/>
+        <location filename="../Main/MainWindow.ui" line="12905"/>
         <source>Catalogue</source>
         <translation>كتالوج</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12877"/>
+        <location filename="../Main/MainWindow.ui" line="12914"/>
         <source>Clean Room</source>
         <translation>غرفة نظيفة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12880"/>
+        <location filename="../Main/MainWindow.ui" line="12917"/>
         <source>Cleam room utility to produce an machine learning statistical representation of the static time series</source>
         <translation>أداة Cleam Room لإنتاج تمثيل إحصائي للتعلم الآلي للسلسلة الزمنية الثابتة</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12892"/>
+        <location filename="../Main/MainWindow.ui" line="12929"/>
         <source>Procedural grid expansion</source>
         <translation>توسيع الشبكة الإجرائية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12901"/>
+        <location filename="../Main/MainWindow.ui" line="12938"/>
         <source>Catalogue element optimization</source>
         <translation>تحسين عنصر الكتالوج</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12910"/>
+        <location filename="../Main/MainWindow.ui" line="12947"/>
         <source>Dynamic EMT Simulation</source>
         <translation>محاكاة ديناميكية EMT</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12913"/>
+        <location filename="../Main/MainWindow.ui" line="12950"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMT Simulation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a dynamic EMT simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;محاكاة EMT&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بتشغيل محاكاة EMT الديناميكية&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12925"/>
+        <location filename="../Main/MainWindow.ui" line="12962"/>
         <source>Prepare EMT dynamic plots</source>
         <translation>إعداد المؤامرات الديناميكية EMT</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12928"/>
+        <location filename="../Main/MainWindow.ui" line="12965"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepare EMT dynamic plots&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the EMT dynamic plot editor before running the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;إعداد المؤامرات الديناميكية EMT&lt;/span&gt;&lt;/p&gt;&lt;p&gt;افتح محرر الرسم الديناميكي EMT قبل تشغيل المحاكاة&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12940"/>
-        <location filename="../Main/MainWindow.ui" line="12943"/>
+        <location filename="../Main/MainWindow.ui" line="12977"/>
+        <location filename="../Main/MainWindow.ui" line="12980"/>
         <source>Small-Signal EMT Simulation</source>
         <translation>محاكاة الإشارة الصغيرة EMT</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12946"/>
+        <location filename="../Main/MainWindow.ui" line="12983"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Small Signal Simulation (EMT)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an EMT Small Signal stability analysis simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;محاكاة الإشارة الصغيرة (EMT)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بتشغيل محاكاة تحليل استقرار الإشارة الصغيرة EMT&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12954"/>
+        <location filename="../Main/MainWindow.ui" line="12991"/>
         <source>Reticular</source>
         <translation>شبكي</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12959"/>
+        <location filename="../Main/MainWindow.ui" line="12996"/>
         <source>Straight</source>
         <translation>مستقيم</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12968"/>
+        <location filename="../Main/MainWindow.ui" line="13005"/>
         <source>ai_chat</source>
         <translation>ai_chat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12971"/>
+        <location filename="../Main/MainWindow.ui" line="13008"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;VeraGrid AI &lt;/span&gt;&lt;/p&gt;&lt;p&gt;Show the VeraGrid AI chat&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;VeraGrid AI&lt;/span&gt;&lt;/p&gt;&lt;p&gt;إظهار الدردشة VeraGrid AI&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12983"/>
+        <location filename="../Main/MainWindow.ui" line="13020"/>
         <source>Power Flow 3-phase</source>
         <translation>تدفق الطاقة 3 مراحل</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12986"/>
+        <location filename="../Main/MainWindow.ui" line="13023"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power Flow 3-phase&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an unbalanced 3-phase power flow analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;تدفق الطاقة 3 مراحل&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بإجراء تحليل تدفق الطاقة غير المتوازن على ثلاث مراحل&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13001"/>
+        <location filename="../Main/MainWindow.ui" line="13038"/>
         <source>Add emt event to selected</source>
         <translation>إضافة حدث emt إلى المحدد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13004"/>
+        <location filename="../Main/MainWindow.ui" line="13041"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add EMT event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new EMT event to the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;إضافة حدث EMT&lt;/span&gt;&lt;/p&gt;&lt;p&gt;قم بإنشاء حدث EMT جديد للاختيار التخطيطي&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13013"/>
+        <location filename="../Main/MainWindow.ui" line="13050"/>
         <source>Set model (x,y) based on (lat, lon)</source>
         <translation>تعيين النموذج (x,y) بناءً على (خط العرض، خط الطول)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13022"/>
+        <location filename="../Main/MainWindow.ui" line="13059"/>
         <source>Restore investments</source>
         <translation>استعادة الاستثمارات</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13034"/>
+        <location filename="../Main/MainWindow.ui" line="13071"/>
         <source>Veragrid Scenario</source>
         <translation>سيناريو فيراجريد</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13043"/>
+        <location filename="../Main/MainWindow.ui" line="13080"/>
         <source>Show dynamic models editor</source>
         <translation>إظهار محرر النماذج الديناميكية</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13055"/>
+        <location filename="../Main/MainWindow.ui" line="13092"/>
         <source>Repair diagram</source>
         <translation>مخطط الإصلاح</translation>
     </message>

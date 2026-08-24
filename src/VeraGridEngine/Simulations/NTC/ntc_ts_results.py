@@ -144,6 +144,7 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
                     ResultTypes.VscPowerFromNegative,
                 ],
                 ResultTypes.FlowReports: [
+                    ResultTypes.NetTransferCapacity,
                     ResultTypes.ContingencyFlowsReport,
                     ResultTypes.InterSpaceBranchPower,
                     ResultTypes.InterSpaceBranchLoading,
@@ -418,6 +419,18 @@ class OptimalNetTransferCapacityTimeSeriesResults(ResultsTemplate):
                 units='',
                 cols_device_type=DeviceType.NoDevice,
                 idx_device_type=DeviceType.BranchDevice
+            )
+
+        elif result_type == ResultTypes.NetTransferCapacity:
+            # achieved inter area exchange per time step
+            return ResultsTable(
+                data=self.inter_area_flows.reshape(-1, 1),
+                index=self.time_array,
+                columns=np.array(['NTC (MW)']),
+                title=str(result_type.value),
+                ylabel='(MW)',
+                cols_device_type=DeviceType.NoDevice,
+                idx_device_type=DeviceType.NoDevice
             )
 
         elif result_type == ResultTypes.ContingencyFlowsReport:

@@ -126,7 +126,10 @@ class ShortCircuitEvent(PointerDeviceParent):
         self._x_fault = float(x_fault)
 
     def _check(self):
+        """
 
+        :return:
+        """
         if self._fault_type == FaultType.LLLG:
             if self._phases != PhasesShortCircuit.abc:
                 self._phases = PhasesShortCircuit.abc
@@ -143,6 +146,7 @@ class ShortCircuitEvent(PointerDeviceParent):
     def fault_type(self, val: FaultType):
 
         if self.auto_update_enabled:
+            self._fault_type = val
             self._check()
         else:
             self._fault_type = val
@@ -159,6 +163,7 @@ class ShortCircuitEvent(PointerDeviceParent):
     def phases(self, val: PhasesShortCircuit):
 
         if self.auto_update_enabled:
+            self._phases = val
             self._check()
         else:
             self._phases = val
@@ -175,6 +180,7 @@ class ShortCircuitEvent(PointerDeviceParent):
     def method(self, val: MethodShortCircuit):
 
         if self.auto_update_enabled:
+            self._method = val
             self._check()
         else:
             self._method = val

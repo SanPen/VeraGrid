@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 
+import warnings
 import numpy as np
 from typing import Union, Tuple
 
@@ -721,8 +722,19 @@ class ControllableBranchParent(BranchParent):
 
     @tap_phase_control_mode.setter
     def tap_phase_control_mode(self, val: TapPhaseControl):
-        assert isinstance(val, TapPhaseControl)
-        self._tap_phase_control_mode = val
+        if isinstance(val, TapPhaseControl):
+            self._tap_phase_control_mode = val
+        # elif isinstance(val, str):
+        #     # Some GUI editing path commits the string instead of the enum
+        #     # For instance for transformers going from fixed to Pf. Thus, we coerce it
+        #     # to not lose the edit, but warn it is not the expected behavior
+        #     warnings.warn(f"tap_phase_control_mode received the string {val!r}; "
+        #                   f"coercing to TapPhaseControl. The caller should pass the enum.")
+        #     self._tap_phase_control_mode = TapPhaseControl(val)
+        else:
+            # Raise the message
+            raise ValueError(f"tap_phase_control_mode expects a TapPhaseControl, "
+                             f"got {type(val).__name__} = {val!r}")
 
     @property
     def tap_module_control_mode(self) -> TapModuleControl:
@@ -734,8 +746,17 @@ class ControllableBranchParent(BranchParent):
 
     @tap_module_control_mode.setter
     def tap_module_control_mode(self, val: TapModuleControl):
-        assert isinstance(val, TapModuleControl)
-        self._tap_module_control_mode = val
+        if isinstance(val, TapModuleControl):
+            self._tap_module_control_mode = val
+        # elif isinstance(val, str):
+        #     # see tap_phase_control_mode
+        #     warnings.warn(f"tap_module_control_mode received the string {val!r}; "
+        #                   f"coercing to TapModuleControl. The caller should pass the enum.")
+        #     self._tap_module_control_mode = TapModuleControl(val)
+        else:
+            # loud, typed refusal instead of a bare assert
+            raise ValueError(f"tap_module_control_mode expects a TapModuleControl, "
+                             f"got {type(val).__name__} = {val!r}")
 
     @property
     def R_corrected(self):

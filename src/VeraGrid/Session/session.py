@@ -332,6 +332,15 @@ class SimulationSession:
         else:
             return None
 
+    def get_driver(self, driver_type: SimulationTypes) -> Union[DRIVER_OBJECTS, None]:
+        """
+        Get the driver by simulation type.
+
+        :param driver_type: Driver simulation type.
+        :return: Driver instance or None.
+        """
+        return self.drivers.get(driver_type, None)
+
     def delete_driver(self, driver_type: SimulationTypes) -> None:
         """
         Get the results of the driver
@@ -365,6 +374,39 @@ class SimulationSession:
             if study_name == drv.tpe.value:
                 return self.drivers[driver_type]
         return None
+
+    def get_results_model(self,
+                          driver_type: SimulationTypes,
+                          result_type: ResultTypes) -> Union[ResultsModel, None]:
+        """
+        Get the results model by simulation type and result type.
+
+        :param driver_type: Driver simulation type.
+        :param result_type: Result type.
+        :return: ResultsModel instance or None if not found.
+        """
+        drv: DRIVER_OBJECTS | None = self.drivers.get(driver_type, None)
+        if drv is not None:
+            thread: GcThread | None = self.threads.get(driver_type, None)
+            if thread is not None:
+                result_is_available: bool = not thread.isRunning() and not thread.has_failed()
+            else:
+                result_is_available = True
+
+            if result_is_available:
+                if drv.results is not None:
+                    tbl = drv.results.mdl(result_type=result_type)
+                    if tbl is None:
+                        return None
+                    else:
+                        return ResultsModel(tbl)
+                else:
+                    print('There seem to be no results :(')
+                    return None
+            else:
+                return None
+        else:
+            return None
 
     def get_results_model_by_name(self,
                                   study_name: str,

@@ -5,6 +5,7 @@
 from __future__ import annotations
 import numpy as np
 import pandas as pd
+from enum import Enum
 from typing import Any, Dict, List, Union
 from PySide6 import QtCore, QtWidgets
 from warnings import warn
@@ -158,6 +159,12 @@ class ProfilesModel(WrappableTableModel):
 
         elif self.data_format is bool:
             delegate = ComboDelegate(self.parent, [True, False], ['True', 'False'])
+            self.parent.setItemDelegate(delegate)
+
+        elif isinstance(self.data_format, type) and issubclass(self.data_format, Enum):
+            # Have a dropdown for enum magnitudes like control modes
+            members = list(self.data_format)
+            delegate = ComboDelegate(self.parent, members, [str(m) for m in members])
             self.parent.setItemDelegate(delegate)
 
         elif self.data_format is float:

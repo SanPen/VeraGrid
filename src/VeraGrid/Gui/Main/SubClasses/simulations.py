@@ -12,6 +12,7 @@ from PySide6 import QtGui, QtCore
 from matplotlib.colors import LinearSegmentedColormap
 
 import VeraGrid.Gui.gui_functions as gf
+from VeraGrid.Gui.i18n import translate_tree_label
 from VeraGrid.Gui.general_dialogues import LogsDialogue
 from VeraGrid.Gui.Diagrams.SchematicWidget.schematic_widget import SchematicWidget, make_diagram_from_buses
 from VeraGrid.Gui.Diagrams.MapWidget.grid_map_widget import MapWidget
@@ -39,6 +40,7 @@ from VeraGridEngine.basic_structures import CxVec, IntVec, Vec
 from VeraGridEngine.enumerations import (DeviceType, AvailableTransferMode, SolverType, MIPSolvers, TimeGrouping,
                                          ZonalGrouping, ContingencyMethod, InvestmentEvaluationMethod, EngineType,
                                          BranchImpedanceMode, ResultTypes, SimulationTypes, NodalCapacityMethod,
+                                         SolutionState,
                                          ContingencyFilteringMethods, InvestmentsEvaluationObjectives,
                                          ReliabilityMode, OpfDispatchMode, DynamicIntegrationMethod,
                                          RmsInitializationMethod, EmtInitializationMethod, EmtSolverTypes,
@@ -332,7 +334,7 @@ class SimulationsMain(TimeEventsMain):
         )
 
         # dictionaries for available results
-        self.available_results_dict: Union[Dict[str, Dict[str, ResultTypes]], None] = dict()
+        self.available_results_dict: Union[Dict[SimulationTypes, Dict[ResultTypes, ResultTypes]], None] = dict()
 
         self.buses_for_storage: List[dev.Bus] = list()
 
@@ -867,9 +869,12 @@ class SimulationsMain(TimeEventsMain):
 
         :return:
         """
-        current_study_name = self.ui.available_results_to_color_comboBox.currentData()
-        drv_dict = {driver.tpe.value: driver for driver in self.get_available_drivers()}
-        drv = drv_dict.get(current_study_name, None)
+        current_study = self.ui.available_results_to_color_comboBox.currentData()
+        drv_dict: Dict[SimulationTypes, DRIVER_OBJECTS] = {driver.tpe: driver for driver in self.get_available_drivers()}
+        if isinstance(current_study, SimulationTypes):
+            drv = drv_dict.get(current_study, None)
+        else:
+            drv = None
         if drv is not None:
             if drv.results is not None:
                 if drv.results.time_indices is not None:
@@ -889,6 +894,70 @@ class SimulationsMain(TimeEventsMain):
 
         self.fill_combinations_tree(drv=drv)
 
+    def build_results_tree_model(self, available_results: List[DRIVER_OBJECTS]) -> QtGui.QStandardItemModel:
+        """
+        Build the results tree with translated labels and enum payloads.
+
+        :param available_results: Simulation drivers with result objects.
+        :return: Tree model for the results view.
+        """
+        model: QtGui.QStandardItemModel = QtGui.QStandardItemModel()
+        model.setHorizontalHeaderLabels([translate_tree_label('Results')])
+        root_item: QtGui.QStandardItem = model.invisibleRootItem()
+        icons: Dict[SimulationTypes, str] = gf.get_simulation_tree_icons()
+
+        for driver in available_results:
+            # Study rows carry the simulation enum. The label can be translated independently.
+            study_item: QtGui.QStandardItem = QtGui.QStandardItem(translate_tree_label(str(driver.tpe.value)))
+            study_item.setEditable(False)
+            study_item.setData(driver.tpe, QtCore.Qt.ItemDataRole.UserRole)
+
+            icon_path: str | None = icons.get(driver.tpe, None)
+            if icon_path is not None:
+                icon: QtGui.QIcon = QtGui.QIcon()
+                icon.addPixmap(QtGui.QPixmap(icon_path))
+                study_item.setIcon(icon)
+            else:
+                pass
+
+            root_item.appendRow(study_item)
+            self.fill_results_tree_model_item(parent_item=study_item,
+                                              results_tree=driver.results.get_results_type_tree())
+
+        return model
+
+    def fill_results_tree_model_item(self,
+                                     parent_item: QtGui.QStandardItem,
+                                     results_tree: object) -> None:
+        """
+        Add result tree entries below one parent item.
+
+        :param parent_item: Parent tree item.
+        :param results_tree: Result tree as dictionaries or lists of result enums.
+        :return: None.
+        """
+        if isinstance(results_tree, dict):
+            for key, value in results_tree.items():
+                # Group nodes are navigation labels. Leaf result nodes below them carry ResultTypes.
+                source_text: str = str(key.value) if isinstance(key, ResultTypes) else str(key)
+                group_item: QtGui.QStandardItem = QtGui.QStandardItem(translate_tree_label(source_text))
+                group_item.setEditable(False)
+                parent_item.appendRow(group_item)
+                self.fill_results_tree_model_item(parent_item=group_item, results_tree=value)
+        elif isinstance(results_tree, list):
+            for result_type in results_tree:
+                if isinstance(result_type, ResultTypes):
+                    result_item: QtGui.QStandardItem = QtGui.QStandardItem(
+                        translate_tree_label(str(result_type.value))
+                    )
+                    result_item.setEditable(False)
+                    result_item.setData(result_type, QtCore.Qt.ItemDataRole.UserRole)
+                    parent_item.appendRow(result_item)
+                else:
+                    pass
+        else:
+            pass
+
     def update_available_results(self) -> None:
         """
         Update the results that are displayed in the results tab
@@ -902,27 +971,53 @@ class SimulationsMain(TimeEventsMain):
 
         available_results = self.get_available_drivers()
         max_steps = 0
-        d = dict()
-        lst = [SimulationTypes.DesignView.value]
+        lst: List[SimulationTypes] = [SimulationTypes.DesignView]
         for driver in available_results:
-            name: str = str(driver.tpe.value)
-            lst.append(name)
-            d[name] = driver.results.get_name_tree()
-            self.available_results_dict[name] = driver.results.get_name_to_results_type_dict()
+            lst.append(driver.tpe)
+            self.available_results_dict[driver.tpe] = driver.results.get_results_type_dict()
             steps = driver.get_steps()
-            self.available_results_steps_dict[name] = steps
+            self.available_results_steps_dict[driver.tpe] = steps
             if len(steps) > max_steps:
                 max_steps = len(steps)
 
-        icons = gf.get_simulation_tree_icons()
-
-        self.ui.results_treeView.setModel(gf.get_tree_model(d, 'Results', icons=icons))
+        self.ui.results_treeView.setModel(self.build_results_tree_model(available_results=available_results))
         lst.reverse()  # this is to show the latest simulation first
-        mdl = gf.ComboModel(text_items=[(name, name) for name in lst])
+        mdl = gf.ComboModel(enum_values=lst, translate=translate_tree_label)
         self.ui.available_results_to_color_comboBox.setModel(mdl)
         self.ui.resultsTableView.setModel(None)
         self.ui.resultsLogsTreeView.setModel(None)
         self.changed_study()
+
+    def refresh_runtime_translations(self) -> None:
+        """
+        Refresh runtime-built results labels after one language change.
+
+        :return: None.
+        """
+        super().refresh_runtime_translations()
+
+        available_results: List[DRIVER_OBJECTS] = self.get_available_drivers()
+        selected_simulation_type: SimulationTypes | None = self.ui.available_results_to_color_comboBox.currentData()
+        combo_values: List[SimulationTypes] = [SimulationTypes.DesignView]
+        driver: DRIVER_OBJECTS
+
+        self.ui.results_treeView.setModel(self.build_results_tree_model(available_results=available_results))
+
+        for driver in available_results:
+            combo_values.append(driver.tpe)
+
+        combo_values.reverse()
+        model: gf.ComboModel = gf.ComboModel(enum_values=combo_values, translate=translate_tree_label)
+        self.ui.available_results_to_color_comboBox.setModel(model)
+
+        if selected_simulation_type is not None:
+            index: int = self.ui.available_results_to_color_comboBox.findData(selected_simulation_type)
+            if index >= 0:
+                self.ui.available_results_to_color_comboBox.setCurrentIndex(index)
+            else:
+                pass
+        else:
+            pass
 
     def get_compatible_from_to_buses_and_inter_branches(self) -> dev.InterAggregationInfo:
         """
@@ -3041,11 +3136,17 @@ class SimulationsMain(TimeEventsMain):
             self.update_available_results()
             self.colour_diagrams()
 
-            if results.converged:
+            # three possible solutions: optimal, optimal-but-relaxed, or not optimal.
+            solution_state = results.get_solution_state(slack_tol_mw=0.1)
+            total_slack_mw = results.get_total_slack_mw()
+            if solution_state == SolutionState.Optimal:
                 if drv.logger.error_count() == 0:
                     self.show_info_toast("Optimal result")
                 else:
-                    self.show_warning_toast("Optimal result with errors :/")
+                    self.show_warning_toast("Optimal result, but check the logs")
+            elif solution_state == SolutionState.Relaxed:
+                self.show_warning_toast(f"Feasible only with relaxed limits: "
+                                        f"{total_slack_mw:.1f} MW of slack (see the overloads results)")
             else:
                 self.show_warning_toast("Not optimal result :/")
 

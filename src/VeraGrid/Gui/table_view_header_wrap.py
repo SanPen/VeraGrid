@@ -3,8 +3,10 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.  
 # SPDX-License-Identifier: MPL-2.0
 from PySide6 import QtCore, QtWidgets, QtGui
+from VeraGrid.Gui.Icons import icons_rc
 from VeraGrid.Gui.wrappable_table_model import WrappableTableModel
 from VeraGrid.Gui.results_model import ResultsModel
+from VeraGrid.Gui.object_proxy_model import ObjectModelFilterProxy
 
 
 class HeaderViewWithWordWrap(QtWidgets.QHeaderView):
@@ -34,10 +36,56 @@ class HeaderViewWithWordWrap(QtWidgets.QHeaderView):
             raise Exception("The parent is not a QTableView :(" + str(type(self.tableView)) + ")")
 
     def _realModel(self) -> WrappableTableModel:
-        mdl = self.model()
+        """
+        Return the source model used for header text wrapping.
+
+        :return: Source table model.
+        """
+        mdl = self.tableView.model()
         if isinstance(mdl, QtCore.QSortFilterProxyModel):
             mdl = mdl.sourceModel()
+        else:
+            pass
         return mdl
+
+    def _proxy_model(self) -> ObjectModelFilterProxy | None:
+        """
+        Return the object-table proxy when this header belongs to one.
+
+        :return: Object model proxy or None.
+        """
+        mdl = self.tableView.model()
+        if isinstance(mdl, ObjectModelFilterProxy):
+            return mdl
+        else:
+            return None
+
+    def _header_state_icon_path(self, logicalIndex: int) -> str:
+        """
+        Return the icon path for the filter-menu state of one column.
+
+        :param logicalIndex: Header section index.
+        :return: Qt resource path or empty string.
+        """
+        icon_path: str = ""
+        proxy_model: ObjectModelFilterProxy | None = self._proxy_model()
+
+        if proxy_model is not None:
+            if proxy_model.has_column_filter(source_column=logicalIndex):
+                icon_path = ":/Icons/icons/table_filter_active.png"
+            else:
+                sort_order: QtCore.Qt.SortOrder | None = proxy_model.get_column_sort_order(source_column=logicalIndex)
+                if sort_order == QtCore.Qt.SortOrder.AscendingOrder:
+                    icon_path = ":/Icons/icons/up.png"
+                else:
+                    if sort_order == QtCore.Qt.SortOrder.DescendingOrder:
+                        icon_path = ":/Icons/icons/down.png"
+                    else:
+                        pass
+        else:
+            pass
+
+        return icon_path
 
     def sectionSizeFromContents(self, logicalIndex: int) -> QtCore.QSize:
         """
@@ -88,11 +136,33 @@ class HeaderViewWithWordWrap(QtWidgets.QHeaderView):
 
                 # Define text indentation
                 indentation = 4  # pixels
-                textRect = QtCore.QRectF(rect.adjusted(indentation, 0, 0, 0))  # Indent left and right
+                icon_size: int = 14
+                icon_padding: int = 5
+                text_right: int = 0
+                icon_path: str = self._header_state_icon_path(logicalIndex=logicalIndex)
+
+                if len(icon_path) > 0:
+                    text_right = -(icon_size + icon_padding + 2)
+                else:
+                    pass
+
+                textRect = QtCore.QRectF(rect.adjusted(indentation, 0, text_right, 0))
 
                 painter.drawText(textRect,
                                  QtCore.Qt.AlignmentFlag.AlignLeft | QtCore.Qt.TextFlag.TextWordWrap,
                                  headerText)
+
+                if len(icon_path) > 0:
+                    icon: QtGui.QIcon = QtGui.QIcon(icon_path)
+                    icon_rect: QtCore.QRect = QtCore.QRect(
+                        rect.right() - icon_size - icon_padding,
+                        rect.top() + int((rect.height() - icon_size) / 2),
+                        icon_size,
+                        icon_size,
+                    )
+                    icon.paint(painter, icon_rect)
+                else:
+                    pass
         else:
             QtWidgets.QHeaderView.paintSection(self, painter, rect, logicalIndex)
 
@@ -115,6 +185,3 @@ class HeaderViewWithWordWrap(QtWidgets.QHeaderView):
         if isinstance(mdl, ResultsModel):
             mdl.sort_column(c=i)
             mdl.update()
-
-
-

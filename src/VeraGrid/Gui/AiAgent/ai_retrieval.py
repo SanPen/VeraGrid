@@ -23,7 +23,7 @@ from typing import Any, Optional, TYPE_CHECKING
 
 import numpy as np
 
-from VeraGridEngine.enumerations import EngineType
+from VeraGridEngine.enumerations import EngineType, SimulationTypes
 
 if TYPE_CHECKING:
     from VeraGrid.Gui.Main.SubClasses.simulations import SimulationsMain
@@ -1137,8 +1137,11 @@ def build_holistic_overview_lines(
     selected_labels: list[str] = list()
     driver_index: int = 0
     selected_index: int = 0
-    active_study_data: str | None = app.ui.available_results_to_color_comboBox.currentData()
-    active_study_name: str = str(active_study_data) if active_study_data is not None else ""
+    active_study_data: object = app.ui.available_results_to_color_comboBox.currentData()
+    if isinstance(active_study_data, SimulationTypes):
+        active_study_name: str = active_study_data.value
+    else:
+        active_study_name = str(active_study_data) if active_study_data is not None else ""
 
     lines.append("This record merges the current grid inputs, session state, and study-result availability.")
     lines.append(f"project_name: {app.circuit.name}")
@@ -1269,8 +1272,11 @@ def build_runtime_knowledge_snapshot(app: "SimulationsMain") -> RuntimeKnowledge
     index: int = 0
 
     summary_lines.append(f"project_name: {app.circuit.name}")
-    active_study_data: str | None = app.ui.available_results_to_color_comboBox.currentData()
-    active_study_name: str = str(active_study_data) if active_study_data is not None else ""
+    active_study_data: object = app.ui.available_results_to_color_comboBox.currentData()
+    if isinstance(active_study_data, SimulationTypes):
+        active_study_name: str = active_study_data.value
+    else:
+        active_study_name = str(active_study_data) if active_study_data is not None else ""
     summary_lines.append(f"active_study: {active_study_name}")
     solver_data: EngineType | None = app.ui.engineComboBox.currentData()
     solver_name: str = solver_data.value if isinstance(solver_data, EngineType) else ""

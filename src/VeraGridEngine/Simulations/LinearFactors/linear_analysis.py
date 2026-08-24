@@ -350,13 +350,16 @@ def make_ptdf(Bpqpv: sp.csc_matrix,
 def make_acdc_ptdf(nc: NumericalCircuit,
                    logger: Logger,
                    bus_types: IntVec,
-                   distribute_slack: bool = False) -> Mat:
+                   distribute_slack: bool = False,
+                   converters_as_setpoint: bool = False) -> Mat:
     """
     Build the ACDC PTDF matrix
     :param nc: NumericalCircuit
     :param logger: Logger
     :param bus_types: Array of bus types for the distributed slack
     :param distribute_slack: distribute the slack?
+    :param converters_as_setpoint: treat every converter (VSC and HVDC) as a set-point
+        device with the small admittance, ignoring droop control modes
     :return: PTDF matrix. It is a full matrix of dimensions Branches x buses
     """
     n = nc.nbus
@@ -389,12 +392,15 @@ def make_acdc_ptdf(nc: NumericalCircuit,
         A[t, f] -= ys
         A[t, t] += ys
 
-    # fake impedances for converters
+    # Fake impedances for converters.
+    # Set-point devices get a small coupling that only keeps the AC-DC topology visible
+    # In the NTC the free mode has to have a higher or equal NTC than the Pmode3
     for k in range(nc.nvsc):
         f = nc.vsc_data.F[k]
         t = nc.vsc_data.T[k]
 
-        if nc.vsc_data.control1_int[k] == ConverterControlType.Pdc_angle_droop.idx():
+        if (not converters_as_setpoint and
+                nc.vsc_data.control1_int[k] == ConverterControlType.Pdc_angle_droop.idx()):
             # P-MODE 3: The VSC behaves as a droop control
             # P = P0 + k * (theta_f - theta_t)
             # k is in MW/deg, we need it in p.u./rad
@@ -408,12 +414,13 @@ def make_acdc_ptdf(nc: NumericalCircuit,
         A[t, f] -= ys
         A[t, t] += ys
 
-    # fake impedances for hvdc
+    # fake impedances for hvdc, same reasoning as the VSCs
     for k in range(nc.nhvdc):
         f = nc.hvdc_data.F[k]
         t = nc.hvdc_data.T[k]
 
-        if nc.hvdc_data.control_mode_int[k] == HvdcControlType.type_0_free.idx():
+        if (not converters_as_setpoint and
+                nc.hvdc_data.control_mode_int[k] == HvdcControlType.type_0_free.idx()):
             # Free mode: P = Pset + angle_droop * (theta_f - theta_t)
             # angle_droop is in MW/deg, we need it in p.u./rad
             ys = nc.hvdc_data.angle_droop[k] * 57.295779513 / nc.Sbase
@@ -599,12 +606,15 @@ class LinearAnalysis:
                  nc: NumericalCircuit,
                  distributed_slack: bool = False,
                  correct_values: bool = False,
+                 converters_as_setpoint: bool = False,
                  logger: Logger = Logger()):
         """
         Linear Analysis constructor
         :param nc: numerical circuit instance
         :param distributed_slack: boolean to distribute slack
         :param correct_values: boolean to fix out layer values
+        :param converters_as_setpoint: build the AC-DC PTDF with every converter treated
+            as a set-point device regardless of its control mode
         """
 
         self.logger: Logger = logger
@@ -650,7 +660,8 @@ class LinearAnalysis:
                                 nc=island,
                                 logger=self.logger,
                                 bus_types=island.bus_data.bus_types,
-                                distribute_slack=distributed_slack
+                                distribute_slack=distributed_slack,
+                                converters_as_setpoint=converters_as_setpoint
                             )
 
                         else:

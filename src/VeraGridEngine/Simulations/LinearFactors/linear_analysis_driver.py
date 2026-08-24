@@ -19,6 +19,9 @@ from VeraGridEngine.enumerations import EngineType, SimulationTypes
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis_results import LinearAnalysisResults
 from VeraGridEngine.Simulations.LinearFactors.linear_analysis_options import LinearAnalysisOptions
 from VeraGridEngine.DataStructures.numerical_circuit import NumericalCircuit
+from VeraGridEngine.Simulations.PowerFlow.power_flow_worker import multi_island_pf_nc
+from VeraGridEngine.Simulations.PowerFlow.power_flow_options import PowerFlowOptions
+from VeraGridEngine.enumerations import SolverType
 
 if TYPE_CHECKING:  # Only imports the below statements during type checking
     from VeraGridEngine.Simulations.OPF.opf_results import OptimalPowerFlowResults
@@ -102,10 +105,13 @@ class LinearAnalysisDriver(DriverTemplate):
                 logger=self.logger
             )
 
+            # The converters are represented by the power they actually move, computed
+            # below, so the PTDF must not also represent them as an equivalent admittance
             analysis = LinearAnalysis(
                 nc=nc,
                 distributed_slack=self.options.distribute_slack,
-                correct_values=self.options.correct_values
+                correct_values=self.options.correct_values,
+                converters_as_setpoint=True
             )
 
             self.logger += analysis.logger
@@ -126,10 +132,18 @@ class LinearAnalysisDriver(DriverTemplate):
 
             Shvdc, Losses_hvdc, Pf_hvdc, Pt_hvdc, loading_hvdc, n_free = nc.hvdc_data.get_power(Sbase=nc.Sbase,
                                                                                                 theta=np.zeros(nbus))
-            Sbus = nc.get_power_injections().real
+            # the linear injections compute the ZIP load components at 1.0 p.u.
+            Sbus = nc.get_linear_power_injections().real
+
+            # Power moved by each converter, following its control mode: a set point, or
+            # the P-mode 3 droop law limited by the converter rating.
+            pf_res = multi_island_pf_nc(nc=nc,
+                                        options=PowerFlowOptions(solver_type=SolverType.Linear))
+            P_vsc = np.real(pf_res.Pfp_vsc)
+
             # The sign is not changed internally and both VSCs and HVDCs are treated as branches
             # So we modify the sign here
-            self.results.Sf = analysis.get_flows(Sbus=Sbus, P_hvdc=-Pf_hvdc * nc.Sbase)
+            self.results.Sf = analysis.get_flows(Sbus=Sbus, P_hvdc=-Pf_hvdc * nc.Sbase, P_vsc=P_vsc)
             self.results.Sbus = analysis.get_corrected_injections(P=Sbus)
             
             self.results.loading = self.results.Sf / (nc.passive_branch_data.rates + 1e-20)

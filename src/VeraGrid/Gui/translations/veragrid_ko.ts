@@ -121,57 +121,57 @@ li.checked::마커 { content: &quot;\2612&quot;; }
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="19"/>
         <source>Phases:</source>
-        <translation type="unfinished"></translation>
+        <translation>위상:</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="26"/>
         <source>N</source>
-        <translation type="unfinished"></translation>
+        <translation>N</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="33"/>
         <source>A</source>
-        <translation type="unfinished"></translation>
+        <translation>A</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="40"/>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="47"/>
         <source>C</source>
-        <translation type="unfinished"></translation>
+        <translation>C</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="103"/>
         <source>Compute from sequence values</source>
-        <translation type="unfinished"></translation>
+        <translation>순서 값으로부터 계산</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="130"/>
         <source>Accept</source>
-        <translation type="unfinished">수용하다</translation>
+        <translation>수용하다</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="148"/>
         <source>Admittance matrix</source>
-        <translation type="unfinished"></translation>
+        <translation>어드미턴스 행렬</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="158"/>
         <source>Dense complex admittance matrix.</source>
-        <translation type="unfinished"></translation>
+        <translation>밀집 복소 어드미턴스 행렬.</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="173"/>
         <source>Shunt admittance</source>
-        <translation type="unfinished"></translation>
+        <translation>션트 어드미턴스</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/AdmittanceMatrixEditor/admittance_matrix_editor_gui.ui" line="185"/>
         <source>Series admittance</source>
-        <translation type="unfinished"></translation>
+        <translation>직렬 어드미턴스</translation>
     </message>
 </context>
 <context>
@@ -1383,60 +1383,89 @@ li.checked::마커 { content: &quot;\2612&quot;; }
         <translation>데이터 포인트별 정의</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="72"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="131"/>
         <source>Bus longitude</source>
         <translation>버스 경도</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="82"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="206"/>
         <source>Load file</source>
         <translation>파일 로드</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="96"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="115"/>
         <location filename="../SubstationDesigner/substation_designer_gui.ui" line="133"/>
         <source>Name</source>
         <translation>이름</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="116"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="165"/>
         <source>Bus y position</source>
         <translation>버스 Y 위치</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="149"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="98"/>
         <location filename="../SubstationDesigner/substation_designer_gui.ui" line="40"/>
         <source>Code</source>
         <translation>암호</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="156"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="70"/>
+        <source>Buses</source>
+        <translation>버스</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="75"/>
+        <source>Substations</source>
+        <translation>변전소</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="80"/>
+        <source>Injections</source>
+        <translation>주입</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="108"/>
+        <source>Target</source>
+        <translation>목표</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="141"/>
+        <source>Also update associated buses latitude and longitude</source>
+        <translation>연결된 버스의 위도 및 경도도 업데이트합니다</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="155"/>
+        <source>Match method:</source>
+        <translation>일치 방법:</translation>
+    </message>
+    <message>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="179"/>
         <source>Bus latitude</source>
         <translation>버스 위도</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="163"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="186"/>
         <source>Bus x position</source>
         <translation>버스x위치</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="170"/>
         <source>Match mathod:</source>
-        <translation>일치 방법:</translation>
+        <translation type="vanished">일치 방법:</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="184"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="172"/>
         <source>Assigning magnitudes</source>
         <translation>규모 할당</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="256"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="282"/>
         <location filename="../FileDialogues/ProfilesInput/profiles_from_data_gui.ui" line="390"/>
         <source>Do it!</source>
         <translation>하세요!</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="262"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="288"/>
         <location filename="../FileDialogues/ProfilesInput/profiles_from_data_gui.ui" line="396"/>
         <location filename="../FileDialogues/ProfilesInput/profiles_from_models_gui.ui" line="169"/>
         <location filename="../ProceduralGrid/procedural_grid_ui.ui" line="233"/>
@@ -1444,7 +1473,7 @@ li.checked::마커 { content: &quot;\2612&quot;; }
         <translation>수용하다</translation>
     </message>
     <message>
-        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="273"/>
+        <location filename="../FileDialogues/CoordinatesInput/coordinates_input_gui.ui" line="299"/>
         <source>Match</source>
         <translation>성냥</translation>
     </message>
@@ -1759,17 +1788,16 @@ li.checked::마커 { content: &quot;\2612&quot;; }
     <message>
         <location filename="../DynamicModelEditor/dynamic_block_properties.ui" line="14"/>
         <source>Block properties</source>
-        <translation type="unfinished"></translation>
+        <translation>블록 속성</translation>
     </message>
     <message>
         <location filename="../DynamicModelEditor/dynamic_block_properties.ui" line="67"/>
         <source>Apply changes</source>
-        <translation type="unfinished"></translation>
+        <translation>변경 사항 적용</translation>
     </message>
     <message>
-        <location filename="../DynamicModelEditor/dynamic_block_properties.ui" line="78"/>
         <source>Close</source>
-        <translation type="unfinished">닫다</translation>
+        <translation type="obsolete">닫다</translation>
     </message>
 </context>
 <context>
@@ -1840,32 +1868,32 @@ li.checked::마커 { content: &quot;\2612&quot;; }
     <message>
         <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="14"/>
         <source>Dynamic Event Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>동적 이벤트 편집기</translation>
     </message>
     <message>
         <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="20"/>
         <source>&lt;b&gt;Target device:&lt;/b&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;b&gt;대상 장치:&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="58"/>
         <source>➕ New Event Group</source>
-        <translation type="unfinished"></translation>
+        <translation>➕ 새 이벤트 그룹</translation>
     </message>
     <message>
         <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="69"/>
         <source>➕ Add New Event</source>
-        <translation type="unfinished"></translation>
+        <translation>➕ 새 이벤트 추가</translation>
     </message>
     <message>
         <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="76"/>
         <source>❌ Remove Selected Rows</source>
-        <translation type="unfinished"></translation>
+        <translation>❌ 선택된 행 제거</translation>
     </message>
     <message>
         <location filename="../DynamicEventsDialog/dynamic_events_editor_dialog.ui" line="85"/>
         <source>Switch Sequence Wizard</source>
-        <translation type="unfinished"></translation>
+        <translation>스위치 시퀀스 마법사</translation>
     </message>
 </context>
 <context>
@@ -2418,32 +2446,32 @@ Cancel and retry?</source>
     <message>
         <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="19"/>
         <source>Add point</source>
-        <translation type="unfinished">포인트 추가</translation>
+        <translation>포인트 추가</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="33"/>
         <source>Remove selected</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 항목 제거</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="47"/>
         <source>Import CSV</source>
-        <translation type="unfinished"></translation>
+        <translation>CSV 가져오기</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="61"/>
         <source>Export CSV</source>
-        <translation type="unfinished"></translation>
+        <translation>CSV 내보내기</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="75"/>
         <source>Copy</source>
-        <translation type="unfinished">복사</translation>
+        <translation>복사</translation>
     </message>
     <message>
         <location filename="../DeviceEditors/LineLocationsEditor/line_locations_editor_gui.ui" line="89"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>붙여넣기</translation>
     </message>
 </context>
 <context>
@@ -2670,7 +2698,7 @@ Cancel and retry?</source>
     </message>
     <message>
         <location filename="../Analysis/analysis_gui.ui" line="1163"/>
-        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="71"/>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="206"/>
         <source>Actions</source>
         <translation>행위</translation>
     </message>
@@ -2790,7 +2818,7 @@ Cancel and retry?</source>
         <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="218"/>
         <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="296"/>
         <location filename="../GridGenerator/grid_generator_gui.ui" line="630"/>
-        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="85"/>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="220"/>
         <source>Copy to clipboard</source>
         <translation>클립보드에 복사</translation>
     </message>
@@ -2799,7 +2827,7 @@ Cancel and retry?</source>
         <location filename="../DeviceEditors/GeneratorEditor/SolarPowerWizard/solar_power_wizard_gui.ui" line="227"/>
         <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="305"/>
         <location filename="../GridGenerator/grid_generator_gui.ui" line="639"/>
-        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="94"/>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="229"/>
         <source>Save</source>
         <translation>구하다</translation>
     </message>
@@ -2909,6 +2937,7 @@ Cancel and retry?</source>
     </message>
     <message>
         <location filename="../DeviceEditors/GeneratorEditor/WindPowerWizard/wind_power_wizard_gui.ui" line="258"/>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="169"/>
         <source>Plot</source>
         <translation>구성</translation>
     </message>
@@ -3050,6 +3079,71 @@ Cancel and retry?</source>
         <location filename="../GridGenerator/grid_generator_gui.ui" line="609"/>
         <source>Create Grid</source>
         <translation>그리드 생성</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="41"/>
+        <source>Method</source>
+        <translation>방법</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="49"/>
+        <source>DPR HELM</source>
+        <translation>DPR HELM</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="54"/>
+        <source>Classical HELM</source>
+        <translation>Classical HELM</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="62"/>
+        <source>DPR start</source>
+        <translation>DPR 시작</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="70"/>
+        <source>Stored guess</source>
+        <translation>저장된 추정값</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="75"/>
+        <source>Classical no-load</source>
+        <translation>고전적 무부하</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="83"/>
+        <source>Q limits</source>
+        <translation>Q 제한</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="90"/>
+        <source>Discrete shunts</source>
+        <translation>개별 션트</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="100"/>
+        <source>QV droop</source>
+        <translation>QV 드룹</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="110"/>
+        <source>Distributed slack</source>
+        <translation>분산된 여유</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="130"/>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="144"/>
+        <source>Re-run</source>
+        <translation>재실행</translation>
+    </message>
+    <message>
+        <location filename="../SigmaAnalysis/sigma_analysis_gui.ui" line="179"/>
+        <source>Data</source>
+        <translation>데이터</translation>
     </message>
 </context>
 <context>
@@ -3723,17 +3817,17 @@ Monte Carlo power flow results:</source>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="14"/>
         <source>Server Files</source>
-        <translation type="unfinished"></translation>
+        <translation>서버 파일</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="91"/>
         <source>Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>선택</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="97"/>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>유형</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="104"/>
@@ -3744,107 +3838,107 @@ Monte Carlo power flow results:</source>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="189"/>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="206"/>
         <source>-</source>
-        <translation type="unfinished">-</translation>
+        <translation>-</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="114"/>
         <source>File name</source>
-        <translation type="unfinished"></translation>
+        <translation>파일 이름</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="131"/>
         <source>File idtag</source>
-        <translation type="unfinished"></translation>
+        <translation>파일 ID 태그</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="148"/>
         <source>Model name</source>
-        <translation type="unfinished"></translation>
+        <translation>모델 이름</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="165"/>
         <source>Model idtag</source>
-        <translation type="unfinished"></translation>
+        <translation>모델 ID 태그</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="182"/>
         <source>Owner user</source>
-        <translation type="unfinished"></translation>
+        <translation>소유자 사용자</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="199"/>
         <source>Created at</source>
-        <translation type="unfinished"></translation>
+        <translation>생성일</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="219"/>
         <source>Actions</source>
-        <translation type="unfinished">행위</translation>
+        <translation>행위</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="225"/>
         <source>Delete removes the selected file or the selected model branch from the server database after confirmation.</source>
-        <translation type="unfinished"></translation>
+        <translation>삭제는 확인 후 선택한 파일 또는 선택한 모델 브랜치를 서버 데이터베이스에서 제거합니다.</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="246"/>
         <source>Refresh</source>
-        <translation type="unfinished">새로 고치다</translation>
+        <translation>새로 고치다</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="249"/>
         <source>Reload the server file tree</source>
-        <translation type="unfinished"></translation>
+        <translation>서버 파일 트리 다시 로드</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="258"/>
         <source>Load File</source>
-        <translation type="unfinished"></translation>
+        <translation>파일 로드</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="261"/>
         <source>Load the full selected multiverse</source>
-        <translation type="unfinished"></translation>
+        <translation>선택된 전체 멀티버스 로드</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="270"/>
         <source>Load Base Model</source>
-        <translation type="unfinished"></translation>
+        <translation>기본 모델 로드</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="273"/>
         <source>Load only the selected file base model</source>
-        <translation type="unfinished"></translation>
+        <translation>선택된 파일의 기본 모델만 로드</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="282"/>
         <source>Load Selected Model</source>
-        <translation type="unfinished"></translation>
+        <translation>선택된 모델 로드</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="285"/>
         <source>Load the selected scenario branch as one flat circuit</source>
-        <translation type="unfinished"></translation>
+        <translation>선택된 시나리오 브랜치를 하나의 평면 회로로 로드</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="294"/>
         <source>Save Current Project</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 프로젝트 저장</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="297"/>
         <source>Upload the current project into the selected server file or model</source>
-        <translation type="unfinished"></translation>
+        <translation>현재 프로젝트를 선택된 서버 파일 또는 모델에 업로드</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="306"/>
         <source>Delete Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>선택 항목 삭제</translation>
     </message>
     <message>
         <location filename="../FileDialogues/ServerFileDialog/server_file_dialogue.ui" line="309"/>
         <source>Delete the selected file or model from the server database</source>
-        <translation type="unfinished"></translation>
+        <translation>선택한 파일 또는 모델을 서버 데이터베이스에서 삭제합니다.</translation>
     </message>
 </context>
 <context>
@@ -4492,6 +4586,2205 @@ Monte Carlo power flow results:</source>
     </message>
 </context>
 <context>
+    <name>VeraGridTreeLabels</name>
+    <message>
+        <source>ATC Report</source>
+        <translation>ATC 보고서</translation>
+    </message>
+    <message>
+        <source>Active power flow per area</source>
+        <translation>지역별 유효 전력 흐름</translation>
+    </message>
+    <message>
+        <source>Any line template</source>
+        <translation>모든 선로 템플릿</translation>
+    </message>
+    <message>
+        <source>Area</source>
+        <translation>지역</translation>
+    </message>
+    <message>
+        <source>Area analysis</source>
+        <translation>지역 분석</translation>
+    </message>
+    <message>
+        <source>Area balance analysis</source>
+        <translation>지역 균형 분석</translation>
+    </message>
+    <message>
+        <source>Area generation analysis</source>
+        <translation>지역 발전 분석</translation>
+    </message>
+    <message>
+        <source>Area load analysis</source>
+        <translation>지역 부하 분석</translation>
+    </message>
+    <message>
+        <source>Associations</source>
+        <translation>협회</translation>
+    </message>
+    <message>
+        <source>Available transfer capacity</source>
+        <translation>사용 가능한 전송 용량</translation>
+    </message>
+    <message>
+        <source>Available transfer capacity (N)</source>
+        <translation>가용 송전 용량 (N)</translation>
+    </message>
+    <message>
+        <source>Available transfer capacity (final)</source>
+        <translation>가용 송전 용량 (최종)</translation>
+    </message>
+    <message>
+        <source>Available transfer capacity time series</source>
+        <translation>가용 송전 용량 시계열</translation>
+    </message>
+    <message>
+        <source>AvailableTransferCapacity</source>
+        <translation>가용 송전 용량</translation>
+    </message>
+    <message>
+        <source>AvailableTransferCapacityTimeSeries</source>
+        <translation>가용 송전 용량 시계열</translation>
+    </message>
+    <message>
+        <source>Balance plot</source>
+        <translation>균형 플롯</translation>
+    </message>
+    <message>
+        <source>Base flow report</source>
+        <translation>기준 흐름 보고서</translation>
+    </message>
+    <message>
+        <source>Batteries</source>
+        <translation>배터리</translation>
+    </message>
+    <message>
+        <source>Battery</source>
+        <translation>배터리</translation>
+    </message>
+    <message>
+        <source>Battery energy</source>
+        <translation>배터리 에너지</translation>
+    </message>
+    <message>
+        <source>Battery invested</source>
+        <translation>배터리 투자</translation>
+    </message>
+    <message>
+        <source>Battery power</source>
+        <translation>배터리 전력</translation>
+    </message>
+    <message>
+        <source>Battery reactive power</source>
+        <translation>배터리 무효 전력</translation>
+    </message>
+    <message>
+        <source>Battery reactive power A</source>
+        <translation>배터리 무효 전력 A</translation>
+    </message>
+    <message>
+        <source>Battery reactive power B</source>
+        <translation>배터리 무효 전력 B</translation>
+    </message>
+    <message>
+        <source>Battery reactive power C</source>
+        <translation>배터리 무효 전력 C</translation>
+    </message>
+    <message>
+        <source>Beq: Equivalent susceptance</source>
+        <translation>Beq: 등가 서셉턴스</translation>
+    </message>
+    <message>
+        <source>Branch</source>
+        <translation>분기점</translation>
+    </message>
+    <message>
+        <source>Branch Loading</source>
+        <translation>분기점 부하</translation>
+    </message>
+    <message>
+        <source>Branch Loading A</source>
+        <translation>분기점 부하 A</translation>
+    </message>
+    <message>
+        <source>Branch Loading B</source>
+        <translation>분기점 부하 B</translation>
+    </message>
+    <message>
+        <source>Branch Loading C</source>
+        <translation>분기점 부하 C</translation>
+    </message>
+    <message>
+        <source>Branch active current &quot;from&quot; (0)</source>
+        <translation>분기점 유효 전류 &quot;from&quot; (0)</translation>
+    </message>
+    <message>
+        <source>Branch active current &quot;from&quot; (1)</source>
+        <translation>분기점 유효 전류 &quot;from&quot; (1)</translation>
+    </message>
+    <message>
+        <source>Branch active current &quot;from&quot; (2)</source>
+        <translation>분기점 유효 전류 &quot;from&quot; (2)</translation>
+    </message>
+    <message>
+        <source>Branch active losses (0)</source>
+        <translation>분기점 유효 손실 (0)</translation>
+    </message>
+    <message>
+        <source>Branch active losses (1)</source>
+        <translation>분기점 유효 손실 (1)</translation>
+    </message>
+    <message>
+        <source>Branch active losses (2)</source>
+        <translation>분기점 유효 손실 (2)</translation>
+    </message>
+    <message>
+        <source>Branch active power &quot;from&quot; (0)</source>
+        <translation>분기점 유효 전력 &quot;from&quot; (0)</translation>
+    </message>
+    <message>
+        <source>Branch active power &quot;from&quot; (1)</source>
+        <translation>분기점 유효 전력 &quot;from&quot; (1)</translation>
+    </message>
+    <message>
+        <source>Branch active power &quot;from&quot; (2)</source>
+        <translation>분기점 유효 전력 &quot;from&quot; (2)</translation>
+    </message>
+    <message>
+        <source>Branch group</source>
+        <translation>분기점 그룹</translation>
+    </message>
+    <message>
+        <source>Branch loading (0)</source>
+        <translation>분기점 부하 (0)</translation>
+    </message>
+    <message>
+        <source>Branch loading (1)</source>
+        <translation>분기점 부하 (1)</translation>
+    </message>
+    <message>
+        <source>Branch loading (2)</source>
+        <translation>분기점 부하 (2)</translation>
+    </message>
+    <message>
+        <source>Branch losses</source>
+        <translation>분기점 손실</translation>
+    </message>
+    <message>
+        <source>Branch monitoring logic</source>
+        <translation>분기점 모니터링 로직</translation>
+    </message>
+    <message>
+        <source>Branch overloads</source>
+        <translation>분기점 과부하</translation>
+    </message>
+    <message>
+        <source>Branch overloads cost</source>
+        <translation>분기점 과부하 비용</translation>
+    </message>
+    <message>
+        <source>Branch power CDF</source>
+        <translation>분기점 전력 CDF</translation>
+    </message>
+    <message>
+        <source>Branch power avg</source>
+        <translation>분기점 전력 평균</translation>
+    </message>
+    <message>
+        <source>Branch power std</source>
+        <translation>분기점 전력 표준편차</translation>
+    </message>
+    <message>
+        <source>Branch reactive current &quot;from&quot; (0)</source>
+        <translation>분기점 무효 전류 &quot;from&quot; (0)</translation>
+    </message>
+    <message>
+        <source>Branch reactive current &quot;from&quot; (1)</source>
+        <translation>Branch reactive current &quot;from&quot; (1)</translation>
+    </message>
+    <message>
+        <source>Branch reactive current &quot;from&quot; (2)</source>
+        <translation>Branch reactive current &quot;from&quot; (2)</translation>
+    </message>
+    <message>
+        <source>Branch reactive losses (0)</source>
+        <translation>Branch reactive losses (0)</translation>
+    </message>
+    <message>
+        <source>Branch reactive losses (1)</source>
+        <translation>Branch reactive losses (1)</translation>
+    </message>
+    <message>
+        <source>Branch reactive losses (2)</source>
+        <translation>Branch reactive losses (2)</translation>
+    </message>
+    <message>
+        <source>Branch reactive power &quot;from&quot; (0)</source>
+        <translation>Branch reactive power &quot;from&quot; (0)</translation>
+    </message>
+    <message>
+        <source>Branch reactive power &quot;from&quot; (1)</source>
+        <translation>Branch reactive power &quot;from&quot; (1)</translation>
+    </message>
+    <message>
+        <source>Branch reactive power &quot;from&quot; (2)</source>
+        <translation>Branch reactive power &quot;from&quot; (2)</translation>
+    </message>
+    <message>
+        <source>Branch template</source>
+        <translation>Branch template</translation>
+    </message>
+    <message>
+        <source>Branches</source>
+        <translation>Branches</translation>
+    </message>
+    <message>
+        <source>Bus</source>
+        <translation>버스</translation>
+    </message>
+    <message>
+        <source>Bus nodal capacity</source>
+        <translation>Bus nodal capacity</translation>
+    </message>
+    <message>
+        <source>Bus power</source>
+        <translation>Bus power</translation>
+    </message>
+    <message>
+        <source>Bus power CDF</source>
+        <translation>Bus power CDF</translation>
+    </message>
+    <message>
+        <source>Bus voltage CDF</source>
+        <translation>Bus voltage CDF</translation>
+    </message>
+    <message>
+        <source>Bus voltage avg</source>
+        <translation>Bus voltage avg</translation>
+    </message>
+    <message>
+        <source>Bus voltage sensitivity</source>
+        <translation>Bus voltage sensitivity</translation>
+    </message>
+    <message>
+        <source>Bus voltage std</source>
+        <translation>Bus voltage std</translation>
+    </message>
+    <message>
+        <source>BusBar</source>
+        <translation>BusBar</translation>
+    </message>
+    <message>
+        <source>BusOrBranch</source>
+        <translation>BusOrBranch</translation>
+    </message>
+    <message>
+        <source>CAIDI</source>
+        <translation>CAIDI</translation>
+    </message>
+    <message>
+        <source>Cascade</source>
+        <translation>Cascade</translation>
+    </message>
+    <message>
+        <source>Catalogue</source>
+        <translation>목록</translation>
+    </message>
+    <message>
+        <source>Catalogue optimization</source>
+        <translation>Catalogue optimization</translation>
+    </message>
+    <message>
+        <source>Circuit</source>
+        <translation>Circuit</translation>
+    </message>
+    <message>
+        <source>Clean room</source>
+        <translation>Clean room</translation>
+    </message>
+    <message>
+        <source>Clustering</source>
+        <translation>클러스터링</translation>
+    </message>
+    <message>
+        <source>Clustering Analysis</source>
+        <translation>Clustering Analysis</translation>
+    </message>
+    <message>
+        <source>Clustering time series report</source>
+        <translation>Clustering time series report</translation>
+    </message>
+    <message>
+        <source>Combinations</source>
+        <translation>Combinations</translation>
+    </message>
+    <message>
+        <source>Community</source>
+        <translation>Community</translation>
+    </message>
+    <message>
+        <source>Community analysis</source>
+        <translation>Community analysis</translation>
+    </message>
+    <message>
+        <source>Community balance analysis</source>
+        <translation>Community balance analysis</translation>
+    </message>
+    <message>
+        <source>Community generation analysis</source>
+        <translation>Community generation analysis</translation>
+    </message>
+    <message>
+        <source>Community load analysis</source>
+        <translation>Community load analysis</translation>
+    </message>
+    <message>
+        <source>Contingencies</source>
+        <translation>만일의 사태</translation>
+    </message>
+    <message>
+        <source>Contingencies report</source>
+        <translation>Contingencies report</translation>
+    </message>
+    <message>
+        <source>Contingencies statistical report</source>
+        <translation>Contingencies statistical report</translation>
+    </message>
+    <message>
+        <source>Contingency</source>
+        <translation>Contingency</translation>
+    </message>
+    <message>
+        <source>Contingency Group</source>
+        <translation>Contingency Group</translation>
+    </message>
+    <message>
+        <source>Contingency analysis</source>
+        <translation>우발상황 분석</translation>
+    </message>
+    <message>
+        <source>Contingency analysis time series</source>
+        <translation>비상 분석 시계열</translation>
+    </message>
+    <message>
+        <source>Contingency flow</source>
+        <translation>Contingency flow</translation>
+    </message>
+    <message>
+        <source>Contingency flow report</source>
+        <translation>Contingency flow report</translation>
+    </message>
+    <message>
+        <source>Contingency frequency</source>
+        <translation>Contingency frequency</translation>
+    </message>
+    <message>
+        <source>Contingency loading</source>
+        <translation>Contingency loading</translation>
+    </message>
+    <message>
+        <source>Contingency overload sum</source>
+        <translation>Contingency overload sum</translation>
+    </message>
+    <message>
+        <source>Contingency relative frequency</source>
+        <translation>Contingency relative frequency</translation>
+    </message>
+    <message>
+        <source>ContingencyAnalysis</source>
+        <translation>ContingencyAnalysis</translation>
+    </message>
+    <message>
+        <source>ContingencyAnalysisTimeSeries</source>
+        <translation>ContingencyAnalysisTimeSeries</translation>
+    </message>
+    <message>
+        <source>ContinuationPowerFlow</source>
+        <translation>ContinuationPowerFlow</translation>
+    </message>
+    <message>
+        <source>Controllable shunt</source>
+        <translation>제어 가능한 션트</translation>
+    </message>
+    <message>
+        <source>Country</source>
+        <translation>Country</translation>
+    </message>
+    <message>
+        <source>Country analysis</source>
+        <translation>Country analysis</translation>
+    </message>
+    <message>
+        <source>Country balance analysis</source>
+        <translation>Country balance analysis</translation>
+    </message>
+    <message>
+        <source>Country generation analysis</source>
+        <translation>Country generation analysis</translation>
+    </message>
+    <message>
+        <source>Country load analysis</source>
+        <translation>Country load analysis</translation>
+    </message>
+    <message>
+        <source>Current injection</source>
+        <translation>현재 주입</translation>
+    </message>
+    <message>
+        <source>DC line</source>
+        <translation>DC 라인</translation>
+    </message>
+    <message>
+        <source>Delete and reduce</source>
+        <translation>삭제 및 축소</translation>
+    </message>
+    <message>
+        <source>Design View</source>
+        <translation>설계 보기</translation>
+    </message>
+    <message>
+        <source>Diagram</source>
+        <translation>도표</translation>
+    </message>
+    <message>
+        <source>Dispatch</source>
+        <translation>디스패치</translation>
+    </message>
+    <message>
+        <source>Dynamic</source>
+        <translation>동적</translation>
+    </message>
+    <message>
+        <source>Dynamic Model Host</source>
+        <translation>동적 모델 호스트</translation>
+    </message>
+    <message>
+        <source>EMT Dynamic</source>
+        <translation>EMT 동적</translation>
+    </message>
+    <message>
+        <source>EMT Small Signal stability</source>
+        <translation>EMT 저신호 안정도</translation>
+    </message>
+    <message>
+        <source>EMT template</source>
+        <translation>EMT 템플릿</translation>
+    </message>
+    <message>
+        <source>ENS</source>
+        <translation>ENS</translation>
+    </message>
+    <message>
+        <source>Emission</source>
+        <translation>배출</translation>
+    </message>
+    <message>
+        <source>Emt Event</source>
+        <translation>EMT 이벤트</translation>
+    </message>
+    <message>
+        <source>Emt Events Group</source>
+        <translation>EMT 이벤트 그룹</translation>
+    </message>
+    <message>
+        <source>EmtSimulation</source>
+        <translation>EMT 시뮬레이션</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>오류</translation>
+    </message>
+    <message>
+        <source>Evaluation report</source>
+        <translation>평가 보고서</translation>
+    </message>
+    <message>
+        <source>Exciter</source>
+        <translation>여자기</translation>
+    </message>
+    <message>
+        <source>External grid</source>
+        <translation>외부 그리드</translation>
+    </message>
+    <message>
+        <source>FMU template</source>
+        <translation>FMU 템플릿</translation>
+    </message>
+    <message>
+        <source>Facility</source>
+        <translation>시설</translation>
+    </message>
+    <message>
+        <source>Flow Reports</source>
+        <translation>흐름 보고서</translation>
+    </message>
+    <message>
+        <source>Flow circulating in the device</source>
+        <translation>장치 내 순환 흐름</translation>
+    </message>
+    <message>
+        <source>Flow entering the node</source>
+        <translation>노드 진입 흐름</translation>
+    </message>
+    <message>
+        <source>Flow exiting the node</source>
+        <translation>노드 이탈 흐름</translation>
+    </message>
+    <message>
+        <source>Flow from the P2X</source>
+        <translation>P2X로부터의 흐름</translation>
+    </message>
+    <message>
+        <source>Flow in the river</source>
+        <translation>강 내 흐름</translation>
+    </message>
+    <message>
+        <source>Fluid</source>
+        <translation>유체</translation>
+    </message>
+    <message>
+        <source>Fluid Injection</source>
+        <translation>유체 주입</translation>
+    </message>
+    <message>
+        <source>Fluid P2X</source>
+        <translation>유체 P2X</translation>
+    </message>
+    <message>
+        <source>Fluid P2Xs</source>
+        <translation>유체 P2Xs</translation>
+    </message>
+    <message>
+        <source>Fluid Pump</source>
+        <translation>유체 펌프</translation>
+    </message>
+    <message>
+        <source>Fluid Turbine</source>
+        <translation>유체 터빈</translation>
+    </message>
+    <message>
+        <source>Fluid injections</source>
+        <translation>유체 주입</translation>
+    </message>
+    <message>
+        <source>Fluid node</source>
+        <translation>유체 노드</translation>
+    </message>
+    <message>
+        <source>Fluid nodes</source>
+        <translation>유체 노드</translation>
+    </message>
+    <message>
+        <source>Fluid path</source>
+        <translation>유체 경로</translation>
+    </message>
+    <message>
+        <source>Fluid paths</source>
+        <translation>유체 경로</translation>
+    </message>
+    <message>
+        <source>Fluid pumps</source>
+        <translation>유체 펌프</translation>
+    </message>
+    <message>
+        <source>Fluid turbines</source>
+        <translation>유체 터빈</translation>
+    </message>
+    <message>
+        <source>Frequency</source>
+        <translation>빈도</translation>
+    </message>
+    <message>
+        <source>Fuel</source>
+        <translation>연료</translation>
+    </message>
+    <message>
+        <source>Generation delta slacks</source>
+        <translation>발전 델타 슬랙</translation>
+    </message>
+    <message>
+        <source>Generation deltas</source>
+        <translation>발전 델타</translation>
+    </message>
+    <message>
+        <source>Generator</source>
+        <translation>발전기</translation>
+    </message>
+    <message>
+        <source>Generator Emission</source>
+        <translation>발전기 배출</translation>
+    </message>
+    <message>
+        <source>Generator Fuel</source>
+        <translation>발전기 연료</translation>
+    </message>
+    <message>
+        <source>Generator Technology</source>
+        <translation>발전기 기술</translation>
+    </message>
+    <message>
+        <source>Generator cost</source>
+        <translation>발전기 비용</translation>
+    </message>
+    <message>
+        <source>Generator emissions</source>
+        <translation>발전기 배출</translation>
+    </message>
+    <message>
+        <source>Generator fuels</source>
+        <translation>발전기 연료</translation>
+    </message>
+    <message>
+        <source>Generator invested</source>
+        <translation>발전기 투자</translation>
+    </message>
+    <message>
+        <source>Generator power</source>
+        <translation>발전기 출력</translation>
+    </message>
+    <message>
+        <source>Generator producing</source>
+        <translation>발전기 발전</translation>
+    </message>
+    <message>
+        <source>Generator reactive power</source>
+        <translation>발전기 무효 전력</translation>
+    </message>
+    <message>
+        <source>Generator reactive power A</source>
+        <translation>발전기 무효 전력 A</translation>
+    </message>
+    <message>
+        <source>Generator reactive power B</source>
+        <translation>발전기 무효 전력 B</translation>
+    </message>
+    <message>
+        <source>Generator reactive power C</source>
+        <translation>발전기 무효 전력 C</translation>
+    </message>
+    <message>
+        <source>Generator reserve</source>
+        <translation>발전기 예비력</translation>
+    </message>
+    <message>
+        <source>Generator shedding</source>
+        <translation>발전기 탈락</translation>
+    </message>
+    <message>
+        <source>Generator shutting down</source>
+        <translation>발전기 정지</translation>
+    </message>
+    <message>
+        <source>Generator starting up</source>
+        <translation>발전기 기동</translation>
+    </message>
+    <message>
+        <source>Generators</source>
+        <translation>발전기</translation>
+    </message>
+    <message>
+        <source>Generic Area</source>
+        <translation>일반 구역</translation>
+    </message>
+    <message>
+        <source>Governor</source>
+        <translation>거버너</translation>
+    </message>
+    <message>
+        <source>Groups</source>
+        <translation>그룹</translation>
+    </message>
+    <message>
+        <source>HVDC Line</source>
+        <translation>HVDC 선로</translation>
+    </message>
+    <message>
+        <source>HVDC ODF</source>
+        <translation>HVDC ODF</translation>
+    </message>
+    <message>
+        <source>HVDC PTDF</source>
+        <translation>HVDC PTDF</translation>
+    </message>
+    <message>
+        <source>HVDC loading</source>
+        <translation>HVDC 부하</translation>
+    </message>
+    <message>
+        <source>HVDC losses</source>
+        <translation>HVDC 손실</translation>
+    </message>
+    <message>
+        <source>HVDC overloads</source>
+        <translation>HVDC 과부하</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;from&quot;</source>
+        <translation>HVDC 전력 &quot;출발&quot;</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;from&quot; A</source>
+        <translation>HVDC 전력 &quot;출발&quot; A</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;from&quot; B</source>
+        <translation>HVDC 전력 &quot;출발&quot; B</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;from&quot; C</source>
+        <translation>HVDC 전력 &quot;출발&quot; C</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;to&quot;</source>
+        <translation>HVDC 전력 &quot;도착&quot;</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;to&quot; A</source>
+        <translation>HVDC 전력 &quot;도착&quot; A</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;to&quot; B</source>
+        <translation>HVDC 전력 &quot;도착&quot; B</translation>
+    </message>
+    <message>
+        <source>HVDC power &quot;to&quot; C</source>
+        <translation>HVDC 전력 &quot;도착&quot; C</translation>
+    </message>
+    <message>
+        <source>Hvdc</source>
+        <translation>Hvdc</translation>
+    </message>
+    <message>
+        <source>If Measurement</source>
+        <translation>If 측정</translation>
+    </message>
+    <message>
+        <source>Iif: Reactive current &quot;from&quot;</source>
+        <translation>Iif: 무효 전류 &quot;출발&quot;</translation>
+    </message>
+    <message>
+        <source>Iif: Reactive current &quot;from&quot; A</source>
+        <translation>Iif: 무효 전류 &quot;출발&quot; A</translation>
+    </message>
+    <message>
+        <source>Iif: Reactive current &quot;from&quot; B</source>
+        <translation>Iif: 무효 전류 &quot;출발&quot; B</translation>
+    </message>
+    <message>
+        <source>Iif: Reactive current &quot;from&quot; C</source>
+        <translation>Iif: 무효 전류 &quot;출발&quot; C</translation>
+    </message>
+    <message>
+        <source>Iit: Reactive current &quot;to&quot;</source>
+        <translation>Iit: 무효 전류 &quot;도착&quot;</translation>
+    </message>
+    <message>
+        <source>Iit: Reactive current &quot;to&quot; A</source>
+        <translation>Iit: 무효 전류 &quot;도착&quot; A</translation>
+    </message>
+    <message>
+        <source>Iit: Reactive current &quot;to&quot; B</source>
+        <translation>Iit: 무효 전류 &quot;도착&quot; B</translation>
+    </message>
+    <message>
+        <source>Iit: Reactive current &quot;to&quot; C</source>
+        <translation>Iit: 무효 전류 &quot;도착&quot; C</translation>
+    </message>
+    <message>
+        <source>Information</source>
+        <translation>정보</translation>
+    </message>
+    <message>
+        <source>Injections</source>
+        <translation>주입</translation>
+    </message>
+    <message>
+        <source>Inputs Analysis</source>
+        <translation>입력 분석</translation>
+    </message>
+    <message>
+        <source>InputsAnalysis</source>
+        <translation>입력 분석</translation>
+    </message>
+    <message>
+        <source>Inter-Area exchange</source>
+        <translation>계통 간 교환</translation>
+    </message>
+    <message>
+        <source>Inter-space branch loading</source>
+        <translation>공간 간 분기 부하</translation>
+    </message>
+    <message>
+        <source>Inter-space branch power</source>
+        <translation>공간 간 분기 전력</translation>
+    </message>
+    <message>
+        <source>InterAggregationInfo</source>
+        <translation>집계 정보</translation>
+    </message>
+    <message>
+        <source>Investment</source>
+        <translation>투자</translation>
+    </message>
+    <message>
+        <source>InvestmentEvaluations</source>
+        <translation>투자 평가</translation>
+    </message>
+    <message>
+        <source>Investments</source>
+        <translation>투자 항목</translation>
+    </message>
+    <message>
+        <source>Investments Group</source>
+        <translation>투자 그룹</translation>
+    </message>
+    <message>
+        <source>Investments evaluation</source>
+        <translation>투자 평가</translation>
+    </message>
+    <message>
+        <source>Irf: Active current &quot;from&quot;</source>
+        <translation>Irf: 유효 전류 &quot;출발&quot;</translation>
+    </message>
+    <message>
+        <source>Irf: Active current &quot;from&quot; A</source>
+        <translation>Irf: 유효 전류 &quot;출발&quot; A</translation>
+    </message>
+    <message>
+        <source>Irf: Active current &quot;from&quot; B</source>
+        <translation>Irf: 유효 전류 &quot;출발&quot; B</translation>
+    </message>
+    <message>
+        <source>Irf: Active current &quot;from&quot; C</source>
+        <translation>Irf: 유효 전류 &quot;출발&quot; C</translation>
+    </message>
+    <message>
+        <source>Irt: Active current &quot;to&quot;</source>
+        <translation>Irt: 유효 전류 &quot;도착&quot;</translation>
+    </message>
+    <message>
+        <source>Irt: Active current &quot;to&quot; A</source>
+        <translation>Irt: A로의 유효 전류</translation>
+    </message>
+    <message>
+        <source>Irt: Active current &quot;to&quot; B</source>
+        <translation>Irt: B로의 유효 전류</translation>
+    </message>
+    <message>
+        <source>Irt: Active current &quot;to&quot; C</source>
+        <translation>Irt: C로의 유효 전류</translation>
+    </message>
+    <message>
+        <source>It Measurement</source>
+        <translation>It 측정</translation>
+    </message>
+    <message>
+        <source>Iterations plot</source>
+        <translation>반복 횟수 플롯</translation>
+    </message>
+    <message>
+        <source>LODF</source>
+        <translation>LODF</translation>
+    </message>
+    <message>
+        <source>LOLE</source>
+        <translation>LOLE</translation>
+    </message>
+    <message>
+        <source>LOLET</source>
+        <translation>LOLET</translation>
+    </message>
+    <message>
+        <source>LOLF</source>
+        <translation>LOLF</translation>
+    </message>
+    <message>
+        <source>LOLFT</source>
+        <translation>LOLFT</translation>
+    </message>
+    <message>
+        <source>Latin Hypercube</source>
+        <translation>라틴 하이퍼큐브</translation>
+    </message>
+    <message>
+        <source>Line</source>
+        <translation>선</translation>
+    </message>
+    <message>
+        <source>Line Location</source>
+        <translation>선로 위치</translation>
+    </message>
+    <message>
+        <source>Line Locations</source>
+        <translation>선로 위치들</translation>
+    </message>
+    <message>
+        <source>Line Template</source>
+        <translation>선로 템플릿</translation>
+    </message>
+    <message>
+        <source>Linear analysis</source>
+        <translation>선형 분석</translation>
+    </message>
+    <message>
+        <source>Linear analysis time series</source>
+        <translation>선형 분석 시계열</translation>
+    </message>
+    <message>
+        <source>LinearAnalysis</source>
+        <translation>선형 분석</translation>
+    </message>
+    <message>
+        <source>LinearAnalysisTimeSeries</source>
+        <translation>선형 분석 시계열</translation>
+    </message>
+    <message>
+        <source>Load</source>
+        <translation>짐</translation>
+    </message>
+    <message>
+        <source>Load like</source>
+        <translation>부하 유사</translation>
+    </message>
+    <message>
+        <source>Load neutral voltage</source>
+        <translation>부하 중성점 전압</translation>
+    </message>
+    <message>
+        <source>Load power</source>
+        <translation>부하 전력</translation>
+    </message>
+    <message>
+        <source>Load shedding</source>
+        <translation>부하 차단</translation>
+    </message>
+    <message>
+        <source>Load shedding cost</source>
+        <translation>부하 차단 비용</translation>
+    </message>
+    <message>
+        <source>Loading CDF</source>
+        <translation>부하 적재 CDF</translation>
+    </message>
+    <message>
+        <source>Loading from the base situation ($\lambda$)</source>
+        <translation>기준 상황에서의 부하 적재 ($\lambda$)</translation>
+    </message>
+    <message>
+        <source>Loading std</source>
+        <translation>부하 적재 표준편차</translation>
+    </message>
+    <message>
+        <source>Loads</source>
+        <translation>부하</translation>
+    </message>
+    <message>
+        <source>Losses % per area</source>
+        <translation>지역별 손실 (%)</translation>
+    </message>
+    <message>
+        <source>Losses CDF</source>
+        <translation>손실 CDF</translation>
+    </message>
+    <message>
+        <source>Losses avg</source>
+        <translation>평균 손실</translation>
+    </message>
+    <message>
+        <source>Losses per area</source>
+        <translation>지역별 손실</translation>
+    </message>
+    <message>
+        <source>Losses per generation unit in area</source>
+        <translation>지역 내 발전기당 손실</translation>
+    </message>
+    <message>
+        <source>Losses std</source>
+        <translation>손실 표준편차</translation>
+    </message>
+    <message>
+        <source>Market</source>
+        <translation>시장</translation>
+    </message>
+    <message>
+        <source>Market unit</source>
+        <translation>시장 단위</translation>
+    </message>
+    <message>
+        <source>Max contingency flow</source>
+        <translation>최대 비상 흐름</translation>
+    </message>
+    <message>
+        <source>Max contingency loading</source>
+        <translation>최대 비상 부하</translation>
+    </message>
+    <message>
+        <source>Maximum contingency flow</source>
+        <translation>최대 비상 흐름</translation>
+    </message>
+    <message>
+        <source>Mean contingency overloading</source>
+        <translation>평균 비상 과부하</translation>
+    </message>
+    <message>
+        <source>Measurements</source>
+        <translation>측정값</translation>
+    </message>
+    <message>
+        <source>Modelling Authority</source>
+        <translation>모델링 권한</translation>
+    </message>
+    <message>
+        <source>Modes</source>
+        <translation>모드</translation>
+    </message>
+    <message>
+        <source>Monte Carlo</source>
+        <translation>몬테카를로</translation>
+    </message>
+    <message>
+        <source>Municipality</source>
+        <translation>지방 자치 단체</translation>
+    </message>
+    <message>
+        <source>Municipality analysis</source>
+        <translation>지방 자치 단체 분석</translation>
+    </message>
+    <message>
+        <source>Municipality balance analysis</source>
+        <translation>지방 자치 단체 균형 분석</translation>
+    </message>
+    <message>
+        <source>Municipality generation analysis</source>
+        <translation>지방 자치 단체 발전 분석</translation>
+    </message>
+    <message>
+        <source>Municipality load analysis</source>
+        <translation>지방 자치 단체 부하 분석</translation>
+    </message>
+    <message>
+        <source>NTC</source>
+        <translation>NTC</translation>
+    </message>
+    <message>
+        <source>Net transfer capacity</source>
+        <translation>순 전송 용량</translation>
+    </message>
+    <message>
+        <source>NetTransferCapacity</source>
+        <translation>순송전 용량</translation>
+    </message>
+    <message>
+        <source>NetTransferCapacityTimeSeries</source>
+        <translation>순송전 용량 시계열</translation>
+    </message>
+    <message>
+        <source>No simulation</source>
+        <translation>시뮬레이션 없음</translation>
+    </message>
+    <message>
+        <source>NoDevice</source>
+        <translation>장치 없음</translation>
+    </message>
+    <message>
+        <source>Nodal capacity</source>
+        <translation>노드 용량</translation>
+    </message>
+    <message>
+        <source>Nodal capacity time series</source>
+        <translation>노드 용량 시계열</translation>
+    </message>
+    <message>
+        <source>Nodal shadow prices</source>
+        <translation>노드 그림자 가격</translation>
+    </message>
+    <message>
+        <source>Nodal slacks</source>
+        <translation>노드 슬랙</translation>
+    </message>
+    <message>
+        <source>Node groups</source>
+        <translation>노드 그룹</translation>
+    </message>
+    <message>
+        <source>NodeGroups</source>
+        <translation>노드 그룹</translation>
+    </message>
+    <message>
+        <source>Nonlinear analysis</source>
+        <translation>비선형 해석</translation>
+    </message>
+    <message>
+        <source>Nonlinear analysis time series</source>
+        <translation>비선형 해석 시계열</translation>
+    </message>
+    <message>
+        <source>Ntc: Base flow report</source>
+        <translation>NTC: 기준 흐름 보고서</translation>
+    </message>
+    <message>
+        <source>Ntc: Contingency flow report</source>
+        <translation>NTC: 비상 흐름 보고서</translation>
+    </message>
+    <message>
+        <source>Ntc: Contingency flow report. (Branch)</source>
+        <translation>NTC: 비상 흐름 보고서. (분기)</translation>
+    </message>
+    <message>
+        <source>Ntc: Contingency flow report. (Generation)</source>
+        <translation>NTC: 비상 흐름 보고서. (발전)</translation>
+    </message>
+    <message>
+        <source>Ntc: Contingency flow report. (Hvdc)</source>
+        <translation>NTC: 비상 흐름 보고서. (HVDC)</translation>
+    </message>
+    <message>
+        <source>Objectives</source>
+        <translation>목표</translation>
+    </message>
+    <message>
+        <source>Objects</source>
+        <translation>사물</translation>
+    </message>
+    <message>
+        <source>Optimal net transfer capacity</source>
+        <translation>최적의 순 전송 용량</translation>
+    </message>
+    <message>
+        <source>Optimal net transfer capacity time series</source>
+        <translation>최적 순송 용량 시계열</translation>
+    </message>
+    <message>
+        <source>Optimal power flow</source>
+        <translation>최적의 전력 흐름</translation>
+    </message>
+    <message>
+        <source>Optimal power flow time series</source>
+        <translation>최적의 전력 흐름 시계열</translation>
+    </message>
+    <message>
+        <source>Owner</source>
+        <translation>소유자</translation>
+    </message>
+    <message>
+        <source>P: Active power</source>
+        <translation>P: 유효 전력</translation>
+    </message>
+    <message>
+        <source>PA: Active power A</source>
+        <translation>PA: A 유효 전력</translation>
+    </message>
+    <message>
+        <source>PB: Active power B</source>
+        <translation>PB: B 유효 전력</translation>
+    </message>
+    <message>
+        <source>PC: Active power C</source>
+        <translation>PC: C 유효 전력</translation>
+    </message>
+    <message>
+        <source>PTDF</source>
+        <translation>PTDF</translation>
+    </message>
+    <message>
+        <source>Pareto</source>
+        <translation>파레토</translation>
+    </message>
+    <message>
+        <source>Pareto combinations</source>
+        <translation>파레토 조합</translation>
+    </message>
+    <message>
+        <source>Pareto evaluation report</source>
+        <translation>파레토 평가 보고서</translation>
+    </message>
+    <message>
+        <source>Pareto frequency</source>
+        <translation>파레토 빈도</translation>
+    </message>
+    <message>
+        <source>Pareto objectives</source>
+        <translation>파레토 목표</translation>
+    </message>
+    <message>
+        <source>Pareto plot NSGA2</source>
+        <translation>파레토 플롯 NSGA2</translation>
+    </message>
+    <message>
+        <source>Pareto plots</source>
+        <translation>파레토 플롯</translation>
+    </message>
+    <message>
+        <source>Participation Factors</source>
+        <translation>참여 계수</translation>
+    </message>
+    <message>
+        <source>Pf Measurement</source>
+        <translation>Pf 측정</translation>
+    </message>
+    <message>
+        <source>Pf: Active power &quot;from&quot;</source>
+        <translation>Pf: &quot;로부터&quot; 유효 전력</translation>
+    </message>
+    <message>
+        <source>Pf: Active power &quot;from&quot; base case</source>
+        <translation>Pf: &quot;로부터&quot; 기준 사례 유효 전력</translation>
+    </message>
+    <message>
+        <source>PfA: Active power &quot;from&quot; A</source>
+        <translation>PfA: &quot;로부터&quot; A 유효 전력</translation>
+    </message>
+    <message>
+        <source>PfB: Active power &quot;from&quot; B</source>
+        <translation>PfB: &quot;로부터&quot; B 유효 전력</translation>
+    </message>
+    <message>
+        <source>PfC: Active power &quot;from&quot; C</source>
+        <translation>PfC: &quot;로부터&quot; C 유효 전력</translation>
+    </message>
+    <message>
+        <source>Pg Measurement</source>
+        <translation>Pg 측정</translation>
+    </message>
+    <message>
+        <source>Pi Measurement</source>
+        <translation>Pi 측정</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses</source>
+        <translation>Pl: 유효 손실</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses (%)</source>
+        <translation>Pl: 유효 손실 (%)</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses (%) A</source>
+        <translation>Pl: 유효 손실 (%) A</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses (%) B</source>
+        <translation>Pl: 유효 손실 (%) B</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses (%) C</source>
+        <translation>Pl: 유효 손실 (%) C</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses A</source>
+        <translation>Pl: 유효 손실 A</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses B</source>
+        <translation>Pl: 유효 손실 B</translation>
+    </message>
+    <message>
+        <source>Pl: Active losses C</source>
+        <translation>Pl: 유효 손실 C</translation>
+    </message>
+    <message>
+        <source>Plot Event</source>
+        <translation>플롯 이벤트</translation>
+    </message>
+    <message>
+        <source>Plot Group</source>
+        <translation>플롯 그룹</translation>
+    </message>
+    <message>
+        <source>Power by technology</source>
+        <translation>기술별 전력</translation>
+    </message>
+    <message>
+        <source>Power flow</source>
+        <translation>전력 흐름</translation>
+    </message>
+    <message>
+        <source>Power flow 3ph</source>
+        <translation>3상 전력 흐름</translation>
+    </message>
+    <message>
+        <source>Power flow time series</source>
+        <translation>전력 흐름 시계열</translation>
+    </message>
+    <message>
+        <source>Power flow time series 3ph</source>
+        <translation>3상 전력 흐름 시계열</translation>
+    </message>
+    <message>
+        <source>PowerFlow</source>
+        <translation>전력 흐름</translation>
+    </message>
+    <message>
+        <source>PowerFlowTimeSeries</source>
+        <translation>전력 흐름 시계열</translation>
+    </message>
+    <message>
+        <source>Pt Measurement</source>
+        <translation>Pt 측정</translation>
+    </message>
+    <message>
+        <source>Pt: Active power &quot;to&quot;</source>
+        <translation>Pt: 유효 전력 &quot;to&quot;</translation>
+    </message>
+    <message>
+        <source>Pt: Active power &quot;to&quot; A</source>
+        <translation>Pt: 유효 전력 &quot;to&quot; A</translation>
+    </message>
+    <message>
+        <source>Pt: Active power &quot;to&quot; B</source>
+        <translation>Pt: 유효 전력 &quot;to&quot; B</translation>
+    </message>
+    <message>
+        <source>Pt: Active power &quot;to&quot; C</source>
+        <translation>Pt: 유효 전력 &quot;to&quot; C</translation>
+    </message>
+    <message>
+        <source>Q: Reactive power</source>
+        <translation>Q: 무효 전력</translation>
+    </message>
+    <message>
+        <source>QA: Reactive power A</source>
+        <translation>QA: 무효 전력 A</translation>
+    </message>
+    <message>
+        <source>QB: Reactive power B</source>
+        <translation>QB: 무효 전력 B</translation>
+    </message>
+    <message>
+        <source>QC: Reactive power C</source>
+        <translation>QC: 무효 전력 C</translation>
+    </message>
+    <message>
+        <source>Qf Measurement</source>
+        <translation>Qf 측정</translation>
+    </message>
+    <message>
+        <source>Qf: Reactive power &quot;from&quot;</source>
+        <translation>Qf: 무효 전력 &quot;from&quot;</translation>
+    </message>
+    <message>
+        <source>QfA: Reactive power &quot;from&quot; A</source>
+        <translation>QfA: 무효 전력 &quot;from&quot; A</translation>
+    </message>
+    <message>
+        <source>QfB: Reactive power &quot;from&quot; B</source>
+        <translation>QfB: 무효 전력 &quot;from&quot; B</translation>
+    </message>
+    <message>
+        <source>QfC: Reactive power &quot;from&quot; C</source>
+        <translation>QfC: 무효 전력 &quot;from&quot; C</translation>
+    </message>
+    <message>
+        <source>Qg Measurement</source>
+        <translation>Qg 측정</translation>
+    </message>
+    <message>
+        <source>Qi Measurement</source>
+        <translation>Qi 측정</translation>
+    </message>
+    <message>
+        <source>Ql: Reactive losses</source>
+        <translation>Ql: 무효 손실</translation>
+    </message>
+    <message>
+        <source>Ql: Reactive losses A</source>
+        <translation>Ql: 무효 손실 A</translation>
+    </message>
+    <message>
+        <source>Ql: Reactive losses B</source>
+        <translation>Ql: 무효 손실 B</translation>
+    </message>
+    <message>
+        <source>Ql: Reactive losses C</source>
+        <translation>Ql: 무효 손실 C</translation>
+    </message>
+    <message>
+        <source>Qt Measurement</source>
+        <translation>Qt 측정</translation>
+    </message>
+    <message>
+        <source>Qt: Reactive power &quot;to&quot;</source>
+        <translation>Qt: 무효 전력 &quot;to&quot;</translation>
+    </message>
+    <message>
+        <source>Qt: Reactive power &quot;to&quot; A</source>
+        <translation>Qt: 무효 전력 &quot;to&quot; A</translation>
+    </message>
+    <message>
+        <source>Qt: Reactive power &quot;to&quot; B</source>
+        <translation>Qt: 무효 전력 &quot;to&quot; B</translation>
+    </message>
+    <message>
+        <source>Qt: Reactive power &quot;to&quot; C</source>
+        <translation>Qt: 무효 전력 &quot;to&quot; C</translation>
+    </message>
+    <message>
+        <source>RMS Dynamic</source>
+        <translation>RMS 동적</translation>
+    </message>
+    <message>
+        <source>RMS Small Signal stability</source>
+        <translation>RMS 고장 신호 안정도</translation>
+    </message>
+    <message>
+        <source>RMS template</source>
+        <translation>RMS 템플릿</translation>
+    </message>
+    <message>
+        <source>Region</source>
+        <translation>영역</translation>
+    </message>
+    <message>
+        <source>Region analysis</source>
+        <translation>영역 분석</translation>
+    </message>
+    <message>
+        <source>Region balance analysis</source>
+        <translation>영역 밸런스 분석</translation>
+    </message>
+    <message>
+        <source>Region generation analysis</source>
+        <translation>영역 발전 분석</translation>
+    </message>
+    <message>
+        <source>Region load analysis</source>
+        <translation>영역 부하 분석</translation>
+    </message>
+    <message>
+        <source>Regions</source>
+        <translation>영역</translation>
+    </message>
+    <message>
+        <source>Reliability</source>
+        <translation>신뢰할 수 있음</translation>
+    </message>
+    <message>
+        <source>Remedial action</source>
+        <translation>보강 조치</translation>
+    </message>
+    <message>
+        <source>Remedial action Group</source>
+        <translation>보강 조치 그룹</translation>
+    </message>
+    <message>
+        <source>Reports</source>
+        <translation>보고서</translation>
+    </message>
+    <message>
+        <source>Reservoir fluid level</source>
+        <translation>저수지 유체 레벨</translation>
+    </message>
+    <message>
+        <source>Results</source>
+        <translation>결과</translation>
+    </message>
+    <message>
+        <source>Right Eigenvectors</source>
+        <translation>우측 고유 벡터</translation>
+    </message>
+    <message>
+        <source>Rms Event</source>
+        <translation>Rms 이벤트</translation>
+    </message>
+    <message>
+        <source>Rms Events Group</source>
+        <translation>Rms 이벤트 그룹</translation>
+    </message>
+    <message>
+        <source>Rms Generator results</source>
+        <translation>Rms 발전기 결과</translation>
+    </message>
+    <message>
+        <source>Rms Genqec delta results</source>
+        <translation>Rms Genqec 델타 결과</translation>
+    </message>
+    <message>
+        <source>Rms Genqec omega results</source>
+        <translation>Rms Genqec 오메가 결과</translation>
+    </message>
+    <message>
+        <source>Rms Line results</source>
+        <translation>Rms 선로 결과</translation>
+    </message>
+    <message>
+        <source>Rms Load P results</source>
+        <translation>Rms 부하 P 결과</translation>
+    </message>
+    <message>
+        <source>Rms Load Q results</source>
+        <translation>Rms 부하 Q 결과</translation>
+    </message>
+    <message>
+        <source>Rms Simple Line P results</source>
+        <translation>Rms 단순 선 P 결과</translation>
+    </message>
+    <message>
+        <source>Rms Simple Line Q results</source>
+        <translation>Rms 단순 선 Q 결과</translation>
+    </message>
+    <message>
+        <source>Rms load results</source>
+        <translation>Rms 부하 결과</translation>
+    </message>
+    <message>
+        <source>Rms plot results</source>
+        <translation>Rms 플롯 결과</translation>
+    </message>
+    <message>
+        <source>Rms time series report</source>
+        <translation>Rms 시계열 보고서</translation>
+    </message>
+    <message>
+        <source>RmsSimulation</source>
+        <translation>Rms 시뮬레이션</translation>
+    </message>
+    <message>
+        <source>S-Domain Plot</source>
+        <translation>S-영역 플롯</translation>
+    </message>
+    <message>
+        <source>S-Domain Plot in Hz</source>
+        <translation>Hz에서의 S-영역 플롯</translation>
+    </message>
+    <message>
+        <source>SAIDI</source>
+        <translation>SAIDI</translation>
+    </message>
+    <message>
+        <source>SAIFI</source>
+        <translation>SAIFI</translation>
+    </message>
+    <message>
+        <source>Sensibilities</source>
+        <translation>민감도</translation>
+    </message>
+    <message>
+        <source>Sensitivity to the exchange</source>
+        <translation>교환에 대한 민감도</translation>
+    </message>
+    <message>
+        <source>Sensitivity to the exchange (N-1)</source>
+        <translation>교환에 대한 민감도 (N-1)</translation>
+    </message>
+    <message>
+        <source>Sequence line</source>
+        <translation>순서선</translation>
+    </message>
+    <message>
+        <source>Series</source>
+        <translation>직렬</translation>
+    </message>
+    <message>
+        <source>Series reactance</source>
+        <translation>직렬 리액턴스</translation>
+    </message>
+    <message>
+        <source>Short circuit</source>
+        <translation>단락</translation>
+    </message>
+    <message>
+        <source>Short circuit active current</source>
+        <translation>단락 능동 전류</translation>
+    </message>
+    <message>
+        <source>Short circuit active current A</source>
+        <translation>단락 능동 전류 A</translation>
+    </message>
+    <message>
+        <source>Short circuit active current B</source>
+        <translation>단락 능동 전류 B</translation>
+    </message>
+    <message>
+        <source>Short circuit active current C</source>
+        <translation>단락 능동 전류 C</translation>
+    </message>
+    <message>
+        <source>Short circuit active power</source>
+        <translation>단락 능동 전력</translation>
+    </message>
+    <message>
+        <source>Short circuit active power A</source>
+        <translation>단락 능동 전력 A</translation>
+    </message>
+    <message>
+        <source>Short circuit active power B</source>
+        <translation>단락 능동 전력 B</translation>
+    </message>
+    <message>
+        <source>Short circuit active power C</source>
+        <translation>단락 능동 전력 C</translation>
+    </message>
+    <message>
+        <source>Short circuit event</source>
+        <translation>단락 이벤트</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive current</source>
+        <translation>단락 무효 전류</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive current A</source>
+        <translation>단락 무효 전류 A</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive current B</source>
+        <translation>단락 무효 전류 B</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive current C</source>
+        <translation>단락 무효 전류 C</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive power</source>
+        <translation>단락 무효 전력</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive power A</source>
+        <translation>단락 무효 전력 A</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive power B</source>
+        <translation>단락 무효 전력 B</translation>
+    </message>
+    <message>
+        <source>Short circuit reactive power C</source>
+        <translation>단락 무효 전력 C</translation>
+    </message>
+    <message>
+        <source>Short-circuit information</source>
+        <translation>단락 정보</translation>
+    </message>
+    <message>
+        <source>ShortCircuit</source>
+        <translation>단락 회로</translation>
+    </message>
+    <message>
+        <source>Shunt</source>
+        <translation>분로</translation>
+    </message>
+    <message>
+        <source>Shunt like devices</source>
+        <translation>병렬 장치</translation>
+    </message>
+    <message>
+        <source>Shunt neutral voltage</source>
+        <translation>병렬 중성 전압</translation>
+    </message>
+    <message>
+        <source>Shunt reactive power</source>
+        <translation>병렬 무효 전력</translation>
+    </message>
+    <message>
+        <source>Shunt reactive power A</source>
+        <translation>병렬 무효 전력 A</translation>
+    </message>
+    <message>
+        <source>Shunt reactive power B</source>
+        <translation>병렬 무효 전력 B</translation>
+    </message>
+    <message>
+        <source>Shunt reactive power C</source>
+        <translation>병렬 무효 전력 C</translation>
+    </message>
+    <message>
+        <source>Sigma + distances</source>
+        <translation>Sigma + 거리</translation>
+    </message>
+    <message>
+        <source>Sigma Analysis</source>
+        <translation>Sigma 분석</translation>
+    </message>
+    <message>
+        <source>Sigma distances</source>
+        <translation>Sigma 거리</translation>
+    </message>
+    <message>
+        <source>Sigma imaginary</source>
+        <translation>Sigma 허수</translation>
+    </message>
+    <message>
+        <source>Sigma real</source>
+        <translation>Sigma 실수</translation>
+    </message>
+    <message>
+        <source>SigmaAnalysis</source>
+        <translation>Sigma 분석</translation>
+    </message>
+    <message>
+        <source>SimulationOptionsDevice</source>
+        <translation>시뮬레이션 옵션 장치</translation>
+    </message>
+    <message>
+        <source>Slacks</source>
+        <translation>슬랙</translation>
+    </message>
+    <message>
+        <source>SmallSignalStability</source>
+        <translation>소신호 안정도</translation>
+    </message>
+    <message>
+        <source>Snapshot</source>
+        <translation>스냅 사진</translation>
+    </message>
+    <message>
+        <source>Special plots</source>
+        <translation>특수 플롯</translation>
+    </message>
+    <message>
+        <source>Spillage flow leaving</source>
+        <translation>누설 흐름</translation>
+    </message>
+    <message>
+        <source>Srap used power</source>
+        <translation>Srap 사용 전력</translation>
+    </message>
+    <message>
+        <source>Stabilizer</source>
+        <translation>안정기</translation>
+    </message>
+    <message>
+        <source>State Matrix</source>
+        <translation>상태 행렬</translation>
+    </message>
+    <message>
+        <source>State estimation</source>
+        <translation>상태 추정</translation>
+    </message>
+    <message>
+        <source>StateEstimation</source>
+        <translation>상태 추정</translation>
+    </message>
+    <message>
+        <source>Static Generator</source>
+        <translation>정지 발전기</translation>
+    </message>
+    <message>
+        <source>Statistics</source>
+        <translation>통계</translation>
+    </message>
+    <message>
+        <source>Std-dev contingency overloading</source>
+        <translation>비상 과부하 표준 편차</translation>
+    </message>
+    <message>
+        <source>Stochastic Power Flow</source>
+        <translation>확률적 전력 흐름</translation>
+    </message>
+    <message>
+        <source>StochasticPowerFlow</source>
+        <translation>확률적 전력 흐름</translation>
+    </message>
+    <message>
+        <source>Substation</source>
+        <translation>지서</translation>
+    </message>
+    <message>
+        <source>Substation analysis</source>
+        <translation>변전소 분석</translation>
+    </message>
+    <message>
+        <source>Substation balance analysis</source>
+        <translation>변전소 밸런스 분석</translation>
+    </message>
+    <message>
+        <source>Substation generation analysis</source>
+        <translation>변전소 발전 분석</translation>
+    </message>
+    <message>
+        <source>Substation load analysis</source>
+        <translation>변전소 부하 분석</translation>
+    </message>
+    <message>
+        <source>Switch</source>
+        <translation>스위치</translation>
+    </message>
+    <message>
+        <source>System</source>
+        <translation>시스템</translation>
+    </message>
+    <message>
+        <source>System emissions</source>
+        <translation>시스템 배출량</translation>
+    </message>
+    <message>
+        <source>System energy cost</source>
+        <translation>시스템 에너지 비용</translation>
+    </message>
+    <message>
+        <source>System energy total cost</source>
+        <translation>시스템 총 에너지 비용</translation>
+    </message>
+    <message>
+        <source>System fuel consumption</source>
+        <translation>시스템 연료 소비</translation>
+    </message>
+    <message>
+        <source>Technology</source>
+        <translation>기술</translation>
+    </message>
+    <message>
+        <source>Technology Category</source>
+        <translation>기술 분류</translation>
+    </message>
+    <message>
+        <source>Technology Group</source>
+        <translation>기술 그룹</translation>
+    </message>
+    <message>
+        <source>Technology plot</source>
+        <translation>기술 플롯</translation>
+    </message>
+    <message>
+        <source>Template</source>
+        <translation>주형</translation>
+    </message>
+    <message>
+        <source>Templates</source>
+        <translation>템플릿</translation>
+    </message>
+    <message>
+        <source>Time</source>
+        <translation>시간</translation>
+    </message>
+    <message>
+        <source>Time series Contingency flow report (Branches)</source>
+        <translation>시계열 비상 흐름 보고서 (분기)</translation>
+    </message>
+    <message>
+        <source>Time series base flow report</source>
+        <translation>시계열 기본 흐름 보고서</translation>
+    </message>
+    <message>
+        <source>Time series branch monitoring logic report</source>
+        <translation>시계열 분기 모니터링 로직 보고서</translation>
+    </message>
+    <message>
+        <source>Time series contingency Branches report</source>
+        <translation>시계열 비상 분기 보고서</translation>
+    </message>
+    <message>
+        <source>Time series contingency flow report</source>
+        <translation>시계열 비상 흐름 보고서</translation>
+    </message>
+    <message>
+        <source>Time series contingency flow report. (Generation)</source>
+        <translation>시계열 비상 흐름 보고서. (발전)</translation>
+    </message>
+    <message>
+        <source>Time series contingency flow report. (Hvdc)</source>
+        <translation>시계열 비상 흐름 보고서. (HVDC)</translation>
+    </message>
+    <message>
+        <source>Time series critical Branches report</source>
+        <translation>시계열 중요 분기 보고서</translation>
+    </message>
+    <message>
+        <source>Time series generation delta power report</source>
+        <translation>시계열 발전량 델타 전력 보고서</translation>
+    </message>
+    <message>
+        <source>Time series generation power report</source>
+        <translation>시계열 발전 전력 보고서</translation>
+    </message>
+    <message>
+        <source>Time series sensitivity to the exchange report</source>
+        <translation>시계열 교환 민감도 보고서</translation>
+    </message>
+    <message>
+        <source>Time series worst sensitivity to the exchange report (N-1)</source>
+        <translation>시계열 최악 교환 민감도 보고서 (N-1)</translation>
+    </message>
+    <message>
+        <source>Topology Processor</source>
+        <translation>토폴로지 프로세서</translation>
+    </message>
+    <message>
+        <source>Topology reduction</source>
+        <translation>토폴로지 축소</translation>
+    </message>
+    <message>
+        <source>Tower</source>
+        <translation>탑</translation>
+    </message>
+    <message>
+        <source>Transformer</source>
+        <translation>변신 로봇</translation>
+    </message>
+    <message>
+        <source>Transformer type</source>
+        <translation>변압기 유형</translation>
+    </message>
+    <message>
+        <source>Transformer3W</source>
+        <translation>Transformer3W</translation>
+    </message>
+    <message>
+        <source>TransformerNw</source>
+        <translation>TransformerNw</translation>
+    </message>
+    <message>
+        <source>Transient stability</source>
+        <translation>과도 안정도</translation>
+    </message>
+    <message>
+        <source>UPFC</source>
+        <translation>UPFC</translation>
+    </message>
+    <message>
+        <source>Underground line</source>
+        <translation>지중 케이블</translation>
+    </message>
+    <message>
+        <source>V: Voltage module</source>
+        <translation>V: 전압 모듈</translation>
+    </message>
+    <message>
+        <source>VA: Voltage module A</source>
+        <translation>VA: 전압 모듈 A</translation>
+    </message>
+    <message>
+        <source>VB: Voltage module B</source>
+        <translation>VB: 전압 모듈 B</translation>
+    </message>
+    <message>
+        <source>VC: Voltage module C</source>
+        <translation>VC: 전압 모듈 C</translation>
+    </message>
+    <message>
+        <source>VSC</source>
+        <translation>VSC</translation>
+    </message>
+    <message>
+        <source>Va Measurement</source>
+        <translation>Va 측정</translation>
+    </message>
+    <message>
+        <source>Var Factory</source>
+        <translation>변수 팩토리</translation>
+    </message>
+    <message>
+        <source>Vm Measurement</source>
+        <translation>Vm 측정</translation>
+    </message>
+    <message>
+        <source>Voltage angle (0)</source>
+        <translation>전압 각도 (0)</translation>
+    </message>
+    <message>
+        <source>Voltage angle (1)</source>
+        <translation>전압 각도 (1)</translation>
+    </message>
+    <message>
+        <source>Voltage angle (2)</source>
+        <translation>전압 각도 (2)</translation>
+    </message>
+    <message>
+        <source>Voltage collapse</source>
+        <translation>전압 붕괴</translation>
+    </message>
+    <message>
+        <source>Voltage level</source>
+        <translation>전압 레벨</translation>
+    </message>
+    <message>
+        <source>Voltage level analysis</source>
+        <translation>전압 레벨 분석</translation>
+    </message>
+    <message>
+        <source>Voltage level balance analysis</source>
+        <translation>전압 레벨 밸런스 분석</translation>
+    </message>
+    <message>
+        <source>Voltage level generation analysis</source>
+        <translation>전압 레벨 발전 분석</translation>
+    </message>
+    <message>
+        <source>Voltage level load analysis</source>
+        <translation>전압 레벨 부하 분석</translation>
+    </message>
+    <message>
+        <source>Voltage level template</source>
+        <translation>전압 레벨 템플릿</translation>
+    </message>
+    <message>
+        <source>Voltage module (0)</source>
+        <translation>전압 모듈 (0)</translation>
+    </message>
+    <message>
+        <source>Voltage module (1)</source>
+        <translation>전압 모듈 (1)</translation>
+    </message>
+    <message>
+        <source>Voltage module (2)</source>
+        <translation>전압 모듈 (2)</translation>
+    </message>
+    <message>
+        <source>Voltage plot</source>
+        <translation>전압 플롯</translation>
+    </message>
+    <message>
+        <source>Vsc</source>
+        <translation>Vsc</translation>
+    </message>
+    <message>
+        <source>Vsc ODF</source>
+        <translation>Vsc ODF</translation>
+    </message>
+    <message>
+        <source>Vsc PTDF</source>
+        <translation>Vsc PTDF</translation>
+    </message>
+    <message>
+        <source>Vsc Pdc</source>
+        <translation>Vsc Pdc</translation>
+    </message>
+    <message>
+        <source>Vsc Vdc</source>
+        <translation>Vsc Vdc</translation>
+    </message>
+    <message>
+        <source>Vsc loading</source>
+        <translation>Vsc 부하</translation>
+    </message>
+    <message>
+        <source>Vsc losses</source>
+        <translation>Vsc 손실</translation>
+    </message>
+    <message>
+        <source>Vsc power &quot;from&quot; negative pole</source>
+        <translation>Vsc 전력 &quot;음극으로부터&quot;</translation>
+    </message>
+    <message>
+        <source>Vsc power &quot;from&quot; positive pole</source>
+        <translation>Vsc 전력 &quot;양극으로부터&quot;</translation>
+    </message>
+    <message>
+        <source>Vsc power &quot;to&quot;</source>
+        <translation>Vsc 전력 &quot;으로&quot;</translation>
+    </message>
+    <message>
+        <source>Vsc power &quot;to&quot; A</source>
+        <translation>Vsc 전력 &quot;A로&quot;</translation>
+    </message>
+    <message>
+        <source>Vsc power &quot;to&quot; B</source>
+        <translation>Vsc 전력 &quot;B로&quot;</translation>
+    </message>
+    <message>
+        <source>Vsc power &quot;to&quot; C</source>
+        <translation>Vsc 전력 &quot;C로&quot;</translation>
+    </message>
+    <message>
+        <source>When to make them plot</source>
+        <translation>플롯할 시점</translation>
+    </message>
+    <message>
+        <source>Winding</source>
+        <translation>굴곡</translation>
+    </message>
+    <message>
+        <source>Wire</source>
+        <translation>전선</translation>
+    </message>
+    <message>
+        <source>Zone</source>
+        <translation>구역</translation>
+    </message>
+    <message>
+        <source>Zone analysis</source>
+        <translation>구역 분석</translation>
+    </message>
+    <message>
+        <source>Zone balance analysis</source>
+        <translation>구역 밸런스 분석</translation>
+    </message>
+    <message>
+        <source>Zone generation analysis</source>
+        <translation>구역 발전 분석</translation>
+    </message>
+    <message>
+        <source>Zone load analysis</source>
+        <translation>구역 부하 분석</translation>
+    </message>
+    <message>
+        <source>export all</source>
+        <translation>전체 내보내기</translation>
+    </message>
+    <message>
+        <source>file open</source>
+        <translation>파일 열기</translation>
+    </message>
+    <message>
+        <source>file save</source>
+        <translation>파일 저장</translation>
+    </message>
+    <message>
+        <source>loading avg</source>
+        <translation>평균 부하</translation>
+    </message>
+    <message>
+        <source>m: Tap module</source>
+        <translation>m: 탭 모듈</translation>
+    </message>
+    <message>
+        <source>ΔP: Active power increment</source>
+        <translation>ΔP: 유효 전력 증가분</translation>
+    </message>
+    <message>
+        <source>ΔV: Voltage modules drop</source>
+        <translation>ΔV: 전압 모듈 강하</translation>
+    </message>
+    <message>
+        <source>ΔV: Voltage modules drop A</source>
+        <translation>ΔV: 전압 모듈 강하 A</translation>
+    </message>
+    <message>
+        <source>ΔV: Voltage modules drop B</source>
+        <translation>ΔV: 전압 모듈 강하 B</translation>
+    </message>
+    <message>
+        <source>ΔV: Voltage modules drop C</source>
+        <translation>ΔV: 전압 모듈 강하 C</translation>
+    </message>
+    <message>
+        <source>Δθ: Voltage angles drop</source>
+        <translation>Δθ: 전압 각도 강하</translation>
+    </message>
+    <message>
+        <source>Δθ: Voltage angles drop A</source>
+        <translation>Δθ: 전압 각도 강하 A</translation>
+    </message>
+    <message>
+        <source>Δθ: Voltage angles drop B</source>
+        <translation>Δθ: 전압 각도 강하 B</translation>
+    </message>
+    <message>
+        <source>Δθ: Voltage angles drop C</source>
+        <translation>Δθ: 전압 각도 강하 C</translation>
+    </message>
+    <message>
+        <source>θ: Voltage angle</source>
+        <translation>θ: 전압 각도</translation>
+    </message>
+    <message>
+        <source>θA: Voltage angle A</source>
+        <translation>θA: 전압 각도 A</translation>
+    </message>
+    <message>
+        <source>θB: Voltage angle B</source>
+        <translation>θB: 전압 각도 B</translation>
+    </message>
+    <message>
+        <source>θC: Voltage angle C</source>
+        <translation>θC: 전압 각도 C</translation>
+    </message>
+    <message>
+        <source>𝜏: Tap angle</source>
+        <translation>𝜏: Tap angle</translation>
+    </message>
+</context>
+<context>
     <name>VscDeviceEditorWidget</name>
     <message>
         <location filename="../DeviceEditors/VscEditor/vsc_editor_widget.ui" line="14"/>
@@ -4553,7 +6846,7 @@ Monte Carlo power flow results:</source>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="86"/>
-        <location filename="../Main/MainWindow.ui" line="11059"/>
+        <location filename="../Main/MainWindow.ui" line="11096"/>
         <source>Model</source>
         <translation>모델</translation>
     </message>
@@ -4733,8 +7026,8 @@ Monte Carlo power flow results:</source>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="907"/>
-        <location filename="../Main/MainWindow.ui" line="3608"/>
-        <location filename="../Main/MainWindow.ui" line="5887"/>
+        <location filename="../Main/MainWindow.ui" line="3645"/>
+        <location filename="../Main/MainWindow.ui" line="5924"/>
         <source>General settings</source>
         <translation>일반 설정</translation>
     </message>
@@ -4800,15 +7093,15 @@ Monte Carlo power flow results:</source>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="1118"/>
-        <location filename="../Main/MainWindow.ui" line="1528"/>
-        <location filename="../Main/MainWindow.ui" line="2218"/>
+        <location filename="../Main/MainWindow.ui" line="1565"/>
+        <location filename="../Main/MainWindow.ui" line="2255"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Time slider&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Move this time slider to select the appropriate time slot to view.&lt;/p&gt;&lt;p&gt;The first position sets the snapshot values, the rest attend to the time series values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;시간 슬라이더&lt;/span&gt;&lt;/p&gt;&lt;p&gt;이 시간 슬라이더를 이동하여 보려는 적절한 시간 슬롯을 선택하세요.&lt;/p&gt;&lt;p&gt;첫 번째 위치는 스냅샷 값을 설정하고 나머지는 시계열 값을 지정합니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="1133"/>
-        <location filename="../Main/MainWindow.ui" line="1544"/>
-        <location filename="../Main/MainWindow.ui" line="2287"/>
+        <location filename="../Main/MainWindow.ui" line="1581"/>
+        <location filename="../Main/MainWindow.ui" line="2324"/>
         <source>Snapshot</source>
         <translation>스냅 사진</translation>
     </message>
@@ -4824,13 +7117,13 @@ Monte Carlo power flow results:</source>
     </message>
     <message>
         <location filename="../Main/MainWindow.ui" line="1204"/>
-        <location filename="../Main/MainWindow.ui" line="1658"/>
-        <location filename="../Main/MainWindow.ui" line="2623"/>
-        <location filename="../Main/MainWindow.ui" line="10547"/>
-        <location filename="../Main/MainWindow.ui" line="10561"/>
-        <location filename="../Main/MainWindow.ui" line="10568"/>
-        <location filename="../Main/MainWindow.ui" line="10631"/>
-        <location filename="../Main/MainWindow.ui" line="10833"/>
+        <location filename="../Main/MainWindow.ui" line="1695"/>
+        <location filename="../Main/MainWindow.ui" line="2660"/>
+        <location filename="../Main/MainWindow.ui" line="10584"/>
+        <location filename="../Main/MainWindow.ui" line="10598"/>
+        <location filename="../Main/MainWindow.ui" line="10605"/>
+        <location filename="../Main/MainWindow.ui" line="10668"/>
+        <location filename="../Main/MainWindow.ui" line="10870"/>
         <source>...</source>
         <translation>...</translation>
     </message>
@@ -4850,266 +7143,271 @@ Monte Carlo power flow results:</source>
         <translation>데이터 베이스</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1358"/>
+        <location filename="../Main/MainWindow.ui" line="1330"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type anything to search the device. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;장치를 검색하려면 아무거나 입력하세요. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="1395"/>
         <source>Objects</source>
         <translation>사물</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1409"/>
+        <location filename="../Main/MainWindow.ui" line="1446"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type anything to search on the name property. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;For more advanced searches you can compose a filter expression:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Subjects:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;col, idx, val, colobj, idxobj&lt;/p&gt;&lt;p&gt;colobj and idxobj allow accessing the objects that may be represented at the index or the columns. With these you can access their internal properties for filtering.&lt;/p&gt;&lt;p&gt;If none is specified idxobj is taken&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Operators:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&amp;gt;, &amp;lt;, &amp;gt;=, &amp;lt;=, !=, =, like, notlike, starts, ends&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Examples:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Filter all object names that are similar to &apos;alba&apos; and their Vnom property &amp;gt; 200&lt;/p&gt;&lt;p&gt;-&amp;gt; idx&lt;span style=&quot; font-style:italic;&quot;&gt;obj.name like alba and idxobj.Vnom &amp;gt; 200&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Equivalently:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;-&amp;gt; name like alba and Vnom &amp;gt; 200&lt;/span&gt;&lt;/p&gt;&lt;p&gt;[Enter] to search &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;name 속성에 검색할 내용을 입력하세요. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;고급 검색을 위해 필터 표현식을 구성할 수 있습니다:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;제목:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;col, idx, val, colobj, idxobj&lt;/p&gt;&lt;p&gt;colobj 및 idxobj를 사용하면 인덱스 또는 열에 표시될 수 있는 개체에 액세스할 수 있습니다. 이를 사용하면 필터링을 위한 내부 속성에 액세스할 수 있습니다.&lt;/p&gt;&lt;p&gt;아무 것도 지정하지 않으면 idxobj가 사용됩니다.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;연산자:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&gt;, &lt;, &gt;=, &lt;=, !=, =, like, notlike, start, end&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;예:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&apos;alba&apos; 및 해당 Vnom 속성이 200보다 큰 모든 개체 이름을 필터링합니다.&lt;/p&gt;&lt;p&gt;-&gt; idx&lt;span style=&quot;font-style:italic;&quot;&gt;obj.name like alba 및 idxobj.Vnom &gt; 200&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;동일하게:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-style:italic;&quot;&gt;-&gt; alba 및 Vnom &gt; 200과 같은 이름&lt;/span&gt;&lt;/p&gt;&lt;p&gt;검색하려면 [Enter] 키를 누르세요 &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1416"/>
+        <location filename="../Main/MainWindow.ui" line="1453"/>
         <source>Smart filter</source>
         <translation>스마트 필터</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1446"/>
+        <location filename="../Main/MainWindow.ui" line="1483"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Histogram&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the histogram analysis of the selected data structure&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;히스토그램&lt;/span&gt;&lt;/p&gt;&lt;p&gt;선택한 데이터 구조의 히스토그램 분석 실행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1493"/>
+        <location filename="../Main/MainWindow.ui" line="1530"/>
         <source>Select the time series point to search</source>
         <translation>검색할 시계열 지점을 선택하세요.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1500"/>
+        <location filename="../Main/MainWindow.ui" line="1537"/>
         <source>Search and navigate to the selected time series point</source>
         <translation>선택한 시계열 지점을 검색하고 탐색합니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1514"/>
+        <location filename="../Main/MainWindow.ui" line="1551"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Snapshot&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Assign the values of the selected time step into the snapshot&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;스냅샷&lt;/span&gt;&lt;/p&gt;&lt;p&gt;선택한 시간 단계의 값을 스냅샷에 할당&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1567"/>
+        <location filename="../Main/MainWindow.ui" line="1604"/>
         <source>Add new object</source>
         <translation>새 개체 추가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1581"/>
+        <location filename="../Main/MainWindow.ui" line="1618"/>
         <source>Delete selection</source>
         <translation>선택 삭제</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1603"/>
+        <location filename="../Main/MainWindow.ui" line="1640"/>
         <source>Associations</source>
         <translation>협회</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1713"/>
+        <location filename="../Main/MainWindow.ui" line="1750"/>
         <source>Time series</source>
         <translation>시계열</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1758"/>
+        <location filename="../Main/MainWindow.ui" line="1795"/>
         <source>Magnitude with profile</source>
         <translation>프로필이 있는 크기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1765"/>
+        <location filename="../Main/MainWindow.ui" line="1802"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Create profiles&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This will create all the object&apos;s profiles&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;프로필 만들기&lt;/span&gt;&lt;/p&gt;&lt;p&gt;이렇게 하면 모든 개체의 프로필이 생성됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1779"/>
+        <location filename="../Main/MainWindow.ui" line="1816"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Delete profiles&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This will delete all the profiles and leave the snapshot.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;프로필 삭제&lt;/span&gt;&lt;/p&gt;&lt;p&gt;이렇게 하면 모든 프로필이 삭제되고 스냅샷이 남습니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1793"/>
+        <location filename="../Main/MainWindow.ui" line="1830"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Import profiles&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Import from data in CSV or Excel files&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;프로필 가져오기&lt;/span&gt;&lt;/p&gt;&lt;p&gt;CSV 또는 Excel 파일의 데이터에서 가져오기&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1810"/>
+        <location filename="../Main/MainWindow.ui" line="1847"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Import profiles from grid models. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;This is, load many individual grids in any of the supported VeraGrid formats and take the operational data from them, aplying them to all the profiles.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;그리드 모델에서 프로필을 가져옵니다. &lt;/span&gt;&lt;/p&gt;&lt;p&gt;이것은 지원되는 VeraGrid 형식으로 많은 개별 그리드를 로드하고 여기에서 작동 데이터를 가져와 모든 프로필에 적용하는 것입니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1827"/>
+        <location filename="../Main/MainWindow.ui" line="1864"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Time series  crop to the selected time interval&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;선택한 시간 간격으로 시계열 자르기&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1844"/>
+        <location filename="../Main/MainWindow.ui" line="1881"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Time series crop to the clusteres time indices.&lt;/p&gt;&lt;p&gt;For that you need cluster simulation in memory&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;시계열은 클러스터 시간 인덱스로 자릅니다.&lt;/p&gt;&lt;p&gt;이를 위해서는 메모리에서 클러스터 시뮬레이션이 필요합니다&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1874"/>
+        <location filename="../Main/MainWindow.ui" line="1911"/>
         <source>Plot the selected object&apos;s profile</source>
         <translation>선택한 개체의 프로필을 플롯합니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1925"/>
+        <location filename="../Main/MainWindow.ui" line="1962"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Copy displayed profile&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;데이터 복사&lt;/span&gt;&lt;/p&gt;&lt;p&gt;표시된 프로필 복사&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1942"/>
+        <location filename="../Main/MainWindow.ui" line="1979"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Paste data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Paste clipboard into the displayed profile&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;데이터 붙여넣기&lt;/span&gt;&lt;/p&gt;&lt;p&gt;표시된 프로필에 클립보드 붙여넣기&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1956"/>
+        <location filename="../Main/MainWindow.ui" line="1993"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy profile&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Copy the current profile into the profile selected by the drop-down selector&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;프로필 복사&lt;/span&gt;&lt;/p&gt;&lt;p&gt;현재 프로필을 드롭다운 선택기로 선택한 프로필에 복사&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1976"/>
+        <location filename="../Main/MainWindow.ui" line="2013"/>
         <source>Profile where to copy the current profile</source>
         <translation>현재 프로필을 복사할 프로필</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="1996"/>
+        <location filename="../Main/MainWindow.ui" line="2033"/>
         <source>Add value to the profile</source>
         <translation>프로필에 가치를 더하다</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2010"/>
+        <location filename="../Main/MainWindow.ui" line="2047"/>
         <source>Subtract value from the profile</source>
         <translation>프로필에서 값 빼기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2024"/>
+        <location filename="../Main/MainWindow.ui" line="2061"/>
         <source>Multiply the profile by a value</source>
         <translation>프로필에 값을 곱합니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2038"/>
+        <location filename="../Main/MainWindow.ui" line="2075"/>
         <source>Divide the profile by a value</source>
         <translation>프로필을 값으로 나눕니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2052"/>
+        <location filename="../Main/MainWindow.ui" line="2089"/>
         <source>Set the value to all or to the selection</source>
         <translation>값을 모두 또는 선택 항목으로 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2095"/>
+        <location filename="../Main/MainWindow.ui" line="2132"/>
         <source>Compiled arrays</source>
         <translation>컴파일된 배열</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2144"/>
+        <location filename="../Main/MainWindow.ui" line="2181"/>
         <source>Export simulation data</source>
         <translation>시뮬레이션 데이터 내보내기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2164"/>
+        <location filename="../Main/MainWindow.ui" line="2201"/>
         <source>Update the islands dispayed</source>
         <translation>표시된 섬 업데이트</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2204"/>
+        <location filename="../Main/MainWindow.ui" line="2241"/>
         <source>Copy to data frame to clipboard in array format</source>
         <translation>배열 형식으로 데이터 프레임을 클립보드로 복사</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2247"/>
+        <location filename="../Main/MainWindow.ui" line="2284"/>
         <source>Plot values</source>
         <translation>플롯 값</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2270"/>
+        <location filename="../Main/MainWindow.ui" line="2307"/>
         <source>Copy array to clipboard</source>
         <translation>배열을 클립보드에 복사</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2306"/>
+        <location filename="../Main/MainWindow.ui" line="2343"/>
         <source>Comments</source>
         <translation>댓글</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2312"/>
+        <location filename="../Main/MainWindow.ui" line="2349"/>
         <source>Write here some comments about the grid</source>
         <translation>여기에 그리드에 대한 의견을 적어주세요.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2328"/>
-        <location filename="../Main/MainWindow.ui" line="2393"/>
-        <location filename="../Main/MainWindow.ui" line="12841"/>
+        <location filename="../Main/MainWindow.ui" line="2365"/>
+        <location filename="../Main/MainWindow.ui" line="2430"/>
+        <location filename="../Main/MainWindow.ui" line="12878"/>
         <source>Results</source>
         <translation>결과</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2449"/>
+        <location filename="../Main/MainWindow.ui" line="2486"/>
         <source>Saved results in this file</source>
         <translation>이 파일에 결과가 저장되었습니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2505"/>
+        <location filename="../Main/MainWindow.ui" line="2542"/>
         <source>Tables</source>
         <translation>테이블</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2589"/>
+        <location filename="../Main/MainWindow.ui" line="2626"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Subjects:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;col, idx, val, colobj, idxobj&lt;/p&gt;&lt;p&gt;colobj and idxobj allow accessing the objects that may be represented at the index or the columns. With these you can access their internal properties for filtering.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Operators:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&amp;gt;, &amp;lt;, &amp;gt;=, &amp;lt;=, !=, =, like, notlike, starts, ends&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Examples:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;The columns should not be column1 or column2, the values should be &amp;gt; 5 and the index be like ab of mn&lt;/span&gt;&lt;/p&gt;&lt;p&gt;-&amp;gt; &lt;span style=&quot; font-style:italic;&quot;&gt;col != [column1, column2] and val &amp;gt; 5 or idx like [ab, mn]&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic;&quot;&gt;Filter the table values that are between 0.5 and 20&lt;/span&gt;&lt;/p&gt;&lt;p&gt;-&amp;gt; &lt;span style=&quot; font-style:italic;&quot;&gt;val &amp;gt; 0.5 and val &amp;lt; 20.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;주제:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;col, idx, val, colobj, idxobj&lt;/p&gt;&lt;p&gt;colobj 및 idxobj를 사용하면 인덱스 또는 열에 표시될 수 있는 개체에 액세스할 수 있습니다. 이를 사용하면 필터링을 위한 내부 속성에 액세스할 수 있습니다.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;연산자:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&gt;, &lt;, &gt;=, &lt;=, !=, =, like, notlike, start, end&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;예:&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-style:italic;&quot;&gt;열은 다음과 같으면 안 됩니다. 컬럼1 또는 컬럼2인 경우 값은 5보다 커야 하고 인덱스는 ab of mn과 같아야 합니다.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;-&gt; &lt;span style=&quot;font-style:italic;&quot;&gt;col != [column1,column2] 및 val &gt; 5 또는 idx는 [ab, mn]&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;font-style:italic;&quot;&gt;사이에 있는 테이블 값을 필터링합니다. 0.5 및 20&lt;/span&gt;&lt;/p&gt;&lt;p&gt;-&gt; &lt;span style=&quot;font-style:italic;&quot;&gt;val &gt; 0.5 및 val &lt; 20.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2596"/>
-        <location filename="../Main/MainWindow.ui" line="2830"/>
+        <location filename="../Main/MainWindow.ui" line="2633"/>
+        <location filename="../Main/MainWindow.ui" line="2867"/>
         <source>Smart search</source>
         <translation>스마트 검색</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2630"/>
+        <location filename="../Main/MainWindow.ui" line="2667"/>
         <source>Transpose the results</source>
         <translation>결과 전치</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2644"/>
+        <location filename="../Main/MainWindow.ui" line="2681"/>
         <source>Results as cummulative density functions</source>
         <translation>누적 밀도 함수로 표현된 결과</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2661"/>
+        <location filename="../Main/MainWindow.ui" line="2698"/>
         <source>Results as absolute values</source>
         <translation>절대값으로 결과</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2678"/>
+        <location filename="../Main/MainWindow.ui" line="2715"/>
         <source>Stacked plot</source>
         <translation>누적 플롯</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2695"/>
+        <location filename="../Main/MainWindow.ui" line="2732"/>
         <source>Copy to data frame to clipboard</source>
         <translation>데이터 프레임을 클립보드로 복사</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2709"/>
+        <location filename="../Main/MainWindow.ui" line="2746"/>
         <source>Copy data in numpy format to clipboard</source>
         <translation>numpy 형식의 데이터를 클립보드에 복사</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2723"/>
-        <location filename="../Main/MainWindow.ui" line="10961"/>
+        <location filename="../Main/MainWindow.ui" line="2760"/>
+        <location filename="../Main/MainWindow.ui" line="10998"/>
         <source>Export data</source>
         <translation>데이터 내보내기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2737"/>
+        <location filename="../Main/MainWindow.ui" line="2774"/>
         <source>Plot the data in a separated window</source>
         <translation>별도의 창에 데이터 플롯</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2775"/>
+        <location filename="../Main/MainWindow.ui" line="2812"/>
         <source>Dynamics</source>
         <translation>역학</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2823"/>
+        <location filename="../Main/MainWindow.ui" line="2860"/>
         <source>Type the search term</source>
         <translation>검색어를 입력하세요</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2844"/>
+        <location filename="../Main/MainWindow.ui" line="2881"/>
         <source>Open the RMS pre-simulation dynamic plot editor</source>
         <translation>RMS 사전 시뮬레이션 동적 플롯 편집기를 엽니다.</translation>
     </message>
@@ -5118,7 +7416,7 @@ Monte Carlo power flow results:</source>
         <translation type="vanished">RMS 플롯</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2858"/>
+        <location filename="../Main/MainWindow.ui" line="2895"/>
         <source>Open the EMT pre-simulation dynamic plot editor</source>
         <translation>EMT 사전 시뮬레이션 동적 플롯 편집기를 엽니다.</translation>
     </message>
@@ -5127,229 +7425,229 @@ Monte Carlo power flow results:</source>
         <translation type="vanished">EMT 플롯</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2885"/>
+        <location filename="../Main/MainWindow.ui" line="2922"/>
         <source>Add new plot</source>
         <translation>새 플롯 추가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2899"/>
+        <location filename="../Main/MainWindow.ui" line="2936"/>
         <source>Remove selected plot</source>
         <translation>선택한 플롯 제거</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2913"/>
+        <location filename="../Main/MainWindow.ui" line="2950"/>
         <source>Display selected plot</source>
         <translation>선택한 플롯 표시</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="2958"/>
+        <location filename="../Main/MainWindow.ui" line="2995"/>
         <source>Drag and drop the Var to the desired plot. Double click to plot directly.</source>
         <translation>Var를 원하는 플롯으로 끌어다 놓습니다. 직접 플롯하려면 두 번 클릭하세요.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3029"/>
+        <location filename="../Main/MainWindow.ui" line="3066"/>
         <source>Logs</source>
         <translation>로그</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3072"/>
+        <location filename="../Main/MainWindow.ui" line="3109"/>
         <source>Save the logs to a file</source>
         <translation>로그를 파일에 저장</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3101"/>
+        <location filename="../Main/MainWindow.ui" line="3138"/>
         <source>Report</source>
         <translation>보고서</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3126"/>
+        <location filename="../Main/MainWindow.ui" line="3163"/>
         <source>Scripting</source>
         <translation>스크립팅</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3211"/>
+        <location filename="../Main/MainWindow.ui" line="3248"/>
         <source>New script, will delete the existing code.</source>
         <translation>새 스크립트는 기존 코드를 삭제합니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3225"/>
+        <location filename="../Main/MainWindow.ui" line="3262"/>
         <source>Save the current source code</source>
         <translation>현재 소스 코드 저장</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3246"/>
+        <location filename="../Main/MainWindow.ui" line="3283"/>
         <source>Name of the source code file</source>
         <translation>소스 코드 파일 이름</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3260"/>
+        <location filename="../Main/MainWindow.ui" line="3297"/>
         <source>Run the source code in the console</source>
         <translation>콘솔에서 소스 코드 실행</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3326"/>
+        <location filename="../Main/MainWindow.ui" line="3363"/>
         <source>Python console</source>
         <translation>파이썬 콘솔</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3399"/>
+        <location filename="../Main/MainWindow.ui" line="3436"/>
         <source>Clear the console</source>
         <translation>콘솔 지우기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3427"/>
+        <location filename="../Main/MainWindow.ui" line="3464"/>
         <source>Source code</source>
         <translation>소스 코드</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3469"/>
+        <location filename="../Main/MainWindow.ui" line="3506"/>
         <source>Settings</source>
         <translation>설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3698"/>
+        <location filename="../Main/MainWindow.ui" line="3735"/>
         <source>Frequency</source>
         <translation>빈도</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3705"/>
+        <location filename="../Main/MainWindow.ui" line="3742"/>
         <source>Snapshot time</source>
         <translation>스냅샷 시간</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3736"/>
+        <location filename="../Main/MainWindow.ui" line="3773"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;System frequency&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This only has an effect in the program when computing lines&apos; per-unit impedance from ohm values.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;시스템 주파수&lt;/span&gt;&lt;/p&gt;&lt;p&gt;이것은 옴 값에서 라인의 단위당 임피던스를 계산할 때만 프로그램에 영향을 미칩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3739"/>
+        <location filename="../Main/MainWindow.ui" line="3776"/>
         <source> Hz</source>
         <translation>헤르츠</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3765"/>
+        <location filename="../Main/MainWindow.ui" line="3802"/>
         <source>Base power</source>
         <translation>기본 전력</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3772"/>
+        <location filename="../Main/MainWindow.ui" line="3809"/>
         <source>Name of the grid model</source>
         <translation>그리드 모델의 이름</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3786"/>
+        <location filename="../Main/MainWindow.ui" line="3823"/>
         <source>Grid name</source>
         <translation>그리드 이름</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3793"/>
+        <location filename="../Main/MainWindow.ui" line="3830"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Base power&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Despite all the bibliography, changing this number to anything other than 100 MVA, might change the meaning of what sensible per-unit voltage are.&lt;/p&gt;&lt;p&gt;So, don&apos;t touch it. To have power in kW, use the option at the loads, geneerators, etc.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;기본 전력&lt;/span&gt;&lt;/p&gt;&lt;p&gt;모든 참고 문헌에도 불구하고 이 숫자를 100MVA 이외의 다른 값으로 변경하면 합리적인 단위당 전압의 의미가 바뀔 수 있습니다.&lt;/p&gt;&lt;p&gt;그러므로 만지지 마세요. 전력을 kW 단위로 얻으려면 부하, 발전기 등에서 옵션을 사용하세요.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3796"/>
+        <location filename="../Main/MainWindow.ui" line="3833"/>
         <source> MVA</source>
         <translation>MVA</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3815"/>
+        <location filename="../Main/MainWindow.ui" line="3852"/>
         <source>Engine to be used when available</source>
         <translation>가능한 경우 사용할 엔진</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3822"/>
+        <location filename="../Main/MainWindow.ui" line="3859"/>
         <source>Engine</source>
         <translation>엔진</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3829"/>
+        <location filename="../Main/MainWindow.ui" line="3866"/>
         <source>Language</source>
         <translation>언어</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3839"/>
+        <location filename="../Main/MainWindow.ui" line="3876"/>
         <source>Dark mode</source>
         <translation>다크 모드</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3868"/>
+        <location filename="../Main/MainWindow.ui" line="3905"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Settings for state estimation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;상태 추정을 위한 설정.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3905"/>
-        <location filename="../Main/MainWindow.ui" line="3915"/>
+        <location filename="../Main/MainWindow.ui" line="3942"/>
+        <location filename="../Main/MainWindow.ui" line="3952"/>
         <source>Power flow settings</source>
         <translation>전력 흐름 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3912"/>
+        <location filename="../Main/MainWindow.ui" line="3949"/>
         <source>Pf</source>
         <translation>Pf</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="3988"/>
+        <location filename="../Main/MainWindow.ui" line="4025"/>
         <source>Power flow</source>
         <translation>전력 흐름</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4128"/>
+        <location filename="../Main/MainWindow.ui" line="4165"/>
         <source>PTDF / LODF</source>
         <translation>PTDF/LODF</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4200"/>
+        <location filename="../Main/MainWindow.ui" line="4237"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Theoretically PTDF and LODF values should be in the range (-1, 1)&lt;br/&gt;However, this is not true in general for any grid due to the existence of antennas.&lt;br/&gt;With this option the values are truncated to the range (-1, 1)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;이론적으로 PTDF 및 LODF 값은 (-1, 1) 범위에 있어야 합니다.&lt;br/&gt;그러나 이는 안테나의 존재로 인해 일반적으로 모든 그리드에 해당되지 않습니다.&lt;br/&gt;이 옵션을 사용하면 값이 (-1, 1) 범위로 잘립니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4203"/>
+        <location filename="../Main/MainWindow.ui" line="4240"/>
         <source>Correct nonsense values</source>
         <translation>넌센스 값을 수정하세요.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4213"/>
+        <location filename="../Main/MainWindow.ui" line="4250"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;With this option, the PTDF is computed such that the slack effects are distributed&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;이 옵션을 사용하면 여유 시간 효과가 분산되도록 PTDF가 계산됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4216"/>
-        <location filename="../Main/MainWindow.ui" line="4445"/>
+        <location filename="../Main/MainWindow.ui" line="4253"/>
+        <location filename="../Main/MainWindow.ui" line="4482"/>
         <source>Distributed slack</source>
         <translation>분산된 여유</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4226"/>
+        <location filename="../Main/MainWindow.ui" line="4263"/>
         <source>Threshold under which sensitivities are ignored when the PTDF is converted to sparse</source>
         <translation>PTDF가 희소로 변환될 때 민감도가 무시되는 임계값</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4245"/>
+        <location filename="../Main/MainWindow.ui" line="4282"/>
         <source>LODF threshold</source>
         <translation>LODF 임계값</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4289"/>
+        <location filename="../Main/MainWindow.ui" line="4326"/>
         <source>Threshold under which sensitivities are ignored when the LODF is converted to sparse</source>
         <translation>LODF가 희소로 변환될 때 민감도가 무시되는 임계값</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4308"/>
+        <location filename="../Main/MainWindow.ui" line="4345"/>
         <source>PTDF threshold</source>
         <translation>PTDF 임계값</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4334"/>
+        <location filename="../Main/MainWindow.ui" line="4371"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Maximum numberof iterations to use.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;Tipical values: &lt;/p&gt;&lt;p&gt;Newton Raphson: 5&lt;/p&gt;&lt;p&gt;Levenberg-Marquards: 20&lt;/p&gt;&lt;p&gt;Fast decoupled: 10&lt;/p&gt;&lt;p&gt;Others: 20&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;사용할 최대 반복 횟수.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;팁 값: &lt;/p&gt;&lt;p&gt;Newton Raphson: 5&lt;/p&gt;&lt;p&gt;Levenberg-Marquards: 20&lt;/p&gt;&lt;p&gt;빠른 분리: 10&lt;/p&gt;&lt;p&gt;기타: 20&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4337"/>
+        <location filename="../Main/MainWindow.ui" line="4374"/>
         <source> iterations</source>
         <translation>반복</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4359"/>
+        <location filename="../Main/MainWindow.ui" line="4396"/>
         <source>Find the tolerance that best represents the load values for power flow</source>
         <translation>전력 흐름에 대한 부하 값을 가장 잘 나타내는 허용 오차를 찾습니다.</translation>
     </message>
@@ -5358,2516 +7656,2524 @@ Monte Carlo power flow results:</source>
         <translation type="vanished">찾다</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4386"/>
+        <location filename="../Main/MainWindow.ui" line="4423"/>
         <source>Max. iterations</source>
         <translation>최대. 반복</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4402"/>
+        <location filename="../Main/MainWindow.ui" line="4439"/>
         <source>General switch for generators remote voltage control</source>
         <translation>발전기 원격 전압 제어용 일반 스위치</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4405"/>
+        <location filename="../Main/MainWindow.ui" line="4442"/>
         <source>Control remote voltage</source>
         <translation>원격 전압 제어</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4412"/>
+        <location filename="../Main/MainWindow.ui" line="4449"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If the selected method does not converge, try a list of methods that may help&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;선택한 방법이 수렴되지 않으면 도움이 될 수 있는 방법 목록을 시도해 보십시오.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4415"/>
+        <location filename="../Main/MainWindow.ui" line="4452"/>
         <source>Retry with other methods</source>
         <translation>다른 방법으로 다시 시도</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4425"/>
+        <location filename="../Main/MainWindow.ui" line="4462"/>
         <source>General switch for branches tap module control</source>
         <translation>분기 탭 모듈 제어용 일반 스위치</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4428"/>
+        <location filename="../Main/MainWindow.ui" line="4465"/>
         <source>Control tap module</source>
         <translation>제어 탭 모듈</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4435"/>
+        <location filename="../Main/MainWindow.ui" line="4472"/>
         <source>Apply impedance tolerances</source>
         <translation>임피던스 허용 오차 적용</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4442"/>
+        <location filename="../Main/MainWindow.ui" line="4479"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If active, the slack power is distributed among the generators according to their installed power &amp;quot;Snom&amp;quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;활성화되면 여유 전력은 설치된 전력 &quot;Snom&quot;에 따라 발전기 간에 분배됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4452"/>
+        <location filename="../Main/MainWindow.ui" line="4489"/>
         <source>If checked, the power flow solution is initialized with a linear (so called DC) power flow first</source>
         <translation>선택하면 전력 흐름 솔루션이 먼저 선형(소위 DC) 전력 흐름으로 초기화됩니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4455"/>
+        <location filename="../Main/MainWindow.ui" line="4492"/>
         <source>Initialize angles</source>
         <translation>각도 초기화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4462"/>
+        <location filename="../Main/MainWindow.ui" line="4499"/>
         <source>If active, the islands of a single node are ignored.</source>
         <translation>활성화되면 단일 노드의 아일랜드가 무시됩니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4465"/>
+        <location filename="../Main/MainWindow.ui" line="4502"/>
         <source>Ignore single node islands</source>
         <translation>단일 노드 아일랜드 무시</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4475"/>
+        <location filename="../Main/MainWindow.ui" line="4512"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If active, the Vm0 and Va0 properties of the bus objects are used to initialize the power flow simulation.&lt;/p&gt;&lt;p&gt;If you need this it is a sign of grid ill conditioning by something else like incorrect impedances of too much loading, specially reactive power that cannot be transported.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;활성화된 경우 버스 객체의 Vm0 및 Va0 속성은 전력 흐름 시뮬레이션을 초기화하는 데 사용됩니다.&lt;/p&gt;&lt;p&gt;이것이 필요한 경우 이는 너무 많은 부하, 특히 전송할 수 없는 무효 전력의 잘못된 임피던스와 같은 다른 요인에 의한 그리드 상태 불량의 신호입니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4478"/>
+        <location filename="../Main/MainWindow.ui" line="4515"/>
         <source>Use voltage guess</source>
         <translation>전압 추측 사용</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4485"/>
-        <location filename="../Main/MainWindow.ui" line="5971"/>
+        <location filename="../Main/MainWindow.ui" line="4522"/>
+        <location filename="../Main/MainWindow.ui" line="6008"/>
         <source>Add a results report in the logs</source>
         <translation>로그에 결과 보고서 추가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4488"/>
-        <location filename="../Main/MainWindow.ui" line="5974"/>
+        <location filename="../Main/MainWindow.ui" line="4525"/>
+        <location filename="../Main/MainWindow.ui" line="6011"/>
         <source>Add report</source>
         <translation>보고서 추가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4495"/>
+        <location filename="../Main/MainWindow.ui" line="4532"/>
         <source>General switch for reactive power limits control</source>
         <translation>무효전력 제한 제어용 일반 스위치</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4498"/>
-        <location filename="../Main/MainWindow.ui" line="5871"/>
+        <location filename="../Main/MainWindow.ui" line="4535"/>
+        <location filename="../Main/MainWindow.ui" line="5908"/>
         <source>Control Q limits</source>
         <translation>제어 Q 한계</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4505"/>
+        <location filename="../Main/MainWindow.ui" line="4542"/>
         <source>General switch for branches tap phase control</source>
         <translation>분기 탭 위상 제어용 일반 스위치</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4508"/>
+        <location filename="../Main/MainWindow.ui" line="4545"/>
         <source>Control tap phase</source>
         <translation>제어 탭 위상</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4515"/>
+        <location filename="../Main/MainWindow.ui" line="4552"/>
         <source>If checked, the controls are adjusted to their closest tap</source>
         <translation>선택하면 컨트롤이 가장 가까운 탭으로 조정됩니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4518"/>
+        <location filename="../Main/MainWindow.ui" line="4555"/>
         <source>Orthogonalize controls</source>
         <translation>컨트롤 직교화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4525"/>
+        <location filename="../Main/MainWindow.ui" line="4562"/>
         <source>Correct the branches resistance using the temperature</source>
         <translation>온도를 이용하여 가지 저항을 수정합니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4528"/>
+        <location filename="../Main/MainWindow.ui" line="4565"/>
         <source>Apply temperature correction</source>
         <translation>온도 보정 적용</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4538"/>
-        <location filename="../Main/MainWindow.ui" line="5830"/>
+        <location filename="../Main/MainWindow.ui" line="4575"/>
+        <location filename="../Main/MainWindow.ui" line="5867"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Factor that multiplies each increment solution. &lt;/p&gt;&lt;p&gt;In practice this is used to slow down troublesome solutions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;각 증분 솔루션을 곱하는 요소입니다. &lt;/p&gt;&lt;p&gt;실제로 이는 문제가 있는 솔루션의 속도를 늦추는 데 사용됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4541"/>
-        <location filename="../Main/MainWindow.ui" line="4590"/>
-        <location filename="../Main/MainWindow.ui" line="4643"/>
+        <location filename="../Main/MainWindow.ui" line="4578"/>
+        <location filename="../Main/MainWindow.ui" line="4627"/>
+        <location filename="../Main/MainWindow.ui" line="4680"/>
         <source> p.u.</source>
         <translation>푸.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4563"/>
+        <location filename="../Main/MainWindow.ui" line="4600"/>
         <source>Level of console information. 0: None, 1: some information, 2: all the information</source>
         <translation>콘솔 정보 수준. 0: 없음, 1: 일부 정보, 2: 모든 정보</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4573"/>
-        <location filename="../Main/MainWindow.ui" line="5115"/>
-        <location filename="../Main/MainWindow.ui" line="8549"/>
+        <location filename="../Main/MainWindow.ui" line="4610"/>
+        <location filename="../Main/MainWindow.ui" line="5152"/>
+        <location filename="../Main/MainWindow.ui" line="8586"/>
         <source>Solver</source>
         <translation>솔버</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4580"/>
-        <location filename="../Main/MainWindow.ui" line="5855"/>
+        <location filename="../Main/MainWindow.ui" line="4617"/>
+        <location filename="../Main/MainWindow.ui" line="5892"/>
         <source>Trust radius</source>
         <translation>신뢰 반경</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4587"/>
-        <location filename="../Main/MainWindow.ui" line="5243"/>
-        <location filename="../Main/MainWindow.ui" line="5789"/>
-        <location filename="../Main/MainWindow.ui" line="8039"/>
-        <location filename="../Main/MainWindow.ui" line="8457"/>
+        <location filename="../Main/MainWindow.ui" line="4624"/>
+        <location filename="../Main/MainWindow.ui" line="5280"/>
+        <location filename="../Main/MainWindow.ui" line="5826"/>
+        <location filename="../Main/MainWindow.ui" line="8076"/>
+        <location filename="../Main/MainWindow.ui" line="8494"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Error tolerance of the method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;메서드의 오류 허용 범위&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4593"/>
-        <location filename="../Main/MainWindow.ui" line="4646"/>
-        <location filename="../Main/MainWindow.ui" line="5246"/>
-        <location filename="../Main/MainWindow.ui" line="5792"/>
-        <location filename="../Main/MainWindow.ui" line="8042"/>
-        <location filename="../Main/MainWindow.ui" line="8460"/>
-        <location filename="../Main/MainWindow.ui" line="9968"/>
-        <location filename="../Main/MainWindow.ui" line="10230"/>
+        <location filename="../Main/MainWindow.ui" line="4630"/>
+        <location filename="../Main/MainWindow.ui" line="4683"/>
+        <location filename="../Main/MainWindow.ui" line="5283"/>
+        <location filename="../Main/MainWindow.ui" line="5829"/>
+        <location filename="../Main/MainWindow.ui" line="8079"/>
+        <location filename="../Main/MainWindow.ui" line="8497"/>
+        <location filename="../Main/MainWindow.ui" line="10005"/>
+        <location filename="../Main/MainWindow.ui" line="10267"/>
         <source>1e-</source>
         <translation>1e-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4619"/>
+        <location filename="../Main/MainWindow.ui" line="4656"/>
         <source>Verbosity</source>
         <translation>다변</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4626"/>
-        <location filename="../Main/MainWindow.ui" line="5223"/>
-        <location filename="../Main/MainWindow.ui" line="5776"/>
-        <location filename="../Main/MainWindow.ui" line="8113"/>
-        <location filename="../Main/MainWindow.ui" line="8496"/>
+        <location filename="../Main/MainWindow.ui" line="4663"/>
+        <location filename="../Main/MainWindow.ui" line="5260"/>
+        <location filename="../Main/MainWindow.ui" line="5813"/>
+        <location filename="../Main/MainWindow.ui" line="8150"/>
+        <location filename="../Main/MainWindow.ui" line="8533"/>
         <source>Tolerance</source>
         <translation>용인</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4633"/>
+        <location filename="../Main/MainWindow.ui" line="4670"/>
         <source>Controls apply after</source>
         <translation>다음 이후에 통제가 적용됩니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4640"/>
+        <location filename="../Main/MainWindow.ui" line="4677"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;VeraGrid does not have an &amp;quot;outer loop&amp;quot;&lt;br/&gt;Instead, in iterative numerical methods (Newton-Raphson, Levenberg-Marquardt, Powell Dog Leg) the controls apply after a certain error threshold has been reached.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;VeraGrid에는 &quot;외부 루프&quot;가 없습니다.&lt;br/&gt;대신 반복 수치 방법(Newton-Raphson, Levenberg-Marquardt, Powell Dog Leg)에서는 특정 오류 임계값에 도달한 후에 컨트롤이 적용됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4666"/>
+        <location filename="../Main/MainWindow.ui" line="4703"/>
         <source>Continuation power flow settings</source>
         <translation>연속 전력 흐름 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4673"/>
+        <location filename="../Main/MainWindow.ui" line="4710"/>
         <source>Cpf</source>
         <translation>CPF</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4676"/>
+        <location filename="../Main/MainWindow.ui" line="4713"/>
         <source>Continuation power flow related settings</source>
         <translation>연속 전력 흐름 관련 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4707"/>
+        <location filename="../Main/MainWindow.ui" line="4744"/>
         <source>Stop at</source>
         <translation>중지</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4714"/>
+        <location filename="../Main/MainWindow.ui" line="4751"/>
         <source>Refer to the NTC areas (Linear tab)</source>
         <translation>NTC 영역 참조(선형 탭)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4794"/>
+        <location filename="../Main/MainWindow.ui" line="4831"/>
         <source>Now</source>
         <translation>지금</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4801"/>
+        <location filename="../Main/MainWindow.ui" line="4838"/>
         <source>Use departure and target points from time series</source>
         <translation>시계열의 출발점 및 목표점 사용</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4811"/>
+        <location filename="../Main/MainWindow.ui" line="4848"/>
         <source>Available transfer capacity</source>
         <translation>사용 가능한 전송 용량</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4825"/>
+        <location filename="../Main/MainWindow.ui" line="4862"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lambda factor&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;람다 인자&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4832"/>
-        <location filename="../Main/MainWindow.ui" line="5028"/>
+        <location filename="../Main/MainWindow.ui" line="4869"/>
+        <location filename="../Main/MainWindow.ui" line="5065"/>
         <source>Max. Iterations</source>
         <translation>최대. 반복</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4839"/>
+        <location filename="../Main/MainWindow.ui" line="4876"/>
         <source>Target</source>
         <translation>목표</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4941"/>
-        <location filename="../Main/MainWindow.ui" line="11371"/>
+        <location filename="../Main/MainWindow.ui" line="4978"/>
+        <location filename="../Main/MainWindow.ui" line="11408"/>
         <source>Continuation power flow</source>
         <translation>연속 전력 흐름</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4959"/>
+        <location filename="../Main/MainWindow.ui" line="4996"/>
         <source>Simulation mode</source>
         <translation>시뮬레이션 모드</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="4966"/>
+        <location filename="../Main/MainWindow.ui" line="5003"/>
         <source>Increase system loading</source>
         <translation>시스템 로딩 증가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5010"/>
+        <location filename="../Main/MainWindow.ui" line="5047"/>
         <source>SE</source>
         <translation>SE</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5038"/>
+        <location filename="../Main/MainWindow.ui" line="5075"/>
         <source>Observability analysis</source>
         <translation>관측 가능성 분석</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5108"/>
+        <location filename="../Main/MainWindow.ui" line="5145"/>
         <source>Fixed slack</source>
         <translation>고정된 여유분</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5210"/>
-        <location filename="../Main/MainWindow.ui" line="12697"/>
+        <location filename="../Main/MainWindow.ui" line="5247"/>
+        <location filename="../Main/MainWindow.ui" line="12734"/>
         <source>State estimation</source>
         <translation>상태 추정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5262"/>
+        <location filename="../Main/MainWindow.ui" line="5299"/>
         <source>Prefer correct</source>
         <translation>올바른 것을 선호</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5269"/>
+        <location filename="../Main/MainWindow.ui" line="5306"/>
         <source>Add pseudo measurements</source>
         <translation>의사 측정 추가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5276"/>
+        <location filename="../Main/MainWindow.ui" line="5313"/>
         <source>Measurements profiling</source>
         <translation>측정 프로파일링</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5300"/>
-        <location filename="../Main/MainWindow.ui" line="5310"/>
+        <location filename="../Main/MainWindow.ui" line="5337"/>
+        <location filename="../Main/MainWindow.ui" line="5347"/>
         <source>Optimal power flow settings</source>
         <translation>최적의 전력 흐름 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5307"/>
+        <location filename="../Main/MainWindow.ui" line="5344"/>
         <source>Opf</source>
         <translation>Opf</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5322"/>
+        <location filename="../Main/MainWindow.ui" line="5359"/>
         <source>Linear settings</source>
         <translation>선형 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5458"/>
+        <location filename="../Main/MainWindow.ui" line="5495"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the time grouping to possibly shorten the solution time.&lt;/p&gt;&lt;p&gt;This splits the time series by week, month, etc. and the subproblems are solved sequentially.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;해결 시간을 단축하려면 시간 그룹화를 선택하세요.&lt;/p&gt;&lt;p&gt;이렇게 하면 시계열이 주, 월 등으로 분할되어 하위 문제가 순차적으로 해결됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5492"/>
+        <location filename="../Main/MainWindow.ui" line="5529"/>
         <source>Consider per-area generation spinning reserve</source>
         <translation>지역별 세대 회전 예비를 고려하십시오.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5495"/>
+        <location filename="../Main/MainWindow.ui" line="5532"/>
         <source>Spinning reserve</source>
         <translation>회전 예비</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5607"/>
+        <location filename="../Main/MainWindow.ui" line="5644"/>
         <source>Instead of using the generation, loads cost for dispatching, use the GLSK (Generation, Load Shift Keys)</source>
         <translation>세대, 로드 비용을 사용하는 대신 GLSK(Generation, Load Shift Keys)를 사용합니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5610"/>
+        <location filename="../Main/MainWindow.ui" line="5647"/>
         <source>Use GSLK as costs</source>
         <translation>GSLK를 비용으로 사용</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5373"/>
+        <location filename="../Main/MainWindow.ui" line="5410"/>
         <source>MIP framework</source>
         <translation>MIP 프레임워크</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5591"/>
+        <location filename="../Main/MainWindow.ui" line="5628"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When checked, the generation costs will use the quadratic coefficients cost, which will trigger a more complex formulation to approximate the quadratic thermal generation curve. Otherwise a linear model is used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;선택하면 발전 비용에 이차 계수 비용이 사용되며, 이차 열발전 곡선을 근사하기 위해 더 복잡한 정식화가 활성화됩니다. 그렇지 않으면 선형 모델이 사용됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5594"/>
+        <location filename="../Main/MainWindow.ui" line="5631"/>
         <source>Use quadratic costs</source>
         <translation>이차 비용 사용</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5419"/>
+        <location filename="../Main/MainWindow.ui" line="5456"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the zonal grouping.&lt;br/&gt;When All (Copper plate) is selected, the branch restrictions are ignored&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;구역 그룹을 선택하세요.&lt;br/&gt;모두(동판)를 선택하면 분기 제한이 무시됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5432"/>
+        <location filename="../Main/MainWindow.ui" line="5469"/>
         <source>Choose the external mixed integer framework</source>
         <translation>외부 혼합 정수 프레임워크 선택</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5399"/>
+        <location filename="../Main/MainWindow.ui" line="5436"/>
         <source>Time grouping</source>
         <translation>시간 그룹화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5508"/>
+        <location filename="../Main/MainWindow.ui" line="5545"/>
         <source>Consider generation minimum up/down time</source>
         <translation>세대 최소 가동/중단 시간 고려</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5511"/>
+        <location filename="../Main/MainWindow.ui" line="5548"/>
         <source>Consider min up/down time</source>
         <translation>최소 가동/중단 시간 고려</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5623"/>
+        <location filename="../Main/MainWindow.ui" line="5660"/>
         <source>When checked, the branch losses will be aproximated by a factor r * rate / (V^2)</source>
         <translation>이 옵션을 선택하면 분기 손실이 r * rate / (V^2) 계수로 근사화됩니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5626"/>
+        <location filename="../Main/MainWindow.ui" line="5663"/>
         <source>Approximate losses</source>
         <translation>대략적인 손실</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5347"/>
+        <location filename="../Main/MainWindow.ui" line="5384"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select how the generation dispatch should behave&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;세대 디스패치의 작동 방식 선택&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5578"/>
+        <location filename="../Main/MainWindow.ui" line="5615"/>
         <source>Contingency tolerance</source>
         <translation>우발상황 허용</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5540"/>
+        <location filename="../Main/MainWindow.ui" line="5577"/>
         <source>LODF matrix tolerance choosing contingencies</source>
         <translation>LODF 행렬 허용오차 선택 우발사항</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5524"/>
+        <location filename="../Main/MainWindow.ui" line="5561"/>
         <source>Consider the contingencies when dispatching</source>
         <translation>파견 시 만일의 사태를 고려하세요.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5527"/>
+        <location filename="../Main/MainWindow.ui" line="5564"/>
         <source>Compute contingencies</source>
         <translation>만일의 사태를 계산하다</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5655"/>
+        <location filename="../Main/MainWindow.ui" line="5692"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The program will save the MIP formulation and be displayed in the text tab of the results&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;프로그램은 MIP 공식을 저장하고 결과의 텍스트 탭에 표시됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5658"/>
+        <location filename="../Main/MainWindow.ui" line="5695"/>
         <source>Report MIP formulation</source>
         <translation>MIP 공식 보고</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5639"/>
+        <location filename="../Main/MainWindow.ui" line="5676"/>
         <source>Fix infeasible problems and rey with the relaxed problem. Applies to OPF and NTC</source>
         <translation>실현 불가능한 문제를 수정하고 완화된 문제를 해결하세요. OPF 및 NTC에 적용됩니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5642"/>
+        <location filename="../Main/MainWindow.ui" line="5679"/>
         <source>Fix infeasibilities and retry</source>
         <translation>실행 불가능한 문제를 수정하고 다시 시도하세요.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5562"/>
+        <location filename="../Main/MainWindow.ui" line="5599"/>
         <source>Consider generation ramps</source>
         <translation>세대 램프 고려</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5565"/>
+        <location filename="../Main/MainWindow.ui" line="5602"/>
         <source>Consider ramps</source>
         <translation>경사로를 고려하세요</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5360"/>
+        <location filename="../Main/MainWindow.ui" line="5397"/>
         <source>Dispatch mode</source>
         <translation>파견 모드</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5386"/>
+        <location filename="../Main/MainWindow.ui" line="5423"/>
         <source>Choose the external mixed integer programming solver</source>
         <translation>외부 혼합 정수 프로그래밍 솔버 선택</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5334"/>
+        <location filename="../Main/MainWindow.ui" line="5371"/>
         <source>Zone grouping</source>
         <translation>구역 그룹화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5677"/>
+        <location filename="../Main/MainWindow.ui" line="5714"/>
         <source>Nonlinear settings</source>
         <translation>비선형 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5702"/>
+        <location filename="../Main/MainWindow.ui" line="5739"/>
         <source>Interior point solver maximum number of iterations</source>
         <translation>내부 점 솔버 최대 반복 횟수</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5705"/>
+        <location filename="../Main/MainWindow.ui" line="5742"/>
         <source>Iterations</source>
         <translation>반복</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5718"/>
+        <location filename="../Main/MainWindow.ui" line="5755"/>
         <source>Initialize the interior point OPF with the power flow solution</source>
         <translation>전력 흐름 솔루션으로 내부 지점 OPF 초기화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5721"/>
+        <location filename="../Main/MainWindow.ui" line="5758"/>
         <source>Initialize with power flow</source>
         <translation>전력 흐름으로 초기화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5744"/>
+        <location filename="../Main/MainWindow.ui" line="5781"/>
         <source>Number of iterations of the method</source>
         <translation>방법의 반복 횟수</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5773"/>
+        <location filename="../Main/MainWindow.ui" line="5810"/>
         <source>Interior point solver tolerance</source>
         <translation>내부 점 솔버 허용오차</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5814"/>
+        <location filename="../Main/MainWindow.ui" line="5851"/>
         <source>Interior point solver method</source>
         <translation>내부 점 해결 방법</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5817"/>
+        <location filename="../Main/MainWindow.ui" line="5854"/>
         <source>IPS method</source>
         <translation>IPS 방식</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5852"/>
+        <location filename="../Main/MainWindow.ui" line="5889"/>
         <source>Interior point trust radius</source>
         <translation>내부 포인트 신뢰 반경</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5868"/>
+        <location filename="../Main/MainWindow.ui" line="5905"/>
         <source>General switch for reactive power limits control in the nonlinear optimal power flow</source>
         <translation>비선형 최적 전력 흐름에서 무효 전력 제한 제어를 위한 일반 스위치</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5899"/>
+        <location filename="../Main/MainWindow.ui" line="5936"/>
         <source>Verbosity level</source>
         <translation>자세한 수준</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5912"/>
-        <location filename="../Main/MainWindow.ui" line="6188"/>
+        <location filename="../Main/MainWindow.ui" line="5949"/>
+        <location filename="../Main/MainWindow.ui" line="6225"/>
         <source>Skip generation limits</source>
         <translation>건너뛰기 생성 제한</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5925"/>
+        <location filename="../Main/MainWindow.ui" line="5962"/>
         <source>Verbose</source>
         <translation>말 수가 많은</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5945"/>
+        <location filename="../Main/MainWindow.ui" line="5982"/>
         <source>Choose the optimal power flow method</source>
         <translation>최적의 전력 흐름 방식 선택</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="5958"/>
-        <location filename="../Main/MainWindow.ui" line="6848"/>
-        <location filename="../Main/MainWindow.ui" line="9021"/>
-        <location filename="../Main/MainWindow.ui" line="9926"/>
-        <location filename="../Main/MainWindow.ui" line="9991"/>
+        <location filename="../Main/MainWindow.ui" line="5995"/>
+        <location filename="../Main/MainWindow.ui" line="6885"/>
+        <location filename="../Main/MainWindow.ui" line="9058"/>
+        <location filename="../Main/MainWindow.ui" line="9963"/>
+        <location filename="../Main/MainWindow.ui" line="10028"/>
         <source>Method</source>
         <translation>방법</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6127"/>
+        <location filename="../Main/MainWindow.ui" line="6164"/>
         <source>Optimal Power Flow</source>
         <translation>최적의 전력 흐름</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6138"/>
+        <location filename="../Main/MainWindow.ui" line="6175"/>
         <source>Net transfer capacity settings</source>
         <translation>순 전송 용량 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6145"/>
+        <location filename="../Main/MainWindow.ui" line="6182"/>
         <source>Ntc</source>
         <translation>엔티씨</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6148"/>
+        <location filename="../Main/MainWindow.ui" line="6185"/>
         <source>Network transfer capacity related settings</source>
         <translation>네트워크 전송 용량 관련 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6159"/>
+        <location filename="../Main/MainWindow.ui" line="6196"/>
         <source>Optimization</source>
         <translation>최적화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6170"/>
+        <location filename="../Main/MainWindow.ui" line="6207"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This criteria springs from the ACER (Agency for the Cooperation for Energy Regulators).&lt;/p&gt;&lt;p&gt;It determines that a branch is only relevant to be considered in a NTC calculation if the flow due to the exchange is over a percentage (70%) &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;A branch is monitored only if:&lt;/p&gt;&lt;p&gt;(branch_rate * 70%) / branch_alpha &amp;lt;= total exchange rating&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;이 기준은 ACER(에너지 규제 기관 협력 기관)에서 비롯됩니다.&lt;/p&gt;&lt;p&gt;교환으로 인한 흐름이 일정 비율(70%)을 초과하는 경우에만 분기가 NTC 계산에서 고려되는 것으로 결정됩니다. &lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;p&gt;분기는 다음 경우에만 모니터링됩니다.&lt;/p&gt;&lt;p&gt;(branch_rate * 70%) / Branch_alpha &lt;= 총 환율&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6173"/>
+        <location filename="../Main/MainWindow.ui" line="6210"/>
         <source>Branch rating contribution (ACER)</source>
         <translation>지점 평가 기여도(ACER)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6185"/>
+        <location filename="../Main/MainWindow.ui" line="6222"/>
         <source>If activated, the generation limits are not considered</source>
         <translation>활성화되면 생성 제한이 고려되지 않습니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6203"/>
-        <location filename="../Main/MainWindow.ui" line="7546"/>
+        <location filename="../Main/MainWindow.ui" line="6240"/>
+        <location filename="../Main/MainWindow.ui" line="7583"/>
         <source> MW</source>
         <translation>MW</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6227"/>
+        <location filename="../Main/MainWindow.ui" line="6264"/>
         <source>If checked, the NTC optimization will use the system declared contingencies</source>
         <translation>선택하면 NTC 최적화가 시스템에서 선언한 비상 상황을 사용합니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6230"/>
+        <location filename="../Main/MainWindow.ui" line="6267"/>
         <source>Consider constingencies</source>
         <translation>불변성 고려</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6242"/>
+        <location filename="../Main/MainWindow.ui" line="6279"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;A branch is monitored solely based on its contribution to the inter-area excahge sensitivity. Therefore a branch is selected if it&apos;s alpha value is greater than the set alpha %&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;분기는 영역 간 배기 감도에 대한 기여도를 기준으로만 모니터링됩니다. 따라서 알파 값이 설정된 알파 %&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;보다 큰 경우 분기가 선택됩니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6245"/>
+        <location filename="../Main/MainWindow.ui" line="6282"/>
         <source>Branch exchange sensitivity (α)</source>
         <translation>분기 교환 민감도(α)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6260"/>
-        <location filename="../Main/MainWindow.ui" line="6410"/>
-        <location filename="../Main/MainWindow.ui" line="6509"/>
+        <location filename="../Main/MainWindow.ui" line="6297"/>
+        <location filename="../Main/MainWindow.ui" line="6447"/>
+        <location filename="../Main/MainWindow.ui" line="6546"/>
         <source>%</source>
         <translation>%</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6343"/>
+        <location filename="../Main/MainWindow.ui" line="6380"/>
         <source>Determine the branches that enter the optimization</source>
         <translation>최적화에 들어가는 분기 결정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6346"/>
+        <location filename="../Main/MainWindow.ui" line="6383"/>
         <source>Branch monitoring selection criteria</source>
         <translation>지점 모니터링 선택 기준</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6395"/>
-        <location filename="../Main/MainWindow.ui" line="7467"/>
-        <location filename="../Main/MainWindow.ui" line="12832"/>
-        <location filename="../Main/MainWindow.ui" line="12859"/>
+        <location filename="../Main/MainWindow.ui" line="6432"/>
+        <location filename="../Main/MainWindow.ui" line="7504"/>
+        <location filename="../Main/MainWindow.ui" line="12869"/>
+        <location filename="../Main/MainWindow.ui" line="12896"/>
         <source>Contingencies</source>
         <translation>만일의 사태</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6407"/>
+        <location filename="../Main/MainWindow.ui" line="6444"/>
         <source>Minimum exchange contribution (Alpha)</source>
         <translation>최소 교환 기여도(알파)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6428"/>
-        <location filename="../Main/MainWindow.ui" line="6431"/>
+        <location filename="../Main/MainWindow.ui" line="6465"/>
+        <location filename="../Main/MainWindow.ui" line="6468"/>
         <source>Transmission reliability margin (TRM)</source>
         <translation>전송 신뢰도 마진(TRM)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6443"/>
+        <location filename="../Main/MainWindow.ui" line="6480"/>
         <source>More strict NTC Formulation: No slacks of any type and specific monitoring criteria</source>
         <translation>더욱 엄격한 NTC 공식화: 어떤 유형의 슬랙도 없고 특정 모니터링 기준도 없습니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6446"/>
+        <location filename="../Main/MainWindow.ui" line="6483"/>
         <source>Strict formulation</source>
         <translation>엄격한 공식화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6461"/>
-        <location filename="../Main/MainWindow.ui" line="6798"/>
+        <location filename="../Main/MainWindow.ui" line="6498"/>
+        <location filename="../Main/MainWindow.ui" line="6835"/>
         <source>General</source>
         <translation>일반적인</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6485"/>
+        <location filename="../Main/MainWindow.ui" line="6522"/>
         <source>Loading threshold to report</source>
         <translation>보고할 로드 임계값</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6497"/>
+        <location filename="../Main/MainWindow.ui" line="6534"/>
         <source>Transfer method</source>
         <translation>전송 방법</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6627"/>
+        <location filename="../Main/MainWindow.ui" line="6664"/>
         <source>Linear</source>
         <translation>선의</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6644"/>
+        <location filename="../Main/MainWindow.ui" line="6681"/>
         <source>Transfer sensitivity threshold</source>
         <translation>전송 감도 임계값</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6656"/>
+        <location filename="../Main/MainWindow.ui" line="6693"/>
         <source>n-1 sensibility consideration</source>
         <translation>n-1 감성고려</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6684"/>
+        <location filename="../Main/MainWindow.ui" line="6721"/>
         <source>Threshold used to discard insensitive branches</source>
         <translation>민감하지 않은 분기를 삭제하는 데 사용되는 임계값</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6708"/>
+        <location filename="../Main/MainWindow.ui" line="6745"/>
         <source>Use existing power flow values for the contingency initialization in the net transfer capacity and contingency simulations</source>
         <translation>순 전달 용량 및 우발 상황 시뮬레이션에서 우발 상황 초기화를 위해 기존 전력 흐름 값을 사용합니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6711"/>
+        <location filename="../Main/MainWindow.ui" line="6748"/>
         <source>Use power flow values for initialization</source>
         <translation>초기화를 위해 전력 흐름 값 사용</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6766"/>
-        <location filename="../Main/MainWindow.ui" line="7010"/>
+        <location filename="../Main/MainWindow.ui" line="6803"/>
+        <location filename="../Main/MainWindow.ui" line="7047"/>
         <source>Select the solver in the OPF tab and the areas in the areas tab</source>
         <translation>OPF 탭에서 솔버를 선택하고 영역 탭에서 영역을 선택합니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6769"/>
+        <location filename="../Main/MainWindow.ui" line="6806"/>
         <source>Net transfer capacity</source>
         <translation>순 전송 용량</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6777"/>
+        <location filename="../Main/MainWindow.ui" line="6814"/>
         <source>Nodal capacity hosting options</source>
         <translation>노드 용량 호스팅 옵션</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6784"/>
+        <location filename="../Main/MainWindow.ui" line="6821"/>
         <source>Nhc</source>
         <translation>NHC</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6787"/>
+        <location filename="../Main/MainWindow.ui" line="6824"/>
         <source>Nodal hosting capacity related settings</source>
         <translation>노드 호스팅 용량 관련 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6809"/>
-        <location filename="../Main/MainWindow.ui" line="6827"/>
+        <location filename="../Main/MainWindow.ui" line="6846"/>
+        <location filename="../Main/MainWindow.ui" line="6864"/>
         <source>If the sense is positive, the algorithm will assess the maximum generation capacity in the selected nodes. If it is negative it will asses the maximum loading capacity in the selected nodes.</source>
         <translation>의미가 긍정적인 경우 알고리즘은 선택한 노드의 최대 발전 용량을 평가합니다. 음수인 경우 선택한 노드의 최대 로딩 용량을 평가합니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6815"/>
+        <location filename="../Main/MainWindow.ui" line="6852"/>
         <source>Sense</source>
         <translation>감각</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="6860"/>
+        <location filename="../Main/MainWindow.ui" line="6897"/>
         <source>Optimization method to use</source>
         <translation>사용할 최적화 방법</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7013"/>
+        <location filename="../Main/MainWindow.ui" line="7050"/>
         <source>Nodal hosting capacity</source>
         <translation>노드 호스팅 용량</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7034"/>
+        <location filename="../Main/MainWindow.ui" line="7071"/>
         <source>Area transfer settings</source>
         <translation>지역 전송 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7041"/>
+        <location filename="../Main/MainWindow.ui" line="7078"/>
         <source>Txfr</source>
         <translation>Txfr</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7044"/>
+        <location filename="../Main/MainWindow.ui" line="7081"/>
         <source>Area, Zone, etc related settings</source>
         <translation>Area, Zone 등 관련 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7151"/>
+        <location filename="../Main/MainWindow.ui" line="7188"/>
         <source>Transfer configuration</source>
         <translation>전송 구성</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7196"/>
+        <location filename="../Main/MainWindow.ui" line="7233"/>
         <source>From</source>
         <translation>에서</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7219"/>
+        <location filename="../Main/MainWindow.ui" line="7256"/>
         <source>To</source>
         <translation>에게</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7240"/>
+        <location filename="../Main/MainWindow.ui" line="7277"/>
         <source>Contingencies settings</source>
         <translation>비상사태 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7247"/>
+        <location filename="../Main/MainWindow.ui" line="7284"/>
         <source>Con</source>
         <translation>범죄자</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7250"/>
+        <location filename="../Main/MainWindow.ui" line="7287"/>
         <source>Contingencies related settings</source>
         <translation>비상 관련 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7277"/>
+        <location filename="../Main/MainWindow.ui" line="7314"/>
         <source>Contingency filter</source>
         <translation>비상 필터</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7290"/>
+        <location filename="../Main/MainWindow.ui" line="7327"/>
         <source>Filter by</source>
         <translation>필터링 기준</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7306"/>
+        <location filename="../Main/MainWindow.ui" line="7343"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Filter contingencies&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This option allows you to only consider the contingencies that fall in ceratain groupings such as Area, Zone or Country. The filtering is performed based on the information stored in the Buses.&lt;/p&gt;&lt;p&gt;This is highly discouraged. We trully advise you to not to filter the contingencies and select All Contingencies. Use this feature at your own risk.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;우발사항 필터링&lt;/span&gt;&lt;/p&gt;&lt;p&gt;이 옵션을 사용하면 지역, 구역 또는 국가와 같은 특정 그룹에 속하는 우발사항만 고려할 수 있습니다. 필터링은 버스에 저장된 정보를 기반으로 수행됩니다.&lt;/p&gt;&lt;p&gt;이는 매우 권장되지 않습니다. 우발사항을 필터링하지 말고 모든 우발사항을 선택하는 것이 좋습니다. 이 기능을 사용하는 데 따른 책임은 사용자 본인에게 있습니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7489"/>
+        <location filename="../Main/MainWindow.ui" line="7526"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Dead band over the SRAP rating.&lt;/p&gt;&lt;p&gt;If greater than zero, the SRAP is investigated for values over the branch protections rating until the specified value.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;SRAP 등급에 대한 불감대.&lt;/p&gt;&lt;p&gt;0보다 큰 경우 SRAP는 지정된 값까지 분기 보호 등급 이상의 값을 조사합니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7492"/>
+        <location filename="../Main/MainWindow.ui" line="7529"/>
         <source>SRAP dead band</source>
         <translation>SRAP 불감대</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7506"/>
+        <location filename="../Main/MainWindow.ui" line="7543"/>
         <source>SRAP limit</source>
         <translation>SRAP 한도</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7513"/>
+        <location filename="../Main/MainWindow.ui" line="7550"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked the SRAP objective solution is the branch nominal rate. Otherwise, the objective rating is the contingency rating.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;선택한 경우 SRAP 목표 솔루션은 지점 명목 비율입니다. 그렇지 않은 경우 목표 등급은 비상 등급입니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7516"/>
+        <location filename="../Main/MainWindow.ui" line="7553"/>
         <source>Revert to nominal rating</source>
         <translation>공칭 등급으로 되돌리기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7523"/>
+        <location filename="../Main/MainWindow.ui" line="7560"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Activate SRAP (Sistema de reducción automática de potencia)&lt;/p&gt;&lt;p&gt;It is a mechanism that helps avoiding considering a contingency if it would be eventually resolved by nearby generation shifting.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;SRAP 활성화(Sistema de reducción automática de potencia)&lt;/p&gt;&lt;p&gt;이는 가까운 세대 이동으로 인해 최종적으로 해결될 경우의 우발 상황을 고려하지 않도록 돕는 메커니즘입니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7526"/>
+        <location filename="../Main/MainWindow.ui" line="7563"/>
         <source>Use SRAP</source>
         <translation>SRAP 사용</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7533"/>
+        <location filename="../Main/MainWindow.ui" line="7570"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If checked, a massive posibly intractable report is generated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;선택하면 다루기 어려울 정도로 방대한 보고서가 생성됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7536"/>
+        <location filename="../Main/MainWindow.ui" line="7573"/>
         <source>Detailed report</source>
         <translation>상세 보고서</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7543"/>
+        <location filename="../Main/MainWindow.ui" line="7580"/>
         <source>Maximum overload power that is solvable using the SRAP technique.</source>
         <translation>SRAP 기술을 사용하여 해결할 수 있는 최대 과부하 전력입니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7575"/>
-        <location filename="../Main/MainWindow.ui" line="7615"/>
-        <location filename="../Main/MainWindow.ui" line="9083"/>
+        <location filename="../Main/MainWindow.ui" line="7612"/>
+        <location filename="../Main/MainWindow.ui" line="7652"/>
+        <location filename="../Main/MainWindow.ui" line="9120"/>
         <source> %</source>
         <translation>%</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7588"/>
+        <location filename="../Main/MainWindow.ui" line="7625"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Amount of contingency loading with respect to the base situation loading that triggers the report of the contingency. This is specially useful when we want to avoig reporting contingencies that are not significant with respect to the base situation.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;우발상황 보고를 촉발시키는 기본상황 부하에 따른 우발상황 부하량. 이는 기본 상황과 관련하여 중요하지 않은 우발적인 보고를 방지하려는 경우 특히 유용합니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7591"/>
+        <location filename="../Main/MainWindow.ui" line="7628"/>
         <source>Contingency dead band</source>
         <translation>비상 데드 밴드</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7598"/>
+        <location filename="../Main/MainWindow.ui" line="7635"/>
         <source>Maximum number of generation nodes to participate in the SRAP</source>
         <translation>SRAP에 참여할 수 있는 최대 생성 노드 수</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7601"/>
+        <location filename="../Main/MainWindow.ui" line="7638"/>
         <source>SRAP top N</source>
         <translation>SRAP 탑 N</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7608"/>
+        <location filename="../Main/MainWindow.ui" line="7645"/>
         <source>Contingency engine</source>
         <translation>비상 엔진</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7658"/>
+        <location filename="../Main/MainWindow.ui" line="7695"/>
         <source>Dyn</source>
         <translation>딘</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7661"/>
+        <location filename="../Main/MainWindow.ui" line="7698"/>
         <source>Rms simulation settings</source>
         <translation>Rms 시뮬레이션 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7789"/>
+        <location filename="../Main/MainWindow.ui" line="7826"/>
         <source>RMS</source>
         <translation>RMS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7897"/>
-        <location filename="../Main/MainWindow.ui" line="7943"/>
-        <location filename="../Main/MainWindow.ui" line="8058"/>
-        <location filename="../Main/MainWindow.ui" line="8400"/>
-        <location filename="../Main/MainWindow.ui" line="8425"/>
-        <location filename="../Main/MainWindow.ui" line="8754"/>
+        <location filename="../Main/MainWindow.ui" line="7934"/>
+        <location filename="../Main/MainWindow.ui" line="7980"/>
+        <location filename="../Main/MainWindow.ui" line="8095"/>
+        <location filename="../Main/MainWindow.ui" line="8437"/>
+        <location filename="../Main/MainWindow.ui" line="8462"/>
+        <location filename="../Main/MainWindow.ui" line="8791"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Initial time for the simulation. &lt;/p&gt;&lt;p&gt;In practice this is used to slow down troublesome solutions.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;시뮬레이션의 초기 시간입니다. &lt;/p&gt;&lt;p&gt;실제로 이는 문제가 있는 솔루션의 속도를 늦추는 데 사용됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7946"/>
-        <location filename="../Main/MainWindow.ui" line="8061"/>
-        <location filename="../Main/MainWindow.ui" line="8403"/>
-        <location filename="../Main/MainWindow.ui" line="8428"/>
-        <location filename="../Main/MainWindow.ui" line="8757"/>
+        <location filename="../Main/MainWindow.ui" line="7983"/>
+        <location filename="../Main/MainWindow.ui" line="8098"/>
+        <location filename="../Main/MainWindow.ui" line="8440"/>
+        <location filename="../Main/MainWindow.ui" line="8465"/>
+        <location filename="../Main/MainWindow.ui" line="8794"/>
         <source> s</source>
         <translation>에스</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8032"/>
-        <location filename="../Main/MainWindow.ui" line="8620"/>
+        <location filename="../Main/MainWindow.ui" line="8069"/>
+        <location filename="../Main/MainWindow.ui" line="8657"/>
         <source>Assessment time</source>
         <translation>평가 시간</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7890"/>
-        <location filename="../Main/MainWindow.ui" line="8779"/>
+        <location filename="../Main/MainWindow.ui" line="7927"/>
+        <location filename="../Main/MainWindow.ui" line="8816"/>
         <source>Initialization</source>
         <translation>초기화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8133"/>
-        <location filename="../Main/MainWindow.ui" line="8627"/>
+        <location filename="../Main/MainWindow.ui" line="8170"/>
+        <location filename="../Main/MainWindow.ui" line="8664"/>
         <source>Time step</source>
         <translation>시간 단계</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7922"/>
-        <location filename="../Main/MainWindow.ui" line="8556"/>
+        <location filename="../Main/MainWindow.ui" line="7959"/>
+        <location filename="../Main/MainWindow.ui" line="8593"/>
         <source>Integration</source>
         <translation>완성</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7900"/>
+        <location filename="../Main/MainWindow.ui" line="7937"/>
         <source>s</source>
         <translation>에스</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8093"/>
-        <location filename="../Main/MainWindow.ui" line="8563"/>
+        <location filename="../Main/MainWindow.ui" line="8130"/>
+        <location filename="../Main/MainWindow.ui" line="8600"/>
         <source>Simulation time</source>
         <translation>시뮬레이션 시간</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8189"/>
+        <location filename="../Main/MainWindow.ui" line="8226"/>
         <source>RMS Small-Signal</source>
         <translation>RMS 소신호</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7877"/>
-        <location filename="../Main/MainWindow.ui" line="8512"/>
-        <location filename="../Main/MainWindow.ui" line="8516"/>
+        <location filename="../Main/MainWindow.ui" line="7914"/>
+        <location filename="../Main/MainWindow.ui" line="8549"/>
+        <location filename="../Main/MainWindow.ui" line="8553"/>
         <source>trapezoid</source>
         <translation>사다리꼴의</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7882"/>
-        <location filename="../Main/MainWindow.ui" line="8521"/>
+        <location filename="../Main/MainWindow.ui" line="7919"/>
+        <location filename="../Main/MainWindow.ui" line="8558"/>
         <source>implicit euler</source>
         <translation>암시적 오일러</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8086"/>
-        <location filename="../Main/MainWindow.ui" line="8532"/>
+        <location filename="../Main/MainWindow.ui" line="8123"/>
+        <location filename="../Main/MainWindow.ui" line="8569"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of modes.&lt;br/&gt;If zero, all modes are included and the calculation is done using dense matrices.&lt;br/&gt;If a number of modes greater than zero is given the calculation is sparse.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;모드 수.&lt;br/&gt;0이면 모든 모드가 포함되고 조밀한 행렬을 사용하여 계산이 수행됩니다.&lt;br/&gt;0보다 큰 모드 수가 주어지면 계산이 희박합니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7968"/>
-        <location filename="../Main/MainWindow.ui" line="8634"/>
+        <location filename="../Main/MainWindow.ui" line="8005"/>
+        <location filename="../Main/MainWindow.ui" line="8671"/>
         <source>Modes</source>
         <translation>모드</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7930"/>
-        <location filename="../Main/MainWindow.ui" line="8725"/>
+        <location filename="../Main/MainWindow.ui" line="7967"/>
+        <location filename="../Main/MainWindow.ui" line="8762"/>
         <source>standard</source>
-        <translation type="unfinished"></translation>
+        <translation>표준</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="7935"/>
-        <location filename="../Main/MainWindow.ui" line="8730"/>
+        <location filename="../Main/MainWindow.ui" line="7972"/>
+        <location filename="../Main/MainWindow.ui" line="8767"/>
         <source>vectorized</source>
-        <translation type="unfinished"></translation>
+        <translation>벡터화된</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8140"/>
-        <location filename="../Main/MainWindow.ui" line="8489"/>
+        <location filename="../Main/MainWindow.ui" line="8177"/>
+        <location filename="../Main/MainWindow.ui" line="8526"/>
         <source>Problem</source>
-        <translation type="unfinished"></translation>
+        <translation>문제</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8327"/>
+        <location filename="../Main/MainWindow.ui" line="8364"/>
         <source>EMT</source>
         <translation>응급구조</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8380"/>
+        <location filename="../Main/MainWindow.ui" line="8417"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Subspace build type. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;서브스페이스 빌드 유형. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8383"/>
-        <location filename="../Main/MainWindow.ui" line="8387"/>
+        <location filename="../Main/MainWindow.ui" line="8420"/>
+        <location filename="../Main/MainWindow.ui" line="8424"/>
         <source>Arnoldi</source>
-        <translation type="unfinished"></translation>
+        <translation>Arnoldi</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8392"/>
+        <location filename="../Main/MainWindow.ui" line="8429"/>
         <source>Hybrid Arnoldi</source>
-        <translation type="unfinished"></translation>
+        <translation>하이브리드 아놀디</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8450"/>
+        <location filename="../Main/MainWindow.ui" line="8487"/>
         <source>Build type</source>
-        <translation type="unfinished"></translation>
+        <translation>빌드 유형</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8542"/>
+        <location filename="../Main/MainWindow.ui" line="8579"/>
         <source>Target period</source>
-        <translation type="unfinished"></translation>
+        <translation>목표 주기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8683"/>
+        <location filename="../Main/MainWindow.ui" line="8720"/>
         <source>EMT Small-Signal</source>
         <translation>EMT 소신호</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8738"/>
+        <location filename="../Main/MainWindow.ui" line="8775"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Period of the periodic orbit. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;주기적인 궤도의 주기. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8741"/>
+        <location filename="../Main/MainWindow.ui" line="8778"/>
         <source>Hz</source>
-        <translation type="unfinished"></translation>
+        <translation>Hz</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8822"/>
+        <location filename="../Main/MainWindow.ui" line="8859"/>
         <source>Machine-learning related settings</source>
         <translation>머신러닝 관련 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8829"/>
+        <location filename="../Main/MainWindow.ui" line="8866"/>
         <source>ML</source>
         <translation>ML</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8832"/>
+        <location filename="../Main/MainWindow.ui" line="8869"/>
         <source>Machine learning related settings</source>
         <translation>머신러닝 관련 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="8850"/>
+        <location filename="../Main/MainWindow.ui" line="8887"/>
         <source>Objective function</source>
         <translation>목적 함수</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9014"/>
+        <location filename="../Main/MainWindow.ui" line="9051"/>
         <source>Minimum form capacity</source>
         <translation>최소 양식 용량</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9070"/>
+        <location filename="../Main/MainWindow.ui" line="9107"/>
         <source>Node grouping</source>
         <translation>노드 그룹화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9080"/>
+        <location filename="../Main/MainWindow.ui" line="9117"/>
         <source>In adequecy and simple dispatch indicated the minimum share of total firm capacity of the system to be in desirable, less is penalized</source>
         <translation>적절성과 단순 파견에서는 시스템의 전체 기업 역량 중 최소 비율이 바람직하다는 것을 나타냈으며, 더 적은 불이익을 받았습니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9099"/>
+        <location filename="../Main/MainWindow.ui" line="9136"/>
         <source>Number of maximum evaluations for the optimization methods</source>
         <translation>최적화 방법에 대한 최대 평가 수</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9102"/>
+        <location filename="../Main/MainWindow.ui" line="9139"/>
         <source> x number of investments</source>
         <translation>x 투자 횟수</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9181"/>
-        <location filename="../Main/MainWindow.ui" line="12172"/>
+        <location filename="../Main/MainWindow.ui" line="9218"/>
+        <location filename="../Main/MainWindow.ui" line="12209"/>
         <source>Clustering</source>
         <translation>클러스터링</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9194"/>
+        <location filename="../Main/MainWindow.ui" line="9231"/>
         <source>Nodal distances</source>
         <translation>노드 거리</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9201"/>
+        <location filename="../Main/MainWindow.ui" line="9238"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of clusters, this affects all the simulations that deal with clustering&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;클러스터 수, 이는 클러스터링을 다루는 모든 시뮬레이션에 영향을 미칩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9204"/>
+        <location filename="../Main/MainWindow.ui" line="9241"/>
         <source> Clusters</source>
         <translation>클러스터</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9220"/>
+        <location filename="../Main/MainWindow.ui" line="9257"/>
         <source>Maximum evaluations</source>
         <translation>최대 평가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9254"/>
+        <location filename="../Main/MainWindow.ui" line="9291"/>
         <source>Máximum standard deviation to determine the groups</source>
         <translation>그룹을 결정하기 위한 최대 표준 편차</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9257"/>
+        <location filename="../Main/MainWindow.ui" line="9294"/>
         <source> σ</source>
         <translation>σ</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9273"/>
+        <location filename="../Main/MainWindow.ui" line="9310"/>
         <source>Min. group size</source>
         <translation>최소 그룹 규모</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9280"/>
+        <location filename="../Main/MainWindow.ui" line="9317"/>
         <source>Select the investment evaluation method</source>
         <translation>투자평가방법 선택</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9287"/>
+        <location filename="../Main/MainWindow.ui" line="9324"/>
         <source>Minimum size of the group</source>
         <translation>그룹의 최소 크기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9293"/>
+        <location filename="../Main/MainWindow.ui" line="9330"/>
         <source> elements</source>
         <translation>강요</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9351"/>
+        <location filename="../Main/MainWindow.ui" line="9388"/>
         <source>Investment evaluation</source>
         <translation>투자평가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9361"/>
+        <location filename="../Main/MainWindow.ui" line="9398"/>
         <source>Number of clusters</source>
         <translation>클러스터 수</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9467"/>
+        <location filename="../Main/MainWindow.ui" line="9504"/>
         <source>Number of islands produced until the analysis stops</source>
         <translation>해석이 종료될 때까지 생성된 섬의 수</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9508"/>
+        <location filename="../Main/MainWindow.ui" line="9545"/>
         <source>Reliability evaluation method</source>
         <translation>신뢰성 평가 방법</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9515"/>
+        <location filename="../Main/MainWindow.ui" line="9552"/>
         <source>Maximum number of samples</source>
         <translation>최대 샘플 수</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9573"/>
+        <location filename="../Main/MainWindow.ui" line="9610"/>
         <source>Reliability</source>
         <translation>신뢰할 수 있음</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9583"/>
-        <location filename="../Main/MainWindow.ui" line="9919"/>
+        <location filename="../Main/MainWindow.ui" line="9620"/>
+        <location filename="../Main/MainWindow.ui" line="9956"/>
         <source>Samples</source>
         <translation>샘플</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9632"/>
+        <location filename="../Main/MainWindow.ui" line="9669"/>
         <source>Cascading</source>
         <translation>계단식</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9829"/>
-        <location filename="../Main/MainWindow.ui" line="11356"/>
+        <location filename="../Main/MainWindow.ui" line="9866"/>
+        <location filename="../Main/MainWindow.ui" line="11393"/>
         <source>Stochastic power flow</source>
         <translation>확률론적 전력 흐름</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9839"/>
+        <location filename="../Main/MainWindow.ui" line="9876"/>
         <source>Maximum number of Monte Carlo samples</source>
         <translation>몬테카를로 샘플의 최대 개수</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9855"/>
+        <location filename="../Main/MainWindow.ui" line="9892"/>
         <source>Aditional islands until stop</source>
         <translation>정지까지 추가 섬</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9862"/>
+        <location filename="../Main/MainWindow.ui" line="9899"/>
         <source>Voltage variance</source>
         <translation>전압 변화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9933"/>
+        <location filename="../Main/MainWindow.ui" line="9970"/>
         <source>Stochastic power flow method</source>
         <translation>확률론적 전력 흐름 방법</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="9965"/>
+        <location filename="../Main/MainWindow.ui" line="10002"/>
         <source>Monte Carlo variance until stop</source>
         <translation>정지까지 몬테카를로 분산</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10015"/>
+        <location filename="../Main/MainWindow.ui" line="10052"/>
         <source>Topology settings</source>
         <translation>토폴로지 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10022"/>
+        <location filename="../Main/MainWindow.ui" line="10059"/>
         <source>Tplgy</source>
         <translation>Tplgy</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10025"/>
+        <location filename="../Main/MainWindow.ui" line="10062"/>
         <source>Topology related settings</source>
         <translation>토폴로지 관련 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10144"/>
-        <location filename="../Main/MainWindow.ui" line="12589"/>
+        <location filename="../Main/MainWindow.ui" line="10181"/>
+        <location filename="../Main/MainWindow.ui" line="12626"/>
         <source>Grid reduction</source>
         <translation>그리드 축소</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10207"/>
+        <location filename="../Main/MainWindow.ui" line="10244"/>
         <source>Select branch types to reduce</source>
         <translation>줄일 지점 유형을 선택하세요.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10217"/>
+        <location filename="../Main/MainWindow.ui" line="10254"/>
         <source>Filter by r+x under threshold</source>
         <translation>임계값 미만의 r+x로 필터링</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10227"/>
+        <location filename="../Main/MainWindow.ui" line="10264"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Exponent of the threshold to use.&lt;/p&gt;&lt;p&gt;threshold = 1x10^-factor&lt;/p&gt;&lt;p&gt;i.e.&lt;/p&gt;&lt;p&gt;factor=3&lt;/p&gt;&lt;p&gt;threshold = 1e-3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;사용할 임계값의 지수.&lt;/p&gt;&lt;p&gt;임계값 = 1x10^-인수&lt;/p&gt;&lt;p&gt;즉,&lt;/p&gt;&lt;p&gt;factor=3&lt;/p&gt;&lt;p&gt;임계값 = 1e-3&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10356"/>
+        <location filename="../Main/MainWindow.ui" line="10393"/>
         <source>Branch rating</source>
         <translation>지점 등급</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10428"/>
+        <location filename="../Main/MainWindow.ui" line="10465"/>
         <source>Branch rating factor</source>
         <translation>지점 평가 요소</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10435"/>
+        <location filename="../Main/MainWindow.ui" line="10472"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Factor to aply to the branch calculated power to use as rating&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;등급으로 사용하기 위해 분기 계산 전력에 적용할 인수&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10454"/>
+        <location filename="../Main/MainWindow.ui" line="10491"/>
         <source>override values</source>
         <translation>값 재정의</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10481"/>
+        <location filename="../Main/MainWindow.ui" line="10518"/>
         <source>File settings</source>
         <translation>파일 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10488"/>
-        <location filename="../Main/MainWindow.ui" line="10940"/>
+        <location filename="../Main/MainWindow.ui" line="10525"/>
+        <location filename="../Main/MainWindow.ui" line="10977"/>
         <source>File</source>
         <translation>파일</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10491"/>
+        <location filename="../Main/MainWindow.ui" line="10528"/>
         <source>File related settings</source>
         <translation>파일 관련 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10512"/>
+        <location filename="../Main/MainWindow.ui" line="10549"/>
         <source>If checked, the results are stored inside the VeraGrid file in a compressed format.</source>
         <translation>선택하면 결과가 VeraGrid 파일 내에 압축 형식으로 저장됩니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10515"/>
+        <location filename="../Main/MainWindow.ui" line="10552"/>
         <source>Save results in .veragrid files</source>
         <translation>결과를 .veragrid 파일로 저장</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10554"/>
+        <location filename="../Main/MainWindow.ui" line="10591"/>
         <source>File path</source>
         <translation>파일 경로</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10680"/>
+        <location filename="../Main/MainWindow.ui" line="10717"/>
         <source>File Information</source>
         <translation>파일 정보</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10728"/>
+        <location filename="../Main/MainWindow.ui" line="10765"/>
         <source>Server</source>
         <translation>섬기는 사람</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10734"/>
+        <location filename="../Main/MainWindow.ui" line="10771"/>
         <source>Server jobs currently on cue</source>
         <translation>현재 큐에 있는 서버 작업</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10762"/>
+        <location filename="../Main/MainWindow.ui" line="10799"/>
         <source>Url</source>
         <translation>URL</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10769"/>
+        <location filename="../Main/MainWindow.ui" line="10806"/>
         <source>Type here the VeraGrid server URL (ask your IT team)</source>
         <translation>여기에 VeraGrid 서버 URL을 입력하세요(IT 팀에 문의하세요).</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10776"/>
+        <location filename="../Main/MainWindow.ui" line="10813"/>
         <source>Port</source>
         <translation>포트</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10783"/>
+        <location filename="../Main/MainWindow.ui" line="10820"/>
         <source>Type here the VeraGrid server Port (ask your IT team)</source>
         <translation>여기에 VeraGrid 서버 포트를 입력하세요(IT 팀에 문의하세요).</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10796"/>
+        <location filename="../Main/MainWindow.ui" line="10833"/>
         <source>Password</source>
         <translation>비밀번호</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10803"/>
+        <location filename="../Main/MainWindow.ui" line="10840"/>
         <source>Type here the VeraGrid server password (ask your IT team)</source>
         <translation>여기에 VeraGrid 서버 비밀번호를 입력하세요(IT 팀에 문의하세요).</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10813"/>
+        <location filename="../Main/MainWindow.ui" line="10850"/>
         <source>Secure</source>
         <translation>안전한</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10871"/>
+        <location filename="../Main/MainWindow.ui" line="10908"/>
         <source>Cancel process</source>
         <translation>프로세스 취소</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10944"/>
+        <location filename="../Main/MainWindow.ui" line="10981"/>
         <source>Export grid</source>
         <translation>그리드 내보내기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10970"/>
+        <location filename="../Main/MainWindow.ui" line="11007"/>
         <source>Import data</source>
         <translation>데이터 가져오기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10991"/>
+        <location filename="../Main/MainWindow.ui" line="11028"/>
         <source>Help</source>
         <translation>돕다</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="10999"/>
+        <location filename="../Main/MainWindow.ui" line="11036"/>
         <source>Actions</source>
         <translation>행위</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11012"/>
+        <location filename="../Main/MainWindow.ui" line="11049"/>
         <source>Simulations</source>
         <translation>시뮬레이션</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11087"/>
+        <location filename="../Main/MainWindow.ui" line="11124"/>
         <source>Diagram</source>
         <translation>도표</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11091"/>
+        <location filename="../Main/MainWindow.ui" line="11128"/>
         <source>Branches drawing style</source>
         <translation>가지 그리기 스타일</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11131"/>
+        <location filename="../Main/MainWindow.ui" line="11168"/>
         <source>plugins</source>
         <translation>플러그인</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11136"/>
+        <location filename="../Main/MainWindow.ui" line="11173"/>
         <source>Events</source>
         <translation>이벤트</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11157"/>
+        <location filename="../Main/MainWindow.ui" line="11194"/>
         <source>toolBar</source>
         <translation>도구 모음</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11224"/>
+        <location filename="../Main/MainWindow.ui" line="11261"/>
         <source>Open file</source>
         <translation>파일 열기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11230"/>
+        <location filename="../Main/MainWindow.ui" line="11267"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11239"/>
+        <location filename="../Main/MainWindow.ui" line="11276"/>
         <source>Save</source>
         <translation>구하다</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11245"/>
-        <location filename="../Main/MainWindow.ui" line="13058"/>
+        <location filename="../Main/MainWindow.ui" line="11282"/>
+        <location filename="../Main/MainWindow.ui" line="13095"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11254"/>
+        <location filename="../Main/MainWindow.ui" line="11291"/>
         <source>Take picture</source>
         <translation>사진을 찍다</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11266"/>
+        <location filename="../Main/MainWindow.ui" line="11303"/>
         <source>New project</source>
         <translation>새 프로젝트</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11272"/>
+        <location filename="../Main/MainWindow.ui" line="11309"/>
         <source>Ctrl+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11281"/>
+        <location filename="../Main/MainWindow.ui" line="11318"/>
         <source>Power Flow</source>
         <translation>전력 흐름</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11284"/>
+        <location filename="../Main/MainWindow.ui" line="11321"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power Flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a power flow analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;전력 흐름&lt;/span&gt;&lt;/p&gt;&lt;p&gt;전력 흐름 분석 실행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11290"/>
+        <location filename="../Main/MainWindow.ui" line="11327"/>
         <source>F5</source>
         <translation>F5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11302"/>
+        <location filename="../Main/MainWindow.ui" line="11339"/>
         <source>Power flow time series</source>
         <translation>전력 흐름 시계열</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11305"/>
+        <location filename="../Main/MainWindow.ui" line="11342"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the power flow study with time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;전력 흐름&lt;/span&gt;&lt;/p&gt;&lt;p&gt;시계열 데이터를 사용하여 전력 흐름 연구 실행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11311"/>
+        <location filename="../Main/MainWindow.ui" line="11348"/>
         <source>Ctrl+F5</source>
         <translation>Ctrl+F5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11320"/>
+        <location filename="../Main/MainWindow.ui" line="11357"/>
         <source>Expand</source>
         <translation>확장하다</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11323"/>
+        <location filename="../Main/MainWindow.ui" line="11360"/>
         <source>Expand distances</source>
         <translation>거리 확장</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11329"/>
         <source>Ctrl+Alt++</source>
-        <translation>Ctrl+Alt++</translation>
+        <translation type="vanished">Ctrl+Alt++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11338"/>
+        <location filename="../Main/MainWindow.ui" line="11375"/>
         <source>Shrink</source>
         <translation>수축</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11341"/>
+        <location filename="../Main/MainWindow.ui" line="11378"/>
         <source>Shrink distances</source>
         <translation>거리 축소</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11347"/>
         <source>Ctrl+Alt+-</source>
-        <translation>Ctrl+Alt+-</translation>
+        <translation type="vanished">Ctrl+Alt+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11359"/>
+        <location filename="../Main/MainWindow.ui" line="11366"/>
+        <source>Ctrl+Shift++</source>
+        <translation>Ctrl+Shift++</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="11384"/>
+        <source>Ctrl+Shift+-</source>
+        <translation>Ctrl+Shift+-</translation>
+    </message>
+    <message>
+        <location filename="../Main/MainWindow.ui" line="11396"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Stochastic power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a stochastic power flow over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;확률적 전력 흐름&lt;/span&gt;&lt;/p&gt;&lt;p&gt;시계열 데이터에 대해 확률적 전력 흐름 수행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11374"/>
+        <location filename="../Main/MainWindow.ui" line="11411"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Continuation power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a continuation power flow over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;연속 전력 흐름&lt;/span&gt;&lt;/p&gt;&lt;p&gt;스냅샷 데이터에 대해 연속 전력 흐름 실행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11386"/>
+        <location filename="../Main/MainWindow.ui" line="11423"/>
         <source>About</source>
         <translation>에 대한</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11398"/>
+        <location filename="../Main/MainWindow.ui" line="11435"/>
         <source>center view</source>
         <translation>센터 뷰</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11401"/>
+        <location filename="../Main/MainWindow.ui" line="11438"/>
         <source>Center view</source>
         <translation>센터뷰</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11407"/>
+        <location filename="../Main/MainWindow.ui" line="11444"/>
         <source>Ctrl+E</source>
         <translation>Ctrl+E</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11416"/>
+        <location filename="../Main/MainWindow.ui" line="11453"/>
         <source>Short Circuit</source>
         <translation>단락</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11419"/>
+        <location filename="../Main/MainWindow.ui" line="11456"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Short Circuit&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a short circuit study over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;단락&lt;/span&gt;&lt;/p&gt;&lt;p&gt;스냅샷 데이터에 대한 단락 연구 실행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11431"/>
+        <location filename="../Main/MainWindow.ui" line="11468"/>
         <source>Automatic grid layout</source>
         <translation>자동 그리드 레이아웃</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11434"/>
+        <location filename="../Main/MainWindow.ui" line="11471"/>
         <source>Automatic layout the of the grid</source>
         <translation>그리드의 자동 레이아웃</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11449"/>
+        <location filename="../Main/MainWindow.ui" line="11486"/>
         <source>Blackout cascade</source>
         <translation>정전 캐스케이드</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11452"/>
+        <location filename="../Main/MainWindow.ui" line="11489"/>
         <source>Run a simulation or step by step blackout cascade</source>
         <translation>시뮬레이션 또는 단계별 정전 캐스케이드 실행</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11464"/>
+        <location filename="../Main/MainWindow.ui" line="11501"/>
         <source>Optimal power flow</source>
         <translation>최적의 전력 흐름</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11467"/>
+        <location filename="../Main/MainWindow.ui" line="11504"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This runs an optimal power flow&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;최적의 전력 흐름&lt;/span&gt;&lt;/p&gt;&lt;p&gt;최적의 전력 흐름을 실행합니다&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11473"/>
+        <location filename="../Main/MainWindow.ui" line="11510"/>
         <source>F6</source>
         <translation>F6</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11482"/>
+        <location filename="../Main/MainWindow.ui" line="11519"/>
         <source>Optimal power flow time series</source>
         <translation>최적의 전력 흐름 시계열</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11485"/>
+        <location filename="../Main/MainWindow.ui" line="11522"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal power flow&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This runs an optimal power flow for the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;최적의 전력 흐름&lt;/span&gt;&lt;/p&gt;&lt;p&gt;시계열 데이터에 대한 최적의 전력 흐름을 실행합니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11491"/>
+        <location filename="../Main/MainWindow.ui" line="11528"/>
         <source>Ctrl+F6</source>
         <translation>Ctrl+F6</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11500"/>
+        <location filename="../Main/MainWindow.ui" line="11537"/>
         <source>Detect transformers</source>
         <translation>변압기 감지</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11503"/>
+        <location filename="../Main/MainWindow.ui" line="11540"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Detect transformers.&lt;/p&gt;&lt;p&gt;Use the nodes nominal voltage to determine which branches should be a transformer.&lt;/p&gt;&lt;p&gt;If a branch joins two nodes with different voltage levels, the branch should be a transformer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;변압기를 감지합니다.&lt;/p&gt;&lt;p&gt;노드 공칭 전압을 사용하여 어떤 분기가 변압기가 되어야 하는지 결정합니다.&lt;/p&gt;&lt;p&gt;분기가 서로 다른 전압 레벨을 가진 두 노드를 연결하는 경우 해당 분기는 변압기여야 합니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11515"/>
+        <location filename="../Main/MainWindow.ui" line="11552"/>
         <source>Auto rate branches</source>
         <translation>자동 요금 지점</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11518"/>
+        <location filename="../Main/MainWindow.ui" line="11555"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Automatic rating of the branches.&lt;/p&gt;&lt;p&gt;Use the branches calculated power to establish a rate, if the branch rate is unknown. A factor is available in the settings.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;가지의 자동 등급.&lt;/p&gt;&lt;p&gt;가지 비율을 알 수 없는 경우 가지 계산 전력을 사용하여 비율을 설정합니다. 설정에서 요소를 사용할 수 있습니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11533"/>
+        <location filename="../Main/MainWindow.ui" line="11570"/>
         <source>Storage location suggestion</source>
         <translation>저장 위치 제안</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11536"/>
+        <location filename="../Main/MainWindow.ui" line="11573"/>
         <source>Suggest places where storage devices are useful</source>
         <translation>저장장치가 유용한 곳을 추천해 주세요</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11548"/>
+        <location filename="../Main/MainWindow.ui" line="11585"/>
         <source>Launch data analysis tool</source>
         <translation>데이터 분석 도구 출시</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11551"/>
+        <location filename="../Main/MainWindow.ui" line="11588"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Data analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Launch the data analysis tool that finds and tries to repair common grid modelling issues&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;데이터 분석&lt;/span&gt;&lt;/p&gt;&lt;p&gt;일반적인 그리드 모델링 문제를 찾아 수정하는 데이터 분석 도구 실행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11557"/>
+        <location filename="../Main/MainWindow.ui" line="11594"/>
         <source>F12</source>
         <translation>F12</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11566"/>
+        <location filename="../Main/MainWindow.ui" line="11603"/>
         <source>Online documentation</source>
         <translation>온라인 문서</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11572"/>
+        <location filename="../Main/MainWindow.ui" line="11609"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11581"/>
+        <location filename="../Main/MainWindow.ui" line="11618"/>
         <source>Save as</source>
         <translation>다른 이름으로 저장</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11593"/>
+        <location filename="../Main/MainWindow.ui" line="11630"/>
         <source>Delete selected</source>
         <translation>선택 항목 삭제</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11596"/>
+        <location filename="../Main/MainWindow.ui" line="11633"/>
         <source>Delete selected objects from the diagrams and optionally from the database</source>
         <translation>다이어그램 및 선택적으로 데이터베이스에서 선택한 개체 삭제</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11602"/>
+        <location filename="../Main/MainWindow.ui" line="11639"/>
         <source>Del</source>
         <translation>델</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11611"/>
+        <location filename="../Main/MainWindow.ui" line="11648"/>
         <source>Linear analysis</source>
         <translation>선형 분석</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11614"/>
+        <location filename="../Main/MainWindow.ui" line="11651"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Linear analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform linear analysis with distribution factors (PTDF, LODF)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;선형 분석&lt;/span&gt;&lt;/p&gt;&lt;p&gt;분포 요인(PTDF, LODF)을 사용하여 선형 분석 수행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11620"/>
+        <location filename="../Main/MainWindow.ui" line="11657"/>
         <source>F7</source>
         <translation>F7</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11629"/>
+        <location filename="../Main/MainWindow.ui" line="11666"/>
         <source>Reset console</source>
         <translation>콘솔 재설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11644"/>
+        <location filename="../Main/MainWindow.ui" line="11681"/>
         <source>Set OPF results to power flow (non destructive)</source>
         <translation>OPF 결과를 전력 흐름으로 설정(비파괴)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11647"/>
+        <location filename="../Main/MainWindow.ui" line="11684"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy OPF data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Set the OPF results into the power flow or time series simulations (non destructive)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;OPF 데이터 복사&lt;/span&gt;&lt;/p&gt;&lt;p&gt;OPF 결과를 전력 흐름 또는 시계열 시뮬레이션으로 설정(비파괴)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11659"/>
+        <location filename="../Main/MainWindow.ui" line="11696"/>
         <source>Correct buses location</source>
         <translation>올바른 버스 위치</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11662"/>
+        <location filename="../Main/MainWindow.ui" line="11699"/>
         <source>Set selected buses location closer to their neighbours</source>
         <translation>선택한 버스 위치를 이웃에 더 가깝게 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11674"/>
+        <location filename="../Main/MainWindow.ui" line="11711"/>
         <source>Copy OPF generation to database (destructive)</source>
         <translation>OPF 생성을 데이터베이스에 복사(파괴)</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11677"/>
+        <location filename="../Main/MainWindow.ui" line="11714"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Copy OPF data&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Destructive copy of the OPF generation results to the input profiles&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;OPF 데이터 복사&lt;/span&gt;&lt;/p&gt;&lt;p&gt;OPF 생성 결과를 입력 프로필에 파괴적으로 복사&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11689"/>
+        <location filename="../Main/MainWindow.ui" line="11726"/>
         <source>Linear analysis time series power flow</source>
         <translation>선형 분석 시계열 전력 흐름</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11692"/>
+        <location filename="../Main/MainWindow.ui" line="11729"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Linear analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;PTDF based time series power flow&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;선형 분석&lt;/span&gt;&lt;/p&gt;&lt;p&gt;PTDF 기반 시계열 전력 흐름&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11698"/>
+        <location filename="../Main/MainWindow.ui" line="11735"/>
         <source>Ctrl+F7</source>
         <translation>Ctrl+F7</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11707"/>
+        <location filename="../Main/MainWindow.ui" line="11744"/>
         <source>Import circuit</source>
         <translation>회로 가져오기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11710"/>
+        <location filename="../Main/MainWindow.ui" line="11747"/>
         <source>Add circuit to the current circuit</source>
         <translation>현재 회로에 회로 추가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11716"/>
+        <location filename="../Main/MainWindow.ui" line="11753"/>
         <source>Ctrl+N, Ctrl+O</source>
         <translation>Ctrl+N, Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11728"/>
+        <location filename="../Main/MainWindow.ui" line="11765"/>
         <source>Sync</source>
         <translation>동조</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11731"/>
+        <location filename="../Main/MainWindow.ui" line="11768"/>
         <source>Sync with the file for colaborative editing of the grid</source>
         <translation>그리드의 공동 편집을 위해 파일과 동기화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11740"/>
+        <location filename="../Main/MainWindow.ui" line="11777"/>
         <source>Draw schematic</source>
         <translation>회로도 그리기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11749"/>
+        <location filename="../Main/MainWindow.ui" line="11786"/>
         <source>Sigma analysis</source>
         <translation>시그마 분석</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11752"/>
+        <location filename="../Main/MainWindow.ui" line="11789"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Sigma analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform HELM-Sigma analysis over the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;시그마 분석&lt;/span&gt;&lt;/p&gt;&lt;p&gt;스냅샷 데이터에 대한 HELM-Sigma 분석 수행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11764"/>
+        <location filename="../Main/MainWindow.ui" line="11801"/>
         <source>Clear &quot;stuff running right now&quot;</source>
         <translation>&quot;지금 실행 중인 항목&quot; 지우기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11776"/>
+        <location filename="../Main/MainWindow.ui" line="11813"/>
         <source>Add default catalogue</source>
         <translation>기본 카탈로그 추가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11791"/>
+        <location filename="../Main/MainWindow.ui" line="11828"/>
         <source>Find node groups</source>
         <translation>노드 그룹 찾기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11794"/>
+        <location filename="../Main/MainWindow.ui" line="11831"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Finds the electrically related nodes by using their electrical distance and the DBSCAN clustering method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;전기적 거리와 DBSCAN 클러스터링 방법을 이용하여 전기적으로 관련된 노드를 찾습니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11806"/>
+        <location filename="../Main/MainWindow.ui" line="11843"/>
         <source>Grid Generator</source>
         <translation>그리드 생성기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11812"/>
+        <location filename="../Main/MainWindow.ui" line="11849"/>
         <source>Ctrl+G</source>
         <translation>Ctrl+G</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11821"/>
+        <location filename="../Main/MainWindow.ui" line="11858"/>
         <source>Node load</source>
         <translation>노드 로드</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11830"/>
+        <location filename="../Main/MainWindow.ui" line="11867"/>
         <source>Generator generation</source>
         <translation>발전기 생성</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11839"/>
+        <location filename="../Main/MainWindow.ui" line="11876"/>
         <source>Contingency analysis time series</source>
         <translation>비상 분석 시계열</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11842"/>
+        <location filename="../Main/MainWindow.ui" line="11879"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingency analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Per form a contingency analysis with the selected method over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;우발상황 분석&lt;/span&gt;&lt;/p&gt;&lt;p&gt;시계열 데이터에 대해 선택한 방법으로 우발상황 분석 수행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11848"/>
+        <location filename="../Main/MainWindow.ui" line="11885"/>
         <source>Ctrl+F8</source>
         <translation>Ctrl+F8</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11857"/>
+        <location filename="../Main/MainWindow.ui" line="11894"/>
         <source>Branch rates</source>
         <translation>지점요금</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11866"/>
+        <location filename="../Main/MainWindow.ui" line="11903"/>
         <source>Set selected buses&apos; Area</source>
         <translation>선택한 버스의 지역을 설정하세요</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11878"/>
+        <location filename="../Main/MainWindow.ui" line="11915"/>
         <source>Set selected buses&apos; Zone</source>
         <translation>선택한 버스의 Zone 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11890"/>
+        <location filename="../Main/MainWindow.ui" line="11927"/>
         <source>Set seleted buses&apos; Country</source>
         <translation>선택한 버스의 국가를 설정하세요</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11902"/>
+        <location filename="../Main/MainWindow.ui" line="11939"/>
         <source>Import bus coordinates</source>
         <translation>버스 좌표 가져오기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11914"/>
+        <location filename="../Main/MainWindow.ui" line="11951"/>
         <source>Available Transfer Capacity</source>
         <translation>사용 가능한 전송 용량</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11917"/>
+        <location filename="../Main/MainWindow.ui" line="11954"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a linear net transfer capacity assesment for the snapshot data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;순 전송 용량&lt;/span&gt;&lt;/p&gt;&lt;p&gt;스냅샷 데이터에 대한 선형 순 전송 용량 평가 수행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11929"/>
+        <location filename="../Main/MainWindow.ui" line="11966"/>
         <source>Available Transfer Capacity Time Series</source>
         <translation>사용 가능한 전송 용량 시계열</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11932"/>
+        <location filename="../Main/MainWindow.ui" line="11969"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a linear net transfer capacity assesment for the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;순 전송 용량&lt;/span&gt;&lt;/p&gt;&lt;p&gt;시계열 데이터에 대한 선형 순 전송 용량 평가 수행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11944"/>
+        <location filename="../Main/MainWindow.ui" line="11981"/>
         <source>Contingency analysis</source>
         <translation>우발상황 분석</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11947"/>
+        <location filename="../Main/MainWindow.ui" line="11984"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingency analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a contingency analysis with the selected method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;우발 상황 분석&lt;/span&gt;&lt;/p&gt;&lt;p&gt;선택한 방법으로 우발 상황 분석 수행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11953"/>
+        <location filename="../Main/MainWindow.ui" line="11990"/>
         <source>F8</source>
         <translation>F8</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11962"/>
+        <location filename="../Main/MainWindow.ui" line="11999"/>
         <source>Optimal net transfer capacity</source>
         <translation>최적의 순 전송 용량</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11965"/>
+        <location filename="../Main/MainWindow.ui" line="12002"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Optimal Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform an optimal net transfer capacity optimization&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;최적 순 전송 용량&lt;/span&gt;&lt;/p&gt;&lt;p&gt;최적 순 전송 용량 최적화 수행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11977"/>
+        <location filename="../Main/MainWindow.ui" line="12014"/>
         <source>Set schematic (x,y) from (lat,lon)</source>
         <translation>(lat, lon)에서 회로도(x,y) 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11989"/>
+        <location filename="../Main/MainWindow.ui" line="12026"/>
         <source>Inputs analysis</source>
         <translation>입력 분석</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11992"/>
+        <location filename="../Main/MainWindow.ui" line="12029"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Inputs analysis&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform an analysis of the inputs for both the snapshot and time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;입력 분석&lt;/span&gt;&lt;/p&gt;&lt;p&gt;스냅샷 및 시계열 데이터 모두에 대한 입력 분석 수행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="11998"/>
+        <location filename="../Main/MainWindow.ui" line="12035"/>
         <source>F11</source>
         <translation>F11</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12007"/>
+        <location filename="../Main/MainWindow.ui" line="12044"/>
         <source>Fuse devices</source>
         <translation>퓨즈 장치</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12010"/>
+        <location filename="../Main/MainWindow.ui" line="12047"/>
         <source>Fuse devices into a single device of each category per node</source>
         <translation>장치를 노드당 각 범주의 단일 장치로 융합</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12022"/>
-        <location filename="../Main/MainWindow.ui" line="12025"/>
+        <location filename="../Main/MainWindow.ui" line="12059"/>
+        <location filename="../Main/MainWindow.ui" line="12062"/>
         <source>Delete inconsistencies</source>
         <translation>불일치 삭제</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12037"/>
+        <location filename="../Main/MainWindow.ui" line="12074"/>
         <source>Optimal NTC time series</source>
         <translation>최적의 NTC 시계열</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12040"/>
+        <location filename="../Main/MainWindow.ui" line="12077"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Net Transfer Capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a net transfer capacity optimization over the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;순 전송 용량&lt;/span&gt;&lt;/p&gt;&lt;p&gt;시계열 데이터에 대한 순 전송 용량 최적화 수행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12052"/>
+        <location filename="../Main/MainWindow.ui" line="12089"/>
         <source>re-index time</source>
         <translation>재인덱싱 시간</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12064"/>
+        <location filename="../Main/MainWindow.ui" line="12101"/>
         <source>Fix generators active based on the power</source>
         <translation>전력에 따라 발전기를 활성화하는 문제 수정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12076"/>
-        <location filename="../Main/MainWindow.ui" line="12079"/>
+        <location filename="../Main/MainWindow.ui" line="12113"/>
+        <location filename="../Main/MainWindow.ui" line="12116"/>
         <source>Fix loads active based on the power</source>
         <translation>전력에 따라 활성 부하를 수정합니다.</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12091"/>
+        <location filename="../Main/MainWindow.ui" line="12128"/>
         <source>Initialize contingencies</source>
         <translation>우발상황 초기화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12094"/>
+        <location filename="../Main/MainWindow.ui" line="12131"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Contingencies wizard&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Launch the contingencies wizard to automatically set up the contingency objects&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;우발 상황 마법사&lt;/span&gt;&lt;/p&gt;&lt;p&gt;우발 상황 마법사를 실행하여 우발 상황 개체를 자동으로 설정하세요&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12106"/>
+        <location filename="../Main/MainWindow.ui" line="12143"/>
         <source>Add selected as new contingency</source>
         <translation>선택한 항목을 새 우발상황으로 추가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12109"/>
+        <location filename="../Main/MainWindow.ui" line="12146"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add contingency&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new contingency from the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;우발사항 추가&lt;/span&gt;&lt;/p&gt;&lt;p&gt;도식 선택에서 새 우발사항 생성&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12115"/>
+        <location filename="../Main/MainWindow.ui" line="12152"/>
         <source>Ctrl+A, Ctrl+C</source>
         <translation>Ctrl+A, Ctrl+C</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12124"/>
+        <location filename="../Main/MainWindow.ui" line="12161"/>
         <source>Add selected as new investment</source>
         <translation>신규 투자로 선택 추가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12127"/>
+        <location filename="../Main/MainWindow.ui" line="12164"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Investments&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create new investment with the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;투자&lt;/span&gt;&lt;/p&gt;&lt;p&gt;도식 선택으로 새로운 투자 창출&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12133"/>
+        <location filename="../Main/MainWindow.ui" line="12170"/>
         <source>Ctrl+A, Ctrl+I</source>
         <translation>Ctrl+A, Ctrl+I</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12142"/>
+        <location filename="../Main/MainWindow.ui" line="12179"/>
         <source>Zoom in</source>
         <translation>확대</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12148"/>
+        <location filename="../Main/MainWindow.ui" line="12185"/>
         <source>Ctrl++</source>
         <translation>Ctrl++</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12157"/>
+        <location filename="../Main/MainWindow.ui" line="12194"/>
         <source>Zoom out</source>
         <translation>축소</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12163"/>
+        <location filename="../Main/MainWindow.ui" line="12200"/>
         <source>Ctrl+-</source>
         <translation>Ctrl+-</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12175"/>
+        <location filename="../Main/MainWindow.ui" line="12212"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform a clustering study of the time series data&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;클러스터링&lt;/span&gt;&lt;/p&gt;&lt;p&gt;시계열 데이터에 대한 클러스터링 연구 수행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12193"/>
+        <location filename="../Main/MainWindow.ui" line="12230"/>
         <source>Use clustering</source>
         <translation>클러스터링 사용</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12196"/>
+        <location filename="../Main/MainWindow.ui" line="12233"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Clustering&lt;/span&gt;&lt;/p&gt;&lt;p&gt;If active, the available clustering results are used in all the simulations that handle time series data non-destructivelly&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;클러스터링&lt;/span&gt;&lt;/p&gt;&lt;p&gt;활성화되면 시계열 데이터를 비파괴적으로 처리하는 모든 시뮬레이션에서 사용 가능한 클러스터링 결과가 사용됩니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12208"/>
+        <location filename="../Main/MainWindow.ui" line="12245"/>
         <source>Investments evaluation</source>
         <translation>투자 평가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12211"/>
+        <location filename="../Main/MainWindow.ui" line="12248"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Investments&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Perform the investments evaluation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;투자&lt;/span&gt;&lt;/p&gt;&lt;p&gt;투자 평가 수행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12217"/>
+        <location filename="../Main/MainWindow.ui" line="12254"/>
         <source>Ctrl+I, Ctrl+E</source>
         <translation>Ctrl+I, Ctrl+E</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12226"/>
+        <location filename="../Main/MainWindow.ui" line="12263"/>
         <source>New schematic from selection</source>
         <translation>선택 항목의 새 회로도</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12238"/>
+        <location filename="../Main/MainWindow.ui" line="12275"/>
         <source>New schematic</source>
         <translation>새로운 회로도</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12250"/>
+        <location filename="../Main/MainWindow.ui" line="12287"/>
         <source>New map</source>
         <translation>새로운 지도</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12262"/>
+        <location filename="../Main/MainWindow.ui" line="12299"/>
         <source>Remove selected diagram</source>
         <translation>선택한 다이어그램 제거</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12271"/>
+        <location filename="../Main/MainWindow.ui" line="12308"/>
         <source>Report a bug or feature</source>
         <translation>버그 또는 기능 신고</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12283"/>
+        <location filename="../Main/MainWindow.ui" line="12320"/>
         <source>Search</source>
         <translation>찾다</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12295"/>
+        <location filename="../Main/MainWindow.ui" line="12332"/>
         <source>Process topology</source>
         <translation>프로세스 토폴로지</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12307"/>
+        <location filename="../Main/MainWindow.ui" line="12344"/>
         <source>Edit simulation time limits</source>
         <translation>시뮬레이션 시간 제한 편집</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12310"/>
+        <location filename="../Main/MainWindow.ui" line="12347"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Time series&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Edit simulation time limits&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;시계열&lt;/span&gt;&lt;/p&gt;&lt;p&gt;시뮬레이션 시간 제한 편집&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12325"/>
+        <location filename="../Main/MainWindow.ui" line="12362"/>
         <source>activate time series</source>
         <translation>시계열 활성화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12328"/>
+        <location filename="../Main/MainWindow.ui" line="12365"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Time series mode&lt;/span&gt;&lt;/p&gt;&lt;p&gt;When activated, the simulations run their time series version&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;시계열 모드&lt;/span&gt;&lt;/p&gt;&lt;p&gt;활성화되면 시뮬레이션이 시계열 버전을 실행합니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12334"/>
+        <location filename="../Main/MainWindow.ui" line="12371"/>
         <source>Ctrl+T</source>
         <translation>Ctrl+T</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12343"/>
+        <location filename="../Main/MainWindow.ui" line="12380"/>
         <source>Clean database</source>
         <translation>데이터베이스 정리</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12349"/>
+        <location filename="../Main/MainWindow.ui" line="12386"/>
         <source>Ctrl+C, Ctrl+D</source>
         <translation>Ctrl+C, Ctrl+D</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12358"/>
+        <location filename="../Main/MainWindow.ui" line="12395"/>
         <source>Scale</source>
         <translation>규모</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12361"/>
+        <location filename="../Main/MainWindow.ui" line="12398"/>
         <source>Scale the system load and or generation</source>
         <translation>시스템 로드 및/또는 생성 규모 조정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12373"/>
+        <location filename="../Main/MainWindow.ui" line="12410"/>
         <source>Disable all results tags</source>
         <translation>모든 결과 태그 비활성화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12385"/>
+        <location filename="../Main/MainWindow.ui" line="12422"/>
         <source>Enable all results tags</source>
         <translation>모든 결과 태그 활성화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12397"/>
+        <location filename="../Main/MainWindow.ui" line="12434"/>
         <source>Detect substations</source>
         <translation>변전소 감지</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12409"/>
+        <location filename="../Main/MainWindow.ui" line="12446"/>
         <source>Optimal hosting capacity</source>
         <translation>최적의 호스팅 용량</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12412"/>
+        <location filename="../Main/MainWindow.ui" line="12449"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Nodal hosting capacity&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the nodal hosting capacity calculation using the selected optimization method&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;노드 호스팅 용량&lt;/span&gt;&lt;/p&gt;&lt;p&gt;선택한 최적화 방법을 사용하여 노드 호스팅 용량 계산 실행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12427"/>
+        <location filename="../Main/MainWindow.ui" line="12464"/>
         <source>Enable server mode</source>
         <translation>서버 모드 활성화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12439"/>
+        <location filename="../Main/MainWindow.ui" line="12476"/>
         <source>Record video</source>
         <translation>비디오 녹화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12442"/>
+        <location filename="../Main/MainWindow.ui" line="12479"/>
         <source>Record video of the schematic</source>
         <translation>회로도 비디오 녹화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12454"/>
+        <location filename="../Main/MainWindow.ui" line="12491"/>
         <source>Save  differential</source>
         <translation>차등 저장</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12466"/>
+        <location filename="../Main/MainWindow.ui" line="12503"/>
         <source>Consolidate coordinates</source>
         <translation>좌표 통합</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12478"/>
+        <location filename="../Main/MainWindow.ui" line="12515"/>
         <source>Add selected as new remedial action</source>
         <translation>선택 항목을 새 교정 조치로 추가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12481"/>
+        <location filename="../Main/MainWindow.ui" line="12518"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add remedial action&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new remedial action from the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;수정 조치 추가&lt;/span&gt;&lt;/p&gt;&lt;p&gt;도식 선택에서 새 수정 조치 생성&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12487"/>
+        <location filename="../Main/MainWindow.ui" line="12524"/>
         <source>Ctrl+A, Ctrl+R</source>
         <translation>Ctrl+A, Ctrl+R</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12496"/>
+        <location filename="../Main/MainWindow.ui" line="12533"/>
         <source>Detect facilities</source>
         <translation>시설 감지</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12505"/>
+        <location filename="../Main/MainWindow.ui" line="12542"/>
         <source>Rotate</source>
         <translation>회전</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12517"/>
+        <location filename="../Main/MainWindow.ui" line="12554"/>
         <source>Reset diagram coordinates to database values</source>
         <translation>다이어그램 좌표를 데이터베이스 값으로 재설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12529"/>
+        <location filename="../Main/MainWindow.ui" line="12566"/>
         <source>Reliability analysis</source>
         <translation>신뢰성 분석</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12532"/>
+        <location filename="../Main/MainWindow.ui" line="12569"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Reliability study&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run the reliability calculation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;신뢰성 연구&lt;/span&gt;&lt;/p&gt;&lt;p&gt;신뢰성 계산 실행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12547"/>
+        <location filename="../Main/MainWindow.ui" line="12584"/>
         <source>Color buses by...</source>
         <translation>버스 색상별로...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12559"/>
+        <location filename="../Main/MainWindow.ui" line="12596"/>
         <source>Color substations by...</source>
         <translation>변전소 색상 지정...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12574"/>
+        <location filename="../Main/MainWindow.ui" line="12611"/>
         <source>Select buses by...</source>
         <translation>버스를 선택하세요...</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12601"/>
+        <location filename="../Main/MainWindow.ui" line="12638"/>
         <source>Substation wizard</source>
         <translation>변전소 마법사</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12604"/>
+        <location filename="../Main/MainWindow.ui" line="12641"/>
         <source>Add substation with a wizard form</source>
         <translation>마법사 양식으로 변전소 추가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12607"/>
+        <location filename="../Main/MainWindow.ui" line="12644"/>
         <source>Ctrl+A, Ctrl+S</source>
         <translation>Ctrl+A, Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12619"/>
+        <location filename="../Main/MainWindow.ui" line="12656"/>
         <source>Dynamic RMS Simulation</source>
         <translation>동적 RMS 시뮬레이션</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12622"/>
+        <location filename="../Main/MainWindow.ui" line="12659"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;RMS Simulation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a dynamic RMS simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;RMS 시뮬레이션&lt;/span&gt;&lt;/p&gt;&lt;p&gt;동적 RMS 시뮬레이션 실행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12634"/>
+        <location filename="../Main/MainWindow.ui" line="12671"/>
         <source>Prepare RMS dynamic plots</source>
         <translation>RMS 동적 플롯 준비</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12637"/>
+        <location filename="../Main/MainWindow.ui" line="12674"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepare RMS dynamic plots&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the RMS dynamic plot editor before running the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;RMS 동적 플롯 준비&lt;/span&gt;&lt;/p&gt;&lt;p&gt;시뮬레이션을 실행하기 전에 RMS 동적 플롯 편집기 열기&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12649"/>
-        <location filename="../Main/MainWindow.ui" line="12652"/>
+        <location filename="../Main/MainWindow.ui" line="12686"/>
+        <location filename="../Main/MainWindow.ui" line="12689"/>
         <source>Small-Signal RMS Simulation</source>
         <translation>소신호 RMS 시뮬레이션</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12655"/>
+        <location filename="../Main/MainWindow.ui" line="12692"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Small Signal Simulation (RMS)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an RMS Small Signal stability analysis simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;소신호 시뮬레이션(RMS)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;RMS 소신호 안정성 분석 시뮬레이션 실행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12667"/>
+        <location filename="../Main/MainWindow.ui" line="12704"/>
         <source>Add rms event to selected</source>
         <translation>선택한 항목에 RMS 이벤트 추가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12670"/>
+        <location filename="../Main/MainWindow.ui" line="12707"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add RMS event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new RMS event to the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;RMS 이벤트 추가&lt;/span&gt;&lt;/p&gt;&lt;p&gt;회로도 선택에 새 RMS 이벤트 생성&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12685"/>
+        <location filename="../Main/MainWindow.ui" line="12722"/>
         <source>Clear highlights</source>
         <translation>하이라이트 지우기</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12700"/>
+        <location filename="../Main/MainWindow.ui" line="12737"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;State estimation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a state estimation analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;상태 추정&lt;/span&gt;&lt;/p&gt;&lt;p&gt;상태 추정 분석 실행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12712"/>
+        <location filename="../Main/MainWindow.ui" line="12749"/>
         <source>Add short circuit events</source>
         <translation>단락 이벤트 추가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12724"/>
+        <location filename="../Main/MainWindow.ui" line="12761"/>
         <source>PSS/e Raw / Rawx</source>
         <translation>PSS/e 원시/Rawx</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12733"/>
+        <location filename="../Main/MainWindow.ui" line="12770"/>
         <source>Power Factory DGS</source>
         <translation>발전공장 DGS</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12742"/>
+        <location filename="../Main/MainWindow.ui" line="12779"/>
         <source>Matpower</source>
         <translation>맷파워</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12751"/>
+        <location filename="../Main/MainWindow.ui" line="12788"/>
         <source>UCTE</source>
         <translation>UCTE</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12760"/>
+        <location filename="../Main/MainWindow.ui" line="12797"/>
         <source>CGMES</source>
         <translation>CGMES</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12769"/>
+        <location filename="../Main/MainWindow.ui" line="12806"/>
         <source>Power Grid Models</source>
         <translation>전력망 모델</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12778"/>
+        <location filename="../Main/MainWindow.ui" line="12815"/>
         <source>CIM</source>
         <translation>CIM</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12787"/>
+        <location filename="../Main/MainWindow.ui" line="12824"/>
         <source>H5</source>
         <translation>H5</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12796"/>
+        <location filename="../Main/MainWindow.ui" line="12833"/>
         <source>JSON</source>
         <translation>JSON</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12805"/>
+        <location filename="../Main/MainWindow.ui" line="12842"/>
         <source>Microsoft Excel</source>
         <translation>마이크로소프트 엑셀</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12814"/>
+        <location filename="../Main/MainWindow.ui" line="12851"/>
         <source>SQLite</source>
         <translation>SQLite</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12823"/>
+        <location filename="../Main/MainWindow.ui" line="12860"/>
         <source>Profiles</source>
         <translation>프로필</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12850"/>
-        <location filename="../Main/MainWindow.ui" line="12868"/>
+        <location filename="../Main/MainWindow.ui" line="12887"/>
+        <location filename="../Main/MainWindow.ui" line="12905"/>
         <source>Catalogue</source>
         <translation>목록</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12877"/>
+        <location filename="../Main/MainWindow.ui" line="12914"/>
         <source>Clean Room</source>
         <translation>클린룸</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12880"/>
+        <location filename="../Main/MainWindow.ui" line="12917"/>
         <source>Cleam room utility to produce an machine learning statistical representation of the static time series</source>
         <translation>정적 시계열의 기계 학습 통계 표현을 생성하는 클린룸 유틸리티</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12892"/>
+        <location filename="../Main/MainWindow.ui" line="12929"/>
         <source>Procedural grid expansion</source>
         <translation>절차적 그리드 확장</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12901"/>
+        <location filename="../Main/MainWindow.ui" line="12938"/>
         <source>Catalogue element optimization</source>
         <translation>카탈로그 요소 최적화</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12910"/>
+        <location filename="../Main/MainWindow.ui" line="12947"/>
         <source>Dynamic EMT Simulation</source>
         <translation>동적 EMT 시뮬레이션</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12913"/>
+        <location filename="../Main/MainWindow.ui" line="12950"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;EMT Simulation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run a dynamic EMT simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;EMT 시뮬레이션&lt;/span&gt;&lt;/p&gt;&lt;p&gt;동적 EMT 시뮬레이션 실행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12925"/>
+        <location filename="../Main/MainWindow.ui" line="12962"/>
         <source>Prepare EMT dynamic plots</source>
         <translation>EMT 동적 플롯 준비</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12928"/>
+        <location filename="../Main/MainWindow.ui" line="12965"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Prepare EMT dynamic plots&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Open the EMT dynamic plot editor before running the simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;EMT 동적 플롯 준비&lt;/span&gt;&lt;/p&gt;&lt;p&gt;시뮬레이션을 실행하기 전에 EMT 동적 플롯 편집기를 엽니다.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12940"/>
-        <location filename="../Main/MainWindow.ui" line="12943"/>
+        <location filename="../Main/MainWindow.ui" line="12977"/>
+        <location filename="../Main/MainWindow.ui" line="12980"/>
         <source>Small-Signal EMT Simulation</source>
         <translation>소신호 EMT 시뮬레이션</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12946"/>
+        <location filename="../Main/MainWindow.ui" line="12983"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Small Signal Simulation (EMT)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an EMT Small Signal stability analysis simulation&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;소신호 시뮬레이션(EMT)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;EMT 소신호 안정성 분석 시뮬레이션 실행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12954"/>
+        <location filename="../Main/MainWindow.ui" line="12991"/>
         <source>Reticular</source>
         <translation>망상</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12959"/>
+        <location filename="../Main/MainWindow.ui" line="12996"/>
         <source>Straight</source>
         <translation>똑바로</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12968"/>
+        <location filename="../Main/MainWindow.ui" line="13005"/>
         <source>ai_chat</source>
         <translation>ai_chat</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12971"/>
+        <location filename="../Main/MainWindow.ui" line="13008"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;VeraGrid AI &lt;/span&gt;&lt;/p&gt;&lt;p&gt;Show the VeraGrid AI chat&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;VeraGrid AI &lt;/span&gt;&lt;/p&gt;&lt;p&gt;VeraGrid AI 채팅 표시&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12983"/>
+        <location filename="../Main/MainWindow.ui" line="13020"/>
         <source>Power Flow 3-phase</source>
         <translation>전력 흐름 3상</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="12986"/>
+        <location filename="../Main/MainWindow.ui" line="13023"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Power Flow 3-phase&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Run an unbalanced 3-phase power flow analysis&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;전력 흐름 3상&lt;/span&gt;&lt;/p&gt;&lt;p&gt;불균형 3상 전력 흐름 분석 실행&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13001"/>
+        <location filename="../Main/MainWindow.ui" line="13038"/>
         <source>Add emt event to selected</source>
         <translation>선택한 항목에 emt 이벤트 추가</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13004"/>
+        <location filename="../Main/MainWindow.ui" line="13041"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Add EMT event&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Create a new EMT event to the schematic selection&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot;font-weight:700;&quot;&gt;EMT 이벤트 추가&lt;/span&gt;&lt;/p&gt;&lt;p&gt;회로도 선택에 새 EMT 이벤트 생성&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13013"/>
+        <location filename="../Main/MainWindow.ui" line="13050"/>
         <source>Set model (x,y) based on (lat, lon)</source>
         <translation>(위도, 경도)를 기준으로 모델 (x,y) 설정</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13022"/>
+        <location filename="../Main/MainWindow.ui" line="13059"/>
         <source>Restore investments</source>
         <translation>투자 회복</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13034"/>
+        <location filename="../Main/MainWindow.ui" line="13071"/>
         <source>Veragrid Scenario</source>
         <translation>베라그리드 시나리오</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13043"/>
+        <location filename="../Main/MainWindow.ui" line="13080"/>
         <source>Show dynamic models editor</source>
         <translation>동적 모델 편집기 표시</translation>
     </message>
     <message>
-        <location filename="../Main/MainWindow.ui" line="13055"/>
+        <location filename="../Main/MainWindow.ui" line="13092"/>
         <source>Repair diagram</source>
         <translation>수리 다이어그램</translation>
     </message>

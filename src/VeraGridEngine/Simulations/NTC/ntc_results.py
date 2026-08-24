@@ -8,7 +8,7 @@ import pandas as pd
 from VeraGridEngine.Simulations.results_table import ResultsTable
 from VeraGridEngine.Simulations.results_template import ResultsTemplate, ResultsProperty
 from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, CxVec, ObjVec
-from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType
+from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType, SolutionState
 
 
 class OptimalNetTransferCapacityResults(ResultsTemplate):
@@ -134,6 +134,7 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
                                          ResultTypes.BranchLoading,
                                          ResultTypes.BranchTapAngle,
                                          ResultTypes.BranchMonitoring,
+                                         ResultTypes.BranchOverloads,
                                          ResultTypes.AvailableTransferCapacityAlpha,
                                      ],
                                      ResultTypes.HvdcResults: [
@@ -141,7 +142,6 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
                                      ],
                                      ResultTypes.VscResults: [
                                          ResultTypes.VscPowerFromPositive,
-                                         ResultTypes.VscPowerFromNegative,
                                      ],
                                      ResultTypes.FlowReports: [
                                          ResultTypes.ContingencyFlowsReport,
@@ -211,6 +211,40 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
         self.inter_area_flows = 0
         self.structural_inter_area_flows = 0
 
+
+    def get_total_slack_mw(self) -> float:
+        """
+        Total limit-relaxation slack of the solution in MW, with the base case overload
+        slacks plus the post-contingency relaxation slacks.
+
+        :return: total slack in MW
+        """
+        total: float = float(np.sum(np.abs(self.overloads)))
+        for item in self.contingency_flows_list:
+            t_i, m_i, c_i, flow_i, neg_i, pos_i = item
+            if isinstance(neg_i, float) and isinstance(pos_i, float):
+                total += abs(neg_i) + abs(pos_i)
+            else:
+                pass  # slack not evaluated to a number, nothing to add
+        return total
+
+    def get_solution_state(self, slack_tol_mw: float = 0.1) -> SolutionState:
+        """
+        Classify the solution: 
+        - Optimal (solved and every limit held within tolerance),
+        - Relaxed (solved, but only by relaxing limits beyond the tolerance)
+        - NotOptimal (the solver did not reach optimality).
+
+        :param slack_tol_mw: total slack below which the solution counts as clean
+        :return: NtcSolutionState
+        """
+        if bool(np.all(self.converged)):
+            if self.get_total_slack_mw() <= slack_tol_mw:
+                return SolutionState.Optimal
+            else:
+                return SolutionState.Relaxed
+        else:
+            return SolutionState.NotOptimal
 
     def get_bus_df(self) -> pd.DataFrame:
         """
@@ -443,28 +477,44 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
                 idx_device_type=DeviceType.BranchDevice
             )
 
+        elif result_type == ResultTypes.BranchOverloads:
+            return ResultsTable(
+                data=self.overloads,
+                index=self.branch_names,
+                title=str(result_type.value),
+                columns=['Overload slack (MW)'],
+                ylabel='(MW)',
+                xlabel='',
+                units='(MW)',
+                cols_device_type=DeviceType.NoDevice,
+                idx_device_type=DeviceType.BranchDevice
+            )
+
         elif result_type == ResultTypes.ContingencyFlowsReport:
             data = list()
             index = list()
             columns = ['Contingency group index', 'Contingency group',
                        'Monitored index', 'Monitored branch',
-                       'Flow (MW)', 'Loading (%)']
+                       'Flow (MW)', 'Loading (%)', 'Relaxation slack (MW)']
             for entry in self.contingency_flows_list:
                 # The strict formulation stores (t, m, c, flow) with no slacks,
                 # while the non-strict one stores (t, m, c, flow, neg_slack, pos_slack).
                 if self.strict_formulation:
                     t, m, c, contingency = entry
                     flow_c = contingency
+                    slack_c = 0.0
                 else:
                     t, m, c, contingency, negative_slack, positive_slack = entry
                     flow_c = contingency - negative_slack + positive_slack
+                    slack_c = abs(negative_slack) + abs(positive_slack)
                 index.append("")
                 loading_c = abs(flow_c) / self.contingency_rates[m] * 100
                 data.append([
                     # Contingency group info
                     c, self.contingency_group_names[c],
                     # Monitored branch info
-                    m, self.branch_names[m], np.round(flow_c, 4), np.round(loading_c, 4)
+                    m, self.branch_names[m], np.round(flow_c, 4), np.round(loading_c, 4),
+                    np.round(slack_c, 4)
                 ])
 
             return ResultsTable(

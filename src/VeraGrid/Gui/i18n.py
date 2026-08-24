@@ -5,7 +5,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Callable, Iterable
 
-from PySide6.QtCore import QObject, QLibraryInfo, QLocale, QTranslator
+from PySide6.QtCore import QCoreApplication, QObject, QLibraryInfo, QLocale, QTranslator
 from PySide6.QtGui import QAction, QKeySequence
 from PySide6.QtWidgets import QApplication
 
@@ -270,6 +270,20 @@ def get_qt_translations_directory() -> str:
     :returns: Qt translations directory.
     """
     return QLibraryInfo.path(QLibraryInfo.LibraryPath.TranslationsPath)
+
+
+def translate_tree_label(source_text: str) -> str:
+    """
+    Translate one runtime-built database or results tree label.
+
+    The database and results trees keep enum objects in ``UserRole`` and only
+    send the visible source text through this manual Qt context. This lets the
+    displayed labels be translated without coupling selection logic to strings.
+
+    :param source_text: Source label text.
+    :returns: Translated label text.
+    """
+    return QCoreApplication.translate("VeraGridTreeLabels", source_text)
 
 
 def normalize_language_code(language_code: str | None) -> str:

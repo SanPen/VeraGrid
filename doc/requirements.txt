@@ -7,4 +7,4 @@ pytablewriter
 myst-parser
 sphinx-rtd-theme
 linkify-it-py
-VeraGridEngine >= 6.0.20
+VeraGridEngine >= 6.5.4

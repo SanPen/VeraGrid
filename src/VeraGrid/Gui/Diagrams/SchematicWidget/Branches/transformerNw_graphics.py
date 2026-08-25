@@ -227,8 +227,8 @@ class TransformerNWGraphicItem(GenericDiagramWidget, QGraphicsRectItem):
         if self.api_object is not None:
             self.set_enable(not self.api_object.active)
             if self._editor.circuit.get_time_number() > 0:
-                ok = yes_no_question('Do you want to update the time series active status accordingly?',
-                                     'Update time series active status')
+                ok = yes_no_question(self.tr('Do you want to update the time series active status accordingly?'),
+                                     self.tr('Update time series active status'))
                 if ok:
                     self._editor.set_active_status_to_profile(self.api_object, override_question=True)
                     for winding in self.api_object.windings:

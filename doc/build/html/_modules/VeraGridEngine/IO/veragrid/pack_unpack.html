@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.IO.veragrid.pack_unpack &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.IO.veragrid.pack_unpack &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,9 +44,9 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
@@ -67,6 +67,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
@@ -125,6 +129,13 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">DiagramType</span><span class="p">,</span> <span class="n">DeviceType</span><span class="p">,</span> <span class="n">SubObjectType</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">,</span>
                                          <span class="n">ContingencyOperationTypes</span><span class="p">)</span>
 
+<span class="n">ProfileDictionary</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Any</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="n">Any</span><span class="p">]</span>
+
+<span class="n">ModelDictionary</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span>
+<span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span>
+<span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
+<span class="p">]</span>
+
 
 <div class="viewcode-block" id="get_objects_dictionary">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.pack_unpack.get_objects_dictionary">[docs]</a>
@@ -160,6 +171,8 @@
         <span class="s1">&#39;emission&#39;</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">EmissionGas</span><span class="p">(),</span>
 
         <span class="s1">&#39;facility&#39;</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Facility</span><span class="p">(),</span>
+
+        <span class="s1">&#39;market_unit&#39;</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MarketUnit</span><span class="p">(),</span>
 
         <span class="s1">&#39;rms_model_template&#39;</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">RmsModelTemplate</span><span class="p">(),</span>
         <span class="s1">&#39;emt_model_template&#39;</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">EmtModelTemplate</span><span class="p">(),</span>
@@ -342,7 +355,8 @@
                 <span class="k">if</span> <span class="n">property_name</span> <span class="ow">in</span> <span class="n">elm</span><span class="o">.</span><span class="n">registered_properties</span><span class="p">:</span>
                     <span class="n">current_value</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_snapshot_value_by_name</span><span class="p">(</span><span class="n">property_name</span><span class="p">)</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">current_value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-                        <span class="n">elm</span><span class="o">.</span><span class="n">set_snapshot_value</span><span class="p">(</span><span class="n">property_name</span><span class="p">,</span> <span class="n">_resolve_project_fmu_config</span><span class="p">(</span><span class="n">current_value</span><span class="p">,</span> <span class="n">project_directory</span><span class="p">))</span>
+                        <span class="n">elm</span><span class="o">.</span><span class="n">set_snapshot_value</span><span class="p">(</span><span class="n">property_name</span><span class="p">,</span>
+                                               <span class="n">_resolve_project_fmu_config</span><span class="p">(</span><span class="n">current_value</span><span class="p">,</span> <span class="n">project_directory</span><span class="p">))</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">pass</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -408,7 +422,7 @@
 
 <div class="viewcode-block" id="order_multiverse_records">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.pack_unpack.order_multiverse_records">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">order_multiverse_records</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">order_multiverse_records</span><span class="p">(</span><span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">|</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return multiverse metadata records in a parent-before-child order.</span>
 
@@ -572,7 +586,7 @@
 
 <div class="viewcode-block" id="profile_todict">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.pack_unpack.profile_todict">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">profile_todict</span><span class="p">(</span><span class="n">profile</span><span class="p">:</span> <span class="n">AnyProfile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">profile_todict</span><span class="p">(</span><span class="n">profile</span><span class="p">:</span> <span class="n">AnyProfile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProfileDictionary</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get a dictionary representation of the profile</span>
 <span class="sd">    :return:</span>
@@ -610,7 +624,7 @@
 
 <div class="viewcode-block" id="profile_todict_idtag">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.pack_unpack.profile_todict_idtag">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">profile_todict_idtag</span><span class="p">(</span><span class="n">profile</span><span class="p">:</span> <span class="n">AnyProfile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">profile_todict_idtag</span><span class="p">(</span><span class="n">profile</span><span class="p">:</span> <span class="n">AnyProfile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProfileDictionary</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get a dictionary representation of the profile</span>
 <span class="sd">    :return:</span>
@@ -641,7 +655,7 @@
 
 <div class="viewcode-block" id="profile_todict_str">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.pack_unpack.profile_todict_str">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">profile_todict_str</span><span class="p">(</span><span class="n">profile</span><span class="p">:</span> <span class="n">AnyProfile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">profile_todict_str</span><span class="p">(</span><span class="n">profile</span><span class="p">:</span> <span class="n">AnyProfile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ProfileDictionary</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get a dictionary representation of the profile</span>
 <span class="sd">    :return:</span>
@@ -681,9 +695,9 @@
 <div class="viewcode-block" id="cast_profile_value">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.pack_unpack.cast_profile_value">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">cast_profile_value</span><span class="p">(</span>
-    <span class="n">profile</span><span class="p">:</span> <span class="n">AnyProfile</span><span class="p">,</span>
-    <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
-    <span class="n">collection</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">profile</span><span class="p">:</span> <span class="n">AnyProfile</span><span class="p">,</span>
+        <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">collection</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert serialized profile payloads into the concrete type required by ``profile``.</span>
@@ -816,6 +830,9 @@
         <span class="k">elif</span> <span class="n">prop</span><span class="o">.</span><span class="n">tpe</span> <span class="o">==</span> <span class="n">SubObjectType</span><span class="o">.</span><span class="n">LineLocations</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
 
+        <span class="k">elif</span> <span class="n">prop</span><span class="o">.</span><span class="n">tpe</span> <span class="o">==</span> <span class="n">SubObjectType</span><span class="o">.</span><span class="n">ImpedanceTripletList</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+
         <span class="k">elif</span> <span class="n">prop</span><span class="o">.</span><span class="n">tpe</span> <span class="o">==</span> <span class="n">SubObjectType</span><span class="o">.</span><span class="n">ListOfWires</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
 
@@ -837,7 +854,9 @@
 
         <span class="k">elif</span> <span class="n">prop</span><span class="o">.</span><span class="n">tpe</span> <span class="o">==</span> <span class="n">SubObjectType</span><span class="o">.</span><span class="n">VarType</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">uid</span>
+                <span class="c1"># Persist the physical variable identity. The mutable UID can</span>
+                <span class="c1"># be shared by every variable connected to the same signal.</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">non_mutable_uid</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Persistent dynamic plot entries may keep unresolved legacy Var</span>
                 <span class="c1"># hints as ``None`` while semantic fields remain the canonical</span>
@@ -881,12 +900,11 @@
 <div class="viewcode-block" id="gather_model_as_jsons">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.pack_unpack.gather_model_as_jsons">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">gather_model_as_jsons</span><span class="p">(</span><span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
-                          <span class="n">project_directory</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span>
-    <span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span>
-        <span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">|</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]:</span>
+                          <span class="n">project_directory</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelDictionary</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Transform a MultiCircuit into a collection of Json files</span>
 <span class="sd">    :param circuit:</span>
+<span class="sd">    :param project_directory:</span>
 <span class="sd">    :return:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -919,6 +937,12 @@
 
     <span class="c1"># time</span>
     <span class="n">unix_time</span> <span class="o">=</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_unix_time</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unix_time</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">unix_time</span> <span class="o">==</span> <span class="n">unix_time</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">unix_time</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Refusing to save degenerate master time profile: all </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">unix_time</span><span class="p">)</span><span class="si">}</span><span class="s2"> unix values are &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">unix_time</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="si">}</span><span class="s2">. This usually means circuit.time_profile was overwritten before saving.&quot;</span>
+        <span class="p">)</span>
+
     <span class="n">data</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;unix&#39;</span><span class="p">:</span> <span class="n">unix_time</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
                     <span class="s1">&#39;prob&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unix_time</span><span class="p">))),</span>
                     <span class="s1">&#39;snapshot_unix&#39;</span><span class="p">:</span> <span class="n">circuit</span><span class="o">.</span><span class="n">get_snapshot_time_unix</span><span class="p">()}</span>
@@ -1230,7 +1254,7 @@
                         <span class="c1"># the property of the file exists, parse it</span>
                         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span> <span class="n">DeviceType</span><span class="p">):</span>
 
-                            <span class="c1"># we must look for the refference in elements_dict</span>
+                            <span class="c1"># we must look for the reference in elements_dict</span>
                             <span class="n">collection</span> <span class="o">=</span> <span class="n">elements_dict_by_type</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
                             <span class="k">if</span> <span class="n">collection</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1337,18 +1361,12 @@
                                 <span class="n">prof</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="nb">bool</span><span class="p">(</span><span class="n">property_value</span><span class="p">))</span>
 
                         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span> <span class="n">EnumType</span><span class="p">):</span>
-
-                            <span class="k">try</span><span class="p">:</span>
-                                <span class="n">val</span> <span class="o">=</span> <span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span><span class="p">(</span><span class="n">property_value</span><span class="p">)</span>
-                                <span class="n">elm</span><span class="o">.</span><span class="n">set_snapshot_value</span><span class="p">(</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
-
-                                <span class="k">if</span> <span class="n">gc_prop</span><span class="o">.</span><span class="n">has_profile</span><span class="p">():</span>
-                                    <span class="n">prof</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
-
-                            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot cast value to </span><span class="si">{</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-                                                 <span class="n">device</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                                                 <span class="n">value</span><span class="o">=</span><span class="n">property_value</span><span class="p">)</span>
+                            <span class="n">val</span><span class="p">,</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">set_enum_snapshot_value</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="n">elm</span><span class="p">,</span>
+                                                              <span class="n">gc_prop</span><span class="o">=</span><span class="n">gc_prop</span><span class="p">,</span>
+                                                              <span class="n">property_value</span><span class="o">=</span><span class="n">property_value</span><span class="p">,</span>
+                                                              <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                            <span class="k">if</span> <span class="n">ok</span> <span class="ow">and</span> <span class="n">gc_prop</span><span class="o">.</span><span class="n">has_profile</span><span class="p">():</span>
+                                <span class="n">prof</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
 
                         <span class="k">else</span><span class="p">:</span>
                             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported property type: </span><span class="si">{</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -1367,7 +1385,12 @@
                         <span class="n">dfp</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">profile_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
                         <span class="k">if</span> <span class="n">dfp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="n">elm</span><span class="o">.</span><span class="n">set_profile</span><span class="p">(</span><span class="n">gc_prop</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">dfp</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span><span class="p">))</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">elm</span><span class="o">.</span><span class="n">set_profile</span><span class="p">(</span><span class="n">gc_prop</span><span class="p">,</span> <span class="n">arr</span><span class="o">=</span><span class="n">dfp</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span><span class="p">))</span>
+                            <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">terr</span><span class="p">:</span>
+                                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Cannot set profile value&quot;</span><span class="p">,</span>
+                                                 <span class="n">device_property</span><span class="o">=</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">profile_name</span><span class="p">,</span>
+                                                 <span class="n">device</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
 
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">skip</span> <span class="o">=</span> <span class="kc">False</span>
@@ -1458,6 +1481,48 @@
 
         <span class="c1"># we found the property at first</span>
         <span class="k">return</span> <span class="n">property_value</span></div>
+
+
+
+<div class="viewcode-block" id="set_enum_snapshot_value">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.pack_unpack.set_enum_snapshot_value">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_enum_snapshot_value</span><span class="p">(</span><span class="n">elm</span><span class="p">:</span> <span class="n">ALL_DEV_TYPES</span><span class="p">,</span>
+                            <span class="n">gc_prop</span><span class="p">:</span> <span class="n">GCProp</span><span class="p">,</span>
+                            <span class="n">property_value</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+                            <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set one enum snapshot value, allowing property setters to translate legacy values.</span>
+<span class="sd">    :return: (typed value, success)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span><span class="p">(</span><span class="n">property_value</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">set_snapshot_value</span><span class="p">(</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">property_value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot cast the value to the snapshot&#39;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="n">property_value</span><span class="p">,</span>
+                             <span class="n">comment</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">property_value</span><span class="p">,</span> <span class="kc">False</span>
+
+        <span class="n">val</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_snapshot_value_by_name</span><span class="p">(</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot cast the value to the snapshot&#39;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="n">property_value</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">property_value</span><span class="p">,</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">set_snapshot_value</span><span class="p">(</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot set the snapshot&#39;</span><span class="p">,</span>
+                             <span class="n">device</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                             <span class="n">value</span><span class="o">=</span><span class="n">property_value</span><span class="p">,</span>
+                             <span class="n">comment</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">property_value</span><span class="p">,</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="n">val</span><span class="p">,</span> <span class="kc">True</span></div>
 
 
 
@@ -1616,6 +1681,14 @@
                                     <span class="n">list_of_wires</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">property_value</span><span class="p">,</span>
                                                         <span class="n">wire_dict</span><span class="o">=</span><span class="n">elements_dict_by_type</span><span class="p">[</span><span class="n">DeviceType</span><span class="o">.</span><span class="n">WireDevice</span><span class="p">])</span>
 
+
+                                <span class="k">elif</span> <span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span> <span class="o">==</span> <span class="n">SubObjectType</span><span class="o">.</span><span class="n">ImpedanceTripletList</span><span class="p">:</span>
+
+                                    <span class="c1"># get the line locations object and fill it with the json data</span>
+                                    <span class="n">impedance_triplet_list</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">ImpedanceTripletList</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_snapshot_value</span><span class="p">(</span>
+                                        <span class="n">prop</span><span class="o">=</span><span class="n">gc_prop</span><span class="p">)</span>
+                                    <span class="n">impedance_triplet_list</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">property_value</span><span class="p">)</span>
+
                                 <span class="k">elif</span> <span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span> <span class="o">==</span> <span class="n">SubObjectType</span><span class="o">.</span><span class="n">TapChanger</span><span class="p">:</span>
 
                                     <span class="c1"># get the line locations object and fill it with the json data</span>
@@ -1724,19 +1797,11 @@
                                                               <span class="n">property_value</span><span class="o">=</span><span class="n">val</span><span class="p">)</span>
 
                             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span><span class="p">,</span> <span class="n">EnumType</span><span class="p">):</span>
-
-                                <span class="k">try</span><span class="p">:</span>
-                                    <span class="n">val</span> <span class="o">=</span> <span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span><span class="p">(</span><span class="n">property_value</span><span class="p">)</span>
-
-                                    <span class="k">try</span><span class="p">:</span>
-                                        <span class="n">elm</span><span class="o">.</span><span class="n">set_snapshot_value</span><span class="p">(</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
-
-                                    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                                        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot set the snapshot&#39;</span><span class="p">,</span>
-                                                         <span class="n">device</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                                                         <span class="n">value</span><span class="o">=</span><span class="n">property_value</span><span class="p">,</span>
-                                                         <span class="n">comment</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-
+                                <span class="n">val</span><span class="p">,</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">set_enum_snapshot_value</span><span class="p">(</span><span class="n">elm</span><span class="o">=</span><span class="n">elm</span><span class="p">,</span>
+                                                                  <span class="n">gc_prop</span><span class="o">=</span><span class="n">gc_prop</span><span class="p">,</span>
+                                                                  <span class="n">property_value</span><span class="o">=</span><span class="n">property_value</span><span class="p">,</span>
+                                                                  <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                                <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
                                     <span class="k">try</span><span class="p">:</span>
                                         <span class="n">search_and_apply_json_profile</span><span class="p">(</span><span class="n">json_entry</span><span class="o">=</span><span class="n">json_entry</span><span class="p">,</span>
                                                                       <span class="n">gc_prop</span><span class="o">=</span><span class="n">gc_prop</span><span class="p">,</span>
@@ -1748,12 +1813,6 @@
                                                          <span class="n">device</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                                                          <span class="n">value</span><span class="o">=</span><span class="n">property_value</span><span class="p">,</span>
                                                          <span class="n">comment</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
-
-                                <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                                    <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Cannot cast the value to the snapshot&#39;</span><span class="p">,</span>
-                                                     <span class="n">device</span><span class="o">=</span><span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
-                                                     <span class="n">value</span><span class="o">=</span><span class="n">property_value</span><span class="p">,</span>
-                                                     <span class="n">comment</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 
                             <span class="k">else</span><span class="p">:</span>
                                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported property type: </span><span class="si">{</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">tpe</span><span class="si">}</span><span class="s1"> for </span><span class="si">{</span><span class="n">gc_prop</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -1854,11 +1913,14 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">parse_veragrid_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">VERAGRID_FILE_TYPE</span><span class="p">,</span>
                         <span class="n">previous_circuit</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                         <span class="n">project_directory</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">refine_pointers</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                         <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                         <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                         <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">MultiCircuit</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Interpret data</span>
+<span class="sd">    :param project_directory: file project directory</span>
+<span class="sd">    :param refine_pointers: Refine (and possibly delete) the pointer objects such as investments and contingencies?</span>
 <span class="sd">    :param data: dictionary of data frames and other information</span>
 <span class="sd">    :param previous_circuit: Optional previous VeraGrid circuit. This is relevant in case of loading grid increments</span>
 <span class="sd">    :param text_func: text callback function</span>
@@ -1985,8 +2047,8 @@
     <span class="c1"># New way of parsing information from .model files (Json files)</span>
     <span class="c1"># These files are just .json stored in the model_data inside the zip file</span>
 
-    <span class="n">block_parser</span> <span class="o">=</span> <span class="n">BlockParser</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span>
-    <span class="n">symbolic_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;symbolic_data&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">block_parser</span> <span class="o">=</span> <span class="n">BlockParser</span><span class="p">(</span><span class="n">circuit</span><span class="o">.</span><span class="n">var_factory</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="n">symbolic_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;symbolic_data&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">symbolic_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">symbolic_data</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;shared_references&quot;</span> <span class="ow">in</span> <span class="n">symbolic_data</span><span class="p">:</span>
@@ -1996,8 +2058,11 @@
             <span class="n">block_parser</span><span class="o">.</span><span class="n">parse_diff_vars</span><span class="p">(</span><span class="n">symbolic_data</span><span class="p">[</span><span class="s2">&quot;diff_vars&quot;</span><span class="p">])</span>
             <span class="k">if</span> <span class="s2">&quot;connections&quot;</span> <span class="ow">in</span> <span class="n">symbolic_data</span><span class="p">:</span>
                 <span class="n">block_parser</span><span class="o">.</span><span class="n">parse_connections</span><span class="p">(</span><span class="n">symbolic_data</span><span class="p">[</span><span class="s2">&quot;connections&quot;</span><span class="p">])</span>
-            <span class="k">for</span> <span class="n">block_uid</span> <span class="ow">in</span> <span class="n">symbolic_data</span><span class="p">[</span><span class="s2">&quot;main_block_uids&quot;</span><span class="p">]:</span>
-                <span class="n">block_parser</span><span class="o">.</span><span class="n">parse_block</span><span class="p">(</span><span class="n">symbolic_data</span><span class="p">[</span><span class="s2">&quot;blocks&quot;</span><span class="p">],</span> <span class="n">block_uid</span><span class="p">)</span>
+            <span class="c1"># BlockParser owns compatibility with all historical dynamics</span>
+            <span class="c1"># containers, including list-based tables, inline children and</span>
+            <span class="c1"># archives created before main_block_uids existed.</span>
+            <span class="n">block_parser</span><span class="o">.</span><span class="n">parse_blocks</span><span class="p">(</span><span class="n">blocks_data</span><span class="o">=</span><span class="n">symbolic_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;blocks&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">()),</span>
+                                      <span class="n">main_block_uids</span><span class="o">=</span><span class="n">symbolic_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;main_block_uids&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">pass</span>  <span class="c1"># the symbolic data is empty</span>
     <span class="k">else</span><span class="p">:</span>
@@ -2140,6 +2205,8 @@
                 <span class="n">ypos</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;ypos&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                 <span class="n">phase</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                 <span class="n">tower</span><span class="o">.</span><span class="n">add_wire_relationship</span><span class="p">(</span><span class="n">wire</span><span class="o">=</span><span class="n">wire</span><span class="p">,</span> <span class="n">xpos</span><span class="o">=</span><span class="n">xpos</span><span class="p">,</span> <span class="n">ypos</span><span class="o">=</span><span class="n">ypos</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="n">phase</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
 
     <span class="c1"># create diagrams --------------------------------------------------------------------------------------------------</span>
     <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -2172,7 +2239,8 @@
 
     <span class="c1"># search contingencies, investments and remedial actions pointed devices</span>
     <span class="c1"># and remove those that point nowhere</span>
-    <span class="n">circuit</span><span class="o">.</span><span class="n">refine_pointer_objects</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">refine_pointers</span><span class="p">:</span>
+        <span class="n">circuit</span><span class="o">.</span><span class="n">refine_pointer_objects</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">circuit</span><span class="o">.</span><span class="n">has_time_series</span><span class="p">:</span>
         <span class="n">circuit</span><span class="o">.</span><span class="n">ensure_profiles_exist</span><span class="p">()</span>
@@ -2194,8 +2262,8 @@
 
 <div class="viewcode-block" id="parse_multiverse_data">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.pack_unpack.parse_multiverse_data">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">parse_multiverse_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VERAGRID_FILE_TYPE</span><span class="p">],</span>
-                          <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_multiverse_data</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">VERAGRID_FILE_TYPE</span><span class="p">],</span>
+                          <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">],</span>
                           <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                           <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                           <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiVerse</span><span class="p">:</span>
@@ -2239,6 +2307,7 @@
     <span class="c1">#   scenario, never against the raw delta payload.</span>
     <span class="n">node_metadata</span> <span class="o">=</span> <span class="n">get_multiverse_node_metadata</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
     <span class="n">ordered_records</span> <span class="o">=</span> <span class="n">order_multiverse_records</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+    <span class="n">all_elements_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">ordered_records</span><span class="p">:</span>
         <span class="n">node_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;node_id&quot;</span><span class="p">])</span>
@@ -2246,63 +2315,92 @@
         <span class="n">parent_id_raw</span> <span class="o">=</span> <span class="n">record</span><span class="p">[</span><span class="s2">&quot;parent_id&quot;</span><span class="p">]</span>
         <span class="n">parent_id</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">parent_id_raw</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">parent_id_raw</span><span class="p">)</span>
 
-        <span class="n">model_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;multiverse&quot;</span><span class="p">][</span><span class="n">circuit_idtag</span><span class="p">]</span>
-        <span class="n">diagrams_dict</span><span class="p">[</span><span class="n">circuit_idtag</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;diagrams&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
+        <span class="n">multiverse_data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;multiverse&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">multiverse_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model_data</span> <span class="o">=</span> <span class="n">multiverse_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">circuit_idtag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-        <span class="n">model_without_diagrams</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model_data</span><span class="p">)</span>
-        <span class="n">model_without_diagrams</span><span class="p">[</span><span class="s2">&quot;diagrams&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">model_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">diagrams_dict</span><span class="p">[</span><span class="n">circuit_idtag</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;diagrams&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">())</span>
 
-        <span class="n">previous_circuit</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">parent_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">composed_by_node_id</span><span class="p">[</span><span class="n">parent_id</span><span class="p">]</span>
+                <span class="n">model_without_diagrams</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">model_data</span><span class="p">)</span>
+                <span class="n">model_without_diagrams</span><span class="p">[</span><span class="s2">&quot;diagrams&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
 
-        <span class="n">grid</span> <span class="o">=</span> <span class="n">parse_veragrid_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">model_without_diagrams</span><span class="p">,</span>
-                                   <span class="n">previous_circuit</span><span class="o">=</span><span class="n">previous_circuit</span><span class="p">,</span>
-                                   <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
-                                   <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
-                                   <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
-        <span class="n">grid</span><span class="o">.</span><span class="n">idtag</span> <span class="o">=</span> <span class="n">circuit_idtag</span>
-        <span class="n">diffs_dict</span><span class="p">[</span><span class="n">circuit_idtag</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span>
+                <span class="n">previous_circuit</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">parent_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">composed_by_node_id</span><span class="p">[</span><span class="n">parent_id</span><span class="p">]</span>
 
-        <span class="k">if</span> <span class="n">parent_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">composed_by_node_id</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">grid</span> <span class="o">=</span> <span class="n">parse_veragrid_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">model_without_diagrams</span><span class="p">,</span>
+                                           <span class="n">previous_circuit</span><span class="o">=</span><span class="n">previous_circuit</span><span class="p">,</span>
+                                           <span class="n">refine_pointers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                           <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                           <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
+                                           <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+                <span class="c1"># we create a dictionary of all the elements in all the scenarios such that finding pointers doesn&#39;t fail later</span>
+                <span class="n">d</span><span class="p">,</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">get_all_elements_dict</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                <span class="n">all_elements_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+                <span class="n">grid</span><span class="o">.</span><span class="n">idtag</span> <span class="o">=</span> <span class="n">circuit_idtag</span>
+                <span class="n">diffs_dict</span><span class="p">[</span><span class="n">circuit_idtag</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span>
+
+                <span class="k">if</span> <span class="n">parent_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">composed_by_node_id</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">composed</span> <span class="o">=</span> <span class="n">composed_by_node_id</span><span class="p">[</span><span class="n">parent_id</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                    <span class="n">composed</span><span class="o">.</span><span class="n">merge_circuit</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+                    <span class="n">composed</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">name</span>
+                    <span class="n">composed_by_node_id</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">composed</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># model_data is None</span>
+                <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">composed</span> <span class="o">=</span> <span class="n">composed_by_node_id</span><span class="p">[</span><span class="n">parent_id</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-            <span class="n">composed</span><span class="o">.</span><span class="n">merge_circuit</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
-            <span class="n">composed</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">name</span>
-            <span class="n">composed_by_node_id</span><span class="p">[</span><span class="n">node_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">composed</span>
+            <span class="c1"># multiverse is None</span>
+            <span class="k">pass</span>
 
-    <span class="n">mv</span><span class="o">.</span><span class="n">parse_json</span><span class="p">(</span><span class="n">diffs_dict</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+    <span class="c1"># Refine pointer in all grids</span>
+    <span class="k">for</span> <span class="n">idtag</span><span class="p">,</span> <span class="n">grid</span> <span class="ow">in</span> <span class="n">diffs_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">refine_pointer_objects</span><span class="p">(</span><span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span> <span class="n">all_elements_dict</span><span class="o">=</span><span class="n">all_elements_dict</span><span class="p">)</span>
+
+    <span class="c1"># Parse the multiverse data</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">mv</span><span class="o">.</span><span class="n">parse_json</span><span class="p">(</span><span class="n">diffs_dict</span><span class="o">=</span><span class="n">diffs_dict</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
 
     <span class="c1"># Parse diagrams only after the multiverse tree exists, so each node can resolve them</span>
     <span class="c1"># against its full composed scenario instead of its raw delta payload.</span>
     <span class="k">for</span> <span class="n">record</span> <span class="ow">in</span> <span class="n">node_metadata</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="n">node_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;node_id&quot;</span><span class="p">])</span>
         <span class="n">circuit_idtag</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">record</span><span class="p">[</span><span class="s2">&quot;circuit_idtag&quot;</span><span class="p">])</span>
-        <span class="n">node</span> <span class="o">=</span> <span class="n">mv</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">node_id</span><span class="p">)</span>
-        <span class="n">full_circuit</span> <span class="o">=</span> <span class="n">mv</span><span class="o">.</span><span class="n">checkout</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="n">obj_dict</span> <span class="o">=</span> <span class="n">full_circuit</span><span class="o">.</span><span class="n">get_all_elements_dict_by_type</span><span class="p">(</span><span class="n">add_locations</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">parsed_diagrams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">mv</span><span class="o">.</span><span class="n">check_node</span><span class="p">(</span><span class="n">node_id</span><span class="p">):</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">mv</span><span class="o">.</span><span class="n">get_node</span><span class="p">(</span><span class="n">node_id</span><span class="p">)</span>
+            <span class="n">full_circuit</span> <span class="o">=</span> <span class="n">mv</span><span class="o">.</span><span class="n">checkout</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="n">obj_dict</span> <span class="o">=</span> <span class="n">full_circuit</span><span class="o">.</span><span class="n">get_all_elements_dict_by_type</span><span class="p">(</span><span class="n">add_locations</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">parsed_diagrams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
 
-        <span class="k">for</span> <span class="n">diagram_dict</span> <span class="ow">in</span> <span class="n">diagrams_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">circuit_idtag</span><span class="p">,</span> <span class="nb">list</span><span class="p">()):</span>
-            <span class="k">if</span> <span class="n">diagram_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="n">DiagramType</span><span class="o">.</span><span class="n">Schematic</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;bus-branch&quot;</span><span class="p">]:</span>
-                <span class="n">diagram</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">SchematicDiagram</span><span class="p">()</span>
-                <span class="n">diagram</span><span class="o">.</span><span class="n">parse_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">diagram_dict</span><span class="p">,</span> <span class="n">obj_dict</span><span class="o">=</span><span class="n">obj_dict</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
-                <span class="n">parsed_diagrams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">diagram</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">diagram_dict</span> <span class="ow">in</span> <span class="n">diagrams_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">circuit_idtag</span><span class="p">,</span> <span class="nb">list</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">diagram_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="n">DiagramType</span><span class="o">.</span><span class="n">Schematic</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="s2">&quot;bus-branch&quot;</span><span class="p">]:</span>
+                    <span class="n">diagram</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">SchematicDiagram</span><span class="p">()</span>
+                    <span class="n">diagram</span><span class="o">.</span><span class="n">parse_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">diagram_dict</span><span class="p">,</span> <span class="n">obj_dict</span><span class="o">=</span><span class="n">obj_dict</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                    <span class="n">parsed_diagrams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">diagram</span><span class="p">)</span>
 
-            <span class="k">elif</span> <span class="n">diagram_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">DiagramType</span><span class="o">.</span><span class="n">SubstationLineMap</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
-                <span class="n">diagram</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">MapDiagram</span><span class="p">()</span>
-                <span class="n">diagram</span><span class="o">.</span><span class="n">parse_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">diagram_dict</span><span class="p">,</span> <span class="n">obj_dict</span><span class="o">=</span><span class="n">obj_dict</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
-                <span class="n">parsed_diagrams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">diagram</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">diagram_dict</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">DiagramType</span><span class="o">.</span><span class="n">SubstationLineMap</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                    <span class="n">diagram</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">MapDiagram</span><span class="p">()</span>
+                    <span class="n">diagram</span><span class="o">.</span><span class="n">parse_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">diagram_dict</span><span class="p">,</span> <span class="n">obj_dict</span><span class="o">=</span><span class="n">obj_dict</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                    <span class="n">parsed_diagrams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">diagram</span><span class="p">)</span>
 
-        <span class="n">node</span><span class="o">.</span><span class="n">diagrams</span> <span class="o">=</span> <span class="n">parsed_diagrams</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">diagrams</span> <span class="o">=</span> <span class="n">parsed_diagrams</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s2">&quot;Node ID not found&quot;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">node_id</span><span class="p">))</span>
 
-    <span class="n">active_node_id_raw</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;active_node_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
-    <span class="k">if</span> <span class="n">mv</span><span class="o">.</span><span class="n">current_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mv</span><span class="o">.</span><span class="n">current_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">obj_dict</span> <span class="o">=</span> <span class="n">mv</span><span class="o">.</span><span class="n">current_model</span><span class="o">.</span><span class="n">get_all_elements_dict_by_type</span><span class="p">(</span><span class="n">add_locations</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">mv</span><span class="o">.</span><span class="n">current_model</span><span class="o">.</span><span class="n">diagrams</span> <span class="o">=</span> <span class="n">copy_diagrams</span><span class="p">(</span><span class="n">diagrams</span><span class="o">=</span><span class="n">mv</span><span class="o">.</span><span class="n">current_node</span><span class="o">.</span><span class="n">diagrams</span><span class="p">,</span> <span class="n">obj_dict</span><span class="o">=</span><span class="n">obj_dict</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">active_node_id_raw</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;active_node_id&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mv</span><span class="o">.</span><span class="n">current_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">mv</span><span class="o">.</span><span class="n">current_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">obj_dict</span> <span class="o">=</span> <span class="n">mv</span><span class="o">.</span><span class="n">current_model</span><span class="o">.</span><span class="n">get_all_elements_dict_by_type</span><span class="p">(</span><span class="n">add_locations</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">mv</span><span class="o">.</span><span class="n">current_model</span><span class="o">.</span><span class="n">diagrams</span> <span class="o">=</span> <span class="n">copy_diagrams</span><span class="p">(</span><span class="n">diagrams</span><span class="o">=</span><span class="n">mv</span><span class="o">.</span><span class="n">current_node</span><span class="o">.</span><span class="n">diagrams</span><span class="p">,</span> <span class="n">obj_dict</span><span class="o">=</span><span class="n">obj_dict</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">active_node_id_raw</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span>
-            <span class="n">mv</span><span class="o">.</span><span class="n">current_node</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">mv</span><span class="o">.</span><span class="n">current_node</span><span class="o">.</span><span class="n">node_id</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="n">active_node_id_raw</span><span class="p">)):</span>
-        <span class="n">mv</span><span class="o">.</span><span class="n">activate_scenario</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">active_node_id_raw</span><span class="p">))</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">active_node_id_raw</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="n">mv</span><span class="o">.</span><span class="n">current_node</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">mv</span><span class="o">.</span><span class="n">current_node</span><span class="o">.</span><span class="n">node_id</span> <span class="o">!=</span> <span class="nb">int</span><span class="p">(</span><span class="n">active_node_id_raw</span><span class="p">))):</span>
+            <span class="k">if</span> <span class="n">mv</span><span class="o">.</span><span class="n">check_node</span><span class="p">(</span><span class="n">active_node_id_raw</span><span class="p">):</span>
+                <span class="n">mv</span><span class="o">.</span><span class="n">activate_scenario</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">active_node_id_raw</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">mv</span></div>
 

@@ -1,5 +1,9 @@
 import VeraGridEngine.api as gce
 from VeraGridEngine import WindingType, ShuntConnectionType, SolverType
+from VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph import (
+    compute_current_loads,
+    compute_power_loads,
+)
 import numpy as np
 
 
@@ -75,6 +79,37 @@ def test_impedance_groundedstar_3ph():
     assert np.allclose(res.voltage_A, Ua_reference, atol=1e-4)
     assert np.allclose(res.voltage_B, Ub_reference, atol=1e-4)
     assert np.allclose(res.voltage_C, Uc_reference, atol=1e-4)
+
+
+def test_neutralstar_load_uses_ground_when_bus_neutral_is_eliminated():
+    bus_idx = np.array([0], dtype=int)
+    bus_lookup = np.array([-1, 0, 1, 2], dtype=int)
+    voltage = np.array([1.0, np.exp(-2j * np.pi / 3), np.exp(2j * np.pi / 3)])
+
+    phase_power = np.array([0.7 + 0.5j, 0.6 + 0.45j, 0.5 + 0.4j])
+    star_power = np.r_[-phase_power.sum(), phase_power]
+    power_current, _, _ = compute_power_loads(
+        bus_idx=bus_idx,
+        bus_lookup=bus_lookup,
+        V=voltage,
+        Sstar=star_power,
+        Sfloating=np.zeros(4, dtype=complex),
+        Sdelta=np.zeros(4, dtype=complex),
+    )
+
+    phase_current = np.array([0.7 - 0.5j, 0.6 - 0.45j, 0.5 - 0.4j])
+    star_current = np.r_[-phase_current.sum(), phase_current]
+    current_current, _, _ = compute_current_loads(
+        bus_idx=bus_idx,
+        bus_lookup=bus_lookup,
+        V=voltage,
+        Istar=star_current,
+        Idelta=np.zeros(4, dtype=complex),
+        Ifloating=np.zeros(4, dtype=complex),
+    )
+
+    assert np.allclose(power_current, -np.conj(phase_power / voltage))
+    assert np.allclose(current_current, -np.conj(phase_current) * voltage)
 
 
 def test_impedance_floatingstar_3ph():

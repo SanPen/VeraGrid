@@ -183,7 +183,7 @@ class LookupArrayLinearDialog(QtWidgets.QDialog):
         :return: None.
         """
         super().__init__(parent)
-        self.setWindowTitle("Configure Lookup Table")
+        self.setWindowTitle(self.tr("Configure Lookup Table"))
         self.resize(560, 420)
 
         self._x_points: list[float] = list()
@@ -361,7 +361,7 @@ class LookupArrayLinearDialog(QtWidgets.QDialog):
         try:
             x_points, y_points = self._read_points_from_table()
         except ValueError as exc:
-            QtWidgets.QMessageBox.warning(self, "Lookup Table", str(exc))
+            QtWidgets.QMessageBox.warning(self, self.tr("Lookup Table"), str(exc))
             return
 
         pairs: list[tuple[float, float]] = list(zip(x_points, y_points))
@@ -386,7 +386,7 @@ class LookupArrayLinearDialog(QtWidgets.QDialog):
         item: QtWidgets.QTableWidgetItem | None
 
         if len(clipboard_text) == 0:
-            QtWidgets.QMessageBox.information(self, "Lookup Table", "Clipboard is empty.")
+            QtWidgets.QMessageBox.information(self, self.tr("Lookup Table"), self.tr("Clipboard is empty."))
             return
         else:
             pass
@@ -394,13 +394,13 @@ class LookupArrayLinearDialog(QtWidgets.QDialog):
         try:
             parsed_rows = _parse_clipboard_grid(clipboard_text)
         except ValueError as exc:
-            QtWidgets.QMessageBox.warning(self, "Lookup Table", str(exc))
+            QtWidgets.QMessageBox.warning(self, self.tr("Lookup Table"), str(exc))
             return
 
         if max(len(row) for row in parsed_rows) <= 2:
             pass
         else:
-            QtWidgets.QMessageBox.warning(self, "Lookup Table", "Lookup table clipboard data can only have up to two columns.")
+            QtWidgets.QMessageBox.warning(self, self.tr("Lookup Table"), self.tr("Lookup table clipboard data can only have up to two columns."))
             return
 
         anchor_row, anchor_col = _get_selection_anchor(self._table_widget, 0, 0)
@@ -455,7 +455,7 @@ class LookupArrayLinearDialog(QtWidgets.QDialog):
         try:
             x_points, y_points = self._read_points_from_table()
         except ValueError as exc:
-            QtWidgets.QMessageBox.warning(self, "Lookup Table", str(exc))
+            QtWidgets.QMessageBox.warning(self, self.tr("Lookup Table"), str(exc))
             return
 
         sorted_pairs: list[tuple[float, float]] = list(zip(x_points, y_points))
@@ -464,7 +464,7 @@ class LookupArrayLinearDialog(QtWidgets.QDialog):
         self._y_points = list(pair[1] for pair in sorted_pairs)
 
         if len(self._x_points) < 2:
-            QtWidgets.QMessageBox.warning(self, "Lookup Table", "Lookup tables require at least two points.")
+            QtWidgets.QMessageBox.warning(self, self.tr("Lookup Table"), self.tr("Lookup tables require at least two points."))
             return
         else:
             pass
@@ -475,8 +475,8 @@ class LookupArrayLinearDialog(QtWidgets.QDialog):
             else:
                 QtWidgets.QMessageBox.warning(
                     self,
-                    "Lookup Table",
-                    "Lookup table x values must be strictly increasing.",
+                    self.tr("Lookup Table"),
+                    self.tr("Lookup table x values must be strictly increasing."),
                 )
                 return
 
@@ -509,14 +509,14 @@ class LookupArrayLinearDialog(QtWidgets.QDialog):
         try:
             x_points, y_points = self._read_points_from_table()
         except ValueError as exc:
-            QtWidgets.QMessageBox.warning(self, "Lookup Table", str(exc))
+            QtWidgets.QMessageBox.warning(self, self.tr("Lookup Table"), str(exc))
             return
 
         pairs: list[tuple[float, float]] = list(zip(x_points, y_points))
         pairs.sort(key=sort_pair_by_x)
 
         if len(pairs) < 2:
-            QtWidgets.QMessageBox.warning(self, "Lookup Table", "Lookup tables require at least two points.")
+            QtWidgets.QMessageBox.warning(self, self.tr("Lookup Table"), self.tr("Lookup tables require at least two points."))
             return
         else:
             pass
@@ -713,7 +713,7 @@ class LookupMatrixLinearDialog(QtWidgets.QDialog):
         :return: None.
         """
         super().__init__(parent)
-        self.setWindowTitle("Configure Lookup Matrix")
+        self.setWindowTitle(self.tr("Configure Lookup Matrix"))
         self.resize(720, 520)
 
         self._x_points: list[float] = list()
@@ -892,7 +892,7 @@ class LookupMatrixLinearDialog(QtWidgets.QDialog):
                 z_matrix[row_index].pop()
             self._replace_matrix_data(x_points=x_points, y_points=y_points, z_matrix=z_matrix)
         else:
-            QtWidgets.QMessageBox.information(self, "Lookup Matrix", "At least two X points are required.")
+            QtWidgets.QMessageBox.information(self, self.tr("Lookup Matrix"), self.tr("At least two X points are required."))
 
     def remove_selected_x_columns(self) -> bool:
         """
@@ -983,7 +983,7 @@ class LookupMatrixLinearDialog(QtWidgets.QDialog):
             z_matrix.pop()
             self._replace_matrix_data(x_points=x_points, y_points=y_points, z_matrix=z_matrix)
         else:
-            QtWidgets.QMessageBox.information(self, "Lookup Matrix", "At least two Y points are required.")
+            QtWidgets.QMessageBox.information(self, self.tr("Lookup Matrix"), self.tr("At least two Y points are required."))
 
     def remove_selected_y_rows(self) -> bool:
         """
@@ -1090,7 +1090,7 @@ class LookupMatrixLinearDialog(QtWidgets.QDialog):
         try:
             x_points, y_points, z_matrix = self._read_matrix_from_table()
         except ValueError as exc:
-            QtWidgets.QMessageBox.warning(self, "Lookup Matrix", str(exc))
+            QtWidgets.QMessageBox.warning(self, self.tr("Lookup Matrix"), str(exc))
             return
 
         sorted_x_indexes = build_sorted_axis_indexes(x_points)
@@ -1126,7 +1126,7 @@ class LookupMatrixLinearDialog(QtWidgets.QDialog):
         item: QtWidgets.QTableWidgetItem | None
 
         if len(clipboard_text.strip()) == 0:
-            QtWidgets.QMessageBox.information(self, "Lookup Matrix", "Clipboard is empty.")
+            QtWidgets.QMessageBox.information(self, self.tr("Lookup Matrix"), self.tr("Clipboard is empty."))
             return
         else:
             pass
@@ -1134,7 +1134,7 @@ class LookupMatrixLinearDialog(QtWidgets.QDialog):
         try:
             parsed_rows = _parse_clipboard_grid(clipboard_text)
         except ValueError as exc:
-            QtWidgets.QMessageBox.warning(self, "Lookup Matrix", str(exc))
+            QtWidgets.QMessageBox.warning(self, self.tr("Lookup Matrix"), str(exc))
             return
 
         anchor_row, anchor_col = _get_selection_anchor(self._table_widget, 0, 0)
@@ -1182,27 +1182,27 @@ class LookupMatrixLinearDialog(QtWidgets.QDialog):
         try:
             x_points, y_points, z_matrix = self._read_matrix_from_table()
         except ValueError as exc:
-            QtWidgets.QMessageBox.warning(self, "Lookup Matrix", str(exc))
+            QtWidgets.QMessageBox.warning(self, self.tr("Lookup Matrix"), str(exc))
             return
 
         if len(x_points) >= 2 and len(y_points) >= 2:
             pass
         else:
-            QtWidgets.QMessageBox.warning(self, "Lookup Matrix", "Lookup matrix requires at least two X points and two Y points.")
+            QtWidgets.QMessageBox.warning(self, self.tr("Lookup Matrix"), self.tr("Lookup matrix requires at least two X points and two Y points."))
             return
 
         for point_index in range(len(x_points) - 1):
             if x_points[point_index + 1] > x_points[point_index]:
                 pass
             else:
-                QtWidgets.QMessageBox.warning(self, "Lookup Matrix", "X axis values must be strictly increasing.")
+                QtWidgets.QMessageBox.warning(self, self.tr("Lookup Matrix"), self.tr("X axis values must be strictly increasing."))
                 return
 
         for point_index in range(len(y_points) - 1):
             if y_points[point_index + 1] > y_points[point_index]:
                 pass
             else:
-                QtWidgets.QMessageBox.warning(self, "Lookup Matrix", "Y axis values must be strictly increasing.")
+                QtWidgets.QMessageBox.warning(self, self.tr("Lookup Matrix"), self.tr("Y axis values must be strictly increasing."))
                 return
 
         self._x_points = x_points

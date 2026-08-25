@@ -86,7 +86,7 @@ class DcLineDeviceEditor(TemplateDeviceEditor):
         """
         TemplateDeviceEditor.__init__(self, api_object=api_object, circuit=circuit)
         self.api_object: DcLine = api_object
-        self.setWindowTitle("DC line editor")
+        self.setWindowTitle(self.tr("DC line editor"))
 
         self.dc_line_design_widget: EmbeddedDcLineDesignEditorWidget | None = None
         self._build_dc_line_design_tab()
@@ -141,7 +141,7 @@ class DcLineDeviceEditor(TemplateDeviceEditor):
         if self.dc_line_design_widget is not None:
             self.dc_line_design_widget.apply_changes()
         else:
-            warning_msg("DC line design widget is not available", "DC line editor")
+            warning_msg(self.tr("DC line design widget is not available"), self.tr("DC line editor"))
 
     def _on_dc_line_design_applied(self, applied_ok: bool) -> None:
         """

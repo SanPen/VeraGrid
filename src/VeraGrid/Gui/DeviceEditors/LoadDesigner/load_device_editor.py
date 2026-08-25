@@ -90,7 +90,7 @@ class LoadDeviceEditor(TemplateDeviceEditor):
         """
         TemplateDeviceEditor.__init__(self, api_object=api_object, circuit=circuit)
         self.api_object: Load = api_object
-        self.setWindowTitle("Load editor")
+        self.setWindowTitle(self.tr("Load editor"))
 
         self.load_designer_widget: EmbeddedLoadDesignerWidget | None = None
         self._build_load_designer_tab()
@@ -162,9 +162,9 @@ class LoadDeviceEditor(TemplateDeviceEditor):
         Apply generated load profiles and refresh base tabs.
         """
         if self.load_designer_widget is None:
-            warning_msg("Load designer is not available", "Load editor")
+            warning_msg(self.tr("Load designer is not available"), self.tr("Load editor"))
         elif not bool(self.load_designer_widget.is_generated):
-            warning_msg("Generate a profile before applying it", "Load editor")
+            warning_msg(self.tr("Generate a profile before applying it"), self.tr("Load editor"))
         else:
             active_profile = self.load_designer_widget.P
             reactive_profile = self.load_designer_widget.Q
@@ -187,7 +187,7 @@ class LoadDeviceEditor(TemplateDeviceEditor):
                 self.refresh_profile_table()
                 self.show_info_toast("Load profile applied")
             else:
-                warning_msg("Wrong load profile length", "Load editor")
+                warning_msg(self.tr("Wrong load profile length"), self.tr("Load editor"))
 
 
 LoadDeviceEditorDialog = LoadDeviceEditor

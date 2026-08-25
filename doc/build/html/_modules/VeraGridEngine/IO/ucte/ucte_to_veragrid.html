@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.IO.ucte.ucte_to_veragrid &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.IO.ucte.ucte_to_veragrid &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,9 +44,9 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
@@ -67,6 +67,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
@@ -118,7 +122,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.devices.ucte_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">coalesce_number</span><span class="p">,</span> <span class="n">is_defined_number</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.devices.ucte_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">UcteCircuit</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">TapChangerTypes</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">,</span> <span class="n">TapPhaseControl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">TapChangerTypes</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">,</span> <span class="n">GeneratorControlMode</span>
 
 
 <div class="viewcode-block" id="is_xnode_code">
@@ -406,8 +410,10 @@
             <span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">elm</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">ld</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">has_gen</span><span class="p">():</span>
-            <span class="n">is_controlled</span> <span class="o">=</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">is_regulating_voltage</span><span class="p">()</span> <span class="ow">and</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">)</span>
-
+            <span class="k">if</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">is_regulating_voltage</span><span class="p">()</span> <span class="ow">and</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">voltage_reference</span><span class="p">):</span>
+                <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span>
             <span class="n">pmin</span> <span class="o">=</span> <span class="o">-</span><span class="n">coalesce_number</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">max_gen_mw</span><span class="p">,</span> <span class="n">get_default_power_limit</span><span class="p">())</span>
             <span class="n">pmax</span> <span class="o">=</span> <span class="o">-</span><span class="n">coalesce_number</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">min_gen_mw</span><span class="p">,</span> <span class="o">-</span><span class="n">get_default_power_limit</span><span class="p">())</span>
 
@@ -415,8 +421,9 @@
             <span class="n">qmax_ucte</span> <span class="o">=</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">max_gen_mvar</span>
 
             <span class="c1"># Handle potentially missing reactive limits in non-standard UCTE files</span>
-            <span class="k">if</span> <span class="n">is_controlled</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">qmin_ucte</span><span class="p">)</span> <span class="ow">or</span> <span class="n">qmin_ucte</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">)</span> \
-                           <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">qmax_ucte</span><span class="p">)</span> <span class="ow">or</span> <span class="n">qmax_ucte</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">control_mode</span> <span class="o">==</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">qmin_ucte</span><span class="p">)</span> <span class="ow">or</span> <span class="n">qmin_ucte</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">qmax_ucte</span><span class="p">)</span> <span class="ow">or</span> <span class="n">qmax_ucte</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">)):</span>
                 <span class="n">qmin</span> <span class="o">=</span> <span class="o">-</span><span class="n">get_default_power_limit</span><span class="p">()</span>
                 <span class="n">qmax</span> <span class="o">=</span> <span class="n">get_default_power_limit</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
@@ -432,8 +439,8 @@
                 <span class="n">Pmax</span><span class="o">=</span><span class="n">pmax</span><span class="p">,</span>
                 <span class="n">Qmin</span><span class="o">=</span><span class="n">qmin</span><span class="p">,</span>
                 <span class="n">Qmax</span><span class="o">=</span><span class="n">qmax</span><span class="p">,</span>
-                <span class="n">vset</span><span class="o">=</span><span class="n">vm0</span> <span class="k">if</span> <span class="n">is_controlled</span> <span class="k">else</span> <span class="mf">1.0</span><span class="p">,</span>
-                <span class="n">is_controlled</span><span class="o">=</span><span class="n">is_controlled</span><span class="p">,</span>
+                <span class="n">vset</span><span class="o">=</span><span class="n">vm0</span> <span class="k">if</span> <span class="p">(</span><span class="n">control_mode</span> <span class="o">==</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1.0</span><span class="p">,</span>
+                <span class="n">control_mode</span><span class="o">=</span><span class="n">control_mode</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="n">tech</span> <span class="o">=</span> <span class="n">tech_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">plant_type</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -443,6 +450,7 @@
             <span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">elm</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">gen</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">bus_dict</span></div>
+
 
 
 <div class="viewcode-block" id="add_switch">
@@ -542,10 +550,10 @@
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.ucte.html#VeraGridEngine.IO.ucte.ucte_to_veragrid.is_fictitious_shunt_line">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">is_fictitious_shunt_line</span><span class="p">(</span><span class="n">ucte_elm</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="k">return</span> <span class="p">(</span>
-        <span class="p">(</span><span class="n">is_fictitious_shunt_code</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_fictitious_shunt_code</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="p">))</span>
-        <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">resistance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
-        <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">reactance</span> <span class="o">-</span> <span class="mf">0.05</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1e-6</span>
-        <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">susceptance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span>
+            <span class="p">(</span><span class="n">is_fictitious_shunt_code</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node1</span><span class="p">)</span> <span class="ow">or</span> <span class="n">is_fictitious_shunt_code</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">node2</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">resistance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
+            <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">reactance</span> <span class="o">-</span> <span class="mf">0.05</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1e-6</span>
+            <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">susceptance</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">tol</span>
     <span class="p">)</span></div>
 
 
@@ -707,10 +715,10 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">has_zero_transformer_impedance</span><span class="p">(</span><span class="n">ucte_elm</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-9</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="n">conductance</span> <span class="o">=</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">conductance</span> <span class="k">if</span> <span class="n">is_defined_number</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">conductance</span><span class="p">)</span> <span class="k">else</span> <span class="mf">0.0</span>
     <span class="k">return</span> <span class="p">(</span>
-        <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">resistance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
-        <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">reactance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
-        <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">susceptance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
-        <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">conductance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
+            <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">resistance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
+            <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">reactance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
+            <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">susceptance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
+            <span class="ow">and</span> <span class="nb">abs</span><span class="p">(</span><span class="n">conductance</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">tol</span>
     <span class="p">)</span></div>
 
 
@@ -957,8 +965,9 @@
                                    <span class="n">device</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">get_primary_key</span><span class="p">())</span>
 
             <span class="k">if</span> <span class="ow">not</span> <span class="n">has_zero_transformer_impedance</span><span class="p">(</span><span class="n">ucte_elm</span><span class="p">):</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;UCTE transformer coupler has non-zero impedance/admittance, importing it as a switch&quot;</span><span class="p">,</span>
-                                   <span class="n">device</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">get_primary_key</span><span class="p">())</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                    <span class="s2">&quot;UCTE transformer coupler has non-zero impedance/admittance, importing it as a switch&quot;</span><span class="p">,</span>
+                    <span class="n">device</span><span class="o">=</span><span class="n">ucte_elm</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">ucte_elm</span><span class="o">.</span><span class="n">get_primary_key</span><span class="p">())</span>
 
             <span class="n">add_switch_from_transformer</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">ucte_elm</span><span class="p">,</span> <span class="n">bus_f</span><span class="p">,</span> <span class="n">bus_t</span><span class="p">,</span> <span class="n">active</span><span class="p">,</span> <span class="n">reducible</span><span class="p">)</span>
             <span class="k">continue</span>

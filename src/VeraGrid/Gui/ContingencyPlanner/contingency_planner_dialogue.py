@@ -27,7 +27,7 @@ class ContingencyPlannerGUI(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.setWindowTitle('Contingency planner')
+        self.setWindowTitle(self.tr('Contingency planner'))
 
         self.circuit = grid
 

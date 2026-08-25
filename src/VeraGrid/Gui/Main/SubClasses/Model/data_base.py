@@ -344,7 +344,7 @@ class DataBaseTableMain(DiagramsMain):
             mdl.copy_to_clipboard()
             self.show_info_toast('Copied!')
         else:
-            warning_msg('There is no data displayed, please display one', 'Copy profile to clipboard')
+            warning_msg(self.tr('There is no data displayed, please display one'), self.tr('Copy profile to clipboard'))
 
     def get_db_object_selected_type(self) -> DeviceType | None:
         """
@@ -530,7 +530,7 @@ class DataBaseTableMain(DiagramsMain):
 
         if len(selected_objects):
 
-            ok = yes_no_question('Are you sure that you want to delete_with_dialogue the selected elements?', 'Delete')
+            ok = yes_no_question(self.tr('Are you sure that you want to delete_with_dialogue the selected elements?'), self.tr('Delete'))
             if ok:
                 for obj in selected_objects:
 
@@ -557,8 +557,8 @@ class DataBaseTableMain(DiagramsMain):
 
         if len(selected_objects):
 
-            ok = yes_no_question('Are you sure that you want to duplicate the selected elements?',
-                                 'Duplicate')
+            ok = yes_no_question(self.tr('Are you sure that you want to duplicate the selected elements?'),
+                                 self.tr('Duplicate'))
             if ok:
                 for obj in selected_objects:
                     cpy = obj.copy(forced_new_idtag=True)
@@ -581,8 +581,8 @@ class DataBaseTableMain(DiagramsMain):
 
             if selected_objects[0].device_type == DeviceType.SubstationDevice:
 
-                ok = yes_no_question('Are you sure that you want to merge the selected substations?',
-                                     'Merge')
+                ok = yes_no_question(self.tr('Are you sure that you want to merge the selected substations?'),
+                                     self.tr('Merge'))
                 if ok:
                     # merge substations into the first
                     self.circuit.merge_substations(selected_objects=selected_objects)
@@ -640,7 +640,7 @@ class DataBaseTableMain(DiagramsMain):
                     diagram.add_object_to_the_schematic(elm=device, logger=logger)
 
             if len(logger):
-                dlg = LogsDialogue(name="Add selected DB objects to current diagram", logger=logger)
+                dlg = LogsDialogue(name=self.tr("Add selected DB objects to current diagram"), logger=logger)
                 dlg.setModal(True)
                 dlg.exec()
 
@@ -767,10 +767,10 @@ class DataBaseTableMain(DiagramsMain):
         if len(selected_buses):
 
             ok = yes_no_question(
-                text="This will delete all buses and their connected elements that were not selected."
+                text=self.tr("This will delete all buses and their connected elements that were not selected."
                      "This cannot be undone and it is dangerous if you don't know"
-                     "what you are doing. \nAre you sure?",
-                title="Crop model to buses selection?")
+                     "what you are doing. \nAre you sure?"),
+                title=self.tr("Crop model to buses selection?"))
 
             if ok:
                 to_be_deleted = list()
@@ -1066,7 +1066,7 @@ class DataBaseTableMain(DiagramsMain):
                 self.circuit.add_control_pc(obj)
 
             else:
-                info_msg("This object does not support table-like addition.\nUse the schematic instead.")
+                info_msg(self.tr("This object does not support table-like addition.\nUse the schematic instead."))
                 return
 
             # update the view
@@ -1121,7 +1121,7 @@ class DataBaseTableMain(DiagramsMain):
                     elm: ALL_DEV_TYPES | None = model.get_object_at_proxy_row(proxy_row=idx_proxy)
 
                     if elm is None:
-                        info_msg('Choose an element from the table')
+                        info_msg(self.tr('Choose an element from the table'))
 
                     elif elm_type == DeviceType.OverheadLineTypeDevice:
 
@@ -1199,16 +1199,16 @@ class DataBaseTableMain(DiagramsMain):
 
                     else:
 
-                        warning_msg('No editor available.\n'
+                        warning_msg(self.tr('No editor available.\n'
                                     'The values can be changed from the table or '
-                                    'via context menus in the graphical interface.',
-                                    'Edit')
+                                    'via context menus in the graphical interface.'),
+                                    self.tr('Edit'))
                 else:
-                    info_msg('Choose an element from the table')
+                    info_msg(self.tr('Choose an element from the table'))
             else:
-                info_msg('Choose an element from the table')
+                info_msg(self.tr('Choose an element from the table'))
         else:
-            info_msg('Select a catalogue element and then a catalogue object')
+            info_msg(self.tr('Select a catalogue element and then a catalogue object'))
 
     def set_value_to_column(self):
         """
@@ -1224,7 +1224,7 @@ class DataBaseTableMain(DiagramsMain):
                 # update the view
                 self.view_objects_data()
             else:
-                info_msg('Select some element to serve as source to copy', 'Set value to column')
+                info_msg(self.tr('Select some element to serve as source to copy'), self.tr('Set value to column'))
         else:
             pass
 
@@ -1277,7 +1277,7 @@ class DataBaseTableMain(DiagramsMain):
                         self.set_big_bus_marker(buses=buses, color=color)
 
                 else:
-                    info_msg('Select some elements to highlight', 'Highlight')
+                    info_msg(self.tr('Select some elements to highlight'), self.tr('Highlight'))
             else:
                 pass
 
@@ -1310,14 +1310,17 @@ class DataBaseTableMain(DiagramsMain):
                     col_indices = list({index.column() for index in indices})
                     elm = model.get_object_at_proxy_row(proxy_row=0)
                     if elm is None:
-                        info_msg("No object found :(", "Highlight based on property")
+                        info_msg(self.tr("No object found :("), self.tr("Highlight based on property"))
                         return
                     else:
                         pass
                     attr = model.attributes[col_indices[0]]
                     gc_prop = elm.registered_properties[attr]
                     if gc_prop is None:
-                        info_msg(f"The proprty {attr} cannot be found :(", "Highlight based on property")
+                        info_msg(
+                            self.tr("The proprty {property_name} cannot be found :(").format(property_name=attr),
+                            self.tr("Highlight based on property"),
+                        )
                         return
 
                     if gc_prop.tpe in [float, int]:
@@ -1376,11 +1379,11 @@ class DataBaseTableMain(DiagramsMain):
                             self.set_big_bus_marker_colours(buses=buses, colors=colors, tool_tips=None)
 
                         else:
-                            info_msg('The maximum value is 0, so the coloring cannot be applied',
-                                     'Highlight based on property')
+                            info_msg(self.tr('The maximum value is 0, so the coloring cannot be applied'),
+                                     self.tr('Highlight based on property'))
                     else:
-                        info_msg('The selected property must be of a numeric type',
-                                 'Highlight based on property')
+                        info_msg(self.tr('The selected property must be of a numeric type'),
+                                 self.tr('Highlight based on property'))
 
                 else:
                     pass
@@ -1417,13 +1420,13 @@ class DataBaseTableMain(DiagramsMain):
                         logger.add_error("No object found for selected row", device=str(i))
 
                 if logger.size():
-                    logs_window = LogsDialogue("Assign to profile", logger=logger)
+                    logs_window = LogsDialogue(self.tr("Assign to profile"), logger=logger)
                     logs_window.exec()
                 else:
                     lst = ", ".join(attr_list)
                     self.show_info_toast(f"{lst} assigned to profile")
         else:
-            info_msg("Select a cell or a column first", "Assign to profile")
+            info_msg(self.tr("Select a cell or a column first"), self.tr("Assign to profile"))
 
     def objects_histogram_analysis_plot(self):
         """
@@ -1442,7 +1445,7 @@ class DataBaseTableMain(DiagramsMain):
             else:
                 pass
         else:
-            info_msg('Select a data structure')
+            info_msg(self.tr('Select a data structure'))
 
     def objects_smart_search(self):
         """
@@ -1482,14 +1485,14 @@ class DataBaseTableMain(DiagramsMain):
         :return:
         """
         ok = yes_no_question(
-            "This action removes all disconnected devices with no active profile and delete all small islands",
-            "Delete inconsistencies")
+            self.tr("This action removes all disconnected devices with no active profile and delete all small islands"),
+            self.tr("Delete inconsistencies"))
 
         if ok:
             logger = self.delete_shit()
 
             if len(logger) > 0:
-                dlg = LogsDialogue("Delete inconsistencies", logger)
+                dlg = LogsDialogue(self.tr("Delete inconsistencies"), logger)
                 dlg.setModal(True)
                 dlg.exec()
 
@@ -1544,14 +1547,14 @@ class DataBaseTableMain(DiagramsMain):
         Clean the DataBase
         """
 
-        ok = yes_no_question("This action may delete_with_dialogue unused objects and references, \nAre you sure?",
-                             title="DB clean")
+        ok = yes_no_question(self.tr("This action may delete_with_dialogue unused objects and references, \nAre you sure?"),
+                             title=self.tr("DB clean"))
 
         if ok:
             logger = self.circuit.clean()
 
             if len(logger) > 0:
-                dlg = LogsDialogue('DB clean logger', logger)
+                dlg = LogsDialogue(self.tr('DB clean logger'), logger)
                 dlg.exec()
 
     def scale(self):
@@ -1567,8 +1570,8 @@ class DataBaseTableMain(DiagramsMain):
         Call the detect substations logic
         """
 
-        ok = yes_no_question("Do you want to try to detect substations and voltage levels in the grid model?",
-                             "Detect substations")
+        ok = yes_no_question(self.tr("Do you want to try to detect substations and voltage levels in the grid model?"),
+                             self.tr("Detect substations"))
 
         if ok:
             val = 1.0 / (10.0 ** self.ui.rxThresholdSpinBox.value())
@@ -1579,8 +1582,8 @@ class DataBaseTableMain(DiagramsMain):
         """
         Call the detect facilities logic
         """
-        ok = yes_no_question("Do you want to try to detect facilities in the grid model?",
-                             "Detect facilities")
+        ok = yes_no_question(self.tr("Do you want to try to detect facilities in the grid model?"),
+                             self.tr("Detect facilities"))
 
         if ok:
             detect_facilities(grid=self.circuit)
@@ -1724,10 +1727,10 @@ class DataBaseTableMain(DiagramsMain):
                 buses_to_replace=buses_to_replace
             )
 
-            dlg3 = CustomQuestionDialogue(title="New substation",
-                                          question="How do you want to represent the merged grid?",
-                                          answer1="Create new diagram",
-                                          answer2="Add to current diagram")
+            dlg3 = CustomQuestionDialogue(title=self.tr("New substation"),
+                                          question=self.tr("How do you want to represent the merged grid?"),
+                                          answer1=self.tr("Create new diagram"),
+                                          answer2=self.tr("Add to current diagram"))
             dlg3.exec()
 
             if dlg3.accepted_answer == 1:
@@ -1790,9 +1793,9 @@ class DataBaseTableMain(DiagramsMain):
         Change values of x,y in the database using the latitude and longitude of the buses
         :return:
         """
-        ok = yes_no_question(text="Setting the database buses x,y position from their latitude and longitude "
+        ok = yes_no_question(text=self.tr("Setting the database buses x,y position from their latitude and longitude "
                                   "values will change the buses values but not the current diagrams. "
-                                  "New diagrams will use the new values",
+                                  "New diagrams will use the new values"),
                              title="")
 
         if ok:
@@ -1808,9 +1811,9 @@ class DataBaseTableMain(DiagramsMain):
         Restore investments to the circuit
         :return:
         """
-        ok = yes_no_question(text="This action will restore the circuit to the state before the last investment "
-                                  "modification. Do you want to proceed?",
-                             title="Restore investments")
+        ok = yes_no_question(text=self.tr("This action will restore the circuit to the state before the last investment "
+                                  "modification. Do you want to proceed?"),
+                             title=self.tr("Restore investments"))
 
         if ok:
             self.circuit.restore_investments()

@@ -2347,6 +2347,8 @@ def _call_symbolic_parser_function(function_name: str, arg_expr: Expr) -> Expr:
         return exp(arg_expr)
     elif function_name == "log":
         return log(arg_expr)
+    elif function_name == "log10":
+        return log10(arg_expr)
     elif function_name == "sqrt":
         return sqrt(arg_expr)
     elif function_name == "asin":
@@ -2359,6 +2361,8 @@ def _call_symbolic_parser_function(function_name: str, arg_expr: Expr) -> Expr:
         return sinh(arg_expr)
     elif function_name == "cosh":
         return cosh(arg_expr)
+    elif function_name == "tanh":
+        return tanh(arg_expr)
     elif function_name == "abs":
         return abs(arg_expr)
     elif function_name == "real":
@@ -2383,24 +2387,26 @@ def _call_symbolic_parser_function(function_name: str, arg_expr: Expr) -> Expr:
         raise ValueError(f"Unknown function '{function_name}'")
 
 
-def _get_symbolic_parser_function_names_internal() -> List[str]:
+def _get_symbolic_parser_unary_function_names_internal() -> List[str]:
     """
-    Return the list of public unary functions accepted by the parser.
+    Return the public unary functions accepted by the symbolic parser.
 
     :return: Supported unary parser function names.
     """
-    return [
+    return list((
         "sin",
         "cos",
         "tan",
         "exp",
         "log",
+        "log10",
         "sqrt",
         "asin",
         "acos",
         "atan",
         "sinh",
         "cosh",
+        "tanh",
         "abs",
         "real",
         "imag",
@@ -2411,16 +2417,28 @@ def _get_symbolic_parser_function_names_internal() -> List[str]:
         "floor",
         "ceil",
         "round",
-    ]
+    ))
+
+
+def _get_symbolic_parser_binary_function_names_internal() -> List[str]:
+    """Return the public binary functions accepted by the symbolic parser.
+
+    :return: Supported two-argument parser function names.
+    """
+    return list((
+        "atan2",
+        "min",
+        "max",
+    ))
 
 
 def _ast_to_symbolic(node: ast.AST, symbol_namespace: Mapping[str, Expr | NUMBER]) -> Expr | Comparison:
-    """
-    Convert a restricted Python AST into a symbolic expression tree.
+    """Convert one restricted Python AST node into a symbolic expression.
 
-    :param node:
-    :param symbol_namespace:
-    :return:
+    :param node: Python syntax node belonging to the parsed expression.
+    :param symbol_namespace: Explicit symbolic identities accepted by name.
+    :return: Symbolic expression or comparison represented by ``node``.
+    :raises ValueError: If the node uses unsupported syntax or identities.
     """
     left_expr: Expr | Comparison
     right_expr: Expr | Comparison
@@ -2472,8 +2490,27 @@ def _ast_to_symbolic(node: ast.AST, symbol_namespace: Mapping[str, Expr | NUMBER
                     return _call_symbolic_parser_function(function_name, right_expr)
                 else:
                     raise ValueError("Function calls require a symbolic argument")
+            elif len(node.args) == 2 and len(node.keywords) == 0:
+                function_name = node.func.id
+                left_expr = _ast_to_symbolic(node.args[0], symbol_namespace)
+                right_expr = _ast_to_symbolic(node.args[1], symbol_namespace)
+
+                # Binary parser functions are kept in the same symbolic
+                # catalogue as unary functions so every editor and importer
+                # observes one authoritative language definition.
+                binary_function_names: List[str] = (
+                    _get_symbolic_parser_binary_function_names_internal()
+                )
+                if (function_name in binary_function_names
+                        and isinstance(left_expr, Expr)
+                        and isinstance(right_expr, Expr)):
+                    return Func2(function_name, left_expr, right_expr)
+                else:
+                    raise ValueError(
+                        f"Unknown two-argument function '{function_name}'"
+                    )
             else:
-                raise ValueError("Only single-argument function calls are supported")
+                raise ValueError("Only supported one- or two-argument functions are allowed")
         else:
             raise ValueError("Only named functions are supported")
     elif isinstance(node, ast.Compare):
@@ -2503,12 +2540,13 @@ def _ast_to_symbolic(node: ast.AST, symbol_namespace: Mapping[str, Expr | NUMBER
 
 
 def string_to_symbolic(expression_text: str, symbol_namespace: Mapping[str, Expr | NUMBER]) -> Expr | Comparison:
-    """
-    Parse a textual symbolic expression into a symbolic tree using a safe AST walk.
+    """Parse restricted source text into a symbolic expression tree.
 
-    :param expression_text:
-    :param symbol_namespace:
-    :return:
+    :param expression_text: Python-like symbolic expression without assignments.
+    :param symbol_namespace: Explicit symbolic identities accepted by name.
+    :return: Parsed symbolic expression or comparison.
+    :raises SyntaxError: If ``expression_text`` is not valid Python expression syntax.
+    :raises ValueError: If the expression uses unsupported syntax or identities.
     """
     expression_tree: ast.Expression = ast.parse(expression_text, mode="eval")
     return _ast_to_symbolic(expression_tree, symbol_namespace)
@@ -2516,12 +2554,30 @@ def string_to_symbolic(expression_text: str, symbol_namespace: Mapping[str, Expr
 
 def get_symbolic_parser_function_names() -> List[str]:
     """
-    Return the public function names accepted by :func:`string_to_symbolic`.
+    Return every public function accepted by :func:`string_to_symbolic`.
 
-    :return:
+    :return: Detached ordered list of unary and binary function names.
     """
-    function_names: List[str] = _get_symbolic_parser_function_names_internal()
+    function_names: List[str] = _get_symbolic_parser_unary_function_names_internal()
+    function_names.extend(_get_symbolic_parser_binary_function_names_internal())
     return function_names
+
+
+def get_symbolic_parser_function_arity(function_name: str) -> int | None:
+    """Return the positional arity of one public symbolic parser function.
+
+    :param function_name: Function name obtained from symbolic source text.
+    :return: Required positional argument count, or ``None`` when unsupported.
+    """
+    unary_function_names: List[str] = _get_symbolic_parser_unary_function_names_internal()
+    binary_function_names: List[str] = _get_symbolic_parser_binary_function_names_internal()
+    if function_name in unary_function_names:
+        result: int | None = 1
+    elif function_name in binary_function_names:
+        result = 2
+    else:
+        result = None
+    return result
 
 
 def symbolic_to_string(expr: Expr) -> str:
@@ -2569,6 +2625,7 @@ __all__ = [
     "symbolic_to_string",
     "string_to_symbolic",
     "get_symbolic_parser_function_names",
+    "get_symbolic_parser_function_arity",
     "hard_sat",
     "f_exc",
     'expression2numba',

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import json
 import re
 import shutil
@@ -37,6 +38,124 @@ class LocalAiTranslationConfig:
         self.timeout_s: int = timeout_s
 
 
+class PythonTranslationMessageCollector(ast.NodeVisitor):
+    """
+    Collect literal Qt translation calls from Python GUI source files.
+    """
+
+    __slots__ = ("class_contexts", "context_stack", "helper_contexts", "messages")
+
+    def __init__(self, helper_contexts: dict[str, str], class_contexts: dict[str, str]) -> None:
+        """
+        Build the Python translation message collector.
+
+        :param helper_contexts: Function name to Qt translation context mapping.
+        :param class_contexts: Class name to overridden ``tr`` context mapping.
+        :returns: None.
+        """
+        self.helper_contexts: dict[str, str] = helper_contexts
+        self.class_contexts: dict[str, str] = class_contexts
+        self.context_stack: list[str] = list()
+        self.messages: dict[str, set[str]] = dict()
+
+    def _add_message(self, context_name: str, source_text: str) -> None:
+        """
+        Store one source text in its Qt translation context.
+
+        :param context_name: Qt translation context.
+        :param source_text: Source text used by the GUI.
+        :returns: Nothing.
+        """
+        context_messages: set[str] | None = self.messages.get(context_name, None)
+
+        # Contexts group translations exactly as Qt resolves them at runtime.
+        if context_messages is None:
+            context_messages = set()
+            self.messages[context_name] = context_messages
+        else:
+            pass
+
+        # Empty strings do not need translator work and only add catalog noise.
+        if len(source_text) > 0:
+            context_messages.add(source_text)
+        else:
+            pass
+
+    def _get_current_tr_context(self) -> str | None:
+        """
+        Return the active ``self.tr`` context.
+
+        :returns: Qt translation context or ``None`` outside classes.
+        """
+        if len(self.context_stack) > 0:
+            class_name: str = self.context_stack[-1]
+            context_name: str | None = self.class_contexts.get(class_name, None)
+
+            if context_name is None:
+                return class_name
+            else:
+                return context_name
+        else:
+            return None
+
+    def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        """
+        Visit one class and use it as the default ``self.tr`` context.
+
+        :param node: Python class definition node.
+        :returns: Nothing.
+        """
+        self.context_stack.append(node.name)
+
+        # The class stack mirrors Qt's default QObject.tr context resolution.
+        self.generic_visit(node)
+        self.context_stack.pop()
+
+    def visit_Call(self, node: ast.Call) -> None:
+        """
+        Visit one function call and collect supported translation literals.
+
+        :param node: Python call node.
+        :returns: Nothing.
+        """
+        context_name: str | None = None
+        source_text: str | None = None
+        function_node: ast.expr = node.func
+        helper_context: str | None
+
+        # Explicit QCoreApplication.translate-style calls carry their context
+        # in the first argument, so they can be added without class inference.
+        if isinstance(function_node, ast.Attribute):
+            if function_node.attr == "translate" and len(node.args) >= 2:
+                context_name = _get_literal_string(node=node.args[0])
+                source_text = _get_literal_string(node=node.args[1])
+            else:
+                if function_node.attr == "tr" and len(node.args) >= 1:
+                    context_name = self._get_current_tr_context()
+                    source_text = _get_literal_string(node=node.args[0])
+                else:
+                    pass
+        else:
+            if isinstance(function_node, ast.Name) and len(node.args) >= 1:
+                helper_context = self.helper_contexts.get(function_node.id, None)
+                if helper_context is None:
+                    pass
+                else:
+                    context_name = helper_context
+                    source_text = _get_literal_string(node=node.args[0])
+            else:
+                pass
+
+        if context_name is not None and source_text is not None:
+            self._add_message(context_name=context_name, source_text=source_text)
+        else:
+            pass
+
+        # Arguments can contain nested translation calls, so the normal AST
+        # traversal still needs to happen after inspecting the current call.
+        self.generic_visit(node)
+
+
 def _find_tool(tool_name: str) -> str:
     """
     Resolve one Qt translation tool from PATH.
@@ -59,6 +178,203 @@ def _run_command(arguments: list[str]) -> None:
     :returns: Nothing.
     """
     subprocess.run(arguments, check=True)
+
+
+def _get_literal_string(node: ast.AST) -> str | None:
+    """
+    Return a literal string from one AST node.
+
+    :param node: Python AST node.
+    :returns: String literal or ``None`` for dynamic expressions.
+    """
+    if isinstance(node, ast.Constant):
+        if isinstance(node.value, str):
+            return node.value
+        else:
+            return None
+    else:
+        return None
+
+
+def _get_translate_context(call_node: ast.Call) -> str | None:
+    """
+    Return the context from one literal ``translate`` call.
+
+    :param call_node: Python call node.
+    :returns: Qt translation context or ``None``.
+    """
+    function_node: ast.expr = call_node.func
+
+    if isinstance(function_node, ast.Attribute):
+        if function_node.attr == "translate" and len(call_node.args) >= 2:
+            return _get_literal_string(node=call_node.args[0])
+        else:
+            return None
+    else:
+        return None
+
+
+def _get_function_translate_context(function_node: ast.FunctionDef) -> str | None:
+    """
+    Return the Qt context wrapped by one helper function.
+
+    :param function_node: Python function definition.
+    :returns: Qt translation context or ``None``.
+    """
+    child_node: ast.AST
+    return_node: ast.Return
+    context_name: str | None = None
+
+    # Runtime helper wrappers usually return QCoreApplication.translate with a
+    # fixed context and a dynamic source_text parameter. Capturing that context
+    # lets literal calls to the wrapper land in the same catalog context.
+    for child_node in ast.walk(function_node):
+        if isinstance(child_node, ast.Return):
+            return_node = child_node
+            if isinstance(return_node.value, ast.Call):
+                context_name = _get_translate_context(call_node=return_node.value)
+            else:
+                pass
+        else:
+            pass
+
+    return context_name
+
+
+def _get_class_tr_context(function_node: ast.FunctionDef, helper_contexts: dict[str, str]) -> str | None:
+    """
+    Return the Qt context used by one overridden ``tr`` method.
+
+    :param function_node: Python ``tr`` method definition.
+    :param helper_contexts: Function name to Qt translation context mapping.
+    :returns: Qt translation context or ``None``.
+    """
+    child_node: ast.AST
+    return_node: ast.Return
+    call_node: ast.Call
+    helper_name: str
+    context_name: str | None = None
+
+    # Some dialogs override tr() to route through a generated-UI context such
+    # as MainWindow or AboutDialog. Those strings must be cataloged there, not
+    # under the Python class name.
+    for child_node in ast.walk(function_node):
+        if isinstance(child_node, ast.Return):
+            return_node = child_node
+            if isinstance(return_node.value, ast.Call):
+                call_node = return_node.value
+                if isinstance(call_node.func, ast.Name):
+                    helper_name = call_node.func.id
+                    context_name = helper_contexts.get(helper_name, None)
+                else:
+                    pass
+            else:
+                pass
+        else:
+            pass
+
+    return context_name
+
+
+def _collect_python_helper_contexts(tree: ast.Module) -> dict[str, str]:
+    """
+    Collect translation helper function contexts from one Python module.
+
+    :param tree: Parsed Python module.
+    :returns: Helper function to Qt context mapping.
+    """
+    helper_contexts: dict[str, str] = dict()
+    body_node: ast.stmt
+    context_name: str | None
+
+    for body_node in tree.body:
+        if isinstance(body_node, ast.FunctionDef):
+            context_name = _get_function_translate_context(function_node=body_node)
+            if context_name is None:
+                pass
+            else:
+                helper_contexts[body_node.name] = context_name
+        else:
+            pass
+
+    return helper_contexts
+
+
+def _collect_python_class_contexts(tree: ast.Module, helper_contexts: dict[str, str]) -> dict[str, str]:
+    """
+    Collect class-specific ``tr`` override contexts from one Python module.
+
+    :param tree: Parsed Python module.
+    :param helper_contexts: Function name to Qt translation context mapping.
+    :returns: Class name to Qt context mapping.
+    """
+    class_contexts: dict[str, str] = dict()
+    body_node: ast.stmt
+    class_body_node: ast.stmt
+    context_name: str | None
+
+    for body_node in tree.body:
+        if isinstance(body_node, ast.ClassDef):
+            for class_body_node in body_node.body:
+                if isinstance(class_body_node, ast.FunctionDef):
+                    if class_body_node.name == "tr":
+                        context_name = _get_class_tr_context(
+                            function_node=class_body_node,
+                            helper_contexts=helper_contexts,
+                        )
+                        if context_name is None:
+                            pass
+                        else:
+                            class_contexts[body_node.name] = context_name
+                    else:
+                        pass
+                else:
+                    pass
+        else:
+            pass
+
+    return class_contexts
+
+
+def _collect_python_translation_messages(gui_root: Path) -> dict[str, set[str]]:
+    """
+    Collect literal Python GUI translation messages below the GUI root.
+
+    :param gui_root: GUI package root directory.
+    :returns: Qt context to source texts mapping.
+    """
+    messages: dict[str, set[str]] = dict()
+    python_file: Path
+    source_code: str
+    tree: ast.Module
+    helper_contexts: dict[str, str]
+    class_contexts: dict[str, str]
+    collector: PythonTranslationMessageCollector
+    context_name: str
+    source_texts: set[str]
+    catalog_source_texts: set[str] | None
+
+    for python_file in sorted(gui_root.rglob("*.py")):
+        source_code = python_file.read_text(encoding="utf-8")
+        tree = ast.parse(source=source_code, filename=str(python_file))
+        helper_contexts = _collect_python_helper_contexts(tree=tree)
+        class_contexts = _collect_python_class_contexts(tree=tree, helper_contexts=helper_contexts)
+        collector = PythonTranslationMessageCollector(
+            helper_contexts=helper_contexts,
+            class_contexts=class_contexts,
+        )
+        collector.visit(tree)
+
+        # Merge per-file results so shared UI contexts gather all generated
+        # code and runtime Python additions into one catalog context.
+        for context_name, source_texts in collector.messages.items():
+            catalog_source_texts = messages.get(context_name, None)
+            if catalog_source_texts is None:
+                messages[context_name] = set(source_texts)
+            else:
+                catalog_source_texts.update(source_texts)
+
+    return messages
 
 
 def _get_language_name(locale_code: str) -> str:
@@ -189,6 +505,110 @@ def _collect_context_source_texts(context_block: str) -> set[str]:
         source_texts.add(unescape(match.group(1)))
 
     return source_texts
+
+
+def _reactivate_context_source_texts(context_block: str, source_texts: set[str]) -> str:
+    """
+    Reactivate required source messages inside one Qt Linguist context block.
+
+    :param context_block: Full context XML block.
+    :param source_texts: Source texts that are still used by VeraGrid.
+    :returns: Patched context XML block.
+    """
+    updated_parts: list[str] = list()
+    last_index: int = 0
+    message_match: re.Match[str]
+    message: str
+    source_match: re.Match[str] | None
+    source_text: str
+    updated_message: str
+
+    for message_match in re.finditer(r"<message>.*?</message>", context_block, flags=re.DOTALL):
+        message = message_match.group(0)
+        source_match = re.search(r"<source>(.*?)</source>", message, flags=re.DOTALL)
+
+        if source_match is not None:
+            source_text = unescape(source_match.group(1))
+            if source_text in source_texts:
+                updated_message = message.replace('<translation type="vanished">', "<translation>")
+                updated_message = re.sub(
+                    r'<translation type="unfinished">([^<]+)</translation>',
+                    r"<translation>\1</translation>",
+                    updated_message,
+                )
+            else:
+                updated_message = message
+        else:
+            updated_message = message
+
+        updated_parts.append(context_block[last_index:message_match.start()])
+        updated_parts.append(updated_message)
+        last_index = message_match.end()
+
+    updated_parts.append(context_block[last_index:])
+    return "".join(updated_parts)
+
+
+def _sync_context_source_texts(ts_file: Path, context_name: str, source_texts: list[str]) -> None:
+    """
+    Ensure one Qt Linguist context contains and activates the required sources.
+
+    :param ts_file: Translation source file to patch.
+    :param context_name: Qt translation context name.
+    :param source_texts: Required source texts.
+    :returns: Nothing.
+    """
+    contents: str = ts_file.read_text(encoding="utf-8")
+    context_pattern: str = rf"(<context>\s*<name>{re.escape(context_name)}</name>)(.*?)(</context>)"
+    context_match: re.Match[str] | None = re.search(context_pattern, contents, flags=re.DOTALL)
+    missing_messages: list[str] = list()
+    source_text: str
+    source_text_set: set[str] = set(source_texts)
+    existing_source_texts: set[str]
+    context_block: str
+    updated_context_block: str
+
+    if context_match is None:
+        for source_text in source_texts:
+            missing_messages.append(_build_unfinished_ts_message(source_text=source_text))
+
+        context_block = (
+            "<context>\n"
+            f"    <name>{context_name}</name>\n"
+            + "".join(missing_messages)
+            + "</context>\n"
+        )
+        contents = contents.replace("</TS>\n", context_block + "</TS>\n")
+    else:
+        context_block = context_match.group(0)
+        updated_context_block = _reactivate_context_source_texts(
+            context_block=context_block,
+            source_texts=source_text_set,
+        )
+        existing_source_texts = _collect_context_source_texts(context_block=updated_context_block)
+
+        for source_text in source_texts:
+            if source_text in existing_source_texts:
+                pass
+            else:
+                missing_messages.append(_build_unfinished_ts_message(source_text=source_text))
+
+        if len(missing_messages) > 0:
+            updated_context_block = (
+                updated_context_block[:updated_context_block.rfind("</context>")]
+                + "".join(missing_messages)
+                + "</context>"
+            )
+        else:
+            pass
+
+        contents = (
+            contents[:context_match.start()]
+            + updated_context_block
+            + contents[context_match.end():]
+        )
+
+    ts_file.write_text(contents, encoding="utf-8")
 
 
 def _collect_finished_translation_memory(ts_file: Path) -> dict[str, str]:
@@ -693,42 +1113,30 @@ def _sync_tree_label_context(ts_file: Path, source_texts: list[str]) -> None:
     :param source_texts: Required tree-label source texts.
     :returns: Nothing.
     """
-    context_name: str = "VeraGridTreeLabels"
-    contents: str = ts_file.read_text(encoding="utf-8")
-    context_pattern: str = rf"(<context>\s*<name>{context_name}</name>)(.*?)(</context>)"
-    context_match: re.Match[str] | None = re.search(context_pattern, contents, flags=re.DOTALL)
-    missing_messages: list[str] = list()
-    source_text: str
+    _sync_context_source_texts(
+        ts_file=ts_file,
+        context_name="VeraGridTreeLabels",
+        source_texts=source_texts,
+    )
 
-    if context_match is None:
-        for source_text in source_texts:
-            missing_messages.append(_build_unfinished_ts_message(source_text=source_text))
 
-        context_block: str = (
-            "<context>\n"
-            f"    <name>{context_name}</name>\n"
-            + "".join(missing_messages)
-            + "</context>\n"
+def _sync_python_translation_contexts(ts_file: Path, messages: dict[str, set[str]]) -> None:
+    """
+    Ensure Python-extracted messages are present in one translation file.
+
+    :param ts_file: Translation source file to patch.
+    :param messages: Qt context to source texts mapping.
+    :returns: Nothing.
+    """
+    context_name: str
+    source_texts: set[str]
+
+    for context_name, source_texts in sorted(messages.items()):
+        _sync_context_source_texts(
+            ts_file=ts_file,
+            context_name=context_name,
+            source_texts=sorted(source_texts),
         )
-        contents = contents.replace("</TS>\n", context_block + "</TS>\n")
-    else:
-        existing_source_texts: set[str] = _collect_context_source_texts(context_block=context_match.group(0))
-        for source_text in source_texts:
-            if source_text in existing_source_texts:
-                pass
-            else:
-                missing_messages.append(_build_unfinished_ts_message(source_text=source_text))
-
-        if len(missing_messages) > 0:
-            contents = (
-                contents[:context_match.start(3)]
-                + "".join(missing_messages)
-                + contents[context_match.start(3):]
-            )
-        else:
-            pass
-
-    ts_file.write_text(contents, encoding="utf-8")
 
 
 def _reactivate_manual_context_translations(ts_file: Path) -> None:
@@ -791,6 +1199,7 @@ def update_translations(ai_config: LocalAiTranslationConfig | None = None) -> No
     translations_dir: Path = gui_root / "translations"
     ts_files: list[Path]
     tree_label_sources: list[str] = _get_runtime_tree_label_sources()
+    python_messages: dict[str, set[str]]
 
     translations_dir.mkdir(parents=True, exist_ok=True)
     ts_files = _get_translation_source_files(translations_dir=translations_dir)
@@ -799,6 +1208,8 @@ def update_translations(ai_config: LocalAiTranslationConfig | None = None) -> No
         return
     else:
         pass
+
+    python_messages = _collect_python_translation_messages(gui_root=gui_root)
 
     # Update all catalogs in one lupdate pass so every translation file sees the same source tree.
     _run_command(
@@ -814,6 +1225,7 @@ def update_translations(ai_config: LocalAiTranslationConfig | None = None) -> No
     ts_file: Path
     for ts_file in ts_files:
         _reactivate_manual_context_translations(ts_file=ts_file)
+        _sync_python_translation_contexts(ts_file=ts_file, messages=python_messages)
         _sync_tree_label_context(ts_file=ts_file, source_texts=tree_label_sources)
 
     if ai_config is None:

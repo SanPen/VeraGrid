@@ -68,7 +68,7 @@ class PythonConsole(BasePythonCodeEditor):
         super().__init__(parent=parent, show_line_numbers=False)
         self.setUndoRedoEnabled(False)
 
-        PythonHighlighter(self.document())
+        self._highlighter: PythonHighlighter = PythonHighlighter(self.document())
 
         self._history = []
         self._history_index = 0
@@ -94,6 +94,24 @@ class PythonConsole(BasePythonCodeEditor):
 
         self._insert_prompt(primary=True)
         self.cursorPositionChanged.connect(self._enforce_cursor)
+
+    def set_dark_mode(self) -> None:
+        """
+        Apply dark mode to the console editor and syntax highlighter.
+
+        :return: None.
+        """
+        BasePythonCodeEditor.set_dark_mode(self)
+        self._highlighter.set_dark_mode()
+
+    def set_light_mode(self) -> None:
+        """
+        Apply light mode to the console editor and syntax highlighter.
+
+        :return: None.
+        """
+        BasePythonCodeEditor.set_light_mode(self)
+        self._highlighter.set_light_mode()
 
     def reset(self):
         self.document().clear()
@@ -429,7 +447,7 @@ if __name__ == "__main__":
     class ConsoleMainWindow(QMainWindow):
         def __init__(self):
             super().__init__()
-            self.setWindowTitle("PySide6 Python Console")
+            self.setWindowTitle(self.tr("PySide6 Python Console"))
             console = PythonConsole(banner="Welcome to Python Console!")
             self.setCentralWidget(console)
 

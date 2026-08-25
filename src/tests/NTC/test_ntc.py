@@ -3,9 +3,11 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import os
+from typing import List
 import numpy as np
 import VeraGridEngine.api as gce
-from VeraGridEngine.enumerations import ConverterControlType
+from VeraGridEngine.enumerations import ConverterControlType, SolutionState, ResultTypes
+from VeraGridEngine.Simulations.NTC.ntc_ts_results import OptimalNetTransferCapacityTimeSeriesResults
 
 
 TEST_GRID_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data", "grids"))
@@ -2105,6 +2107,55 @@ def test_ntc_structural_n1_overload_is_relaxed_not_infeasible() -> None:
     # the base flows are the physical 80/40 split, untouched by the relaxation
     assert np.isclose(float(res.Sf[1].real), 80.0, atol=1.0)
     assert np.isclose(float(res.Sf[2].real), 40.0, atol=1.0)
+
+
+def test_ntc_ts_solution_status_column() -> None:
+    """
+    The net-transfer-capacity time-series table reports Optimal, Relaxed, or
+    NotOptimal for each hour.
+    """
+    time_array: np.ndarray = np.array(['2020-01-01T00', '2020-01-01T01', '2020-01-01T02'],
+                                      dtype='datetime64[h]')
+    res = OptimalNetTransferCapacityTimeSeriesResults(
+        bus_names=np.array(['b1']),
+        branch_names=np.array(['br1']),
+        hvdc_names=np.array([]),
+        vsc_names=np.array([]),
+        contingency_group_names=np.array(['g1']),
+        time_array=time_array,
+        time_indices=np.array([0, 1, 2]),
+    )
+    res.converged[0] = True
+    res.converged[1] = True
+    res.converged[2] = False
+    res.overloads[0, 0] = 0.0
+    res.overloads[1, 0] = 5.0
+    res.inter_area_flows[0] = 100.0
+    res.inter_area_flows[1] = 90.0
+    res.inter_area_flows[2] = 0.0
+
+    states: List[SolutionState] = res.get_solution_states(slack_tol_mw=0.1)
+    assert states[0] == SolutionState.Optimal
+    assert states[1] == SolutionState.Relaxed
+    assert states[2] == SolutionState.NotOptimal
+
+    ntc_table = res.mdl(ResultTypes.NetTransferCapacity)
+    assert list(ntc_table.cols_c) == ['NTC (MW)']
+    assert ntc_table.data_c.dtype == float
+    assert ntc_table.data_c[0, 0] == 100.0
+
+    slack_table = res.mdl(ResultTypes.NetTransferCapacitySlack)
+    assert list(slack_table.cols_c) == ['Total slack (MW)']
+    assert slack_table.data_c.dtype == float
+    assert slack_table.data_c[0, 0] == 0.0
+    assert slack_table.data_c[1, 0] == 5.0
+    assert slack_table.data_c[2, 0] == 0.0
+
+    status_table = res.mdl(ResultTypes.NetTransferCapacityStatus)
+    assert list(status_table.cols_c) == ['Status']
+    assert status_table.data_c[0, 0] == SolutionState.Optimal
+    assert status_table.data_c[1, 0] == SolutionState.Relaxed
+    assert status_table.data_c[2, 0] == SolutionState.NotOptimal
 
 
 if __name__ == '__main__':

@@ -6,21 +6,23 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.IO.matpower package &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.IO.matpower package &mdash; VeraGrid 6.5.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=b3745da1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/style.css?v=ba3a54df" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/documentation_options.js?v=276d7aeb"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../search.html" /> 
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="VeraGridEngine.IO.matpower.legacy package" href="VeraGridEngine.IO.matpower.legacy.html" />
+    <link rel="prev" title="VeraGridEngine.IO.iidm.devices package" href="VeraGridEngine.IO.iidm.devices.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -42,12 +44,12 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
@@ -60,6 +62,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
@@ -68,12 +71,35 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../change_log.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/data_models.html">Data Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">VeraGrid</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">VeraGrid</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="VeraGridEngine.html">VeraGridEngine package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="VeraGridEngine.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Compilers.html">VeraGridEngine.Compilers package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.DataStructures.html">VeraGridEngine.DataStructures package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Devices.html">VeraGridEngine.Devices package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="VeraGridEngine.IO.html">VeraGridEngine.IO package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Simulations.html">VeraGridEngine.Simulations package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Templates.html">VeraGridEngine.Templates package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Topology.html">VeraGridEngine.Topology package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="VeraGridEngine.Utils.html">VeraGridEngine.Utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.api">VeraGridEngine.api module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.basic_structures">VeraGridEngine.basic_structures module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.data_logger">VeraGridEngine.data_logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine.enumerations">VeraGridEngine.enumerations module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#veragridengine-setup-module">VeraGridEngine.setup module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="VeraGridEngine.html#module-VeraGridEngine">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -90,6 +116,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">VeraGrid</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.html">VeraGridEngine package</a></li>
+          <li class="breadcrumb-item"><a href="VeraGridEngine.IO.html">VeraGridEngine.IO package</a></li>
       <li class="breadcrumb-item active">VeraGridEngine.IO.matpower package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../../../_sources/rst_source/api/auto/VeraGridEngine.IO.matpower.rst.txt" rel="nofollow"> View page source</a>
@@ -141,169 +170,35 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
-<section id="module-VeraGridEngine.IO.matpower.area">
-<span id="veragridengine-io-matpower-area-module"></span><h2>VeraGridEngine.IO.matpower.area module<a class="headerlink" href="#module-VeraGridEngine.IO.matpower.area" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.area.MatpowerArea">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.area.</span></span><span class="sig-name descname"><span class="pre">MatpowerArea</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/area.html#MatpowerArea"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.area.MatpowerArea" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.area.MatpowerArea.parse_row">
-<span class="sig-name descname"><span class="pre">parse_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/area.html#MatpowerArea.parse_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.area.MatpowerArea.parse_row" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>row</strong></p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
+<section id="veragridengine-io-matpower-area-module">
+<h2>VeraGridEngine.IO.matpower.area module<a class="headerlink" href="#veragridengine-io-matpower-area-module" title="Link to this heading"></a></h2>
 </section>
-<section id="module-VeraGridEngine.IO.matpower.branch">
-<span id="veragridengine-io-matpower-branch-module"></span><h2>VeraGridEngine.IO.matpower.branch module<a class="headerlink" href="#module-VeraGridEngine.IO.matpower.branch" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.branch.MatpowerBranch">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.branch.</span></span><span class="sig-name descname"><span class="pre">MatpowerBranch</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/branch.html#MatpowerBranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.branch.MatpowerBranch" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class to parse and write branch data from MATPOWER .m files.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.branch.MatpowerBranch.parse_row">
-<span class="sig-name descname"><span class="pre">parse_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/branch.html#MatpowerBranch.parse_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.branch.MatpowerBranch.parse_row" title="Link to this definition"></a></dt>
-<dd><p>Parses a single row of branch data and assigns values to the instance attributes.
-:param row: List of values corresponding to a MATPOWER branch row.</p>
-</dd></dl>
-
-</dd></dl>
-
+<section id="veragridengine-io-matpower-branch-module">
+<h2>VeraGridEngine.IO.matpower.branch module<a class="headerlink" href="#veragridengine-io-matpower-branch-module" title="Link to this heading"></a></h2>
 </section>
-<section id="module-VeraGridEngine.IO.matpower.branch_dc">
-<span id="veragridengine-io-matpower-branch-dc-module"></span><h2>VeraGridEngine.IO.matpower.branch_dc module<a class="headerlink" href="#module-VeraGridEngine.IO.matpower.branch_dc" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.branch_dc.MatAcDcBranch">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.branch_dc.</span></span><span class="sig-name descname"><span class="pre">MatAcDcBranch</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/branch_dc.html#MatAcDcBranch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.branch_dc.MatAcDcBranch" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class to parse and write DC branch data from MATPOWER .m files.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.branch_dc.MatAcDcBranch.parse_row">
-<span class="sig-name descname"><span class="pre">parse_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/branch_dc.html#MatAcDcBranch.parse_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.branch_dc.MatAcDcBranch.parse_row" title="Link to this definition"></a></dt>
-<dd><p>Parses a single row of DC branch data and assigns values to the instance attributes.
-:param row: List of values corresponding to a MATPOWER DC branch row.</p>
-</dd></dl>
-
-</dd></dl>
-
+<section id="veragridengine-io-matpower-branch-dc-module">
+<h2>VeraGridEngine.IO.matpower.branch_dc module<a class="headerlink" href="#veragridengine-io-matpower-branch-dc-module" title="Link to this heading"></a></h2>
 </section>
-<section id="module-VeraGridEngine.IO.matpower.bus">
-<span id="veragridengine-io-matpower-bus-module"></span><h2>VeraGridEngine.IO.matpower.bus module<a class="headerlink" href="#module-VeraGridEngine.IO.matpower.bus" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.bus.MatpowerBus">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.bus.</span></span><span class="sig-name descname"><span class="pre">MatpowerBus</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/bus.html#MatpowerBus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.bus.MatpowerBus" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class to parse and write bus data from MATPOWER .m files.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.bus.MatpowerBus.parse_row">
-<span class="sig-name descname"><span class="pre">parse_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/bus.html#MatpowerBus.parse_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.bus.MatpowerBus.parse_row" title="Link to this definition"></a></dt>
-<dd><p>Parses a single row of bus data and assigns values to the instance attributes.
-:param row: List of values corresponding to a MATPOWER bus row.</p>
-</dd></dl>
-
-</dd></dl>
-
+<section id="veragridengine-io-matpower-bus-module">
+<h2>VeraGridEngine.IO.matpower.bus module<a class="headerlink" href="#veragridengine-io-matpower-bus-module" title="Link to this heading"></a></h2>
 </section>
-<section id="module-VeraGridEngine.IO.matpower.bus_dc">
-<span id="veragridengine-io-matpower-bus-dc-module"></span><h2>VeraGridEngine.IO.matpower.bus_dc module<a class="headerlink" href="#module-VeraGridEngine.IO.matpower.bus_dc" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.bus_dc.MatAcDcBus">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.bus_dc.</span></span><span class="sig-name descname"><span class="pre">MatAcDcBus</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/bus_dc.html#MatAcDcBus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.bus_dc.MatAcDcBus" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class to parse and write DC bus data from MATPOWER .m files.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.bus_dc.MatAcDcBus.parse_row">
-<span class="sig-name descname"><span class="pre">parse_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/bus_dc.html#MatAcDcBus.parse_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.bus_dc.MatAcDcBus.parse_row" title="Link to this definition"></a></dt>
-<dd><p>Parses a single row of DC bus data and assigns values to the instance attributes.
-:param row: List of values corresponding to a MATPOWER DC bus row.</p>
-</dd></dl>
-
-</dd></dl>
-
+<section id="veragridengine-io-matpower-bus-dc-module">
+<h2>VeraGridEngine.IO.matpower.bus_dc module<a class="headerlink" href="#veragridengine-io-matpower-bus-dc-module" title="Link to this heading"></a></h2>
 </section>
-<section id="module-VeraGridEngine.IO.matpower.converter_dc">
-<span id="veragridengine-io-matpower-converter-dc-module"></span><h2>VeraGridEngine.IO.matpower.converter_dc module<a class="headerlink" href="#module-VeraGridEngine.IO.matpower.converter_dc" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.converter_dc.MatAcDcConverter">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.converter_dc.</span></span><span class="sig-name descname"><span class="pre">MatAcDcConverter</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/converter_dc.html#MatAcDcConverter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.converter_dc.MatAcDcConverter" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class to parse and write converter data from MATPOWER .m files.</p>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.converter_dc.MatAcDcConverter.busac_i">
-<span class="sig-name descname"><span class="pre">busac_i</span></span><a class="headerlink" href="#VeraGridEngine.IO.matpower.converter_dc.MatAcDcConverter.busac_i" title="Link to this definition"></a></dt>
-<dd><p>CONVTYPE_DC constants
-3 DCDROOP - DC voltage droop
-2 DCSLACK - DC slack bus
-1 DCNOSLACK -  constant active power bus</p>
-<p>CONVTYPE_AC constants
-2 PVC - constant voltage converter control
-1 PQC - constant reactive power converter control</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.converter_dc.MatAcDcConverter.parse_row">
-<span class="sig-name descname"><span class="pre">parse_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/converter_dc.html#MatAcDcConverter.parse_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.converter_dc.MatAcDcConverter.parse_row" title="Link to this definition"></a></dt>
-<dd><p>Parses a single row of converter data and assigns values to the instance attributes.
-:param row: List of values corresponding to a MATPOWER converter row.</p>
-</dd></dl>
-
-</dd></dl>
-
+<section id="veragridengine-io-matpower-converter-dc-module">
+<h2>VeraGridEngine.IO.matpower.converter_dc module<a class="headerlink" href="#veragridengine-io-matpower-converter-dc-module" title="Link to this heading"></a></h2>
 </section>
-<section id="module-VeraGridEngine.IO.matpower.generator">
-<span id="veragridengine-io-matpower-generator-module"></span><h2>VeraGridEngine.IO.matpower.generator module<a class="headerlink" href="#module-VeraGridEngine.IO.matpower.generator" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.generator.MatpowerGenerator">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.generator.</span></span><span class="sig-name descname"><span class="pre">MatpowerGenerator</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/generator.html#MatpowerGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.generator.MatpowerGenerator" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Class to parse and write generator data from MATPOWER .m files.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.generator.MatpowerGenerator.parse_cost">
-<span class="sig-name descname"><span class="pre">parse_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/generator.html#MatpowerGenerator.parse_cost"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.generator.MatpowerGenerator.parse_cost" title="Link to this definition"></a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.generator.MatpowerGenerator.parse_row">
-<span class="sig-name descname"><span class="pre">parse_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/generator.html#MatpowerGenerator.parse_row"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.generator.MatpowerGenerator.parse_row" title="Link to this definition"></a></dt>
-<dd><p>Parses a single row of generator data and assigns values to the instance attributes.
-:param row: List of values corresponding to a MATPOWER generator row.</p>
-</dd></dl>
-
-</dd></dl>
-
+<section id="veragridengine-io-matpower-generator-module">
+<h2>VeraGridEngine.IO.matpower.generator module<a class="headerlink" href="#veragridengine-io-matpower-generator-module" title="Link to this heading"></a></h2>
 </section>
-<section id="module-VeraGridEngine.IO.matpower.matpower_circuit">
-<span id="veragridengine-io-matpower-matpower-circuit-module"></span><h2>VeraGridEngine.IO.matpower.matpower_circuit module<a class="headerlink" href="#module-VeraGridEngine.IO.matpower.matpower_circuit" title="Link to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_circuit.</span></span><span class="sig-name descname"><span class="pre">MatpowerCircuit</span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_circuit.html#MatpowerCircuit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit.read_file">
-<span class="sig-name descname"><span class="pre">read_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_circuit.html#MatpowerCircuit.read_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit.read_file" title="Link to this definition"></a></dt>
-<dd><p>Read matpower .m file
-:param file_name:
-:return:</p>
-</dd></dl>
-
-</dd></dl>
-
+<section id="veragridengine-io-matpower-matpower-circuit-module">
+<h2>VeraGridEngine.IO.matpower.matpower_circuit module<a class="headerlink" href="#veragridengine-io-matpower-matpower-circuit-module" title="Link to this heading"></a></h2>
 </section>
 <section id="module-VeraGridEngine.IO.matpower.matpower_to_veragrid">
 <span id="veragridengine-io-matpower-matpower-to-veragrid-module"></span><h2>VeraGridEngine.IO.matpower.matpower_to_veragrid module<a class="headerlink" href="#module-VeraGridEngine.IO.matpower.matpower_to_veragrid" title="Link to this heading"></a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_areas">
-<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_areas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit" title="VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit"><span class="pre">MatpowerCircuit</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.area.Area" title="VeraGridEngine.Devices.Aggregation.area.Area"><span class="pre">Area</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#convert_areas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_areas" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_areas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MatpowerCircuit</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="VeraGridEngine.Devices.Aggregation.html#VeraGridEngine.Devices.Aggregation.area.Area" title="VeraGridEngine.Devices.Aggregation.area.Area"><span class="pre">Area</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#convert_areas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_areas" title="Link to this definition"></a></dt>
 <dd><p>Parse Matpower / FUBM Matpower area data into VeraGrid
 :param circuit: MultiCircuit instance
 :param m_grid: MatpowerCircuit
@@ -312,7 +207,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_branches">
-<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_branches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit" title="VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit"><span class="pre">MatpowerCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_idx_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#convert_branches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_branches" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_branches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MatpowerCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_idx_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#convert_branches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_branches" title="Link to this definition"></a></dt>
 <dd><p>Parse Matpower / FUBM Matpower branch data into VeraGrid
 :param circuit: MultiCircuit instance
 :param m_grid: MatpowerCircuit
@@ -323,7 +218,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_buses">
-<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_buses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit" title="VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit"><span class="pre">MatpowerCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_idx_dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#convert_buses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_buses" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_buses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MatpowerCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_idx_dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#convert_buses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_buses" title="Link to this definition"></a></dt>
 <dd><p>Parse Matpower / FUBM Matpower bus data into VeraGrid
 :param circuit: MultiCircuit instance
 :param m_grid: MatpowerCircuit
@@ -333,12 +228,12 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_converters">
-<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_converters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit" title="VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit"><span class="pre">MatpowerCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dc_bus_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#convert_converters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_converters" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_converters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MatpowerCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dc_bus_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#convert_converters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_converters" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_dc_branches">
-<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_dc_branches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit" title="VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit"><span class="pre">MatpowerCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">dc_bus_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#convert_dc_branches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_dc_branches" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_dc_branches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MatpowerCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dc_bus_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#convert_dc_branches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_dc_branches" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -356,7 +251,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_dc_buses">
-<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_dc_buses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit" title="VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit"><span class="pre">MatpowerCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_idx_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#convert_dc_buses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_dc_buses" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_dc_buses</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MatpowerCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">area_idx_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#convert_dc_buses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_dc_buses" title="Link to this definition"></a></dt>
 <dd><p>Parse Matpower / FUBM Matpower bus data into VeraGrid
 :param circuit: MultiCircuit instance
 :param m_grid: MatpowerCircuit
@@ -367,7 +262,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_generators">
-<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_generators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit" title="VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit"><span class="pre">MatpowerCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_idx_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#convert_generators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_generators" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">convert_generators</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">circuit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MatpowerCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bus_idx_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="VeraGridEngine.Devices.Substation.html#VeraGridEngine.Devices.Substation.bus.Bus" title="VeraGridEngine.Devices.Substation.bus.Bus"><span class="pre">Bus</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#convert_generators"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.convert_generators" title="Link to this definition"></a></dt>
 <dd><p>Parse Matpower / FUBM Matpower generator data into VeraGrid
 :param circuit: MultiCircuit instance
 :param m_grid: MatpowerCircuit
@@ -377,7 +272,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.matpower_to_veragrid.matpower_to_veragrid">
-<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">matpower_to_veragrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit" title="VeraGridEngine.IO.matpower.matpower_circuit.MatpowerCircuit"><span class="pre">MatpowerCircuit</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#matpower_to_veragrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.matpower_to_veragrid" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_to_veragrid.</span></span><span class="sig-name descname"><span class="pre">matpower_to_veragrid</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m_grid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MatpowerCircuit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logger</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="VeraGridEngine.html#VeraGridEngine.basic_structures.Logger" title="VeraGridEngine.basic_structures.Logger"><span class="pre">Logger</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="VeraGridEngine.Devices.html#VeraGridEngine.Devices.multi_circuit.MultiCircuit" title="VeraGridEngine.Devices.multi_circuit.MultiCircuit"><span class="pre">MultiCircuit</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_to_veragrid.html#matpower_to_veragrid"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_to_veragrid.matpower_to_veragrid" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -412,18 +307,36 @@ Returns:</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.matpower_utils.parse_matlab_float">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_utils.</span></span><span class="sig-name descname"><span class="pre">parse_matlab_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_utils.html#parse_matlab_float"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_utils.parse_matlab_float" title="Link to this definition"></a></dt>
+<dd><p>Parse one MATLAB-like scalar token into a Python float.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – Scalar token or scalar expression.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Parsed floating-point value.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If the token cannot be parsed as a supported scalar expression.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.IO.matpower.matpower_utils.txt2mat">
-<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_utils.</span></span><span class="sig-name descname"><span class="pre">txt2mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">txt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_splitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">';'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_float</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_utils.html#txt2mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_utils.txt2mat" title="Link to this definition"></a></dt>
-<dd><dl class="field-list simple">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.IO.matpower.matpower_utils.</span></span><span class="sig-name descname"><span class="pre">txt2mat</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">txt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_splitter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">';'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_float</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/IO/matpower/matpower_utils.html#txt2mat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.IO.matpower.matpower_utils.txt2mat" title="Link to this definition"></a></dt>
+<dd><p>Convert one MATPOWER matrix literal into a NumPy array.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>txt</strong></p></li>
-<li><p><strong>line_splitter</strong></p></li>
-<li><p><strong>to_float</strong></p></li>
+<li><p><strong>txt</strong> – Matrix body text without the outer brackets.</p></li>
+<li><p><strong>line_splitter</strong> – Row terminator token.</p></li>
+<li><p><strong>to_float</strong> – Whether to parse entries as numeric values.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>Parsed matrix.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -550,7 +463,10 @@ Returns:</p>
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="VeraGridEngine.IO.iidm.devices.html" class="btn btn-neutral float-left" title="VeraGridEngine.IO.iidm.devices package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="VeraGridEngine.IO.matpower.legacy.html" class="btn btn-neutral float-right" title="VeraGridEngine.IO.matpower.legacy package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

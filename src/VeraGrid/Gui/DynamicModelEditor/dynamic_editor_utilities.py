@@ -11,6 +11,7 @@ from VeraGridEngine.Devices.Branches.transformer import Transformer2W
 from VeraGridEngine.Devices.Branches.winding import Winding
 from VeraGridEngine.enumerations import (
     BlockType,
+    ConverterControlType,
     EmtFaultPlacementSide,
     FaultType,
     JMartiDataSourceMode,
@@ -19,10 +20,13 @@ from VeraGridEngine.enumerations import (
 )
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Utils.Symbolic.block import Block
-from VeraGridEngine.Utils.Symbolic.symbolic import Const, Var
+from VeraGridEngine.Utils.Symbolic.symbolic import Const, Expr, Var
 import VeraGridEngine.Templates.BasicBlockCatalog as basic_block_templates
 import VeraGridEngine.Templates as tem
 import VeraGridEngine.Templates.Emt as emt_templates
+import VeraGridEngine.Templates.Rms as rms_templates
+from VeraGridEngine.Templates.Rms.dc_line_rms_template_v2 import DcLineRmsTemplateV2
+from VeraGridEngine.Templates.Rms.hvdc_vsc_gfl_rms_template_v2 import HvdcVscGflRmsTemplate
 from VeraGridEngine.Devices.types import ALL_DEV_TYPES
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
@@ -175,7 +179,41 @@ def get_blocktype2template_builder_dict() -> Dict[BlockType, type[TemplateDefini
 
     :return: Builder class lookup used by drop and properties workflows.
     """
-    return dict(((BlockType.FAULT_EMT, emt_templates.FaultEmtTemplate), (BlockType.SWITCH_EMT, emt_templates.SwitchEmtTemplate), (BlockType.GROUNDING_LINK_EMT, emt_templates.GroundingLinkEmtTemplate), (BlockType.INDUCTION_MOTOR_EMT, emt_templates.InductionMotorEmtTemplate), (BlockType.R_LOAD_EMT, emt_templates.ShuntRComboEmtTemplate), (BlockType.L_LOAD_EMT, emt_templates.ShuntLComboEmtTemplate), (BlockType.C_LOAD_EMT, emt_templates.ShuntCComboEmtTemplate), (BlockType.VOLTAGE_SOURCE_EMT, emt_templates.VoltageSourceEmtTemplate), (BlockType.CURRENT_SOURCE_EMT, emt_templates.CurrentSourceEmtTemplate), (BlockType.CONTROLLED_VOLTAGE_SOURCE_EMT, emt_templates.ControlledVoltageSourceEmtTemplate), (BlockType.CONTROLLED_CURRENT_SOURCE_EMT, emt_templates.ControlledCurrentSourceEmtTemplate), (BlockType.ARBITRARY_WAVEFORM_VOLTAGE_SOURCE_EMT, emt_templates.ArbitraryWaveformVoltageSourceEmtTemplate), (BlockType.ARBITRARY_WAVEFORM_CURRENT_SOURCE_EMT, emt_templates.ArbitraryWaveformCurrentSourceEmtTemplate), (BlockType.NONLINEAR_RESISTOR_EMT, emt_templates.NonLinearResistorEmtTemplate), (BlockType.STEP_VOLTAGE_SOURCE_EMT, emt_templates.StepVoltageSourceEmtTemplate), (BlockType.STEP_CURRENT_SOURCE_EMT, emt_templates.StepCurrentSourceEmtTemplate), (BlockType.RAMP_VOLTAGE_SOURCE_EMT, emt_templates.RampVoltageSourceEmtTemplate), (BlockType.RAMP_CURRENT_SOURCE_EMT, emt_templates.RampCurrentSourceEmtTemplate), (BlockType.DOUBLE_EXPONENTIAL_CURRENT_SOURCE_EMT, emt_templates.DoubleExponentialCurrentSourceEmtTemplate), (BlockType.HEIDLER_CURRENT_SOURCE_EMT, emt_templates.HeidlerCurrentSourceEmtTemplate), (BlockType.CIGRE_SURGE_CURRENT_SOURCE_EMT, emt_templates.CigreSurgeCurrentSourceEmtTemplate), (BlockType.EXP_LOAD_EMT, emt_templates.ExponentialLoadEmtTemplate), (BlockType.ZIP_LOAD_EMT, emt_templates.LoadZIPEmtTemplate), (BlockType.TRAFO_EMT, emt_templates.TransformerEmtTemplate), (BlockType.XFMR_TRANSFORMER, emt_templates.XfmrEmtTemplate), (BlockType.EMT_PI_LINE, emt_templates.PiLineEmtTemplate), (BlockType.EMT_BERGERON_LINE, emt_templates.BergeronLineEmtTemplate), (BlockType.EMT_JMARTI_LINE, JMartiBlockTemplateDefinition), (BlockType.INVERSE_LOOKUP_ARRAY, emt_templates.InverseLookupArrayLinearRuntimeTemplate), (BlockType.LOOKUP_ARRAY_LINEAR, emt_templates.LookupArrayLinearRuntimeTemplate), (BlockType.LOOKUP_ARRAY_SPLINE, emt_templates.LookupArraySplineRuntimeTemplate), (BlockType.LOOKUP_MATRIX_LINEAR, emt_templates.LookupMatrixLinearRuntimeTemplate), (BlockType.LOOKUP_MATRIX_SPLINE, emt_templates.LookupMatrixSplineRuntimeTemplate),))
+    return dict(((BlockType.FAULT_EMT, emt_templates.FaultEmtTemplate),
+                 (BlockType.SWITCH_EMT, emt_templates.SwitchEmtTemplate),
+                 (BlockType.GROUNDING_LINK_EMT, emt_templates.GroundingLinkEmtTemplate),
+                 (BlockType.INDUCTION_MOTOR_EMT, emt_templates.InductionMotorEmtTemplate),
+                 (BlockType.R_LOAD_EMT, emt_templates.ShuntRComboEmtTemplate),
+                 (BlockType.L_LOAD_EMT, emt_templates.ShuntLComboEmtTemplate),
+                 (BlockType.C_LOAD_EMT, emt_templates.ShuntCComboEmtTemplate),
+                 (BlockType.VOLTAGE_SOURCE_EMT, emt_templates.VoltageSourceEmtTemplate),
+                 (BlockType.CURRENT_SOURCE_EMT, emt_templates.CurrentSourceEmtTemplate),
+                 (BlockType.CONTROLLED_VOLTAGE_SOURCE_EMT, emt_templates.ControlledVoltageSourceEmtTemplate),
+                 (BlockType.CONTROLLED_CURRENT_SOURCE_EMT, emt_templates.ControlledCurrentSourceEmtTemplate),
+                 (BlockType.ARBITRARY_WAVEFORM_VOLTAGE_SOURCE_EMT, emt_templates.ArbitraryWaveformVoltageSourceEmtTemplate),
+                 (BlockType.ARBITRARY_WAVEFORM_CURRENT_SOURCE_EMT, emt_templates.ArbitraryWaveformCurrentSourceEmtTemplate),
+                 (BlockType.NONLINEAR_RESISTOR_EMT, emt_templates.NonLinearResistorEmtTemplate),
+                 (BlockType.STEP_VOLTAGE_SOURCE_EMT, emt_templates.StepVoltageSourceEmtTemplate),
+                 (BlockType.STEP_CURRENT_SOURCE_EMT, emt_templates.StepCurrentSourceEmtTemplate),
+                 (BlockType.RAMP_VOLTAGE_SOURCE_EMT, emt_templates.RampVoltageSourceEmtTemplate),
+                 (BlockType.RAMP_CURRENT_SOURCE_EMT, emt_templates.RampCurrentSourceEmtTemplate),
+                 (BlockType.DOUBLE_EXPONENTIAL_CURRENT_SOURCE_EMT, emt_templates.DoubleExponentialCurrentSourceEmtTemplate),
+                 (BlockType.HEIDLER_CURRENT_SOURCE_EMT, emt_templates.HeidlerCurrentSourceEmtTemplate),
+                 (BlockType.CIGRE_SURGE_CURRENT_SOURCE_EMT, emt_templates.CigreSurgeCurrentSourceEmtTemplate),
+                 (BlockType.EXP_LOAD_EMT, emt_templates.ExponentialLoadEmtTemplate),
+                 (BlockType.ZIP_LOAD_EMT, emt_templates.LoadZIPEmtTemplate),
+                 (BlockType.TRAFO_EMT, emt_templates.TransformerEmtTemplate),
+                 (BlockType.XFMR_TRANSFORMER, emt_templates.XfmrEmtTemplate),
+                 (BlockType.EMT_PI_LINE, emt_templates.PiLineEmtTemplate),
+                 (BlockType.EMT_BERGERON_LINE, emt_templates.BergeronLineEmtTemplate),
+                 (BlockType.EMT_JMARTI_LINE, JMartiBlockTemplateDefinition),
+                 (BlockType.INVERSE_LOOKUP_ARRAY, emt_templates.InverseLookupArrayLinearRuntimeTemplate),
+                 (BlockType.LOOKUP_ARRAY_LINEAR, emt_templates.LookupArrayLinearRuntimeTemplate),
+                 (BlockType.LOOKUP_ARRAY_SPLINE, emt_templates.LookupArraySplineRuntimeTemplate),
+                 (BlockType.LOOKUP_MATRIX_LINEAR, emt_templates.LookupMatrixLinearRuntimeTemplate),
+                 (BlockType.LOOKUP_MATRIX_SPLINE, emt_templates.LookupMatrixSplineRuntimeTemplate),
+                 (BlockType.GFL_VSC_HVDC_RMS, HvdcVscGflRmsTemplate),
+                 (BlockType.DC_LINE_RMS, DcLineRmsTemplateV2),))
 
 
 def create_default_template_builder(var_factory: VarFactory,
@@ -354,7 +392,7 @@ def initialize_template_builder_from_block(builder: TemplateDefinition,
         else:
             pass
 
-    if block_type == BlockType.EMT_JMARTI_LINE:
+    if block_type in (BlockType.EMT_JMARTI_LINE, BlockType.GFL_VSC_HVDC_RMS):
         stored_configuration: object = block.__dict__.get("_modal_template_config", None)
         if isinstance(stored_configuration, dict):
             configuration_name: str
@@ -375,6 +413,56 @@ def initialize_template_builder_from_block(builder: TemplateDefinition,
                     pass
         else:
             pass
+    else:
+        pass
+
+    if block_type == BlockType.GFL_VSC_HVDC_RMS:
+        # Block metadata accelerates an in-memory reopen, but the serialized
+        # symbolic format does not retain arbitrary Python attributes. Recover
+        # the two structural controller selections from the generated child
+        # names so save/close/reopen remains deterministic as well.
+        child_names: set[str] = set()
+        candidate_block: Block
+        for candidate_block in block.get_all_blocks():
+            child_names.add(candidate_block.name)
+
+        control1_property: TemplateProp | None = builder.params_dict.get("control1", None)
+        if control1_property is None:
+            pass
+        elif "Pdc_ctrl" in child_names:
+            control1_property.value = ConverterControlType.Pdc
+        elif "Pac_ctrl" in child_names:
+            control1_property.value = ConverterControlType.Pac
+        elif "Vdc_ctrl" in child_names:
+            control1_property.value = ConverterControlType.Vm_dc
+        else:
+            pass
+
+        control2_property: TemplateProp | None = builder.params_dict.get("control2", None)
+        if control2_property is None:
+            pass
+        elif "Vac_ctrl" in child_names:
+            control2_property.value = ConverterControlType.Vm_ac
+        elif "Qac_ctrl" in child_names:
+            control2_property.value = ConverterControlType.Qac
+        else:
+            pass
+
+        # Cdc is a regular numeric parameter. Recovering it here prevents a
+        # structural controller edit from replacing a saved custom value with
+        # the builder default before the parameter table is reapplied.
+        cdc_property: TemplateProp | None = builder.params_dict.get("cdc", None)
+        for candidate_block in block.get_all_blocks():
+            event_variable: Var
+            event_expression: Expr
+            for event_variable, event_expression in candidate_block.event_dict.items():
+                if cdc_property is not None and event_variable.name == "Cdc" and isinstance(event_expression, Const):
+                    if isinstance(event_expression.value, (int, float)):
+                        cdc_property.value = float(event_expression.value)
+                    else:
+                        pass
+                else:
+                    pass
     else:
         pass
 
@@ -637,6 +725,15 @@ def create_block_of_type(var_factory: VarFactory,
         blk.name = item_name
         return blk
 
+    elif block_type == BlockType.VOLTAGE_SOURCE_RMS:
+        blk = rms_templates.VoltageSourceBuild(var_factory, name=item_name).block
+        blk.name = item_name
+        return blk
+
+    elif block_type == BlockType.TRANSFORMER_2W_RMS:
+        blk = rms_templates.get_transformer2w_rms(vf=var_factory).block
+        blk.name = item_name
+        return blk
 
 
     # DC PV source averaged

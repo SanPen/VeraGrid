@@ -51,7 +51,7 @@ class VscDeviceEditor(TemplateDeviceEditor):
         TemplateDeviceEditor.__init__(self, api_object=api_object, circuit=circuit)
         self.api_object: VSC = api_object
         self.main_gui: Any | None = main_gui
-        self.setWindowTitle("VSC editor")
+        self.setWindowTitle(self.tr("VSC editor"))
 
         self._build_vsc_tab()
         self._refresh_vsc_summary()

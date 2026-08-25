@@ -235,7 +235,7 @@ class VoltageLevelConversionWizard(QDialog):
         :param grid: MultiCircuit where the bus belongs
         """
         super().__init__()
-        self.setWindowTitle("Convert Bus to Voltage Level")
+        self.setWindowTitle(self.tr("Convert Bus to Voltage Level"))
         self.setMinimumWidth(600)
         self.setMinimumHeight(500)
 
@@ -250,7 +250,7 @@ class VoltageLevelConversionWizard(QDialog):
 
         # --- Combobox for type of scheme ---
         scheme_layout = QHBoxLayout()
-        scheme_layout.addWidget(QLabel("Scheme type:"))
+        scheme_layout.addWidget(QLabel(self.tr("Scheme type:")))
 
         # Only show the 4 supported schemes in the dropdown (as desired by REE)
         # Other schemes are kept in the backend but not exposed in the UI
@@ -269,17 +269,17 @@ class VoltageLevelConversionWizard(QDialog):
         self.combo.currentIndexChanged.connect(self.reset_all)
 
         # Checkboxes in a group box
-        options_group = QGroupBox("Options")
+        options_group = QGroupBox(self.tr("Options"))
         options_layout = QVBoxLayout(options_group)
 
         # First row of checkboxes
         row1_layout = QHBoxLayout()
-        self.add_breakers_checkbox = QCheckBox("Use breakers")
+        self.add_breakers_checkbox = QCheckBox(self.tr("Use breakers"))
         self.add_breakers_checkbox.setChecked(True)
         self.add_breakers_checkbox.setToolTip("If disabled, connections are made using branches instead of breakers")
         row1_layout.addWidget(self.add_breakers_checkbox)
 
-        self.keep_original_ratio_checkbox = QCheckBox("Keep original rates")
+        self.keep_original_ratio_checkbox = QCheckBox(self.tr("Keep original rates"))
         self.keep_original_ratio_checkbox.setChecked(False)
         self.keep_original_ratio_checkbox.setToolTip("If enabled, breakers inherit the rates "
                                                      "of the original branch. Otherwise, 9999 is assigned")
@@ -289,12 +289,12 @@ class VoltageLevelConversionWizard(QDialog):
 
         # Second row of checkboxes
         row2_layout = QHBoxLayout()
-        self.enable_transfer_bus_checkbox = QCheckBox("Enable transfer bus (JBPT)")
+        self.enable_transfer_bus_checkbox = QCheckBox(self.tr("Enable transfer bus (JBPT)"))
         self.enable_transfer_bus_checkbox.setChecked(False)
         self.enable_transfer_bus_checkbox.setToolTip("If enabled, a transfer bus (JBPT) is added with additional logic")
         row2_layout.addWidget(self.enable_transfer_bus_checkbox)
 
-        self.reducible_branches_checkbox = QCheckBox("Reducible branches")
+        self.reducible_branches_checkbox = QCheckBox(self.tr("Reducible branches"))
         self.reducible_branches_checkbox.setChecked(True)
         self.reducible_branches_checkbox.setToolTip("If true, every switch created reducible. If false, "
                                                     "the switches are kept in the analysis.")
@@ -304,7 +304,7 @@ class VoltageLevelConversionWizard(QDialog):
 
         # Third row of checkboxes
         row3_layout = QHBoxLayout()
-        self.bar_by_segments_checkbox = QCheckBox("Bars with impedance")
+        self.bar_by_segments_checkbox = QCheckBox(self.tr("Bars with impedance"))
         self.bar_by_segments_checkbox.setChecked(False)
         self.bar_by_segments_checkbox.setToolTip("Split the bar into segments with impedances")
         row3_layout.addWidget(self.bar_by_segments_checkbox)
@@ -314,7 +314,7 @@ class VoltageLevelConversionWizard(QDialog):
         main_layout.addWidget(options_group)
 
         # --- Table for positions ---
-        table_label = QLabel("Positions (use arrows to reorder):")
+        table_label = QLabel(self.tr("Positions (use arrows to reorder):"))
         main_layout.addWidget(table_label)
 
         # Table with reorder buttons layout
@@ -331,13 +331,13 @@ class VoltageLevelConversionWizard(QDialog):
         reorder_buttons_layout = QVBoxLayout()
         reorder_buttons_layout.addStretch()
 
-        self.move_up_button = QPushButton("\u25B2")  # Up arrow
+        self.move_up_button = QPushButton(self.tr("\u25B2"))  # Up arrow
         self.move_up_button.setFixedWidth(30)
         self.move_up_button.setToolTip("Move selected row up")
         self.move_up_button.clicked.connect(self.table.move_row_up)
         reorder_buttons_layout.addWidget(self.move_up_button)
 
-        self.move_down_button = QPushButton("\u25BC")  # Down arrow
+        self.move_down_button = QPushButton(self.tr("\u25BC"))  # Down arrow
         self.move_down_button.setFixedWidth(30)
         self.move_down_button.setToolTip("Move selected row down")
         self.move_down_button.clicked.connect(self.table.move_row_down)
@@ -350,12 +350,12 @@ class VoltageLevelConversionWizard(QDialog):
 
         # --- Add/Remove position buttons ---
         position_buttons_layout = QHBoxLayout()
-        self.add_spare_button = QPushButton("+ Add spare position")
+        self.add_spare_button = QPushButton(self.tr("+ Add spare position"))
         self.add_spare_button.setToolTip("Add an empty position (especially important for Breaker-and-a-Half scheme)")
         self.add_spare_button.clicked.connect(self.add_spare_position)
         position_buttons_layout.addWidget(self.add_spare_button)
 
-        self.remove_row_button = QPushButton("- Remove selected")
+        self.remove_row_button = QPushButton(self.tr("- Remove selected"))
         self.remove_row_button.setToolTip("Remove the selected row")
         self.remove_row_button.clicked.connect(self.remove_selected_row)
         position_buttons_layout.addWidget(self.remove_row_button)
@@ -367,11 +367,11 @@ class VoltageLevelConversionWizard(QDialog):
         bottom_layout = QHBoxLayout()
         bottom_layout.addStretch()
 
-        self.cancel_button = QPushButton("Cancel")
+        self.cancel_button = QPushButton(self.tr("Cancel"))
         self.cancel_button.clicked.connect(self.close)
         bottom_layout.addWidget(self.cancel_button)
 
-        self.do_button = QPushButton("Do it")
+        self.do_button = QPushButton(self.tr("Do it"))
         self.do_button.clicked.connect(self.do_it)
         bottom_layout.addWidget(self.do_button)
 
@@ -510,8 +510,8 @@ class VoltageLevelConversionWizard(QDialog):
             else:
                 QMessageBox.warning(
                     self,
-                    "Cannot Remove",
-                    "Only spare positions can be removed. Actual devices cannot be removed from the list."
+                    self.tr("Cannot Remove"),
+                    self.tr("Only spare positions can be removed. Actual devices cannot be removed from the list.")
                 )
 
     def get_vl_type(self) -> VoltageLevelTypes:
@@ -612,7 +612,7 @@ class VoltageLevelConversionWizard(QDialog):
         is_valid, error_msg = self.validate_configuration()
 
         if not is_valid:
-            QMessageBox.warning(self, "Validation Error", error_msg)
+            QMessageBox.warning(self, self.tr("Validation Error"), error_msg)
             return
 
         self.closed_ok = True

@@ -15,8 +15,8 @@ The classical theoretical foundations for power-system dynamic simulation can be
 
 This page provides the common theory, architecture, initialization, solver, event, and scripting concepts shared by VeraGrid's dynamic studies. Continue with the domain-specific guides or the model reference according to the task:
 
-- **RMS simulations** cover phasor-domain time simulation and contain the RMS small-signal analysis guide.
-- **EMT simulations** cover waveform- and phase-domain time simulation.
+- **RMS simulations** cover phasor-domain time simulation and contain the RMS Small-Signal analysis guide.
+- **EMT simulations** cover waveform- and phase-domain time simulation and contain the EMT Floquet Small-Signal analysis guide.
 - **Dynamic model library** contains model authoring guidance, device templates, reusable DAE blocks, and procedural runtime logic.
 
 ```{toctree}
@@ -230,7 +230,7 @@ $$
 \Delta \dot{x} = \left(f_x - f_y g_y^{-1} g_x\right) \Delta x
 $$
 
-This reduced matrix is one of the foundations of eigenvalue-based small-signal analysis. It is also a strong reason to keep the nonlinear model formulation coherent: if the original DAE is inconsistent, the linearized model will be inconsistent as well.
+This reduced matrix is one of the foundations of eigenvalue-based Small-Signal analysis. It is also a strong reason to keep the nonlinear model formulation coherent: if the original DAE is inconsistent, the linearized model will be inconsistent as well.
 
 ### DAE index and numerical implications
 
@@ -572,7 +572,7 @@ In practical terms, `external_mapping` answers questions such as:
 
 This mapping is essential because the static grid objects and the dynamic block objects are not the same thing, even if they represent the same physical device. The mapping is what lets one steady-state solution initialize the correct symbolic variables inside the dynamic model.
 
-Without this bridge, RMS dynamic simulation and small-signal linearization would lose their physical operating-point consistency.
+Without this bridge, RMS dynamic simulation and Small-Signal linearization would lose their physical operating-point consistency.
 
 ### `api_obj_mapping`
 
@@ -645,7 +645,7 @@ Without this step, time integration may diverge immediately or produce physicall
 
 ### Power flow as starting point
 
-For RMS simulations, the standard workflow is to solve a power flow first and then use that operating point to initialize the dynamic model. This is also the workflow used by VeraGrid's RMS dynamic and RMS small-signal drivers.
+For RMS simulations, the standard workflow is to solve a power flow first and then use that operating point to initialize the dynamic model. This is also the workflow used by VeraGrid's RMS dynamic and RMS Small-Signal drivers.
 
 For EMT simulations, a static operating point is also needed, but the dynamic initialization problem is richer because phase-domain or waveform-domain quantities may have to be reconstructed consistently from the static network state and from model-specific initialization equations.
 

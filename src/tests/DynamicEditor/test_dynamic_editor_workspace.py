@@ -6,7 +6,9 @@ import sys
 from PySide6 import QtCore, QtGui, QtWidgets
 import shiboken6
 
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_tab import DynamicEditorTab
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_workspace_window import DynamicEditorWorkspaceWindow
+from VeraGrid.Session.dynamic_editor_entries import DynamicEditorEntry
 from VeraGrid.Session.dynamic_editor_entries import build_dynamic_editor_entry
 from VeraGrid.Session.dynamic_editor_workspace_session import DynamicEditorWorkspaceSession
 from VeraGridEngine.enumerations import DynamicSimulationMode
@@ -200,6 +202,52 @@ def test_workspace_detaches_and_reattaches_tabs_between_windows() -> None:
 
     assert workspace.workspace_for_page(emt_page) is workspace
     assert workspace.ui.editorTabs.count() == 2
+
+    _reset_dynamic_editor_workspaces()
+
+
+def test_project_replacement_closes_all_detached_dynamic_editor_workspaces() -> None:
+    """Close all editor pages and windows before their circuit is replaced.
+
+    :return: None.
+    """
+    _get_app()
+    _reset_dynamic_editor_workspaces()
+    circuit: gce.MultiCircuit
+    load: gce.Load
+    _entry: DynamicEditorEntry
+    circuit, load, _entry = _build_load_entry()
+    session: DynamicEditorWorkspaceSession = DynamicEditorWorkspaceSession()
+    workspace: DynamicEditorWorkspaceWindow = DynamicEditorWorkspaceWindow(session=session)
+
+    rms_page: DynamicEditorTab | None = workspace.open_dynamic_editor_for(
+        load,
+        circuit,
+        preferred_mode=DynamicSimulationMode.RMS,
+    )
+    emt_page: DynamicEditorTab | None = workspace.open_dynamic_editor_for(
+        load,
+        circuit,
+        preferred_mode=DynamicSimulationMode.EMT,
+        target_workspace=workspace,
+    )
+    assert rms_page is not None
+    assert emt_page is not None
+
+    # Detach one page to prove project replacement covers the complete session
+    # rather than only the most recently active workspace window.
+    emt_index: int = workspace.index_of_page(emt_page)
+    workspace._on_tab_drag_started(emt_index)
+    workspace._on_tab_detach_requested(workspace.pos())
+    assert len(session.get_open_workspaces()) == 2
+
+    replacement_accepted: bool = session.close_all_for_project_replacement(parent=workspace)
+
+    assert replacement_accepted
+    assert len(session.get_open_workspaces()) == 0
+    assert len(session._session_pages) == 0
+    assert rms_page.editor is None
+    assert emt_page.editor is None
 
     _reset_dynamic_editor_workspaces()
 

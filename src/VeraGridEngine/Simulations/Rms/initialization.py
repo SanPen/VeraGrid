@@ -1529,27 +1529,43 @@ def init_pseudo_transient(mdl: Block,
             else:
                 pass
 
-    # Promote unresolved event parameters (Const(None)) to algebraic unknowns.
-    # Prefer ordered init-equation updates when available, then fall back to an
-    # inferred update from the actual equilibrium residuals.
+    # Symbolic event expressions become local algebraic initialization
+    # constraints ``event_parameter - expression = 0``. Adding both the
+    # variable and its residual preserves a square pseudo-transient system.
+    # Const(None) remains the legacy/external seeding form and keeps the former
+    # inferred-reference update path because it has no owned expression.
     equilibrium_reference_update_eqs: Dict[Var, Expr] = dict()
     for blk in mdl_work.get_all_blocks():
-        unresolved = [
-            var for var, value in blk.event_dict.items()
-            if isinstance(var, Var) and isinstance(value, Const) and value.value is None
+        initializable_event_parameters: List[tuple[Var, Expr | Const]] = [
+            (var, value)
+            for var, value in blk.event_dict.items()
+            if isinstance(var, Var) and (not isinstance(value, Const) or value.value is None)
         ]
-        for var in unresolved:
-            update_expr: Expr | None = None
+        for var, event_expression in initializable_event_parameters:
             ordered_expr: Expr | Const | None = ordered_init_update_eqs.get(var, None)
-            if isinstance(ordered_expr, Expr) and not isinstance(ordered_expr, Const):
-                update_expr = ordered_expr
+            if isinstance(event_expression, Const):
+                update_expr: Expr | None = _find_equilibrium_reference_update_eq(
+                    mdl=mdl_work,
+                    ref_var=var,
+                )
+                if isinstance(update_expr, Expr) and not isinstance(update_expr, Const):
+                    equilibrium_reference_update_eqs[var] = update_expr
+                else:
+                    pass
             else:
-                update_expr = _find_equilibrium_reference_update_eq(mdl=mdl_work, ref_var=var)
-            if isinstance(update_expr, Expr) and not isinstance(update_expr, Const):
-                equilibrium_reference_update_eqs[var] = update_expr
-            else:
+                if isinstance(ordered_expr, Expr):
+                    initialization_expression: Expr = ordered_expr
+                else:
+                    initialization_expression = event_expression
+                blk.algebraic_eqs.append((var - initialization_expression).simplify())
+
+            event_is_algebraic: bool = any(
+                algebraic_var.uid == var.uid
+                for algebraic_var in blk.algebraic_vars
+            )
+            if event_is_algebraic:
                 pass
-            if not any(v.uid == var.uid for v in blk.algebraic_vars):
+            else:
                 blk.algebraic_vars.append(var)
             del blk.event_dict[var]
     

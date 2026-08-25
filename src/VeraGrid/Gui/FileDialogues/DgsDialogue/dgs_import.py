@@ -28,7 +28,7 @@ class DgsImportDialogue(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_DgsImportDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('DGS import')
+        self.setWindowTitle(self.tr('DGS import'))
         self.setModal(True)
 
         self.app: IoMain = app

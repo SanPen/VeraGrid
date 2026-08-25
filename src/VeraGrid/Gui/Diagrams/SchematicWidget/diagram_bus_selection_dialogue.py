@@ -33,7 +33,7 @@ class DiagramBusSelectorDialogue(QtWidgets.QDialog):
         :param substation:
         """
         super().__init__()
-        self.setWindowTitle("Bus selection by diagram")
+        self.setWindowTitle(self.tr("Bus selection by diagram"))
 
         self.layout = QVBoxLayout(self)
 
@@ -55,7 +55,7 @@ class DiagramBusSelectorDialogue(QtWidgets.QDialog):
 
         self.layout.addWidget(self.diagram_widget)
 
-        self.select_button = QPushButton("Select")
+        self.select_button = QPushButton(self.tr("Select"))
         self.diagram_widget.frame1_layout.addWidget(self.select_button)
         self.diagram_widget.library_view.setVisible(False)
 

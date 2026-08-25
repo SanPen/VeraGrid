@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.IO.veragrid.json_parser &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.IO.veragrid.json_parser &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,9 +44,9 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
@@ -67,6 +67,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
@@ -119,7 +123,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Parents.editable_device</span><span class="w"> </span><span class="kn">import</span> <span class="n">EditableDevice</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.driver_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">DriverToSave</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">DeviceType</span><span class="p">,</span> <span class="n">HvdcControlType</span><span class="p">,</span> <span class="n">BuildStatus</span><span class="p">,</span>
-                                         <span class="n">TapModuleControl</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">,</span> <span class="n">SimulationTypes</span><span class="p">)</span>
+                                         <span class="n">TapModuleControl</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">,</span> <span class="n">SimulationTypes</span><span class="p">,</span>
+                                         <span class="n">GeneratorControlMode</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="add_to_dict">
@@ -205,7 +210,7 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The passed dictionary is not a profile definition&quot;</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">profile</span><span class="o">.</span><span class="n">default_value</span><span class="o">=</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">profile</span><span class="o">.</span><span class="n">default_value</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">profile</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">arr</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
             <span class="k">return</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
@@ -273,7 +278,7 @@
                               <span class="n">active</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">element</span><span class="p">[</span><span class="s2">&quot;is_slack&quot;</span><span class="p">]:</span>
-                    <span class="n">elm</span><span class="o">.</span><span class="n">_bus_type</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span>
+                    <span class="n">elm</span><span class="o">.</span><span class="n">bus_type</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span>
                 <span class="k">if</span> <span class="n">element</span><span class="p">[</span><span class="s2">&quot;vmax&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">elm</span><span class="o">.</span><span class="n">Vmax</span> <span class="o">=</span> <span class="n">element</span><span class="p">[</span><span class="s2">&quot;vmax&quot;</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">element</span><span class="p">[</span><span class="s2">&quot;vmin&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -555,20 +560,22 @@
                 <span class="n">has_profiles</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="k">for</span> <span class="n">jentry</span> <span class="ow">in</span> <span class="n">generators</span><span class="p">:</span>
-                <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]),</span>
-                                    <span class="n">idtag</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]),</span>
-                                    <span class="n">P</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]),</span>
-                                    <span class="n">power_factor</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;pf&#39;</span><span class="p">]),</span>
-                                    <span class="n">vset</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;vset&#39;</span><span class="p">]),</span>
-                                    <span class="n">is_controlled</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;is_controlled&#39;</span><span class="p">]),</span>
-                                    <span class="n">Qmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;qmin&#39;</span><span class="p">]),</span>
-                                    <span class="n">Qmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;qmax&#39;</span><span class="p">]),</span>
-                                    <span class="n">Snom</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;snom&#39;</span><span class="p">]),</span>
-                                    <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;active&#39;</span><span class="p">]),</span>
-                                    <span class="n">Pmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;pmin&#39;</span><span class="p">]),</span>
-                                    <span class="n">Pmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;pmax&#39;</span><span class="p">]),</span>
-                                    <span class="n">Cost</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;cost&quot;</span> <span class="ow">in</span> <span class="n">jentry</span> <span class="k">else</span> <span class="mf">1.0</span><span class="p">),</span>
-                                    <span class="p">)</span>
+                <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span> <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;is_controlled&#39;</span><span class="p">])</span> <span class="k">else</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span>
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]),</span>
+                    <span class="n">idtag</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]),</span>
+                    <span class="n">P</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]),</span>
+                    <span class="n">power_factor</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;pf&#39;</span><span class="p">]),</span>
+                    <span class="n">vset</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;vset&#39;</span><span class="p">]),</span>
+                    <span class="n">control_mode</span><span class="o">=</span><span class="n">control_mode</span><span class="p">,</span>
+                    <span class="n">Qmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;qmin&#39;</span><span class="p">]),</span>
+                    <span class="n">Qmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;qmax&#39;</span><span class="p">]),</span>
+                    <span class="n">Snom</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;snom&#39;</span><span class="p">]),</span>
+                    <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;active&#39;</span><span class="p">]),</span>
+                    <span class="n">Pmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;pmin&#39;</span><span class="p">]),</span>
+                    <span class="n">Pmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;pmax&#39;</span><span class="p">]),</span>
+                    <span class="n">Cost</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;cost&quot;</span> <span class="ow">in</span> <span class="n">jentry</span> <span class="k">else</span> <span class="mf">1.0</span><span class="p">),</span>
+                <span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">has_profiles</span><span class="p">:</span>
                     <span class="n">profile_entry</span> <span class="o">=</span> <span class="n">device_profiles_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">]</span>
@@ -591,20 +598,22 @@
                 <span class="n">has_profiles</span> <span class="o">=</span> <span class="kc">False</span>
 
             <span class="k">for</span> <span class="n">jentry</span> <span class="ow">in</span> <span class="n">batteries</span><span class="p">:</span>
-                <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Battery</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]),</span>
-                                  <span class="n">idtag</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]),</span>
-                                  <span class="n">P</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]),</span>
-                                  <span class="n">power_factor</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;pf&#39;</span><span class="p">]),</span>
-                                  <span class="n">vset</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;vset&#39;</span><span class="p">]),</span>
-                                  <span class="n">is_controlled</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;is_controlled&#39;</span><span class="p">]),</span>
-                                  <span class="n">Qmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;qmin&#39;</span><span class="p">]),</span>
-                                  <span class="n">Qmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;qmax&#39;</span><span class="p">]),</span>
-                                  <span class="n">Snom</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;snom&#39;</span><span class="p">]),</span>
-                                  <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;active&#39;</span><span class="p">]),</span>
-                                  <span class="n">Pmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;pmin&#39;</span><span class="p">]),</span>
-                                  <span class="n">Pmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;pmax&#39;</span><span class="p">]),</span>
-                                  <span class="n">Cost</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]),</span>
-                                  <span class="p">)</span>
+                <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span> <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;is_controlled&#39;</span><span class="p">])</span> <span class="k">else</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span>
+                <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Battery</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]),</span>
+                    <span class="n">idtag</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]),</span>
+                    <span class="n">P</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]),</span>
+                    <span class="n">power_factor</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;pf&#39;</span><span class="p">]),</span>
+                    <span class="n">vset</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;vset&#39;</span><span class="p">]),</span>
+                    <span class="n">control_mode</span><span class="o">=</span><span class="n">control_mode</span><span class="p">,</span>
+                    <span class="n">Qmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;qmin&#39;</span><span class="p">]),</span>
+                    <span class="n">Qmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;qmax&#39;</span><span class="p">]),</span>
+                    <span class="n">Snom</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;snom&#39;</span><span class="p">]),</span>
+                    <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;active&#39;</span><span class="p">]),</span>
+                    <span class="n">Pmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;pmin&#39;</span><span class="p">]),</span>
+                    <span class="n">Pmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;pmax&#39;</span><span class="p">]),</span>
+                    <span class="n">Cost</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]),</span>
+                <span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">has_profiles</span><span class="p">:</span>
                     <span class="n">profile_entry</span> <span class="o">=</span> <span class="n">device_profiles_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">]</span>
@@ -914,13 +923,11 @@
                 <span class="n">circuit</span><span class="o">.</span><span class="n">add_winding</span><span class="p">(</span><span class="n">elm</span><span class="p">)</span>
                 <span class="n">windings_dict</span><span class="p">[</span><span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span>
 
-
         <span class="k">if</span> <span class="s2">&quot;Transformer3w&quot;</span> <span class="ow">in</span> <span class="n">devices</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
 
             <span class="n">transformers</span> <span class="o">=</span> <span class="n">devices</span><span class="p">[</span><span class="s2">&quot;Transformer3w&quot;</span><span class="p">]</span>
 
             <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">transformers</span><span class="p">:</span>
-
                 <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Transformer3W</span><span class="p">(</span><span class="n">idtag</span><span class="o">=</span><span class="n">entry</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span>
                                         <span class="n">code</span><span class="o">=</span><span class="n">entry</span><span class="p">[</span><span class="s1">&#39;code&#39;</span><span class="p">],</span>
                                         <span class="n">name</span><span class="o">=</span><span class="n">entry</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
@@ -1220,12 +1227,18 @@
         <span class="k">if</span> <span class="s1">&#39;Generator&#39;</span> <span class="ow">in</span> <span class="n">devices</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">generators</span> <span class="o">=</span> <span class="n">devices</span><span class="p">[</span><span class="s2">&quot;Generator&quot;</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">jentry</span> <span class="ow">in</span> <span class="n">generators</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;is_controlled&#39;</span><span class="p">]):</span>
+                    <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span>
+
                 <span class="n">gen</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]),</span>
                                     <span class="n">idtag</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]),</span>
                                     <span class="n">P</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]),</span>
                                     <span class="n">power_factor</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;pf&#39;</span><span class="p">]),</span>
                                     <span class="n">vset</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;vset&#39;</span><span class="p">]),</span>
-                                    <span class="n">is_controlled</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;is_controlled&#39;</span><span class="p">]),</span>
+                                    <span class="n">control_mode</span><span class="o">=</span><span class="n">control_mode</span><span class="p">,</span>
                                     <span class="n">Qmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;qmin&#39;</span><span class="p">]),</span>
                                     <span class="n">Qmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;qmax&#39;</span><span class="p">]),</span>
                                     <span class="n">Snom</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;snom&#39;</span><span class="p">]),</span>
@@ -1240,12 +1253,18 @@
         <span class="k">if</span> <span class="s1">&#39;Battery&#39;</span> <span class="ow">in</span> <span class="n">devices</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">batteries</span> <span class="o">=</span> <span class="n">devices</span><span class="p">[</span><span class="s2">&quot;Battery&quot;</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">jentry</span> <span class="ow">in</span> <span class="n">batteries</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;is_controlled&#39;</span><span class="p">]):</span>
+                    <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span>
+
                 <span class="n">gen</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Battery</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]),</span>
                                   <span class="n">idtag</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]),</span>
                                   <span class="n">P</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]),</span>
                                   <span class="n">power_factor</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;pf&#39;</span><span class="p">]),</span>
                                   <span class="n">vset</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;vset&#39;</span><span class="p">]),</span>
-                                  <span class="n">is_controlled</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;is_controlled&#39;</span><span class="p">]),</span>
+                                  <span class="n">control_mode</span><span class="o">=</span><span class="n">control_mode</span><span class="p">,</span>
                                   <span class="n">Qmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;qmin&#39;</span><span class="p">]),</span>
                                   <span class="n">Qmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;qmax&#39;</span><span class="p">]),</span>
                                   <span class="n">Snom</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">jentry</span><span class="p">[</span><span class="s1">&#39;snom&#39;</span><span class="p">]),</span>
@@ -1547,7 +1566,7 @@
 
     <span class="c1"># Add buses</span>
     <span class="n">elements</span><span class="p">[</span><span class="s1">&#39;Bus&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[{</span><span class="s1">&#39;id&#39;</span><span class="p">:</span> <span class="n">elm</span><span class="o">.</span><span class="n">idtag</span><span class="p">,</span>
-                        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">elm</span><span class="o">.</span><span class="n">determine_bus_type</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">elm</span><span class="o">.</span><span class="n">determine_snapshot_bus_type</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
                         <span class="s1">&#39;phases&#39;</span><span class="p">:</span> <span class="s1">&#39;ps&#39;</span><span class="p">,</span>
                         <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">elm</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
                         <span class="s1">&#39;name_code&#39;</span><span class="p">:</span> <span class="n">elm</span><span class="o">.</span><span class="n">code</span><span class="p">,</span>

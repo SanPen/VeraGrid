@@ -14,7 +14,9 @@ from VeraGridEngine.Devices.Dynamic.var_factory import (Connection,
                                                         find_var_by_persisted_identity)
 from VeraGridEngine.Utils.Symbolic import SharedVarReferenceType
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Expr, Const, BinOp, UnOp, Func, Func2
-from VeraGridEngine.Utils.Symbolic.block import Block, normalize_dynamic_connection_intents
+from VeraGridEngine.Utils.Symbolic.block import (Block,
+                                                 normalize_dynamic_connection_intents,
+                                                 normalize_event_parameter_initialization)
 from VeraGridEngine.Utils.Symbolic.dynamic_connection_intent import (DynamicConnectionIntent,
                                                                      DynamicConnectionIntentDirection,
                                                                      dynamic_connection_intent_from_dict,
@@ -699,6 +701,8 @@ class BlockSaver:
         :param main: is it the main block?
         :return: Dictionary representing the block
         """
+        normalize_event_parameter_initialization(block=blk)
+
         # One registry is shared by every expression owned by this block. Child
         # blocks create their own registry when ``save_block`` recurses.
         composite_expression_ids: Dict[int, int] = dict()
@@ -1602,6 +1606,7 @@ class BlockParser:
                                   field_name="connection_intents",
                                   missing_uid=None)
         normalize_dynamic_connection_intents(block=block)
+        normalize_event_parameter_initialization(block=block)
 
         diagram_data = data.get("diagram", None)
         if diagram_data is not None:
@@ -2089,6 +2094,7 @@ def _duplicate_block(block: Block,
             ))
 
     normalize_dynamic_connection_intents(block=new_block)
+    normalize_event_parameter_initialization(block=new_block)
 
     extra_key: str
     extra_value: Any

@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.IO.raw.veragrid_to_raw &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.IO.raw.veragrid_to_raw &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,9 +44,9 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
@@ -67,6 +67,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
@@ -709,7 +713,7 @@
     <span class="n">psse_bus</span><span class="o">.</span><span class="n">VM</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">Vm0</span>
     <span class="n">psse_bus</span><span class="o">.</span><span class="n">VA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">bus</span><span class="o">.</span><span class="n">Va0</span><span class="p">)</span>
 
-    <span class="n">psse_bus</span><span class="o">.</span><span class="n">IDE</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">_bus_type</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">psse_bus</span><span class="o">.</span><span class="n">IDE</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">bus_type</span><span class="o">.</span><span class="n">value</span>
 
     <span class="k">return</span> <span class="n">psse_bus</span></div>
 
@@ -1136,6 +1140,8 @@
                                      <span class="n">transformer</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">contingency_factor</span><span class="p">,</span>
                                      <span class="n">transformer</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">protection_rating_factor</span><span class="p">)</span>
 
+    <span class="c1"># The winding tap is stored on the winding-bus (bus_from) side, matching PSSe&#39;s</span>
+    <span class="c1"># winding-bus-side WINDVn / ANGn, so write the values directly (see raw_to_veragrid).</span>
     <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CW</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">psse_transformer</span><span class="o">.</span><span class="n">WINDV1</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">tap_module</span>
     <span class="n">psse_transformer</span><span class="o">.</span><span class="n">WINDV2</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">winding2</span><span class="o">.</span><span class="n">tap_module</span>
@@ -1144,6 +1150,52 @@
     <span class="n">psse_transformer</span><span class="o">.</span><span class="n">ANG1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">transformer</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">tap_phase</span><span class="p">)</span>
     <span class="n">psse_transformer</span><span class="o">.</span><span class="n">ANG2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">transformer</span><span class="o">.</span><span class="n">winding2</span><span class="o">.</span><span class="n">tap_phase</span><span class="p">)</span>
     <span class="n">psse_transformer</span><span class="o">.</span><span class="n">ANG3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">transformer</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">tap_phase</span><span class="p">)</span>
+
+    <span class="c1"># Winding tap regulation (mirror of the winding_controls parsing in raw_to_veragrid).</span>
+    <span class="c1"># Without writing these fields the COD/CONT/RMA/RMI/VMA/VMI/NTP default to &quot;no control&quot;,</span>
+    <span class="c1"># so the regulation parsed from the input RAW is lost on round-trip and the regulated bus</span>
+    <span class="c1"># loses its voltage lock (shifting its initial voltage).</span>
+    <span class="n">winding1</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">winding1</span>
+    <span class="k">if</span> <span class="n">winding1</span><span class="o">.</span><span class="n">tap_module_control_mode</span> <span class="o">==</span> <span class="n">TapModuleControl</span><span class="o">.</span><span class="n">Vm</span> <span class="ow">and</span> <span class="n">winding1</span><span class="o">.</span><span class="n">regulation_bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">COD1</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CONT1</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">winding1</span><span class="o">.</span><span class="n">regulation_bus</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">RMA1</span> <span class="o">=</span> <span class="n">winding1</span><span class="o">.</span><span class="n">tap_module_max</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">RMI1</span> <span class="o">=</span> <span class="n">winding1</span><span class="o">.</span><span class="n">tap_module_min</span>
+        <span class="c1"># the controlled-voltage band collapses to its midpoint (vset) on read, so write</span>
+        <span class="c1"># vset on both ends to reproduce it exactly.</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">VMA1</span> <span class="o">=</span> <span class="n">winding1</span><span class="o">.</span><span class="n">vset</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">VMI1</span> <span class="o">=</span> <span class="n">winding1</span><span class="o">.</span><span class="n">vset</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">NTP1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">winding1</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">COD1</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">winding2</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">winding2</span>
+    <span class="k">if</span> <span class="n">winding2</span><span class="o">.</span><span class="n">tap_module_control_mode</span> <span class="o">==</span> <span class="n">TapModuleControl</span><span class="o">.</span><span class="n">Vm</span> <span class="ow">and</span> <span class="n">winding2</span><span class="o">.</span><span class="n">regulation_bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">COD2</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CONT2</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">winding2</span><span class="o">.</span><span class="n">regulation_bus</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">RMA2</span> <span class="o">=</span> <span class="n">winding2</span><span class="o">.</span><span class="n">tap_module_max</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">RMI2</span> <span class="o">=</span> <span class="n">winding2</span><span class="o">.</span><span class="n">tap_module_min</span>
+        <span class="c1"># the controlled-voltage band collapses to its midpoint (vset) on read, so write</span>
+        <span class="c1"># vset on both ends to reproduce it exactly.</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">VMA2</span> <span class="o">=</span> <span class="n">winding2</span><span class="o">.</span><span class="n">vset</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">VMI2</span> <span class="o">=</span> <span class="n">winding2</span><span class="o">.</span><span class="n">vset</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">NTP2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">winding2</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">COD2</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">winding3</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">winding3</span>
+    <span class="k">if</span> <span class="n">winding3</span><span class="o">.</span><span class="n">tap_module_control_mode</span> <span class="o">==</span> <span class="n">TapModuleControl</span><span class="o">.</span><span class="n">Vm</span> <span class="ow">and</span> <span class="n">winding3</span><span class="o">.</span><span class="n">regulation_bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">COD3</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CONT3</span> <span class="o">=</span> <span class="n">bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">winding3</span><span class="o">.</span><span class="n">regulation_bus</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">RMA3</span> <span class="o">=</span> <span class="n">winding3</span><span class="o">.</span><span class="n">tap_module_max</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">RMI3</span> <span class="o">=</span> <span class="n">winding3</span><span class="o">.</span><span class="n">tap_module_min</span>
+        <span class="c1"># the controlled-voltage band collapses to its midpoint (vset) on read, so write</span>
+        <span class="c1"># vset on both ends to reproduce it exactly.</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">VMA3</span> <span class="o">=</span> <span class="n">winding3</span><span class="o">.</span><span class="n">vset</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">VMI3</span> <span class="o">=</span> <span class="n">winding3</span><span class="o">.</span><span class="n">vset</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">NTP3</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">winding3</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">psse_transformer</span><span class="o">.</span><span class="n">COD3</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">ckt</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 

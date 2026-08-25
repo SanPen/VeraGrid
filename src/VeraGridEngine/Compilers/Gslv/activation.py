@@ -125,7 +125,9 @@ try:
         WindingType.GroundedStar: pg.WindingType.GroundedStar,
         WindingType.NeutralStar: pg.WindingType.NeutralStar,
         WindingType.Delta: pg.WindingType.Delta,
-        WindingType.ZigZag: pg.WindingType.ZigZag,
+        WindingType.GroundedZigZag: pg.WindingType.ZigZag,
+        WindingType.FloatingZigZag: pg.WindingType.ZigZag,
+        WindingType.NeutralZigZag: pg.WindingType.ZigZag,
     }
 
     windings_connection_dict = {

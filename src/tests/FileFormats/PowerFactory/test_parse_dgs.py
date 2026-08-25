@@ -230,3 +230,25 @@ def test_dgs_tower_coupling_logs_non_empty_message_for_blank_value_error() -> No
 
     assert len(logger.entries) == 1
     assert logger.entries[0].msg == "Failed to apply tower template."
+
+
+def test_dgs_shared_tower_type_creates_phase_layout_variants() -> None:
+    grid = FileOpen(os.path.join("data", "grids", "DGS", "IEEE13_NoCables.dgs")).open()
+    line_by_name = {line.name: line for line in grid.lines}
+
+    assert line_by_name["LOHL632-645"].template.name == "LineConfig603-604_CBN"
+    assert line_by_name["LOHL645-646"].template.name == "LineConfig603-604_CBN"
+    assert line_by_name["LOHL671-684"].template.name == "LineConfig603-604_ACN"
+    assert line_by_name["LOHL632-645"].template is not line_by_name["LOHL671-684"].template
+
+    expected_by_line = {
+        "LOHL632-645": [True, False, True, True],
+        "LOHL645-646": [True, False, True, True],
+        "LOHL671-684": [True, True, False, True],
+    }
+    for line_name, expected_phases in expected_by_line.items():
+        line = line_by_name[line_name]
+        declared_phases = [line.ys.phN, line.ys.phA, line.ys.phB, line.ys.phC]
+        matrix_phases = np.any(np.abs(line.ys.values) > 1e-12, axis=0)
+        assert declared_phases == expected_phases
+        assert np.array_equal(matrix_phases, expected_phases)

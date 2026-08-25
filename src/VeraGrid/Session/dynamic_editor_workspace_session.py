@@ -157,6 +157,50 @@ class DynamicEditorWorkspaceSession(QtCore.QObject):
         # fixtures are still alive. Tests that require immediate destruction
         # explicitly flush DeferredDelete after releasing their own references.
 
+    def close_all_for_project_replacement(self, parent: QtWidgets.QWidget) -> bool:
+        """Close every dynamic-editor workspace before replacing its project.
+
+        Close guards are evaluated for all pages before any workspace is
+        modified. Consequently, rejecting one unapplied-change warning leaves
+        the complete editor family and the current circuit untouched.
+
+        :param parent: Main window that owns unapplied-change confirmations.
+        :return: ``True`` when every workspace was closed or none was open;
+            ``False`` when the user cancelled the replacement.
+        """
+        # Detachable workspaces share this session, so one stable snapshot
+        # covers both the primary window and every detached editor window.
+        workspaces_to_close: List[DynamicEditorWorkspaceWindow] = list(self.get_open_workspaces())
+        workspace_to_check: DynamicEditorWorkspaceWindow
+        page_to_check: DynamicBlockEditorGUI | DynamicEditorTab
+
+        # Validate the complete operation first. Closing during this loop would
+        # make cancellation in a later detached window only partially effective.
+        for workspace_to_check in workspaces_to_close:
+            for page_to_check in workspace_to_check.pages_iter():
+                if bool(page_to_check.can_close_editor(parent)):
+                    pass
+                else:
+                    return False
+
+        # Every guard has accepted, so each workspace can now destroy its pages
+        # without prompting again. Page teardown also closes block properties.
+        workspace_to_close: DynamicEditorWorkspaceWindow
+        for workspace_to_close in workspaces_to_close:
+            workspace_to_close.close_for_project_replacement()
+
+        # Project-specific routing and mode history must not leak into editors
+        # opened later for devices from the replacement circuit.
+        self._open_workspaces.clear()
+        self._session_pages.clear()
+        self._last_mode_by_key_base.clear()
+        self._last_active_workspace = None
+        self._pending_drag_page = None
+        self._pending_drag_workspace = None
+        self._retained_workspaces.clear()
+        self._retained_pages.clear()
+        return True
+
     def workspace_for_page(self, page: DynamicBlockEditorGUI | DynamicEditorTab) -> "DynamicEditorWorkspaceWindow | None":
         """
         Locate the workspace that currently owns one editor page.

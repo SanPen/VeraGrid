@@ -5,7 +5,16 @@
 
 import VeraGridEngine.api as gce
 from VeraGridEngine import WindingType, ShuntConnectionType
+from VeraGridEngine.Simulations.PowerFlow3ph.Formulations.pf_basic_formulation_3ph import expandVoltage3ph
 import numpy as np
+
+
+def test_expand_voltage_3ph_initializes_neutrals_uniformly():
+    voltage = np.array([1.0, 0.95 * np.exp(0.1j)])
+    expanded = expandVoltage3ph(voltage)
+
+    assert np.allclose(expanded[0::4], 1e-4 * np.exp(1j * np.angle(voltage)))
+
 
 def test_ieee_13_bus_feeder_driver():
     """

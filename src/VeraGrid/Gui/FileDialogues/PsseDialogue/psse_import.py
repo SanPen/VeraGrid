@@ -27,7 +27,7 @@ class PsseImportDialogue(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_PsseImportDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('PSS/e import')
+        self.setWindowTitle(self.tr('PSS/e import'))
         self.setModal(True)
 
         self.app = app

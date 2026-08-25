@@ -11,6 +11,34 @@ from VeraGridEngine.basic_structures import IntVec, Vec, StrVec, CxVec, ObjVec
 from VeraGridEngine.enumerations import StudyResultsType, ResultTypes, DeviceType, SolutionState
 
 
+def contingency_report_row_order(entries: list) -> IntVec:
+    """
+    Order contingency-flow report rows so hours stay together.
+
+    Time is the primary key. Outage index and watched-branch index follow so
+    each hour stays grouped the same way the formulation stored the pairs.
+
+    :param entries: list of (t, m, c, ...) tuples
+    :return: permutation of row indices
+    """
+    n_rep: int = len(entries)
+    if n_rep == 0:
+        return np.zeros(0, dtype=int)
+    else:
+        time_keys: IntVec = np.empty(n_rep, dtype=int)
+        monitor_keys: IntVec = np.empty(n_rep, dtype=int)
+        group_keys: IntVec = np.empty(n_rep, dtype=int)
+        i_rep: int
+        for i_rep in range(n_rep):
+            entry_i: tuple = entries[i_rep]
+            # (t, m, c, ...) as stored when the pair was formulated
+            time_keys[i_rep] = int(entry_i[0])
+            monitor_keys[i_rep] = int(entry_i[1])
+            group_keys[i_rep] = int(entry_i[2])
+        # lexsort: last key is primary, so time, then outage, then watched line
+        return np.lexsort((monitor_keys, group_keys, time_keys))
+
+
 class OptimalNetTransferCapacityResults(ResultsTemplate):
     """
     OPF results.
@@ -496,7 +524,10 @@ class OptimalNetTransferCapacityResults(ResultsTemplate):
             columns = ['Contingency group index', 'Contingency group',
                        'Monitored index', 'Monitored branch',
                        'Flow (MW)', 'Loading (%)', 'Relaxation slack (MW)']
-            for entry in self.contingency_flows_list:
+            row_order: IntVec = contingency_report_row_order(self.contingency_flows_list)
+            i_ord: int
+            for i_ord in range(len(row_order)):
+                entry = self.contingency_flows_list[int(row_order[i_ord])]
                 # The strict formulation stores (t, m, c, flow) with no slacks,
                 # while the non-strict one stores (t, m, c, flow, neg_slack, pos_slack).
                 if self.strict_formulation:

@@ -78,7 +78,7 @@ class Transformer3WDeviceEditor(TemplateDeviceEditor):
         """
         TemplateDeviceEditor.__init__(self, api_object=api_object, circuit=circuit)
         self.api_object: Transformer3W = api_object
-        self.setWindowTitle("Transformer 3W editor")
+        self.setWindowTitle(self.tr("Transformer 3W editor"))
 
         self.transformer3w_design_widget: EmbeddedTransformer3WDesignEditorWidget | None = None
         self._build_transformer3w_design_tab()
@@ -128,7 +128,7 @@ class Transformer3WDeviceEditor(TemplateDeviceEditor):
         if self.transformer3w_design_widget is not None:
             self.transformer3w_design_widget.apply_changes()
         else:
-            warning_msg("Transformer 3W design widget is not available", "Transformer 3W editor")
+            warning_msg(self.tr("Transformer 3W design widget is not available"), self.tr("Transformer 3W editor"))
 
     def _on_transformer3w_design_applied(self, applied_ok: bool) -> None:
         """

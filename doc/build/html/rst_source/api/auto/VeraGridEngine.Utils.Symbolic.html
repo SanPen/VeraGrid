@@ -568,6 +568,28 @@ scans when many variables must be resolved from the same block.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.Symbolic.block.normalize_event_parameter_initialization">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.Symbolic.block.</span></span><span class="sig-name descname"><span class="pre">normalize_event_parameter_initialization</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Utils.Symbolic.block.Block" title="VeraGridEngine.Utils.Symbolic.block.Block"><span class="pre">Block</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/Symbolic/block.html#normalize_event_parameter_initialization"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.Symbolic.block.normalize_event_parameter_initialization" title="Link to this definition"></a></dt>
+<dd><p>Move legacy event-parameter initialization into <code class="docutils literal notranslate"><span class="pre">event_dict</span></code>.</p>
+<p>Older templates represented one runtime parameter twice: <code class="docutils literal notranslate"><span class="pre">event_dict</span></code>
+contained <code class="docutils literal notranslate"><span class="pre">Const(None)</span></code> while <code class="docutils literal notranslate"><span class="pre">init_eqs</span></code> contained the actual initial
+expression. Event parameters now own their scalar value or initialization
+expression directly in <code class="docutils literal notranslate"><span class="pre">event_dict</span></code>. If a legacy entry already contains
+a concrete event expression, that expression remains authoritative, matching
+the precedence historically used by explicit initialization.</p>
+<p>Variable UIDs are used for matching because loaded or reconstructed blocks
+can contain distinct Python objects representing the same symbolic identity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>block</strong> – Root block whose complete child tree is normalized in place.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.Utils.Symbolic.block.refresh_block_tree_var_name_mappings">
 <span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.Symbolic.block.</span></span><span class="sig-name descname"><span class="pre">refresh_block_tree_var_name_mappings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root_block</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#VeraGridEngine.Utils.Symbolic.block.Block" title="VeraGridEngine.Utils.Symbolic.block.Block"><span class="pre">Block</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/Symbolic/block.html#refresh_block_tree_var_name_mappings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.Symbolic.block.refresh_block_tree_var_name_mappings" title="Link to this definition"></a></dt>
 <dd><p>Rebuild algebraic-variable lookups after connected names change.</p>
@@ -4313,12 +4335,26 @@ Parentheses are added only when required.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.Symbolic.symbolic.get_symbolic_parser_function_arity">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.Symbolic.symbolic.</span></span><span class="sig-name descname"><span class="pre">get_symbolic_parser_function_arity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/Symbolic/symbolic.html#get_symbolic_parser_function_arity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.Symbolic.symbolic.get_symbolic_parser_function_arity" title="Link to this definition"></a></dt>
+<dd><p>Return the positional arity of one public symbolic parser function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>function_name</strong> – Function name obtained from symbolic source text.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Required positional argument count, or <code class="docutils literal notranslate"><span class="pre">None</span></code> when unsupported.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.Utils.Symbolic.symbolic.get_symbolic_parser_function_names">
 <span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.Symbolic.symbolic.</span></span><span class="sig-name descname"><span class="pre">get_symbolic_parser_function_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/Symbolic/symbolic.html#get_symbolic_parser_function_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.Symbolic.symbolic.get_symbolic_parser_function_names" title="Link to this definition"></a></dt>
-<dd><p>Return the public function names accepted by <a class="reference internal" href="#VeraGridEngine.Utils.Symbolic.symbolic.string_to_symbolic" title="VeraGridEngine.Utils.Symbolic.symbolic.string_to_symbolic"><code class="xref py py-func docutils literal notranslate"><span class="pre">string_to_symbolic()</span></code></a>.</p>
+<dd><p>Return every public function accepted by <a class="reference internal" href="#VeraGridEngine.Utils.Symbolic.symbolic.string_to_symbolic" title="VeraGridEngine.Utils.Symbolic.symbolic.string_to_symbolic"><code class="xref py py-func docutils literal notranslate"><span class="pre">string_to_symbolic()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p>
+<dd class="field-odd"><p>Detached ordered list of unary and binary function names.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4400,16 +4436,22 @@ corresponding new_values after each t_event.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="VeraGridEngine.Utils.Symbolic.symbolic.string_to_symbolic">
 <span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.Symbolic.symbolic.</span></span><span class="sig-name descname"><span class="pre">string_to_symbolic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expression_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">symbol_namespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.Utils.Symbolic.symbolic.Expr" title="VeraGridEngine.Utils.Symbolic.symbolic.Expr"><span class="pre">Expr</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">complex</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#VeraGridEngine.Utils.Symbolic.symbolic.Expr" title="VeraGridEngine.Utils.Symbolic.symbolic.Expr"><span class="pre">Expr</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#VeraGridEngine.Utils.Symbolic.symbolic.Comparison" title="VeraGridEngine.Utils.Symbolic.symbolic.Comparison"><span class="pre">Comparison</span></a></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/Symbolic/symbolic.html#string_to_symbolic"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.Symbolic.symbolic.string_to_symbolic" title="Link to this definition"></a></dt>
-<dd><p>Parse a textual symbolic expression into a symbolic tree using a safe AST walk.</p>
+<dd><p>Parse restricted source text into a symbolic expression tree.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>expression_text</strong></p></li>
-<li><p><strong>symbol_namespace</strong></p></li>
+<li><p><strong>expression_text</strong> – Python-like symbolic expression without assignments.</p></li>
+<li><p><strong>symbol_namespace</strong> – Explicit symbolic identities accepted by name.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>Parsed symbolic expression or comparison.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SyntaxError</strong> – If <code class="docutils literal notranslate"><span class="pre">expression_text</span></code> is not valid Python expression syntax.</p></li>
+<li><p><strong>ValueError</strong> – If the expression uses unsupported syntax or identities.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -5789,6 +5831,26 @@ its children for robust GUI execution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>device</strong> – Device whose saved EMT root parameters must be synchronized.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="VeraGridEngine.Utils.Symbolic.templates_common_functions.synchronize_saved_rms_root_mappings_from_children">
+<span class="sig-prename descclassname"><span class="pre">VeraGridEngine.Utils.Symbolic.templates_common_functions.</span></span><span class="sig-name descname"><span class="pre">synchronize_saved_rms_root_mappings_from_children</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">device</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../../_modules/VeraGridEngine/Utils/Symbolic/templates_common_functions.html#synchronize_saved_rms_root_mappings_from_children"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#VeraGridEngine.Utils.Symbolic.templates_common_functions.synchronize_saved_rms_root_mappings_from_children" title="Link to this definition"></a></dt>
+<dd><p>Mirror child RMS mappings into the saved device-model root.</p>
+<p>Models assembled in the Dynamic Editor store complete device templates as
+children of the editor-owned root. RMS initialization reads
+<code class="docutils literal notranslate"><span class="pre">external_mapping</span></code> and <code class="docutils literal notranslate"><span class="pre">api_obj_mapping</span></code> from that root, so every
+mapping owned by a generated child must also be exposed there after the
+edited model is committed. Existing non-null root mappings remain
+authoritative, which preserves manually curated interface bindings.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>device</strong> – Device whose saved RMS model has just been committed.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>None.</p>

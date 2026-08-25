@@ -7,7 +7,7 @@ from __future__ import annotations
 #
 from typing import Any, List, Dict, NamedTuple
 #
-from VeraGridEngine.enumerations import VarPowerFlowReferenceType
+from VeraGridEngine.enumerations import ParamPowerFlowReferenceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 
 from VeraGridEngine.Utils.Symbolic.block import (Block,
@@ -2194,6 +2194,50 @@ def synchronize_saved_emt_root_parameters_from_children(device: Any) -> None:
                         model.parameters[api_var] = child_block.parameters[api_var]
                 else:
                     pass
+
+
+def synchronize_saved_rms_root_mappings_from_children(device: Any) -> None:
+    """Mirror child RMS mappings into the saved device-model root.
+
+    Models assembled in the Dynamic Editor store complete device templates as
+    children of the editor-owned root. RMS initialization reads
+    ``external_mapping`` and ``api_obj_mapping`` from that root, so every
+    mapping owned by a generated child must also be exposed there after the
+    edited model is committed. Existing non-null root mappings remain
+    authoritative, which preserves manually curated interface bindings.
+
+    :param device: Device whose saved RMS model has just been committed.
+    :return: None.
+    """
+    model: Block = device.rms_model
+    descendant_block: Block
+    external_key: VarPowerFlowReferenceType
+    external_var: Var | None
+    api_key: ParamPowerFlowReferenceType
+    api_var: Var | None
+
+    if model.empty():
+        return
+    else:
+        pass
+
+    # The first element is the root itself. Only descendants need to be
+    # mirrored, including mappings owned by nested equation blocks.
+    all_blocks: List[Block] = model.get_all_blocks()
+    for descendant_block in all_blocks[1:]:
+        for external_key, external_var in descendant_block.external_mapping.items():
+            root_external_var: Var | None = model.external_mapping.get(external_key, None)
+            if root_external_var is None and external_var is not None:
+                model.external_mapping[external_key] = external_var
+            else:
+                pass
+
+        for api_key, api_var in descendant_block.api_obj_mapping.items():
+            root_api_var: Var | None = model.api_obj_mapping.get(api_key, None)
+            if root_api_var is None and api_var is not None:
+                model.api_obj_mapping[api_key] = api_var
+            else:
+                pass
 
 
 def ensure_bus_emt_model_matches_grid_mask(bus: Any,

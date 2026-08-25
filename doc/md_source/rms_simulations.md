@@ -1,15 +1,15 @@
-# 📝 RMS simulations
+# ⏱️ RMS simulations
 
 Root-mean-square (RMS) simulation is VeraGrid's phasor-domain dynamic-simulation workflow for electromechanical and controller time scales. It is the right tool when the objective is to study the time evolution of the system after a disturbance without resolving instantaneous electromagnetic waveforms inside each cycle.
 
 RMS simulation is usually the first dynamic study to run because it captures the global dynamic picture at moderate computational cost.
 
-The RMS model also provides the operating point and linearization used by VeraGrid's small-signal stability analysis.
+The RMS model also provides the operating point and linearization used by VeraGrid's Small-Signal stability analysis.
 
 ```{toctree}
 :maxdepth: 1
 
-small_signal_stability
+small_signal_stability_rms
 ```
 
 ## When to use RMS simulation
@@ -273,5 +273,5 @@ print(results.values.shape)
 - Always validate the static power-flow solution before running RMS.
 - Use RMS first when the main interest is electromechanical or controller-level behaviour.
 - Keep the dynamic model only as detailed as the study requires.
-- For linearized modal analysis around one RMS operating point or one RMS trajectory point, see [Small signal stability](small_signal_stability.md).
+- For linearized modal analysis around one RMS operating point or one RMS trajectory point, see [Small-Signal stability](small_signal_stability_rms.md).
 - For the broad mathematical and architectural background of the dynamic engine, see [Dynamic simulations](dynamic_simulations.md).

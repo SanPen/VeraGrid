@@ -1,0 +1,146 @@
+﻿********************************************************************************
+*
+* DIgSILENT (R) DGS Export V1.8.4
+* Copyright (C) DIgSILENT GmbH 2026. All rights reserved.
+*
+* DIgSILENT (C) PowerFactory V24.0.10.0
+*
+* Date:     08/06/2026 12:08
+* Project:  IEEE13_LoadValidation (Study Case: Study Case)
+*
+********************************************************************************
+
+
+$$General;FID(a:40);Descr(a:40);Val(a:255)
+  1;Version;7.0
+
+
+$$ComLdf;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);iopt_pq(i)
+  2;C;Load Flow Calculation;;1
+
+
+$$ElmFeeder;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);obj_id(p);iorient(i);i_scale(i);Sset(r);icolor(i);outserv(i)
+  3;C;RG60_LOHL650-632;;30;0;0;0;-15572290;0
+  4;C;RG60_UregA;;;0;0;0;-15572290;0
+  5;C;RG60_UregB;;;0;0;0;-1172706;0
+  6;C;RG60_UregC;;;0;0;0;-14636533;0
+
+
+$$ElmLne;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);dline(r);fline(r);GPScoords:MATRIX(a);nlnum(i);inAir(i)
+  7;C;LOHL650-632;9;56;0.6096;1;;1;0
+
+
+$$ElmLod;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);mode_inp(a:6);slini(r);plini(r);qlini(r);coslini(r);pf_recap(i);scale0(r);i_scale(i);outserv(i);classif(a:40);i_sym(i);plinir(r);plinis(r);plinit(r);qlinir(r);qlinis(r);qlinit(r);phtech(a)
+  8;C;General Load;9;45;DEF;2.563201;2.4;0.9;0.936329;0;1;1;0;;1;1;0.8;0.6;0.5;0.3;0.1;1PH PH-N
+
+
+$$ElmNet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);frnom(r);pDiagram(p)
+  9;C;Grid;;60;26
+  10;C;Summary Grid;;50;
+
+
+$$ElmTerm;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);systype(i);iUsage(i);uknom(r);unknom(r);iminus(i);outserv(i);GPSlat(r);GPSlon(r);vtarget(r)
+  11;C;Load;9;38;0;0;4.16;2.401777;0;0;0;0;1
+  12;C;Source;9;38;0;0;4.16;2.401777;0;0;0;0;1
+
+
+$$ElmXnet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);snss(r);rntxn(r);z2tz1(r);snssmin(r);rntxnmin(r);z2tz1min(r);chr_name(a:40);bustp(a:2);pgini(r);qgini(r);phiini(r);usetp(r);outserv(i);Kpf(r);K(r);cmax(r);xd(r);xq(r)
+  13;C;External Grid;9;10000;0.1;1;8000;0.1;1;;PV;0;0;0;1;0;0;0;1.1;0.2;0.2
+
+
+$$IntFolder;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p)
+  14;C;Layers;26
+  15;C;Settings;26
+  16;C;Grf;
+
+
+$$IntGrf;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);iCol(i);iVis(i);iLevel(i);rCenterX(r);rCenterY(r);sSymNam(a:80);pDataObj(p);iRot(i);rSizeX(r);rSizeY(r)
+  17;C;Graphical Net Object3;26;-16777216;1;1;260.3125;183.75;TermStrip;12;0;1.833333;1
+  18;C;Graphical Net Object30;26;-16777216;1;1;262.5;166.25;d_lin;7;0;1;1
+  19;C;Graphical Net Object5;26;-16777216;1;1;262.5;201.25;d_net;13;180;1;1
+  20;C;Graphical Net Object6(1);26;-16777216;1;1;262.5;131.25;d_load;8;0;1;1
+  21;C;Graphical Net Object6;26;-16777216;1;1;260.3125;148.75;TermStrip;11;0;1.833333;1
+
+
+$$IntGrfcon;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);rX:SIZEROW(i);rX:0(r);rX:1(r);rY:SIZEROW(i);rY:0(r);rY:1(r);iDatConNr(i)
+  22;C;GCO_1;18;2;262.5;262.5;2;166.25;183.75;0
+  23;C;GCO_2;18;2;262.5;262.5;2;166.25;148.75;1
+  24;C;GCO_1;19;2;262.5;262.5;2;196.875;183.75;0
+  25;C;GCO_1;20;2;262.5;262.5;2;135.625;148.75;0
+
+
+$$IntGrfnet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);snap_on(i);ortho_on(i);pDataFolder(p)
+  26;C;Grid;;1;1;9
+
+
+$$IntRef;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);obj_id(p)
+  27;C;Ref0;10;9
+
+
+$$StaCubic;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);obj_bus(i);obj_id(p);it2p1(i);it2p2(i);it2p3(i);cPhInfo(a)
+  28;C;Cub_4;11;1;7;0;1;2;abcN
+  29;C;Cub_5;11;0;8;0;1;2;aN
+  30;C;Cub_4;12;0;7;0;1;2;abcN
+  31;C;Cub_5;12;0;13;0;1;2;abcN
+
+
+$$StaSwitch;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);on_off(i);typ_id(p);aUsage(a)
+  32;C;Switch;28;1;;cbk
+  33;C;Switch;29;1;;cbk
+  34;C;Switch;30;1;;cbk
+  35;C;Switch;31;1;;cbk
+
+
+$$TypBar;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);uknom(r);Ithlim(r);Tkr(r);Iplim(r)
+  36;C;BusBar115kV;;115;0;1;0
+  37;C;Busbar0.48kV;;0.48;0;1;0
+  38;C;Busbar4.16kV;;4.16;0;1;0
+
+
+$$TypCon;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);sline(r);ncsub(i);dsubc(r);rpha(r);diaco(r);erpha(r);diatub(r);iskin(i);tmax(r);uline(r);iopt_inp(a:6);alpha(r);rpha_tmax(r);mlei(a:20);iModel(i)
+  39;C;556.5 ACSR;;0.73;1;0.1;0.115512;23.5458;9.54024;16;0;80;4.16;tmx;0;0.115512;Al;0
+  40;C;n1 ACSR;;0.23;1;0.1;0.695935;10.1092;1.359408;16;0;80;4.16;tmx;0;0.695935;As;0
+  41;C;n4 ACSR;;0.34;1;0.1;0.367851;14.3002;2.481072;16;0;80;4.16;tmx;0;0.367852;Al;0
+
+
+$$TypLne;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);uline(r);sline(r);InomAir(r);cohl_(i);rline(r);xline(r);rline0(r);xline0(r);Ithr(r);tmax(r);rtemp(r);systp(i);nlnph(i);nneutral(i);frnom(r);mlei(a:4);bline(r);bline0(r)
+  42;C;Cable Type Al-VPE 4x185sm 0.6/1kV;;1;0.34;0.355;0;0.164042;0.068897;0.656168;0.275590;17.4;90;250;0;3;1;60;Al;187.0079;111.5486
+  43;C;OHL Type SP LV;;1;0.8;0.8;1;0.492126;0.492126;0;0;0;80;80;0;1;1;60;Cu;0;0
+
+
+$$TypLod;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);systp(i);phtech(i);aP(r);bP(r);kpu0(r);kpu1(r);kpu(r);aQ(r);bQ(r);kqu0(r);kqu1(r);kqu(r)
+  44;C;LodDcPQ;;0;0;1;0;0;1;2;1;0;0;1;2
+  45;C;LodPEcI;;0;8;0;1;0;1;2;0;1;0;1;2
+  46;C;LodPEcPQ;;0;9;1;0;0;1;2;1;0;0;1;2
+  47;C;LodPEcZ;;0;9;0;0;0;1;2;0;0;0;1;2
+  48;C;LodPNcI;;0;8;0;1;0;1;2;0;1;0;1;2
+  49;C;LodPNcPQ;;0;8;1;0;0;1;2;1;0;0;1;2
+  50;C;LodPNcZ;;0;8;0;0;0;1;2;0;0;0;1;2
+  51;C;LodPPcI;;0;7;0;1;0;1;2;0;1;0;1;2
+  52;C;LodPPcZ;;0;7;0;0;0;1;2;0;0;0;1;2
+  53;C;LodYEcPQ;;0;9;1;0;0;1;2;1;0;0;1;2
+  54;C;LodYNcPQ;;0;3;1;0;0;1;2;1;0;0;1;2
+
+
+$$TypSym;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);sgn(r);ugn(r);cosn(r);xd(r);xq(r);xdsss(r);rstr(r);xdsat(r);satur(i);nphase(i);nslty(i);x0sy(r);r0sy(r);x2sy(r);r2sy(r);iopt_data(i);xds(r);xqs(r);xl(r);xdss(r);xqss(r);xrlq(r);tds(r);tqs(r);tdss(r);tqss(r);xstr(r)
+  55;C;3.5 MVA DG;;3.5;6.6;0.8;1.5;0.75;0.168;0.0504;1.2;0;3;2;0.1;0;0.2;0;1;0.256;0.3;0.1;0.168;0.184;0;0.53;0;0.03;0.03;0.2
+
+
+$$TypTow;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);frnom(r);nlear(i);nlcir(i);gearth(r);i_mode(i);pcond_e:SIZEROW(i);pcond_e:0(p);nphas:SIZEROW(i);nphas:0(r);nphas:1(r);ktrto:SIZEROW(i);ktrto:0(r);ktrto:1(r);pcond_c:SIZEROW(i);pcond_c:0(p);pcond_c:1(p);xy_e:SIZEROW(i);xy_e:SIZECOL(i);xy_e:0:0(r);xy_e:0:1(r);xy_c:SIZEROW(i);xy_c:SIZECOL(i);xy_c:0:0(r);xy_c:0:1(r);xy_c:0:2(r);xy_c:0:3(r);xy_c:0:4(r);xy_c:0:5(r);xy_c:1:0(r);xy_c:1:1(r);xy_c:1:2(r);xy_c:1:3(r);xy_c:1:4(r);xy_c:1:5(r);R_c0:SIZEROW(i);R_c0:SIZECOL(i);R_c0:0:0(r);R_c0:0:1(r);R_c0:1:0(r);R_c0:1:1(r);X_c0:SIZEROW(i);X_c0:SIZECOL(i);X_c0:0:0(r);X_c0:0:1(r);X_c0:1:0(r);X_c0:1:1(r);R_c1:SIZEROW(i);R_c1:SIZECOL(i);R_c1:0:0(r);R_c1:0:1(r);R_c1:1:0(r);R_c1:1:1(r);X_c1:SIZEROW(i);X_c1:SIZECOL(i);X_c1:0:0(r);X_c1:0:1(r);X_c1:1:0(r);X_c1:1:1(r);B_c0:SIZEROW(i);B_c0:SIZECOL(i);B_c0:0:0(r);B_c0:0:1(r);B_c0:1:0(r);B_c0:1:1(r);B_c1:SIZEROW(i);B_c1:SIZECOL(i);B_c1:0:0(r);B_c1:0:1(r);B_c1:1:0(r);B_c1:1:1(r);G_c0:SIZEROW(i);G_c0:SIZECOL(i);G_c0:0:0(r);G_c0:0:1(r);G_c0:1:0(r);G_c0:1:1(r);G_c1:SIZEROW(i);G_c1:SIZECOL(i);G_c1:0:0(r);G_c1:0:1(r);G_c1:1:0(r);G_c1:1:1(r)
+  56;C;LineConfig601;;60;0;2;100;0;0;;2;3;1;2;0;0;2;39;41;0;2;;;2;6;-0.3048;-1.0668;1.0668;8.5344;8.5344;8.5344;0.1523999951232;0;0;7.31519976591361;0;0;2;2;0.28938587264300;0;0;0;2;2;1.84028590543697;0;0;0;2;2;0.11551323258965;0;0;0.42598366211991;2;2;0.37092624906715;0;0;0.96207525615837;2;2;2.05281997027578;0;0;0;2;2;4.53810766818396;0;0;3.34042442918459;2;2;0;0;0;0;2;2;-2.77555756156289e-17;0;0;0
+  57;C;LineConfig601val;;60;1;1;100;0;1;41;1;3;;1;0;;1;39;;1;2;0.1523999951232;7.31519976591361;1;6;-0.3048;-1.0668;1.0668;8.5344;8.5344;8.5344;;;;;;;1;1;0.40533051259525;;;;1;1;1.18687004553522;;;;1;1;0.11555656375723;;;;1;1;0.37082840013407;;;;1;1;2.05281997027578;;;;1;1;4.53810766818396;;;;1;1;0;;;;1;1;5.55111512312578e-17;;;
+  58;C;LineConfig602;;60;0;2;100;0;0;;2;3;1;2;0;0;2;41;41;0;0;;;2;6;-0.3048;1.0668;-1.0668;8.5344;8.5344;8.5344;0.1523999951232;0;0;7.31519976591361;0;0;2;2;0.54172473655225;0;0;0;2;2;1.94183434292389;0;0;0;2;2;0.36785209649889;0;0;0.42598363231759;2;2;0.47247468655407;0;0;0.96207526739358;2;2;1.95681658172144;0;0;0;2;2;4.09021015609093;0;0;3.31282137919026;2;2;0;0;0;0;2;2;2.77555756156289e-17;0;0;0
+  59;C;LineConfig602val;;60;1;1;100;0;1;41;1;3;;1;0;;1;41;;1;2;0.1523999951232;7.31519976591361;1;6;-0.3048;1.0668;-1.0668;8.5344;8.5344;8.5344;;;;;;;1;1;0.65766936905392;;;;1;1;1.28841848161774;;;;1;1;0.3678954202159;;;;1;1;0.47237683621659;;;;1;1;1.95681658172144;;;;1;1;4.09021015609093;;;;1;1;0;;;;1;1;-1.94289029309402e-16;;;
+  60;C;LineConfig603-604;;60;0;2;100;0;0;;2;2;1;2;0;0;2;40;40;0;0;;;2;6;-1.0668;1.0668;0;8.5344;8.5344;0;0.1523999951232;0;0;7.31519976591361;0;0;2;2;0.81185083721291;0;0;0;2;2;1.46042892895006;0;0;0;2;2;0.69593637355792;0;0;0.75406759451966;2;2;0.55481892785723;0;0;1.00743795711989;2;2;2.35530659170663;0;0;0;2;2;3.47439096275939;0;0;3.01809354455243;2;2;0;0;0;0;2;2;0;0;0;0
+  61;C;LineConfig603-604val;;60;1;1;100;0;1;40;1;2;;1;0;;1;40;;1;2;0.1523999951232;7.31519976591361;1;6;-1.0668;1.0668;0;8.5344;8.5344;0;;;;;;;1;1;0.95217258189971;;;;1;1;1.12718953158112;;;;1;1;0.69595699403054;;;;1;1;0.55479137763854;;;;1;1;2.35530659170663;;;;1;1;3.47439096275939;;;;1;1;0;;;;1;1;0;;;
+  62;C;LineConfig605;;60;0;2;100;0;0;;2;1;1;2;0;0;2;40;40;0;0;;;2;6;0;0;0;8.8392;0;0;0.1523999951232;0;0;7.31519976591361;0;0;2;2;0;0;0;0;2;2;0;0;0;0;2;2;0.75385037546251;0.05802291939466;0.05802291939466;0.75406759451966;2;2;1.00767035817922;0.47772943405107;0.47772943405107;1.00743795711989;2;2;0;0;0;0;2;2;2.8100926148869;-0.83060209656515;-0.83060209656515;2.87681161082885;2;2;0;0;0;0;2;2;0;0;0;0
+  63;C;LineConfig605val;;60;1;1;100;0;1;40;1;1;;1;0;;1;40;;1;2;0.1523999951232;7.31519976591361;1;6;0;0;0;8.8392;0;0;;;;;;;1;1;0;;;;1;1;0;;;;1;1;0.82565606272883;;;;1;1;0.83821832402917;;;;1;1;0;;;;1;1;2.8100926148869;;;;1;1;0;;;;1;1;0;;;
+
+
+$$TypTr2;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);nt2ph(i);strn(r);frnom(r);utrn_h(r);utrn_l(r);uktr(r);pcutr(r);uk0tr(r);ur0tr(r);tr2cn_h(a:4);tr2cn_l(a:4);nt2ag(r);curmg(r);pfe(r);zx0hl_n(r);itapch(i);tap_side(i);dutap(r);phitr(r);nntap0(i);ntpmn(i);ntpmx(i);manuf(a:40)
+  64;C;AutoTRF1ph;;2;1.667;60;2.401777;2.401777;0;0;3;0;D;D;0;0;0;100;1;1;0.625;0;0;-16;16;
+  65;C;SubstationTyp3ph;;3;5;60;115;4.16;8.062258;50;8.062258;1;D;YN;1;0;0;100;1;1;0.625;0;0;-16;16;
+  66;C;Transformer Type 4.16/0.24 SP;;2;0.5;60;2.4;0.24;3;0;3;0;D;YN;0;0;0;100;1;0;0;0;0;0;0;
+  67;C;Transformer Type 4.8/0.415;;3;1;60;4.8;0.415;6;0;6;0;D;YN;5;0;0;100;1;0;0;0;0;0;0;
+  68;C;Transformer Type Gen Set;;3;3.6;50;6.6;4.16;6;0;600;0;YN;D;7;0;0;100;1;0;2.5;0;0;-2;2;
+  69;C;XFM-1Typ;;3;0.5;60;4.16;0.48;2.282542;5.5;2.282542;1.1;YN;YN;0;0;0;100;0;0;0;0;0;0;0;

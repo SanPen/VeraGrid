@@ -36,7 +36,7 @@ class PsseExportDialogue(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_PsseExportDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('PSS/e export')
+        self.setWindowTitle(self.tr('PSS/e export'))
         self.setModal(True)
 
         self.app: IoMain = app
@@ -259,7 +259,7 @@ class PsseExportDialogue(QtWidgets.QDialog):
         default_name: str = os.path.join(self.app.project_directory, self.app.ui.grid_name_line_edit.text())
         file_filter: str = self.get_dialogue_file_filter(export_mode=export_mode, file_tpe=file_tpe)
         selected_file_name, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                                   'Export to PSS/e',
+                                                                                   self.tr('Export to PSS/e'),
                                                                                    default_name,
                                                                                    file_filter)
 

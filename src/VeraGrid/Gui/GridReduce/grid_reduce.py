@@ -37,7 +37,7 @@ class GridReduceDialogue(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_ReduceDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('Grid reduction')
+        self.setWindowTitle(self.tr('Grid reduction'))
         self.setModal(True)
 
         self.logger = Logger()
@@ -91,7 +91,7 @@ class GridReduceDialogue(QtWidgets.QDialog):
 
             ok = yes_no_question(
                 text=text,
-                title="Grid reduction?")
+                title=self.tr("Grid reduction?"))
 
             if ok:
 
@@ -115,7 +115,7 @@ class GridReduceDialogue(QtWidgets.QDialog):
                     _, pf_res = self._session.power_flow
 
                     if pf_res is None:
-                        warning_msg("Run a power flow first! or select another method", "Grid reduction")
+                        warning_msg(self.tr("Run a power flow first! or select another method"), self.tr("Grid reduction"))
                         return
 
                     # NOTE: self._grid gets reduced in-place
@@ -131,7 +131,7 @@ class GridReduceDialogue(QtWidgets.QDialog):
                     _, pf_res = self._session.power_flow
 
                     if pf_res is None:
-                        warning_msg("Run a power flow first! or select another method", "Grid reduction")
+                        warning_msg(self.tr("Run a power flow first! or select another method"), self.tr("Grid reduction"))
                         return
 
                     # NOTE: self._grid gets reduced in-place
@@ -187,14 +187,14 @@ class GridReduceDialogue(QtWidgets.QDialog):
                     raise NotImplementedError("Reduction method not supported")
 
                 if logger.has_logs():
-                    self.logs_dialogue = LogsDialogue(name="Import profiles", logger=logger)
+                    self.logs_dialogue = LogsDialogue(name=self.tr("Import profiles"), logger=logger)
                     self.logs_dialogue.exec()
 
                 self.did_reduce = True
             else:
                 pass  # not ok
         else:
-            warning_msg("No reduction happened", "Grid reduction")
+            warning_msg(self.tr("No reduction happened"), self.tr("Grid reduction"))
 
         # exit
         self.close()

@@ -8,27 +8,124 @@
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.Templates.Rms.vsc_gfl import VscGflBuild
+from VeraGridEngine.Templates.template_definition import TemplateDefinition, TemplateProp
 from VeraGridEngine.Utils.Symbolic.block import Block, Var
 from VeraGridEngine.enumerations import ConverterControlType, VarPowerFlowReferenceType
 
 
+class HvdcVscGflRmsTemplate(TemplateDefinition):
+    """Editable template definition for the standalone HVDC GFL VSC model."""
+
+    __slots__ = ()
+
+    def __init__(self, vf: VarFactory) -> None:
+        """Define the structural inputs exposed by the dynamic editor.
+
+        :param vf: Variable factory that will own the generated RMS variables.
+        :return: None.
+        """
+        super().__init__(
+            vf,
+            params=list((
+                TemplateProp(
+                    name="control1",
+                    units="",
+                    descr="Active-axis control mode (Vm_dc, Pdc, or Pac).",
+                    tpe=ConverterControlType,
+                    value=ConverterControlType.Vm_dc,
+                    allowed_values=(
+                        ConverterControlType.Vm_dc,
+                        ConverterControlType.Pdc,
+                        ConverterControlType.Pac,
+                    ),
+                ),
+                TemplateProp(
+                    name="control2",
+                    units="",
+                    descr="Reactive-axis control mode (Qac or Vm_ac).",
+                    tpe=ConverterControlType,
+                    value=ConverterControlType.Qac,
+                    allowed_values=(
+                        ConverterControlType.Qac,
+                        ConverterControlType.Vm_ac,
+                    ),
+                ),
+                TemplateProp(
+                    name="cdc",
+                    units="p.u.",
+                    descr="DC-link capacitance used by the RMS voltage state.",
+                    tpe=float,
+                    value=0.40,
+                ),
+                TemplateProp(
+                    name="name",
+                    units="",
+                    descr="Name of the RMS model.",
+                    tpe=str,
+                    value="HVDC GFL VSC",
+                ),
+            )),
+        )
+
+    def eval(self) -> RmsModelTemplate:
+        """Build the HVDC VSC using the current editor property values.
+
+        :return: Configured standalone HVDC GFL VSC RMS template.
+        """
+        control1: ConverterControlType = self.get_value("control1")
+        control2: ConverterControlType = self.get_value("control2")
+        cdc: float = self.get_value("cdc")
+        name: str = self.get_value("name")
+
+        return build_hvdc_vsc_gfl_rms(
+            vfactory=self.vf,
+            name=name,
+            control1=control1,
+            control2=control2,
+            cdc=cdc,
+        )
+
+
 def _find_event_variable(block: Block, variable_name: str) -> tuple[Block, Var] | None:
-    """Find an event parameter and its owning block recursively."""
+    """Find an event parameter and its owning block recursively.
+
+    :param block: Root of the symbolic block tree to inspect.
+    :param variable_name: Exact event-parameter name to find.
+    :return: Owner and variable, or ``None`` when the parameter is absent.
+    """
+    variable: Var
     for variable in block.event_dict:
         if variable.name == variable_name:
             return block, variable
+        else:
+            pass
+    child: Block
     for child in block.children:
-        result = _find_event_variable(child, variable_name)
+        result: tuple[Block, Var] | None = _find_event_variable(child, variable_name)
         if result is not None:
             return result
+        else:
+            pass
     return None
 
 
 def _set_event_value(block: Block, variable_name: str, value: float, vf: VarFactory) -> None:
-    """Set one existing event parameter to a numeric default."""
-    result = _find_event_variable(block=block, variable_name=variable_name)
+    """Set one existing event parameter to a numeric default.
+
+    :param block: Root of the symbolic block tree to update.
+    :param variable_name: Exact event-parameter name to update.
+    :param value: Real numeric default assigned to the parameter.
+    :param vf: Factory used to create the symbolic constant.
+    :return: None.
+    :raises KeyError: If the block has no matching event parameter.
+    """
+    result: tuple[Block, Var] | None = _find_event_variable(block=block, variable_name=variable_name)
     if result is None:
         raise KeyError(f"The VSC GFL model has no event parameter named '{variable_name}'")
+    else:
+        pass
+    owner: Block
+    variable: Var
     owner, variable = result
     owner.event_dict[variable] = vf.add_const(value)
 
@@ -54,7 +151,7 @@ def build_hvdc_vsc_gfl_rms(
     :param cdc: DC-link capacitance in p.u.
     :return: Complete reusable RMS VSC template.
     """
-    template = VscGflBuild(
+    template: RmsModelTemplate = VscGflBuild(
         vfactory=vfactory,
         name=name,
         control1=control1,
@@ -63,9 +160,16 @@ def build_hvdc_vsc_gfl_rms(
     template.name = name
     template.block.name = name
 
-    vdc = template.block.external_mapping[VarPowerFlowReferenceType.Vdc]
-    dvdc_dt = vfactory.add_diff_var(f"dVdc_dt_{name}", base_var=vdc)
-    cdc_parameter = vfactory.add_var(f"Cdc_{name}")
+    vdc: Var | None = template.block.external_mapping.get(VarPowerFlowReferenceType.Vdc, None)
+    if vdc is None:
+        raise ValueError("The HVDC GFL VSC template must expose its Vdc variable")
+    else:
+        pass
+
+    # Internal symbols must remain valid identifiers independently of the
+    # user-facing block name, which may legitimately contain spaces.
+    dvdc_dt: Var = vfactory.add_diff_var("dVdc_dt", base_var=vdc)
+    cdc_parameter: Var = vfactory.add_var("Cdc")
 
     # Pf_dc + Pt_ac - Ploss - Cdc*Vdc*dVdc/dt = 0.
     template.block.algebraic_eqs[0] -= cdc_parameter * vdc * dvdc_dt
@@ -76,16 +180,18 @@ def build_hvdc_vsc_gfl_rms(
     # Defaults validated by the point-to-point HVDC RMS example. The physical
     # transformer carries station resistance, so the converter interface is
     # lossless and does not duplicate that network loss.
-    defaults = {
-        "Kp_vdc": 0.20,
-        "Ki_vdc": 1.00,
-        "Kp_icl": 0.20,
-        "Ki_icl": 5.00,
-        "Kp_pol": 0.02,
-        "Ki_pol": 0.10,
-        "R": 0.0,
-    }
-    for variable_name, value in defaults.items():
+    defaults: tuple[tuple[str, float], ...] = (
+        ("Kp_vdc", 0.20),
+        ("Ki_vdc", 1.00),
+        ("Kp_icl", 0.20),
+        ("Ki_icl", 5.00),
+        ("Kp_pol", 0.02),
+        ("Ki_pol", 0.10),
+        ("R", 0.0),
+    )
+    variable_name: str
+    value: float
+    for variable_name, value in defaults:
         _set_event_value(template.block, variable_name, value, vfactory)
 
     return template

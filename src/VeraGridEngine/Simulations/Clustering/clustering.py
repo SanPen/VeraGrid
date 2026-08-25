@@ -47,7 +47,7 @@ def kmeans_sampling(x_input: Mat, n_points: int = 10) -> Tuple[IntVec, Vec, IntV
         cluster_representative_indices[c] = rep_idx
 
     # 1. Sort the representatives …
-    sorting_idx = np.argsort(cluster_representative_indices)
+    sorting_idx = np.argsort(cluster_representative_indices, kind="stable")
 
     cluster_representative_indices = cluster_representative_indices[sorting_idx]
     cluster_probability = cluster_probability[sorting_idx]

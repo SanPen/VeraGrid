@@ -154,9 +154,7 @@ def get_esd1_rms_template(vfactory: VarFactory, name: str = "ESD1 RMS template")
         state_vars=[ipout, iqout, soc],
         in_vars=inputs,
         init_eqs={
-            pref0: p,
             pext0: zero,
-            qref0: q,
             soc: soc0,
             pref: pref_expr,
             pext: pext_expr,
@@ -173,9 +171,9 @@ def get_esd1_rms_template(vfactory: VarFactory, name: str = "ESD1 RMS template")
             iqout: iq_cmd_expr,
         },
         event_dict={
-            pref0: vfactory.add_const(None),
+            pref0: p,
             pext0: vfactory.add_const(0.0),
-            qref0: vfactory.add_const(None),
+            qref0: q,
             p_dis_max: vfactory.add_const(1.0),
             p_ch_max: vfactory.add_const(1.0),
             qmax: vfactory.add_const(1.0),

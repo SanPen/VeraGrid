@@ -27,7 +27,7 @@ class GridMergeDialogue(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('Grid merges & acquisitions')
+        self.setWindowTitle(self.tr('Grid merges & acquisitions'))
 
         self.ui.treeWidget.setHeaderLabels(
             ["Grid", "Object type", "action", "idtag", "name", "property", "value", "new value"]
@@ -40,7 +40,7 @@ class GridMergeDialogue(QtWidgets.QDialog):
         self.all_elms_base_dict, ok = self._base_grid.get_all_elements_dict(logger=self.logger)
 
         if not ok:
-            dlg = LogsDialogue('The base circuit has duplicated idtags and cannot be merged :(', self.logger)
+            dlg = LogsDialogue(self.tr('The base circuit has duplicated idtags and cannot be merged :('), self.logger)
             dlg.exec()
             return
 
@@ -49,7 +49,7 @@ class GridMergeDialogue(QtWidgets.QDialog):
         self.diff_objects_dict, ok2 = self._diff.get_all_elements_dict(logger=self.logger)
 
         if not ok2:
-            dlg = LogsDialogue('The diff circuit has duplicated idtags and cannot be merged :(', self.logger)
+            dlg = LogsDialogue(self.tr('The diff circuit has duplicated idtags and cannot be merged :('), self.logger)
             dlg.exec()
             return
 

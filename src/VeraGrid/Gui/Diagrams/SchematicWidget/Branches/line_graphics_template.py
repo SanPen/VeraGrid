@@ -78,6 +78,15 @@ class TransformerSymbol(QGraphicsRectItem):
         QGraphicsRectItem.setPen(self, QPen(TRANSPARENT))
         self.setRect(QRectF(0, 0, w, h))
 
+        background_path: QPainterPath = QPainterPath()
+        background_path.setFillRule(Qt.FillRule.WindingFill)
+        background_path.addEllipse(w * 0.35 - d / 2, h * 0.5 - d / 2, d, d)
+        background_path.addEllipse(w * 0.65 - d / 2, h * 0.5 - d / 2, d, d)
+        background_path.addRect(w * 0.25, h * 0.25, w * 0.50, h * 0.50)
+        self.background: QGraphicsPathItem = QGraphicsPathItem(background_path, parent=self)
+        self.background.setPen(QPen(TRANSPARENT))
+        self.background.setBrush(QBrush(QColor(ACTIVE['background'])))
+
         self.c0 = QGraphicsEllipseItem(0, 0, d, d, parent=self)
         self.c1 = QGraphicsEllipseItem(0, 0, d, d, parent=self)
         self.c2 = QGraphicsEllipseItem(0, 0, d, d, parent=self)
@@ -97,7 +106,8 @@ class TransformerSymbol(QGraphicsRectItem):
         self.c1.setPos(w * 0.35 - d / 2, h * 0.5 - d / 2)
         self.c2.setPos(w * 0.65 - d / 2, h * 0.5 - d / 2)
 
-        self.c0.setZValue(0)
+        self.background.setZValue(0)
+        self.c0.setZValue(1)
         self.c1.setZValue(2)
         self.c2.setZValue(1)
 
@@ -113,8 +123,20 @@ class TransformerSymbol(QGraphicsRectItem):
         pen = QPen(color, line_w, style)
         self.c2.setPen(pen)
         self.c1.setPen(pen)
+        self.background.setBrush(QBrush(self._background_fill()))
         self.c0.setBrush(QBrush(Qt.BrushStyle.NoBrush))
         self.c2.setBrush(QBrush(Qt.BrushStyle.NoBrush))
+
+    @staticmethod
+    def _background_fill() -> QColor:
+        """
+        Get the schematic background that hides the branch route under the coils.
+
+        :return: Schematic background colour.
+        """
+        fill_color: QColor = QColor(ACTIVE['background'])
+        fill_color.setAlpha(255)
+        return fill_color
 
     def set_pen(self, pen: QPen):
         """
@@ -190,7 +212,9 @@ class VscSymbol(QGraphicsRectItem):
         self.setRect(QRectF(0, 0, w, h))
 
         if self.icon_route is None:
-            self.body = QGraphicsRectItem(QRectF(0, 0, w, h), parent=self)
+            body_path: QPainterPath = QPainterPath()
+            body_path.addRoundedRect(QRectF(0, 0, w, h), 10.0, 10.0)
+            self.body = QGraphicsPathItem(body_path, parent=self)
             self.divider = QGraphicsLineItem(QLineF(w, 0, 0, h), parent=self)
 
             self.text_ac = QGraphicsTextItem("~", parent=self)
@@ -229,7 +253,7 @@ class VscSymbol(QGraphicsRectItem):
         if self.body is None:
             return
 
-        line_w = max(2.0, float(w) * 0.45)
+        line_w = max(5.0, float(w) * 1.0)
         pen = QPen(color, line_w, style)
         self.body.setPen(pen)
         self.body.setBrush(QBrush(self._contrast_fill(color)))
@@ -266,7 +290,7 @@ class VscSymbol(QGraphicsRectItem):
             return
         w = self.rect().width()
         h = self.rect().height()
-        inset = max(1.0, line_w * 0.6)
+        inset: float = max(10.0, line_w * 1.4)
         self.divider.setLine(QLineF(w - inset, inset, inset, h - inset))
 
     def set_colour(self, color: QColor, w, style: Qt.PenStyle):
@@ -321,16 +345,6 @@ class UpfcSymbol(VscSymbol):
         VscSymbol.__init__(self, parent=parent, pen_width=pen_width, h=h, w=w, icon_route=":/Icons/icons/upfc.png")
 
 
-class SeriesReactanceSymbol(VscSymbol):
-    """
-    UpfcSymbol
-    """
-
-    def __init__(self, parent, pen_width, h=30, w=30):
-        VscSymbol.__init__(self, parent=parent, pen_width=pen_width, h=h, w=w,
-                           icon_route=":/Icons/icons/reactance.png")
-
-
 class BranchVectorSymbolBase(QGraphicsRectItem):
     """
     Shared vector base for compact branch symbols.
@@ -377,6 +391,21 @@ class BranchVectorSymbolBase(QGraphicsRectItem):
             pass
 
         return item
+
+    @staticmethod
+    def _opposite_color(color: QColor) -> QColor:
+        """
+        Get a dark/white contrast color for internal symbol marks.
+
+        :param color: Reference symbol body color.
+        :return: Opposite readable color.
+        """
+        if color.lightness() > 127:
+            opposite: QColor = QColor(32, 32, 32, 255)
+        else:
+            opposite = QColor(245, 245, 245, 255)
+
+        return opposite
 
     @staticmethod
     def _contrast_fill(color: QColor) -> QColor:
@@ -453,6 +482,90 @@ class BranchVectorSymbolBase(QGraphicsRectItem):
         self.setTransform(self.parent.get_symbol_transform(self.rect()))
 
 
+class SeriesReactanceSymbol(BranchVectorSymbolBase):
+    """
+    SeriesReactanceSymbol
+    """
+
+    def __init__(self, parent, pen_width: float | int, h: float = 56, w: float = 56) -> None:
+        """
+        Build one vector series-reactance coil symbol.
+
+        :param parent: Parent branch graphic.
+        :param pen_width: Reference pen width.
+        :param h: Symbol height.
+        :param w: Symbol width.
+        :return: ``None``.
+        """
+        BranchVectorSymbolBase.__init__(self, parent=parent, pen_width=pen_width, h=h, w=w)
+
+        mid_y: float = h * 0.5
+        top_y: float = h * 0.28
+        bottom_y: float = h * 0.72
+        self.left_line: QGraphicsLineItem = QGraphicsLineItem(0.0, mid_y, w * 0.14, mid_y, parent=self)
+        self.right_line: QGraphicsLineItem = QGraphicsLineItem(w * 0.86, mid_y, w, mid_y, parent=self)
+        self._register(self.left_line)
+        self._register(self.right_line)
+
+        # Keep the reactance visible on every theme with a solid square body.
+        body_path: QPainterPath = QPainterPath()
+        body_path.addRoundedRect(w * 0.14, h * 0.14, w * 0.72, h * 0.72, 4.0, 4.0)
+        self.body: QGraphicsPathItem = QGraphicsPathItem(body_path, parent=self)
+        self._register(self.body, fill_item=True)
+
+        # Draw multiple half-waves inside the square body.
+        coil_path: QPainterPath = QPainterPath(QPointF(w * 0.24, mid_y))
+        coil_path.cubicTo(w * 0.27, top_y, w * 0.31, top_y, w * 0.34, mid_y)
+        coil_path.cubicTo(w * 0.37, bottom_y, w * 0.41, bottom_y, w * 0.44, mid_y)
+        coil_path.cubicTo(w * 0.47, top_y, w * 0.51, top_y, w * 0.54, mid_y)
+        coil_path.cubicTo(w * 0.57, bottom_y, w * 0.61, bottom_y, w * 0.64, mid_y)
+        coil_path.cubicTo(w * 0.67, top_y, w * 0.71, top_y, w * 0.74, mid_y)
+        coil_path.cubicTo(w * 0.75, mid_y, w * 0.75, mid_y, w * 0.76, mid_y)
+        self.coil_item: QGraphicsPathItem = QGraphicsPathItem(coil_path, parent=self)
+        self._register(self.coil_item)
+
+    def set_colour(self, color: QColor, w: float | int, style: Qt.PenStyle) -> None:
+        """
+        Set a solid body and a contrasting internal coil.
+
+        :param color: Target branch color.
+        :param w: Requested width.
+        :param style: Requested line style.
+        :return: ``None``.
+        """
+        line_w: float = max(1.8, float(w) * 0.42)
+        terminal_pen: QPen = QPen(color, line_w, style, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin)
+        coil_pen: QPen = QPen(self._opposite_color(color),
+                              max(1.6, float(w) * 0.45),
+                              style,
+                              Qt.PenCapStyle.RoundCap,
+                              Qt.PenJoinStyle.RoundJoin)
+
+        self.left_line.setPen(terminal_pen)
+        self.right_line.setPen(terminal_pen)
+        self.body.setPen(QPen(color, max(1.0, float(w) * 0.25), style))
+        self.body.setBrush(QBrush(color))
+        self.coil_item.setPen(coil_pen)
+
+    def setBrush(self, brush: QBrush | QColor) -> None:
+        """
+        Keep the reactance body solid.
+
+        :param brush: Fill brush or color.
+        :return: ``None``.
+        """
+        if isinstance(brush, QColor):
+            color: QColor = QColor(brush)
+            color.setAlpha(255)
+            brush_obj: QBrush = QBrush(color)
+        else:
+            brush_obj = brush
+
+        item: QGraphicsEllipseItem | QGraphicsPathItem
+        for item in self._fill_items:
+            item.setBrush(brush_obj)
+
+
 class SwitchSymbol(BranchVectorSymbolBase):
     """
     SwitchSymbol
@@ -470,16 +583,61 @@ class SwitchSymbol(BranchVectorSymbolBase):
         """
         BranchVectorSymbolBase.__init__(self, parent=parent, pen_width=pen_width, h=h, w=w)
 
-        mid_y = h * 0.5
-        left_line = QGraphicsLineItem(0.0, mid_y, w * 0.12, mid_y, parent=self)
-        right_line = QGraphicsLineItem(w * 0.88, mid_y, w, mid_y, parent=self)
+        mid_y: float = h * 0.5
+        left_line: QGraphicsLineItem = QGraphicsLineItem(0.0, mid_y, w * 0.12, mid_y, parent=self)
+        right_line: QGraphicsLineItem = QGraphicsLineItem(w * 0.88, mid_y, w, mid_y, parent=self)
         self._register(left_line)
         self._register(right_line)
 
-        body_path = QPainterPath()
-        body_path.addRoundedRect(w * 0.12, h * 0.18, w * 0.76, h * 0.64, 6.0, 6.0)
-        body = QGraphicsPathItem(body_path, parent=self)
-        self._register(body, fill_item=True)
+        body_path: QPainterPath = QPainterPath()
+        body_path.addRoundedRect(w * 0.10, h * 0.16, w * 0.80, h * 0.68, 5.0, 5.0)
+        self.body: QGraphicsPathItem = QGraphicsPathItem(body_path, parent=self)
+        self._register(self.body, fill_item=True)
+
+        self.contact: QGraphicsLineItem = QGraphicsLineItem(w * 0.5, h * 0.24, w * 0.5, h * 0.76, parent=self)
+
+    def setBrush(self, brush: QBrush | QColor) -> None:
+        """
+        Keep the switch body solid with the requested branch color.
+
+        :param brush: Fill brush or color.
+        :return: ``None``.
+        """
+        if isinstance(brush, QColor):
+            color: QColor = QColor(brush)
+            color.setAlpha(255)
+            brush_obj: QBrush = QBrush(color)
+        else:
+            brush_obj = brush
+
+        item: QGraphicsEllipseItem | QGraphicsPathItem
+        for item in self._fill_items:
+            item.setBrush(brush_obj)
+
+    def set_colour(self, color: QColor, w: float | int, style: Qt.PenStyle) -> None:
+        """
+        Set the switch fill without a separate thin outside square.
+
+        :param color: Target stroke color.
+        :param w: Requested width.
+        :param style: Requested line style.
+        :return: ``None``.
+        """
+        line_w: float = max(1.8, float(w) * 0.42)
+        line_pen: QPen = QPen(color, line_w, style, Qt.PenCapStyle.RoundCap, Qt.PenJoinStyle.RoundJoin)
+        contact_pen: QPen = QPen(self._opposite_color(color),
+                                 max(1.8, float(w) * 0.45),
+                                 style,
+                                 Qt.PenCapStyle.RoundCap,
+                                 Qt.PenJoinStyle.RoundJoin)
+
+        item: QGraphicsLineItem | QGraphicsEllipseItem | QGraphicsPathItem
+        for item in self._stroke_items:
+            item.setPen(line_pen)
+
+        self.body.setPen(QPen(TRANSPARENT))
+        self.body.setBrush(QBrush(color))
+        self.contact.setPen(contact_pen)
 
 
 class DisconnectorSymbol(BranchVectorSymbolBase):
@@ -973,10 +1131,10 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
         elif isinstance(api_object, HvdcLine):
             self.symbol = HvdcSymbol(parent=self, pen_width=width, h=30, w=30)
         elif isinstance(api_object, SeriesReactance):
-            self.symbol = SeriesReactanceSymbol(parent=self, pen_width=width, h=30, w=30)
+            self.symbol = SeriesReactanceSymbol(parent=self, pen_width=width, h=56, w=56)
         elif isinstance(api_object, Switch):
             if api_object.graphic_type == SwitchGraphicType.CircuitBreaker:
-                self.symbol = SwitchSymbol(parent=self, pen_width=width, h=36, w=44)
+                self.symbol = SwitchSymbol(parent=self, pen_width=width, h=44, w=44)
             elif api_object.graphic_type == SwitchGraphicType.Disconnector:
                 self.symbol = DisconnectorSymbol(parent=self, pen_width=width, h=36, w=44)
             else:
@@ -2048,8 +2206,8 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
                 self.set_enable(True)
 
             if self._editor.circuit.get_time_number() > 0:
-                ok = yes_no_question('Do you want to update the time series active status accordingly?',
-                                     'Update time series active status')
+                ok = yes_no_question(self.tr('Do you want to update the time series active status accordingly?'),
+                                     self.tr('Update time series active status'))
 
                 if ok:
                     # change the bus state (time series)
@@ -2082,7 +2240,7 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
                 self.symbol.setPen(QPen(ACTIVE['color']))
             else:
                 if isinstance(self.symbol, SwitchSymbol):
-                    self.symbol.setBrush(QColor(0, 0, 0, 0))
+                    self.symbol.setBrush(QColor(DEACTIVATED['color']))
                 else:
                     inactive_fill = QColor(DEACTIVATED['color'])
                     inactive_fill.setAlpha(72)
@@ -2317,10 +2475,7 @@ class LineGraphicTemplateItem(GenericDiagramWidget, QGraphicsLineItem):
         if self.symbol:
             self.symbol.set_pen(route_pen)
             if isinstance(self.symbol, SwitchSymbol):
-                if self.api_object is not None and self.api_object.active:
-                    self.symbol.setBrush(QColor(route_pen.color()))
-                else:
-                    self.symbol.setBrush(QColor(0, 0, 0, 0))
+                self.symbol.setBrush(QColor(route_pen.color()))
 
     def assign_rate_to_profile(self):
         """

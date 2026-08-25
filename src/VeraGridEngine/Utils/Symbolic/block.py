@@ -21,6 +21,58 @@ from VeraGridEngine.Utils.Symbolic.dynamic_connection_intent import (DynamicConn
 from VeraGridEngine.Utils.Symbolic.variable_alignment_engine import align_variables
 
 
+def normalize_event_parameter_initialization(block: "Block") -> None:
+    """Move legacy event-parameter initialization into ``event_dict``.
+
+    Older templates represented one runtime parameter twice: ``event_dict``
+    contained ``Const(None)`` while ``init_eqs`` contained the actual initial
+    expression. Event parameters now own their scalar value or initialization
+    expression directly in ``event_dict``. If a legacy entry already contains
+    a concrete event expression, that expression remains authoritative, matching
+    the precedence historically used by explicit initialization.
+
+    Variable UIDs are used for matching because loaded or reconstructed blocks
+    can contain distinct Python objects representing the same symbolic identity.
+
+    :param block: Root block whose complete child tree is normalized in place.
+    :return: None.
+    """
+    pending_blocks: List[Block] = list((block,))
+    pending_index: int = 0
+    while pending_index < len(pending_blocks):
+        current_block: Block = pending_blocks[pending_index]
+        pending_index += 1
+
+        event_variables_by_uid: Dict[int, Var] = dict()
+        event_variable: Var
+        for event_variable in current_block.event_dict:
+            event_variables_by_uid[event_variable.uid] = event_variable
+
+        init_variables_to_remove: List[Var] = list()
+        init_variable: Var
+        init_expression: Expr
+        for init_variable, init_expression in current_block.init_eqs.items():
+            matching_event_variable: Var | None = event_variables_by_uid.get(init_variable.uid, None)
+            if matching_event_variable is None:
+                pass
+            else:
+                event_expression: Expr | Const = current_block.event_dict[matching_event_variable]
+                if isinstance(event_expression, Const) and event_expression.value is None:
+                    current_block.event_dict[matching_event_variable] = init_expression
+                else:
+                    # A concrete event expression already had precedence in the
+                    # unified explicit-initialization dependency graph.
+                    pass
+                init_variables_to_remove.append(init_variable)
+
+        for init_variable in init_variables_to_remove:
+            del current_block.init_eqs[init_variable]
+
+        child_block: Block
+        for child_block in current_block.children:
+            pending_blocks.append(child_block)
+
+
 def normalize_dynamic_connection_intents(block: "Block") -> None:
     """
     Keep one current typed state for each connection-intent identity.
@@ -309,6 +361,11 @@ class Block:
                                                                   else connection_intents)
 
         self._diagram: BlockDiagram = BlockDiagram()
+
+        # Enforce one initialization owner as soon as a complete block is
+        # created. Boundary normalization remains necessary for legacy objects
+        # whose dictionaries are assigned after construction or deserialized.
+        normalize_event_parameter_initialization(block=self)
 
     @property
     def diagram(self) -> BlockDiagram:

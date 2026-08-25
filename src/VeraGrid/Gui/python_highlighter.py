@@ -4,12 +4,9 @@
 # SPDX-License-Identifier: MPL-2.0
 
 import re
-from PySide6.QtGui import (
-    QSyntaxHighlighter,
-    QTextCharFormat,
-    QColor,
-    QFont,
-)
+from typing import Dict
+
+from PySide6.QtGui import QSyntaxHighlighter, QTextCharFormat, QColor, QFont
 
 
 class PythonHighlighter(QSyntaxHighlighter):
@@ -24,28 +21,7 @@ class PythonHighlighter(QSyntaxHighlighter):
     def __init__(self, document):
         super().__init__(document)
 
-        # ----------------------------
-        # Formats (created ONCE)
-        # ----------------------------
-
-        def fmt(color, bold=False):
-            f = QTextCharFormat()
-            f.setForeground(QColor(color))
-            if bold:
-                f.setFontWeight(QFont.Weight.Bold)
-            return f
-
-        self.formats = {
-            "prompt": fmt("#64B5F6", True),
-            "keyword": fmt("#82AAFF", True),
-            "builtin": fmt("#FFCB6B"),
-            "number": fmt("#C3E88D"),
-            "string": fmt("#F07178"),
-            "comment": fmt("#546E7A"),
-            "operator": fmt("#89DDFF"),
-            "identifier": fmt("#FFFFFF"),
-            "defclass": fmt("#C792EA", True),
-        }
+        self.formats: Dict[str, QTextCharFormat] = dict()
 
         # ----------------------------
         # Keyword sets
@@ -82,6 +58,72 @@ class PythonHighlighter(QSyntaxHighlighter):
 
         self.re_triple_single = re.compile(r"'''")
         self.re_triple_double = re.compile(r'"""')
+        self.set_light_mode()
+
+    def _make_format(self, color: str, bold: bool = False) -> QTextCharFormat:
+        """
+        Build one text format used by the syntax highlighter.
+
+        :param color: Hexadecimal text color.
+        :param bold: Whether the token must be bold.
+        :return: Text format with the requested foreground.
+        """
+        text_format: QTextCharFormat = QTextCharFormat()
+        text_format.setForeground(QColor(color))
+        if bold:
+            text_format.setFontWeight(QFont.Weight.Bold)
+        else:
+            pass
+        return text_format
+
+    def apply_theme(self, dark_theme: bool) -> None:
+        """
+        Apply token colors for the current editor theme.
+
+        :param dark_theme: Whether to use the dark token palette.
+        :return: None.
+        """
+        if dark_theme:
+            self.formats = {
+                "prompt": self._make_format("#64B5F6", True),
+                "keyword": self._make_format("#82AAFF", True),
+                "builtin": self._make_format("#FFCB6B"),
+                "number": self._make_format("#C3E88D"),
+                "string": self._make_format("#F07178"),
+                "comment": self._make_format("#78909C"),
+                "operator": self._make_format("#89DDFF"),
+                "identifier": self._make_format("#F5F5F5"),
+                "defclass": self._make_format("#C792EA", True),
+            }
+        else:
+            self.formats = {
+                "prompt": self._make_format("#1565C0", True),
+                "keyword": self._make_format("#5B21B6", True),
+                "builtin": self._make_format("#92400E"),
+                "number": self._make_format("#166534"),
+                "string": self._make_format("#B91C1C"),
+                "comment": self._make_format("#64748B"),
+                "operator": self._make_format("#0369A1"),
+                "identifier": self._make_format("#141414"),
+                "defclass": self._make_format("#7E22CE", True),
+            }
+        self.rehighlight()
+
+    def set_dark_mode(self) -> None:
+        """
+        Apply dark syntax colors.
+
+        :return: None.
+        """
+        self.apply_theme(dark_theme=True)
+
+    def set_light_mode(self) -> None:
+        """
+        Apply light syntax colors.
+
+        :return: None.
+        """
+        self.apply_theme(dark_theme=False)
 
     # ----------------------------
     # Core highlighter

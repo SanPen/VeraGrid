@@ -94,7 +94,7 @@ class TimeEventsMain(DataBaseTableMain):
 
         if self.circuit.time_profile is not None:
             quit_msg = "Are you sure that you want to delete the profiles?"
-            reply = QtWidgets.QMessageBox.question(self, 'Message', quit_msg,
+            reply = QtWidgets.QMessageBox.question(self, self.tr('Message'), quit_msg,
                                                    QtWidgets.QMessageBox.StandardButton.Yes,
                                                    QtWidgets.QMessageBox.StandardButton.No)
 
@@ -106,7 +106,7 @@ class TimeEventsMain(DataBaseTableMain):
             else:
                 pass
         else:
-            warning_msg('There are no profiles', 'Delete profiles')
+            warning_msg(self.tr('There are no profiles'), self.tr('Delete profiles'))
 
     def import_profiles(self):
         """
@@ -165,9 +165,9 @@ class TimeEventsMain(DataBaseTableMain):
                                     self.show_info_toast("Generators dispatchable status set")
 
                             elif objects[0].device_type == DeviceType.LoadDevice:
-                                ok1 = yes_no_question("Do you want to correct the loads active profile "
-                                                      "based on the active power profile?",
-                                                      "Match")
+                                ok1 = yes_no_question(self.tr("Do you want to correct the loads active profile "
+                                                      "based on the active power profile?"),
+                                                      self.tr("Match"))
                                 if ok1:
                                     self.fix_loads_active_based_on_the_power(ask_before=False)
                                     self.show_info_toast("Loads active status set")
@@ -225,16 +225,16 @@ class TimeEventsMain(DataBaseTableMain):
                     n = len(clustering_results.time_indices)
 
                     if n != self.ui.cluster_number_spinBox.value():
-                        error_msg("The number of clusters in the stored results is different from the specified :(\n"
-                                  "Run another clustering analysis.")
+                        error_msg(self.tr("The number of clusters in the stored results is different from the specified :(\n"
+                                  "Run another clustering analysis."))
 
                         return
                     else:
                         # all ok
-                        ok = yes_no_question("Are you sure that you want to crop "
+                        ok = yes_no_question(self.tr("Are you sure that you want to crop "
                                              "the profiles to the clustered results?\n"
                                              "This cannot be undone.\n"
-                                             "Also, the clustering will be removed after this.")
+                                             "Also, the clustering will be removed after this."))
 
                         if ok:
                             self.circuit.resample_profiles(indices=clustering_results.time_indices)
@@ -391,7 +391,7 @@ class TimeEventsMain(DataBaseTableMain):
                 msg = "Are you sure that you want to overwrite the values " + magnitude_to + \
                       " with the values of " + magnitude_from + "?"
 
-                reply = QtWidgets.QMessageBox.question(self, 'Message', msg,
+                reply = QtWidgets.QMessageBox.question(self, self.tr('Message'), msg,
                                                        QtWidgets.QMessageBox.StandardButton.Yes,
                                                        QtWidgets.QMessageBox.StandardButton.No)
 
@@ -502,8 +502,8 @@ class TimeEventsMain(DataBaseTableMain):
         """
 
         if not self.circuit.valid_for_simulation():
-            warning_msg("There are no objects to which to assign a profile. \n"
-                        "You need to load or create a grid!")
+            warning_msg(self.tr("There are no objects to which to assign a profile. \n"
+                        "You need to load or create a grid!"))
             return
 
         if self.circuit.time_profile is None:
@@ -523,8 +523,8 @@ class TimeEventsMain(DataBaseTableMain):
                     self.show_logs(name="Import profiles", logger=logger)
 
         else:
-            warning_msg("The import of profiles from many grid models "
-                        "can only be done if the grid has not profiles :/")
+            warning_msg(self.tr("The import of profiles from many grid models "
+                        "can only be done if the grid has not profiles :/"))
 
     def get_circuit_snapshot_datetime(self):
         """
@@ -544,7 +544,7 @@ class TimeEventsMain(DataBaseTableMain):
             self.get_circuit_snapshot_datetime()
             self.show_info_toast("Profile value set to the snapshot")
         else:
-            info_msg('Select a time series step to copy to the snapshot', 'Set snapshot')
+            info_msg(self.tr('Select a time series step to copy to the snapshot'), self.tr('Set snapshot'))
 
     def copy_profiles(self):
         """
@@ -569,7 +569,7 @@ class TimeEventsMain(DataBaseTableMain):
             else:
                 self.show_warning_toast('Nothing to copy')
         else:
-            warning_msg('There is no profile displayed, please display one', 'Copy profile to clipboard')
+            warning_msg(self.tr('There is no profile displayed, please display one'), self.tr('Copy profile to clipboard'))
 
     def paste_profiles(self):
         """
@@ -596,4 +596,4 @@ class TimeEventsMain(DataBaseTableMain):
                                      selected_rows=rows,
                                      selected_cols=cols)
         else:
-            warning_msg('There is no profile displayed, please display one', 'Paste profile to clipboard')
+            warning_msg(self.tr('There is no profile displayed, please display one'), self.tr('Paste profile to clipboard'))

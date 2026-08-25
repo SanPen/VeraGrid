@@ -1039,7 +1039,7 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         Delete all bus connections
         """
         if ask:
-            ok = yes_no_question('Are you sure that you want to delete this fluid node',
+            ok = yes_no_question(self.tr('Are you sure that you want to delete this fluid node'),
                                  'Remove fluid node from schematic and DB' if delete_from_db else "Remove bus from schematic")
         else:
             ok = True
@@ -1053,8 +1053,8 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
         @return:
         """
         if ask:
-            ok = yes_no_question('Are you sure that you want to delete this fluid node',
-                                 'Remove fluid node')
+            ok = yes_no_question(self.tr('Are you sure that you want to delete this fluid node'),
+                                 self.tr('Remove fluid node'))
         else:
             ok = True
 
@@ -1078,9 +1078,9 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
                 i = self.editor.circuit.fluid_nodes.index(self.api_object)
                 self.editor.plot_bus(i, self.api_object.bus)
             else:
-                error_msg("No electrical bus attached :/")
+                error_msg(self.tr("No electrical bus attached :/"))
         else:
-            error_msg("No DB object attached :/")
+            error_msg(self.tr("No DB object attached :/"))
 
     def plot_fluid_profiles(self):
         """
@@ -1092,7 +1092,7 @@ class FluidNodeGraphicItem(GenericDiagramWidget, QtWidgets.QGraphicsRectItem):
             i = self.editor.circuit.fluid_nodes.index(self.api_object)
             self.editor.plot_fluid_node(i, self.api_object)
         else:
-            error_msg("No DB object attached :/")
+            error_msg(self.tr("No DB object attached :/"))
 
     def set_values(self, i: int, Vm: float, Va: float, P: float, Q: float,
                    tpe: str, format_str="{:10.2f}"):

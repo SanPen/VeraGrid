@@ -1192,7 +1192,7 @@ QWidget#overviewPage QProgressBar::chunk {{
         aggregation: str = self.get_balance_aggregation(result_type)
         result_table = self.inputs_results.mdl(result_type)
         magnitude: np.ndarray = np.max(np.abs(result_table.data_c), axis=0)
-        ranking: np.ndarray = np.argsort(magnitude)[::-1]
+        ranking: np.ndarray = np.argsort(magnitude, kind="stable")[::-1]
         selected_indices: np.ndarray = ranking[:min(top_n, len(ranking))]
 
         if len(selected_indices) == 0:

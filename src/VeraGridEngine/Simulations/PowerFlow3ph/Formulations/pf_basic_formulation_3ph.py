@@ -24,7 +24,7 @@ from VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions impo
 from VeraGridEngine.Topology.simulation_indices import compile_types
 from VeraGridEngine.basic_structures import Vec, IntVec, CxVec, CxMat, BoolVec, Logger
 from VeraGridEngine.Utils.Sparse.csc2 import (CSC, scipy_to_mat)
-from VeraGridEngine.enumerations import WindingType
+from VeraGridEngine.enumerations import BusMode, WindingType
 
 
 @nb.njit(cache=True)
@@ -205,7 +205,14 @@ def compute_ybus(nc: NumericalCircuit) -> Tuple[csc_matrix, csc_matrix, csc_matr
         else:
             pass
 
-    # aplica la prioridad: si algún trafo aterra el neutro del bus, el neutro se elimina del solver
+    bus_has_neutral[0::4] &= nc.bus_data.bus_types != BusMode.Slack_tpe.value
+
+    grounded_shunt_buses = nc.shunt_data.bus_idx[
+        nc.shunt_data.active & nc.shunt_data.grounds_neutral
+    ]
+    bus_has_neutral[4 * grounded_shunt_buses] = False
+
+    # aplica la prioridad: si algún trafo, shunt o el slack aterra el neutro, el neutro se elimina del solver
     binary_bus_mask[0::4] = binary_bus_mask[0::4] & bus_has_neutral[0::4]
 
     Ysh_bus = np.zeros((n * 4, n * 4), dtype=complex)
@@ -221,7 +228,7 @@ def compute_ybus(nc: NumericalCircuit) -> Tuple[csc_matrix, csc_matrix, csc_matr
         f4 = 4 * f + idx4
         Ysh_bus[np.ix_(f4, f4)] += nc.load_data.Y3_star[np.ix_(k4, idx4)] / (nc.Sbase / 3)
 
-    Ybus = Cf.T @ Yf + Ct.T @ Yt + Ysh_bus
+    Ybus = Cfcopy.T @ Yf + Ctcopy.T @ Yt + Ysh_bus
 
     Ybus = Ybus[np.ix_(binary_bus_mask, binary_bus_mask)]
     Ysh_bus = Ysh_bus[np.ix_(binary_bus_mask, binary_bus_mask)]
@@ -330,7 +337,7 @@ def compute_current_loads(bus_idx: IntVec,
         floating = (Ifloating[ab] != zero_load or Ifloating[bc] != zero_load or Ifloating[ca] != zero_load)
         delta = (Idelta[ab] != zero_load or Idelta[bc] != zero_load or Idelta[ca] != zero_load)
 
-        n_connected = (Istar[nn] != zero_load)
+        n_connected = (Istar[nn] != zero_load and n2 >= 0)
         a_connected = (Istar[ab] != zero_load)
         b_connected = (Istar[bc] != zero_load)
         c_connected = (Istar[ca] != zero_load)
@@ -423,6 +430,42 @@ def compute_current_loads(bus_idx: IntVec,
             I[c2] -= Icn
             I[n2] += (Ian + Ibn + Icn)
 
+        elif star and a_connected and b_connected and n_connected:
+
+            Uan = V[a2] - V[n2]
+            Ubn = V[b2] - V[n2]
+
+            Ian = np.conj(Istar[ab]) * (Uan / abs(Uan))
+            Ibn = np.conj(Istar[bc]) * (Ubn / abs(Ubn))
+
+            I[a2] -= Ian
+            I[b2] -= Ibn
+            I[n2] += (Ian + Ibn)
+
+        elif star and b_connected and c_connected and n_connected:
+
+            Ubn = V[b2] - V[n2]
+            Ucn = V[c2] - V[n2]
+
+            Ibn = np.conj(Istar[bc]) * (Ubn / abs(Ubn))
+            Icn = np.conj(Istar[ca]) * (Ucn / abs(Ucn))
+
+            I[b2] -= Ibn
+            I[c2] -= Icn
+            I[n2] += (Ibn + Icn)
+
+        elif star and a_connected and c_connected and n_connected:
+
+            Uan = V[a2] - V[n2]
+            Ucn = V[c2] - V[n2]
+
+            Ian = np.conj(Istar[ab]) * (Uan / abs(Uan))
+            Icn = np.conj(Istar[ca]) * (Ucn / abs(Ucn))
+
+            I[a2] -= Ian
+            I[c2] -= Icn
+            I[n2] += (Ian + Icn)
+
         elif star and a_connected and n_connected:
 
             Uan = V[a2] - V[n2]
@@ -450,6 +493,27 @@ def compute_current_loads(bus_idx: IntVec,
                 I[a2] -= np.conj(Istar[ab]) * np.exp(1j * voltage_angle_a)
             if b2 >= 0:
                 I[b2] -= np.conj(Istar[bc]) * np.exp(1j * voltage_angle_b)
+            if c2 >= 0:
+                I[c2] -= np.conj(Istar[ca]) * np.exp(1j * voltage_angle_c)
+
+        elif star and a_connected and b_connected:
+
+            if a2 >= 0:
+                I[a2] -= np.conj(Istar[ab]) * np.exp(1j * voltage_angle_a)
+            if b2 >= 0:
+                I[b2] -= np.conj(Istar[bc]) * np.exp(1j * voltage_angle_b)
+
+        elif star and b_connected and c_connected:
+
+            if b2 >= 0:
+                I[b2] -= np.conj(Istar[bc]) * np.exp(1j * voltage_angle_b)
+            if c2 >= 0:
+                I[c2] -= np.conj(Istar[ca]) * np.exp(1j * voltage_angle_c)
+
+        elif star and a_connected and c_connected:
+
+            if a2 >= 0:
+                I[a2] -= np.conj(Istar[ab]) * np.exp(1j * voltage_angle_a)
             if c2 >= 0:
                 I[c2] -= np.conj(Istar[ca]) * np.exp(1j * voltage_angle_c)
 
@@ -560,7 +624,7 @@ def compute_power_loads(bus_idx: IntVec,
         floating = (Sfloating[ab] != zero_load or Sfloating[bc] != zero_load or Sfloating[ca] != zero_load)
         delta = (Sdelta[ab] != zero_load or Sdelta[bc] != zero_load or Sdelta[ca] != zero_load)
 
-        n_connected = (Sstar[nn] != zero_load)
+        n_connected = (Sstar[nn] != zero_load and n2 >= 0)
         a_connected = (Sstar[ab] != zero_load)
         b_connected = (Sstar[bc] != zero_load)
         c_connected = (Sstar[ca] != zero_load)
@@ -633,6 +697,42 @@ def compute_power_loads(bus_idx: IntVec,
             I[c2] -= Icn
             I[n2] += (Ian + Ibn + Icn)
 
+        elif star and a_connected and b_connected and n_connected:
+
+            Uan = V[a2] - V[n2]
+            Ubn = V[b2] - V[n2]
+
+            Ian = np.conj(Sstar[ab] / Uan)
+            Ibn = np.conj(Sstar[bc] / Ubn)
+
+            I[a2] -= Ian
+            I[b2] -= Ibn
+            I[n2] += (Ian + Ibn)
+
+        elif star and b_connected and c_connected and n_connected:
+
+            Ubn = V[b2] - V[n2]
+            Ucn = V[c2] - V[n2]
+
+            Ibn = np.conj(Sstar[bc] / Ubn)
+            Icn = np.conj(Sstar[ca] / Ucn)
+
+            I[b2] -= Ibn
+            I[c2] -= Icn
+            I[n2] += (Ibn + Icn)
+
+        elif star and a_connected and c_connected and n_connected:
+
+            Uan = V[a2] - V[n2]
+            Ucn = V[c2] - V[n2]
+
+            Ian = np.conj(Sstar[ab] / Uan)
+            Icn = np.conj(Sstar[ca] / Ucn)
+
+            I[a2] -= Ian
+            I[c2] -= Icn
+            I[n2] += (Ian + Icn)
+
         elif star and a_connected and n_connected:
 
             Uan = V[a2] - V[n2]
@@ -660,6 +760,27 @@ def compute_power_loads(bus_idx: IntVec,
                 I[a2] -= np.conj(Sstar[ab] / (V[a2]))
             if b2 >= 0:
                 I[b2] -= np.conj(Sstar[bc] / (V[b2]))
+            if c2 >= 0:
+                I[c2] -= np.conj(Sstar[ca] / (V[c2]))
+
+        elif star and a_connected and b_connected:
+
+            if a2 >= 0:
+                I[a2] -= np.conj(Sstar[ab] / (V[a2]))
+            if b2 >= 0:
+                I[b2] -= np.conj(Sstar[bc] / (V[b2]))
+
+        elif star and b_connected and c_connected:
+
+            if b2 >= 0:
+                I[b2] -= np.conj(Sstar[bc] / (V[b2]))
+            if c2 >= 0:
+                I[c2] -= np.conj(Sstar[ca] / (V[c2]))
+
+        elif star and a_connected and c_connected:
+
+            if a2 >= 0:
+                I[a2] -= np.conj(Sstar[ab] / (V[a2]))
             if c2 >= 0:
                 I[c2] -= np.conj(Sstar[ca] / (V[c2]))
 
@@ -835,21 +956,15 @@ def expandVoltage3ph(V0: CxVec) -> CxVec:
     n = len(V0)
     idx4 = np.array([0, 1, 2, 3], dtype=nb.int64)
 
-    magnitudes_slack = np.array([-1 + 1e-5, 0, 0, 0], dtype=nb.float64)
-    angles_slack = np.array([0, 0, -2 * np.pi / 3, 2 * np.pi / 3], dtype=nb.float64)
-
-    magnitudes = np.array([-1 + 1e-4, 0, 0, 0], dtype=nb.float64)
-    angles = np.array([10 * np.pi / 180, 0, -2 * np.pi / 3, 2 * np.pi / 3], dtype=nb.float64)
+    angles = np.array([0, 0, -2 * np.pi / 3, 2 * np.pi / 3], dtype=nb.float64)
 
     Vm = np.abs(V0)
     Va = np.angle(V0)
     x4 = np.zeros(4 * n, dtype=nb.complex128)
 
     for k in range(n):
-        if k == 0:
-            x4[4 * k + idx4] = (Vm[k] + magnitudes_slack) * np.exp(1j * (Va[k] + angles_slack))
-        else:
-            x4[4 * k + idx4] = (Vm[k] + magnitudes) * np.exp(1j * (Va[k] + angles))
+        x4[4 * k] = 1e-4 * np.exp(1j * Va[k])
+        x4[4 * k + idx4[1:]] = Vm[k] * np.exp(1j * (Va[k] + angles[1:]))
 
     return x4
 

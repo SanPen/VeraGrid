@@ -28,7 +28,7 @@ class Transformer3WEditor(QtWidgets.QDialog):
         super().__init__()
         self.ui = Ui_Transformer3wEditorDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle("Transformer editor")
+        self.setWindowTitle(self.tr("Transformer editor"))
 
         self._api_object: Transformer3W = tr3
         self.sbase: float = Sbase

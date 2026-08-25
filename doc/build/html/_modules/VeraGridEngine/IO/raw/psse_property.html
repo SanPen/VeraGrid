@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.IO.raw.psse_property &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.IO.raw.psse_property &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,9 +44,9 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
@@ -67,6 +67,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
@@ -109,6 +113,93 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TypeVar</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.base.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">Unit</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.base.base_property</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseProperty</span>
+
+
+<div class="viewcode-block" id="coerce_psse_int">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.psse_property.coerce_psse_int">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">coerce_psse_int</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">current_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Coerce a PSSE integer field while preserving the current default on invalid input.</span>
+
+<span class="sd">    :param value: Candidate PSSE value.</span>
+<span class="sd">    :param current_value: Current field value used as fallback.</span>
+<span class="sd">    :return: Parsed integer or the current value when parsing is not possible.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed_value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">current_value</span>
+
+    <span class="c1"># PSSE files may leave optional numeric fields blank, so blank values keep the current default.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">stripped_value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">stripped_value</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">parsed_value</span> <span class="o">=</span> <span class="n">current_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c1"># Some PSSE writers emit integer fields as &quot;1.0&quot;, so float parsing is the tolerant path.</span>
+                <span class="n">parsed_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">stripped_value</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">parsed_value</span> <span class="o">=</span> <span class="n">current_value</span>
+    <span class="k">elif</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">parsed_value</span> <span class="o">=</span> <span class="n">current_value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parsed_value</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parsed_value</span></div>
+
+
+
+<div class="viewcode-block" id="coerce_psse_float">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.psse_property.coerce_psse_float">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">coerce_psse_float</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">current_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Coerce a PSSE floating-point field while preserving the current default on invalid input.</span>
+
+<span class="sd">    :param value: Candidate PSSE value.</span>
+<span class="sd">    :param current_value: Current field value used as fallback.</span>
+<span class="sd">    :return: Parsed float or the current value when parsing is not possible.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">current_value</span>
+
+    <span class="c1"># PSSE files may leave optional numeric fields blank, so blank values keep the current default.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">stripped_value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">stripped_value</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">parsed_value</span> <span class="o">=</span> <span class="n">current_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">parsed_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">stripped_value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="n">parsed_value</span> <span class="o">=</span> <span class="n">current_value</span>
+    <span class="k">elif</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">parsed_value</span> <span class="o">=</span> <span class="n">current_value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parsed_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parsed_value</span></div>
+
+
+
+<div class="viewcode-block" id="coerce_psse_str">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.psse_property.coerce_psse_str">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">coerce_psse_str</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="n">current_value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Coerce a PSSE string field.</span>
+
+<span class="sd">    :param value: Candidate PSSE value.</span>
+<span class="sd">    :param current_value: Current field value used as fallback when the value is missing.</span>
+<span class="sd">    :return: String representation of the value or the current value when the value is missing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parsed_value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">current_value</span>
+
+    <span class="c1"># String fields should stay editable, but a missing value should not erase an existing default.</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">parsed_value</span> <span class="o">=</span> <span class="n">current_value</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">parsed_value</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parsed_value</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parsed_value</span></div>
+
 
 
 <div class="viewcode-block" id="PsseProperty">

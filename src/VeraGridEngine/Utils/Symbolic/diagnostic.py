@@ -594,7 +594,7 @@ class NewtonTraceCollector:
             return
         k = int(max(1, min(int(top_k), int(residual.size))))
         idx = np.argpartition(np.abs(residual), -k)[-k:]
-        idx = idx[np.argsort(np.abs(residual[idx]))[::-1]]
+        idx = idx[np.argsort(np.abs(residual[idx]), kind="stable")[::-1]]
         top_rows: list[dict[str, Any]] = list()
         for ii in idx:
             row: dict[str, Any] = {

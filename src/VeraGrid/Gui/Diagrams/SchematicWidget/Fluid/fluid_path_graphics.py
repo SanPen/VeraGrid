@@ -179,7 +179,7 @@ class FluidPathGraphicItem(LineGraphicTemplateItem):
         Convert this object to transformer
         :return:
         """
-        ok = yes_no_question('Are you sure that you want to convert this fluid path into a line?',
-                             'Convert fluid path')
+        ok = yes_no_question(self.tr('Are you sure that you want to convert this fluid path into a line?'),
+                             self.tr('Convert fluid path'))
         if ok:
             self._editor.convert_fluid_path_to_line(element=self.api_object, item_graphic=self)

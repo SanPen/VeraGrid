@@ -886,7 +886,7 @@ class ResultsMain(SimulationsMain):
                     mdl.save_to_csv(f)
                     print('Saved!')
                 else:
-                    error_msg(file + self.tr(" is not valid :("))
+                    error_msg(self.tr("{file_name} is not valid :(").format(file_name=file))
         else:
             warning_msg(self.tr("There is no profile displayed, please display one"),
                         self.tr("Copy profile to clipboard"))

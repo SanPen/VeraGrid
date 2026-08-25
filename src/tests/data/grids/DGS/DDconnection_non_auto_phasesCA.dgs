@@ -1,0 +1,108 @@
+﻿********************************************************************************
+*
+* DIgSILENT (R) DGS Export V1.8.4
+* Copyright (C) DIgSILENT GmbH 2026. All rights reserved.
+*
+* DIgSILENT (C) PowerFactory V24.0.10.0
+*
+* Date:     08/07/2026 17:05
+* Project:  IEEE13_SinglePhaseTransformer (Study Case: Study Case)
+*
+********************************************************************************
+
+
+$$General;FID(a:40);Descr(a:40);Val(a:255)
+  1;Version;7.0
+
+
+$$ElmLne;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);dline(r);fline(r);GPScoords:MATRIX(a);nlnum(i);inAir(i)
+  2;C;LOHL632-633;4;42;0.1524;1;;1;0
+
+
+$$ElmLod;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);mode_inp(a:6);slini(r);plini(r);qlini(r);coslini(r);pf_recap(i);scale0(r);i_scale(i);outserv(i);classif(a:40);i_sym(i);plinir(r);plinis(r);plinit(r);qlinir(r);qlinis(r);qlinit(r);phtech(a)
+  3;C;L634-YcPQ;4;41;DEF;0.447213;0.4;0.2;0.894427;0;1;1;0;;1;0.16;0.12;0.12;0.11;0.09;0.09;1PH PH-PH
+
+
+$$ElmNet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);frnom(r);pDiagram(p)
+  4;C;Grid;;60;25
+
+
+$$ElmTerm;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);systype(i);iUsage(i);uknom(r);unknom(r);iminus(i);outserv(i);GPSlat(r);GPSlon(r);vtarget(r)
+  5;C;632;4;39;0;0;4.16;2.401777;0;0;0;0;1
+  6;C;633;4;39;0;0;4.16;2.401777;0;0;0;0;1
+  7;C;634;4;38;0;0;0.48;0.277128;0;0;0;0;1
+
+
+$$ElmTr2;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);typ_id(p);ntnum(i);outserv(i);nntap(i);i_auto(i);ntrcn(i);usetp(r);usp_low(r);usp_up(r);t2ldc(i);cgnd_h(i);cgnd_l(i);i_eahv(i);i_ealv(i)
+  8;C;XFM-1;4;43;1;0;0;0;0;1;0.99;1.01;0;0;0;0;0
+
+
+$$ElmXnet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);snss(r);rntxn(r);z2tz1(r);snssmin(r);rntxnmin(r);z2tz1min(r);chr_name(a:40);bustp(a:2);pgini(r);qgini(r);phiini(r);usetp(r);outserv(i);Kpf(r);K(r);cmax(r);xd(r);xq(r)
+  9;C;External Grid;4;1e+09;0.1;1;8000;0.1;1;;SL;0;0;0;1;0;0;0;1.1;0.2;0.2
+
+
+$$IntFolder;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p)
+  10;C;Layers;25
+  11;C;Settings;25
+
+
+$$IntGrf;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);iCol(i);iVis(i);iLevel(i);rCenterX(r);rCenterY(r);sSymNam(a:80);pDataObj(p);iRot(i);rSizeX(r);rSizeY(r)
+  12;C;Graphical Net Object21;25;-16777216;1;1;231.875;105;d_tr2;8;90;1;1
+  13;C;Graphical Net Object26;25;-16777216;1;1;181.5625;105;d_lin;2;90;1;1
+  14;C;Graphical Net Object43;25;-16777216;1;1;262.5;96.25;d_load;3;0;1;1
+  15;C;Graphical Net Object6;25;-16777216;1;1;150.9375;118.125;TermStrip;5;0;1.5;1
+  16;C;Graphical Net Object7;25;-16777216;1;1;203.4375;118.125;TermStrip;6;0;1.166667;1
+  17;C;Graphical Net Object8(1);25;-16777216;1;1;161.875;135.625;d_net;9;180;1;1
+  18;C;Graphical Net Object8;25;-16777216;1;1;258.125;118.125;TermStrip;7;0;1.333333;1
+
+
+$$IntGrfcon;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);rX:SIZEROW(i);rX:0(r);rX:1(r);rX:2(r);rY:SIZEROW(i);rY:0(r);rY:1(r);rY:2(r);iDatConNr(i)
+  19;C;GCO_1;12;3;227.5;210;210;3;105;105;118.125;0
+  20;C;GCO_2;12;3;236.25;253.75;253.75;3;105;105;118.125;1
+  21;C;GCO_1;13;3;181.5625;161.875;161.875;3;105;105;118.125;0
+  22;C;GCO_2;13;3;181.5625;201.25;201.25;3;105;105;118.125;1
+  23;C;GCO_1;14;2;262.5;262.5;;2;100.625;118.125;;0
+  24;C;GCO_1;17;2;161.875;161.875;;2;131.25;118.125;;0
+
+
+$$IntGrfnet;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);snap_on(i);ortho_on(i);pDataFolder(p)
+  25;C;Grid;;1;1;4
+
+
+$$StaCubic;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);obj_bus(i);obj_id(p);it2p1(i);it2p2(i);it2p3(i);cPhInfo(a)
+  26;C;Cub_1;5;0;2;0;1;2;abcN
+  27;C;Cub_2;5;0;9;0;1;2;abcN
+  28;C;Cub_1;6;0;8;2;0;2;ca
+  29;C;Cub_2;6;1;2;0;1;2;abcN
+  30;C;Cub_1;7;1;8;2;0;2;ca
+  31;C;Cub_2;7;0;3;2;0;2;ca
+
+
+$$StaSwitch;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);on_off(i);typ_id(p);aUsage(a)
+  32;C;Switch;26;1;;cbk
+  33;C;Switch;27;1;;cbk
+  34;C;Switch;28;1;;cbk
+  35;C;Switch;29;1;;cbk
+  36;C;Switch;30;1;;cbk
+  37;C;Switch;31;1;;cbk
+
+
+$$TypBar;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);uknom(r);Ithlim(r);Tkr(r);Iplim(r)
+  38;C;Busbar0.48kV;;0.48;0;1;0
+  39;C;Busbar4.16kV;;4.16;0;1;0
+
+
+$$TypCon;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);sline(r);ncsub(i);dsubc(r);rpha(r);diaco(r);erpha(r);diatub(r);iskin(i);tmax(r);uline(r);iopt_inp(a:6);alpha(r);rpha_tmax(r);mlei(a:20);iModel(i)
+  40;C;n4 ACSR;;0.34;1;0.1;0.367851;14.3002;2.481072;16;0;80;4.16;tmx;0;0.367852;Al;0
+
+
+$$TypLod;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);systp(i);phtech(i);aP(r);bP(r);kpu0(r);kpu1(r);kpu(r);aQ(r);bQ(r);kqu0(r);kqu1(r);kqu(r)
+  41;C;LodPNcPQ;;0;7;1;0;0;1;2;1;0;0;1;2
+
+
+$$TypTow;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);frnom(r);nlear(i);nlcir(i);gearth(r);i_mode(i);pcond_e:SIZEROW(i);nphas:SIZEROW(i);nphas:0(r);nphas:1(r);ktrto:SIZEROW(i);ktrto:0(r);ktrto:1(r);pcond_c:SIZEROW(i);pcond_c:0(p);pcond_c:1(p);xy_e:SIZEROW(i);xy_e:SIZECOL(i);xy_c:SIZEROW(i);xy_c:SIZECOL(i);xy_c:0:0(r);xy_c:0:1(r);xy_c:0:2(r);xy_c:0:3(r);xy_c:0:4(r);xy_c:0:5(r);xy_c:1:0(r);xy_c:1:1(r);xy_c:1:2(r);xy_c:1:3(r);xy_c:1:4(r);xy_c:1:5(r);R_c0:SIZEROW(i);R_c0:SIZECOL(i);R_c0:0:0(r);R_c0:0:1(r);R_c0:1:0(r);R_c0:1:1(r);X_c0:SIZEROW(i);X_c0:SIZECOL(i);X_c0:0:0(r);X_c0:0:1(r);X_c0:1:0(r);X_c0:1:1(r);R_c1:SIZEROW(i);R_c1:SIZECOL(i);R_c1:0:0(r);R_c1:0:1(r);R_c1:1:0(r);R_c1:1:1(r);X_c1:SIZEROW(i);X_c1:SIZECOL(i);X_c1:0:0(r);X_c1:0:1(r);X_c1:1:0(r);X_c1:1:1(r);B_c0:SIZEROW(i);B_c0:SIZECOL(i);B_c0:0:0(r);B_c0:0:1(r);B_c0:1:0(r);B_c0:1:1(r);B_c1:SIZEROW(i);B_c1:SIZECOL(i);B_c1:0:0(r);B_c1:0:1(r);B_c1:1:0(r);B_c1:1:1(r);G_c0:SIZEROW(i);G_c0:SIZECOL(i);G_c0:0:0(r);G_c0:0:1(r);G_c0:1:0(r);G_c0:1:1(r);G_c1:SIZEROW(i);G_c1:SIZECOL(i);G_c1:0:0(r);G_c1:0:1(r);G_c1:1:0(r);G_c1:1:1(r)
+  42;C;LineConfig602;;60;0;2;100;0;0;2;3;1;2;0;0;2;40;40;0;2;2;6;-0.3048;1.0668;-1.0668;8.5344;8.5344;8.5344;0.1523999951232;0;0;7.31519976591361;0;0;2;2;0.54172476635457;0;0;0;2;2;1.94183433168868;0;0;0;2;2;0.36785212630121;0;0;0.42598366211991;2;2;0.47247467531886;0;0;0.96207525615837;2;2;1.95681658172144;0;0;0;2;2;4.09021015609093;0;0;3.31282137919026;2;2;0;0;0;0;2;2;2.77555756156289e-17;0;0;0
+
+
+$$TypTr2;FID(a:40);OP(a:1);loc_name(a:80);fold_id(p);nt2ph(i);strn(r);frnom(r);utrn_h(r);utrn_l(r);uktr(r);pcutr(r);uk0tr(r);ur0tr(r);tr2cn_h(a:4);tr2cn_l(a:4);nt2ag(r);curmg(r);pfe(r);zx0hl_n(r);itapch(i);tap_side(i);dutap(r);phitr(r);nntap0(i);ntpmn(i);ntpmx(i);manuf(a:40)
+  43;C;AutoTRF1ph;;2;0.5;60;4.16;0.48;2.2825;1.833;3;0;D;D;0;0;0;100;0;1;0.625;0;0;-16;16;

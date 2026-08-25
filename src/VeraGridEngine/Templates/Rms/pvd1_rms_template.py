@@ -130,8 +130,6 @@ def get_pvd1_rms_template(vfactory: VarFactory, name: str = "PVD1 RMS template")
         state_vars=[ipout, iqout],
         in_vars=inputs,
         init_eqs={
-            pref0: p,
-            qref0: q,
             pext0: zero,
             f_hz: vfactory.add_const(60.0),
             q_droop: q_droop_expr,
@@ -147,8 +145,8 @@ def get_pvd1_rms_template(vfactory: VarFactory, name: str = "PVD1 RMS template")
             iqout: iq_cmd_expr,
         },
         event_dict={
-            pref0: vfactory.add_const(None),
-            qref0: vfactory.add_const(None),
+            pref0: p,
+            qref0: q,
             pext0: vfactory.add_const(0.0),
             qmx: vfactory.add_const(1.0),
             qmn: vfactory.add_const(-1.0),
@@ -419,8 +417,6 @@ def get_pvd1_complete_rms_template(vfactory: VarFactory, name: str = "PVD1 compl
         state_vars=[ipout, iqout, pll_int, theta_pll],
         in_vars=inputs,
         init_eqs={
-            pref0: p,
-            qref0: q,
             pext0: zero,
             pll_int: zero,
             theta_pll: va,
@@ -448,8 +444,8 @@ def get_pvd1_complete_rms_template(vfactory: VarFactory, name: str = "PVD1 compl
             iqout: iq_cmd_expr,
         },
         event_dict={
-            pref0: vfactory.add_const(None),
-            qref0: vfactory.add_const(None),
+            pref0: p,
+            qref0: q,
             pext0: vfactory.add_const(0.0),
             qmx: vfactory.add_const(0.33),
             qmn: vfactory.add_const(-0.33),
@@ -656,8 +652,6 @@ def get_pvd1_dc_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 DC-MPP
         state_vars=[ipout, iqout, pmppt],
         in_vars=inputs,
         init_eqs={
-            pref0: p,
-            qref0: q,
             pext0: zero,
             f_hz: vfactory.add_const(60.0),
             pavail: pavail_expr,
@@ -675,8 +669,8 @@ def get_pvd1_dc_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 DC-MPP
             iqout: iq_cmd_expr,
         },
         event_dict={
-            pref0: vfactory.add_const(None),
-            qref0: vfactory.add_const(None),
+            pref0: p,
+            qref0: q,
             pext0: vfactory.add_const(0.0),
             qmx: vfactory.add_const(1.0),
             qmn: vfactory.add_const(-1.0),
@@ -928,8 +922,6 @@ def get_pvd1_dc_link_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 D
         state_vars=[ipout, iqout, xi_mppt, duty, vdc],
         in_vars=inputs,
         init_eqs={
-            pref0: p,
-            qref0: q,
             pext0: zero,
             f_hz: vfactory.add_const(60.0),
             vdc: vdc0,
@@ -954,8 +946,8 @@ def get_pvd1_dc_link_mppt_rms_template(vfactory: VarFactory, name: str = "PVD1 D
             iqout: iq_cmd_expr,
         },
         event_dict={
-            pref0: vfactory.add_const(None),
-            qref0: vfactory.add_const(None),
+            pref0: p,
+            qref0: q,
             pext0: vfactory.add_const(0.0),
             qmx: vfactory.add_const(1.0),
             qmn: vfactory.add_const(-1.0),
@@ -1190,8 +1182,6 @@ def get_pvd1_dc_link_bess_rms_template(vfactory: VarFactory, name: str = "PVD1 D
         state_vars=[ipout, iqout, vdc],
         in_vars=inputs,
         init_eqs={
-            pref0: p,
-            qref0: q,
             pext0: zero,
             f_hz: vfactory.add_const(60.0),
             vdc: vdc0,
@@ -1215,8 +1205,8 @@ def get_pvd1_dc_link_bess_rms_template(vfactory: VarFactory, name: str = "PVD1 D
             iqout: iq_cmd_expr,
         },
         event_dict={
-            pref0: vfactory.add_const(None),
-            qref0: vfactory.add_const(None),
+            pref0: p,
+            qref0: q,
             pext0: vfactory.add_const(0.0),
             qmx: vfactory.add_const(1.0),
             qmn: vfactory.add_const(-1.0),

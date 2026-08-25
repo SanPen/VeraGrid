@@ -660,7 +660,7 @@ class ModelsInputGUI(QtWidgets.QDialog):
 
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('Models import dialogue')
+        self.setWindowTitle(self.tr('Models import dialogue'))
 
         self.logger = Logger()
         self.grids_model: GridsModel = GridsModel(logger=self.logger)
@@ -730,7 +730,7 @@ class ModelsInputGUI(QtWidgets.QDialog):
         :return:
         """
         if self.grids_model.rowCount() > 0:
-            ok = yes_no_question("Do you want to clear the import data?")
+            ok = yes_no_question(self.tr("Do you want to clear the import data?"))
             if ok:
                 self.grids_model.clear()
 
@@ -742,7 +742,7 @@ class ModelsInputGUI(QtWidgets.QDialog):
         files_types = "Formats (*.raw *.RAW *.rawx *.xml *.m *.matpower *.epc *.EPC *.dgs *.p *.uct *.UCT)"
 
         # call dialog to select the file
-        filenames, type_selected = QtWidgets.QFileDialog.getOpenFileNames(self, 'Add files', filter=files_types)
+        filenames, type_selected = QtWidgets.QFileDialog.getOpenFileNames(self, self.tr('Add files'), filter=files_types)
 
         if len(filenames):
             self.grids_model.add_paths(paths=filenames)
@@ -769,7 +769,7 @@ class ModelsInputGUI(QtWidgets.QDialog):
                 current_path = str(self.grids_model.items()[index.row()].path)
                 start_folder = os.path.dirname(current_path)
                 filename, type_selected = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                                                'Select file',
+                                                                                self.tr('Select file'),
                                                                                 start_folder,
                                                                                 filter=files_types)
                 del type_selected
@@ -862,7 +862,7 @@ class ModelsInputGUI(QtWidgets.QDialog):
         :return: ``True`` when the close request was accepted.
         """
         ok: bool = yes_no_question(
-            "There is an import procedure running.\nCancel it and close the window?"
+            self.tr("There is an import procedure running.\nCancel it and close the window?")
         )
 
         if ok:

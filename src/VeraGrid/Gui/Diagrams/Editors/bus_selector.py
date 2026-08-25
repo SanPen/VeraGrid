@@ -20,7 +20,7 @@ class BusSelectorDialogue(QDialog):
         :param parent: ?
         """
         QDialog.__init__(self, parent)
-        self.setWindowTitle("Bus selection")
+        self.setWindowTitle(self.tr("Bus selection"))
 
         # Create layout
         main_layout = QVBoxLayout()

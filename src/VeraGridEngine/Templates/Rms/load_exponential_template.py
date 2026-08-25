@@ -71,14 +71,10 @@ def ExponentialLoadBuild(vfactory: VarFactory, name: str = "", Pl0=1.0, Ql0=0.1)
     events_dict = {
         P0: vfactory.add_const(Pl0),
         Q0: vfactory.add_const(Ql0),
-        V0: vfactory.add_const(None),
+        V0: inputs[0],
 
         a: vfactory.add_const(5),
         b: vfactory.add_const(5),
-    }
-
-    init_eqs = {
-        V0: inputs[0],
     }
 
     templ.block = Block(
@@ -88,7 +84,6 @@ def ExponentialLoadBuild(vfactory: VarFactory, name: str = "", Pl0=1.0, Ql0=0.1)
         ],
         algebraic_vars=[P, Q],
         event_dict=events_dict,
-        init_eqs=init_eqs,
     )
 
     templ.block.external_mapping = {

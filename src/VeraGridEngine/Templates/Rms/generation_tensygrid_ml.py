@@ -445,7 +445,7 @@ def GovernorBuild(vfactory: VarFactory, name: str = "", hard_sat_type: str = "ml
 
     events_dict = {
         # control parameters
-        Pm_ref: vfactory.add_const(None),
+        Pm_ref: inputs[1],
         Kp: vfactory.add_const(-0.01),
         Ki: vfactory.add_const(-0.01),
         p0: vfactory.add_const(1.0),
@@ -552,7 +552,6 @@ def GovernorBuild(vfactory: VarFactory, name: str = "", hard_sat_type: str = "ml
         name="governor",
 
         init_eqs={
-            Pm_ref: inputs[1],
             y1: vfactory.add_const(0.0),
             x1: inputs[0] - omega_ref,
             u_gov1: vfactory.add_const(0),

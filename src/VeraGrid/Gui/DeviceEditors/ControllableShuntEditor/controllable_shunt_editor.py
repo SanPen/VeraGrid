@@ -188,7 +188,7 @@ class ControllableShuntEditor(QtWidgets.QDialog):
         :param api_object: Controllable shunt object to mutate on acceptance.
         """
         QtWidgets.QDialog.__init__(self)
-        self.setWindowTitle("Controllable shunt editor")
+        self.setWindowTitle(self.tr("Controllable shunt editor"))
         self.resize(640, 420)
 
         self.main_layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(self)

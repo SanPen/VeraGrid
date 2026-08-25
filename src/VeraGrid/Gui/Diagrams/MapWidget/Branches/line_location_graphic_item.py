@@ -171,8 +171,12 @@ class LineLocationGraphicItem(QtWidgets.QGraphicsEllipseItem, NodeTemplate):
         :return:
         """
         if question:
-            ok = yes_no_question(f"Move substation {self.api_object.name} graphics to it's database coordinates?",
-                                 "Move substation graphics")
+            ok = yes_no_question(
+                self.tr("Move substation {substation_name} graphics to it's database coordinates?").format(
+                    substation_name=self.api_object.name,
+                ),
+                self.tr("Move substation graphics"),
+            )
 
             if ok:
                 x, y = self.move_to(lat=self.api_object.lat,

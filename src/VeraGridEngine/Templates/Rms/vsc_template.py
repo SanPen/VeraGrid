@@ -167,7 +167,7 @@ def PVControlBuild2(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     Km = vfactory.add_var('Km')
     Ts = vfactory.add_var('Ts_controller')
     event_dict = {
-        vref: vfactory.add_const(None),
+        vref: inputs[0],
         Km: vfactory.add_const(10.0),
         Ts: vfactory.add_const(0.01),
         Kp: vfactory.add_const(0.1),
@@ -175,7 +175,7 @@ def PVControlBuild2(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
         Temp: vfactory.add_const(300.0),
         G: vfactory.add_const(1000.0),
         Gref: vfactory.add_const(1000.0),
-        Pref: vfactory.add_const(None),
+        Pref: inputs[4],
         Tref: vfactory.add_const(300.0),
         gamma_p: vfactory.add_const(-0.001),
         vdc_ref: vfactory.add_const(1.033),
@@ -183,11 +183,6 @@ def PVControlBuild2(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
 
     Ppv = (G / vfactory.add_const(1000.0)) * (Pref * (1 + gamma_p * (Temp - Tref)))
     i_dc_ref = Ppv / vdc_ref
-    init_eqs = {
-        vref: inputs[0],
-        Pref: inputs[4],
-    }
-
     block_vhs_control, _ = tf_to_diffblock_with_antiwindup(
         vfactory,
         x=(Vm - vref),
@@ -208,7 +203,6 @@ def PVControlBuild2(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
         ],
         algebraic_vars=[vdc_ref],
         in_vars=inputs,
-        init_eqs=init_eqs,
         # children = [block_vhs_control],
         event_dict=event_dict,
     )
@@ -318,7 +312,7 @@ def PVCellBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
         rho_e: vfactory.add_const(1.68e-8),
         C_temp: vfactory.add_const(1000.0),
         G: vfactory.add_const(1000.0),
-        iL0: vfactory.add_const(None)
+        iL0: Idc - (-iD - vD / Rsh)
     }
 
     qe = vfactory.add_const(1.60217662e-19)  # Electron charge (C)
@@ -358,7 +352,6 @@ def PVCellBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
             Idc: Pdc / Vdc,
             vD: Vdc + Rse * Idc,
             iD: Is * (sym.exp(vD / (gamma * v_T)) - vfactory.add_const(1)),
-            iL0: Idc - (- iD - vD / Rsh),
             iL: Idc - (- iD - vD / Rsh),
         }
     )

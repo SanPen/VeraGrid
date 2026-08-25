@@ -75,7 +75,7 @@ class LineDeviceEditor(TemplateDeviceEditor):
         """
         TemplateDeviceEditor.__init__(self, api_object=api_object, circuit=circuit)
         self.api_object: Line = api_object
-        self.setWindowTitle("Line editor")
+        self.setWindowTitle(self.tr("Line editor"))
 
         self.line_design_widget: EmbeddedLineDesignEditorWidget | None = None
         self._build_line_design_tab()
@@ -122,7 +122,7 @@ class LineDeviceEditor(TemplateDeviceEditor):
         if self.line_design_widget is not None:
             self.line_design_widget.apply_changes()
         else:
-            warning_msg("Line design widget is not available", "Line editor")
+            warning_msg(self.tr("Line design widget is not available"), self.tr("Line editor"))
 
     def _on_line_design_applied(self, applied_ok: bool) -> None:
         """

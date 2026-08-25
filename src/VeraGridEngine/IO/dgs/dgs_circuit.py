@@ -63,6 +63,7 @@ class DgsCircuit:
         BlkSum,
         ChaRef,
         ChaVec,
+        ComLdf,
         ElmComp,
         ElmDsl,
         ElmBranch,
@@ -139,6 +140,7 @@ class DgsCircuit:
         self.blksigs: List[BlkSig] = list()
         self.blkslots: List[BlkSlot] = list()
         self.blksums: List[BlkSum] = list()
+        self.comldfs: List[ComLdf] = list()
         self.elmcomps: List[ElmComp] = list()
         self.elmdsls: List[ElmDsl] = list()
         self.elmbranches: List[ElmBranch] = list()
@@ -210,6 +212,7 @@ class DgsCircuit:
             BlkSum: self.blksums,
             ChaRef: self.charefs,
             ChaVec: self.chavecs,
+            ComLdf: self.comldfs,
             ElmComp: self.elmcomps,
             ElmDsl: self.elmdsls,
             ElmBranch: self.elmbranches,

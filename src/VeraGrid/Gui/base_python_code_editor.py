@@ -62,6 +62,9 @@ class BasePythonCodeEditor(QtWidgets.QPlainTextEdit):
         self._tab_text: str = "    "
         self._show_line_numbers: bool = show_line_numbers
         self._line_number_area: PythonLineNumberArea | None = None
+        self._applying_editor_palette: bool = False
+        self._line_number_gutter_color: QtGui.QColor = QtGui.QColor(240, 242, 245)
+        self._line_number_text_color: QtGui.QColor = QtGui.QColor(95, 100, 110)
         if self._show_line_numbers:
             self._line_number_area = PythonLineNumberArea(self)
         else:
@@ -74,6 +77,7 @@ class BasePythonCodeEditor(QtWidgets.QPlainTextEdit):
         self.setTabStopDistance(float(self.fontMetrics().horizontalAdvance(self._tab_text)))
         self.setLineWrapMode(QtWidgets.QPlainTextEdit.LineWrapMode.NoWrap)
         self.setTabChangesFocus(False)
+        BasePythonCodeEditor.set_light_mode(self)
 
         # Keep the gutter synchronized with document growth and scrolling only
         # for editors that actually display line numbers.
@@ -83,6 +87,79 @@ class BasePythonCodeEditor(QtWidgets.QPlainTextEdit):
         else:
             pass
         self.update_line_number_area_width(0)
+
+    def apply_editor_theme(self, dark_theme: bool) -> None:
+        """Apply explicit editor and gutter colors.
+
+        :param dark_theme: Whether to use dark editor colors.
+        :return: None.
+        """
+        if self._applying_editor_palette:
+            return
+        else:
+            pass
+
+        self._applying_editor_palette = True
+        editor_palette: QtGui.QPalette = QtGui.QPalette(self.palette())
+
+        if dark_theme:
+            base_color: QtGui.QColor = QtGui.QColor(30, 30, 30)
+            gutter_color: QtGui.QColor = QtGui.QColor(37, 37, 38)
+            text_color: QtGui.QColor = QtGui.QColor(245, 245, 245)
+            gutter_text_color: QtGui.QColor = QtGui.QColor(160, 165, 175)
+        else:
+            base_color = QtGui.QColor(255, 255, 255)
+            gutter_color = QtGui.QColor(240, 242, 245)
+            text_color = QtGui.QColor(20, 20, 20)
+            gutter_text_color = QtGui.QColor(95, 100, 110)
+
+        self._line_number_gutter_color = QtGui.QColor(gutter_color)
+        self._line_number_text_color = QtGui.QColor(gutter_text_color)
+
+        color_groups: tuple[QtGui.QPalette.ColorGroup, ...] = (
+            QtGui.QPalette.ColorGroup.Active,
+            QtGui.QPalette.ColorGroup.Inactive,
+            QtGui.QPalette.ColorGroup.Disabled,
+        )
+        color_group: QtGui.QPalette.ColorGroup
+        for color_group in color_groups:
+            editor_palette.setColor(color_group, QtGui.QPalette.ColorRole.Base, base_color)
+            editor_palette.setColor(color_group, QtGui.QPalette.ColorRole.Window, base_color)
+            editor_palette.setColor(color_group, QtGui.QPalette.ColorRole.Text, text_color)
+            editor_palette.setColor(color_group, QtGui.QPalette.ColorRole.WindowText, text_color)
+            editor_palette.setColor(color_group, QtGui.QPalette.ColorRole.AlternateBase, gutter_color)
+            editor_palette.setColor(color_group, QtGui.QPalette.ColorRole.PlaceholderText, gutter_text_color)
+        self.setPalette(editor_palette)
+        self.viewport().setAutoFillBackground(True)
+        self.viewport().setBackgroundRole(QtGui.QPalette.ColorRole.Base)
+        self.viewport().setPalette(editor_palette)
+        self.setStyleSheet(
+            f"background-color: {base_color.name()};"
+            f"color: {text_color.name()};"
+        )
+        self.viewport().setStyleSheet(f"background-color: {base_color.name()};")
+
+        if self._line_number_area is not None:
+            self._line_number_area.setPalette(editor_palette)
+            self._line_number_area.setStyleSheet(f"background-color: {gutter_color.name()};")
+            self._line_number_area.update()
+        else:
+            pass
+        self._applying_editor_palette = False
+
+    def set_dark_mode(self) -> None:
+        """Apply the dark editor theme.
+
+        :return: None.
+        """
+        self.apply_editor_theme(dark_theme=True)
+
+    def set_light_mode(self) -> None:
+        """Apply the light editor theme.
+
+        :return: None.
+        """
+        self.apply_editor_theme(dark_theme=False)
 
     def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
         """Insert four spaces for Tab and delegate every other key.
@@ -179,8 +256,8 @@ class BasePythonCodeEditor(QtWidgets.QPlainTextEdit):
         else:
             pass
         painter: QtGui.QPainter = QtGui.QPainter(self._line_number_area)
-        painter.fillRect(event.rect(), self.palette().alternateBase())
-        painter.setPen(self.palette().placeholderText().color())
+        painter.fillRect(event.rect(), self._line_number_gutter_color)
+        painter.setPen(self._line_number_text_color)
         text_block: QtGui.QTextBlock = self.firstVisibleBlock()
         block_number: int = text_block.blockNumber()
         top: int = int(self.blockBoundingGeometry(text_block).translated(self.contentOffset()).top())

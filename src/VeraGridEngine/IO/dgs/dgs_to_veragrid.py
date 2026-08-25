@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: MPL-2.0
 from __future__ import annotations
 import math
+import re
 import numpy as np
 from typing import Dict, List, Set, Tuple, TypeVar
 
@@ -18,7 +19,8 @@ from VeraGridEngine.enumerations import (
     ConverterFaultControlType,
     GeneratorType,
     GeneratorControlMode,
-    BusGraphicType
+    BusGraphicType,
+    ShuntConnectionType
 )
 import VeraGridEngine.Devices as dev
 from VeraGridEngine.Devices.Branches.wire import Wire
@@ -28,6 +30,27 @@ from VeraGridEngine.IO.dgs.dgs_circuit import DgsCircuit
 from VeraGridEngine.IO.dgs.dgs_objects import *
 
 TDgsObject = TypeVar("TDgsObject")
+
+PhaseMap = Dict[Tuple[str, int], int]
+
+_PHASE_NAME_PATTERN = re.compile(r"SP1|SP2|DP1|DP2|SP|[ABCN]")
+_LOCAL_PHASE_INDEX: Dict[str, int] = {
+    "A": 0,
+    "B": 1,
+    "C": 2,
+    "N": 3,
+    "SP": 0,
+    "SP1": 0,
+    "SP2": 1,
+    "DP1": 0,
+    "DP2": 1,
+}
+_GLOBAL_PHASE_INDEX: Dict[str, int] = {
+    "N": 0,
+    "A": 1,
+    "B": 2,
+    "C": 3,
+}
 
 
 def _is_element_closed_by_cubicle_switches(
@@ -118,6 +141,86 @@ def _ref_id(x: str | None) -> str | None:
         return s.split("\\")[-1]
     else:
         return s
+
+
+def _get_cubic_phase_names(cubic: StaCubic) -> List[str]:
+    """
+    Parse the local phase names stored in ``StaCubic.cPhInfo``.
+
+    Examples: ``aN`` becomes ``[A, N]`` and ``SPN`` becomes ``[SP, N]``.
+
+    :param cubic: PowerFactory cubicle.
+    :return: Local phase names in their displayed order.
+    """
+    return _PHASE_NAME_PATTERN.findall((cubic.cPhInfo or "").upper())
+
+
+def _get_cubic_active_phase_indices(cubic: StaCubic) -> Set[int]:
+    """
+    Return the local conductor indices that are connected in a cubicle.
+
+    The ``it2p`` fields may contain default values for disconnected conductors,
+    so ``cPhInfo`` is used to determine which values are meaningful.
+
+    :param cubic: PowerFactory cubicle.
+    :return: Connected local conductor indices.
+    """
+    return {_LOCAL_PHASE_INDEX[name] for name in _get_cubic_phase_names(cubic)}
+
+
+def _get_cubic_phases(cubic: StaCubic, phase_map: PhaseMap) -> List[int]:
+    """
+    Return the resolved N/A/B/C phases used by a cubicle.
+
+    The returned order follows the element phase order ``it2p1``, ``it2p2``
+    and ``it2p3``. Active conductors without an ``it2p`` slot, normally the
+    neutral of an ABCN cubicle, are appended. Unresolved conductors are omitted.
+
+    :param cubic: PowerFactory cubicle.
+    :param phase_map: Resolved terminal-conductor phase map.
+    :return: Global phase indices (0=N, 1=A, 2=B, 3=C).
+    """
+    terminal_id = _ref_id(cubic.fold_id)
+    if terminal_id is None:
+        return []
+
+    active_indices = _get_cubic_active_phase_indices(cubic)
+    used_indices: Set[int] = set()
+    phases: List[int] = []
+
+    for attribute in ("it2p1", "it2p2", "it2p3"):
+        local_index = int(getattr(cubic, attribute))
+        if local_index in active_indices and local_index not in used_indices:
+            used_indices.add(local_index)
+            phase = phase_map.get((terminal_id, local_index))
+            if phase is not None:
+                phases.append(phase)
+
+    # StaCubic has only three it2p fields. In a four-wire ABCN cubicle the
+    # neutral is present in cPhInfo but has no explicit it2p slot.
+    for local_index in sorted(active_indices - used_indices):
+        phase = phase_map.get((terminal_id, local_index))
+        if phase is not None:
+            phases.append(phase)
+
+    return phases
+
+
+def _get_element_phases(element_id: str,
+                        cubics_by_objid: Dict[str, List[StaCubic]],
+                        phase_map: PhaseMap) -> List[int]:
+    """
+    Return all resolved phases connected to an element.
+
+    :param element_id: DGS element identifier.
+    :param cubics_by_objid: Cubicles grouped by connected element.
+    :param phase_map: Resolved terminal-conductor phase map.
+    :return: Sorted unique global phase indices.
+    """
+    phases: Set[int] = set()
+    for cubic in cubics_by_objid.get(_ref_id(element_id), []):
+        phases.update(_get_cubic_phases(cubic=cubic, phase_map=phase_map))
+    return sorted(phases)
 
 
 def _stacubic_obj_bus_sort_key(cubic: StaCubic) -> int:
@@ -709,6 +812,7 @@ def convert_dgs_to_overhead_line_type_geometrical_parameters(
         typcon_by_id: Dict[str, TypCon],
         wire_by_id: Dict[str, Wire],
         default_frequency_hz: float,
+        phase_order: List[int] | None = None,
 ) -> dev.OverheadLineType:
     """
     Convert dgs to overhead line type geometrical parameters.
@@ -717,6 +821,7 @@ def convert_dgs_to_overhead_line_type_geometrical_parameters(
     :param typcon_by_id: typcon_by_id parameter.
     :param wire_by_id: wire_by_id parameter.
     :param default_frequency_hz: default_frequency_hz parameter.
+    :param phase_order: Resolved N/A/B/C phase of each physical conductor.
     :return: Function result.
     """
 
@@ -790,9 +895,26 @@ def convert_dgs_to_overhead_line_type_geometrical_parameters(
         else:
             pass
 
-    # Phase wires per circuit
+    # Phase wires per circuit. TypTow.xy_c always reserves coordinates for
+    # three conductors, but nphas states how many of them actually exist.
     # Expected xy_c row format: [xA, xB, xC, yA, yB, yC]
+    phase_cursor = 0
     for c_idx, ptr in enumerate(typtow.pcond_c):
+        if c_idx < len(typtow.nphas):
+            phase_count = int(typtow.nphas[c_idx])
+        else:
+            phase_count = 3
+        phase_count = max(0, min(phase_count, 3))
+
+        base_phase = 3 * int(c_idx)  # circuit 0 -> phases 1, 2, 3
+        circuit_phases: List[int] = []
+        for conductor_idx in range(phase_count):
+            if phase_order is not None and phase_cursor < len(phase_order):
+                circuit_phases.append(phase_order[phase_cursor])
+            else:
+                circuit_phases.append(base_phase + conductor_idx + 1)
+            phase_cursor += 1
+
         if ptr is not None:
 
             cid = _ref_id(ptr)
@@ -810,14 +932,18 @@ def convert_dgs_to_overhead_line_type_geometrical_parameters(
 
                     offsets = _bundle_offsets(n_sub=int(tc.ncsub), spacing_m=float(tc.dsubc))
 
-                    base_phase = 3 * int(c_idx)  # circuit 0 -> 0, circuit 1 -> 3, ...
-                    for dx, dy in offsets:
-                        ohl_type.wires_in_tower.append(
-                            WireInTower(wire=wire, xpos=xA + dx, ypos=yA + dy, phase=base_phase + 1))
-                        ohl_type.wires_in_tower.append(
-                            WireInTower(wire=wire, xpos=xB + dx, ypos=yB + dy, phase=base_phase + 2))
-                        ohl_type.wires_in_tower.append(
-                            WireInTower(wire=wire, xpos=xC + dx, ypos=yC + dy, phase=base_phase + 3))
+                    x_positions = (xA, xB, xC)
+                    y_positions = (yA, yB, yC)
+                    for conductor_idx, phase in enumerate(circuit_phases):
+                        for dx, dy in offsets:
+                            ohl_type.wires_in_tower.append(
+                                WireInTower(
+                                    wire=wire,
+                                    xpos=x_positions[conductor_idx] + dx,
+                                    ypos=y_positions[conductor_idx] + dy,
+                                    phase=phase,
+                                )
+                            )
                 else:
                     pass
             else:
@@ -913,8 +1039,8 @@ def _convert_pf_tr2_connection(code: str) -> WindingType | None:
         "D": WindingType.Delta,
         "Y": WindingType.NeutralStar,
         "YN": WindingType.GroundedStar,
-        "Z": WindingType.ZigZag,
-        "ZN": WindingType.ZigZag,
+        "Z": WindingType.FloatingZigZag,
+        "ZN": WindingType.NeutralZigZag,
     }
 
     if c in conversion_dict:
@@ -1625,6 +1751,7 @@ def convert_dgs_to_transformer(tr2: ElmTr2,
                                cubics_by_objid: Dict[str, List[StaCubic]],
                                bus_by_term_id: Dict[str, dev.Bus],
                                switch_by_cubic_id: Dict[str, StaSwitch],
+                               phase_map: PhaseMap,
                                parallel_index: int = 0,
                                parallel_count: int = 1) -> dev.Transformer2W:
     """
@@ -1641,6 +1768,7 @@ def convert_dgs_to_transformer(tr2: ElmTr2,
     :param cubics_by_objid: cubics_by_objid parameter.
     :param bus_by_term_id: bus_by_term_id parameter.
     :param switch_by_cubic_id: switch_by_cubic_id parameter.
+    :param phase_map: Resolved terminal-conductor phase map.
     :param parallel_index: parallel_index parameter.
     :param parallel_count: parallel_count parameter.
     :return: Function result.
@@ -1706,6 +1834,83 @@ def convert_dgs_to_transformer(tr2: ElmTr2,
     #   - TypTr2.ntpmx   : maximum position (integer)
     #   - TypTr2.tap_side: side where the tap-changer is located (typically 0=HV, 1=LV)
     #   - ElmTr2.nntap   : current position (integer)
+    #   - TypTr2.tr2cn_h : high voltage side connection
+    #   - TypTr2.tr2cn_l : low voltage side connection
+
+    # From-side is the HV-side
+    if bus_vg_from.Vnom > bus_vg_to.Vnom:
+
+        # D-D (or Y-Y) Connection (non-auto transformer)
+        if typtr2_raw.tr2cn_h == 'D' and typtr2_raw.tr2cn_l == 'D' and tr2.i_auto == 0 and typtr2_raw.nt2ph == 2:
+
+            if tr2.i_eahv == 1:
+                trafo.conn_f = WindingType.GroundedStar
+            else:
+                trafo.conn_f = WindingType.Delta
+
+            if tr2.i_ealv == 1:
+                trafo.conn_t = WindingType.GroundedStar
+            else:
+                trafo.conn_t = WindingType.Delta
+
+        elif typtr2_raw.tr2cn_h == 'Y' and typtr2_raw.tr2cn_l == 'Y' and tr2.i_auto == 0 and typtr2_raw.nt2ph == 2:
+
+            if tr2.i_eahv == 1:
+                trafo.conn_f = WindingType.GroundedStar
+            else:
+                trafo.conn_f = WindingType.Delta
+
+            if tr2.i_ealv == 1:
+                trafo.conn_t = WindingType.GroundedStar
+            else:
+                trafo.conn_t = WindingType.Delta
+
+    # To-side is the HV-side
+    else:
+
+        # D-D (or Y-Y) Connection (non-auto transformer)
+        if typtr2_raw.tr2cn_h == 'D' and typtr2_raw.tr2cn_l == 'D' and tr2.i_auto == 0 and typtr2_raw.nt2ph == 2:
+
+            if tr2.i_eahv == 1:
+                trafo.conn_t = WindingType.GroundedStar
+            else:
+                trafo.conn_t = WindingType.Delta
+
+            if tr2.i_ealv == 1:
+                trafo.conn_f = WindingType.GroundedStar
+            else:
+                trafo.conn_f = WindingType.Delta
+
+        elif typtr2_raw.tr2cn_h == 'Y' and typtr2_raw.tr2cn_l == 'Y' and tr2.i_auto == 0 and typtr2_raw.nt2ph == 2:
+
+            if tr2.i_eahv == 1:
+                trafo.conn_t = WindingType.GroundedStar
+            else:
+                trafo.conn_t = WindingType.Delta
+
+            if tr2.i_ealv == 1:
+                trafo.conn_f = WindingType.GroundedStar
+            else:
+                trafo.conn_f = WindingType.Delta
+
+    cubicles = cubics_by_objid.get(_ref_id(tr2.ID), [])
+    cubicles = sorted(cubicles, key=_stacubic_obj_bus_sort_key)
+    phases = _get_element_phases(
+        element_id=tr2.ID,
+        cubics_by_objid=cubics_by_objid,
+        phase_map=phase_map,
+    )
+
+    # Keep the previous direct cPhInfo behaviour when no propagated mapping
+    # could be built, for example in incomplete legacy DGS exports.
+    if len(phases) == 0 and len(cubicles) > 0:
+        phases = sorted({
+            _GLOBAL_PHASE_INDEX[name]
+            for name in _get_cubic_phase_names(cubicles[0])
+            if name in _GLOBAL_PHASE_INDEX
+        })
+
+    trafo.phases = np.array(phases, dtype=int)
 
     if int(typtr2_raw.itapch) != 0 and trafo.tap_changer.total_positions > 0:
         tap_position = int(tr2.nntap) - int(typtr2_raw.ntpmn)
@@ -2516,6 +2721,7 @@ def convert_dgs_to_line(
         logger: Logger,
         cubics_by_objid: Dict[str, List[StaCubic]],
         bus_by_term_id: Dict[str, dev.Bus],
+        phase_map: PhaseMap,
         parallel_index: int = 0,
         parallel_count: int = 1
 ) -> dev.Line:
@@ -2626,7 +2832,13 @@ def convert_dgs_to_line(
     seq_template: dev.SequenceLineType | None = None
     ohl_template: dev.OverheadLineType | None = None
 
-    if typ_id is not None and typ_id != "":
+    ohl_template = overhead_line_type_dict.get(lne.ID, None)
+    if ohl_template is None:
+        line_id = _ref_id(lne.ID)
+        if line_id is not None:
+            ohl_template = overhead_line_type_dict.get(line_id, None)
+
+    if ohl_template is None and typ_id is not None and typ_id != "":
         seq_template = sequence_templates_dict.get(typ_id, None)
         if seq_template is None:
             tid = _ref_id(typ_id)
@@ -2639,7 +2851,7 @@ def convert_dgs_to_line(
                 tid = _ref_id(typ_id)
                 if tid is not None and tid != "":
                     ohl_template = overhead_line_type_dict.get(tid, None)
-    else:
+    elif ohl_template is None:
         # typ_id is missing: rely on tower coupling template
         ohl_template = tower_template
 
@@ -2742,6 +2954,19 @@ def convert_dgs_to_line(
         line.rate = float(line.rate) * float(lne.fline)
     else:
         pass
+
+    phases = _get_element_phases(
+        element_id=lne.ID,
+        cubics_by_objid=cubics_by_objid,
+        phase_map=phase_map,
+    )
+    if len(phases) > 0:
+        active_phases = set(phases)
+        for admittance in (line.ys, line.ysh):
+            admittance.phN = 0 in active_phases
+            admittance.phA = 1 in active_phases
+            admittance.phB = 2 in active_phases
+            admittance.phC = 3 in active_phases
 
     return line
 
@@ -3004,7 +3229,10 @@ def _extract_load_pq(elmlod: ElmLod, logger: Logger) -> Tuple[float, float, floa
     """
     name = elmlod.loc_name or _ref_id(elmlod.ID) or "Load"
 
-    if elmlod.i_sym == 1:
+    phase_technology = (elmlod.phtech or "").strip().upper()
+    single_phase = phase_technology.startswith("1PH")
+
+    if elmlod.i_sym == 1 and not single_phase:
 
         # Apply scaling
         scale = _get_scale_factor(scale0=elmlod.scale0, logger=logger, name=name)
@@ -3020,6 +3248,23 @@ def _extract_load_pq(elmlod: ElmLod, logger: Logger) -> Tuple[float, float, floa
         qb = elmlod.qlinis * scale
         qc = elmlod.qlinit * scale
         q = qa + qb + qc
+
+    elif elmlod.i_sym == 1 and single_phase:
+
+        # Apply scaling
+        scale = _get_scale_factor(scale0=elmlod.scale0, logger=logger, name=name)
+
+        # Active Power [MW]
+        pa = elmlod.plini * scale
+        p = pa
+
+        # Reactive Power [MVAr]
+        qa = elmlod.qlini * scale
+        q = qa
+
+        # Not connected phases
+        pb, pc = 0.0, 0.0
+        qb, qc = 0.0, 0.0
 
     else:
         # Primary: direct P/Q
@@ -3048,10 +3293,96 @@ def _extract_load_pq(elmlod: ElmLod, logger: Logger) -> Tuple[float, float, floa
         p *= scale
         q *= scale
 
-        pa, pb, pc = 0.0, 0.0, 0.0 # Balanced active power
-        qa, qb, qc = 0.0, 0.0, 0.0  # Balanced reactive power
+        if phase_technology.startswith("1PH"):
+            phase_count = 1
+        elif phase_technology.startswith("2PH"):
+            phase_count = 2
+        else:
+            phase_count = 3
+
+        # PowerFactory stores balanced P/Q as the total of all connected
+        # phases. Keep explicit local phase values so they can be mapped to
+        # the resolved N/A/B/C conductors below.
+        local_p = p / phase_count
+        local_q = q / phase_count
+        pa = local_p
+        pb = local_p if phase_count >= 2 else 0.0
+        pc = local_p if phase_count == 3 else 0.0
+        qa = local_q
+        qb = local_q if phase_count >= 2 else 0.0
+        qc = local_q if phase_count == 3 else 0.0
 
     return p, pa, pb, pc, q, qa, qb, qc
+
+
+def _map_load_pq_to_global_phases(
+        elmlod: ElmLod,
+        cubics_by_objid: Dict[str, List[StaCubic]],
+        phase_map: PhaseMap,
+        local_p: Tuple[float, float, float],
+        local_q: Tuple[float, float, float],
+        logger: Logger,
+) -> Tuple[float, float, float, float, float, float]:
+    """
+    Map PowerFactory local load phases to VeraGrid A/B/C fields.
+
+    The angular treatment of phase-to-phase loads is deliberately outside
+    this mapping. If the DGS phase information is missing, the original local
+    order is returned to preserve the previous behaviour.
+
+    :param elmlod: PowerFactory load.
+    :param cubics_by_objid: Cubicles grouped by connected element.
+    :param phase_map: Resolved terminal-conductor phase map.
+    :param local_p: Active power in PowerFactory Phase 1/2/3 order.
+    :param local_q: Reactive power in PowerFactory Phase 1/2/3 order.
+    :param logger: VeraGrid logger.
+    :return: Active and reactive power in VeraGrid P1/P2/P3 order.
+    """
+    cubics = cubics_by_objid.get(_ref_id(elmlod.ID), [])
+    if len(cubics) == 0:
+        return local_p + local_q
+
+    phase_technology = (elmlod.phtech or "").strip().upper()
+    phases = [
+        phase
+        for phase in _get_cubic_phases(cubic=cubics[0], phase_map=phase_map)
+        if phase != 0
+    ]
+
+    if phase_technology.startswith("1PH"):
+        expected_phases = 1
+    elif phase_technology.startswith("2PH"):
+        expected_phases = 2
+    else:
+        expected_phases = 3
+
+    if len(phases) < expected_phases:
+        if len(phases) > 0:
+            logger.add_warning(
+                "Incomplete phase mapping for load; keeping local phase order.",
+                device=elmlod.loc_name,
+                device_class="ElmLod",
+                value=phases,
+                expected_value=expected_phases,
+            )
+        return local_p + local_q
+
+    global_p = [0.0, 0.0, 0.0]
+    global_q = [0.0, 0.0, 0.0]
+
+    if phase_technology == "1PH PH-PH" and len(phases) >= 2:
+        phase_pair = tuple(sorted(phases[:2]))
+        branch_idx = {(1, 2): 0, (2, 3): 1, (1, 3): 2}[phase_pair]
+        global_p[branch_idx] = local_p[0]
+        global_q[branch_idx] = local_q[0]
+        return (*global_p, *global_q)
+
+    for local_index, phase in enumerate(phases[:expected_phases]):
+        global_index = phase - 1
+        global_p[global_index] = local_p[local_index]
+        global_q[global_index] = local_q[local_index]
+
+    return (*global_p, *global_q)
 
 
 def convert_dgs_ward_equivalent_to_load(elmvac: ElmVac,
@@ -3102,7 +3433,10 @@ def convert_dgs_to_load(elmlod: ElmLod,
                         buses: List[dev.Bus],
                         logger: Logger,
                         cubics_by_objid: Dict[str, List[StaCubic]],
-                        bus_by_term_id: Dict[str, dev.Bus]) -> Tuple[dev.Bus, dev.Load]:
+                        bus_by_term_id: Dict[str, dev.Bus],
+                        phase_map: PhaseMap,
+                        comldf: ComLdf | None,
+                        typlod: TypLod | None) -> Tuple[dev.Bus, dev.Load]:
     """
     Convert dgs to load.
 
@@ -3112,6 +3446,9 @@ def convert_dgs_to_load(elmlod: ElmLod,
     :param logger: logger parameter.
     :param cubics_by_objid: cubics_by_objid parameter.
     :param bus_by_term_id: bus_by_term_id parameter.
+    :param phase_map: Resolved terminal-conductor phase map.
+    :param comldf: PowerFactory load-flow configuration, if exported.
+    :param typlod: PowerFactory type referenced by the load, if available.
     :return: Function result.
     """
     bus = get_injection_bus(elm_id=elmlod.ID,
@@ -3120,21 +3457,101 @@ def convert_dgs_to_load(elmlod: ElmLod,
                             cubics_by_objid=cubics_by_objid,
                             bus_by_term_id=bus_by_term_id)
 
-    p_mw, pa_mw, pb_mw, pc_mw, q_mvar, qa_mvar, qb_mvar, qc_mvar = _extract_load_pq(elmlod=elmlod, logger=logger)
-
-    load = dev.Load(
-        name=elmlod.loc_name or f"Load_{_ref_id(elmlod.ID)}",
-        P=p_mw,
-        P1=pa_mw,
-        P2=pb_mw,
-        P3=pc_mw,
-        Q=q_mvar,
-        Q1=qa_mvar,
-        Q2=qb_mvar,
-        Q3=qc_mvar,
-        active=not bool(elmlod.outserv)
+    p_mw, pa_mw, pb_mw, pc_mw, q_mvar, qa_mvar, qb_mvar, qc_mvar = _extract_load_pq(
+        elmlod=elmlod,
+        logger=logger,
     )
+    pa_mw, pb_mw, pc_mw, qa_mvar, qb_mvar, qc_mvar = _map_load_pq_to_global_phases(
+        elmlod=elmlod,
+        cubics_by_objid=cubics_by_objid,
+        phase_map=phase_map,
+        local_p=(pa_mw, pb_mw, pc_mw),
+        local_q=(qa_mvar, qb_mvar, qc_mvar),
+        logger=logger,
+    )
+
+    use_voltage_dependency = comldf is not None and int(comldf.iopt_pq) == 1
+    is_constant_current = (
+        typlod is not None
+        and typlod.aP == 0.0
+        and typlod.bP == 1.0
+        and typlod.aQ == 0.0
+        and typlod.bQ == 1.0
+    )
+    is_constant_impedance = (
+        typlod is not None
+        and typlod.aP == 0.0
+        and typlod.bP == 0.0
+        and typlod.aQ == 0.0
+        and typlod.bQ == 0.0
+    )
+
+    # Use the voltage-dependent model only when PowerFactory enables it.
+    if use_voltage_dependency and is_constant_current:
+
+        load = dev.Load(
+            name=elmlod.loc_name or f"Load_{_ref_id(elmlod.ID)}",
+            Ir=p_mw,
+            Ir1=pa_mw,
+            Ir2=pb_mw,
+            Ir3=pc_mw,
+            Ii=-1.0 * q_mvar,
+            Ii1=-1.0 * qa_mvar,
+            Ii2=-1.0 * qb_mvar,
+            Ii3=-1.0 * qc_mvar,
+            active=not bool(elmlod.outserv)
+        )
+
+    # Constant impedance loads
+    elif use_voltage_dependency and is_constant_impedance:
+
+        load = dev.Load(
+            name=elmlod.loc_name or f"Load_{_ref_id(elmlod.ID)}",
+            G=p_mw,
+            G1=pa_mw,
+            G2=pb_mw,
+            G3=pc_mw,
+            B=-1.0 * q_mvar,
+            B1=-1.0 * qa_mvar,
+            B2=-1.0 * qb_mvar,
+            B3=-1.0 * qc_mvar,
+            active=not bool(elmlod.outserv)
+        )
+
+    else:
+
+        load = dev.Load(
+            name=elmlod.loc_name or f"Load_{_ref_id(elmlod.ID)}",
+            P=p_mw,
+            P1=pa_mw,
+            P2=pb_mw,
+            P3=pc_mw,
+            Q=q_mvar,
+            Q1=qa_mvar,
+            Q2=qb_mvar,
+            Q3=qc_mvar,
+            active=not bool(elmlod.outserv)
+        )
+
     # Add the connection type
+    if elmlod.phtech == "3PH-'D'":
+        load.conn = ShuntConnectionType.Delta
+    elif elmlod.phtech == "3PH PH-E":
+        load.conn = ShuntConnectionType.GroundedStar
+    elif elmlod.phtech == "3PH-'YN'":
+        load.conn = ShuntConnectionType.NeutralStar
+    elif elmlod.phtech == "2PH PH-E":
+        load.conn = ShuntConnectionType.GroundedStar
+    elif elmlod.phtech == "2PH-'YN'":
+        load.conn = ShuntConnectionType.NeutralStar
+    elif elmlod.phtech == "1PH PH-PH":
+        load.conn = ShuntConnectionType.Delta
+    elif elmlod.phtech == "1PH PH-N":
+        load.conn = ShuntConnectionType.NeutralStar
+    elif elmlod.phtech == "1PH PH-E":
+        load.conn = ShuntConnectionType.GroundedStar
+    else:
+        load.conn = ShuntConnectionType.GroundedStar
 
     return bus, load
 
@@ -3648,6 +4065,7 @@ def convert_dgs_to_shunt(elmshnt: ElmShnt,
                          logger: Logger,
                          cubics_by_objid: Dict[str, List[StaCubic]],
                          bus_by_term_id: Dict[str, dev.Bus],
+                         phase_map: PhaseMap,
                          frequency: float) -> Tuple[dev.Bus, dev.Shunt]:
     """
     Convert dgs to shunt.
@@ -3658,6 +4076,7 @@ def convert_dgs_to_shunt(elmshnt: ElmShnt,
     :param logger: logger parameter.
     :param cubics_by_objid: cubics_by_objid parameter.
     :param bus_by_term_id: bus_by_term_id parameter.
+    :param phase_map: Resolved terminal-conductor phase map.
     :param frequency: frequency parameter.
     :return: Function result.
     """
@@ -3670,11 +4089,54 @@ def convert_dgs_to_shunt(elmshnt: ElmShnt,
                             bus_by_term_id=bus_by_term_id)
 
     g_mw, b_mvar = _extract_shunt_gb(elmshnt=elmshnt, f=frequency, logger=logger)
+    phases = [phase for phase in _get_element_phases(elmshnt.ID, cubics_by_objid, phase_map) if phase != 0]
+
+    # Unbalanced
+    if elmshnt.ctech == 0: # 3PH-'D'
+        g_abc = [g_mw / 3] * 3
+        b_abc = [b_mvar / 3] * 3
+        connection = ShuntConnectionType.Delta
+    elif elmshnt.ctech in (3, 5): # 2PH-'Y' or 1PH PH-PH
+        phase_pair = tuple(sorted(phases[:2])) if len(phases) >= 2 else (1, 2)
+        branch_idx = {(1, 2): 0, (2, 3): 1, (1, 3): 2}[phase_pair]
+        g_abc = [0.0] * 3
+        b_abc = [0.0] * 3
+        g_abc[branch_idx] = g_mw
+        b_abc[branch_idx] = b_mvar
+        connection = ShuntConnectionType.Delta
+    else:
+        phase_count = {1: 3, 2: 3, 4: 2, 6: 1, 7: 1}.get(elmshnt.ctech, 3)
+        active_phases = phases[:phase_count] if len(phases) >= phase_count else list(range(1, phase_count + 1))
+        g_abc = [0.0] * 3
+        b_abc = [0.0] * 3
+        for phase in active_phases:
+            g_abc[phase - 1] = g_mw / phase_count
+            b_abc[phase - 1] = b_mvar / phase_count
+
+        if elmshnt.ctech == 1: # 3PH-'Y'
+            connection = ShuntConnectionType.FloatingStar
+        elif elmshnt.ctech in (2, 4): # 3PH-'YN' or 2PH-'YN'
+            connection = (ShuntConnectionType.GroundedStar if elmshnt.cgnd == 0
+                          else ShuntConnectionType.NeutralStar)
+        elif elmshnt.ctech == 6: # 1PH PH-N
+            connection = ShuntConnectionType.NeutralStar
+        else: # 1PH PH-E and backwards-compatible fallback
+            connection = ShuntConnectionType.GroundedStar
 
     shunt = dev.Shunt(name=name,
                       G=g_mw,
+                      G1=g_abc[0],
+                      G2=g_abc[1],
+                      G3=g_abc[2],
                       B=b_mvar,
+                      B1=b_abc[0],
+                      B2=b_abc[1],
+                      B3=b_abc[2],
                       active=(elmshnt.outserv == 0))
+    shunt.conn = connection
+    shunt.phN = (elmshnt.ctech == 6
+                 or any("N" in _get_cubic_phase_names(cubic)
+                        for cubic in cubics_by_objid.get(_ref_id(elmshnt.ID), [])))
 
     return bus, shunt
 
@@ -4449,7 +4911,8 @@ def _add_elmlod_loads(dgs_grid: DgsCircuit,
                       stacubic_dict: Dict[str, List[int]],
                       logger: Logger,
                       cubics_by_objid: Dict[str, List[StaCubic]],
-                      bus_by_term_id: Dict[str, dev.Bus]) -> None:
+                      bus_by_term_id: Dict[str, dev.Bus],
+                      phase_map: PhaseMap) -> None:
     """
     Add elmlod loads.
 
@@ -4459,16 +4922,30 @@ def _add_elmlod_loads(dgs_grid: DgsCircuit,
     :param logger: logger parameter.
     :param cubics_by_objid: cubics_by_objid parameter.
     :param bus_by_term_id: bus_by_term_id parameter.
+    :param phase_map: Resolved terminal-conductor phase map.
     :return: Function result.
     """
+    comldf = dgs_grid.comldfs[0] if len(dgs_grid.comldfs) > 0 else None
+
+    typlod_by_id: Dict[str, TypLod] = dict()
+    for typlod in dgs_grid.typlods:
+        typlod_by_id[typlod.ID] = typlod
+        typlod_id = _ref_id(typlod.ID)
+        if typlod_id is not None:
+            typlod_by_id[typlod_id] = typlod
+
     for elmlod in dgs_grid.elmlods:
+        typlod = _resolve_pointer_dict_value(key=elmlod.typ_id, mapping=typlod_by_id)
         bus, load = convert_dgs_to_load(
             elmlod=elmlod,
             stacubic_dict=stacubic_dict,
             buses=grid.buses,
             logger=logger,
             cubics_by_objid=cubics_by_objid,
-            bus_by_term_id=bus_by_term_id
+            bus_by_term_id=bus_by_term_id,
+            phase_map=phase_map,
+            comldf=comldf,
+            typlod=typlod,
         )
         grid.add_load(bus=bus, api_obj=load)
 
@@ -4635,6 +5112,7 @@ def _add_elmshnt_devices(dgs_grid: DgsCircuit,
                          logger: Logger,
                          cubics_by_objid: Dict[str, List[StaCubic]],
                          bus_by_term_id: Dict[str, dev.Bus],
+                         phase_map: PhaseMap,
                          frequency: float) -> None:
     """
     Add elmshnt devices.
@@ -4645,6 +5123,7 @@ def _add_elmshnt_devices(dgs_grid: DgsCircuit,
     :param logger: logger parameter.
     :param cubics_by_objid: cubics_by_objid parameter.
     :param bus_by_term_id: bus_by_term_id parameter.
+    :param phase_map: Resolved terminal-conductor phase map.
     :param frequency: frequency parameter.
     :return: Function result.
     """
@@ -4668,6 +5147,7 @@ def _add_elmshnt_devices(dgs_grid: DgsCircuit,
                 logger=logger,
                 cubics_by_objid=cubics_by_objid,
                 bus_by_term_id=bus_by_term_id,
+                phase_map=phase_map,
                 frequency=frequency
             )
             grid.add_shunt(bus=bus, api_obj=shunt)
@@ -4881,7 +5361,8 @@ def _add_elmtr2_transformers(dgs_grid: DgsCircuit,
                              cubics_by_objid: Dict[str, List[StaCubic]],
                              bus_by_term_id: Dict[str, dev.Bus],
                              switch_by_cubic_id: Dict[str, StaSwitch],
-                             branch_group_by_id: Dict[str, dev.BranchGroup]) -> None:
+                             branch_group_by_id: Dict[str, dev.BranchGroup],
+                             phase_map: PhaseMap) -> None:
     """
     Add elmtr2 transformers.
 
@@ -4897,6 +5378,7 @@ def _add_elmtr2_transformers(dgs_grid: DgsCircuit,
     :param bus_by_term_id: bus_by_term_id parameter.
     :param switch_by_cubic_id: switch_by_cubic_id parameter.
     :param branch_group_by_id: branch_group_by_id parameter.
+    :param phase_map: Resolved terminal-conductor phase map.
     :return: Function result.
     """
     for elmtr2 in dgs_grid.elmtr2s:
@@ -4914,6 +5396,7 @@ def _add_elmtr2_transformers(dgs_grid: DgsCircuit,
                 cubics_by_objid=cubics_by_objid,
                 bus_by_term_id=bus_by_term_id,
                 switch_by_cubic_id=switch_by_cubic_id,
+                phase_map=phase_map,
                 parallel_index=parallel_index,
                 parallel_count=parallel_count
             )
@@ -5123,6 +5606,105 @@ def _build_stacubic_mappings(stacubics: List[StaCubic]) -> Tuple[Dict[str, List[
         else:
             pass
     return stacubic_dict, cubics_by_objid
+
+
+def _build_phase_map(stacubics: List[StaCubic], logger: Logger) -> PhaseMap:
+    """
+    Resolve every terminal conductor to a global N/A/B/C phase.
+
+    Absolute phase names (A, B, C and N) are used as known starting points.
+    Local names such as SP, DP1 and DP2 are propagated through every element
+    that has two or more cubicles. Repeating the propagation allows phases to
+    travel through any number of downstream lines and transformers.
+
+    :param stacubics: All PowerFactory cubicles in the DGS file.
+    :param logger: VeraGrid logger.
+    :return: Mapping ``(terminal ID, local conductor index) -> N/A/B/C index``.
+    """
+    phase_map: PhaseMap = {}
+    cubics_by_element: Dict[str, List[Tuple[StaCubic, str, Set[int]]]] = {}
+
+    for cubic in stacubics:
+        terminal_id = _ref_id(cubic.fold_id)
+        element_id = _ref_id(cubic.obj_id)
+        if terminal_id is None or element_id is None:
+            continue
+
+        phase_names = _get_cubic_phase_names(cubic)
+        active_indices = {_LOCAL_PHASE_INDEX[name] for name in phase_names}
+        cubics_by_element.setdefault(element_id, []).append((cubic, terminal_id, active_indices))
+
+        # A, B, C and N are already global phase names. Local names are
+        # deliberately left unresolved until they can be propagated.
+        for phase_name in phase_names:
+            global_phase = _GLOBAL_PHASE_INDEX.get(phase_name)
+            if global_phase is None:
+                continue
+
+            node = (terminal_id, _LOCAL_PHASE_INDEX[phase_name])
+            previous_phase = phase_map.get(node)
+            if previous_phase is not None and previous_phase != global_phase:
+                raise ValueError(
+                    f"Conflicting phases for terminal conductor {node}: "
+                    f"{previous_phase} and {global_phase}"
+                )
+
+            phase_map[node] = global_phase
+
+    changed = True
+    while changed:
+        changed = False
+
+        for element_id, cubicle_sides in cubics_by_element.items():
+            if len(cubicle_sides) < 2:
+                continue
+
+            for attribute in ("it2p1", "it2p2", "it2p3"):
+                connected_nodes: List[Tuple[str, int]] = []
+
+                for cubic, terminal_id, active_indices in cubicle_sides:
+                    local_index = int(getattr(cubic, attribute))
+                    if local_index in active_indices:
+                        connected_nodes.append((terminal_id, local_index))
+
+                known_phases = {
+                    phase_map[node]
+                    for node in connected_nodes
+                    if node in phase_map
+                }
+
+                if len(known_phases) > 1:
+                    raise ValueError(
+                        f"Conflicting phase mapping in element {element_id} "
+                        f"for {attribute}: {sorted(known_phases)}"
+                    )
+
+                if len(known_phases) == 0:
+                    continue
+
+                resolved_phase = next(iter(known_phases))
+                for node in connected_nodes:
+                    if node not in phase_map:
+                        phase_map[node] = resolved_phase
+                        changed = True
+
+    unresolved_nodes: Set[Tuple[str, int]] = set()
+    for cubicle_sides in cubics_by_element.values():
+        for _, terminal_id, active_indices in cubicle_sides:
+            for local_index in active_indices:
+                node = (terminal_id, local_index)
+                if node not in phase_map:
+                    unresolved_nodes.add(node)
+
+    for terminal_id, local_index in sorted(unresolved_nodes):
+        logger.add_warning(
+            "Could not resolve the global phase of terminal conductor.",
+            device=f"ElmTerm ID={terminal_id}",
+            device_class="StaCubic",
+            value=local_index,
+        )
+
+    return phase_map
 
 
 def _build_graphics_positions(intgrfs: List[IntGrf]) -> Dict[str, Tuple[float, float]]:
@@ -5353,6 +5935,8 @@ def _add_typtow_templates(dgs_grid: DgsCircuit,
                           typcon_raw_dict: Dict[str, TypCon],
                           wire_type_dict: Dict[str, Wire],
                           typlne_dict: Dict[str, dev.SequenceLineType],
+                          cubics_by_objid: Dict[str, List[StaCubic]],
+                          phase_map: PhaseMap,
                           frequency: float,
                           logger: Logger) -> Dict[str, dev.OverheadLineType]:
     """
@@ -5363,6 +5947,8 @@ def _add_typtow_templates(dgs_grid: DgsCircuit,
     :param typcon_raw_dict: typcon_raw_dict parameter.
     :param wire_type_dict: wire_type_dict parameter.
     :param typlne_dict: typlne_dict parameter.
+    :param cubics_by_objid: Cubicles grouped by connected element.
+    :param phase_map: Resolved terminal-conductor phase map.
     :param frequency: frequency parameter.
     :param logger: logger parameter.
     :return: Function result.
@@ -5372,11 +5958,78 @@ def _add_typtow_templates(dgs_grid: DgsCircuit,
         tow_id = _ref_id(typtow.ID)
         if tow_id is not None:
             if typtow.i_mode == 0:
+                phase_counts = [
+                    max(0, min(int(typtow.nphas[index]), 3))
+                    if index < len(typtow.nphas)
+                    else 3
+                    for index in range(len(typtow.pcond_c))
+                ]
+                expected_conductors = sum(phase_counts)
+                phase_order_by_line_id: Dict[str, Tuple[int, ...]] = dict()
+
+                # TypTow describes the physical circuits, while the line
+                # cubicles identify their electrical N/A/B/C conductors.
+                for line in dgs_grid.elmlnes:
+                    if _ref_id(line.typ_id) != tow_id:
+                        continue
+
+                    line_phase_orders: Set[Tuple[int, ...]] = set()
+                    for cubic in cubics_by_objid.get(_ref_id(line.ID), []):
+                        phases = tuple(_get_cubic_phases(cubic=cubic, phase_map=phase_map))
+                        if len(phases) == expected_conductors:
+                            line_phase_orders.add(phases)
+
+                    if len(line_phase_orders) == 1:
+                        line_phase_order = next(iter(line_phase_orders))
+                        phase_order_by_line_id[line.ID] = line_phase_order
+                        line_id = _ref_id(line.ID)
+                        if line_id is not None:
+                            phase_order_by_line_id[line_id] = line_phase_order
+                    elif len(line_phase_orders) > 1:
+                        logger.add_warning(
+                            "Line cubicles have different phase layouts; keeping the shared tower template.",
+                            device=line.loc_name,
+                            device_class="ElmLne",
+                            value=sorted(line_phase_orders),
+                        )
+
+                phase_orders = set(phase_order_by_line_id.values())
+
+                phase_order: List[int] | None = None
+                if len(phase_orders) == 1:
+                    phase_order = list(next(iter(phase_orders)))
+                elif len(phase_orders) > 1:
+                    ohl_types_by_phase_order: Dict[Tuple[int, ...], dev.OverheadLineType] = dict()
+                    phase_labels = ("N", "A", "B", "C")
+                    for resolved_phase_order in sorted(phase_orders):
+                        ohl_type = convert_dgs_to_overhead_line_type_geometrical_parameters(
+                            typtow=typtow,
+                            typcon_by_id=typcon_raw_dict,
+                            wire_by_id=wire_type_dict,
+                            default_frequency_hz=frequency,
+                            phase_order=list(resolved_phase_order),
+                        )
+                        phase_suffix = "".join(phase_labels[phase] for phase in resolved_phase_order)
+                        ohl_type.name = f"{ohl_type.name}_{phase_suffix}"
+                        ohl_type.idtag = f"{tow_id}_{phase_suffix}"
+                        ohl_types_by_phase_order[resolved_phase_order] = ohl_type
+                        grid.overhead_line_types.append(ohl_type)
+
+                    default_phase_order = sorted(phase_orders)[0]
+                    overhead_line_type_dict[tow_id] = ohl_types_by_phase_order[default_phase_order]
+                    overhead_line_type_dict[typtow.ID] = ohl_types_by_phase_order[default_phase_order]
+                    for line_id, resolved_phase_order in phase_order_by_line_id.items():
+                        overhead_line_type_dict[line_id] = ohl_types_by_phase_order[resolved_phase_order]
+                    continue
+                elif phase_counts == [3, 1]:
+                    phase_order = [1, 2, 3, 0]
+
                 ohl_type = convert_dgs_to_overhead_line_type_geometrical_parameters(
                     typtow=typtow,
                     typcon_by_id=typcon_raw_dict,
                     wire_by_id=wire_type_dict,
                     default_frequency_hz=frequency,
+                    phase_order=phase_order,
                 )
                 overhead_line_type_dict[tow_id] = ohl_type
                 overhead_line_type_dict[typtow.ID] = ohl_type
@@ -5609,7 +6262,8 @@ def _add_elmlne_lines(dgs_grid: DgsCircuit,
                       logger: Logger,
                       cubics_by_objid: Dict[str, List[StaCubic]],
                       bus_by_term_id: Dict[str, dev.Bus],
-                      branch_group_by_id: Dict[str, dev.BranchGroup]) -> Dict[str, List[dev.Line]]:
+                      branch_group_by_id: Dict[str, dev.BranchGroup],
+                      phase_map: PhaseMap) -> Dict[str, List[dev.Line]]:
     """
     Add elmlne lines.
 
@@ -5627,6 +6281,7 @@ def _add_elmlne_lines(dgs_grid: DgsCircuit,
     :param cubics_by_objid: cubics_by_objid parameter.
     :param bus_by_term_id: bus_by_term_id parameter.
     :param branch_group_by_id: branch_group_by_id parameter.
+    :param phase_map: Resolved terminal-conductor phase map.
     :return: Function result.
     """
     line_by_dgs_id: Dict[str, List[dev.Line]] = dict()
@@ -5660,6 +6315,7 @@ def _add_elmlne_lines(dgs_grid: DgsCircuit,
                 logger=logger,
                 cubics_by_objid=cubics_by_objid,
                 bus_by_term_id=bus_by_term_id,
+                phase_map=phase_map,
                 parallel_index=parallel_index,
                 parallel_count=parallel_count
             )
@@ -5792,6 +6448,7 @@ def dgs_to_circuit(path: str,
 
     # StaCubic dictionaries
     stacubic_dict, cubics_by_objid = _build_stacubic_mappings(stacubics=dgs_grid.stacubics)
+    phase_map = _build_phase_map(stacubics=dgs_grid.stacubics, logger=logger)
 
     pos_by_objid: Dict[str, Tuple[float, float]] = _build_graphics_positions(intgrfs=dgs_grid.intgrfs)
     area_by_id: Dict[str, dev.Area] = _add_elmarea_areas(dgs_grid=dgs_grid, grid=grid)
@@ -5853,6 +6510,7 @@ def dgs_to_circuit(path: str,
         logger=logger,
         cubics_by_objid=cubics_by_objid,
         bus_by_term_id=bus_by_term_id,
+        phase_map=phase_map,
     )
     _add_elmgenstat_devices(
         dgs_grid=dgs_grid,
@@ -5878,6 +6536,7 @@ def dgs_to_circuit(path: str,
         logger=logger,
         cubics_by_objid=cubics_by_objid,
         bus_by_term_id=bus_by_term_id,
+        phase_map=phase_map,
         frequency=frequency,
     )
     _add_elmsvs_devices(
@@ -5905,6 +6564,8 @@ def dgs_to_circuit(path: str,
         typcon_raw_dict=typcon_raw_dict,
         wire_type_dict=wire_type_dict,
         typlne_dict=typlne_dict,
+        cubics_by_objid=cubics_by_objid,
+        phase_map=phase_map,
         frequency=frequency,
         logger=logger,
     )
@@ -5948,6 +6609,7 @@ def dgs_to_circuit(path: str,
         cubics_by_objid=cubics_by_objid,
         bus_by_term_id=bus_by_term_id,
         branch_group_by_id=branch_group_by_id,
+        phase_map=phase_map,
     )
     _apply_elmtow_tower_coupling(
         dgs_grid=dgs_grid,
@@ -6002,6 +6664,7 @@ def dgs_to_circuit(path: str,
         bus_by_term_id=bus_by_term_id,
         switch_by_cubic_id=switch_by_cubic_id,
         branch_group_by_id=branch_group_by_id,
+        phase_map=phase_map,
     )
     _add_elmtr3_transformers(
         dgs_grid=dgs_grid,

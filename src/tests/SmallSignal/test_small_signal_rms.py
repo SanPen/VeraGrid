@@ -536,7 +536,7 @@ def test_eigenvalues():
                           -0.7926383508563992 + 0j, 2.8393441106828003e-14 + 0j])
 
     eig_VeraGrid, pfactors_VeraGrid = stability_kundur_no_shunt()
-    eig_VeraGrid_ord = eig_VeraGrid[np.argsort(-np.abs(eig_VeraGrid))]
+    eig_VeraGrid_ord = eig_VeraGrid[np.argsort(-np.abs(eig_VeraGrid), kind="stable")]
 
     equal = False
     if len(eig_Andes) == len(eig_VeraGrid_ord):

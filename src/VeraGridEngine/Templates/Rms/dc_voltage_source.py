@@ -50,7 +50,7 @@ def DCVoltageSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTempla
     event_dict = {
         C: vfactory.add_const(0.01),
         Rpv: vfactory.add_const(0.001),
-        Vpv0: vfactory.add_const(None),
+        Vpv0: Vdc + Rpv * (Pdc / Vdc),
     }
     dc_block = Block(
         algebraic_eqs=[
@@ -64,7 +64,6 @@ def DCVoltageSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTempla
         out_vars=[Pdc, Idc],
         init_eqs={
             Idc: Pdc / Vdc,
-            Vpv0: Vdc + Rpv * (Pdc / Vdc),
             Vpv: Vpv0,
         },
         external_mapping={
@@ -119,8 +118,8 @@ def DCCurrentSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTempla
     event_dict = {
         C: vfactory.add_const(0.05),
         Rpv: vfactory.add_const(0.005),
-        Vpv0: vfactory.add_const(None),
-        Idc_src0: vfactory.add_const(None),
+        Vpv0: Vdc + Rpv * (Pdc / Vdc),
+        Idc_src0: Pdc / Vdc,
     }
     dc_block = Block(
         algebraic_eqs=[
@@ -134,9 +133,7 @@ def DCCurrentSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelTempla
         out_vars=[Pdc, Idc],
         init_eqs={
             Idc: Pdc / Vdc,
-            Idc_src0: Pdc / Vdc,
             Idc_src: Pdc / Vdc,
-            Vpv0: Vdc + Rpv * (Pdc / Vdc),
         },
         external_mapping={
             VarPowerFlowReferenceType.P: Pdc,
@@ -181,7 +178,7 @@ def DCPowerLimitedSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelT
 
     event_dict = {
         C: vfactory.add_const(0.05),
-        Pdc_ref0: vfactory.add_const(None),
+        Pdc_ref0: Pdc,
         Pmax: vfactory.add_const(10.0),
         eps_v: vfactory.add_const(1e-9),
     }
@@ -199,7 +196,6 @@ def DCPowerLimitedSource(vfactory: VarFactory, Vdc, name: str = "") -> RmsModelT
         init_eqs={
             Idc: Pdc / (Vdc + eps_v),
             Idc_src: Idc,
-            Pdc_ref0: Pdc,
         },
         external_mapping={
             VarPowerFlowReferenceType.P: Pdc,

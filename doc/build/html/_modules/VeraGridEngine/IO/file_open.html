@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.IO.file_open &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.IO.file_open &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -44,9 +44,9 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/topology.html">🌵 Topology</a></li>
@@ -67,6 +67,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../md_source/license.html">📜 License</a></li>
@@ -120,8 +124,9 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.excel_interface</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">load_from_xls</span><span class="p">,</span> <span class="n">interpret_excel_v3</span><span class="p">,</span> <span class="n">interprete_excel_v2</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.pack_unpack</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">parse_veragrid_data</span><span class="p">,</span> <span class="n">parse_multiverse_data</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.matpower.legacy.matpower_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpret_data_v1</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.matpower.matpower_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MatpowerCircuit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.matpower.devices.matpower_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MatpowerCircuit</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.matpower.matpower_to_veragrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">matpower_to_veragrid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.Eurostag.eurostag_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">open_eurostag</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.dgs.dgs_to_veragrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">dgs_to_circuit</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.others.dpx_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_dpx</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.others.ipa_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_iPA</span>
@@ -137,14 +142,19 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.veragrid.h5_interface</span><span class="w"> </span><span class="kn">import</span> <span class="n">open_h5</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.rawx_parser_writer</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_rawx</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.others.pypsa_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_pypsa_netcdf</span><span class="p">,</span> <span class="n">parse_pypsa_hdf5</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.others.pandapower_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">Panda2VeraGrid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.others.pandapower_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">Panda2VeraGrid</span><span class="p">,</span> <span class="n">is_pandapower_file</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.devices.ucte_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">UcteCircuit</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.ucte.ucte_to_veragrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_ucte_to_veragrid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.others.rte_parser</span><span class="w"> </span><span class="kn">import</span> <span class="n">rte2veragrid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.others.anarede</span><span class="w"> </span><span class="kn">import</span> <span class="n">PWFParser</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.iidm.iidm_parser_pypowsybl</span><span class="w"> </span><span class="kn">import</span> <span class="n">IidmParser</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.multi_circuit</span><span class="w"> </span><span class="kn">import</span> <span class="n">MultiCircuit</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">CGMESVersions</span><span class="p">,</span> <span class="n">CgmesTopologyMode</span><span class="p">,</span> <span class="n">FileType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CGMESVersions</span><span class="p">,</span>
+    <span class="n">CgmesTopologyMode</span><span class="p">,</span>
+    <span class="n">DynamicSimulationMode</span><span class="p">,</span>
+    <span class="n">FileType</span><span class="p">,</span>
+<span class="p">)</span>
 
 
 <div class="viewcode-block" id="FileOpenOptions">
@@ -172,6 +182,7 @@
                  <span class="c1"># DGS</span>
                  <span class="n">dgs_use_vsc_for_injections</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">dgs_use_dynamic_information</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">dgs_dynamic_simulation_mode</span><span class="p">:</span> <span class="n">DynamicSimulationMode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        :param file_type: FileType to load, none is unsure</span>
@@ -215,7 +226,8 @@
 
         <span class="c1"># DGS</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dgs_use_vsc_for_injections</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">dgs_use_vsc_for_injections</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dgs_use_dynamic_information</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">dgs_use_dynamic_information</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dgs_use_dynamic_information</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">dgs_use_dynamic_information</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dgs_dynamic_simulation_mode</span><span class="p">:</span> <span class="n">DynamicSimulationMode</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">dgs_dynamic_simulation_mode</span></div>
 
 
 
@@ -323,6 +335,10 @@
 <span class="sd">    :param file_name: file path(s) with the extension</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file_name</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">suffixes</span> <span class="o">=</span> <span class="p">{</span><span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">suffix</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="p">{</span><span class="s1">&#39;.ech&#39;</span><span class="p">,</span> <span class="s1">&#39;.dta&#39;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">suffixes</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">Eurostag</span>
 
         <span class="n">looks_like_ucte</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span>
@@ -369,6 +385,8 @@
             <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_delta</span>
 
         <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.sqlite&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_pandapower_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PandaPower</span>
 
             <span class="c1"># open file content</span>
             <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_sqlite</span>
@@ -382,6 +400,9 @@
         <span class="k">elif</span> <span class="n">file_extension</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.m&#39;</span><span class="p">,</span> <span class="s1">&#39;.matpower&#39;</span><span class="p">]:</span>
             <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">Matpower</span>
 
+        <span class="k">elif</span> <span class="n">file_extension</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;.ech&#39;</span><span class="p">,</span> <span class="s1">&#39;.dta&#39;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">Eurostag</span>
+
         <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.dpx&#39;</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">DPX</span>
 
@@ -389,6 +410,9 @@
             <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PWF</span>
 
         <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.json&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_pandapower_file</span><span class="p">(</span><span class="n">file_name</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">PandaPower</span>
+
             <span class="k">return</span> <span class="n">FileType</span><span class="o">.</span><span class="n">VeraGrid_json</span>
 
         <span class="k">elif</span> <span class="n">file_extension</span> <span class="o">==</span> <span class="s1">&#39;.ejson3&#39;</span><span class="p">:</span>
@@ -505,7 +529,7 @@
                                                             <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
                                                             <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
                 <span class="c1"># interpret file content</span>
-                <span class="k">if</span> <span class="n">data_dictionary</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_dictionary</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">has_multiverse_data</span><span class="p">:</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">multiverse</span> <span class="o">=</span> <span class="n">parse_multiverse_data</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data_dictionary</span><span class="p">,</span>
                                                                 <span class="n">metadata</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">json_files</span><span class="p">[</span><span class="s2">&quot;metadata&quot;</span><span class="p">],</span>
@@ -666,6 +690,9 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>
                 <span class="k">return</span> <span class="kc">None</span>
 
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">Eurostag</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span> <span class="o">=</span> <span class="n">open_eurostag</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">)</span>
+
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_type</span> <span class="o">==</span> <span class="n">FileType</span><span class="o">.</span><span class="n">DPX</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">circuit</span><span class="p">,</span> <span class="n">log</span> <span class="o">=</span> <span class="n">load_dpx</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">logger</span> <span class="o">+=</span> <span class="n">log</span>
@@ -733,7 +760,8 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">file_name</span><span class="p">,</span>
                     <span class="n">logger_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="p">,</span>
                     <span class="n">use_vsc_for_injections</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">dgs_use_vsc_for_injections</span><span class="p">,</span>
-                    <span class="n">use_dynamic_information</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">dgs_use_dynamic_information</span>
+                    <span class="n">use_dynamic_information</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">dgs_use_dynamic_information</span><span class="p">,</span>
+                    <span class="n">dynamic_simulation_mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">dgs_dynamic_simulation_mode</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;File name is not a string&quot;</span><span class="p">)</span>

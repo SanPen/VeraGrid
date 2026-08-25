@@ -33,7 +33,7 @@ class UcteExportDialogue(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_UcteExportDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle("UCTE export")
+        self.setWindowTitle(self.tr("UCTE export"))
         self.setModal(True)
 
         self.app: IoMain = app
@@ -205,7 +205,7 @@ class UcteExportDialogue(QtWidgets.QDialog):
         default_name: str = os.path.join(self.app.project_directory, self.app.ui.grid_name_line_edit.text())
         file_filter: str = self.get_dialogue_file_filter(export_mode=export_mode)
         selected_file_name, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                                   "Export to UCTE",
+                                                                                   self.tr("Export to UCTE"),
                                                                                    default_name,
                                                                                    file_filter)
 

@@ -21,7 +21,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="📝 RMS simulations" href="rms_simulations.html" />
+    <link rel="next" title="⏱️ RMS simulations" href="rms_simulations.html" />
     <link rel="prev" title="🌀 State estimation" href="state_estimation.html" /> 
 </head>
 
@@ -72,7 +72,7 @@
 <li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">🧲 Dynamic simulations</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rms_simulations.html">⏱️ RMS simulations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="dynamic_model_library_index.html">📚 Dynamic model library</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#why-dynamic-simulations-are-different-from-static-simulations">Why dynamic simulations are different from static simulations</a></li>
@@ -206,14 +206,14 @@
 <p>The classical theoretical foundations for power-system dynamic simulation can be found in Kundur’s treatment of electromechanical stability, in Milano’s differential-algebraic modelling framework, and in standard EMT references such as Dommel and Mahseredjian’s ATP/EMTP-oriented literature and the EMTP-RV theory texts [1]-[6]. VeraGrid follows the same general modelling philosophy: represent the network and devices as coupled differential-algebraic systems, initialize them consistently from a solved operating point, and integrate them in time with suitable numerical methods.</p>
 <p>This page provides the common theory, architecture, initialization, solver, event, and scripting concepts shared by VeraGrid’s dynamic studies. Continue with the domain-specific guides or the model reference according to the task:</p>
 <ul class="simple">
-<li><p><strong>RMS simulations</strong> cover phasor-domain time simulation and contain the RMS small-signal analysis guide.</p></li>
-<li><p><strong>EMT simulations</strong> cover waveform- and phase-domain time simulation.</p></li>
+<li><p><strong>RMS simulations</strong> cover phasor-domain time simulation and contain the RMS Small-Signal analysis guide.</p></li>
+<li><p><strong>EMT simulations</strong> cover waveform- and phase-domain time simulation and contain the EMT Floquet Small-Signal analysis guide.</p></li>
 <li><p><strong>Dynamic model library</strong> contains model authoring guidance, device templates, reusable DAE blocks, and procedural runtime logic.</p></li>
 </ul>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="rms_simulations.html">📝 RMS simulations</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="small_signal_stability.html">🔍Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rms_simulations.html">⏱️ RMS simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="small_signal_stability_rms.html">🔍 Small-Signal Stability Analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rms_simulations.html#when-to-use-rms-simulation">When to use RMS simulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rms_simulations.html#rms-workflow-in-veragrid">RMS workflow in VeraGrid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="rms_simulations.html#rms-settings">RMS settings</a></li>
@@ -225,6 +225,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="emt_simulations.html">🔬 EMT simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="small_signal_stability_emt.html">🧬 EMT Small-Signal stability: Floquet analysis</a></li>
 <li class="toctree-l2"><a class="reference internal" href="emt_simulations.html#when-to-use-emt-simulation">When to use EMT simulation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="emt_simulations.html#emt-workflow-in-veragrid">EMT workflow in VeraGrid</a></li>
 <li class="toctree-l2"><a class="reference internal" href="emt_simulations.html#emt-settings">EMT settings</a></li>
@@ -435,7 +436,7 @@
 </div><p>and substitution yields the reduced state matrix:</p>
 <div class="math">
 <p><img src="../_images/math/97515f5ab2c33dd017b8571b83ca13a137f1960d.svg" alt="\Delta \dot{x} = \left(f_x - f_y g_y^{-1} g_x\right) \Delta x"/></p>
-</div><p>This reduced matrix is one of the foundations of eigenvalue-based small-signal analysis. It is also a strong reason to keep the nonlinear model formulation coherent: if the original DAE is inconsistent, the linearized model will be inconsistent as well.</p>
+</div><p>This reduced matrix is one of the foundations of eigenvalue-based Small-Signal analysis. It is also a strong reason to keep the nonlinear model formulation coherent: if the original DAE is inconsistent, the linearized model will be inconsistent as well.</p>
 </section>
 <section id="dae-index-and-numerical-implications">
 <h3>DAE index and numerical implications<a class="headerlink" href="#dae-index-and-numerical-implications" title="Link to this heading"></a></h3>
@@ -746,7 +747,7 @@
 <li><p>Which reactive-power or voltage-control quantity is tied to the external operating point?</p></li>
 </ul>
 <p>This mapping is essential because the static grid objects and the dynamic block objects are not the same thing, even if they represent the same physical device. The mapping is what lets one steady-state solution initialize the correct symbolic variables inside the dynamic model.</p>
-<p>Without this bridge, RMS dynamic simulation and small-signal linearization would lose their physical operating-point consistency.</p>
+<p>Without this bridge, RMS dynamic simulation and Small-Signal linearization would lose their physical operating-point consistency.</p>
 </section>
 <section id="api-obj-mapping">
 <h3><code class="docutils literal notranslate"><span class="pre">api_obj_mapping</span></code><a class="headerlink" href="#api-obj-mapping" title="Link to this heading"></a></h3>
@@ -808,7 +809,7 @@
 <p>Without this step, time integration may diverge immediately or produce physically meaningless transients.</p>
 <section id="power-flow-as-starting-point">
 <h3>Power flow as starting point<a class="headerlink" href="#power-flow-as-starting-point" title="Link to this heading"></a></h3>
-<p>For RMS simulations, the standard workflow is to solve a power flow first and then use that operating point to initialize the dynamic model. This is also the workflow used by VeraGrid’s RMS dynamic and RMS small-signal drivers.</p>
+<p>For RMS simulations, the standard workflow is to solve a power flow first and then use that operating point to initialize the dynamic model. This is also the workflow used by VeraGrid’s RMS dynamic and RMS Small-Signal drivers.</p>
 <p>For EMT simulations, a static operating point is also needed, but the dynamic initialization problem is richer because phase-domain or waveform-domain quantities may have to be reconstructed consistently from the static network state and from model-specific initialization equations.</p>
 </section>
 <section id="initialization-methods-available-in-veragrid">
@@ -1468,7 +1469,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="state_estimation.html" class="btn btn-neutral float-left" title="🌀 State estimation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="rms_simulations.html" class="btn btn-neutral float-right" title="📝 RMS simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="rms_simulations.html" class="btn btn-neutral float-right" title="⏱️ RMS simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

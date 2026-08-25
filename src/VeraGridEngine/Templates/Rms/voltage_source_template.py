@@ -7,6 +7,7 @@ from VeraGridEngine.Devices.Dynamic.var_factory import VarFactory
 from VeraGridEngine.enumerations import DeviceType, VarPowerFlowReferenceType
 from VeraGridEngine.Devices.Dynamic.rms_template import RmsModelTemplate
 from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.symbolic import Expr, Var
 import VeraGridEngine.Utils.Symbolic.symbolic as sym
 
 
@@ -14,70 +15,93 @@ def VoltageSourceBuild(
     vfactory: VarFactory,
     name: str = "",
 ) -> RmsModelTemplate:
-    """
-    Build an RMS voltage-source template with P/Q capability limits.
+    """Build an RMS voltage-source template with P/Q capability limits.
 
     Control logic:
-    - Q within limits  -> enforce Vm = Vg0
-    - Q at limit       -> enforce Q = clamp(Q, Qmin_G, Qmax_G)
-    - P within limits  -> enforce Va = Ag0
-    - P at limit       -> enforce P = clamp(P, Pmin_G, Pmax_G)
+
+    - Q within limits: enforce ``Vm = Vg0``.
+    - Q at a limit: enforce ``Q = clamp(Q, Qmin_G, Qmax_G)``.
+    - P within limits: enforce ``Va = Ag0``.
+    - P at a limit: enforce ``P = clamp(P, Pmin_G, Pmax_G)``.
+
+    :param vfactory: Shared symbolic variable factory.
+    :param name: User-facing model name.
+    :return: Voltage-source RMS model with an editor-visible equation block.
     """
-    templ = RmsModelTemplate()
-    templ.tpe = DeviceType.ExternalGridDevice
+    templ: RmsModelTemplate = RmsModelTemplate(name=name)
+    templ.tpe = DeviceType.GeneratorDevice
 
-    Vm = vfactory.add_var("Vm", VarPowerFlowReferenceType.Vm)
-    Va = vfactory.add_var("Va", VarPowerFlowReferenceType.Va)
-    inputs = [Vm, Va]
+    voltage_magnitude: Var = vfactory.add_var("Vm", reference=VarPowerFlowReferenceType.Vm)
+    voltage_angle: Var = vfactory.add_var("Va", reference=VarPowerFlowReferenceType.Va)
+    inputs: list[Var] = list((voltage_magnitude, voltage_angle))
 
-    P = vfactory.add_var("P")
-    Q = vfactory.add_var("Q")
+    active_power: Var = vfactory.add_var("P", reference=VarPowerFlowReferenceType.P)
+    reactive_power: Var = vfactory.add_var("Q", reference=VarPowerFlowReferenceType.Q)
+    outputs: list[Var] = list((active_power, reactive_power))
 
-    Vg0 = vfactory.add_var("Vg0")
-    Ag0 = vfactory.add_var("Ag0")
+    initial_voltage_magnitude: Var = vfactory.add_var("Vg0")
+    initial_voltage_angle: Var = vfactory.add_var("Ag0")
 
-    Pmax_G = vfactory.add_var("Pmax_G")
-    Pmin_G = vfactory.add_var("Pmin_G")
-    Qmax_G = vfactory.add_var("Qmax_G")
-    Qmin_G = vfactory.add_var("Qmin_G")
+    active_power_maximum: Var = vfactory.add_var("Pmax_G")
+    active_power_minimum: Var = vfactory.add_var("Pmin_G")
+    reactive_power_maximum: Var = vfactory.add_var("Qmax_G")
+    reactive_power_minimum: Var = vfactory.add_var("Qmin_G")
 
-    event_dict = {
-        Vg0: vfactory.add_const(None),
-        Ag0: vfactory.add_const(None),
-        Pmax_G: vfactory.add_const(9.999),
-        Pmin_G: vfactory.add_const(-9.999),
-        Qmax_G: vfactory.add_const(9.999),
-        Qmin_G: vfactory.add_const(-9.999),
-    }
+    event_dict: dict[Var, Expr] = dict((
+        (initial_voltage_magnitude, voltage_magnitude),
+        (initial_voltage_angle, voltage_angle),
+        (active_power_maximum, vfactory.add_const(9.999)),
+        (active_power_minimum, vfactory.add_const(-9.999)),
+        (reactive_power_maximum, vfactory.add_const(9.999)),
+        (reactive_power_minimum, vfactory.add_const(-9.999)),
+    ))
 
-    init_eqs = {
-        Vg0: Vm,
-        Ag0: Va,
-    }
-
-    p_within_limits = ((Pmax_G - P) >= 0).to_expression() * (0 <= (P - Pmin_G)).to_expression()
-    q_within_limits = ((Qmax_G - Q) >= 0).to_expression() * (0 <= (Q - Qmin_G)).to_expression()
-
-    p_sat = sym.max(Pmin_G, sym.min(P, Pmax_G))
-    q_sat = sym.max(Qmin_G, sym.min(Q, Qmax_G))
-
-    templ.block = Block(
-        algebraic_eqs=[
-            (Va - Ag0) * p_within_limits + (P - p_sat) * (1 - p_within_limits),
-            (Vm - Vg0) * q_within_limits + (Q - q_sat) * (1 - q_within_limits),
-        ],
-        algebraic_vars=[P, Q],
-        init_eqs=init_eqs,
-        event_dict=event_dict,
+    active_power_within_limits: Expr = (
+        ((active_power_maximum - active_power) >= 0).to_expression()
+        * (0 <= (active_power - active_power_minimum)).to_expression()
+    )
+    reactive_power_within_limits: Expr = (
+        ((reactive_power_maximum - reactive_power) >= 0).to_expression()
+        * (0 <= (reactive_power - reactive_power_minimum)).to_expression()
     )
 
-    templ.block.name = "Voltage Source"
-    templ.block.external_mapping = {
-        VarPowerFlowReferenceType.P: P,
-        VarPowerFlowReferenceType.Q: Q,
-        VarPowerFlowReferenceType.Vm: Vm,
-        VarPowerFlowReferenceType.Va: Va,
-    }
-    templ.block.in_vars = inputs
+    saturated_active_power: Expr = sym.max(
+        active_power_minimum,
+        sym.min(active_power, active_power_maximum),
+    )
+    saturated_reactive_power: Expr = sym.max(
+        reactive_power_minimum,
+        sym.min(reactive_power, reactive_power_maximum),
+    )
+
+    # Store the equations in a child. The root is the device interface shown
+    # by the Dynamic Editor and the child remains available for inspection.
+    equation_block: Block = Block(
+        name="Voltage Source equations",
+        algebraic_eqs=list((
+            (voltage_angle - initial_voltage_angle) * active_power_within_limits
+            + (active_power - saturated_active_power) * (1 - active_power_within_limits),
+            (voltage_magnitude - initial_voltage_magnitude) * reactive_power_within_limits
+            + (reactive_power - saturated_reactive_power) * (1 - reactive_power_within_limits),
+        )),
+        algebraic_vars=list(outputs),
+        event_dict=event_dict,
+        in_vars=list(inputs),
+        out_vars=list(outputs),
+    )
+
+    root_block: Block = Block(
+        name="Voltage Source",
+        children=list((equation_block,)),
+        in_vars=list(inputs),
+        out_vars=list(outputs),
+        external_mapping=dict((
+            (VarPowerFlowReferenceType.P, active_power),
+            (VarPowerFlowReferenceType.Q, reactive_power),
+            (VarPowerFlowReferenceType.Vm, voltage_magnitude),
+            (VarPowerFlowReferenceType.Va, voltage_angle),
+        )),
+    )
+    templ.block = root_block
 
     return templ

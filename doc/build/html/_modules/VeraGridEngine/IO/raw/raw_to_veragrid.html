@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.IO.raw.raw_to_veragrid &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.IO.raw.raw_to_veragrid &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,9 +44,9 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
@@ -67,6 +67,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
@@ -130,7 +134,8 @@
     <span class="n">RawVscDCLineLike</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">TapChangerTypes</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">,</span> <span class="n">ShuntControlMode</span><span class="p">,</span> <span class="n">SwitchGraphicType</span>
+    <span class="n">TapChangerTypes</span><span class="p">,</span> <span class="n">TapPhaseControl</span><span class="p">,</span> <span class="n">TapModuleControl</span><span class="p">,</span> <span class="n">ShuntControlMode</span><span class="p">,</span> <span class="n">SwitchGraphicType</span><span class="p">,</span>
+    <span class="n">GeneratorControlMode</span>
 <span class="p">)</span>
 
 
@@ -203,7 +208,8 @@
         <span class="n">zone_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Zone</span><span class="p">],</span>
         <span class="n">substation_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Substation</span><span class="p">],</span>
         <span class="n">circuit</span><span class="p">:</span> <span class="n">MultiCircuit</span><span class="p">,</span>
-        <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+        <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span>
+    <span class="n">Dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="nb">set</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create VeraGrid buses for PSSE node-breaker nodes.</span>
 
@@ -263,8 +269,8 @@
             <span class="c1"># Only one node bus should carry the slack designation of the reduced</span>
             <span class="c1"># electrical bus. The others are plain PQ nodes until topology reduction.</span>
             <span class="k">if</span> <span class="n">raw_bus</span><span class="o">.</span><span class="n">I</span> <span class="ow">in</span> <span class="n">representative_bus_by_number</span><span class="p">:</span>
-                <span class="n">bus</span><span class="o">.</span><span class="n">is_slack</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="n">bus</span><span class="o">.</span><span class="n">_bus_type</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">BusMode</span><span class="o">.</span><span class="n">PQ_tpe</span>
+                <span class="n">bus</span><span class="o">.</span><span class="n">set_is_slack_at</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">bus</span><span class="o">.</span><span class="n">bus_type</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">BusMode</span><span class="o">.</span><span class="n">PQ_tpe</span>
 
             <span class="n">circuit</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus</span><span class="p">)</span>
 
@@ -520,15 +526,15 @@
 
     <span class="c1"># set type</span>
     <span class="k">if</span> <span class="n">psse_bus</span><span class="o">.</span><span class="n">IDE</span> <span class="ow">in</span> <span class="n">bustype</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">bus</span><span class="o">.</span><span class="n">_bus_type</span> <span class="o">=</span> <span class="n">bustype</span><span class="p">[</span><span class="n">psse_bus</span><span class="o">.</span><span class="n">IDE</span><span class="p">]</span>
+        <span class="n">bus</span><span class="o">.</span><span class="n">bus_type</span> <span class="o">=</span> <span class="n">bustype</span><span class="p">[</span><span class="n">psse_bus</span><span class="o">.</span><span class="n">IDE</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">bus</span><span class="o">.</span><span class="n">_bus_type</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">BusMode</span><span class="o">.</span><span class="n">PQ_tpe</span>
+        <span class="n">bus</span><span class="o">.</span><span class="n">bus_type</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">BusMode</span><span class="o">.</span><span class="n">PQ_tpe</span>
 
     <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">psse_bus</span><span class="o">.</span><span class="n">IDE</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
         <span class="n">bus</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="k">if</span> <span class="n">bus</span><span class="o">.</span><span class="n">_bus_type</span> <span class="o">==</span> <span class="n">dev</span><span class="o">.</span><span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span><span class="p">:</span>
-        <span class="n">bus</span><span class="o">.</span><span class="n">is_slack</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">if</span> <span class="n">bus</span><span class="o">.</span><span class="n">bus_type</span> <span class="o">==</span> <span class="n">dev</span><span class="o">.</span><span class="n">BusMode</span><span class="o">.</span><span class="n">Slack_tpe</span><span class="p">:</span>
+        <span class="n">bus</span><span class="o">.</span><span class="n">set_is_slack_at</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># Ensures unique name</span>
     <span class="n">bus</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">bus</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -672,22 +678,6 @@
             <span class="n">value</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">MODSW</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">ControllableShunt</span><span class="p">(</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Switched shunt &#39;</span> <span class="o">+</span> <span class="n">busnum_id</span><span class="p">,</span>
-        <span class="n">code</span><span class="o">=</span><span class="n">busnum_id</span><span class="p">,</span>
-        <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">STAT</span><span class="p">),</span>
-        <span class="n">B</span><span class="o">=</span><span class="n">b_init</span><span class="p">,</span>
-        <span class="n">step</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-        <span class="n">vset</span><span class="o">=</span><span class="n">vset</span><span class="p">,</span>
-        <span class="n">vmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">VSWLO</span><span class="p">),</span>
-        <span class="n">vmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">VSWHI</span><span class="p">),</span>
-        <span class="n">control_mode</span><span class="o">=</span><span class="n">control_mode</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">SWREG</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">SWREG</span> <span class="o">!=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">I</span><span class="p">:</span>
-            <span class="n">elm</span><span class="o">.</span><span class="n">control_bus</span> <span class="o">=</span> <span class="n">psse_bus_dict</span><span class="p">[</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">SWREG</span><span class="p">]</span>
-
     <span class="n">n_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
     <span class="n">b_list</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
 
@@ -698,6 +688,29 @@
         <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">n_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
             <span class="n">b_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">get_block_admittance</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+
+    <span class="c1"># Pick the discrete step whose cumulative susceptance matches the in-service</span>
+    <span class="c1"># initial value BINIT. The raw is a solved snapshot, so BINIT is the susceptance</span>
+    <span class="c1"># PSSe converged with; starting here lets a controls-off solve reproduce it</span>
+    <span class="c1"># (step 0 = neutral/off, step k = first k blocks on).</span>
+    <span class="n">cum_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">([</span><span class="n">n</span> <span class="o">*</span> <span class="n">b</span> <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">n_list</span><span class="p">,</span> <span class="n">b_list</span><span class="p">)]),</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="n">init_step</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cum_b</span> <span class="o">-</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">BINIT</span><span class="p">)))</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cum_b</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">ControllableShunt</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Switched shunt &#39;</span> <span class="o">+</span> <span class="n">busnum_id</span><span class="p">,</span>
+        <span class="n">code</span><span class="o">=</span><span class="n">busnum_id</span><span class="p">,</span>
+        <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">STAT</span><span class="p">),</span>
+        <span class="n">B</span><span class="o">=</span><span class="n">b_init</span><span class="p">,</span>
+        <span class="n">step</span><span class="o">=</span><span class="n">init_step</span><span class="p">,</span>
+        <span class="n">vset</span><span class="o">=</span><span class="n">vset</span><span class="p">,</span>
+        <span class="n">vmin</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">VSWLO</span><span class="p">),</span>
+        <span class="n">vmax</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">VSWHI</span><span class="p">),</span>
+        <span class="n">control_mode</span><span class="o">=</span><span class="n">control_mode</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">SWREG</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">SWREG</span> <span class="o">!=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">I</span><span class="p">:</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">control_bus</span> <span class="o">=</span> <span class="n">psse_bus_dict</span><span class="p">[</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">SWREG</span><span class="p">]</span>
 
     <span class="n">elm</span><span class="o">.</span><span class="n">set_blocks</span><span class="p">(</span><span class="n">n_list</span><span class="p">,</span> <span class="n">b_list</span><span class="p">)</span>
 
@@ -749,7 +762,8 @@
 
 <div class="viewcode-block" id="get_veragrid_generator">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.raw_to_veragrid.get_veragrid_generator">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_veragrid_generator</span><span class="p">(</span><span class="n">psse_elm</span><span class="p">:</span> <span class="n">RawGeneratorLike</span><span class="p">,</span> <span class="n">psse_bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_veragrid_generator</span><span class="p">(</span><span class="n">psse_elm</span><span class="p">:</span> <span class="n">RawGeneratorLike</span><span class="p">,</span> <span class="n">psse_bus_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span>
+                           <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    :param psse_elm:</span>
@@ -760,17 +774,17 @@
     <span class="n">name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">I</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">WMOD</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Conventional machine</span>
-        <span class="n">is_controlled</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">Q</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">QG</span>
+        <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QG</span>
         <span class="n">Qmin</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QB</span>
         <span class="n">Qmax</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QT</span>
     <span class="k">elif</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">WMOD</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Standard Qmin, Qmax limits</span>
-        <span class="n">is_controlled</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">Q</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">QG</span>
+        <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QG</span>
         <span class="n">Qmin</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QB</span>
         <span class="n">Qmax</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QT</span>
     <span class="k">elif</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">WMOD</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># Qmin, Qmax based based on WPF</span>
-        <span class="n">is_controlled</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span>
         <span class="c1"># pf = psse_elm.WPF</span>
         <span class="c1"># NOTE: the QB and QT limits come correct already, no need to compute this here</span>
         <span class="n">Q</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QG</span>
@@ -779,36 +793,45 @@
         <span class="n">Qmin</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QB</span>
         <span class="n">Qmax</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QT</span>
     <span class="k">elif</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">WMOD</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>  <span class="c1"># Fixed Q</span>
-        <span class="n">is_controlled</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span>
         <span class="n">pf</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">WPF</span> <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">WPF</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">0.8</span>
         <span class="n">Q</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">PG</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">pf</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
         <span class="n">Qmin</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QB</span>
         <span class="n">Qmax</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QT</span>
     <span class="k">elif</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">WMOD</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># Infeed machine</span>
-        <span class="n">is_controlled</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span>
         <span class="n">pf</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">WPF</span> <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">WPF</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">0.8</span>
         <span class="n">Q</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">PG</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">pf</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
         <span class="n">Qmin</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QB</span>
         <span class="n">Qmax</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QT</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">is_controlled</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span>
         <span class="n">Qmin</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QB</span>
         <span class="n">Qmax</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QT</span>
         <span class="n">Q</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">QG</span>
 
-    <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                        <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                        <span class="n">code</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                        <span class="n">P</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">PG</span><span class="p">,</span>
-                        <span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span>
-                        <span class="n">vset</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">VS</span><span class="p">,</span>
-                        <span class="n">Qmin</span><span class="o">=</span><span class="n">Qmin</span><span class="p">,</span>
-                        <span class="n">Qmax</span><span class="o">=</span><span class="n">Qmax</span><span class="p">,</span>
-                        <span class="n">Snom</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">MBASE</span><span class="p">,</span>
-                        <span class="n">Pmax</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">PT</span><span class="p">,</span>
-                        <span class="n">Pmin</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">PB</span><span class="p">,</span>
-                        <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">STAT</span><span class="p">),</span>
-                        <span class="n">is_controlled</span><span class="o">=</span><span class="n">is_controlled</span><span class="p">)</span>
+    <span class="c1"># A non-slack generator with no reactive range (QT == QB) cannot regulate voltage.</span>
+    <span class="c1"># Keep the slack machine as voltage-controlled even when its reactive range is zero,</span>
+    <span class="c1"># because the RAW slack/reference bus still defines the system angle and voltage target.</span>
+    <span class="n">bus</span> <span class="o">=</span> <span class="n">psse_bus_dict</span><span class="p">[</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">I</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">Qmax</span> <span class="o">==</span> <span class="n">Qmin</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">bus</span><span class="o">.</span><span class="n">is_slack</span><span class="p">:</span>
+        <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span>
+
+    <span class="n">elm</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">idtag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">code</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">P</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">PG</span><span class="p">,</span>
+        <span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span>
+        <span class="n">vset</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">VS</span><span class="p">,</span>
+        <span class="n">Qmin</span><span class="o">=</span><span class="n">Qmin</span><span class="p">,</span>
+        <span class="n">Qmax</span><span class="o">=</span><span class="n">Qmax</span><span class="p">,</span>
+        <span class="n">Snom</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">MBASE</span><span class="p">,</span>
+        <span class="n">Pmax</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">PT</span><span class="p">,</span>
+        <span class="n">Pmin</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">PB</span><span class="p">,</span>
+        <span class="n">active</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">STAT</span><span class="p">),</span>
+        <span class="n">control_mode</span><span class="o">=</span><span class="n">control_mode</span>
+    <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">IREG</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">IREG</span> <span class="o">!=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">I</span><span class="p">:</span>
@@ -996,48 +1019,37 @@
             <span class="n">tc_neutral_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">NTP1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
             <span class="n">tc_normal_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">NTP1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
 
-            <span class="n">alpha_per_2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">RMA1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="c1"># NTP1 should be an odd number</span>
-            <span class="n">number_of_symmetrical_step</span> <span class="o">=</span> <span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">NTP1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
-            <span class="n">tc_dV</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">alpha_per_2</span><span class="p">)</span> <span class="o">/</span> <span class="n">number_of_symmetrical_step</span>
+            <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">NTP1</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
 
-            <span class="n">d_ang</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">RMA1</span> <span class="o">/</span> <span class="p">((</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">NTP1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="c1"># ?: this value is set internally by set_tap_phase</span>
-            <span class="c1"># tc_tap_position</span>
-            <span class="k">if</span> <span class="n">d_ang</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
-                <span class="n">tc_step</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">ANG1</span> <span class="o">/</span> <span class="n">d_ang</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">tc_step</span> <span class="o">-</span> <span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">ANG1</span> <span class="o">/</span> <span class="n">d_ang</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
-                        <span class="n">device</span><span class="o">=</span><span class="n">psse_elm</span><span class="p">,</span>
-                        <span class="n">device_class</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">class_name</span><span class="p">,</span>
-                        <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Tap changer is not on discrete step.&quot;</span><span class="p">,</span>
-                        <span class="n">value</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">ANG1</span> <span class="o">/</span> <span class="n">d_ang</span><span class="p">,</span>
-                    <span class="p">)</span>
-                <span class="n">tc_tap_pos</span> <span class="o">=</span> <span class="n">tc_neutral_position</span> <span class="o">+</span> <span class="n">tc_step</span>
+                <span class="n">alpha_per_2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">RMA1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="c1"># NTP1 should be an odd number</span>
+                <span class="n">number_of_symmetrical_step</span> <span class="o">=</span> <span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">NTP1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+                <span class="n">tc_dV</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">tan</span><span class="p">(</span><span class="n">alpha_per_2</span><span class="p">)</span> <span class="o">/</span> <span class="n">number_of_symmetrical_step</span>
+
+                <span class="n">d_ang</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">RMA1</span> <span class="o">/</span> <span class="p">((</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">NTP1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+                <span class="c1"># ?: this value is set internally by set_tap_phase</span>
+                <span class="c1"># tc_tap_position</span>
+                <span class="k">if</span> <span class="n">d_ang</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">tc_step</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">ANG1</span> <span class="o">/</span> <span class="n">d_ang</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">tc_step</span> <span class="o">-</span> <span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">ANG1</span> <span class="o">/</span> <span class="n">d_ang</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.1</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                            <span class="n">device</span><span class="o">=</span><span class="n">psse_elm</span><span class="p">,</span>
+                            <span class="n">device_class</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">class_name</span><span class="p">,</span>
+                            <span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Tap changer is not on discrete step.&quot;</span><span class="p">,</span>
+                            <span class="n">value</span><span class="o">=</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">ANG1</span> <span class="o">/</span> <span class="n">d_ang</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="n">tc_tap_pos</span> <span class="o">=</span> <span class="n">tc_neutral_position</span> <span class="o">+</span> <span class="n">tc_step</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">tc_step</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">tc_step</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="c1"># print()</span>
-            <span class="c1"># corrected_phase = elm.tap_changer.set_tap_phase(elm.tap_phase)</span>
-            <span class="c1"># elm.tap_phase = corrected_phase</span>
-            <span class="c1">#</span>
-            <span class="c1"># print(&quot;Tap module, and phase calculated:&quot;,</span>
-            <span class="c1">#       elm.tap_module, elm.tap_phase)</span>
 
-            <span class="c1"># if psse_elm.NTP1 &gt; 1:</span>
-            <span class="c1">#     tc_total_positions = psse_elm.NTP1</span>
-            <span class="c1">#     tc_neutral_position = int((psse_elm.NTP1 + 1) / 2)</span>
-            <span class="c1">#     tc_normal_position = int((psse_elm.NTP1 + 1) / 2)</span>
-            <span class="c1">#     alpha_per_2 = math.radians(psse_elm.RMA1)</span>
-            <span class="c1">#     number_of_symmetrical_step = (psse_elm.NTP1 - 1) / 2</span>
-            <span class="c1">#     tc_dV = 2 * math.tan(alpha_per_2) / number_of_symmetrical_step</span>
-            <span class="c1"># else:</span>
-            <span class="c1">#     tc_total_positions = 1</span>
-            <span class="c1">#     tc_neutral_position = 0</span>
-            <span class="c1">#     tc_normal_position = 0</span>
-            <span class="c1">#     alpha_per_2 = math.radians(psse_elm.RMA1)</span>
-            <span class="c1">#     tc_dV = 0.0</span>
-            <span class="c1">#     logger.add_warning(msg=&#39;Number of tap positions == 1&#39;, value=1)</span>
-
+                <span class="n">tc_total_positions</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">tc_neutral_position</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">tc_normal_position</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">alpha_per_2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">RMA1</span><span class="p">)</span>
+                <span class="n">tc_dV</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s1">&#39;Number of tap positions == 1&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+         
         <span class="k">elif</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">COD1</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">]:</span>  <span class="c1"># for control of a dc line quantity</span>
             <span class="c1"># (valid only for two-winding transformers)</span>
 
@@ -1138,6 +1150,7 @@
         <span class="n">mf</span><span class="p">,</span> <span class="n">mt</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">get_virtual_taps</span><span class="p">()</span>
 
         <span class="c1"># we need to discount that PSSe includes the virtual tap inside the normal tap</span>
+        <span class="c1"># NOTE: may need to be `/ mf / mt` (small Va error on some radial buses); see admittance_matrices.py</span>
         <span class="n">elm</span><span class="o">.</span><span class="n">tap_module</span> <span class="o">=</span> <span class="n">tap_module</span> <span class="o">/</span> <span class="n">mf</span> <span class="o">*</span> <span class="n">mt</span>
 
         <span class="k">return</span> <span class="n">elm</span><span class="p">,</span> <span class="mi">2</span>
@@ -1253,15 +1266,64 @@
                                  <span class="n">rate23</span><span class="o">=</span><span class="n">rate2_1</span><span class="p">,</span>
                                  <span class="n">rate31</span><span class="o">=</span><span class="n">rate3_1</span><span class="p">)</span>
 
-        <span class="c1"># NOTE: These seem to be related to the vector group and not to the power flow tap</span>
+        <span class="c1"># PSSe defines the winding off-nominal turns ratio (WINDVn) and phase shift (ANGn)</span>
+        <span class="c1"># on the winding-bus side. The windings are oriented winding-bus(bus_from) -&gt;</span>
+        <span class="c1"># star(bus_to) with the tap applied on the bus_from (winding-bus) side, so the</span>
+        <span class="c1"># PSSe winding-side values are used directly.</span>
         <span class="n">tr3w</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">tap_phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">ANG1</span><span class="p">)</span>
         <span class="n">tr3w</span><span class="o">.</span><span class="n">winding2</span><span class="o">.</span><span class="n">tap_phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">ANG2</span><span class="p">)</span>
         <span class="n">tr3w</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">tap_phase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">ANG3</span><span class="p">)</span>
+
+        <span class="c1"># STAT=2/3/4 means winding 1/2/3 is individually out of service</span>
+        <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">STAT</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding2</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">STAT</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding2</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">STAT</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding2</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">STAT</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding2</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">STAT</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding2</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># STAT=2/3/4 means winding 1/2/3 is individually out of service</span>
+        <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">STAT</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding2</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">STAT</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding2</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">STAT</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding2</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">STAT</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding2</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">STAT</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding2</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">tr3w</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="n">NOMV1</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">NOMV1</span> <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">NOMV1</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">bus_1</span><span class="o">.</span><span class="n">Vnom</span>
         <span class="n">NOMV2</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">NOMV2</span> <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">NOMV2</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">bus_2</span><span class="o">.</span><span class="n">Vnom</span>
         <span class="n">NOMV3</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">NOMV3</span> <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">NOMV3</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">bus_3</span><span class="o">.</span><span class="n">Vnom</span>
 
+        <span class="c1"># winding-bus-side off-nominal ratio in pu (per PSSe convention), applied directly</span>
+        <span class="c1"># because the winding tap is on the winding-bus (bus_from) side.</span>
         <span class="k">if</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">CW</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 
             <span class="n">tr3w</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">tap_module</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">WINDV1</span>
@@ -1281,6 +1343,48 @@
             <span class="n">tr3w</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">tap_module</span> <span class="o">=</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">WINDV3</span> <span class="o">/</span> <span class="n">NOMV3</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unknown impedance combination CW=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">psse_elm</span><span class="o">.</span><span class="n">CZ</span><span class="p">))</span>
+
+        <span class="c1"># --------------------------------------------------------------------------------------</span>
+        <span class="c1"># Winding tap regulation. With COD = +-1 a winding steps its tap to hold the controlled</span>
+        <span class="c1"># bus (CONTn) voltage within the band [VMIn, VMAn], the tap ratio moving within</span>
+        <span class="c1"># [RMIn, RMAn] over NTPn discrete positions. PSSe writes the *initial* tap into WINDVn</span>
+        <span class="c1"># and adjusts it during the solve, so importing the regulation lets VeraGrid reproduce</span>
+        <span class="c1"># the regulated tap instead of staying frozen at the input value.</span>
+        <span class="c1"># --------------------------------------------------------------------------------------</span>
+        <span class="n">winding_controls</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">tr3w</span><span class="o">.</span><span class="n">winding1</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">COD1</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">CONT1</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">RMA1</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">RMI1</span><span class="p">,</span>
+             <span class="n">psse_elm</span><span class="o">.</span><span class="n">VMA1</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">VMI1</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">NTP1</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">tr3w</span><span class="o">.</span><span class="n">winding2</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">COD2</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">CONT2</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">RMA2</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">RMI2</span><span class="p">,</span>
+             <span class="n">psse_elm</span><span class="o">.</span><span class="n">VMA2</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">VMI2</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">NTP2</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">tr3w</span><span class="o">.</span><span class="n">winding3</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">COD3</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">CONT3</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">RMA3</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">RMI3</span><span class="p">,</span>
+             <span class="n">psse_elm</span><span class="o">.</span><span class="n">VMA3</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">VMI3</span><span class="p">,</span> <span class="n">psse_elm</span><span class="o">.</span><span class="n">NTP3</span><span class="p">),</span>
+        <span class="p">]</span>
+        <span class="k">for</span> <span class="n">w</span><span class="p">,</span> <span class="n">cod</span><span class="p">,</span> <span class="n">cont</span><span class="p">,</span> <span class="n">rma</span><span class="p">,</span> <span class="n">rmi</span><span class="p">,</span> <span class="n">vma</span><span class="p">,</span> <span class="n">vmi</span><span class="p">,</span> <span class="n">ntp</span> <span class="ow">in</span> <span class="n">winding_controls</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cod</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>  <span class="c1"># voltage control (negative =&gt; locked, kept fixed)</span>
+                <span class="n">w</span><span class="o">.</span><span class="n">tap_module_control_mode</span> <span class="o">=</span> <span class="n">TapModuleControl</span><span class="o">.</span><span class="n">Vm</span> <span class="k">if</span> <span class="n">cod</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">TapModuleControl</span><span class="o">.</span><span class="n">fixed</span>
+
+                <span class="n">reg_bus</span> <span class="o">=</span> <span class="n">psse_bus_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">cont</span><span class="p">)),</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">reg_bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">w</span><span class="o">.</span><span class="n">regulation_bus</span> <span class="o">=</span> <span class="n">reg_bus</span>
+
+                <span class="c1"># controlled-voltage band -&gt; regulate towards its midpoint</span>
+                <span class="k">if</span> <span class="n">vma</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">vmi</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">w</span><span class="o">.</span><span class="n">vset</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">vma</span> <span class="o">+</span> <span class="n">vmi</span><span class="p">)</span>
+
+                <span class="c1"># tap-ratio limits and discrete positions. The parsed tap_module (WINDVn) is</span>
+                <span class="c1"># the regulator&#39;s starting position and is left untouched; only the changer</span>
+                <span class="c1"># ladder is configured so the solver can step it within [RMIn, RMAn].</span>
+                <span class="k">if</span> <span class="n">rma</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">rmi</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                    <span class="n">w</span><span class="o">.</span><span class="n">tap_module_max</span> <span class="o">=</span> <span class="n">rma</span>
+                    <span class="n">w</span><span class="o">.</span><span class="n">tap_module_min</span> <span class="o">=</span> <span class="n">rmi</span>
+                    <span class="k">if</span> <span class="n">ntp</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">tc</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">tap_changer</span>
+                        <span class="n">tc</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">VoltageRegulation</span>
+                        <span class="n">tc</span><span class="o">.</span><span class="n">total_positions</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ntp</span><span class="p">)</span>
+                        <span class="n">tc</span><span class="o">.</span><span class="n">neutral_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ntp</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+                        <span class="n">tc</span><span class="o">.</span><span class="n">normal_position</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ntp</span> <span class="o">//</span> <span class="mi">2</span><span class="p">)</span>
+                        <span class="n">tc</span><span class="o">.</span><span class="n">dV</span> <span class="o">=</span> <span class="p">(</span><span class="n">rma</span> <span class="o">-</span> <span class="n">rmi</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">ntp</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                        <span class="n">tc</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span>
 
         <span class="n">tr3w</span><span class="o">.</span><span class="n">compute_delta_to_star</span><span class="p">()</span>
 
@@ -1773,7 +1877,6 @@
             <span class="n">api_obj</span><span class="o">.</span><span class="n">control_bus</span> <span class="o">=</span> <span class="n">api_obj</span><span class="o">.</span><span class="n">control_bus</span>
 
         <span class="n">circuit</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="p">)</span>
-        <span class="c1"># api_obj.is_controlled = psse_gen.WMOD == 0 or psse_gen.WMOD == 1</span>
 
     <span class="c1"># Go through Branches</span>
     <span class="n">branches_already_there</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
@@ -1792,8 +1895,10 @@
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">n_windings</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">bus_from</span> <span class="o">=</span> <span class="n">find_terminal_bus</span><span class="p">(</span><span class="n">terminal_bus_lookup</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">J</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CKT</span><span class="p">)</span>
-            <span class="n">bus_to</span> <span class="o">=</span> <span class="n">find_terminal_bus</span><span class="p">(</span><span class="n">terminal_bus_lookup</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">J</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CKT</span><span class="p">)</span>
+            <span class="n">bus_from</span> <span class="o">=</span> <span class="n">find_terminal_bus</span><span class="p">(</span><span class="n">terminal_bus_lookup</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">J</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+                                         <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CKT</span><span class="p">)</span>
+            <span class="n">bus_to</span> <span class="o">=</span> <span class="n">find_terminal_bus</span><span class="p">(</span><span class="n">terminal_bus_lookup</span><span class="p">,</span> <span class="s1">&#39;2&#39;</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">J</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+                                       <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CKT</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">bus_from</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">transformer</span><span class="o">.</span><span class="n">bus_from</span> <span class="o">=</span> <span class="n">bus_from</span>
@@ -1806,7 +1911,8 @@
                 <span class="n">transformer</span><span class="o">.</span><span class="n">bus_to</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">bus_to</span>
 
             <span class="k">if</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CONT1</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">NODE1</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">control_bus</span> <span class="o">=</span> <span class="n">find_control_node_bus</span><span class="p">(</span><span class="n">node_bus_by_bus_and_node</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CONT1</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">NODE1</span><span class="p">)</span>
+                <span class="n">control_bus</span> <span class="o">=</span> <span class="n">find_control_node_bus</span><span class="p">(</span><span class="n">node_bus_by_bus_and_node</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CONT1</span><span class="p">,</span>
+                                                    <span class="n">psse_transformer</span><span class="o">.</span><span class="n">NODE1</span><span class="p">)</span>
                 <span class="k">if</span> <span class="n">control_bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">transformer</span><span class="o">.</span><span class="n">regulation_bus</span> <span class="o">=</span> <span class="n">control_bus</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -1814,9 +1920,12 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">transformer</span><span class="o">.</span><span class="n">regulation_bus</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">regulation_bus</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">bus_1</span> <span class="o">=</span> <span class="n">find_terminal_bus</span><span class="p">(</span><span class="n">terminal_bus_lookup</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">J</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CKT</span><span class="p">)</span>
-            <span class="n">bus_2</span> <span class="o">=</span> <span class="n">find_terminal_bus</span><span class="p">(</span><span class="n">terminal_bus_lookup</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">J</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CKT</span><span class="p">)</span>
-            <span class="n">bus_3</span> <span class="o">=</span> <span class="n">find_terminal_bus</span><span class="p">(</span><span class="n">terminal_bus_lookup</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">J</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CKT</span><span class="p">)</span>
+            <span class="n">bus_1</span> <span class="o">=</span> <span class="n">find_terminal_bus</span><span class="p">(</span><span class="n">terminal_bus_lookup</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">I</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">J</span><span class="p">,</span>
+                                      <span class="n">psse_transformer</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CKT</span><span class="p">)</span>
+            <span class="n">bus_2</span> <span class="o">=</span> <span class="n">find_terminal_bus</span><span class="p">(</span><span class="n">terminal_bus_lookup</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">J</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">I</span><span class="p">,</span>
+                                      <span class="n">psse_transformer</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CKT</span><span class="p">)</span>
+            <span class="n">bus_3</span> <span class="o">=</span> <span class="n">find_terminal_bus</span><span class="p">(</span><span class="n">terminal_bus_lookup</span><span class="p">,</span> <span class="s1">&#39;3&#39;</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">I</span><span class="p">,</span>
+                                      <span class="n">psse_transformer</span><span class="o">.</span><span class="n">J</span><span class="p">,</span> <span class="n">psse_transformer</span><span class="o">.</span><span class="n">CKT</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="n">bus_1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">transformer</span><span class="o">.</span><span class="n">bus1</span> <span class="o">=</span> <span class="n">bus_1</span>

@@ -551,7 +551,7 @@ def _build_Ybus(nbus: int, nbr: int, F: IntVec, T: IntVec,
 
     # ---------- sort (col,row) ---------------------------------------
     key = cols_raw * nbus + rows_raw
-    order = np.argsort(key)
+    order = np.argsort(key)  # stable already because it is C
 
     rows_s = rows_raw[order]
     cols_s = cols_raw[order]

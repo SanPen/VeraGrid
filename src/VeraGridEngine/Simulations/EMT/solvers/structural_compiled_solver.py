@@ -830,7 +830,7 @@ def _greedy_color_columns(col_rows: List[List[int]], n_rows: int) -> Tuple[Int32
         degrees[col_index] = len(adjacency[col_index])
         col_index += 1
 
-    order = np.argsort(-degrees).astype(np.int32)
+    order = np.argsort(-degrees, kind="stable").astype(np.int32)
     colors = -np.ones(n_cols, dtype=np.int32)
     used = np.zeros(n_cols, dtype=np.bool_)
     max_color: int = -1

@@ -138,10 +138,6 @@ def build_vsc_transformer_control(vf: VarFactory, Vm: Var, vdc: Var, name: str =
         Ki: vf.add_const(10.0),
         Km: vf.add_const(1.0),
         Tm: vf.add_const(0.05),
-        v_ref: vf.add_const(None),
-        vdc_ref: vf.add_const(None),
-    }
-    block.init_eqs = {
         v_ref: Vm + am / Km,
         vdc_ref: vdc,
     }
@@ -252,13 +248,11 @@ def build_trafo_vsc(vf:VarFactory, trafo:Transformer2W, name:str = ''):
         init_eqs={
             am: vmt/k*vdc,
             Im: sym.sqrt(Pt**2 + Qt**2)/vmf,
-            phi0: vat - vaf,
-            P_ref: Pf,
         },
         event_dict={
             m      : vf.add_const(trafo.tap_module),
-            P_ref   : vf.add_const(None),
-            phi0   : vf.add_const(None),
+            P_ref   : Pf,
+            phi0   : vat - vaf,
         },
         in_vars=inputs,
     )

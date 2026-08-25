@@ -314,7 +314,7 @@ def _build_reference_modal_transform(z_per_length_at_reference: np.ndarray,
 
     # Stage 2: impose a deterministic mode ordering so every later fitting stage
     # sees stable mode indices across runs and across test environments.
-    order_index = np.argsort(np.real(eigenvalues))
+    order_index = np.argsort(np.real(eigenvalues), kind="stable")
     modal_transform = eigenvectors[:, order_index]
 
     try:

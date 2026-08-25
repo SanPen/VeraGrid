@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.IO.raw.psse_circuit &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.IO.raw.psse_circuit &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,9 +44,9 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
@@ -67,6 +67,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
@@ -111,7 +115,11 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.psse_object</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawObject</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.psse_property</span><span class="w"> </span><span class="kn">import</span> <span class="n">PsseProperty</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.raw_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawAreaLike</span><span class="p">,</span> <span class="n">RawBranchLike</span><span class="p">,</span> <span class="n">RawBusLike</span><span class="p">,</span> <span class="n">RawEquipmentTerminalLike</span><span class="p">,</span> <span class="n">RawFACTSLike</span><span class="p">,</span> <span class="n">RawFixedShuntLike</span><span class="p">,</span> <span class="n">RawGeneratorLike</span><span class="p">,</span> <span class="n">RawGneDeviceLike</span><span class="p">,</span> <span class="n">RawImpedanceCorrectionTableLike</span><span class="p">,</span> <span class="n">RawInductionMachineLike</span><span class="p">,</span> <span class="n">RawInterAreaLike</span><span class="p">,</span> <span class="n">RawLoadLike</span><span class="p">,</span> <span class="n">RawMultiLineSectionLike</span><span class="p">,</span> <span class="n">RawNodeLike</span><span class="p">,</span> <span class="n">RawOwnerLike</span><span class="p">,</span> <span class="n">RawSubstationLike</span><span class="p">,</span> <span class="n">RawSubstationSwitchingDeviceLike</span><span class="p">,</span> <span class="n">RawSwitchedShuntLike</span><span class="p">,</span> <span class="n">RawSystemSwitchingDeviceLike</span><span class="p">,</span> <span class="n">RawTransformerLike</span><span class="p">,</span> <span class="n">RawTwoTerminalDCLineLike</span><span class="p">,</span> <span class="n">RawVscDCLineLike</span><span class="p">,</span> <span class="n">RawZoneLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.raw_types</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawAreaLike</span><span class="p">,</span> <span class="n">RawBranchLike</span><span class="p">,</span> <span class="n">RawBusLike</span><span class="p">,</span> <span class="n">RawEquipmentTerminalLike</span><span class="p">,</span> \
+    <span class="n">RawFACTSLike</span><span class="p">,</span> <span class="n">RawFixedShuntLike</span><span class="p">,</span> <span class="n">RawGeneratorLike</span><span class="p">,</span> <span class="n">RawGneDeviceLike</span><span class="p">,</span> <span class="n">RawImpedanceCorrectionTableLike</span><span class="p">,</span> \
+    <span class="n">RawInductionMachineLike</span><span class="p">,</span> <span class="n">RawInterAreaLike</span><span class="p">,</span> <span class="n">RawLoadLike</span><span class="p">,</span> <span class="n">RawMultiLineSectionLike</span><span class="p">,</span> <span class="n">RawNodeLike</span><span class="p">,</span> <span class="n">RawOwnerLike</span><span class="p">,</span> \
+    <span class="n">RawSubstationLike</span><span class="p">,</span> <span class="n">RawSubstationSwitchingDeviceLike</span><span class="p">,</span> <span class="n">RawSwitchedShuntLike</span><span class="p">,</span> <span class="n">RawSystemSwitchingDeviceLike</span><span class="p">,</span> \
+    <span class="n">RawTransformerLike</span><span class="p">,</span> <span class="n">RawTwoTerminalDCLineLike</span><span class="p">,</span> <span class="n">RawVscDCLineLike</span><span class="p">,</span> <span class="n">RawZoneLike</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.base.multi_section_line</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawMultiLineSection</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.base.area</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawArea</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.raw.versioned.base.branch</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawBranch</span>
@@ -139,7 +147,6 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
 
 
-
 <div class="viewcode-block" id="PsseCircuit">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.raw.html#VeraGridEngine.IO.raw.psse_circuit.PsseCircuit">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PsseCircuit</span><span class="p">(</span><span class="n">RawObject</span><span class="p">,</span> <span class="n">BaseCircuit</span><span class="p">):</span>
@@ -161,7 +168,8 @@
         <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;switched_shunts&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;swshunt&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="n">RawSwitchedShunt</span><span class="p">),</span>
         <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;substations&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;sub&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="n">RawSubstation</span><span class="p">),</span>
         <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;nodes&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;subnode&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="n">RawNode</span><span class="p">),</span>
-        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;substation_switching_devices&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;subswd&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="n">RawSubstationSwitchingDevice</span><span class="p">),</span>
+        <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;substation_switching_devices&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;subswd&#39;</span><span class="p">,</span>
+                     <span class="n">class_type</span><span class="o">=</span><span class="n">RawSubstationSwitchingDevice</span><span class="p">),</span>
         <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;equipment_terminals&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;subterm&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="n">RawEquipmentTerminal</span><span class="p">),</span>
         <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;switches&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;sysswd&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="n">RawSystemSwitchingDevice</span><span class="p">),</span>
         <span class="n">PsseProperty</span><span class="p">(</span><span class="n">property_name</span><span class="o">=</span><span class="s1">&#39;gne&#39;</span><span class="p">,</span> <span class="n">rawx_key</span><span class="o">=</span><span class="s1">&#39;gne&#39;</span><span class="p">,</span> <span class="n">class_type</span><span class="o">=</span><span class="n">RawGneDevice</span><span class="p">),</span>
@@ -242,6 +250,10 @@
         <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">IC</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SBASE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">REV</span> <span class="o">=</span> <span class="n">data</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;RAW header contains 3 elements instead of the expected 6&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">IC</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SBASE</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">REV</span> <span class="o">=</span> <span class="mi">25</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;RAW header contains elements instead of the expected 6&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RAW header contains </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> elements instead of the expected 6&quot;</span><span class="p">)</span></div>
 
@@ -286,9 +298,9 @@
 
                 <span class="k">if</span> <span class="n">uuid_</span> <span class="ow">in</span> <span class="n">global_index</span><span class="p">:</span>
                     <span class="n">found_elm</span> <span class="o">=</span> <span class="n">global_index</span><span class="p">[</span><span class="n">uuid_</span><span class="p">]</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Global UUID5 duplicate&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">id_</span><span class="p">,</span>
-                                     <span class="n">device_class</span><span class="o">=</span><span class="n">prop</span><span class="o">.</span><span class="n">rawx_key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">uuid_</span><span class="p">,</span>
-                                     <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Found </span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">found_elm</span><span class="o">.</span><span class="n">class_name</span><span class="p">,</span> <span class="n">found_elm</span><span class="o">.</span><span class="n">get_id</span><span class="p">()))</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="s2">&quot;Global UUID5 duplicate&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">id_</span><span class="p">,</span>
+                                    <span class="n">device_class</span><span class="o">=</span><span class="n">prop</span><span class="o">.</span><span class="n">rawx_key</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="n">uuid_</span><span class="p">,</span>
+                                    <span class="n">comment</span><span class="o">=</span><span class="s2">&quot;Found </span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">found_elm</span><span class="o">.</span><span class="n">class_name</span><span class="p">,</span> <span class="n">found_elm</span><span class="o">.</span><span class="n">get_id</span><span class="p">()))</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">global_index</span><span class="p">[</span><span class="n">uuid_</span><span class="p">]</span> <span class="o">=</span> <span class="n">elm</span></div>
 </div>

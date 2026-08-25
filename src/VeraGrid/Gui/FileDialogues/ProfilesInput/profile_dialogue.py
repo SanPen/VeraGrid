@@ -355,7 +355,7 @@ class GeneratorsProfileOptionsDialogue(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Generator active power options")
+        self.setWindowTitle(self.tr("Generator active power options"))
         self.setModal(True)  # Make the dialog modal
 
         # Create checkboxes
@@ -510,7 +510,7 @@ class ProfileInputGUI(QtWidgets.QDialog):
 
         # call dialog to select the file
         filename, type_selected = QtWidgets.QFileDialog.getOpenFileName(self,
-                                                                        caption='Open file',
+                                                                        caption=self.tr('Open file'),
                                                                         filter=files_types)
 
         if len(filename) > 0:
@@ -526,15 +526,15 @@ class ProfileInputGUI(QtWidgets.QDialog):
                                      dayfirst=True)
 
                     if df.shape[0] == 0 or df.shape[1] == 0:
-                        error_msg(text="Make sure this is a proper comma-separated-value file.\n Otherwise use excel.",
-                                  title="Value error loading CSV file")
+                        error_msg(text=self.tr("Make sure this is a proper comma-separated-value file.\n Otherwise use excel."),
+                                  title=self.tr("Value error loading CSV file"))
                         return
                     else:
                         # try to assign
                         self.assign_origin_df(df=df)
 
                 except ValueError as e:
-                    error_msg(text=str(e), title="Value error loading CSV file")
+                    error_msg(text=str(e), title=self.tr("Value error loading CSV file"))
                     return
 
                 except UnicodeDecodeError:
@@ -545,7 +545,7 @@ class ProfileInputGUI(QtWidgets.QDialog):
                         self.assign_origin_df(df=df)
 
                     except Exception as e:
-                        error_msg(str(e), title="Error")
+                        error_msg(str(e), title=self.tr("Error"))
                         return
 
             elif file_extension in ['.xlsx', '.xls']:
@@ -564,7 +564,10 @@ class ProfileInputGUI(QtWidgets.QDialog):
                     return
 
             else:
-                error_msg(text="Could not open:\n" + filename, title="File open")
+                error_msg(
+                    text=self.tr("Could not open:\n{file_name}").format(file_name=filename),
+                    title=self.tr("File open"),
+                )
                 return
 
     def try_format_the_source_data(self, df: pd.DataFrame = None) -> Tuple[pd.DataFrame, bool, Logger]:
@@ -706,7 +709,7 @@ class ProfileInputGUI(QtWidgets.QDialog):
 
         else:
             if logger.has_logs():
-                dlg = LogsDialogue("Import issues", logger)
+                dlg = LogsDialogue(self.tr("Import issues"), logger)
                 dlg.setModal(True)
                 dlg.exec()
 
@@ -1026,5 +1029,5 @@ class ProfileInputGUI(QtWidgets.QDialog):
             self.close()
         else:
             self.was_accepted = False
-            info_msg(text="No time profile.\nConsider loading a valid source of data.",
-                     title="No time profile")
+            info_msg(text=self.tr("No time profile.\nConsider loading a valid source of data."),
+                     title=self.tr("No time profile"))

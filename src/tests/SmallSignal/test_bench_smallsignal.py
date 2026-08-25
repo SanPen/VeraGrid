@@ -70,8 +70,8 @@ def test_small_signal_mathematical_benchmarks():
     mu_R, v = spla.eigs(A_bal, k=2, which="LM")
     mu_L, w = spla.eigs(A_bal.T, k=2, which="LM")
 
-    idx_R = np.argsort(mu_R.real)
-    idx_L = np.argsort(mu_L.real)
+    idx_R = np.argsort(mu_R.real, kind="stable")
+    idx_L = np.argsort(mu_L.real, kind="stable")
     v = v[:, idx_R]
     w = w[:, idx_L]
 

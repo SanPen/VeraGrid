@@ -1186,8 +1186,8 @@ class SimulationsMain(TimeEventsMain):
                 if results is not None:
                     opf_results = results
                 else:
-                    warning_msg('There are no OPF results, '
-                                'therefore this operation will not use OPF information.')
+                    warning_msg(self.tr('There are no OPF results, '
+                                'therefore this operation will not use OPF information.'))
                     self.ui.actionOpf_to_Power_flow.setChecked(False)
                     opf_results = None
             else:
@@ -1226,8 +1226,8 @@ class SimulationsMain(TimeEventsMain):
 
             if opf_time_series_results is None:
                 if use_opf:
-                    info_msg('There are no OPF time series, '
-                             'therefore this operation will not use OPF information.')
+                    info_msg(self.tr('There are no OPF time series, '
+                             'therefore this operation will not use OPF information.'))
                     self.ui.actionOpf_to_Power_flow.setChecked(False)
 
         else:
@@ -1416,7 +1416,7 @@ class SimulationsMain(TimeEventsMain):
                     logger = self.circuit.check_rms_models()
                     if logger.has_errors():
                         # Show dialogue
-                        dlg = LogsDialogue(name="RMS pre simulation check",
+                        dlg = LogsDialogue(name=self.tr("RMS pre simulation check"),
                                            logger=logger)
                         dlg.setModal(True)
                         dlg.exec()
@@ -1445,7 +1445,7 @@ class SimulationsMain(TimeEventsMain):
                             if created_group is not None:
                                 self.run_rms()
                             else:
-                                info_msg(f"No RMS Events Group was added. The RMS simulation can't run.")
+                                info_msg(self.tr("No RMS Events Group was added. The RMS simulation can't run."))
 
                 else:
                     self.show_warning_toast('Another rms simulation is running already...')
@@ -1500,7 +1500,7 @@ class SimulationsMain(TimeEventsMain):
                         if created_group is not None:
                             self.run_emt()
                         else:
-                            info_msg(f"No EMT Events Group was added. The EMT simulation can't run.")
+                            info_msg(self.tr("No EMT Events Group was added. The EMT simulation can't run."))
 
 
                 else:
@@ -1641,7 +1641,7 @@ class SimulationsMain(TimeEventsMain):
                 self.show_warning_toast("Power flow not converged :/")
 
         else:
-            warning_msg('There are no power flow results.\nIs there any slack bus or generator?', 'Power flow')
+            warning_msg(self.tr('There are no power flow results.\nIs there any slack bus or generator?'), self.tr('Power flow'))
 
         if not self.session.is_anything_running():
             self.UNLOCK()
@@ -1711,8 +1711,8 @@ class SimulationsMain(TimeEventsMain):
                 self.show_warning_toast("Power flow 3ph not converged :/")
 
         else:
-            warning_msg('There are no power flow results.\nIs there any slack bus or generator?',
-                        'Power flow')
+            warning_msg(self.tr('There are no power flow results.\nIs there any slack bus or generator?'),
+                        self.tr('Power flow'))
 
         if not self.session.is_anything_running():
             self.UNLOCK()
@@ -1857,8 +1857,8 @@ class SimulationsMain(TimeEventsMain):
                 self.show_warning_toast("State estimation not converged :/")
 
         else:
-            warning_msg('There are no state estimation results.\nIs there any slack bus or generator?',
-                        'State estimation')
+            warning_msg(self.tr('There are no state estimation results.\nIs there any slack bus or generator?'),
+                        self.tr('State estimation'))
 
         if not self.session.is_anything_running():
             self.UNLOCK()
@@ -1877,8 +1877,10 @@ class SimulationsMain(TimeEventsMain):
                 _, pf_results3ph = self.session.power_flow_3ph
 
                 if self.circuit.get_short_circuit_event_number() == 0:
-                    warning_msg('You need to define short circuits in the Database.'
-                                + '\nAdd them by right click on a bus and selecting on the context menu.')
+                    warning_msg(self.tr(
+                        "You need to define short circuits in the Database.\n"
+                        "Add them by right click on a bus and selecting on the context menu."
+                    ))
                 else:
                     methods = {event.method for event in self.circuit.short_circuit_event}
                     needs_pf = any(method in (MethodShortCircuit.sequences, MethodShortCircuit.sequences_vsc)
@@ -1892,7 +1894,9 @@ class SimulationsMain(TimeEventsMain):
                         missing.append('Run a 3-phase power flow simulation first.')
 
                     if missing:
-                        info_msg('\n'.join(missing) + '\nThe results are needed to initialize this simulation.')
+                        info_msg(self.tr(
+                            "{missing_results}\nThe results are needed to initialize this simulation."
+                        ).format(missing_results="\n".join(missing)))
                     else:
                         self.add_simulation(SimulationTypes.ShortCircuit_run)
 
@@ -1921,7 +1925,7 @@ class SimulationsMain(TimeEventsMain):
                                          prog_func=self.ui.progressBar.setValue,
                                          text_func=self.ui.progress_label.setText)
             else:
-                warning_msg('Another short circuit is being executed now...')
+                warning_msg(self.tr('Another short circuit is being executed now...'))
         else:
             pass
 
@@ -1942,7 +1946,7 @@ class SimulationsMain(TimeEventsMain):
             self.colour_diagrams()
 
         else:
-            error_msg('Something went wrong, There are no power short circuit results.')
+            error_msg(self.tr('Something went wrong, There are no power short circuit results.'))
 
         if not self.session.is_anything_running():
             self.UNLOCK()
@@ -2039,7 +2043,7 @@ class SimulationsMain(TimeEventsMain):
                                      prog_func=self.ui.progressBar.setValue,
                                      text_func=self.ui.progress_label.setText)
                 else:
-                    warning_msg('Another PTDF time series is being executed now...')
+                    warning_msg(self.tr('Another PTDF time series is being executed now...'))
             else:
                 self.show_warning_toast('There are no time series...')
 
@@ -2267,15 +2271,15 @@ class SimulationsMain(TimeEventsMain):
                     Pf_hvdc = None
 
                 if len(idx_from) == 0:
-                    error_msg('The area "from" has no buses!')
+                    error_msg(self.tr('The area "from" has no buses!'))
                     return
 
                 if len(idx_to) == 0:
-                    error_msg('The area "to" has no buses!')
+                    error_msg(self.tr('The area "to" has no buses!'))
                     return
 
                 if len(idx_br) == 0:
-                    error_msg('There are no inter-area Branches!')
+                    error_msg(self.tr('There are no inter-area Branches!'))
                     return
 
                 mode = self.ui.transferMethodComboBox.currentData()
@@ -2371,7 +2375,7 @@ class SimulationsMain(TimeEventsMain):
                             Pf_hvdc = pf_results.hvdc_Pf.real
                             use_provided_flows = True
                         else:
-                            warning_msg('There were no power flow values available. Linear flows will be used.')
+                            warning_msg(self.tr('There were no power flow values available. Linear flows will be used.'))
                             use_provided_flows = False
                             Pf_hvdc = None
                             Pf = None
@@ -2381,15 +2385,15 @@ class SimulationsMain(TimeEventsMain):
                         Pf = None
 
                     if len(idx_from) == 0:
-                        error_msg('The area "from" has no buses!')
+                        error_msg(self.tr('The area "from" has no buses!'))
                         return
 
                     if len(idx_to) == 0:
-                        error_msg('The area "to" has no buses!')
+                        error_msg(self.tr('The area "to" has no buses!'))
                         return
 
                     if len(idx_br) == 0:
-                        error_msg('There are no inter-area Branches!')
+                        error_msg(self.tr('There are no inter-area Branches!'))
                         return
 
                     mode = self.ui.transferMethodComboBox.currentData()
@@ -2519,9 +2523,9 @@ class SimulationsMain(TimeEventsMain):
                     if len(sel_bus_idx) > 0:
                         S = self.circuit.get_Sbus()
                         if S[sel_bus_idx].sum() == 0:
-                            warning_msg('You have selected a group of buses with no power injection.\n'
+                            warning_msg(self.tr('You have selected a group of buses with no power injection.\n'
                                         'this will result in an infinite continuation, since the loading variation '
-                                        'of buses with zero injection will be infinite.', 'Continuation Power Flow')
+                                        'of buses with zero injection will be infinite.'), self.tr('Continuation Power Flow'))
                             return
 
                     pf_options = self.get_selected_power_flow_options()
@@ -2611,8 +2615,8 @@ class SimulationsMain(TimeEventsMain):
                 else:
                     self.show_warning_toast('Another voltage collapse simulation is running...')
             else:
-                info_msg('Run a power flow simulation first.\n'
-                         'The results are needed to initialize this simulation.')
+                info_msg(self.tr('Run a power flow simulation first.\n'
+                         'The results are needed to initialize this simulation.'))
         else:
             pass
 
@@ -3050,7 +3054,7 @@ class SimulationsMain(TimeEventsMain):
         info: dev.InterAggregationInfo = self.get_compatible_from_to_buses_and_inter_branches()
 
         if not info.valid:
-            error_msg('There are no compatible areas')
+            error_msg(self.tr('There are no compatible areas'))
             return None
 
         idx_from = info.idx_bus_from
@@ -3062,15 +3066,15 @@ class SimulationsMain(TimeEventsMain):
         sense_hvdc_br = info.sense_hvdc
 
         if len(idx_from) == 0:
-            error_msg('The "from" aggregation has no buses!')
+            error_msg(self.tr('The "from" aggregation has no buses!'))
             return None
 
         if len(idx_to) == 0:
-            error_msg('The area "to" has no buses!')
+            error_msg(self.tr('The area "to" has no buses!'))
             return None
 
         if (len(idx_br) + len(idx_hvdc_br)) == 0:
-            error_msg('There are no inter-area Branches!')
+            error_msg(self.tr('There are no inter-area Branches!'))
             return None
 
         opts = sim.OptimalNetTransferCapacityOptions(
@@ -3360,12 +3364,12 @@ class SimulationsMain(TimeEventsMain):
                         self.set_big_bus_marker_colours(buses=self.buses_for_storage, colors=colors, tool_tips=None)
                     else:
 
-                        info_msg('No problems were detected, therefore no storage is suggested',
-                                 'Storage location')
+                        info_msg(self.tr('No problems were detected, therefore no storage is suggested'),
+                                 self.tr('Storage location'))
 
                 else:
-                    warning_msg('There is no time series simulation.\n It is needed for this functionality.',
-                                'Storage location')
+                    warning_msg(self.tr('There is no time series simulation.\n It is needed for this functionality.'),
+                                self.tr('Storage location'))
 
             else:
 
@@ -3516,8 +3520,8 @@ class SimulationsMain(TimeEventsMain):
                 else:
                     self.show_warning_toast('Another contingency analysis is being executed now...')
             else:
-                warning_msg("There are no investment groups, "
-                            "you need to create some so that VeraGrid can evaluate them ;)")
+                warning_msg(self.tr("There are no investment groups, "
+                            "you need to create some so that VeraGrid can evaluate them ;)"))
 
         else:
             pass
@@ -3628,7 +3632,7 @@ class SimulationsMain(TimeEventsMain):
                 else:
                     warning_msg('You cannot find {0} clusters for {1} time steps.\n'
                                 'Modify the number of clusters in the ML settings.'.format(n_points, nt),
-                                title="Clustering")
+                                title=self.tr("Clustering"))
 
             else:
                 self.show_warning_toast('Another clustering is being executed now...')
@@ -3658,8 +3662,8 @@ class SimulationsMain(TimeEventsMain):
         """
         Fuse the devices per node into a single device per category
         """
-        ok = yes_no_question("This action will fuse all the devices per node and per category. Are you sure?",
-                             "Fuse devices")
+        ok = yes_no_question(self.tr("This action will fuse all the devices per node and per category. Are you sure?"),
+                             self.tr("Fuse devices"))
 
         if ok:
             deleted_devices = self.circuit.fuse_devices()
@@ -3681,8 +3685,8 @@ class SimulationsMain(TimeEventsMain):
                 n = len(clustering_results.time_indices)
 
                 if n != self.ui.cluster_number_spinBox.value():
-                    error_msg("The number of clusters in the stored results is different from the specified :(\n"
-                              "Run another clustering analysis.")
+                    error_msg(self.tr("The number of clusters in the stored results is different from the specified :(\n"
+                              "Run another clustering analysis."))
                     self.ui.actionUse_clustering.setChecked(False)
                     return None
                 else:
@@ -3725,8 +3729,8 @@ class SimulationsMain(TimeEventsMain):
 
                 options = self.get_nodal_capacity_options()
                 if len(options.capacity_nodes_idx) == 0:
-                    error_msg(text="For this simulation, you need to select some buses from the interface",
-                              title="Nodal hosting capacity")
+                    error_msg(text=self.tr("For this simulation, you need to select some buses from the interface"),
+                              title=self.tr("Nodal hosting capacity"))
                     return
 
                 self.remove_simulation(SimulationTypes.NodalCapacity_run)
@@ -3757,8 +3761,8 @@ class SimulationsMain(TimeEventsMain):
                 options = self.get_nodal_capacity_options()
 
                 if len(options.capacity_nodes_idx) == 0:
-                    error_msg(text="For this simulation, you need to select some buses from the interface",
-                              title="Nodal hosting capacity")
+                    error_msg(text=self.tr("For this simulation, you need to select some buses from the interface"),
+                              title=self.tr("Nodal hosting capacity"))
                     return
 
                 if self.ts_flag():
@@ -3928,10 +3932,10 @@ class SimulationsMain(TimeEventsMain):
                                  text_func=self.ui.progress_label.setText)
 
             else:
-                info_msg('Run a power flow simulation first.\n'
-                         'The results are needed to initialize this simulation.')
+                info_msg(self.tr('Run a power flow simulation first.\n'
+                         'The results are needed to initialize this simulation.'))
         else:
-            info_msg('The simulation time is 0. Change it to a proper time in settings.')
+            info_msg(self.tr('The simulation time is 0. Change it to a proper time in settings.'))
 
     def post_rms(self) -> None:
         """
@@ -3998,7 +4002,7 @@ class SimulationsMain(TimeEventsMain):
                 self.show_info_toast("There are no active RMS event groups to report.")
 
         else:
-            warning_msg('There are no rms simulation results.', 'Rms simulation')
+            warning_msg(self.tr('There are no rms simulation results.'), self.tr('Rms simulation'))
 
         if not self.session.is_anything_running():
             self.UNLOCK()
@@ -4059,11 +4063,11 @@ class SimulationsMain(TimeEventsMain):
                                  text_func=self.ui.progress_label.setText)
 
             else:
-                info_msg('Run a power flow simulation first.\n'
-                         'The results are needed to initialize this simulation.')
+                info_msg(self.tr('Run a power flow simulation first.\n'
+                         'The results are needed to initialize this simulation.'))
 
         else:
-            info_msg('The simulation time is 0. Change it to a proper time in settings.')
+            info_msg(self.tr('The simulation time is 0. Change it to a proper time in settings.'))
 
         # if self.circuit.valid_for_simulation():
         #
@@ -4214,7 +4218,7 @@ class SimulationsMain(TimeEventsMain):
             else:
                 pass
 
-            warning_msg('There are no emt simulation results.', 'Emt simulation')
+            warning_msg(self.tr('There are no emt simulation results.'), self.tr('Emt simulation'))
 
         if not self.session.is_anything_running():
             self.UNLOCK()
@@ -4283,7 +4287,7 @@ class SimulationsMain(TimeEventsMain):
                 logger = self.circuit.check_rms_models()
                 if logger.has_errors():
                     # Show dialogue
-                    dlg = LogsDialogue(name="Small-signal stability RMS pre simulation check",
+                    dlg = LogsDialogue(name=self.tr("Small-signal stability RMS pre simulation check"),
                                        logger=logger)
                     dlg.setModal(True)
                     dlg.exec()
@@ -4320,8 +4324,8 @@ class SimulationsMain(TimeEventsMain):
                                          text_func=self.ui.progress_label.setText)
 
                     else:
-                        info_msg('Run a power flow simulation first.\n'
-                                 'The results are needed to initialize this simulation.')
+                        info_msg(self.tr('Run a power flow simulation first.\n'
+                                 'The results are needed to initialize this simulation.'))
 
             else:
                 self.show_warning_toast('Another Small-Signal stability analysis simulation is running already...')
@@ -4352,8 +4356,8 @@ class SimulationsMain(TimeEventsMain):
             else:
                 pass
 
-            warning_msg('There are no Small-Signal Stability analysis RMS results.',
-                        'Small-Signal Stability analysis RMS')
+            warning_msg(self.tr('There are no Small-Signal Stability analysis RMS results.'),
+                        self.tr('Small-Signal Stability analysis RMS'))
 
         if not self.session.is_anything_running():
             self.UNLOCK()
@@ -4370,7 +4374,7 @@ class SimulationsMain(TimeEventsMain):
                 logger = self.circuit.check_emt_models()
                 if logger.has_errors():
                     # Show dialogue
-                    dlg = LogsDialogue(name="Small-signal stability EMT pre simulation check",
+                    dlg = LogsDialogue(name=self.tr("Small-signal stability EMT pre simulation check"),
                                        logger=logger)
                     dlg.setModal(True)
                     dlg.exec()
@@ -4407,8 +4411,8 @@ class SimulationsMain(TimeEventsMain):
                                          text_func=self.ui.progress_label.setText)
 
                     else:
-                        info_msg('Run a power flow simulation first.\n'
-                                 'The results are needed to initialize this simulation.')
+                        info_msg(self.tr('Run a power flow simulation first.\n'
+                                 'The results are needed to initialize this simulation.'))
             else:
                 self.show_warning_toast('Another Small-Signal stability analysis EMT simulation is running already...')
 
@@ -4431,8 +4435,8 @@ class SimulationsMain(TimeEventsMain):
             self.show_info_toast("Small-Signal stability analysis EMT has finished correctly!")
 
         else:
-            warning_msg('There are no Small-Signal Stability analysis EMT results.',
-                        'Small-Signal Stability analysis EMT')
+            warning_msg(self.tr('There are no Small-Signal Stability analysis EMT results.'),
+                        self.tr('Small-Signal Stability analysis EMT'))
 
         if not self.session.is_anything_running():
             self.UNLOCK()
@@ -4498,8 +4502,8 @@ class SimulationsMain(TimeEventsMain):
         # the per-element selection API needed below.
         current_diagram = self.get_selected_diagram_widget()
         if not isinstance(current_diagram, SchematicWidget):
-            warning_msg("Catalogue optimization requires an active schematic diagram with a selection.",
-                        "Catalogue optimization")
+            warning_msg(self.tr("Catalogue optimization requires an active schematic diagram with a selection."),
+                        self.tr("Catalogue optimization"))
             return
         else:
             pass
@@ -4518,9 +4522,9 @@ class SimulationsMain(TimeEventsMain):
 
         # Empty selection: warn the user and stop. Running the optimization would have nothing to do.
         if len(selected_branches) == 0:
-            warning_msg("Select at least one AC line or two-winding transformer in the schematic "
-                        "before running the catalogue optimization.",
-                        "Catalogue optimization")
+            warning_msg(self.tr("Select at least one AC line or two-winding transformer in the schematic "
+                        "before running the catalogue optimization."),
+                        self.tr("Catalogue optimization"))
             return
         else:
             pass
@@ -4542,7 +4546,7 @@ class SimulationsMain(TimeEventsMain):
                 voltage_tolerance=0.1,
             )
         except ValueError as ex:
-            warning_msg(str(ex), "Catalogue optimization")
+            warning_msg(str(ex), self.tr("Catalogue optimization"))
             return
 
         # Maximum number of evaluations: scale the per-decision spinbox by the number of slots.

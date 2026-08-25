@@ -389,6 +389,22 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
         diff_init_eqs[dt_vd_f] = vfactory.add_const(0.0)
         diff_init_eqs[dt_vq_f] = vfactory.add_const(0.0)
 
+    # Runtime references own their equilibrium expressions directly. The
+    # explicit initializer resolves these expressions once and freezes the
+    # resulting scalar values before runtime events are enabled.
+    event_dict[P_ref] = P_ctrl
+    event_dict[Q_ref] = Q_ctrl
+    event_dict[vd_ref] = (
+        vd_f
+        if reconstruct_filter_voltage
+        else (vfactory.add_const(0.0) if voltage_inputs is not None else vd_f)
+    )
+    event_dict[vq_ref] = (
+        vq_f
+        if reconstruct_filter_voltage
+        else (V if voltage_inputs is not None else vq_f)
+    )
+
     core_block = Block(
         algebraic_eqs=algebraic_eqs,
         algebraic_vars=algebraic_vars,
@@ -398,8 +414,6 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
         init_eqs={
             P: p_init,
             Q: q_init,
-            P_ref: P_ctrl,
-            Q_ref: Q_ctrl,
             theta: (Va_g if reconstruct_filter_voltage else Va_f) if voltage_inputs is not None else Va_c,
             omega: vfactory.add_const(1.0),
             V: V_ref if reconstruct_filter_voltage else (Vm_f if voltage_inputs is not None else Vm_c),
@@ -410,8 +424,6 @@ def build_gfm_converter_model(vfactory: VarFactory, inputs: List[Var],
             iq_g: iq_g_init,
             vd_f: vd_f_init,
             vq_f: vq_f_init,
-            vd_ref: vd_f if reconstruct_filter_voltage else (vfactory.add_const(0.0) if voltage_inputs is not None else vd_f),
-            vq_ref: vq_f if reconstruct_filter_voltage else (V if voltage_inputs is not None else vq_f),
 
             # Capacitor currents (Rcap is large, so damping terms are negligible)
             id_c: id_c_init,

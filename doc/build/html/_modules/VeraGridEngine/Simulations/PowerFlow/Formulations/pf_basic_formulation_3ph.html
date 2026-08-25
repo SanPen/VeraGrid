@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.PowerFlow.Formulations.pf_basic_formulation_3ph &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.Simulations.PowerFlow.Formulations.pf_basic_formulation_3ph &mdash; VeraGrid 6.0.23 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/documentation_options.js?v=c7f96f52"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -119,13 +119,14 @@
                                                                                      <span class="n">compute_slack_distribution</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.Formulations.pf_formulation_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">PfFormulationTemplate</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.NumericalMethods.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">compute_current</span><span class="p">,</span>
-                                                                                     <span class="n">compute_power</span><span class="p">,</span>
-                                                                                     <span class="n">compute_fx</span><span class="p">,</span>
-                                                                                     <span class="n">polar_to_rect</span><span class="p">,</span>
-                                                                                     <span class="n">fortescue_012_to_abc</span><span class="p">)</span>
+                                                                                    <span class="n">compute_power</span><span class="p">,</span>
+                                                                                    <span class="n">compute_fx</span><span class="p">,</span>
+                                                                                    <span class="n">polar_to_rect</span><span class="p">,</span>
+                                                                                    <span class="n">fortescue_012_to_abc</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Topology.simulation_indices</span><span class="w"> </span><span class="kn">import</span> <span class="n">compile_types</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vec</span><span class="p">,</span> <span class="n">IntVec</span><span class="p">,</span> <span class="n">CxVec</span><span class="p">,</span> <span class="n">CxMat</span><span class="p">,</span> <span class="n">BoolVec</span><span class="p">,</span> <span class="n">Logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Sparse.csc2</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">CSC</span><span class="p">,</span> <span class="n">scipy_to_mat</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="n">WindingType</span>
 
 
 <div class="viewcode-block" id="lookup_from_mask">
@@ -257,12 +258,13 @@
     <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="c1"># --- build CSR-like incidence list: branches per bus (Numba-friendly) ---</span>
-    <span class="n">deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="c1"># number of incident branches per bus (the bus “degree”)</span>
+    <span class="n">deg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>  <span class="c1"># number of incident branches per bus (the bus “degree”)</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
         <span class="n">deg</span><span class="p">[</span><span class="n">F</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">deg</span><span class="p">[</span><span class="n">T</span><span class="p">[</span><span class="n">k</span><span class="p">]]</span> <span class="o">+=</span> <span class="mi">1</span>
 
-    <span class="n">ptr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span> <span class="c1"># Index pointer into bus_branches that gives where each bus’s incident branches start and end</span>
+    <span class="c1"># Index pointer into bus_branches that gives where each bus’s incident branches start and end</span>
+    <span class="n">ptr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
         <span class="n">ptr</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ptr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">deg</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
@@ -298,11 +300,11 @@
             <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
                 <span class="n">k</span> <span class="o">=</span> <span class="n">bus_branches</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
 
-                <span class="k">if</span> <span class="n">F</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">bus_idx</span> <span class="ow">and</span> <span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">conn_f</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;Yg&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">F</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">bus_idx</span> <span class="ow">and</span> <span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">conn_f</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">WindingType</span><span class="o">.</span><span class="n">GroundedStar</span><span class="o">.</span><span class="n">idx</span><span class="p">():</span>
                     <span class="n">grounded_here</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="k">break</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">T</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">bus_idx</span> <span class="ow">and</span> <span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">conn_t</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;Yg&#39;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">T</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">bus_idx</span> <span class="ow">and</span> <span class="n">nc</span><span class="o">.</span><span class="n">passive_branch_data</span><span class="o">.</span><span class="n">conn_t</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="n">WindingType</span><span class="o">.</span><span class="n">GroundedStar</span><span class="o">.</span><span class="n">idx</span><span class="p">():</span>
                         <span class="n">grounded_here</span> <span class="o">=</span> <span class="kc">True</span>
                         <span class="k">break</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -350,17 +352,26 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_generators</span><span class="p">(</span><span class="n">bus_idx</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
                        <span class="n">bus_lookup</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">,</span>
                        <span class="n">V</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
-                       <span class="n">P</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
-                       <span class="n">Q</span><span class="p">:</span> <span class="n">CxVec</span><span class="p">,</span>
-                       <span class="n">is_controlled</span><span class="p">:</span> <span class="n">BoolVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CxVec</span><span class="p">:</span>
+                       <span class="n">P</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                       <span class="n">Q</span><span class="p">:</span> <span class="n">Vec</span><span class="p">,</span>
+                       <span class="n">control_mode_int</span><span class="p">:</span> <span class="n">IntVec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CxVec</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 
+<span class="sd">    :param bus_idx:</span>
+<span class="sd">    :param bus_lookup:</span>
+<span class="sd">    :param V:</span>
+<span class="sd">    :param P:</span>
+<span class="sd">    :param Q:</span>
+<span class="sd">    :param control_mode_int:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">V</span><span class="p">)</span>
     <span class="n">nelm</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bus_idx</span><span class="p">)</span>
     <span class="n">Igen</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nelm</span><span class="p">):</span>
 
-        <span class="k">if</span> <span class="n">is_controlled</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">control_mode_int</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># GeneratorControlMode.V: 1</span>
             <span class="n">Q</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
 
         <span class="n">f</span> <span class="o">=</span> <span class="n">bus_idx</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
@@ -1169,30 +1180,36 @@
         <span class="c1"># compute the function residual</span>
         <span class="c1"># Assumes the internal vars were updated already with self.x2var()</span>
 
-        <span class="n">Igen</span> <span class="o">=</span> <span class="n">compute_generators</span><span class="p">(</span><span class="n">bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">,</span>
-                                  <span class="n">bus_lookup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_lookup</span><span class="p">,</span>
-                                  <span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
-                                  <span class="n">P</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">p</span><span class="p">,</span>
-                                  <span class="n">Q</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">q</span><span class="p">,</span>
-                                  <span class="n">is_controlled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">controllable</span><span class="p">)</span>
+        <span class="n">Igen</span> <span class="o">=</span> <span class="n">compute_generators</span><span class="p">(</span>
+            <span class="n">bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">,</span>
+            <span class="n">bus_lookup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_lookup</span><span class="p">,</span>
+            <span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+            <span class="n">P</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">p</span><span class="p">,</span>
+            <span class="n">Q</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">q</span><span class="p">,</span>
+            <span class="n">control_mode_int</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">control_mode_int</span>
+        <span class="p">)</span>
 
         <span class="p">(</span><span class="n">Ipower</span><span class="p">,</span>
          <span class="n">Y_power_linear</span><span class="p">,</span>
-         <span class="bp">self</span><span class="o">.</span><span class="n">Un_floating_power</span><span class="p">)</span> <span class="o">=</span> <span class="n">compute_power_loads</span><span class="p">(</span><span class="n">bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">,</span>
-                                                       <span class="n">bus_lookup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_lookup</span><span class="p">,</span>
-                                                       <span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
-                                                       <span class="n">Sstar</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">S3_star</span><span class="p">,</span>
-                                                       <span class="n">Sfloating</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">S3_floatingstar</span><span class="p">,</span>
-                                                       <span class="n">Sdelta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">S3_delta</span><span class="p">)</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">Un_floating_power</span><span class="p">)</span> <span class="o">=</span> <span class="n">compute_power_loads</span><span class="p">(</span>
+            <span class="n">bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">,</span>
+            <span class="n">bus_lookup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_lookup</span><span class="p">,</span>
+            <span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+            <span class="n">Sstar</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">S3_star</span><span class="p">,</span>
+            <span class="n">Sfloating</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">S3_floatingstar</span><span class="p">,</span>
+            <span class="n">Sdelta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">S3_delta</span>
+        <span class="p">)</span>
 
         <span class="p">(</span><span class="n">Icurrent</span><span class="p">,</span>
          <span class="n">Y_current_linear</span><span class="p">,</span>
-         <span class="bp">self</span><span class="o">.</span><span class="n">Un_floating_current</span><span class="p">)</span> <span class="o">=</span> <span class="n">compute_current_loads</span><span class="p">(</span><span class="n">bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">,</span>
-                                                           <span class="n">bus_lookup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_lookup</span><span class="p">,</span>
-                                                           <span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
-                                                           <span class="n">Istar</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">I3_star</span><span class="p">,</span>
-                                                           <span class="n">Idelta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">I3_delta</span><span class="p">,</span>
-                                                           <span class="n">Ifloating</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">I3_floatingstar</span><span class="p">)</span>
+         <span class="bp">self</span><span class="o">.</span><span class="n">Un_floating_current</span><span class="p">)</span> <span class="o">=</span> <span class="n">compute_current_loads</span><span class="p">(</span>
+            <span class="n">bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">,</span>
+            <span class="n">bus_lookup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_lookup</span><span class="p">,</span>
+            <span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+            <span class="n">Istar</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">I3_star</span><span class="p">,</span>
+            <span class="n">Idelta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">I3_delta</span><span class="p">,</span>
+            <span class="n">Ifloating</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">I3_floatingstar</span>
+        <span class="p">)</span>
 
         <span class="n">Ibus</span> <span class="o">=</span> <span class="p">(</span><span class="n">Igen</span> <span class="o">+</span> <span class="n">Ipower</span> <span class="o">+</span> <span class="n">Icurrent</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">Sbase</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">V</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">))</span>
         <span class="n">Icalc</span> <span class="o">=</span> <span class="n">compute_current</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Ybus</span><span class="p">,</span> <span class="n">V</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">V</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">V</span><span class="p">))</span>
@@ -1229,12 +1246,14 @@
         <span class="c1"># compute the function residual</span>
         <span class="c1"># Assumes the internal vars were updated already with self.x2var()</span>
 
-        <span class="n">Igen</span> <span class="o">=</span> <span class="n">compute_generators</span><span class="p">(</span><span class="n">bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">,</span>
-                                  <span class="n">bus_lookup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_lookup</span><span class="p">,</span>
-                                  <span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
-                                  <span class="n">P</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">p</span><span class="p">,</span>
-                                  <span class="n">Q</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">q</span><span class="p">,</span>
-                                  <span class="n">is_controlled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">controllable</span><span class="p">)</span>
+        <span class="n">Igen</span> <span class="o">=</span> <span class="n">compute_generators</span><span class="p">(</span>
+            <span class="n">bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">,</span>
+            <span class="n">bus_lookup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_lookup</span><span class="p">,</span>
+            <span class="n">V</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+            <span class="n">P</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">p</span><span class="p">,</span>
+            <span class="n">Q</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">q</span><span class="p">,</span>
+            <span class="n">control_mode_int</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">control_mode_int</span>
+        <span class="p">)</span>
 
         <span class="p">(</span><span class="n">Ipower</span><span class="p">,</span>
          <span class="n">Y_power_linear</span><span class="p">,</span>
@@ -1288,12 +1307,14 @@
         <span class="c1"># compute the function residual</span>
         <span class="c1"># Assumes the internal vars were updated already with self.x2var()</span>
 
-        <span class="n">Igen</span> <span class="o">=</span> <span class="n">compute_generators</span><span class="p">(</span><span class="n">bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">,</span>
-                                  <span class="n">bus_lookup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_lookup</span><span class="p">,</span>
-                                  <span class="n">V</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">,</span>
-                                  <span class="n">P</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">p</span><span class="p">,</span>
-                                  <span class="n">Q</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">q</span><span class="p">,</span>
-                                  <span class="n">is_controlled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">controllable</span><span class="p">)</span>
+        <span class="n">Igen</span> <span class="o">=</span> <span class="n">compute_generators</span><span class="p">(</span>
+            <span class="n">bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">,</span>
+            <span class="n">bus_lookup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_lookup</span><span class="p">,</span>
+            <span class="n">V</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">,</span>
+            <span class="n">P</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">p</span><span class="p">,</span>
+            <span class="n">Q</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">q</span><span class="p">,</span>
+            <span class="n">control_mode_int</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">control_mode_int</span>
+        <span class="p">)</span>
 
         <span class="p">(</span><span class="n">Ipower</span><span class="p">,</span>
          <span class="n">Y_power_linear</span><span class="p">,</span>
@@ -1359,7 +1380,8 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">distributed_slack</span><span class="p">:</span>
                 <span class="n">ok</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="n">compute_slack_distribution</span><span class="p">(</span><span class="n">Scalc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">Scalc</span><span class="p">,</span>
                                                        <span class="n">vd</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vd</span><span class="p">,</span>
-                                                       <span class="n">bus_installed_power</span><span class="o">=</span><span class="n">expand3ph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">installed_power</span><span class="p">)[</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">])</span>
+                                                       <span class="n">bus_installed_power</span><span class="o">=</span><span class="n">expand3ph</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">bus_data</span><span class="o">.</span><span class="n">installed_power</span><span class="p">)[</span>
+                                                           <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">])</span>
                 <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
                     <span class="n">any_change</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="c1"># Update the objective power to reflect the slack distribution</span>
@@ -1389,12 +1411,14 @@
 
         <span class="c1"># NOTE: Assumes the internal vars were updated already with self.x2var()</span>
 
-        <span class="n">Igen</span> <span class="o">=</span> <span class="n">compute_generators</span><span class="p">(</span><span class="n">bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">,</span>
-                                  <span class="n">bus_lookup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_lookup</span><span class="p">,</span>
-                                  <span class="n">V</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">,</span>
-                                  <span class="n">P</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">p</span><span class="p">,</span>
-                                  <span class="n">Q</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">q</span><span class="p">,</span>
-                                  <span class="n">is_controlled</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">controllable</span><span class="p">)</span>
+        <span class="n">Igen</span> <span class="o">=</span> <span class="n">compute_generators</span><span class="p">(</span>
+            <span class="n">bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">,</span>
+            <span class="n">bus_lookup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_lookup</span><span class="p">,</span>
+            <span class="n">V</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">,</span>
+            <span class="n">P</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">p</span><span class="p">,</span>
+            <span class="n">Q</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">q</span><span class="p">,</span>
+            <span class="n">control_mode_int</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">generator_data</span><span class="o">.</span><span class="n">control_mode_int</span>
+        <span class="p">)</span>
 
         <span class="n">Ipower</span><span class="p">,</span> <span class="n">Y_power_linear</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Un_floating_power</span> <span class="o">=</span> <span class="n">compute_power_loads</span><span class="p">(</span><span class="n">bus_idx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">nc</span><span class="o">.</span><span class="n">load_data</span><span class="o">.</span><span class="n">bus_idx</span><span class="p">,</span>
                                                                              <span class="n">bus_lookup</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bus_lookup</span><span class="p">,</span>

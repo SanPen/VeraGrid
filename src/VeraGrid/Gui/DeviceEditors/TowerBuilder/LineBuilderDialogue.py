@@ -28,7 +28,7 @@ class TowerBuilderGUI(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_TowerBuilderDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('Line builder')
+        self.setWindowTitle(self.tr('Line builder'))
 
         # create wire collection from the catalogue
         self.wires_table = WiresTable(self)
@@ -275,7 +275,7 @@ class TowerBuilderGUI(QtWidgets.QDialog):
         all_ok, logs = self.compute()
 
         if not all_ok:
-            logger_diag = LogsDialogue(name='Tower computation', logger=logs)
+            logger_diag = LogsDialogue(name=self.tr('Tower computation'), logger=logs)
             logger_diag.exec()
 
     def example_1(self):

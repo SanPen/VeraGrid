@@ -623,7 +623,7 @@ For a denominator whose sign matters, blindly writing `denominator + eps` can ch
 - Test initialization separately from a time-domain event.
 - Apply steps to one dynamic parameter at a time.
 - Inspect states, algebraic variables, retained values, and dynamic parameters around every discontinuity.
-- Compare steady state, small-signal behavior where applicable, and time-domain response against an analytical result or trusted reference.
+- Compare steady state, Small-Signal behavior where applicable, and time-domain response against an analytical result or trusted reference.
 
 ## Common failure modes
 

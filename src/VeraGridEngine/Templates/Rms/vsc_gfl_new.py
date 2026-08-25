@@ -360,10 +360,10 @@ def build_gfl_converter_model(vfactory: VarFactory, inputs,
         Ki_vac: vfactory.add_const(1.0),
         R: vfactory.add_const(0.01),
         L: vfactory.add_const(0.05),
-        P_ref: vfactory.add_const(None),
-        Q_ref: vfactory.add_const(None),
-        Vdc_ref: vfactory.add_const(None),
-        Vm_ac_ref: vfactory.add_const(None),
+        P_ref: P,
+        Q_ref: Q,
+        Vdc_ref: v_dc,
+        Vm_ac_ref: Vm,
     }
 
     # P and Q at the point of common coupling
@@ -524,26 +524,7 @@ def build_gfl_converter_model(vfactory: VarFactory, inputs,
         v_q_c: v_q_g + R * i_q - omega * L * i_d,
         vd_hat: v_d_c - (v_d_g - L * omega * i_q),
         vq_hat: v_q_c - (v_q_g + L * omega * i_d),
-        Vdc_ref: v_dc,
-        Vm_ac_ref: Vm,
-        Q_ref: Q,
-        P_ref: P,
     }
-    
-    # Add control-specific initialization
-    if control1 in [ConverterControlType.Pac, ConverterControlType.Pdc]:
-        init_eqs[P_ref] = P
-    elif control1 == ConverterControlType.Vm_dc:
-        init_eqs[Vdc_ref] = v_dc
-        # For DC voltage control, initialize i_q_ref based on initial power flow
-        init_eqs[i_q_ref] = P / v_q_g
-    
-    if control2 == ConverterControlType.Qac:
-        init_eqs[Q_ref] = Q
-    elif control2 == ConverterControlType.Vm_ac:
-        init_eqs[Vm_ac_ref] = Vm
-        # For AC voltage control, initialize i_d_ref based on initial reactive power
-        init_eqs[i_d_ref] = Q / v_q_g
 
     gfl_block_aux = Block(
         algebraic_eqs=algebraic_eqs,

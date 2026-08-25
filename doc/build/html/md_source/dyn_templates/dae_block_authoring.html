@@ -1,0 +1,953 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Writing DAE models in VeraGrid &mdash; VeraGrid 6.4.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../../_static/style.css?v=b3745da1" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=56b830b2"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="RMS device templates" href="RMS/index.html" />
+    <link rel="prev" title="Dynamic model library" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Dynamic model library</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="index.html#authoring-models">Authoring models</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Writing DAE models in VeraGrid</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#the-mental-model">The mental model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#from-a-template-to-the-global-problem">From a template to the global problem</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#anatomy-of-a-block">Anatomy of a <code class="docutils literal notranslate"><span class="pre">Block</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#variables-and-symbolic-expressions">Variables and symbolic expressions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initialization">Initialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#external-mappings">External mappings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api-object-mappings">API object mappings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ports-children-and-connections">Ports, children, and connections</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#procedural-modes-and-runtime-logic">Procedural modes and runtime logic</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#a-complete-scripting-example">A complete scripting example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#authoring-in-the-dynamic-model-editor">Authoring in the Dynamic Model Editor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#good-habits">Good habits</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#common-failure-modes">Common failure modes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#where-new-models-and-documentation-belong">Where new models and documentation belong</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#author-checklist">Author checklist</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#device-templates">Device templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#reusable-blocks-and-logic">Reusable blocks and logic</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../small_signal_stability.html">🔍Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../emt_simulations.html">🔬 EMT simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rst_source/change_log.html">Change log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Dynamic model library</a></li>
+      <li class="breadcrumb-item active">Writing DAE models in VeraGrid</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/md_source/dyn_templates/dae_block_authoring.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="writing-dae-models-in-veragrid">
+<h1>Writing DAE models in VeraGrid<a class="headerlink" href="#writing-dae-models-in-veragrid" title="Link to this heading"></a></h1>
+<p>This guide explains how to author dynamic models with VeraGrid’s symbolic <code class="docutils literal notranslate"><span class="pre">Block</span></code> system. It covers the mathematical contract, every user-facing part of a block, initialization, network and API mappings, hierarchical composition, procedural modes, and the equivalent workflows in Python and the Dynamic Model Editor.</p>
+<p>Use this guide when you need to create a new RMS or EMT model. Use the <a class="reference internal" href="index.html"><span class="std std-doc">Dynamic model library</span></a> when you need the reference page for an existing model or reusable block, and <a class="reference internal" href="../dynamic_simulations.html"><span class="std std-doc">Dynamic simulations</span></a> for the theory and simulation workflow.</p>
+<section id="the-mental-model">
+<h2>The mental model<a class="headerlink" href="#the-mental-model" title="Link to this heading"></a></h2>
+<p>A VeraGrid dynamic model is a hierarchy of symbolic blocks. Each primitive block contributes variables and equations to a global differential-algebraic equation (DAE) problem:</p>
+<div class="math">
+<p><img src="../../_images/math/47210ad8be38ac49ef50bf8a6cd5171fdfbeb367.png" alt="\dot{x} = f(x, y, p, m, t)"/></p>
+</div><div class="math">
+<p><img src="../../_images/math/3667b9d0fe9ccab73ec03cf009ccf0f0a5e17a53.png" alt="0 = g(x, y, p, m, t)"/></p>
+</div><p>where:</p>
+<ul class="simple">
+<li><p><img class="math" src="../../_images/math/888f7c323ac0341871e867220ae2d76467d74d6e.png" alt="x"/> contains continuous state variables;</p></li>
+<li><p><img class="math" src="../../_images/math/1b5e577d6216dca3af7d87aa122a0b9b360d6cb3.png" alt="y"/> contains algebraic variables;</p></li>
+<li><p><img class="math" src="../../_images/math/141bbefb74014fc5e43499901bf78607ae335583.png" alt="p"/> contains fixed or event-enabled parameters;</p></li>
+<li><p><img class="math" src="../../_images/math/e9bc7da808d33a16a8347f27a519bd067186aa66.png" alt="m"/> contains retained procedural modes;</p></li>
+<li><p><img class="math" src="../../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/> is simulation time.</p></li>
+</ul>
+<p>The solver does not execute a block diagram one box at a time. It flattens the model hierarchy, assembles all continuous equations into one numerical problem, initializes a consistent operating point, and solves the coupled system. The diagram, children, and ports organize that mathematical model and define how it connects to the rest of the grid.</p>
+<p>Procedural logic is deliberately separate. It runs at accepted simulation boundaries and updates retained values outside the continuous Newton residual. This separation prevents a residual evaluation from mutating model memory or choosing a different branch midway through a nonlinear iteration.</p>
+</section>
+<section id="from-a-template-to-the-global-problem">
+<h2>From a template to the global problem<a class="headerlink" href="#from-a-template-to-the-global-problem" title="Link to this heading"></a></h2>
+<p>The main stages are:</p>
+<ol class="arabic simple">
+<li><p>A template builder creates symbolic variables through the grid’s <code class="docutils literal notranslate"><span class="pre">VarFactory</span></code>.</p></li>
+<li><p>Primitive <code class="docutils literal notranslate"><span class="pre">Block</span></code> objects declare their variables, equations, parameters, initialization, and ports.</p></li>
+<li><p>A root <code class="docutils literal notranslate"><span class="pre">Block</span></code> groups the primitive blocks and exposes the device-level interface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">external_mapping</span></code> connects that interface to grid and power-flow semantics.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">api_obj_mapping</span></code> copies compatible static device data into model parameters.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">set_rms_model()</span></code> or <code class="docutils literal notranslate"><span class="pre">set_emt_model()</span></code> attaches the model and connects it to its bus or buses.</p></li>
+<li><p>The RMS or EMT problem builder flattens the hierarchy, initializes the model, and compiles the numerical evaluators.</p></li>
+<li><p>During the simulation, scheduled events update <code class="docutils literal notranslate"><span class="pre">event_dict</span></code> parameters and procedural entries update <code class="docutils literal notranslate"><span class="pre">mode_dict</span></code> values at accepted boundaries.</p></li>
+</ol>
+</section>
+<section id="anatomy-of-a-block">
+<h2>Anatomy of a <code class="docutils literal notranslate"><span class="pre">Block</span></code><a class="headerlink" href="#anatomy-of-a-block" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Block</span></code> class is defined in <code class="docutils literal notranslate"><span class="pre">VeraGridEngine.Utils.Symbolic.block</span></code>. The following table describes the fields relevant to model authors.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Meaning</p></th>
+<th class="head"><p>Authoring rule</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p>Human-readable block name</p></td>
+<td><p>Give every meaningful child a short, stable name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">state_vars</span></code></p></td>
+<td><p>Continuous state variables <img class="math" src="../../_images/math/888f7c323ac0341871e867220ae2d76467d74d6e.png" alt="x"/></p></td>
+<td><p>Keep the same order as <code class="docutils literal notranslate"><span class="pre">state_eqs</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">state_eqs</span></code></p></td>
+<td><p>Right-hand sides <img class="math" src="../../_images/math/0ef82e27c101be3dd7e49be846a102f7f7373e63.png" alt="\dot{x}=f(\cdot)"/></p></td>
+<td><p>Write only the derivative right-hand side, not <code class="docutils literal notranslate"><span class="pre">d_x</span> <span class="pre">-</span> <span class="pre">f</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">algebraic_vars</span></code></p></td>
+<td><p>Algebraic unknowns <img class="math" src="../../_images/math/1b5e577d6216dca3af7d87aa122a0b9b360d6cb3.png" alt="y"/></p></td>
+<td><p>Keep the same order as <code class="docutils literal notranslate"><span class="pre">algebraic_eqs</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">algebraic_eqs</span></code></p></td>
+<td><p>Algebraic residuals <img class="math" src="../../_images/math/9a3615dff9b7213857ec6c128fafd6460336b4d5.png" alt="g(\cdot)=0"/></p></td>
+<td><p>Write <code class="docutils literal notranslate"><span class="pre">left</span> <span class="pre">-</span> <span class="pre">right</span></code>, so the stored expression must equal zero.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code></p></td>
+<td><p>Constants fixed for the simulation</p></td>
+<td><p>Use for physical or controller data that are not event targets.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">event_dict</span></code></p></td>
+<td><p>Runtime parameters that scheduled events may change</p></td>
+<td><p>Use only for quantities intentionally exposed to events.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mode_dict</span></code></p></td>
+<td><p>Retained procedural values and their startup expressions</p></td>
+<td><p>A procedural writer normally updates each mode after initialization.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">init_values</span></code></p></td>
+<td><p>Direct initialization values or guesses</p></td>
+<td><p>Use when a direct value is clearer than an equation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">init_eqs</span></code></p></td>
+<td><p>Variable-to-expression initialization rules</p></td>
+<td><p>Provide a physically consistent startup relation for states, algebraic variables, and unresolved runtime parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">diff_init_eqs</span></code></p></td>
+<td><p>Initialization rules for derivative variables</p></td>
+<td><p>Use when the formulation explicitly declares <code class="docutils literal notranslate"><span class="pre">diff_vars</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">in_vars</span></code></p></td>
+<td><p>Signals or network quantities consumed by the block</p></td>
+<td><p>Inputs are supplied by another block or by a bus connection.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">out_vars</span></code></p></td>
+<td><p>Variables exposed to other blocks or the root interface</p></td>
+<td><p>An output is normally also a state, algebraic variable, or retained value.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">children</span></code></p></td>
+<td><p>Nested blocks</p></td>
+<td><p>Use children to preserve physical and control structure.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">external_mapping</span></code></p></td>
+<td><p>Semantic network and power-flow references</p></td>
+<td><p>Map a <code class="docutils literal notranslate"><span class="pre">VarPowerFlowReferenceType</span></code> to the exact model <code class="docutils literal notranslate"><span class="pre">Var</span></code> representing it.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">api_obj_mapping</span></code></p></td>
+<td><p>Static device-property references</p></td>
+<td><p>Map a <code class="docutils literal notranslate"><span class="pre">ParamPowerFlowReferenceType</span></code> to the exact parameter <code class="docutils literal notranslate"><span class="pre">Var</span></code> that receives the value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">procedural_logic</span></code></p></td>
+<td><p>Ordered runtime logic entries</p></td>
+<td><p>Writers execute in list order at accepted boundaries.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inequalities</span></code></p></td>
+<td><p>Inequality constraints</p></td>
+<td><p>Treat as an advanced formulation feature; verify solver support before relying on it.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">diff_vars</span></code></p></td>
+<td><p>Explicit derivative variables</p></td>
+<td><p>Use only when the chosen formulation requires explicit derivative symbols.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">differential_eqs</span></code></p></td>
+<td><p>Legacy differential residual representation</p></td>
+<td><p>Prefer <code class="docutils literal notranslate"><span class="pre">state_vars</span></code> plus <code class="docutils literal notranslate"><span class="pre">state_eqs</span></code> for new models.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">discrete_eqs</span></code> and <code class="docutils literal notranslate"><span class="pre">boolean_guards</span></code></p></td>
+<td><p>Advanced discrete/guard representation</p></td>
+<td><p>Prefer the public procedural-logic API for new stateful switching logic unless implementing a solver-specific formulation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reformulated_vars</span></code></p></td>
+<td><p>Auxiliary variables introduced during reformulation</p></td>
+<td><p>Normally compiler-owned rather than manually authored.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">is_decomposable</span></code></p></td>
+<td><p>Whether equations may be exposed as smaller graphical blocks</p></td>
+<td><p>Leave enabled unless the model must remain atomic.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">diagram</span></code> and <code class="docutils literal notranslate"><span class="pre">connection_intents</span></code></p></td>
+<td><p>Persisted editor layout and semantic connection state</p></td>
+<td><p>Let the Dynamic Model Editor manage these in normal authoring workflows.</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">uid</span></code> and each variable’s symbolic identities are infrastructure, not model parameters. Do not generate, copy, or rewrite them manually. Use <code class="docutils literal notranslate"><span class="pre">VarFactory</span></code> and the connection helpers so identity propagation remains consistent.</p>
+</section>
+<section id="variables-and-symbolic-expressions">
+<h2>Variables and symbolic expressions<a class="headerlink" href="#variables-and-symbolic-expressions" title="Link to this heading"></a></h2>
+<p>Create variables and constants through the <code class="docutils literal notranslate"><span class="pre">VarFactory</span></code> associated with the grid:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">voltage</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Vm&quot;</span><span class="p">,</span>
+    <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vm</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">gain</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;K&quot;</span><span class="p">)</span>
+<span class="n">gain_value</span><span class="p">:</span> <span class="n">Const</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="n">epsilon</span><span class="p">:</span> <span class="n">Const</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1e-9</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Do not create a second <code class="docutils literal notranslate"><span class="pre">Var</span></code> merely because it has the same name. Connections depend on symbolic identity, not only on display names.</p>
+<p>Symbolic expressions support ordinary arithmetic such as <code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code>, <code class="docutils literal notranslate"><span class="pre">*</span></code>, <code class="docutils literal notranslate"><span class="pre">/</span></code>, powers, and the functions exposed by <code class="docutils literal notranslate"><span class="pre">VeraGridEngine.Utils.Symbolic.symbolic</span></code>, including trigonometric, exponential, logarithmic, square-root, complex, limiter, and comparison operations. Import the symbolic module with a clear alias when several functions are needed:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sym</span>
+
+<span class="n">current_magnitude</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">current_d</span> <span class="o">*</span> <span class="n">current_d</span> <span class="o">+</span> <span class="n">current_q</span> <span class="o">*</span> <span class="n">current_q</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span>
+<span class="n">limited_reference</span><span class="p">:</span> <span class="n">Expr</span> <span class="o">=</span> <span class="n">sym</span><span class="o">.</span><span class="n">hard_sat</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">lower_limit</span><span class="p">,</span> <span class="n">upper_limit</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The symbolic expression tree is later differentiated, substituted, serialized, and compiled. Avoid ordinary Python branching based on a symbolic comparison. A symbolic expression is a model description, not a numeric value available while the template is being built.</p>
+<section id="state-equations">
+<h3>State equations<a class="headerlink" href="#state-equations" title="Link to this heading"></a></h3>
+<p>For the physical equation</p>
+<div class="math">
+<p><img src="../../_images/math/13c83d504c0bf4d210f5df804139392750b40dda.png" alt="T\dot{x}=u-x,"/></p>
+</div><p>declare <code class="docutils literal notranslate"><span class="pre">x</span></code> in <code class="docutils literal notranslate"><span class="pre">state_vars</span></code> and store only the right-hand side in <code class="docutils literal notranslate"><span class="pre">state_eqs</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span><span class="o">.</span><span class="n">state_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">x</span><span class="p">])</span>
+<span class="n">block</span><span class="o">.</span><span class="n">state_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([(</span><span class="n">u</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">time_constant</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)])</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">state_vars[i]</span></code> and <code class="docutils literal notranslate"><span class="pre">state_eqs[i]</span></code> are one pair. A mismatch in length or order changes the mathematical model.</p>
+</section>
+<section id="algebraic-equations">
+<h3>Algebraic equations<a class="headerlink" href="#algebraic-equations" title="Link to this heading"></a></h3>
+<p>For the physical equation <img class="math" src="../../_images/math/261b4f324cd5a50006f2e7dd02183cd45824c945.png" alt="y=Kx"/>, declare <code class="docutils literal notranslate"><span class="pre">y</span></code> as an algebraic variable and store a zero residual:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span><span class="o">.</span><span class="n">algebraic_vars</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">y</span><span class="p">])</span>
+<span class="n">block</span><span class="o">.</span><span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span><span class="n">y</span> <span class="o">-</span> <span class="n">gain</span> <span class="o">*</span> <span class="n">x</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Do not store only <code class="docutils literal notranslate"><span class="pre">gain</span> <span class="pre">*</span> <span class="pre">x</span></code>; that would mean <code class="docutils literal notranslate"><span class="pre">gain</span> <span class="pre">*</span> <span class="pre">x</span> <span class="pre">=</span> <span class="pre">0</span></code>, not <code class="docutils literal notranslate"><span class="pre">y</span> <span class="pre">=</span> <span class="pre">gain</span> <span class="pre">*</span> <span class="pre">x</span></code>.</p>
+</section>
+<section id="parameters-event-parameters-and-modes">
+<h3>Parameters, event parameters, and modes<a class="headerlink" href="#parameters-event-parameters-and-modes" title="Link to this heading"></a></h3>
+<p>These three categories serve different purposes:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Can a scheduled event change it?</p></th>
+<th class="head"><p>Can procedural logic write it?</p></th>
+<th class="head"><p>Typical use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">parameters</span></code></p></td>
+<td><p>No</p></td>
+<td><p>No</p></td>
+<td><p>resistance, inductance, fixed gain, fixed time constant</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">event_dict</span></code></p></td>
+<td><p>Yes</p></td>
+<td><p>No</p></td>
+<td><p>set-point, breaker command, disturbance magnitude</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mode_dict</span></code></p></td>
+<td><p>Not as a normal user event target</p></td>
+<td><p>Yes</p></td>
+<td><p>latch state, sampled value, delayed signal, operating mode</p></td>
+</tr>
+</tbody>
+</table>
+<p>The dictionary value is the startup expression or constant associated with the key variable. <code class="docutils literal notranslate"><span class="pre">Const(None)</span></code> is useful for an event parameter whose initial value must be recovered through <code class="docutils literal notranslate"><span class="pre">init_eqs</span></code>, for example from a solved active-power value.</p>
+<p>Do not put every tunable number in <code class="docutils literal notranslate"><span class="pre">event_dict</span></code>. Event parameters occupy the runtime parameter vector and form part of the public event interface. A fixed machine reactance belongs in <code class="docutils literal notranslate"><span class="pre">parameters</span></code>; an active-power reference intended for a step or ramp belongs in <code class="docutils literal notranslate"><span class="pre">event_dict</span></code>.</p>
+</section>
+</section>
+<section id="initialization">
+<h2>Initialization<a class="headerlink" href="#initialization" title="Link to this heading"></a></h2>
+<p>A dynamic model must start from a point that satisfies its algebraic equations and is consistent with its states, parameters, and the solved network operating point.</p>
+<section id="init-eqs">
+<h3><code class="docutils literal notranslate"><span class="pre">init_eqs</span></code><a class="headerlink" href="#init-eqs" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">init_eqs</span></code> maps a target variable to the expression used to initialize it:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span><span class="o">.</span><span class="n">init_eqs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">input_signal</span><span class="p">,</span>
+    <span class="n">output</span><span class="p">:</span> <span class="n">input_signal</span><span class="p">,</span>
+    <span class="n">reference</span><span class="p">:</span> <span class="n">solved_power</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>The direction is always <code class="docutils literal notranslate"><span class="pre">target:</span> <span class="pre">initial_expression</span></code>. Initialization equations are not the time-domain residuals; they are a separate construction of the starting point.</p>
+<p>Good initialization equations should:</p>
+<ul class="simple">
+<li><p>use power-flow quantities through <code class="docutils literal notranslate"><span class="pre">external_mapping</span></code> where appropriate;</p></li>
+<li><p>reconstruct internal controller and electrical variables from that operating point;</p></li>
+<li><p>provide consistent initial values for continuous states;</p></li>
+<li><p>initialize unresolved <code class="docutils literal notranslate"><span class="pre">Const(None)</span></code> event parameters;</p></li>
+<li><p>avoid contradictory assignments and circular dependencies;</p></li>
+<li><p>use the same sign and per-unit conventions as the time-domain equations.</p></li>
+</ul>
+</section>
+<section id="init-values">
+<h3><code class="docutils literal notranslate"><span class="pre">init_values</span></code><a class="headerlink" href="#init-values" title="Link to this heading"></a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">init_values</span></code> for direct startup values or useful initial guesses when no symbolic relationship is needed. Prefer a meaningful physical expression in <code class="docutils literal notranslate"><span class="pre">init_eqs</span></code> when the value depends on the operating point.</p>
+</section>
+<section id="diff-init-eqs">
+<h3><code class="docutils literal notranslate"><span class="pre">diff_init_eqs</span></code><a class="headerlink" href="#diff-init-eqs" title="Link to this heading"></a></h3>
+<p>When a formulation declares explicit derivative variables in <code class="docutils literal notranslate"><span class="pre">diff_vars</span></code>, <code class="docutils literal notranslate"><span class="pre">diff_init_eqs</span></code> supplies their initial expressions. New state-space models normally use <code class="docutils literal notranslate"><span class="pre">state_vars</span></code> and <code class="docutils literal notranslate"><span class="pre">state_eqs</span></code>, so this field is often empty.</p>
+</section>
+<section id="validate-the-equilibrium">
+<h3>Validate the equilibrium<a class="headerlink" href="#validate-the-equilibrium" title="Link to this heading"></a></h3>
+<p>Do not accept initialization merely because the solver returns a vector. Check that:</p>
+<ul class="simple">
+<li><p>the power flow converged first;</p></li>
+<li><p>the initialization residual is small;</p></li>
+<li><p>state derivatives expected to be stationary are close to zero;</p></li>
+<li><p>the initial P, Q, voltage, current, and control references agree;</p></li>
+<li><p>no limiter, latch, or protection mode starts in an unintended state.</p></li>
+</ul>
+</section>
+</section>
+<section id="external-mappings">
+<h2>External mappings<a class="headerlink" href="#external-mappings" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">external_mapping</span></code> connects model variables to semantic network and solved-operating-point quantities. Its keys are <code class="docutils literal notranslate"><span class="pre">VarPowerFlowReferenceType</span></code> enum members and its values are the exact <code class="docutils literal notranslate"><span class="pre">Var</span></code> objects used by the model:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">root</span><span class="o">.</span><span class="n">external_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+    <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vm</span><span class="p">:</span> <span class="n">voltage_magnitude</span><span class="p">,</span>
+    <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Va</span><span class="p">:</span> <span class="n">voltage_angle</span><span class="p">,</span>
+    <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">active_power</span><span class="p">,</span>
+    <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">:</span> <span class="n">reactive_power</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>This mapping has two related roles:</p>
+<ul class="simple">
+<li><p>it tells the connection helpers which variables represent the device’s bus-facing contract;</p></li>
+<li><p>it tells initialization which symbolic variables correspond to power-flow results.</p></li>
+</ul>
+<p>Use the reference that matches the topology and formulation:</p>
+<ul class="simple">
+<li><p>single-bus RMS injections commonly use <code class="docutils literal notranslate"><span class="pre">Vm</span></code>, <code class="docutils literal notranslate"><span class="pre">Va</span></code>, <code class="docutils literal notranslate"><span class="pre">P</span></code>, and <code class="docutils literal notranslate"><span class="pre">Q</span></code>;</p></li>
+<li><p>RMS branches distinguish <code class="docutils literal notranslate"><span class="pre">Vmf</span></code>/<code class="docutils literal notranslate"><span class="pre">Vaf</span></code> and <code class="docutils literal notranslate"><span class="pre">Vmt</span></code>/<code class="docutils literal notranslate"><span class="pre">Vat</span></code>, with corresponding from/to powers and currents;</p></li>
+<li><p>EMT injections use <code class="docutils literal notranslate"><span class="pre">Vdc</span></code> or the active phase references <code class="docutils literal notranslate"><span class="pre">v_N</span></code>, <code class="docutils literal notranslate"><span class="pre">v_A</span></code>, <code class="docutils literal notranslate"><span class="pre">v_B</span></code>, and <code class="docutils literal notranslate"><span class="pre">v_C</span></code>;</p></li>
+<li><p>EMT branches use from/to references such as <code class="docutils literal notranslate"><span class="pre">vf_A</span></code>, <code class="docutils literal notranslate"><span class="pre">vt_A</span></code>, <code class="docutils literal notranslate"><span class="pre">if_A</span></code>, and <code class="docutils literal notranslate"><span class="pre">it_A</span></code>.</p></li>
+</ul>
+<p>The complete and current set is defined by <code class="docutils literal notranslate"><span class="pre">VarPowerFlowReferenceType</span></code> and is offered by the GUI mapping selector.</p>
+<p>For composite models, keep the authoritative device-level mapping on the root block even when the mapped variable is owned by a child. Root mappings, root ports, and internal equations must all refer to the same symbolic identity. Do not create a duplicate root variable with the same name.</p>
+</section>
+<section id="api-object-mappings">
+<h2>API object mappings<a class="headerlink" href="#api-object-mappings" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">api_obj_mapping</span></code> maps static grid-device properties to dynamic model parameter variables:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">root</span><span class="o">.</span><span class="n">api_obj_mapping</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">({</span>
+    <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pl0</span><span class="p">:</span> <span class="n">active_power_reference</span><span class="p">,</span>
+    <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ql0</span><span class="p">:</span> <span class="n">reactive_power_reference</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>This is different from <code class="docutils literal notranslate"><span class="pre">external_mapping</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">external_mapping</span></code> identifies operating-point and network-interface variables;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">api_obj_mapping</span></code> identifies configuration values copied from the associated API device.</p></li>
+</ul>
+<p>The mapped value must be the same <code class="docutils literal notranslate"><span class="pre">Var</span></code> that appears in <code class="docutils literal notranslate"><span class="pre">parameters</span></code> or <code class="docutils literal notranslate"><span class="pre">event_dict</span></code>. Use one semantic mapping key only once in the effective block hierarchy. The available keys and their intended units are defined by <code class="docutils literal notranslate"><span class="pre">ParamPowerFlowReferenceType</span></code>; use the GUI selector or inspect that enum rather than inventing a string key.</p>
+<p>Not every dynamic parameter needs an API mapping. Controller-specific gains with no corresponding static device property should retain their template value and remain editable as dynamic parameters.</p>
+</section>
+<section id="ports-children-and-connections">
+<h2>Ports, children, and connections<a class="headerlink" href="#ports-children-and-connections" title="Link to this heading"></a></h2>
+<section id="inputs-and-outputs">
+<h3>Inputs and outputs<a class="headerlink" href="#inputs-and-outputs" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">in_vars</span></code> and <code class="docutils literal notranslate"><span class="pre">out_vars</span></code> form a block’s explicit interface:</p>
+<ul class="simple">
+<li><p>an input is consumed by the block and produced elsewhere;</p></li>
+<li><p>an output is owned by the block and exposed to another block or to the device root;</p></li>
+<li><p>a root input or output is part of the saved device contract.</p></li>
+</ul>
+<p>Marking a variable as an output does not create an equation and does not remove it from its state or algebraic collection. It only exposes the existing variable.</p>
+</section>
+<section id="hierarchical-composition">
+<h3>Hierarchical composition<a class="headerlink" href="#hierarchical-composition" title="Link to this heading"></a></h3>
+<p>Use children to group a model by physical and control responsibility:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Converter
+├── Electrical plant
+├── Measurements and PLL
+├── Outer power/voltage controller
+├── Inner current controller
+├── Modulator
+└── Protection and procedural modes
+</pre></div>
+</div>
+<p>Each child should be understandable and testable in isolation. The root should mainly own the device-level contract: children, root ports, mappings, and any genuinely global parameters.</p>
+<p>Add a child with <code class="docutils literal notranslate"><span class="pre">root.add(child)</span></code> or <code class="docutils literal notranslate"><span class="pre">root.children.append(child)</span></code>. Do not flatten a composite model manually. The problem builder performs the authoritative flattening while the editor preserves the hierarchy.</p>
+</section>
+<section id="connecting-children-in-scripting">
+<h3>Connecting children in scripting<a class="headerlink" href="#connecting-children-in-scripting" title="Link to this heading"></a></h3>
+<p>For explicit connections, use <code class="docutils literal notranslate"><span class="pre">VarFactory.add_connections()</span></code> with target inputs first and source outputs second:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">(</span>
+    <span class="nb">list</span><span class="p">([</span><span class="n">controller</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]]),</span>
+    <span class="nb">list</span><span class="p">([</span><span class="n">measurement</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]]),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">connect_models()</span></code> can connect compatible child ports that share a non-empty shared reference. Network-facing RMS and EMT models should be attached with <code class="docutils literal notranslate"><span class="pre">set_rms_model()</span></code> or <code class="docutils literal notranslate"><span class="pre">set_emt_model()</span></code> rather than by manually rewriting variable identities.</p>
+</section>
+</section>
+<section id="procedural-modes-and-runtime-logic">
+<h2>Procedural modes and runtime logic<a class="headerlink" href="#procedural-modes-and-runtime-logic" title="Link to this heading"></a></h2>
+<p>Procedural logic represents sampled, delayed, stateful, or discontinuous decisions that should not mutate the continuous DAE residual during Newton iterations.</p>
+<p>The runtime sequence is conceptually:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mode_dict</span></code> supplies startup expressions for retained modes.</p></li>
+<li><p>After continuous initialization, procedural entries evaluate once at the initialized operating point.</p></li>
+<li><p>The solver advances and accepts a time step.</p></li>
+<li><p>Procedural entries run in their stored order using the accepted state and current runtime parameters.</p></li>
+<li><p>They update their retained outputs for the next solve.</p></li>
+<li><p>Timed entries may request an exact forced event time inside a nominal integration step.</p></li>
+</ol>
+<p>A retained mode therefore has memory across accepted steps but is not a continuous state and is not solved by Newton.</p>
+<section id="a-procedural-latch">
+<h3>A procedural latch<a class="headerlink" href="#a-procedural-latch" title="Link to this heading"></a></h3>
+<p>The following fragment creates an undervoltage latch. The continuous equations may read <code class="docutils literal notranslate"><span class="pre">trip_mode</span></code>, while the procedural entry is its only writer:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.procedural_logic</span><span class="w"> </span><span class="kn">import</span> <span class="n">flipflop</span>
+
+<span class="n">trip_mode</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;trip_mode&quot;</span><span class="p">)</span>
+<span class="n">trip_voltage</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;V_trip&quot;</span><span class="p">)</span>
+<span class="n">reset_voltage</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;V_reset&quot;</span><span class="p">)</span>
+
+<span class="n">block</span><span class="o">.</span><span class="n">mode_dict</span><span class="p">[</span><span class="n">trip_mode</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+<span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">trip_voltage</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.80</span><span class="p">)</span>
+<span class="n">block</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">reset_voltage</span><span class="p">]</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.90</span><span class="p">)</span>
+<span class="n">block</span><span class="o">.</span><span class="n">procedural_logic</span> <span class="o">=</span> <span class="nb">list</span><span class="p">([</span>
+    <span class="n">flipflop</span><span class="p">(</span>
+        <span class="n">boolset</span><span class="o">=</span><span class="n">voltage_magnitude</span> <span class="o">&lt;=</span> <span class="n">trip_voltage</span><span class="p">,</span>
+        <span class="n">boolreset</span><span class="o">=</span><span class="n">voltage_magnitude</span> <span class="o">&gt;=</span> <span class="n">reset_voltage</span><span class="p">,</span>
+        <span class="n">output</span><span class="o">=</span><span class="n">trip_mode</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;undervoltage_trip&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+<p>The different trip and reset thresholds provide hysteresis and avoid chatter. A continuous residual can then use <code class="docutils literal notranslate"><span class="pre">1.0</span> <span class="pre">-</span> <span class="pre">trip_mode</span></code> as an enable factor.</p>
+</section>
+<section id="rules-for-procedural-logic">
+<h3>Rules for procedural logic<a class="headerlink" href="#rules-for-procedural-logic" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Declare retained outputs in <code class="docutils literal notranslate"><span class="pre">mode_dict</span></code> before adding their writers.</p></li>
+<li><p>Give each retained output exactly one writer.</p></li>
+<li><p>Order entries deliberately. If one entry reads a mode written by another entry at the same boundary, place the writer first unless a one-step delay is intentional.</p></li>
+<li><p>Keep mode names unique across the effective block hierarchy.</p></li>
+<li><p>Use hysteresis or pickup/dropoff delays around noisy thresholds.</p></li>
+<li><p>Use procedural logic for latches, timers, exact handovers, delayed values, moving averages, retained samples, and discontinuous switching decisions.</p></li>
+<li><p>Use continuous state equations for physical energy storage and controller integrators.</p></li>
+<li><p>Do not use procedural memory to hide an algebraic loop that should be modelled and solved explicitly.</p></li>
+</ul>
+<p>Equation-level <code class="docutils literal notranslate"><span class="pre">select()</span></code> and <code class="docutils literal notranslate"><span class="pre">ifelse()</span></code> are intentionally blocked in the public procedural API. Move the switching decision to <code class="docutils literal notranslate"><span class="pre">procedural_logic</span></code> and consume its retained mode in the equations, or use a physically justified smooth continuous approximation.</p>
+<p>The available runtime entries are documented under <a class="reference internal" href="procedural_logic/index.html"><span class="std std-doc">Runtime procedural logic</span></a>.</p>
+</section>
+</section>
+<section id="a-complete-scripting-example">
+<h2>A complete scripting example<a class="headerlink" href="#a-complete-scripting-example" title="Link to this heading"></a></h2>
+<p>This example builds a small RMS constant-power load with a first-order active-power reference. It demonstrates states, algebraic residuals, fixed and event parameters, initialization, both mappings, and the device-level interface.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsModelTemplate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Dynamic.var_factory</span><span class="w"> </span><span class="kn">import</span> <span class="n">VarFactory</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.block</span><span class="w"> </span><span class="kn">import</span> <span class="n">Block</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.symbolic</span><span class="w"> </span><span class="kn">import</span> <span class="n">Const</span><span class="p">,</span> <span class="n">Var</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DeviceType</span><span class="p">,</span>
+    <span class="n">ParamPowerFlowReferenceType</span><span class="p">,</span>
+    <span class="n">VarPowerFlowReferenceType</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">build_lagged_load_rms</span><span class="p">(</span>
+    <span class="n">var_factory</span><span class="p">:</span> <span class="n">VarFactory</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Lagged RMS load&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RmsModelTemplate</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build a constant-Q load with a lagged active-power reference.</span>
+
+<span class="sd">    :param var_factory: Grid-owned factory used to create symbolic identities.</span>
+<span class="sd">    :param name: Human-readable template and root-block name.</span>
+<span class="sd">    :return: RMS load template ready to attach to a load device.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">template</span><span class="p">:</span> <span class="n">RmsModelTemplate</span> <span class="o">=</span> <span class="n">RmsModelTemplate</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">template</span><span class="o">.</span><span class="n">tpe</span> <span class="o">=</span> <span class="n">DeviceType</span><span class="o">.</span><span class="n">LoadDevice</span>
+
+    <span class="c1"># The bus supplies voltage, while the load exposes solved active and</span>
+    <span class="c1"># reactive power through the root contract.</span>
+    <span class="n">voltage_magnitude</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Vm&quot;</span><span class="p">,</span>
+        <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vm</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">voltage_angle</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Va&quot;</span><span class="p">,</span>
+        <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Va</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">active_power</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Pl&quot;</span><span class="p">,</span>
+        <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">reactive_power</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Ql&quot;</span><span class="p">,</span>
+        <span class="n">reference</span><span class="o">=</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># The filtered reference is a physical controller state. The two</span>
+    <span class="c1"># references are runtime parameters because grid events may change them.</span>
+    <span class="n">filtered_active_power</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Pl_filtered&quot;</span><span class="p">)</span>
+    <span class="n">active_power_reference</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Pl0&quot;</span><span class="p">)</span>
+    <span class="n">reactive_power_reference</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Ql0&quot;</span><span class="p">)</span>
+    <span class="n">time_constant</span><span class="p">:</span> <span class="n">Var</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_var</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;T_p&quot;</span><span class="p">)</span>
+
+    <span class="c1"># The time constant is required to be positive. A very small regularizer</span>
+    <span class="c1"># protects evaluation at an accidental zero without replacing validation.</span>
+    <span class="n">time_constant_value</span><span class="p">:</span> <span class="n">Const</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">0.10</span><span class="p">)</span>
+    <span class="n">epsilon</span><span class="p">:</span> <span class="n">Const</span> <span class="o">=</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="mf">1e-9</span><span class="p">)</span>
+
+    <span class="n">root</span><span class="p">:</span> <span class="n">Block</span> <span class="o">=</span> <span class="n">Block</span><span class="p">(</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+        <span class="n">state_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">filtered_active_power</span><span class="p">]),</span>
+        <span class="n">state_eqs</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span>
+            <span class="p">(</span><span class="n">active_power_reference</span> <span class="o">-</span> <span class="n">filtered_active_power</span><span class="p">)</span>
+            <span class="o">/</span> <span class="p">(</span><span class="n">time_constant</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">),</span>
+        <span class="p">]),</span>
+        <span class="n">algebraic_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">active_power</span><span class="p">,</span> <span class="n">reactive_power</span><span class="p">]),</span>
+        <span class="n">algebraic_eqs</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span>
+            <span class="n">active_power</span> <span class="o">-</span> <span class="n">filtered_active_power</span><span class="p">,</span>
+            <span class="n">reactive_power</span> <span class="o">-</span> <span class="n">reactive_power_reference</span><span class="p">,</span>
+        <span class="p">]),</span>
+        <span class="n">parameters</span><span class="o">=</span><span class="nb">dict</span><span class="p">({</span>
+            <span class="n">time_constant</span><span class="p">:</span> <span class="n">time_constant_value</span><span class="p">,</span>
+        <span class="p">}),</span>
+        <span class="n">event_dict</span><span class="o">=</span><span class="nb">dict</span><span class="p">({</span>
+            <span class="n">active_power_reference</span><span class="p">:</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+            <span class="n">reactive_power_reference</span><span class="p">:</span> <span class="n">var_factory</span><span class="o">.</span><span class="n">add_const</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span>
+        <span class="p">}),</span>
+        <span class="n">init_eqs</span><span class="o">=</span><span class="nb">dict</span><span class="p">({</span>
+            <span class="n">active_power_reference</span><span class="p">:</span> <span class="n">active_power</span><span class="p">,</span>
+            <span class="n">reactive_power_reference</span><span class="p">:</span> <span class="n">reactive_power</span><span class="p">,</span>
+            <span class="n">filtered_active_power</span><span class="p">:</span> <span class="n">active_power</span><span class="p">,</span>
+        <span class="p">}),</span>
+        <span class="n">in_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">voltage_magnitude</span><span class="p">,</span> <span class="n">voltage_angle</span><span class="p">]),</span>
+        <span class="n">out_vars</span><span class="o">=</span><span class="nb">list</span><span class="p">([</span><span class="n">active_power</span><span class="p">,</span> <span class="n">reactive_power</span><span class="p">]),</span>
+        <span class="n">external_mapping</span><span class="o">=</span><span class="nb">dict</span><span class="p">({</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Vm</span><span class="p">:</span> <span class="n">voltage_magnitude</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Va</span><span class="p">:</span> <span class="n">voltage_angle</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">active_power</span><span class="p">,</span>
+            <span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">:</span> <span class="n">reactive_power</span><span class="p">,</span>
+        <span class="p">}),</span>
+        <span class="n">api_obj_mapping</span><span class="o">=</span><span class="nb">dict</span><span class="p">({</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Pl0</span><span class="p">:</span> <span class="n">active_power_reference</span><span class="p">,</span>
+            <span class="n">ParamPowerFlowReferenceType</span><span class="o">.</span><span class="n">Ql0</span><span class="p">:</span> <span class="n">reactive_power_reference</span><span class="p">,</span>
+        <span class="p">}),</span>
+    <span class="p">)</span>
+
+    <span class="n">template</span><span class="o">.</span><span class="n">block</span> <span class="o">=</span> <span class="n">root</span>
+    <span class="k">return</span> <span class="n">template</span>
+</pre></div>
+</div>
+<p>Attach the block with the shared grid factory and the standard connection helper:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.bus_rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">initialize_bus_rms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.templates_common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_rms_model</span>
+
+
+<span class="n">initialize_bus_rms</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">load</span><span class="o">.</span><span class="n">bus</span><span class="p">,</span> <span class="n">vf</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span>
+<span class="n">load_template</span><span class="p">:</span> <span class="n">RmsModelTemplate</span> <span class="o">=</span> <span class="n">build_lagged_load_rms</span><span class="p">(</span>
+    <span class="n">var_factory</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">set_rms_model</span><span class="p">(</span>
+    <span class="n">device</span><span class="o">=</span><span class="n">load</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">load_template</span><span class="o">.</span><span class="n">block</span><span class="p">,</span>
+    <span class="n">var_factory</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>For EMT, return an <code class="docutils literal notranslate"><span class="pre">EmtModelTemplate</span></code>, use phase or DC references appropriate to the device, and attach its block with <code class="docutils literal notranslate"><span class="pre">set_emt_model()</span></code>. Do not import GUI modules into <code class="docutils literal notranslate"><span class="pre">VeraGridEngine</span></code>; the same engine block must work without Qt.</p>
+<section id="making-a-template-editable-as-a-catalogue-item">
+<h3>Making a template editable as a catalogue item<a class="headerlink" href="#making-a-template-editable-as-a-catalogue-item" title="Link to this heading"></a></h3>
+<p>A reusable template builder may subclass <code class="docutils literal notranslate"><span class="pre">TemplateDefinition</span></code> and expose structural inputs through typed <code class="docutils literal notranslate"><span class="pre">TemplateProp</span></code> entries. Its <code class="docutils literal notranslate"><span class="pre">eval()</span></code> method returns the configured <code class="docutils literal notranslate"><span class="pre">RmsModelTemplate</span></code> or <code class="docutils literal notranslate"><span class="pre">EmtModelTemplate</span></code>. Use structural properties only for choices that rebuild the model, such as active phases or winding configuration. Ordinary numeric gains and time constants belong in the block parameter collections so the Block Properties editor can modify them without reconstructing the topology.</p>
+</section>
+</section>
+<section id="authoring-in-the-dynamic-model-editor">
+<h2>Authoring in the Dynamic Model Editor<a class="headerlink" href="#authoring-in-the-dynamic-model-editor" title="Link to this heading"></a></h2>
+<p>The GUI edits the same <code class="docutils literal notranslate"><span class="pre">Block</span></code> objects used by scripting. There is no separate graphical model format.</p>
+<section id="open-and-compose-a-model">
+<h3>Open and compose a model<a class="headerlink" href="#open-and-compose-a-model" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Build and solve the static network first.</p></li>
+<li><p>Right-click the target device and open the <strong>RMS editor</strong> or <strong>EMT editor</strong>.</p></li>
+<li><p>Keep the automatically provided grid-connection blocks; they define the live bus-facing interface.</p></li>
+<li><p>Drag device templates or basic blocks from <strong>Dynamic library</strong> onto the canvas.</p></li>
+<li><p>Connect output ports to compatible input ports.</p></li>
+<li><p>Split a large model into named children such as plant, measurements, outer control, inner control, and protection.</p></li>
+<li><p>Use the workspace <strong>Validate</strong> action before saving the model.</p></li>
+<li><p>Use the editor’s apply/save button and confirm the <strong>Model saved</strong> notification. Until then, the editor is working on an isolated copy.</p></li>
+</ol>
+<p>The <a class="reference internal" href="../RMS_practical_session.html"><span class="std std-doc">RMS practical session</span></a> and <a class="reference internal" href="../EMT_practical_session.html"><span class="std std-doc">EMT practical session</span></a> show the device-level workflow with screenshots.</p>
+</section>
+<section id="block-properties">
+<h3>Block Properties<a class="headerlink" href="#block-properties" title="Link to this heading"></a></h3>
+<p>Double-click a block to open <strong>Block properties</strong>. The main pages are:</p>
+<ul class="simple">
+<li><p><strong>General options</strong>: block identity, generated structural settings, numeric fixed parameters, event parameters, and modes.</p></li>
+<li><p><strong>DAE model</strong>: recursive Variables and Parameters tables, the equation owner selector, safe Python-like equation code, and LaTeX/PDF export.</p></li>
+<li><p><strong>Runtime logic</strong>: retained modes and ordered procedural entries.</p></li>
+<li><p><strong>Special settings</strong>: structured builder data for blocks that need it, such as lookup tables.</p></li>
+</ul>
+<p>Edits in the dialog are staged. <strong>Apply changes</strong> validates the complete draft and applies it atomically to the editor working copy; it does not by itself save the complete device model back to the grid.</p>
+</section>
+<section id="variables-and-mappings-in-the-gui">
+<h3>Variables and mappings in the GUI<a class="headerlink" href="#variables-and-mappings-in-the-gui" title="Link to this heading"></a></h3>
+<p>Use the Variables and Parameters tables to declare symbols. Select the correct role:</p>
+<ul class="simple">
+<li><p>Input</p></li>
+<li><p>Algebraic</p></li>
+<li><p>State</p></li>
+<li><p>Differential</p></li>
+<li><p>Parameter</p></li>
+<li><p>Dynamic parameter</p></li>
+<li><p>Mode parameter</p></li>
+</ul>
+<p>The mapping column assigns <code class="docutils literal notranslate"><span class="pre">VarPowerFlowReferenceType</span></code> to network-facing variables and <code class="docutils literal notranslate"><span class="pre">ParamPowerFlowReferenceType</span></code> to static parameters. Do not simulate a mapping by merely renaming a variable to <code class="docutils literal notranslate"><span class="pre">Vm</span></code>, <code class="docutils literal notranslate"><span class="pre">P</span></code>, or <code class="docutils literal notranslate"><span class="pre">r</span></code>; the semantic enum selection is what creates the contract.</p>
+<p>The Output checkbox exposes an existing variable as a port or result. It does not turn an input into an equation, and it does not remove a variable from its original role.</p>
+</section>
+<section id="dae-code-in-the-gui">
+<h3>DAE code in the GUI<a class="headerlink" href="#dae-code-in-the-gui" title="Link to this heading"></a></h3>
+<p>The <strong>Python code</strong> page is a safe assignment-only editor, not a general Python console. The three variable declarations are projections of the Variables table and define equation ordering:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">state_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+<span class="n">algebraic_vars</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span><span class="p">]</span>
+<span class="n">diff_vars</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">state_eqs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># Right-hand side of dx/dt.</span>
+    <span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">T</span> <span class="o">+</span> <span class="n">eps</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">algebraic_eqs</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># Residual equal to zero.</span>
+    <span class="n">y</span> <span class="o">-</span> <span class="n">K</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">init_eqs</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">x</span><span class="p">:</span> <span class="n">u</span><span class="p">,</span>
+    <span class="n">y</span><span class="p">:</span> <span class="n">K</span> <span class="o">*</span> <span class="n">u</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">diff_init_eqs</span> <span class="o">=</span> <span class="p">{}</span>
+</pre></div>
+</div>
+<p>Create or reclassify variables with the tables, not by inventing undeclared names in the code. Select the appropriate <strong>Equation owner</strong> when editing a composite model. <strong>Validate all code</strong> checks every recursive equation buffer and focuses the first inline error.</p>
+</section>
+<section id="runtime-logic-in-the-gui">
+<h3>Runtime logic in the GUI<a class="headerlink" href="#runtime-logic-in-the-gui" title="Link to this heading"></a></h3>
+<p>In <strong>Runtime logic</strong>:</p>
+<ol class="arabic simple">
+<li><p>Add retained modes and give each a startup expression.</p></li>
+<li><p>Add procedural entries and choose their type.</p></li>
+<li><p>Bind every output, target, expression, delay, threshold, or limit field.</p></li>
+<li><p>Put entries in their intended execution order.</p></li>
+<li><p>Press <strong>Validate runtime logic</strong>.</p></li>
+<li><p>Fix unknown references, missing modes, duplicate writers, invalid expressions, and order-dependent reads before applying.</p></li>
+</ol>
+<p>The editor serializes the same <code class="docutils literal notranslate"><span class="pre">mode_dict</span></code> and <code class="docutils literal notranslate"><span class="pre">procedural_logic</span></code> structures shown in the scripting examples.</p>
+</section>
+</section>
+<section id="good-habits">
+<h2>Good habits<a class="headerlink" href="#good-habits" title="Link to this heading"></a></h2>
+<section id="organize-by-responsibility">
+<h3>Organize by responsibility<a class="headerlink" href="#organize-by-responsibility" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Keep the electrical plant, measurements, controls, modulation, and protection in separate children.</p></li>
+<li><p>Give blocks and variables stable engineering names.</p></li>
+<li><p>Expose only the ports needed by other children or by the root contract.</p></li>
+<li><p>Keep network mappings and static API mappings easy to find at the root.</p></li>
+<li><p>Avoid one enormous primitive block containing an entire converter or generator.</p></li>
+</ul>
+</section>
+<section id="make-numerical-domains-explicit">
+<h3>Make numerical domains explicit<a class="headerlink" href="#make-numerical-domains-explicit" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>State the sign convention for currents and powers.</p></li>
+<li><p>State whether every quantity is SI, per unit, RMS, peak, phase, dq, or complex phasor.</p></li>
+<li><p>Use one base convention throughout a child and convert at a clear boundary.</p></li>
+<li><p>Keep phase ordering explicit and consistent, normally N-A-B-C or A-B-C as required by the template.</p></li>
+</ul>
+</section>
+<section id="protect-mathematical-domains">
+<h3>Protect mathematical domains<a class="headerlink" href="#protect-mathematical-domains" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Protect denominators that may legitimately approach zero.</p></li>
+<li><p>Add a small epsilon to positive quantities such as voltage magnitudes when division cannot be avoided.</p></li>
+<li><p>For squared norms, use a form such as <code class="docutils literal notranslate"><span class="pre">sqrt(x</span> <span class="pre">*</span> <span class="pre">x</span> <span class="pre">+</span> <span class="pre">y</span> <span class="pre">*</span> <span class="pre">y</span> <span class="pre">+</span> <span class="pre">eps)</span></code>.</p></li>
+<li><p>Protect square-root and logarithm domains with physically meaningful bounds.</p></li>
+<li><p>Validate time constants, inductances, capacitances, bases, and rated values as strictly positive when the physics requires it.</p></li>
+<li><p>Do not use epsilon to conceal an invalid model parameter. A regularizer should protect a legitimate limiting case, not make negative or nonsensical data appear valid.</p></li>
+<li><p>Choose epsilon relative to the model’s scaling. A value harmless in per unit may be inappropriate in SI units.</p></li>
+</ul>
+<p>For a denominator whose sign matters, blindly writing <code class="docutils literal notranslate"><span class="pre">denominator</span> <span class="pre">+</span> <span class="pre">eps</span></code> can change the physics near zero. Prefer a formulation derived from the physical limit, a magnitude bound with explicit sign handling, or a procedural mode that handles the singular operating region.</p>
+</section>
+<section id="preserve-dae-quality">
+<h3>Preserve DAE quality<a class="headerlink" href="#preserve-dae-quality" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Keep one equation per declared state and algebraic unknown, in the same order.</p></li>
+<li><p>Write algebraic equations as explicit zero residuals.</p></li>
+<li><p>Avoid redundant equations and duplicated unknowns.</p></li>
+<li><p>Avoid hidden algebraic loops between child interfaces when a single local equation would be clearer.</p></li>
+<li><p>Prefer smooth expressions inside Newton residuals.</p></li>
+<li><p>Move true latches and discontinuous decisions to procedural logic.</p></li>
+<li><p>Check units and scaling so residuals have comparable numerical magnitudes.</p></li>
+</ul>
+</section>
+<section id="design-initialization-with-the-model">
+<h3>Design initialization with the model<a class="headerlink" href="#design-initialization-with-the-model" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Write initialization equations while writing the dynamic equations, not afterward.</p></li>
+<li><p>Derive internal states from the solved operating point whenever possible.</p></li>
+<li><p>Initialize controller references so their initial error is zero unless a startup transient is intentional.</p></li>
+<li><p>Initialize limiter and protection modes consistently with the initial measurement.</p></li>
+<li><p>Test explicit initialization on several realistic operating points, not only at nominal voltage and zero reactive power.</p></li>
+</ul>
+</section>
+<section id="keep-runtime-categories-honest">
+<h3>Keep runtime categories honest<a class="headerlink" href="#keep-runtime-categories-honest" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Fixed configuration belongs in <code class="docutils literal notranslate"><span class="pre">parameters</span></code>.</p></li>
+<li><p>User-scheduled disturbances belong in <code class="docutils literal notranslate"><span class="pre">event_dict</span></code>.</p></li>
+<li><p>Retained logic outputs belong in <code class="docutils literal notranslate"><span class="pre">mode_dict</span></code>.</p></li>
+<li><p>Continuous memory belongs in <code class="docutils literal notranslate"><span class="pre">state_vars</span></code>.</p></li>
+<li><p>Give each mode one procedural writer.</p></li>
+<li><p>Avoid reading a later writer unless a one-step delay is part of the model.</p></li>
+</ul>
+</section>
+<section id="build-and-test-incrementally">
+<h3>Build and test incrementally<a class="headerlink" href="#build-and-test-incrementally" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Validate a primitive child before composing the whole device.</p></li>
+<li><p>Start with one device connected to a small network.</p></li>
+<li><p>Test initialization separately from a time-domain event.</p></li>
+<li><p>Apply steps to one event parameter at a time.</p></li>
+<li><p>Inspect states, algebraic variables, modes, and event parameters around every discontinuity.</p></li>
+<li><p>Compare steady state, small-signal behavior where applicable, and time-domain response against an analytical result or trusted reference.</p></li>
+</ul>
+</section>
+</section>
+<section id="common-failure-modes">
+<h2>Common failure modes<a class="headerlink" href="#common-failure-modes" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Symptom</p></th>
+<th class="head"><p>Likely cause</p></th>
+<th class="head"><p>What to inspect</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Unknown symbol in the GUI</p></td>
+<td><p>The symbol was typed in code but not declared in the tables</p></td>
+<td><p>Add or map it in Variables/Parameters and revalidate all owners.</p></td>
+</tr>
+<tr class="row-odd"><td><p>State/equation count error</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">state_vars</span></code> and <code class="docutils literal notranslate"><span class="pre">state_eqs</span></code> differ in length or order</p></td>
+<td><p>Pair each state with one right-hand side.</p></td>
+</tr>
+<tr class="row-even"><td><p>Singular Jacobian</p></td>
+<td><p>Missing equation, redundant equation, unconnected input, or zero-domain expression</p></td>
+<td><p>Count unknowns/residuals, inspect ports, and check denominators.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Initialization fails</p></td>
+<td><p>Incomplete or contradictory <code class="docutils literal notranslate"><span class="pre">init_eqs</span></code>, wrong sign, or missing external mapping</p></td>
+<td><p>Compare the time-domain equations with the startup operating point.</p></td>
+</tr>
+<tr class="row-even"><td><p>Model does not connect to the bus</p></td>
+<td><p>Wrong <code class="docutils literal notranslate"><span class="pre">VarPowerFlowReferenceType</span></code>, missing root port, or duplicated root variable</p></td>
+<td><p>Inspect the root interface and attach with the standard helper.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Static data are ignored</p></td>
+<td><p>Missing or incorrect <code class="docutils literal notranslate"><span class="pre">api_obj_mapping</span></code></p></td>
+<td><p>Map the correct enum member to the exact parameter variable.</p></td>
+</tr>
+<tr class="row-even"><td><p>An event cannot find a parameter</p></td>
+<td><p>The quantity is in <code class="docutils literal notranslate"><span class="pre">parameters</span></code> rather than <code class="docutils literal notranslate"><span class="pre">event_dict</span></code></p></td>
+<td><p>Promote only the intended event target to <code class="docutils literal notranslate"><span class="pre">event_dict</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>A mode never changes</p></td>
+<td><p>Missing procedural writer or output not declared in <code class="docutils literal notranslate"><span class="pre">mode_dict</span></code></p></td>
+<td><p>Validate runtime logic and inspect the output binding.</p></td>
+</tr>
+<tr class="row-even"><td><p>A mode changes one step late</p></td>
+<td><p>Reader appears before writer</p></td>
+<td><p>Reorder entries or document the intentional delay.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Switching chatters</p></td>
+<td><p>No hysteresis, delay, or retained state around a threshold</p></td>
+<td><p>Use separate pickup/dropoff thresholds or procedural relay logic.</p></td>
+</tr>
+<tr class="row-even"><td><p>GUI changes disappear</p></td>
+<td><p>The Block Properties draft was applied, but the complete editor model was not saved</p></td>
+<td><p>Apply the editor working copy and confirm <strong>Model saved</strong>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="where-new-models-and-documentation-belong">
+<h2>Where new models and documentation belong<a class="headerlink" href="#where-new-models-and-documentation-belong" title="Link to this heading"></a></h2>
+<p>Place engine templates according to their simulation domain:</p>
+<ul class="simple">
+<li><p>RMS device templates: <code class="docutils literal notranslate"><span class="pre">src/VeraGridEngine/Templates/Rms/</span></code></p></li>
+<li><p>EMT device templates: <code class="docutils literal notranslate"><span class="pre">src/VeraGridEngine/Templates/Emt/</span></code></p></li>
+<li><p>reusable editor catalogue blocks: <code class="docutils literal notranslate"><span class="pre">src/VeraGridEngine/Templates/BasicBlockCatalog/</span></code></p></li>
+<li><p>generic symbolic infrastructure: <code class="docutils literal notranslate"><span class="pre">src/VeraGridEngine/Utils/Symbolic/</span></code></p></li>
+<li><p>procedural runtime entries: <code class="docutils literal notranslate"><span class="pre">src/VeraGridEngine/Utils/procedural_logic.py</span></code></p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">VeraGridEngine</span></code> must remain independent of the Qt GUI. A model that needs a GUI class to build or run is in the wrong architectural layer.</p>
+<p>Place user-facing reference documentation here:</p>
+<ul class="simple">
+<li><p>RMS model pages: <code class="docutils literal notranslate"><span class="pre">doc/md_source/dyn_templates/RMS/</span></code></p></li>
+<li><p>EMT model pages: <code class="docutils literal notranslate"><span class="pre">doc/md_source/dyn_templates/EMT/</span></code></p></li>
+<li><p>reusable block pages: <code class="docutils literal notranslate"><span class="pre">doc/md_source/dyn_templates/library/</span></code></p></li>
+<li><p>procedural entry pages: <code class="docutils literal notranslate"><span class="pre">doc/md_source/dyn_templates/procedural_logic/</span></code></p></li>
+</ul>
+<p>Each new model page should document its physical purpose, equations, interface, parameter units, initialization assumptions, mappings, procedural behavior, and known domain limitations. Add or generate the corresponding catalogue entry so the model remains reachable from the <a class="reference internal" href="index.html"><span class="std std-doc">Dynamic model library</span></a>.</p>
+</section>
+<section id="author-checklist">
+<h2>Author checklist<a class="headerlink" href="#author-checklist" title="Link to this heading"></a></h2>
+<p>Before considering a model complete, verify all of the following:</p>
+<ul class="contains-task-list simple">
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">The physical domain, sign convention, units, and bases are documented.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">Every symbol was created through the shared <code class="docutils literal notranslate"><span class="pre">VarFactory</span></code>.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">State and algebraic equation counts and ordering are correct.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">Algebraic equations are zero residuals.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">Parameters, event parameters, modes, and states have distinct roles.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">Initialization is consistent with a converged power flow.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">Root <code class="docutils literal notranslate"><span class="pre">in_vars</span></code>, <code class="docutils literal notranslate"><span class="pre">out_vars</span></code>, and <code class="docutils literal notranslate"><span class="pre">external_mapping</span></code> describe the same interface.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox"><code class="docutils literal notranslate"><span class="pre">api_obj_mapping</span></code> uses enum keys and exact model variables.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">Large models are divided into meaningful children.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">Divisions, square roots, logarithms, and other restricted domains are protected appropriately.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">Discontinuous memory and latches use ordered procedural logic.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">Runtime logic has no missing modes, duplicate writers, or accidental order dependence.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">The model validates in the GUI and through scripting.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">Initialization and at least one event response have automated tests.</p></li>
+<li class="task-list-item"><p><input class="task-list-item-checkbox" disabled="disabled" type="checkbox">A documentation page is linked from the appropriate dynamic-template index.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Dynamic model library" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="RMS/index.html" class="btn btn-neutral float-right" title="RMS device templates" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

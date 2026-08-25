@@ -5,7 +5,7 @@
 from __future__ import annotations
 from typing import Union, List, TYPE_CHECKING, Callable
 import VeraGrid.ThirdParty.darkdetect as darkdetect
-from PySide6.QtCore import Qt, QPointF, QLineF
+from PySide6.QtCore import Qt, QPointF, QLineF, QCoreApplication
 from PySide6.QtWidgets import (QApplication, QGraphicsLineItem, QGraphicsItem, QGraphicsPolygonItem,
                                QGraphicsItemGroup, QGraphicsRectItem, QGraphicsEllipseItem, QGraphicsTextItem,
                                QGraphicsPathItem)
@@ -133,6 +133,18 @@ class GenericDiagramWidget:
         self.color = ACTIVE['color']
         self.style = ACTIVE['style']
 
+    def tr(self, source_text: str, disambiguation: str | None = None, n: int = -1) -> str:
+        """
+        Translate one diagram item runtime string.
+
+        :param source_text: Source string to translate.
+        :param disambiguation: Optional Qt disambiguation text.
+        :param n: Optional plural parameter.
+        :return: Translated text.
+        """
+        class_name: str = self.__class__.__name__
+        return QCoreApplication.translate(class_name, source_text, disambiguation, n)
+
     @property
     def api_object(self) -> ALL_DEV_TYPES:
         """
@@ -252,8 +264,8 @@ class GenericDiagramWidget:
         :return: ``True`` when an editor was opened.
         """
         warning_msg(
-            f"Editor launch is not implemented for {self.__class__.__name__}",
-            "Device editor",
+            self.tr("Editor launch is not implemented for {class_name}").format(class_name=self.__class__.__name__),
+            self.tr("Device editor"),
         )
         return False
 

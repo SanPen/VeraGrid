@@ -835,6 +835,45 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
         else:
             pass
 
+    def _dispose_all_pages(self) -> None:
+        """Dispose every editor page after its close guards have succeeded.
+
+        The workspace owns the complete editor hierarchy. Tearing pages down
+        here ensures floating block-properties docks are destroyed before the
+        circuit that backs them is replaced.
+
+        :return: None.
+        """
+        # Iterate over a stable snapshot because removing each tab changes the
+        # live tab order and unregisters the page from the shared session.
+        pages_to_dispose: list[DynamicBlockEditorGUI | DynamicEditorTab] = list(self.pages_iter())
+        page_to_dispose: DynamicBlockEditorGUI | DynamicEditorTab
+        for page_to_dispose in pages_to_dispose:
+            page_to_dispose.prepare_to_delete()
+            self.session.unregister_page(page_to_dispose)
+            self.remove_page(page_to_dispose)
+            page_to_dispose.setParent(None)
+            page_to_dispose.deleteLater()
+
+    def close_for_project_replacement(self) -> None:
+        """Close this workspace after session-wide guards were accepted.
+
+        Project replacement validates every page in every detachable workspace
+        before closing the first window. This method performs only the teardown
+        phase so a later workspace cannot leave a partially closed editor
+        family by rejecting the replacement.
+
+        :return: None.
+        """
+        # Stop routing new pages to the old circuit before releasing any editor
+        # object that still retains its device and symbolic working tree.
+        self._accepts_new_pages = False
+        self._dispose_all_pages()
+
+        # With no pages left, the regular close event can unregister and delete
+        # the top-level workspace without displaying the page guards again.
+        self.close()
+
     def closeEvent(self, event: QtGui.QCloseEvent) -> None:
         """
         Close the workspace window after checking every open page.
@@ -854,16 +893,7 @@ class DynamicEditorWorkspaceWindow(QtWidgets.QMainWindow):
                     pass
 
         self._accepts_new_pages = False
-        pages = [self.page_at(index) for index in range(self.editor_tabs.count())]
-        for page in pages:
-            if page is None:
-                pass
-            else:
-                page.prepare_to_delete()
-                self.session.unregister_page(page)
-                self.remove_page(page)
-                page.setParent(None)
-                page.deleteLater()
+        self._dispose_all_pages()
 
         self.session.unregister_workspace(self)
         event.accept()

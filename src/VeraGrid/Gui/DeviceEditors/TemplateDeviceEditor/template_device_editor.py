@@ -282,7 +282,7 @@ class TemplateDeviceEditor(QtWidgets.QDialog):
         self.ui = Ui_TemplateDeviceEditorDialog()
         self.ui.setupUi(self)
         self._replace_profiles_table_view()
-        self.setWindowTitle("Device editor")
+        self.setWindowTitle(self.tr("Device editor"))
         self.toast_manager: ToastManager = ToastManager(parent=self, position_top=False)
 
         prop_filter_mdl = gf.ComboModel(

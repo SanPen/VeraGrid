@@ -1603,7 +1603,7 @@ class SequenceEditorDialog(QtWidgets.QDialog):
     def __init__(self, parent, sequence_type: WaveformSequenceType | V_I_CurveSequenceType | X_Y_SequenceType ):
         super().__init__(parent)
         self.sequence_type = sequence_type
-        self.setWindowTitle("Sequence editor")
+        self.setWindowTitle(self.tr("Sequence editor"))
         self.setMinimumSize(600, 500)
 
         layout = QtWidgets.QVBoxLayout(self)
@@ -1744,8 +1744,8 @@ class SequenceEditorDialog(QtWidgets.QDialog):
             if row_count < 2:
                 QtWidgets.QMessageBox.warning(
                     self,
-                    "Invalid number of points",
-                    "At least two points are required.",
+                    self.tr("Invalid number of points"),
+                    self.tr("At least two points are required."),
                 )
                 return
 
@@ -1762,23 +1762,23 @@ class SequenceEditorDialog(QtWidgets.QDialog):
                 except ValueError:
                     QtWidgets.QMessageBox.warning(
                         self,
-                        "Invalid values",
-                        f"Non-numeric value in column 0 at row {row + 1}.",
+                        self.tr("Invalid values"),
+                        self.tr("Non-numeric value in column 0 at row {row_number}.").format(row_number=row + 1),
                     )
                     return
                 if prev_x is not None and x <= prev_x:
                     if self.sequence_type is WaveformSequenceType:
                         QtWidgets.QMessageBox.warning(
                             self,
-                            "Invalid waveform",
-                            "Arbitrary source waveform times must be strictly increasing.",
+                            self.tr("Invalid waveform"),
+                            self.tr("Arbitrary source waveform times must be strictly increasing."),
                         )
 
                     elif self.sequence_type is X_Y_SequenceType:
                         QtWidgets.QMessageBox.warning(
                             self,
-                            "Invalid points",
-                            "y points must be strictly increasing.",
+                            self.tr("Invalid points"),
+                            self.tr("y points must be strictly increasing."),
                         )
                     return
                 prev_x = x
@@ -1822,7 +1822,7 @@ class LookupMatrixEditorDialog(QtWidgets.QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Lookup matrix editor")
+        self.setWindowTitle(self.tr("Lookup matrix editor"))
         self.setMinimumSize(750, 650)
 
         main_layout = QtWidgets.QVBoxLayout(self)
@@ -2172,16 +2172,16 @@ class LookupMatrixEditorDialog(QtWidgets.QDialog):
         if len(x_vals) < 2:
             QtWidgets.QMessageBox.warning(
                 self,
-                "Invalid number of X points",
-                "At least two X breakpoints are required.",
+                self.tr("Invalid number of X points"),
+                self.tr("At least two X breakpoints are required."),
             )
             return
 
         if len(y_vals) < 2:
             QtWidgets.QMessageBox.warning(
                 self,
-                "Invalid number of Y points",
-                "At least two Y breakpoints are required.",
+                self.tr("Invalid number of Y points"),
+                self.tr("At least two Y breakpoints are required."),
             )
             return
 
@@ -2190,8 +2190,8 @@ class LookupMatrixEditorDialog(QtWidgets.QDialog):
             if x_vals[i] <= x_vals[i - 1]:
                 QtWidgets.QMessageBox.warning(
                     self,
-                    "Invalid X breakpoints",
-                    "X values must be strictly increasing.",
+                    self.tr("Invalid X breakpoints"),
+                    self.tr("X values must be strictly increasing."),
                 )
                 return
 
@@ -2200,8 +2200,8 @@ class LookupMatrixEditorDialog(QtWidgets.QDialog):
             if y_vals[i] <= y_vals[i - 1]:
                 QtWidgets.QMessageBox.warning(
                     self,
-                    "Invalid Y breakpoints",
-                    "Y values must be strictly increasing.",
+                    self.tr("Invalid Y breakpoints"),
+                    self.tr("Y values must be strictly increasing."),
                 )
                 return
 
@@ -2296,7 +2296,9 @@ class WindingTypeDelegate(QtWidgets.QItemDelegate):
             ("Neutral Star (Yn)", WindingType.NeutralStar),
             ("Floating Star (Y)", WindingType.FloatingStar),
             ("Delta", WindingType.Delta),
-            ("ZigZag (Z)", WindingType.ZigZag),
+            ("Grounded ZigZag (Zg)", WindingType.GroundedZigZag),
+            ("Neutral ZigZag (Zn)", WindingType.NeutralZigZag),
+            ("Floating ZigZag (Z)", WindingType.FloatingZigZag),
         ]
 
     @QtCore.Slot()

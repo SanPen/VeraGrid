@@ -38,7 +38,8 @@ def _winding_type_to_pf_code(winding_type: WindingType) -> str:
         WindingType.NeutralStar: "Y",
         WindingType.GroundedStar: "YN",
         WindingType.Delta: "D",
-        WindingType.ZigZag: "Z",
+        WindingType.FloatingZigZag: "Z",
+        WindingType.NeutralZigZag: "ZN",
     }
     return conversion_dict.get(winding_type, "Y")
 

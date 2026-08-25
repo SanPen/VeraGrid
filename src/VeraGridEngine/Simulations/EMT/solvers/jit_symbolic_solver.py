@@ -1534,7 +1534,7 @@ def _print_residual_debug_table(res: Vec,
         print("            residual table labels may be wrong.\n")
 
     abs_res = np.abs(res)
-    top_indices = np.argsort(abs_res)[::-1]
+    top_indices = np.argsort(abs_res, kind="stable")[::-1]
 
     width_idx = 4
     width_kind = 6

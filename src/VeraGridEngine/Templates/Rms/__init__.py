@@ -20,11 +20,13 @@ from VeraGridEngine.Templates.Rms.pvd1_rms_template import get_pvd1_rms_template
 from VeraGridEngine.Templates.Rms.esd1_rms_template import get_esd1_rms_template
 from VeraGridEngine.Templates.Rms.voltage_source_template import VoltageSourceBuild
 from VeraGridEngine.Templates.Rms.vsc_gfl_dclinked import build_vsc_rms
-from VeraGridEngine.Templates.Rms.hvdc_vsc_gfl_rms_template import (
+from VeraGridEngine.Templates.Rms.hvdc_vsc_gfl_rms_template_v2 import (
+    HvdcVscGflRmsTemplate,
     build_hvdc_vsc_gfl_rms,
     get_hvdc_vdc_q_vsc_rms,
     get_hvdc_pdc_q_vsc_rms,
 )
+from VeraGridEngine.Templates.Rms.dc_line_rms_template_v2 import DcLineRmsTemplateV2, build_dc_line_rms_v2
 from VeraGridEngine.Templates.Rms.dc_voltage_source import DCPVSourceAveraged
 from VeraGridEngine.Templates.Rms.basic_devices import get_pll_transform_rms, get_pi_current_controller, get_pi_power_controller, get_gfl_converter_rms
 from VeraGridEngine.Templates.Rms.empty_rms_template import get_empty_rms_template

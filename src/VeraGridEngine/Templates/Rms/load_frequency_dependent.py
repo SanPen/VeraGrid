@@ -63,7 +63,7 @@ def FrequencyLoadBuild(vfactory: VarFactory, name: str = "", Pl0=1.0, Ql0=0.1) -
     event_dict = {
         P0: vfactory.add_const(Pl0),
         Q0: vfactory.add_const(Ql0),
-        V0: vfactory.add_const(None),
+        V0: inputs[0],
 
         # Exponential Parameters
         alpha_p: vfactory.add_const(1.2),
@@ -72,12 +72,10 @@ def FrequencyLoadBuild(vfactory: VarFactory, name: str = "", Pl0=1.0, Ql0=0.1) -
         beta_q: vfactory.add_const(1.2),
 
         Tf: vfactory.add_const(0.1),
-        theta0: vfactory.add_const(None),
+        theta0: inputs[1],
     }
 
     init_eqs = {
-        V0: inputs[0],
-        theta0: inputs[1],
         P: P0,
         Q: Q0,
     }

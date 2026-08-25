@@ -588,7 +588,7 @@ class LoadDesigner(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui: Ui_Dialog = Ui_Dialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('Load designer')
+        self.setWindowTitle(self.tr('Load designer'))
 
         if time_array is None:
             start_time: datetime = datetime(year=2026, month=1, day=1)

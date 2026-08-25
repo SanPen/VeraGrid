@@ -47,10 +47,27 @@ def decompose_block_in_place(block: Block, var_factory: VarFactory) -> Dict[int,
 
     :param block: Block whose equations will be decomposed.
     :param var_factory: ``VarFactory`` instance required by the decomposer.
-    :return: None.
+    :return: Block-type mapping for the generated operation children, or an
+        empty mapping when no graphical decomposition can be generated.
     """
     decomposer = EquationDecomposer(var_factory)
     decomposed, block2blocktype = decomposer.decompose(block)
+
+    # Some RMS blocks intentionally expose algebraic variables that are not
+    # lowered into their explicit graphical subset. That partial decomposition
+    # is valid and is relied upon by models such as GENROW. Reject only the
+    # destructive case where a non-empty equation block produces no operation
+    # children at all, which would replace the complete DAE with empty ports.
+    decomposition_has_content: bool = len(decomposed.children) > 0
+    if decomposition_has_content:
+        pass
+    else:
+        # Keep an entirely implicit block intact and prevent repeated empty
+        # decomposition attempts. Its complete equations remain available
+        # through the atomic block's properties dialogue.
+        block.is_decomposable = False
+        return dict()
+
     preserved_uid = block.uid
     block.name = decomposed.name
     block.is_decomposable = decomposed.is_decomposable

@@ -32,7 +32,7 @@ class TransformerEditor(QtWidgets.QDialog):
         super().__init__()
         self.ui = Ui_TransformerEditorDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle("Transformer editor")
+        self.setWindowTitle(self.tr("Transformer editor"))
 
         self.transformer_obj: Transformer2W = branch
         self.sbase: float = grid.Sbase

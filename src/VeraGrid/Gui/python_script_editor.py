@@ -90,6 +90,22 @@ class ScriptingPythonEditor(BasePythonCodeEditor):
         self._completion_shortcut.activated.connect(self._trigger_completion)
         self._last_prefix: str = ""
 
+    def set_dark_mode(self) -> None:
+        """Apply dark mode to the editor and syntax highlighter.
+
+        :return: None.
+        """
+        BasePythonCodeEditor.set_dark_mode(self)
+        self._highlighter.set_dark_mode()
+
+    def set_light_mode(self) -> None:
+        """Apply light mode to the editor and syntax highlighter.
+
+        :return: None.
+        """
+        BasePythonCodeEditor.set_light_mode(self)
+        self._highlighter.set_light_mode()
+
     def add_var(self, name: str, val: Any) -> None:
         """Expose one object to Scripting completion and execution.
 

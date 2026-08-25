@@ -22,7 +22,7 @@ class SyncDialogueWindow(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('Sync conflicts')
+        self.setWindowTitle(self.tr('Sync conflicts'))
 
         self.file_sync_thread = file_sync_thread
 

@@ -242,11 +242,17 @@ def get_open_meteo_wind_weather_df(time_index: pd.DatetimeIndex,
             weather_df["surface_pressure"] = np.asarray(hourly["surface_pressure"], dtype=float)
             return True, weather_df
         else:
-            error_msg("Open-Meteo did not return hourly weather data")
+            error_msg(QtCore.QCoreApplication.translate(
+                "MainWindow",
+                "Open-Meteo did not return hourly weather data",
+            ))
             return False, pd.DataFrame()
 
     except (requests.RequestException, KeyError, ValueError, TypeError) as err:
-        error_msg("Open-Meteo weather request failed :(\n" + str(err))
+        error_msg(QtCore.QCoreApplication.translate(
+            "MainWindow",
+            "Open-Meteo weather request failed :(\n{error_text}",
+        ).format(error_text=str(err)))
         return False, pd.DataFrame()
 
 
@@ -293,14 +299,20 @@ def load_windpowerlib_turbine_templates() -> Tuple[bool, pd.DataFrame]:
     try:
         from windpowerlib import data as wt
     except ImportError as err:
-        error_msg("windpowerlib is required to load turbine templates:\n" + str(err))
+        error_msg(QtCore.QCoreApplication.translate(
+            "MainWindow",
+            "windpowerlib is required to load turbine templates:\n{error_text}",
+        ).format(error_text=str(err)))
         return False, pd.DataFrame()
 
     try:
         templates_df: pd.DataFrame = wt.get_turbine_types(print_out=False)
         return True, templates_df
     except (KeyError, ValueError, TypeError) as err:
-        error_msg("windpowerlib turbine template loading failed :(\n" + str(err))
+        error_msg(QtCore.QCoreApplication.translate(
+            "MainWindow",
+            "windpowerlib turbine template loading failed :(\n{error_text}",
+        ).format(error_text=str(err)))
         return False, pd.DataFrame()
 
 
@@ -466,7 +478,10 @@ def calculate_wind_power_with_windpowerlib(weather_df: pd.DataFrame,
     try:
         from windpowerlib import ModelChain
     except ImportError as err:
-        error_msg("windpowerlib is required to generate wind power profiles:\n" + str(err))
+        error_msg(QtCore.QCoreApplication.translate(
+            "MainWindow",
+            "windpowerlib is required to generate wind power profiles:\n{error_text}",
+        ).format(error_text=str(err)))
         return False, pd.Series(dtype=float)
 
     nominal_power_w: float = peak_power * 1e6
@@ -496,7 +511,10 @@ def calculate_wind_power_with_windpowerlib(weather_df: pd.DataFrame,
                                                                                            upper=nominal_power_w)
         return True, power_output
     except (KeyError, ValueError, TypeError) as err:
-        error_msg("windpowerlib wind calculation failed :(\n" + str(err))
+        error_msg(QtCore.QCoreApplication.translate(
+            "MainWindow",
+            "windpowerlib wind calculation failed :(\n{error_text}",
+        ).format(error_text=str(err)))
         return False, pd.Series(dtype=float)
 
 
@@ -612,15 +630,24 @@ def get_wind_power_df(time_array: Sequence[Union[str, datetime, pd.Timestamp]],
                 if valid_longitude:
                     if valid_peak_power:
                         if valid_hub_height:
-                            error_msg("The roughness length must be zero or greater")
+                            error_msg(QtCore.QCoreApplication.translate(
+                                "MainWindow",
+                                "The roughness length must be zero or greater",
+                            ))
                         else:
-                            error_msg("The hub height must be greater than zero")
+                            error_msg(QtCore.QCoreApplication.translate("MainWindow", "The hub height must be greater than zero"))
                     else:
-                        error_msg("The wind generator peak power must be greater than zero")
+                        error_msg(QtCore.QCoreApplication.translate(
+                            "MainWindow",
+                            "The wind generator peak power must be greater than zero",
+                        ))
                 else:
-                    error_msg("The longitude must be between -180 and 180 degrees")
+                    error_msg(QtCore.QCoreApplication.translate(
+                        "MainWindow",
+                        "The longitude must be between -180 and 180 degrees",
+                    ))
             else:
-                error_msg("The latitude must be between -90 and 90 degrees")
+                error_msg(QtCore.QCoreApplication.translate("MainWindow", "The latitude must be between -90 and 90 degrees"))
 
             return False, pd.DataFrame(data=dict(P=np.zeros(len(time_array))))
     else:
@@ -851,7 +878,9 @@ class WindFarmWizard(QtWidgets.QDialog):
                                                   turbine_type=self.get_selected_turbine_type())
             return turbine
         except (ImportError, KeyError, ValueError, TypeError) as err:
-            error_msg("The selected wind turbine could not be created:\n" + str(err))
+            error_msg(self.tr("The selected wind turbine could not be created:\n{error_text}").format(
+                error_text=str(err),
+            ))
             return None
 
     def plot_design_curves(self) -> None:
@@ -898,7 +927,7 @@ class WindFarmWizard(QtWidgets.QDialog):
                 figure.tight_layout()
                 plt.show()
             else:
-                error_msg("The selected turbine has no design curves")
+                error_msg(self.tr("The selected turbine has no design curves"))
         else:
             pass
 

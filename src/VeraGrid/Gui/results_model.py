@@ -3,6 +3,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 # SPDX-License-Identifier: MPL-2.0
 import io
+from enum import Enum
 from typing import Any
 
 import numpy as np
@@ -139,6 +140,8 @@ class ResultsModel(WrappableTableModel):
 
                 if isinstance(val, str):
                     return val
+                elif isinstance(val, Enum):
+                    return str(val)
                 elif isinstance(val, complex):
                     if val.real != 0 or val.imag != 0:
                         return val.__format__(self.table.format_string)
@@ -361,4 +364,4 @@ class ResultsModel(WrappableTableModel):
                             selected_rows=selected_rows,
                             stacked=stacked)
         except ValueError as e:
-            error_msg(text=str(e), title="Plotting error")
+            error_msg(text=str(e), title=self.tr("Plotting error"))

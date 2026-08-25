@@ -7,7 +7,7 @@ import copy
 from typing import Tuple
 
 from VeraGridEngine.Devices.Parents.pointer_device_parent import PointerDeviceParent
-from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.block import Block, normalize_event_parameter_initialization
 from VeraGridEngine.enumerations import DeviceType, SubObjectType
 from VeraGridEngine.Devices.Parents.editable_device import GCProp
 
@@ -79,13 +79,20 @@ class RmsModelTemplate(PointerDeviceParent):
         return result
 
     @property
-    def block(self):
-        """
+    def block(self) -> Block:
+        """Return the normalized symbolic block owned by this RMS template.
 
-        :return:
+        :return: RMS symbolic block using one initialization source per event parameter.
         """
+        normalize_event_parameter_initialization(block=self._block)
         return self._block
 
     @block.setter
-    def block(self, obj: Block):
+    def block(self, obj: Block) -> None:
+        """Replace the RMS block and normalize legacy event initialization.
+
+        :param obj: Complete symbolic block assigned to the template.
+        :return: None.
+        """
         self._block = obj
+        normalize_event_parameter_initialization(block=self._block)

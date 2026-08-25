@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Compilers.circuit_to_gslv &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.Compilers.circuit_to_gslv &mdash; VeraGrid 6.0.23 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../_static/documentation_options.js?v=c7f96f52"></script>
       <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -3197,6 +3197,14 @@
 
 
 
+<div class="viewcode-block" id="convert_gslv_arr_to_idx">
+<a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_gslv.convert_gslv_arr_to_idx">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_gslv_arr_to_idx</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+    <span class="n">pg_to_idx</span> <span class="o">=</span> <span class="p">{</span><span class="n">pg_val</span><span class="p">:</span> <span class="n">gc_val</span><span class="o">.</span><span class="n">idx</span><span class="p">()</span> <span class="k">for</span> <span class="n">gc_val</span><span class="p">,</span> <span class="n">pg_val</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">pg_to_idx</span><span class="p">[</span><span class="n">e</span><span class="p">]</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span></div>
+
+
+
 <div class="viewcode-block" id="compare_branch_parent_data">
 <a class="viewcode-back" href="../../../rst_source/api/auto/VeraGridEngine.Compilers.html#VeraGridEngine.Compilers.circuit_to_gslv.compare_branch_parent_data">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compare_branch_parent_data</span><span class="p">(</span><span class="n">gslv_branch_data</span><span class="p">:</span> <span class="n">pg</span><span class="o">.</span><span class="n">BranchParentData</span><span class="p">,</span>
@@ -3288,11 +3296,11 @@
     <span class="n">errors</span> <span class="o">+=</span> <span class="n">CheckArr</span><span class="p">(</span><span class="n">nc_gslv</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">alpha2</span><span class="p">,</span> <span class="n">nc_gc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">alpha2</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="s1">&#39;VscData&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha2&#39;</span><span class="p">)</span>
     <span class="n">errors</span> <span class="o">+=</span> <span class="n">CheckArr</span><span class="p">(</span><span class="n">nc_gslv</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">alpha3</span><span class="p">,</span> <span class="n">nc_gc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">alpha3</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="s1">&#39;VscData&#39;</span><span class="p">,</span> <span class="s1">&#39;alpha3&#39;</span><span class="p">)</span>
 
-    <span class="n">errors</span> <span class="o">+=</span> <span class="n">CheckArrEq</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nc_gslv</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control1</span><span class="p">),</span>
-                         <span class="n">convert_arr</span><span class="p">(</span><span class="n">nc_gc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control1</span><span class="p">,</span> <span class="n">converter_control_type_dict</span><span class="p">),</span>
+    <span class="n">errors</span> <span class="o">+=</span> <span class="n">CheckArrEq</span><span class="p">(</span><span class="n">convert_gslv_arr_to_idx</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nc_gslv</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control1</span><span class="p">),</span> <span class="n">converter_control_type_dict</span><span class="p">),</span>
+                         <span class="n">nc_gc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control1_int</span><span class="p">,</span>
                          <span class="s1">&#39;VscData&#39;</span><span class="p">,</span> <span class="s1">&#39;control1&#39;</span><span class="p">)</span>
-    <span class="n">errors</span> <span class="o">+=</span> <span class="n">CheckArrEq</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nc_gslv</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control2</span><span class="p">),</span>
-                         <span class="n">convert_arr</span><span class="p">(</span><span class="n">nc_gc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control2</span><span class="p">,</span> <span class="n">converter_control_type_dict</span><span class="p">),</span>
+    <span class="n">errors</span> <span class="o">+=</span> <span class="n">CheckArrEq</span><span class="p">(</span><span class="n">convert_gslv_arr_to_idx</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nc_gslv</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control2</span><span class="p">),</span> <span class="n">converter_control_type_dict</span><span class="p">),</span>
+                         <span class="n">nc_gc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control2_int</span><span class="p">,</span>
                          <span class="s1">&#39;VscData&#39;</span><span class="p">,</span> <span class="s1">&#39;control2&#39;</span><span class="p">)</span>
 
     <span class="n">errors</span> <span class="o">+=</span> <span class="n">CheckArr</span><span class="p">(</span><span class="n">nc_gslv</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control1_val</span><span class="p">,</span> <span class="n">nc_gc</span><span class="o">.</span><span class="n">vsc_data</span><span class="o">.</span><span class="n">control1_val</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="s1">&#39;VscData&#39;</span><span class="p">,</span> <span class="s1">&#39;control1_val&#39;</span><span class="p">)</span>
@@ -3320,8 +3328,8 @@
     <span class="n">errors</span> <span class="o">+=</span> <span class="n">CheckArr</span><span class="p">(</span><span class="n">nc_gslv</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">Vnt</span><span class="p">,</span> <span class="n">nc_gc</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">Vnt</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="s1">&#39;HvdcData&#39;</span><span class="p">,</span> <span class="s1">&#39;Vnt&#39;</span><span class="p">)</span>
     <span class="n">errors</span> <span class="o">+=</span> <span class="n">CheckArr</span><span class="p">(</span><span class="n">nc_gslv</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">angle_droop</span><span class="p">,</span> <span class="n">nc_gc</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">angle_droop</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="s1">&#39;HvdcData&#39;</span><span class="p">,</span> <span class="s1">&#39;control1_val&#39;</span><span class="p">)</span>
 
-    <span class="n">errors</span> <span class="o">+=</span> <span class="n">CheckArrEq</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nc_gslv</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">control_mode</span><span class="p">),</span>
-                         <span class="n">convert_arr</span><span class="p">(</span><span class="n">nc_gc</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">control_mode</span><span class="p">,</span> <span class="n">hvdc_control_mode_dict</span><span class="p">),</span>
+    <span class="n">errors</span> <span class="o">+=</span> <span class="n">CheckArrEq</span><span class="p">(</span><span class="n">convert_gslv_arr_to_idx</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nc_gslv</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">control_mode</span><span class="p">),</span> <span class="n">hvdc_control_mode_dict</span><span class="p">),</span>
+                         <span class="n">nc_gc</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">control_mode_int</span><span class="p">,</span>
                          <span class="s1">&#39;HvdcData&#39;</span><span class="p">,</span> <span class="s1">&#39;control_mode&#39;</span><span class="p">)</span>
 
     <span class="n">errors</span> <span class="o">+=</span> <span class="n">CheckArr</span><span class="p">(</span><span class="n">nc_gslv</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">Qmin_f</span><span class="p">,</span> <span class="n">nc_gc</span><span class="o">.</span><span class="n">hvdc_data</span><span class="o">.</span><span class="n">Qmin_f</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="s1">&#39;HvdcData&#39;</span><span class="p">,</span> <span class="s1">&#39;Qmin_f&#39;</span><span class="p">)</span>

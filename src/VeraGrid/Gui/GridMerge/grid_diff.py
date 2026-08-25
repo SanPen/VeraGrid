@@ -297,7 +297,7 @@ class GridDiffDialogue(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('Grid differential')
+        self.setWindowTitle(self.tr('Grid differential'))
 
         self.ui.treeWidget.setHeaderLabels(
             ["Grid", "Object type", "action", "idtag", "name", "property", "value", "new value"]
@@ -312,7 +312,7 @@ class GridDiffDialogue(QtWidgets.QDialog):
         _, ok = self._current_grid.get_all_elements_dict(logger=self.logger)
 
         if not ok:
-            dlg = LogsDialogue('The circuit has duplicated idtags and cannot be differentiated :(', self.logger)
+            dlg = LogsDialogue(self.tr('The circuit has duplicated idtags and cannot be differentiated :('), self.logger)
             dlg.exec()
             return
 
@@ -351,7 +351,7 @@ class GridDiffDialogue(QtWidgets.QDialog):
         files_types = "VeraGrid (*.gridcal, *.veragrid)"
 
         filename, type_selected = QtWidgets.QFileDialog.getOpenFileName(parent=self,
-                                                                        caption="Open base grid",
+                                                                        caption=self.tr("Open base grid"),
                                                                         filter=files_types)
 
         if len(filename) > 0:
@@ -374,7 +374,10 @@ class GridDiffDialogue(QtWidgets.QDialog):
                 self.ui.progressFrame.setVisible(True)
                 self.open_file_thread_object.start()
             else:
-                error_msg(title="File not found", text=f"{filename} not found :(")
+                error_msg(
+                    title=self.tr("File not found"),
+                    text=self.tr("{file_name} not found :(").format(file_name=filename),
+                )
 
         else:
             self.open_file_thread_object = None
@@ -402,7 +405,7 @@ class GridDiffDialogue(QtWidgets.QDialog):
                         self.diff_objects_dict, _ = self._diff.get_all_elements_dict(logger=self.logger)
 
                         if thread.logger.has_logs():
-                            dlg = LogsDialogue('Errors while computing the differential :(',
+                            dlg = LogsDialogue(self.tr('Errors while computing the differential :('),
                                                thread.logger)
                             dlg.exec()
                     else:
@@ -472,13 +475,13 @@ class GridDiffDialogue(QtWidgets.QDialog):
         :return:
         """
         if self._diff is None:
-            error_msg(text="No differential created :(\nDid you load a base grid to compare?",
-                      title="No diff")
+            error_msg(text=self.tr("No differential created :(\nDid you load a base grid to compare?"),
+                      title=self.tr("No diff"))
         else:
             # select the file to save
-            filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self, 'Save file',
+            filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save file'),
                                                                             self._diff.name,
-                                                                            "VeraGrid diff (*.dveragrid)")
+                                                                            self.tr("VeraGrid diff (*.dveragrid)"))
 
             if filename != '':
 
@@ -520,8 +523,8 @@ class GridDiffDialogue(QtWidgets.QDialog):
         down QThread wrappers while Qt is still delivering their signals.
         """
         if self.any_thread_running():
-            warning_msg("Wait for the differential worker to finish before closing this window.",
-                        "Grid differential")
+            warning_msg(self.tr("Wait for the differential worker to finish before closing this window."),
+                        self.tr("Grid differential"))
             event.ignore()
             return
 

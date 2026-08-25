@@ -369,6 +369,13 @@ class DynamicEditorTab(QtWidgets.QWidget):
         :return: None.
         """
         content_block: Block = resolve_navigation_content_block(block)
+        if content_block.uid == self._navigation.current_block.uid:
+            # Atomic leaf editors render their own DAE as the central node.
+            # Ctrl-clicking that presentation must not push the same block onto
+            # the breadcrumb repeatedly.
+            return
+        else:
+            pass
         content_block, self._block2blocktype = prepare_block_for_editing(content_block, self._var_factory)
         self._navigation.open_child(content_block)
         self._replace_editor()

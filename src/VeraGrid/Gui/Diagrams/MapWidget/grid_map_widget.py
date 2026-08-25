@@ -697,14 +697,14 @@ class GridMapWidget(BaseDiagramWidget):
         selected_items = self.get_selected_substations()
 
         if len(selected_items) != 2:
-            error_msg(text="Please select two substations", title="Create new line")
+            error_msg(text=self.tr("Please select two substations"), title=self.tr("Create new line"))
             return None
 
         it1: SubstationGraphicItem = selected_items[0]
         it2: SubstationGraphicItem = selected_items[1]
 
         if it1 == it2:
-            error_msg(text="Somehow the two substations are the same :(", title="Create new line")
+            error_msg(text=self.tr("Somehow the two substations are the same :("), title=self.tr("Create new line"))
             return None
 
         dialog = NewMapLineDialogue(grid=self.circuit, se_from=it1.api_object, se_to=it2.api_object)
@@ -718,11 +718,11 @@ class GridMapWidget(BaseDiagramWidget):
                     self.add_api_line(new_line)
                     self.circuit.add_line(new_line)
                 else:
-                    error_msg(text="The nominal voltage of the two connecting substations is not the same :(",
-                              title="Create new line")
+                    error_msg(text=self.tr("The nominal voltage of the two connecting substations is not the same :("),
+                              title=self.tr("Create new line"))
                     return None
             else:
-                error_msg(text="Some of the buses was None :(", title="Create new line")
+                error_msg(text=self.tr("Some of the buses was None :("), title=self.tr("Create new line"))
                 return None
 
     def remove_line_location_graphic(self, node: LineLocationGraphicItem):
@@ -1260,8 +1260,8 @@ class GridMapWidget(BaseDiagramWidget):
             substation_graphics.sort_voltage_levels()
 
             # ask to create a se diagram
-            ok = yes_no_question(title="create substation diagram",
-                                 text="Do you want to finalize the editing of the substation in the schematic?")
+            ok = yes_no_question(title=self.tr("create substation diagram"),
+                                 text=self.tr("Do you want to finalize the editing of the substation in the schematic?"))
 
             if ok:
                 self.new_substation_diagram(substation=se_object)
@@ -1787,11 +1787,11 @@ class GridMapWidget(BaseDiagramWidget):
                 gelm.api_object.latitude = gelm.lat
                 gelm.api_object.longitude = gelm.lon
 
-        ok = yes_no_question(title='Update lengths?',
-                             text='Do you want to update lengths of lines? \n'
+        ok = yes_no_question(title=self.tr('Update lengths?'),
+                             text=self.tr('Do you want to update lengths of lines? \n'
                                   'IMPORTANT: This will take into account every movement of substation and line '
                                   'locations. If you are unsure of the effects of this updating, click no and perform '
-                                  'the individual length update in a new map or in the specific line.')
+                                  'the individual length update in a new map or in the specific line.'))
         if ok:
             line_graphics_dict = self.graphics_manager.get_device_type_dict(DeviceType.LineDevice)
 
@@ -1927,11 +1927,11 @@ class GridMapWidget(BaseDiagramWidget):
                                       'the substation should be created.')
             return
 
-        ok = yes_no_question(title='Transform waypoint to substation?',
-                             text='Do you want to transform to substation the selected '
+        ok = yes_no_question(title=self.tr('Transform waypoint to substation?'),
+                             text=self.tr('Do you want to transform to substation the selected '
                                   'waypoint? This operation will split the line at the '
                                   'selected location, and will connect the new ends to '
-                                  'the new substation.')
+                                  'the new substation.'))
 
         if ok:
 
@@ -2158,8 +2158,8 @@ class GridMapWidget(BaseDiagramWidget):
                 min_value=1,
                 max_value=10,
                 default_value=0,
-                title="Select circuit ID",
-                text="Circuit ID",
+                title=self.tr("Select circuit ID"),
+                text=self.tr("Circuit ID"),
                 is_int=True
             )
 
@@ -2267,9 +2267,9 @@ class GridMapWidget(BaseDiagramWidget):
         self.gui.show_info_toast(message='Line merging successful!')
 
         ok = yes_no_question(
-            text='Do you want to delete the substation where the lines were connecting? This will'
+            text=self.tr('Do you want to delete the substation where the lines were connecting? This will'
                  ' open the substation deletion menu, with the information of the items that would '
-                 'be removed.', title='Remove substation?')
+                 'be removed.'), title=self.tr('Remove substation?'))
         if ok:
             merging_substation = self.graphics_manager.query(elm=joint_bus.substation)
             merging_substation.remove_function_from_schematic_and_db()
@@ -2297,11 +2297,11 @@ class GridMapWidget(BaseDiagramWidget):
             gen.latitude = gen_graphic.lat
             gen.longitude = gen_graphic.lon
 
-        ok = yes_no_question(title='Update lengths?',
-                             text='Do you want to update lengths of lines? \n'
+        ok = yes_no_question(title=self.tr('Update lengths?'),
+                             text=self.tr('Do you want to update lengths of lines? \n'
                                   'IMPORTANT: This will take into account every movement of substation and line '
                                   'locations. If you are unsure of the effects of this updating, click no and perform '
-                                  'the individual length update in a new map or in the specific line.')
+                                  'the individual length update in a new map or in the specific line.'))
         if ok:
 
             for line_graphic in line_graphics_list:

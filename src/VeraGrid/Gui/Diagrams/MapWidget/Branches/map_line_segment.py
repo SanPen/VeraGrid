@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import webbrowser
 from typing import List, TYPE_CHECKING
-from PySide6.QtCore import Qt, QPointF, QLineF
+from PySide6.QtCore import Qt, QPointF, QLineF, QCoreApplication
 from PySide6.QtGui import QPen, QColor, QCursor
 from PySide6.QtWidgets import QMenu, QGraphicsSceneContextMenuEvent
 from PySide6.QtWidgets import QGraphicsLineItem, QGraphicsSceneMouseEvent
@@ -396,8 +396,13 @@ class MapLineSegment(QGraphicsLineItem):
                 self.set_enable(True)
 
             if self.editor.circuit.get_time_number() > 0:
-                ok = yes_no_question('Do you want to update the time series active status accordingly?',
-                                     'Update time series active status')
+                ok = yes_no_question(
+                    QCoreApplication.translate(
+                        "MapLineSegment",
+                        "Do you want to update the time series active status accordingly?",
+                    ),
+                    QCoreApplication.translate("MapLineSegment", "Update time series active status"),
+                )
 
                 if ok:
                     # change the bus state (time series)

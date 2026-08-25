@@ -246,8 +246,8 @@ class TransformerGraphicItem(LineGraphicTemplateItem):
         :return:
         """
 
-        ok = yes_no_question(text="A template will be generated using this transformer values",
-                             title="Add transformer type")
+        ok = yes_no_question(text=self.tr("A template will be generated using this transformer values"),
+                             title=self.tr("Add transformer type"))
 
         if ok:
             tpe = self.api_object.get_transformer_type(Sbase=self.editor.circuit.Sbase)

@@ -56,7 +56,7 @@ class InspectModel(QWidget):
         main_layout.addLayout(left_panel)
 
         var_header_layout: QHBoxLayout = QHBoxLayout()
-        var_label: QLabel = QLabel("Variables")
+        var_label: QLabel = QLabel(self.tr("Variables"))
         var_header_layout.addWidget(var_label)
         left_panel.addLayout(var_header_layout)
 
@@ -64,7 +64,7 @@ class InspectModel(QWidget):
         left_panel.addWidget(self.list_vars)
 
         param_header_layout: QHBoxLayout = QHBoxLayout()
-        param_label: QLabel = QLabel("Parameters")
+        param_label: QLabel = QLabel(self.tr("Parameters"))
         param_header_layout.addWidget(param_label)
         left_panel.addLayout(param_header_layout)
 
@@ -80,7 +80,7 @@ class InspectModel(QWidget):
         main_layout.addLayout(right_panel)
 
         eqn_header_layout: QHBoxLayout = QHBoxLayout()
-        eqn_label: QLabel = QLabel("Equations")
+        eqn_label: QLabel = QLabel(self.tr("Equations"))
         eqn_header_layout.addWidget(eqn_label)
         right_panel.addLayout(eqn_header_layout)
 

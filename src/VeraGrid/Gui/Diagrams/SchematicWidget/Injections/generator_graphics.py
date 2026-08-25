@@ -132,8 +132,8 @@ class GeneratorGraphicItem(InjectionTemplateGraphicItem):
         """
         Convert this generator to a battery
         """
-        ok = yes_no_question('Are you sure that you want to convert this generator into a battery?',
-                             'Convert generator')
+        ok = yes_no_question(self.tr('Are you sure that you want to convert this generator into a battery?'),
+                             self.tr('Convert generator'))
         if ok:
             self._editor.convert_generator_to_battery(gen=self.api_object, graphic_object=self)
 

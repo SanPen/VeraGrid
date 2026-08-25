@@ -8,7 +8,7 @@ from typing import Union
 import sys
 
 import numpy as np
-from PySide6 import QtWidgets
+from PySide6 import QtCore, QtWidgets
 
 from VeraGrid.Gui.DeviceEditors.LineEditor.line_editor_gui import Ui_LineEditorDialog
 from VeraGrid.Gui.gui_functions import get_list_model
@@ -35,7 +35,7 @@ class LineEditor(QtWidgets.QDialog):
         super().__init__()
         self.ui = Ui_LineEditorDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle("Line editor")
+        self.setWindowTitle(self.tr("Line editor"))
 
         self.line: Line = line
         self.sbase: float = grid.Sbase
@@ -76,11 +76,13 @@ class LineEditor(QtWidgets.QDialog):
 
         if voltage_from <= 0.0:
             error_msg(
-                text=f"Vnom in bus {self.line.bus_from} is {voltage_from}\n"
-                "That causes an infinite base admittance.\n"
-                "The process has been aborted.\n"
-                "Please correct the data and try again.",
-                title="Line editor initialization",
+                text=self.tr(
+                    "Vnom in bus {bus_name} is {voltage_from}\n"
+                    "That causes an infinite base admittance.\n"
+                    "The process has been aborted.\n"
+                    "Please correct the data and try again."
+                ).format(bus_name=self.line.bus_from, voltage_from=voltage_from),
+                title=self.tr("Line editor initialization"),
             )
         else:
             zbase: float = (voltage_from * voltage_from) / self.sbase
@@ -132,8 +134,10 @@ class LineEditor(QtWidgets.QDialog):
                     self.ui.circuitIndexSpinBox.setMaximum(max(1, int(self.current_template.n_circuits)))
                 else:
                     warning_msg(
-                        text=f"The template {self.current_template.name} contains errors",
-                        title="Load template",
+                        text=self.tr("The template {template_name} contains errors").format(
+                            template_name=self.current_template.name,
+                        ),
+                        title=self.tr("Load template"),
                     )
             else:
                 pass
@@ -174,7 +178,7 @@ class LineEditor(QtWidgets.QDialog):
         """
         length: float = self.ui.lengthSpinBox.value()
         if length == 0.0:
-            error_msg(text="The length cannot be 0!", title="Accept line design values")
+            error_msg(text=self.tr("The length cannot be 0!"), title=self.tr("Accept line design values"))
             return
         else:
             pass
@@ -188,10 +192,10 @@ class LineEditor(QtWidgets.QDialog):
             self.accept()
         else:
             response: bool = yes_no_question(
-                text="Warning: You did not load template values. The circuit index will not be updated. "
+                text=self.tr("Warning: You did not load template values. The circuit index will not be updated. "
                 "Line parameters will be based on the provided values for Length, Max Current, Resistance, "
-                "Reactance, and Susceptance.\n\nDo you want to continue without a template?",
-                title="No Template Selected",
+                "Reactance, and Susceptance.\n\nDo you want to continue without a template?"),
+                title=self.tr("No Template Selected"),
             )
 
             if response:
@@ -236,7 +240,10 @@ class LineEditor(QtWidgets.QDialog):
                 self.ui.circuitIndexSpinBox.setMaximum(max(1, int(template.n_circuits)))
                 self.selected_template = template
             else:
-                warning_msg(text=f"The template {template.name} contains errors", title="Load template")
+                warning_msg(
+                    text=self.tr("The template {template_name} contains errors").format(template_name=template.name),
+                    title=self.tr("Load template"),
+                )
         else:
             pass
 

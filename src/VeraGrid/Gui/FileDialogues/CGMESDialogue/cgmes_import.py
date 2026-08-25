@@ -31,7 +31,7 @@ class CgmesImportDialogue(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_CgmesImportDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('CGMES import')
+        self.setWindowTitle(self.tr('CGMES import'))
         self.setModal(True)
 
         self.app: IoMain = app

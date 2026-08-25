@@ -198,7 +198,9 @@ def test_open_file_now_accepts_one_string_path_without_iterating_characters(monk
     IoMain.open_file_now(harness, filenames=str(file_path))
 
     assert captured_errors == list()
-    assert harness.file_name == str(file_path)
+    # The visible project identity changes only after the loaded circuit has
+    # passed the project-replacement guards in ``post_open_file``.
+    assert harness.file_name == ""
     assert harness.project_directory == str(file_path.parent)
     assert isinstance(harness.open_file_thread_object, FakeThreadObject)
     assert harness.open_file_thread_object.file_name == str(file_path)

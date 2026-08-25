@@ -69,7 +69,7 @@ def PVLoadBuild(vfactory: VarFactory, name: str = "", Pg0_val=1.0, Vg0_val=1.0) 
     # Event dictionary with default values
     event_dict = {
         Pg0: vfactory.add_const(Pg0_val),
-        Vg0: vfactory.add_const(None),
+        Vg0: Vm,
         Qmax_G: vfactory.add_const(1.0),
         Qmin_G: vfactory.add_const(-1.0),
     }
@@ -77,7 +77,6 @@ def PVLoadBuild(vfactory: VarFactory, name: str = "", Pg0_val=1.0, Vg0_val=1.0) 
     # Initialize Q to Qg0
     init_eqs = {
         P: Pg0,
-        Vg0: Vm,
     }
     
     within_limits = ((Qmax_G - Q)>=0).to_expression() * (0 <= (Q - Qmin_G)).to_expression()

@@ -217,7 +217,7 @@ class BackEulerImplicitIntegrationMTI(BackEulerImplicitIntegration):
             except Exception:
                 return "<eq unavailable>"
 
-        order = np.argsort(np.abs(arr))[::-1]
+        order = np.argsort(np.abs(arr), kind="stable")[::-1]
         k = min(top_k, arr.size)
         print(f"[MTI-RHS] {tag} top {k} residual entries (idx: value):")
         for i in order[:k]:

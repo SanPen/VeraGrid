@@ -4,11 +4,13 @@
 # SPDX-License-Identifier: MPL-2.0
 
 from __future__ import annotations
+from enum import Enum
 from typing import Sequence, Any, Union, Type
 
 from VeraGridEngine.Devices.Dynamic.emt_template import EmtModelTemplate
 from VeraGridEngine.basic_structures import Vec
-from VeraGridEngine.enumerations import WindingType, V_I_CurveSequenceType, WaveformSequenceType, X_Y_SequenceType, X_Y_Z_Matrix
+from VeraGridEngine.enumerations import (ConverterControlType, WindingType, V_I_CurveSequenceType,
+                                         WaveformSequenceType, X_Y_SequenceType, X_Y_Z_Matrix)
 
 
 
@@ -19,6 +21,7 @@ TEMPLATEPROP_TYPES = Union[
     Type[float],
     Type[str],
     Type[Sequence[Vec]],
+    Type[ConverterControlType],
     Type[WindingType],
     Type[V_I_CurveSequenceType],
     Type[WaveformSequenceType],
@@ -40,10 +43,30 @@ class TemplateProp:
         "display",
         "editable",
         "value",
+        "allowed_values",
 
     )
 
-    def __init__(self, name: str, units: str, descr: str, tpe: TEMPLATEPROP_TYPES, value: Any = None):
+    def __init__(self,
+                 name: str,
+                 units: str,
+                 descr: str,
+                 tpe: TEMPLATEPROP_TYPES,
+                 value: Any = None,
+                 allowed_values: Sequence[Enum] | None = None) -> None:
+        """Describe one editable input of a symbolic template builder.
+
+        When ``allowed_values`` is provided for an enum property, editors must
+        offer only that subset instead of every member of the enum class.
+
+        :param name: Property identifier used by the template builder.
+        :param units: Units displayed by property editors.
+        :param descr: Human-readable explanation of the property.
+        :param tpe: Runtime type expected by the template builder.
+        :param value: Default property value.
+        :param allowed_values: Optional ordered subset of permitted enum members.
+        :return: None.
+        """
         self.name: str = name
         self.units: str = units
         self.descr: str = descr
@@ -51,6 +74,9 @@ class TemplateProp:
         self.display: bool = True
         self.editable: bool = True
         self.value: Any = value
+        self.allowed_values: tuple[Enum, ...] | None = (
+            None if allowed_values is None else tuple(allowed_values)
+        )
 
 
 class TemplateDefinition:

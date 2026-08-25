@@ -188,8 +188,9 @@ class BusesForSrap:
                 sensitivities2 = self.sensitivities[positive_idx]
                 srap_gen_used2 = srap_gen_used[positive_idx]
 
-                # sort greater to lower, more positive first
-                idx = np.argsort(-sensitivities2)
+                # sort greater to lower, more positive first.
+                # kind='stable' keeps original bus order on equal PTDFs
+                idx = np.argsort(-sensitivities2, kind='stable')
                 idx2 = idx[:top_n]
                 p_available3 = p_available2[idx2]
                 sensitivities3 = sensitivities2[idx2]
@@ -222,8 +223,10 @@ class BusesForSrap:
                 sensitivities2 = self.sensitivities[negative_idx]
                 srap_gen_used2 = srap_gen_used[negative_idx]
 
-                # sort lower to greater, more negative first
-                idx = np.argsort(sensitivities2)
+                # sort lower to greater, more negative first.
+                # kind='stable' keeps original bus order on equal PTDFs, matching
+                # GSLV arma::sort_index / std::stable_sort.
+                idx = np.argsort(sensitivities2, kind='stable')
                 idx2 = idx[:top_n]
                 p_available3 = p_available2[idx2]
                 sensitivities3 = sensitivities2[idx2]

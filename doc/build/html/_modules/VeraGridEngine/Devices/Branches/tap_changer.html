@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Branches.tap_changer &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Devices.Branches.tap_changer &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
 
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -59,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
@@ -69,9 +68,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
 </ul>
@@ -135,6 +138,7 @@
         <span class="s1">&#39;_m_array&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_k_re_array&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_k_im_array&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_uses_explicit_table&#39;</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -191,6 +195,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>  <span class="c1"># tap module positions</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>  <span class="c1"># impedance correction positions (real)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>  <span class="c1"># impedance correction positions (imag)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_uses_explicit_table</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span>
 
 <div class="viewcode-block" id="TapChanger.copy">
@@ -213,7 +218,17 @@
         <span class="n">elm</span><span class="o">.</span><span class="n">_tap_position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tap_position</span>
         <span class="n">elm</span><span class="o">.</span><span class="n">_k_re_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">elm</span><span class="o">.</span><span class="n">_k_im_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">elm</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span>
+        <span class="n">table_was_copied</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">elm</span><span class="o">.</span><span class="n">set_tap_module_phase_values</span><span class="p">(</span>
+            <span class="n">tap_modules</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span><span class="p">,</span>
+            <span class="n">tap_phases</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">table_was_copied</span><span class="p">:</span>
+            <span class="c1"># ``set_tap_module_phase_values`` marks every accepted table as</span>
+            <span class="c1"># explicit.  Restore the source semantic because a generic table</span>
+            <span class="c1"># is copied through the same numerical API.</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">_uses_explicit_table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_uses_explicit_table</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">elm</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">elm</span></div>
 
 
@@ -262,7 +277,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span>
 
     <span class="nd">@total_positions</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">total_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">total_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span> <span class="o">=</span> <span class="n">value</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">()</span>
@@ -278,7 +293,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tap_position</span>
 
     <span class="nd">@tap_position</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">tap_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tap_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the tap position (zero indexing)</span>
 <span class="sd">        :param val: tap value</span>
@@ -298,7 +313,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_neutral_position</span>
 
     <span class="nd">@neutral_position</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">neutral_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">neutral_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set the neutral position</span>
 <span class="sd">        :param val: neutral position value</span>
@@ -323,6 +338,26 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">uses_explicit_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return whether the tap table came from an explicit native definition.</span>
+
+<span class="sd">        :return: ``True`` for imported or user-supplied tables that must retain</span>
+<span class="sd">            their discrete entries exactly; ``False`` for arrays derived from</span>
+<span class="sd">            the generic VeraGrid tap law.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_uses_explicit_table</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">impedance_correction_real_array</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the real impedance correction factors per tap position.</span>
+
+<span class="sd">        :return: Array of length ``total_positions``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">impedance_correction_imag_array</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get the imaginary impedance correction factors per tap position.</span>
@@ -330,6 +365,68 @@
 <span class="sd">        :return: array of length total_positions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span>
+
+<div class="viewcode-block" id="TapChanger.set_impedance_correction_values">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.set_impedance_correction_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_impedance_correction_values</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">correction_real</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+            <span class="n">correction_imag</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Install exact real and imaginary impedance factors by tap position.</span>
+
+<span class="sd">        The stored branch impedance is the neutral reference.  Each factor is</span>
+<span class="sd">        applied only when numerical data is compiled, which keeps the tap</span>
+<span class="sd">        characteristic reusable after editing or serialisation.</span>
+
+<span class="sd">        :param correction_real: Non-negative resistance factors.</span>
+<span class="sd">        :param correction_imag: Non-negative reactance factors.</span>
+<span class="sd">        :return: ``True`` when both complete arrays were accepted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">real_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">correction_real</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">imag_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">correction_imag</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">expected_shape</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">,)</span>
+        <span class="n">shapes_are_valid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">real_values</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">expected_shape</span>
+            <span class="ow">and</span> <span class="n">imag_values</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">expected_shape</span>
+        <span class="p">)</span>
+        <span class="n">values_are_valid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">real_values</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">real_values</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">imag_values</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">imag_values</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">shapes_are_valid</span> <span class="ow">and</span> <span class="n">values_are_valid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span> <span class="o">=</span> <span class="n">real_values</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span> <span class="o">=</span> <span class="n">imag_values</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">accepted</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">accepted</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">accepted</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.get_impedance_correction">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.get_impedance_correction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_impedance_correction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the impedance factors at the current discrete position.</span>
+
+<span class="sd">        :return: Resistance and reactance correction factors.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">position</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tap_position</span><span class="p">)</span>
+        <span class="n">position_is_valid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">position</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">position_is_valid</span><span class="p">:</span>
+            <span class="n">correction_real</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span><span class="p">[</span><span class="n">position</span><span class="p">])</span>
+            <span class="n">correction_imag</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span><span class="p">[</span><span class="n">position</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">correction_real</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">correction_imag</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">return</span> <span class="n">correction_real</span><span class="p">,</span> <span class="n">correction_imag</span></div>
+
 
 <div class="viewcode-block" id="TapChanger.resize">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.resize">[docs]</a>
@@ -340,6 +437,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_ndv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
+        <span class="c1"># A resized tap window invalidates the positional correction contract;</span>
+        <span class="c1"># reset it explicitly until an importer installs a matching table.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span></div>
 
 
@@ -352,29 +453,75 @@
         <span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_ndv</span> <span class="o">=</span> <span class="p">(</span><span class="n">positions</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">neutral_position</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dV</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_phase2</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_module2</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_module2</span><span class="p">(</span><span class="n">positions</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_uses_explicit_table</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="TapChanger.set_tap_module_phase_values">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.set_tap_module_phase_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_tap_module_phase_values</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">tap_modules</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+            <span class="n">tap_phases</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Install one exact discrete complex-tap table.</span>
+
+<span class="sd">        This table is required by importers whose native tap law contains a</span>
+<span class="sd">        fixed vector-group shift, a winding-side reciprocal or another</span>
+<span class="sd">        relationship that cannot be represented by the generic ``dV`` and</span>
+<span class="sd">        asymmetry parameters alone.  Core tap-configuration setters still call</span>
+<span class="sd">        :meth:`recalc`, intentionally returning the object to its generic law.</span>
+
+<span class="sd">        :param tap_modules: Positive tap magnitudes by zero-based position.</span>
+<span class="sd">        :param tap_phases: Unwrapped tap phases in radians by position.</span>
+<span class="sd">        :return: ``True`` when the complete table was accepted.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">module_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tap_modules</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">phase_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tap_phases</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">expected_shape</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">,)</span>
+        <span class="n">shapes_are_valid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">module_values</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">expected_shape</span>
+            <span class="ow">and</span> <span class="n">phase_values</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">expected_shape</span>
+        <span class="p">)</span>
+        <span class="n">values_are_valid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">module_values</span><span class="p">))</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">module_values</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">phase_values</span><span class="p">))</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">shapes_are_valid</span> <span class="ow">and</span> <span class="n">values_are_valid</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span> <span class="o">=</span> <span class="n">module_values</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span> <span class="o">=</span> <span class="n">phase_values</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_uses_explicit_table</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">result</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">result</span></div>
 
 
 <div class="viewcode-block" id="TapChanger.to_dict">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.to_dict">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a dictionary representation of the tap</span>
 <span class="sd">        :return:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;asymmetry_angle&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">asymmetry_angle</span><span class="p">,</span>
-            <span class="s2">&quot;total_positions&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">,</span>
-            <span class="s2">&quot;dV&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dV</span><span class="p">,</span>
-            <span class="s2">&quot;neutral_position&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">neutral_position</span><span class="p">,</span>
-            <span class="s2">&quot;normal_position&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal_position</span><span class="p">,</span>
-            <span class="s2">&quot;tap_position&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tap_position</span><span class="p">,</span>
-            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span><span class="p">),</span>
-            <span class="s2">&quot;low_step&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_step</span><span class="p">,</span>
-            <span class="s2">&quot;negative_low&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_negative_low</span><span class="p">,</span>
-            <span class="s2">&quot;impedance_correction_real&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
-            <span class="s2">&quot;impedance_correction_imag&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
-        <span class="p">}</span></div>
+        <span class="n">tap_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+        <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;asymmetry_angle&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">asymmetry_angle</span>
+        <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;total_positions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span>
+        <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;dV&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dV</span>
+        <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;neutral_position&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">neutral_position</span>
+        <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;normal_position&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normal_position</span>
+        <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tap_position&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tap_position</span>
+        <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tc_type</span><span class="p">)</span>
+        <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;low_step&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_low_step</span>
+        <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;negative_low&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_negative_low</span>
+        <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tap_module_table&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;tap_phase_table&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;uses_explicit_table&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_uses_explicit_table</span>
+        <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;impedance_correction_real&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_re_array</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">tap_data</span><span class="p">[</span><span class="s2">&quot;impedance_correction_imag&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">tap_data</span></div>
 
 
 <div class="viewcode-block" id="TapChanger.parse">
@@ -418,7 +565,58 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_k_im_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_positions</span><span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Incorrect impedance table length&quot;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recalc</span><span class="p">()</span>
+
+        <span class="c1"># New files preserve exact native tap tables.  Older files omit these</span>
+        <span class="c1"># keys and continue to use the generic VeraGrid tap law above.</span>
+        <span class="n">tap_module_table_obj</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tap_module_table&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">tap_phase_table_obj</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tap_phase_table&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tap_module_table_obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tap_phase_table_obj</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">tap_module_table</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tap_module_table_obj</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+                <span class="n">tap_phase_table</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">tap_phase_table_obj</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="n">exact_table_was_loaded</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">exact_table_was_loaded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">set_tap_module_phase_values</span><span class="p">(</span>
+                    <span class="n">tap_modules</span><span class="o">=</span><span class="n">tap_module_table</span><span class="p">,</span>
+                    <span class="n">tap_phases</span><span class="o">=</span><span class="n">tap_phase_table</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">exact_table_was_loaded</span><span class="p">:</span>
+                <span class="n">explicit_table_object</span><span class="p">:</span> <span class="nb">object</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="s2">&quot;uses_explicit_table&quot;</span><span class="p">,</span>
+                    <span class="kc">None</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">explicit_table_object</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_uses_explicit_table</span> <span class="o">=</span> <span class="n">explicit_table_object</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Legacy files persisted generated tables before recording</span>
+                    <span class="c1"># their provenance.  Treat them as generic unless their</span>
+                    <span class="c1"># values differ from the current generic tap law.</span>
+                    <span class="n">generic_modules</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_module2</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="n">generic_phases</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_phase2</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_uses_explicit_table</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span>
+                        <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+                            <span class="n">tap_module_table</span><span class="p">,</span>
+                            <span class="n">generic_modules</span><span class="p">,</span>
+                            <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-12</span><span class="p">,</span>
+                            <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span>
+                            <span class="n">tap_phase_table</span><span class="p">,</span>
+                            <span class="n">generic_phases</span><span class="p">,</span>
+                            <span class="n">atol</span><span class="o">=</span><span class="mf">1.0e-12</span><span class="p">,</span>
+                            <span class="n">rtol</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="s2">&quot;Incorrect exact tap table&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span></div>
 
 
 <div class="viewcode-block" id="TapChanger.to_df">
@@ -573,6 +771,28 @@
             <span class="k">return</span> <span class="mf">1.0</span></div>
 
 
+<div class="viewcode-block" id="TapChanger.get_tap_module_at">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.get_tap_module_at">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tap_module_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tap_position</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the exact stored module at one discrete position.</span>
+
+<span class="sd">        Importers may install a native explicit tap table whose direction is</span>
+<span class="sd">        not represented by the generic positive ``dV`` parameter.  Station</span>
+<span class="sd">        controls therefore need read-only positional access to that table.</span>
+
+<span class="sd">        :param tap_position: Zero-based discrete position.</span>
+<span class="sd">        :return: Exact tap module, or ``nan`` for an invalid position.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">position_is_valid</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span>
+            <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">tap_position</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">position_is_valid</span><span class="p">:</span>
+            <span class="n">tap_module</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span><span class="p">[</span><span class="n">tap_position</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tap_module</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">return</span> <span class="n">tap_module</span></div>
+
+
 <div class="viewcode-block" id="TapChanger.set_tap_module">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.tap_changer.TapChanger.set_tap_module">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_tap_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tap_module</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -610,7 +830,7 @@
 <span class="sd">        Min tap module, computed on the fly</span>
 <span class="sd">        :return: float</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_module2</span><span class="p">(</span><span class="n">tap_position</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="TapChanger.get_tap_module_max">
@@ -620,7 +840,7 @@
 <span class="sd">        Max tap module, computed on the fly</span>
 <span class="sd">        :return: float</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_module2</span><span class="p">(</span><span class="n">tap_position</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_m_array</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="TapChanger.get_tap_phase_min">
@@ -630,7 +850,7 @@
 <span class="sd">        Min tap phase, computed on the fly</span>
 <span class="sd">        :return: float</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_phase2</span><span class="p">(</span><span class="n">tap_position</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="TapChanger.get_tap_phase_max">
@@ -640,7 +860,7 @@
 <span class="sd">        Maximum tap phase (calculated)</span>
 <span class="sd">        :return: float</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tap_phase2</span><span class="p">(</span><span class="n">tap_position</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">total_positions</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tau_array</span><span class="p">))</span></div>
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="s2">&quot;TapChanger&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>

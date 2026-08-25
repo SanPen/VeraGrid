@@ -689,7 +689,7 @@ class  PseudoTransient:
                 )
 
             if rhs.size > 0 and np.all(np.isfinite(rhs)):
-                idx = np.argsort(np.abs(rhs))[::-1][:8]
+                idx = np.argsort(np.abs(rhs), kind="stable")[::-1][:8]
                 top_rhs = [f"{self._rhs_index_equation_repr(int(i))}: {rhs[int(i)]:+.3e}" for i in idx]
                 print(f"[PseudoTransient][Singular] largest rhs entries: {top_rhs}", file=sys.stderr)
                 self._report_piecewise_activity(rhs)
@@ -713,7 +713,7 @@ class  PseudoTransient:
                     if singular_dirs.size > 0:
                         i = int(singular_dirs[0])
                         v = vh.T[:, i]
-                        dom = np.argsort(np.abs(v))[::-1][:8]
+                        dom = np.argsort(np.abs(v), kind="stable")[::-1][:8]
                         dom_vars = [f"{self._var_index_name(int(j))}: {v[int(j)]:+.3e}" for j in dom]
                         print(
                             f"[PseudoTransient][Singular] dominant variables in null-like direction: {dom_vars}",
@@ -797,7 +797,7 @@ class  PseudoTransient:
 
             if vh.size > 0 and s.size > 0:
                 v_min = vh[min(rank, vh.shape[0] - 1), :] if rank < vh.shape[0] else vh[-1, :]
-                dom = np.argsort(np.abs(v_min))[::-1][:8]
+                dom = np.argsort(np.abs(v_min), kind="stable")[::-1][:8]
                 dom_vars = [f"{self._var_index_name(int(j))}: {v_min[int(j)]:+.3e}" for j in dom]
                 emit(f"[SVD] {context}: weak right-singular variables={dom_vars}")
 
@@ -805,7 +805,7 @@ class  PseudoTransient:
                 n_weak = min(3, s.size, u.shape[1])
                 for sv_idx in range(s.size - n_weak, s.size):
                     left_vec = u[:, sv_idx]
-                    dom_rows = np.argsort(np.abs(left_vec))[::-1][:8]
+                    dom_rows = np.argsort(np.abs(left_vec), kind="stable")[::-1][:8]
                     row_labels = [
                         f"{self._rhs_index_equation_begin(int(i))}: {left_vec[int(i)]:+.3e}, rhs={rhs_solve[int(i)]:+.3e}"
                         for i in dom_rows
@@ -819,11 +819,11 @@ class  PseudoTransient:
             if u.shape[1] > left_null_start:
                 coeffs = u[:, left_null_start:].T @ b
                 if coeffs.size > 0:
-                    order = np.argsort(np.abs(coeffs))[::-1]
+                    order = np.argsort(np.abs(coeffs), kind="stable")[::-1]
                     for pos in order[:min(3, order.size)]:
                         left_vec = u[:, left_null_start + int(pos)]
                         coeff = float(coeffs[int(pos)])
-                        dom_rows = np.argsort(np.abs(left_vec))[::-1][:8]
+                        dom_rows = np.argsort(np.abs(left_vec), kind="stable")[::-1][:8]
                         row_labels = [
                             f"{self._rhs_index_equation_begin(int(i))}: {left_vec[int(i)]:+.3e}"
                             for i in dom_rows
@@ -1270,7 +1270,7 @@ class  PseudoTransient:
             print(f"[PseudoTransient] Final RHS offenders: none above threshold={threshold:.3e}")
             return
 
-        ranked = offenders[np.argsort(-abs_rhs[offenders])]
+        ranked = offenders[np.argsort(-abs_rhs[offenders], kind="stable")]
         n_show = min(int(top_n), ranked.size)
         print(f"[PseudoTransient] Final RHS offenders (top {n_show}, threshold={threshold:.3e}):")
         for i in ranked[:n_show]:

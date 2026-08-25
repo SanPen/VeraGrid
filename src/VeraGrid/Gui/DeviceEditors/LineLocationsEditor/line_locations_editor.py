@@ -332,9 +332,9 @@ class LineLocationsEditorWidget(QtWidgets.QWidget):
         selected_filter: str
         file_name, selected_filter = QtWidgets.QFileDialog.getOpenFileName(
             self,
-            "Import coordinates",
+            self.tr("Import coordinates"),
             "",
-            "CSV files (*.csv);;Text files (*.txt);;All files (*)",
+            self.tr("CSV files (*.csv);;Text files (*.txt);;All files (*)"),
         )
         _ = selected_filter
 
@@ -345,7 +345,7 @@ class LineLocationsEditorWidget(QtWidgets.QWidget):
                 parsed_rows: list[list[object]] = parse_line_locations_text(text=file_text)
                 self._table_model.load_rows(rows=parsed_rows)
             except (OSError, ValueError) as exception:
-                QtWidgets.QMessageBox.warning(self, "Locations", str(exception))
+                QtWidgets.QMessageBox.warning(self, self.tr("Locations"), str(exception))
         else:
             pass
 
@@ -357,9 +357,9 @@ class LineLocationsEditorWidget(QtWidgets.QWidget):
         selected_filter: str
         file_name, selected_filter = QtWidgets.QFileDialog.getSaveFileName(
             self,
-            "Export coordinates",
+            self.tr("Export coordinates"),
             "line_locations.csv",
-            "CSV files (*.csv);;All files (*)",
+            self.tr("CSV files (*.csv);;All files (*)"),
         )
         _ = selected_filter
 
@@ -369,7 +369,7 @@ class LineLocationsEditorWidget(QtWidgets.QWidget):
                 with open(file_name, "w", encoding="utf-8", newline="") as file_pointer:
                     file_pointer.write(csv_text)
             except OSError as exception:
-                QtWidgets.QMessageBox.warning(self, "Locations", str(exception))
+                QtWidgets.QMessageBox.warning(self, self.tr("Locations"), str(exception))
         else:
             pass
 
@@ -419,7 +419,7 @@ class LineLocationsEditorWidget(QtWidgets.QWidget):
                 parsed_rows: list[list[object]] = parse_line_locations_text(text=clipboard_text)
                 self._table_model.load_rows(rows=parsed_rows)
             except ValueError as exception:
-                QtWidgets.QMessageBox.warning(self, "Locations", str(exception))
+                QtWidgets.QMessageBox.warning(self, self.tr("Locations"), str(exception))
         else:
             pass
 

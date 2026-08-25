@@ -100,7 +100,7 @@ class ScenariosMain(ConfigurationMain):
         text, ok = QtWidgets.QInputDialog.getText(
             self,
             title,
-            "Enter scenario name:",
+            self.tr("Enter scenario name:"),
             QtWidgets.QLineEdit.EchoMode.Normal,
             default_name
         )
@@ -109,7 +109,7 @@ class ScenariosMain(ConfigurationMain):
             if text.strip() != "":
                 return text.strip()
             else:
-                warning_msg("Scenario name cannot be empty", title)
+                warning_msg(self.tr("Scenario name cannot be empty"), title)
                 return None
         else:
             return None
@@ -216,13 +216,13 @@ class ScenariosMain(ConfigurationMain):
         parent_index: QModelIndex | None = self.get_selected_scenario_index()
 
         if parent_index is None or not parent_index.isValid():
-            warning_msg("Please select a parent scenario first", "Add Child Scenario")
+            warning_msg(self.tr("Please select a parent scenario first"), self.tr("Add Child Scenario"))
             return
 
         parent_node: ScenarioNode | None = self.scenario_tree_model.get_node(parent_index)
 
         if parent_node is None:
-            warning_msg("Invalid parent scenario selected", "Add Child Scenario")
+            warning_msg(self.tr("Invalid parent scenario selected"), self.tr("Add Child Scenario"))
             return
 
         # Count existing children for default naming
@@ -287,13 +287,13 @@ class ScenariosMain(ConfigurationMain):
         selected_index: QModelIndex | None = self.get_selected_scenario_index()
 
         if selected_index is None or not selected_index.isValid():
-            warning_msg("Please select a scenario to remove", "Remove Scenario")
+            warning_msg(self.tr("Please select a scenario to remove"), self.tr("Remove Scenario"))
             return
 
         node: ScenarioNode | None = self.scenario_tree_model.get_node(selected_index)
 
         if node is None:
-            warning_msg("Invalid scenario selected", "Remove Scenario")
+            warning_msg(self.tr("Invalid scenario selected"), self.tr("Remove Scenario"))
             return
 
         circuit: MultiCircuit = node.circuit
@@ -304,7 +304,7 @@ class ScenariosMain(ConfigurationMain):
         if child_count > 0:
             message += f"\n\nThis will also remove {child_count} child scenario(s)."
 
-        ok: bool = yes_no_question(message, "Remove Scenario")
+        ok: bool = yes_no_question(message, self.tr("Remove Scenario"))
 
         if ok:
             # Deletion always falls back to the parent node, or to the first remaining root
@@ -318,7 +318,7 @@ class ScenariosMain(ConfigurationMain):
             try:
                 success: bool = self.scenario_tree_model.remove_node(selected_index)
             except ValueError as exc:
-                warning_msg(str(exc), "Remove Scenario")
+                warning_msg(str(exc), self.tr("Remove Scenario"))
                 return
 
             if success:
@@ -342,7 +342,7 @@ class ScenariosMain(ConfigurationMain):
                 self.update_available_results()
                 self.show_info_toast(f"Scenario '{circuit.name}' removed")
             else:
-                warning_msg("Failed to remove scenario", "Remove Scenario")
+                warning_msg(self.tr("Failed to remove scenario"), self.tr("Remove Scenario"))
         else:
             # User cancelled the operation
             pass
@@ -356,13 +356,13 @@ class ScenariosMain(ConfigurationMain):
         selected_index: QModelIndex | None = self.get_selected_scenario_index()
 
         if selected_index is None or not selected_index.isValid():
-            warning_msg("Please select a scenario to merge into", "Merge Children")
+            warning_msg(self.tr("Please select a scenario to merge into"), self.tr("Merge Children"))
             return
 
         node: ScenarioNode | None = self.scenario_tree_model.get_node(selected_index)
 
         if node is None:
-            warning_msg("Invalid scenario selected", "Merge Children")
+            warning_msg(self.tr("Invalid scenario selected"), self.tr("Merge Children"))
             return
 
         child_count: int = node.child_count()
@@ -371,9 +371,11 @@ class ScenariosMain(ConfigurationMain):
             return
 
         ok: bool = yes_no_question(
-            f"Merge {child_count} child scenario(s) into '{node.circuit.name}'?\n\n"
-            f"This will remove the direct child scenarios after their changes are applied.",
-            "Merge Children"
+            self.tr(
+                "Merge {child_count} child scenario(s) into '{scenario_name}'?\n\n"
+                "This will remove the direct child scenarios after their changes are applied."
+            ).format(child_count=child_count, scenario_name=node.circuit.name),
+            self.tr("Merge Children")
         )
 
         if not ok:
@@ -382,7 +384,7 @@ class ScenariosMain(ConfigurationMain):
         success: bool = self.scenario_tree_model.merge_children_into_parent(selected_index)
 
         if not success:
-            warning_msg("Failed to merge child scenarios", "Merge Children")
+            warning_msg(self.tr("Failed to merge child scenarios"), self.tr("Merge Children"))
             return
 
         merged_circuit: MultiCircuit = self.multiverse.current_model
@@ -428,7 +430,7 @@ class ScenariosMain(ConfigurationMain):
         selected_index: QModelIndex | None = self.get_selected_scenario_index()
 
         if selected_index is None or not selected_index.isValid():
-            warning_msg("Please select a scenario to rename", "Rename Scenario")
+            warning_msg(self.tr("Please select a scenario to rename"), self.tr("Rename Scenario"))
             return
 
         # Use the tree view's built-in editing capability
@@ -442,17 +444,17 @@ class ScenariosMain(ConfigurationMain):
         selected_index: QModelIndex | None = self.get_selected_scenario_index()
 
         if selected_index is None or not selected_index.isValid():
-            warning_msg("Please select a scenario to commit", "Commit Scenario")
+            warning_msg(self.tr("Please select a scenario to commit"), self.tr("Commit Scenario"))
             return
 
         node: ScenarioNode | None = self.scenario_tree_model.get_node(selected_index)
 
         if node is None:
-            warning_msg("Invalid scenario selected", "Commit Scenario")
+            warning_msg(self.tr("Invalid scenario selected"), self.tr("Commit Scenario"))
             return
 
         if node is not self.multiverse.current_node:
-            warning_msg("Only the current scenario can be committed. Activate it first.", "Commit Scenario")
+            warning_msg(self.tr("Only the current scenario can be committed. Activate it first."), self.tr("Commit Scenario"))
             return
 
         self.multiverse.commit_current()
@@ -467,13 +469,13 @@ class ScenariosMain(ConfigurationMain):
         selected_index: QModelIndex | None = self.get_selected_scenario_index()
 
         if selected_index is None or not selected_index.isValid():
-            warning_msg("Please select a scenario to set as current", "Set Current Scenario")
+            warning_msg(self.tr("Please select a scenario to set as current"), self.tr("Set Current Scenario"))
             return
 
         node: ScenarioNode | None = self.scenario_tree_model.get_node(selected_index)
 
         if node is None:
-            warning_msg("Invalid scenario selected", "Set Current Scenario")
+            warning_msg(self.tr("Invalid scenario selected"), self.tr("Set Current Scenario"))
             return
 
         if node is self.multiverse.current_node:

@@ -33,7 +33,7 @@ class MatpowerExportDialogue(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_MatpowerExportDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle("MATPOWER export")
+        self.setWindowTitle(self.tr("MATPOWER export"))
         self.setModal(True)
 
         self.app: IoMain = app
@@ -205,7 +205,7 @@ class MatpowerExportDialogue(QtWidgets.QDialog):
         default_name: str = os.path.join(self.app.project_directory, self.app.ui.grid_name_line_edit.text())
         file_filter: str = self.get_dialogue_file_filter(export_mode=export_mode)
         selected_file_name, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                                   "Export to MATPOWER",
+                                                                                   self.tr("Export to MATPOWER"),
                                                                                    default_name,
                                                                                    file_filter)
 

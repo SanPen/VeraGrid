@@ -853,6 +853,21 @@ class TypSind(DGSElement):
         self.Re: float = 0.0
         self.Xe: float = 0.0
 
+class ComLdf(DGSElement):
+    """PowerFactory Load Flow Calculation type (ComLdf)."""
+    element_type = 'ComLdf'
+    properties_list = [
+        DgsProperty('loc_name', 'a:40', 'DGS field loc_name (a:40)', py_name='loc_name'),
+        DgsProperty('fold_id', 'p', 'DGS field fold_id (p)', py_name='fold_id'),
+        DgsProperty('iopt_pq', 'i', 'Consider Voltage Dependency of Loads', py_name='iopt_pq'),
+    ]
+
+    def __init__(self) -> None:
+        self.ID: str = ""
+        self.loc_name: str = ""
+        self.fold_id: str = ""
+        self.iopt_pq: int = 0
+
 
 class ElmLnesec(DGSElement):
     element_type = 'ElmLnesec'
@@ -944,6 +959,7 @@ class ElmLod(DGSElement):
         DgsProperty('pf_recap', 'i', 'DGS field pf_recap (i)', py_name='pf_recap'),
         DgsProperty('i_scale', 'i', 'DGS field i_scale (i)', py_name='i_scale'),
         DgsProperty('classif', 'a:20', 'DGS field classif (a:20)', py_name='classif'),
+        DgsProperty('phtech', 'a', 'Phase and connection technology', py_name='phtech'),
     ]
 
     def __init__(self) -> None:
@@ -970,6 +986,7 @@ class ElmLod(DGSElement):
         self.pf_recap: int = 0
         self.i_scale: int = 0
         self.classif: str = ""
+        self.phtech: str = ""
 
 
 class ElmLodlv(DGSElement):
@@ -1068,6 +1085,7 @@ class ElmShnt(DGSElement):
         DgsProperty('i_cont', 'i', 'Tap Changer (Discrete=0, Continuous=1)', py_name='i_cont'),
         DgsProperty('usetp_mx', 'r', 'Upper Voltage Limit in p.u.', py_name='usetp_mx'),
         DgsProperty('usetp_mn', 'r', 'Lower Voltage Limit in p.u.', py_name='usetp_mn'),
+        DgsProperty('cgnd', 'i', 'Star Point (Grounded=0, Neutral=1)', py_name='cgnd'),
     ]
 
     def __init__(self) -> None:
@@ -1094,6 +1112,7 @@ class ElmShnt(DGSElement):
         self.i_cont: int = 0
         self.usetp_mx: float = 1.0
         self.usetp_mn: float = 1.0
+        self.cgnd: int = 0
 
 
 class ElmSvs(DGSElement):
@@ -1369,6 +1388,8 @@ class ElmTr2(DGSElement):
         DgsProperty('t2ldc', 'i', 'Line Drop Compensation Enabled', py_name='t2ldc'),
         DgsProperty('mTaps_SIZEROW', 'i', 'Number of Stored Tap Table Rows', py_name='mTaps_SIZEROW'),
         DgsProperty('mTaps_SIZECOL', 'i', 'Number of Stored Tap Table Columns', py_name='mTaps_SIZECOL'),
+        DgsProperty('i_eahv', 'i', 'HV-side, phase 2 internally grounded.', py_name='i_eahv'),
+        DgsProperty('i_ealv', 'i', 'LV-side, phase 2 internally grounded.', py_name='i_ealv'),
     ]
 
     def __init__(self) -> None:
@@ -1394,6 +1415,8 @@ class ElmTr2(DGSElement):
         self.t2ldc: int = 0
         self.mTaps_SIZEROW: int = 0
         self.mTaps_SIZECOL: int = 0
+        self.i_eahv: int = 0
+        self.i_ealv: int = 0
 
 
 class ElmTr3(DGSElement):
@@ -2166,6 +2189,7 @@ class StaCubic(DGSElement):
         DgsProperty('it2p1', 'i', 'Phase-to-Phase Connection Flag 1', py_name='it2p1'),
         DgsProperty('it2p2', 'i', 'Phase-to-Phase Connection Flag 2', py_name='it2p2'),
         DgsProperty('it2p3', 'i', 'Phase-to-Phase Connection Flag 3', py_name='it2p3'),
+        DgsProperty('cPhInfo', 'a', 'Connected phases information', py_name='cPhInfo'),
     ]
 
     def __init__(self) -> None:
@@ -2179,6 +2203,7 @@ class StaCubic(DGSElement):
         self.it2p1: int = 0
         self.it2p2: int = 0
         self.it2p3: int = 0
+        self.cPhInfo: str = ""
 
 
 class StaSwitch(DGSElement):

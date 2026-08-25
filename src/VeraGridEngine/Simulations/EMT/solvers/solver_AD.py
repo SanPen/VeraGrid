@@ -179,7 +179,7 @@ def greedy_color_columns(col_rows: List[List[int]], n_rows: int) -> Tuple[np.nda
                     pass
 
     degrees: np.ndarray = np.array([len(adj[j]) for j in range(n_cols)], dtype=np.int32)
-    order: List[int] = list(np.argsort(-degrees))
+    order: List[int] = list(np.argsort(-degrees, kind="stable"))
     colors: np.ndarray = -np.ones(n_cols, dtype=np.int32)
     max_color: int = -1
     used: np.ndarray = np.zeros(n_cols, dtype=np.bool_)

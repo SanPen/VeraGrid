@@ -36,7 +36,7 @@ class CgmesExportDialogue(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self)
         self.ui = Ui_CgmesExportDialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('CGMES export')
+        self.setWindowTitle(self.tr('CGMES export'))
         self.setModal(True)
 
         self.grid = app.circuit
@@ -309,7 +309,7 @@ class CgmesExportDialogue(QtWidgets.QDialog):
 
         files_types: str = "CGMES (*.zip);;"
         filename, type_selected = QtWidgets.QFileDialog.getSaveFileName(self,
-                                                                        'Export to CGMES',
+                                                                        self.tr('Export to CGMES'),
                                                                         default_name,
                                                                         files_types)
 

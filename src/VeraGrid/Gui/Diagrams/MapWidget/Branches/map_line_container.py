@@ -616,8 +616,8 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
             self.set_enable(True)
 
         if self.editor.circuit.get_time_number() > 0:
-            ok = yes_no_question('Do you want to update the time series active status accordingly?',
-                                 'Update time series active status')
+            ok = yes_no_question(self.tr('Do you want to update the time series active status accordingly?'),
+                                 self.tr('Update time series active status'))
             if ok:
                 self.editor.set_active_status_to_profile(self.api_object, override_question=True)
 
@@ -904,7 +904,7 @@ class MapLineContainer(GenericDiagramWidget, QGraphicsItemGroup):
             return first_list, second_list
         else:
             # Handle invalid index
-            error_msg("Index out of range or invalid", "split line")
+            error_msg(self.tr("Index out of range or invalid"), self.tr("split line"))
             return list(), list()
 
     def disable_line(self):

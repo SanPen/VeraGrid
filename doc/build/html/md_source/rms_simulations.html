@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>📝 RMS simulations &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>⏱️ RMS simulations &mdash; VeraGrid 6.5.5 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
@@ -21,7 +21,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="🔍Small-Signal Stability Analysis" href="small_signal_stability.html" />
+    <link rel="next" title="🔍 Small-Signal Stability Analysis" href="small_signal_stability_rms.html" />
     <link rel="prev" title="🧲 Dynamic simulations" href="dynamic_simulations.html" /> 
 </head>
 
@@ -72,8 +72,8 @@
 <li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a><ul class="current">
-<li class="toctree-l2 current"><a class="current reference internal" href="#">📝 RMS simulations</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="small_signal_stability.html">🔍Small-Signal Stability Analysis</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">⏱️ RMS simulations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="small_signal_stability_rms.html">🔍 Small-Signal Stability Analysis</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#when-to-use-rms-simulation">When to use RMS simulation</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#rms-workflow-in-veragrid">RMS workflow in VeraGrid</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#rms-settings">RMS settings</a></li>
@@ -141,7 +141,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
-      <li class="breadcrumb-item active">📝 RMS simulations</li>
+      <li class="breadcrumb-item active">⏱️ RMS simulations</li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/md_source/rms_simulations.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -152,13 +152,13 @@
            <div itemprop="articleBody">
              
   <section class="tex2jax_ignore mathjax_ignore" id="rms-simulations">
-<h1>📝 RMS simulations<a class="headerlink" href="#rms-simulations" title="Link to this heading"></a></h1>
+<h1>⏱️ RMS simulations<a class="headerlink" href="#rms-simulations" title="Link to this heading"></a></h1>
 <p>Root-mean-square (RMS) simulation is VeraGrid’s phasor-domain dynamic-simulation workflow for electromechanical and controller time scales. It is the right tool when the objective is to study the time evolution of the system after a disturbance without resolving instantaneous electromagnetic waveforms inside each cycle.</p>
 <p>RMS simulation is usually the first dynamic study to run because it captures the global dynamic picture at moderate computational cost.</p>
-<p>The RMS model also provides the operating point and linearization used by VeraGrid’s small-signal stability analysis.</p>
+<p>The RMS model also provides the operating point and linearization used by VeraGrid’s Small-Signal stability analysis.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="small_signal_stability.html">🔍Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="small_signal_stability_rms.html">🔍 Small-Signal Stability Analysis</a></li>
 </ul>
 </div>
 <section id="when-to-use-rms-simulation">
@@ -547,7 +547,7 @@
 <li><p>Always validate the static power-flow solution before running RMS.</p></li>
 <li><p>Use RMS first when the main interest is electromechanical or controller-level behaviour.</p></li>
 <li><p>Keep the dynamic model only as detailed as the study requires.</p></li>
-<li><p>For linearized modal analysis around one RMS operating point or one RMS trajectory point, see <a class="reference internal" href="small_signal_stability.html"><span class="std std-doc">Small signal stability</span></a>.</p></li>
+<li><p>For linearized modal analysis around one RMS operating point or one RMS trajectory point, see <a class="reference internal" href="small_signal_stability_rms.html"><span class="std std-doc">Small-Signal stability</span></a>.</p></li>
 <li><p>For the broad mathematical and architectural background of the dynamic engine, see <a class="reference internal" href="dynamic_simulations.html"><span class="std std-doc">Dynamic simulations</span></a>.</p></li>
 </ul>
 </section>
@@ -558,7 +558,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="dynamic_simulations.html" class="btn btn-neutral float-left" title="🧲 Dynamic simulations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="small_signal_stability.html" class="btn btn-neutral float-right" title="🔍Small-Signal Stability Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="small_signal_stability_rms.html" class="btn btn-neutral float-right" title="🔍 Small-Signal Stability Analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -22,7 +22,7 @@ class CatalogueGUI(QtWidgets.QDialog):
         self.selected_file = None
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.setWindowTitle('Custom Catalogue')
+        self.setWindowTitle(self.tr('Custom Catalogue'))
         self.circuit: MultiCircuit = MultiCircuit()
 
         self.ui.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
@@ -37,7 +37,7 @@ class CatalogueGUI(QtWidgets.QDialog):
             self.accept()
         else:
             quit_msg = "No checkbox was selected for adding the component to the catalogue."
-            QtWidgets.QMessageBox.warning(self, "Can't upload file", quit_msg)
+            QtWidgets.QMessageBox.warning(self, self.tr("Can't upload file"), quit_msg)
             print("No checkbox was selected for adding the component to the catalogue.")
 
     def on_reject(self):

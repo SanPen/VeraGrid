@@ -722,7 +722,7 @@ def select_mimo_observables(y_data: Mat,
 
     if 0 < maximum_observables < n_channels:
         variances: Vec = np.var(y_data, axis=0).astype(np.float64)
-        ranking_indices: np.ndarray = np.argsort(-variances)
+        ranking_indices: np.ndarray = np.argsort(-variances, kind="stable")
         selected_indices: np.ndarray = np.sort(ranking_indices[:maximum_observables])
         selected_signal: Mat = np.asarray(y_data[:, selected_indices], dtype=np.float64)
         selected_names: List[str] = list()
@@ -1336,7 +1336,7 @@ def compute_svd_decomposition(hankel_matrix: CxMat,
                 )
                 del svd_u_matrix
 
-                sort_indices: np.ndarray = np.argsort(-singular_values)
+                sort_indices: np.ndarray = np.argsort(-singular_values, kind="stable")
                 singular_values_sorted: Vec = np.asarray(singular_values[sort_indices], dtype=np.float64)
                 right_vectors_sorted: CxMat = np.asarray(vh_matrix[sort_indices, :].conj().T, dtype=np.complex128)
                 smallest_sigma: float = max(float(singular_values_sorted[-1]), float(np.finfo(np.float64).eps))

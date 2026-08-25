@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.IO.matpower.legacy.matpower_parser &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.IO.matpower.legacy.matpower_parser &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -44,9 +44,9 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/topology.html">🌵 Topology</a></li>
@@ -67,6 +67,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../md_source/license.html">📜 License</a></li>
@@ -116,6 +120,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.matpower.legacy.matpower_branch_definitions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">matpower_branches</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.matpower.legacy.matpower_bus_definitions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">matpower_buses</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.matpower.legacy.matpower_gen_definitions</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">matpower_gen</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.matpower.matpower_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_matlab_float</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.IO.matpower.veragrid_to_matpower</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_matpower_case_dict</span>
 
 
@@ -186,7 +191,7 @@
         <span class="c1"># fill-in the data</span>
         <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vec</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">to_float</span><span class="p">:</span>
-                <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">parse_matlab_float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
@@ -294,7 +299,7 @@
         <span class="n">bus_idx_dict</span><span class="p">[</span><span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">matpower_buses</span><span class="o">.</span><span class="n">BUS_I</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span>
 
         <span class="c1"># determine if the bus is set as slack manually</span>
-        <span class="n">bus</span><span class="o">.</span><span class="n">is_slack</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">matpower_buses</span><span class="o">.</span><span class="n">BUS_TYPE</span><span class="p">]</span> <span class="o">==</span> <span class="n">matpower_buses</span><span class="o">.</span><span class="n">REF</span>
+        <span class="n">bus</span><span class="o">.</span><span class="n">set_is_slack_at</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">matpower_buses</span><span class="o">.</span><span class="n">BUS_TYPE</span><span class="p">]</span> <span class="o">==</span> <span class="n">matpower_buses</span><span class="o">.</span><span class="n">REF</span><span class="p">)</span>
 
         <span class="c1"># Add the bus to the circuit buses</span>
         <span class="n">circuit</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus</span><span class="p">)</span>
@@ -566,8 +571,10 @@
 
                 <span class="n">rate</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">[</span><span class="n">matpower_branches</span><span class="o">.</span><span class="n">RATE_A</span><span class="p">,</span> <span class="n">matpower_branches</span><span class="o">.</span><span class="n">RATE_B</span><span class="p">,</span> <span class="n">matpower_branches</span><span class="o">.</span><span class="n">RATE_C</span><span class="p">]])</span>
 
-                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-                    <span class="c1"># in matpower rate=0 means not limited by rating</span>
+                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">rate</span> <span class="o">&gt;=</span> <span class="mf">99999.0</span><span class="p">:</span>
+                    <span class="c1"># In MATPOWER, rate=0 means not limited by rating.</span>
+                    <span class="c1"># PGLIB also uses 99999 as an explicit placeholder for</span>
+                    <span class="c1"># effectively-unbounded thermal ratings.</span>
                     <span class="n">rate</span> <span class="o">=</span> <span class="mi">10000</span>
                     <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -618,8 +625,10 @@
 
                 <span class="n">rate</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">matpower_branches</span><span class="o">.</span><span class="n">RATE_A</span><span class="p">]</span>
 
-                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-                    <span class="c1"># in matpower rate=0 means not limited by rating</span>
+                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">rate</span> <span class="o">&gt;=</span> <span class="mf">99999.0</span><span class="p">:</span>
+                    <span class="c1"># In MATPOWER, rate=0 means not limited by rating.</span>
+                    <span class="c1"># PGLIB also uses 99999 as an explicit placeholder for</span>
+                    <span class="c1"># effectively-unbounded thermal ratings.</span>
                     <span class="n">rate</span> <span class="o">=</span> <span class="mi">10000</span>
                     <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -654,8 +663,10 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">rate</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">matpower_branches</span><span class="o">.</span><span class="n">RATE_A</span><span class="p">]</span>
 
-                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-                    <span class="c1"># in matpower rate=0 means not limited by rating</span>
+                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">rate</span> <span class="o">&gt;=</span> <span class="mf">99999.0</span><span class="p">:</span>
+                    <span class="c1"># In MATPOWER, rate=0 means not limited by rating.</span>
+                    <span class="c1"># PGLIB also uses 99999 as an explicit placeholder for</span>
+                    <span class="c1"># effectively-unbounded thermal ratings.</span>
                     <span class="n">rate</span> <span class="o">=</span> <span class="mi">10000</span>
                     <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -682,8 +693,10 @@
 
                 <span class="n">rate</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">matpower_branches</span><span class="o">.</span><span class="n">RATE_A</span><span class="p">]</span>
 
-                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-                    <span class="c1"># in matpower rate=0 means not limited by rating</span>
+                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">rate</span> <span class="o">&gt;=</span> <span class="mf">99999.0</span><span class="p">:</span>
+                    <span class="c1"># In MATPOWER, rate=0 means not limited by rating.</span>
+                    <span class="c1"># PGLIB also uses 99999 as an explicit placeholder for</span>
+                    <span class="c1"># effectively-unbounded thermal ratings.</span>
                     <span class="n">rate</span> <span class="o">=</span> <span class="mi">10000</span>
                     <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -709,8 +722,10 @@
 
                 <span class="n">rate</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">matpower_branches</span><span class="o">.</span><span class="n">RATE_A</span><span class="p">]</span>
 
-                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-                    <span class="c1"># in matpower rate=0 means not limited by rating</span>
+                <span class="k">if</span> <span class="n">rate</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">rate</span> <span class="o">&gt;=</span> <span class="mf">99999.0</span><span class="p">:</span>
+                    <span class="c1"># In MATPOWER, rate=0 means not limited by rating.</span>
+                    <span class="c1"># PGLIB also uses 99999 as an explicit placeholder for</span>
+                    <span class="c1"># effectively-unbounded thermal ratings.</span>
                     <span class="n">rate</span> <span class="o">=</span> <span class="mi">10000</span>
                     <span class="n">monitor_loading</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">else</span><span class="p">:</span>
@@ -874,28 +889,21 @@
 
 <div class="viewcode-block" id="parse_matpower_file">
 <a class="viewcode-back" href="../../../../../rst_source/api/auto/VeraGridEngine.IO.matpower.legacy.html#VeraGridEngine.IO.matpower.legacy.matpower_parser.parse_matpower_file">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">parse_matpower_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">export</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">Logger</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_matpower_file</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">MultiCircuit</span><span class="p">,</span> <span class="n">Logger</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        filename:</span>
-<span class="sd">        export:</span>
-
-<span class="sd">    Returns:</span>
-
+<span class="sd">    Read MatPower file</span>
+<span class="sd">    :param filename: MatPower file</span>
+<span class="sd">    :return: MultiCircuit (if successful), Logger</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># declare circuit</span>
-    <span class="n">circuit</span> <span class="o">=</span> <span class="n">MultiCircuit</span><span class="p">()</span>
-
     <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="p">()</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="n">read_matpower_file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="s1">&#39;bus&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">circuit</span> <span class="o">=</span> <span class="n">interpret_data_v1</span><span class="p">(</span><span class="n">circuit</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+        <span class="n">circuit</span> <span class="o">=</span> <span class="n">interpret_data_v1</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s1">&#39;No bus data&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;No bus data found in MatPower file:(&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">circuit</span><span class="p">,</span> <span class="n">logger</span></div>
 
@@ -1005,7 +1013,7 @@
 
         <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
             <span class="s1">&#39;bus_i&#39;</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>  <span class="c1"># matlab starts at 1</span>
-            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">elm</span><span class="o">.</span><span class="n">determine_bus_type</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">elm</span><span class="o">.</span><span class="n">determine_snapshot_bus_type</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
             <span class="s1">&#39;Pd&#39;</span><span class="p">:</span> <span class="n">Pd</span><span class="p">,</span>
             <span class="s1">&#39;Qd&#39;</span><span class="p">:</span> <span class="n">Qd</span><span class="p">,</span>
             <span class="s1">&#39;Gs&#39;</span><span class="p">:</span> <span class="n">Gs</span><span class="p">,</span>

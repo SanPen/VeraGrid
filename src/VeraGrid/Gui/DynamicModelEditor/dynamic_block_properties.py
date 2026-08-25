@@ -19,6 +19,21 @@ from PySide6.QtCore import Qt, Signal
 
 from VeraGrid.Gui.Icons import icons_rc
 from VeraGrid.Gui.base_python_code_editor import BasePythonCodeEditor
+from VeraGrid.Gui.DynamicModelEditor.dae_code_completion import (
+    DaeCompletionEntry,
+    DaeCompletionPosition,
+    DaeLanguageContext,
+    analyze_dae_completion_position,
+    build_dae_completion_entries,
+    build_generic_dae_language_context,
+    get_dae_section_names,
+)
+from VeraGrid.Gui.DynamicModelEditor.dae_code_linter import (
+    DaeCodeDiagnostic,
+    build_dae_code_diagnostics,
+    build_semantic_dae_diagnostic,
+    normalize_algebraic_equality_syntax,
+)
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_properties_gui import (
     Ui_DynamicBlockPropertiesDialog,
 )
@@ -57,10 +72,11 @@ from VeraGridEngine.Utils.Symbolic.symbolic import (
     Comparison,
     Const,
     Expr,
-    Func2,
     UnOp,
     Var,
     get_expression_vars,
+    get_symbolic_parser_function_arity,
+    get_symbolic_parser_function_names,
     string_to_symbolic,
     symbolic_to_string,
 )
@@ -143,23 +159,48 @@ class BlockEquationDraft:
 
 
 class ParameterDraftRow:
-    """One numeric parameter value edited without mutating its source constant."""
+    """One static value or event expression staged without mutating its block."""
 
-    __slots__ = ("_category", "_variable", "_constant", "_draft_text")
+    __slots__ = (
+        "_category",
+        "_owner",
+        "_variable",
+        "_expression",
+        "_kind",
+        "_original_text",
+        "_draft_text",
+    )
 
-    def __init__(self, category: str, variable: Var, constant: Const) -> None:
-        """
-        Capture one parameter and its original constant object.
+    def __init__(self,
+                 category: str,
+                 owner: Block,
+                 variable: Var,
+                 expression: Expr,
+                 kind: BlockSymbolKind) -> None:
+        """Capture one parameter mapping as an editable textual draft.
 
-        :param category: Value supplied for ``category``.
-        :param variable: Symbolic variable used by the operation.
-        :param constant: Value supplied for ``constant``.
+        Static parameters retain their numeric-only contract. Event parameters
+        retain their complete symbolic expression so initialization references
+        are not hidden or flattened to artificial constants by the dialogue.
+
+        :param category: User-facing parameter category.
+        :param owner: Block containing the parameter mapping.
+        :param variable: Parameter variable used as the mapping key.
+        :param expression: Current static value or event initialization expression.
+        :param kind: Static or event parameter role.
         :return: None.
         """
         self._category: str = category
+        self._owner: Block = owner
         self._variable: Var = variable
-        self._constant: Const = constant
-        self._draft_text: str = str(constant.value)
+        self._expression: Expr = expression
+        self._kind: BlockSymbolKind = kind
+        if isinstance(expression, Const):
+            expression_text: str = str(expression.value)
+        else:
+            expression_text = symbolic_to_string(expression)
+        self._original_text: str = expression_text
+        self._draft_text: str = expression_text
 
     def get_category(self) -> str:
         """
@@ -173,11 +214,23 @@ class ParameterDraftRow:
         """
         return self._variable
 
-    def get_constant(self) -> Const:
+    def get_owner(self) -> Block:
         """
-        :return: The original constant that will be updated on Apply.
+        :return: Block containing the staged parameter mapping.
         """
-        return self._constant
+        return self._owner
+
+    def get_kind(self) -> BlockSymbolKind:
+        """
+        :return: Static or event parameter role represented by the row.
+        """
+        return self._kind
+
+    def get_expression(self) -> Expr:
+        """
+        :return: Original expression represented by the row.
+        """
+        return self._expression
 
     def get_draft_text(self) -> str:
         """
@@ -227,12 +280,68 @@ class ParameterDraftRow:
                 pass
         return parsed_value
 
+    def parse_event_expression(self, namespace: Mapping[str, Expr]) -> Expr:
+        """Parse one event-parameter value or symbolic initialization expression.
+
+        :param namespace: Explicit symbolic identities accepted in the expression.
+        :return: Parsed scalar symbolic expression.
+        :raises ValueError: If the text is empty, unset, boolean, comparative, or non-real.
+        """
+        value_text: str = self._draft_text.strip()
+        if len(value_text) == 0:
+            raise ValueError(f"Event parameter '{self._variable.name}' cannot be empty")
+        elif value_text.lower() == "none":
+            raise ValueError(
+                f"Event parameter '{self._variable.name}' requires a numeric value, "
+                "an expression, or an unchanged external initialization mapping"
+            )
+        else:
+            parsed_expression: Expr | Comparison = string_to_symbolic(value_text, namespace)
+
+        # Python represents a negative numeric literal as a unary operation.
+        # Normalize that parser detail so a signed scalar remains a Const and
+        # follows the same event-parameter contract as an unsigned scalar.
+        if isinstance(parsed_expression, UnOp):
+            parsed_expression = parsed_expression.simplify()
+        else:
+            pass
+
+        if isinstance(parsed_expression, Comparison):
+            raise ValueError(
+                f"Event parameter '{self._variable.name}' requires a scalar expression"
+            )
+        elif isinstance(parsed_expression, Const):
+            constant_value: object = parsed_expression.value
+            if isinstance(constant_value, bool) or not isinstance(constant_value, (int, float)):
+                raise ValueError(
+                    f"Event parameter '{self._variable.name}' requires a real numeric value"
+                )
+            else:
+                numeric_value: float = float(constant_value)
+            if numeric_value == float("inf") or numeric_value == float("-inf") or numeric_value != numeric_value:
+                raise ValueError(f"Event parameter '{self._variable.name}' must be finite")
+            else:
+                pass
+        else:
+            pass
+        return parsed_expression
+
+    def has_changes(self) -> bool:
+        """
+        :return: Whether the staged text differs from the loaded expression.
+        """
+        return self._draft_text.strip() != self._original_text.strip()
+
     def is_unchanged_unset(self) -> bool:
         """Return whether an originally unset constant remains unset.
 
         :return: ``True`` for an unchanged ``Const(None)`` draft.
         """
-        return self._constant.value is None and self._draft_text.strip().lower() == "none"
+        return (
+            isinstance(self._expression, Const)
+            and self._expression.value is None
+            and self._draft_text.strip().lower() == "none"
+        )
 
 
 class BlockStructuralEditRequest:
@@ -547,8 +656,13 @@ class StructuralSettingDelegate(QtWidgets.QStyledItemDelegate):
             return integer_editor
         elif isinstance(prop.value, Enum):
             enum_combo: QtWidgets.QComboBox = QtWidgets.QComboBox(parent)
+            enum_options: tuple[Enum, ...] = (
+                tuple(prop.value.__class__)
+                if prop.allowed_values is None
+                else prop.allowed_values
+            )
             enum_member: Enum
-            for enum_member in prop.value.__class__:
+            for enum_member in enum_options:
                 enum_combo.addItem(enum_member.name)
             return enum_combo
         elif prop.name == "connection_type" and prop.value is None:
@@ -636,8 +750,13 @@ def parse_structural_setting_value(prop: TemplateProp, value_text: str) -> objec
     elif isinstance(current_value, float):
         return float(value_text)
     elif isinstance(current_value, Enum):
+        enum_options: tuple[Enum, ...] = (
+            tuple(current_value.__class__)
+            if prop.allowed_values is None
+            else prop.allowed_values
+        )
         enum_member: Enum
-        for enum_member in current_value.__class__:
+        for enum_member in enum_options:
             if value_text == enum_member.name or value_text == str(enum_member.value):
                 return enum_member
             else:
@@ -2067,13 +2186,13 @@ class SymbolMappingDelegate(QtWidgets.QStyledItemDelegate):
 
 
 class BlockParameterDraftModel(QtCore.QAbstractTableModel):
-    """Table model that stages numeric parameter changes until Apply."""
+    """Table model that stages static values and event expressions until Apply."""
 
     __slots__ = ("_rows",)
 
     def __init__(self, block: Block, parent: QtCore.QObject | None = None) -> None:
         """
-        Build staged rows recursively from fixed, event, and mode constants.
+        Build staged rows recursively from static values and event expressions.
 
         :param block: Symbolic block used by the operation.
         :param parent: Owning Qt widget.
@@ -2092,8 +2211,18 @@ class BlockParameterDraftModel(QtCore.QAbstractTableModel):
         child_block: Block
         for child_block in block.get_all_blocks():
             owner_label: str = child_block.name if child_block is not block else block.name
-            self._append_constant_rows(f"Parameter - {owner_label}", child_block.parameters)
-            self._append_constant_rows(f"Dynamic parameter - {owner_label}", child_block.event_dict)
+            self._append_parameter_rows(
+                category=f"Parameter - {owner_label}",
+                owner=child_block,
+                values=child_block.parameters,
+                kind=BlockSymbolKind.PARAMETER,
+            )
+            self._append_parameter_rows(
+                category=f"Dynamic parameter - {owner_label}",
+                owner=child_block,
+                values=child_block.event_dict,
+                kind=BlockSymbolKind.EVENT_PARAMETER,
+            )
             # Retained modes may have symbolic initialization expressions and
             # execution dependencies. They are edited in Runtime logic, where
             # their writers and readers can be validated as one transaction.
@@ -2109,20 +2238,35 @@ class BlockParameterDraftModel(QtCore.QAbstractTableModel):
         self._load_rows(block)
         self.endResetModel()
 
-    def _append_constant_rows(self, category: str, values: Mapping[Var, Expr]) -> None:
-        """Append numeric and explicitly unset constants from one block dictionary.
+    def _append_parameter_rows(self,
+                               category: str,
+                               owner: Block,
+                               values: Mapping[Var, Expr],
+                               kind: BlockSymbolKind) -> None:
+        """Append editable parameter mappings from one block dictionary.
 
         :param category: User-facing constant category and owner label.
+        :param owner: Block containing the supplied parameter mapping.
         :param values: Variable-to-expression dictionary owned by the block.
+        :param kind: Static or event parameter role represented by the mapping.
         :return: None.
         """
         variable: Var
         expression: Expr
         for variable, expression in values.items():
-            if isinstance(expression, Const):
-                self._rows.append(ParameterDraftRow(category, variable, expression))
-            else:
+            if kind == BlockSymbolKind.PARAMETER and not isinstance(expression, Const):
+                # Static parameters have a numeric-only engine contract.
                 pass
+            else:
+                self._rows.append(
+                    ParameterDraftRow(
+                        category=category,
+                        owner=owner,
+                        variable=variable,
+                        expression=expression,
+                        kind=kind,
+                    )
+                )
 
     def rowCount(self, parent: QtCore.QModelIndex = QtCore.QModelIndex()) -> int:
         """
@@ -2171,7 +2315,13 @@ class BlockParameterDraftModel(QtCore.QAbstractTableModel):
             else:
                 return None
         elif role == Qt.ItemDataRole.ToolTipRole and index.column() == 2:
-            return self.tr("Numeric value. Changes are staged until Apply changes is pressed.")
+            if row.get_kind() == BlockSymbolKind.EVENT_PARAMETER:
+                return self.tr(
+                    "Real value or symbolic initialization expression. "
+                    "Changes are staged until Apply changes is pressed."
+                )
+            else:
+                return self.tr("Numeric value. Changes are staged until Apply changes is pressed.")
         else:
             return None
 
@@ -2235,27 +2385,59 @@ class BlockParameterDraftModel(QtCore.QAbstractTableModel):
         else:
             return None
 
-    def get_pending_values(self) -> List[tuple[Const, float | complex]]:
-        """
-        Validate and return all staged constant updates.
+    def get_pending_static_values(self) -> List[tuple[Const, float | complex]]:
+        """Validate and return staged updates for numeric static parameters.
 
-        :return: All staged constant updates.
+        :return: Original constants and their staged numeric values.
         """
         result: List[tuple[Const, float | complex]] = list()
         row: ParameterDraftRow
         for row in self._rows:
-            if row.is_unchanged_unset():
+            expression: Expr = row.get_expression()
+            if row.get_kind() != BlockSymbolKind.PARAMETER:
+                pass
+            elif isinstance(expression, Const) and row.is_unchanged_unset():
                 # ``None`` means the value is supplied later by a mapping. It
                 # remains visible in the table but does not become a fake zero.
                 pass
+            elif isinstance(expression, Const):
+                result.append((expression, row.parse_value()))
             else:
-                result.append((row.get_constant(), row.parse_value()))
+                pass
         return result
 
-    def get_pending_named_values(self) -> List[tuple[str, float | complex]]:
-        """
-        Validate and return staged constants by semantic variable name.
+    def get_pending_event_expressions(
+            self,
+            namespace: Mapping[str, Expr]) -> List[tuple[Block, Var, Expr]]:
+        """Validate changed event-parameter expressions against one namespace.
 
+        Unchanged ``Const(None)`` values remain available for external power-flow
+        seeding. Every edited event row must instead become an explicit scalar
+        value or expression.
+
+        :param namespace: Explicit symbolic identities accepted in expressions.
+        :return: Changed owner, variable, and parsed expression triples.
+        """
+        result: List[tuple[Block, Var, Expr]] = list()
+        row: ParameterDraftRow
+        for row in self._rows:
+            if row.get_kind() != BlockSymbolKind.EVENT_PARAMETER or not row.has_changes():
+                pass
+            else:
+                parsed_expression: Expr = row.parse_event_expression(namespace)
+                result.append((row.get_owner(), row.get_variable(), parsed_expression))
+        return result
+
+    def get_pending_named_values(
+            self,
+            namespace: Mapping[str, Expr]) -> List[tuple[str, float | complex]]:
+        """Validate and return transferable numeric values by semantic name.
+
+        Structural regeneration can transfer scalar parameter values by name.
+        Symbolic event expressions remain the builder's responsibility and are
+        therefore omitted from this numeric transfer list.
+
+        :param namespace: Explicit symbolic identities accepted in event expressions.
         :return: Staged constants by semantic variable name.
         """
         result: List[tuple[str, float | complex]] = list()
@@ -2263,9 +2445,111 @@ class BlockParameterDraftModel(QtCore.QAbstractTableModel):
         for row in self._rows:
             if row.is_unchanged_unset():
                 pass
-            else:
+            elif row.get_kind() == BlockSymbolKind.PARAMETER:
                 result.append((row.get_variable().name, row.parse_value()))
+            else:
+                event_expression: Expr = row.parse_event_expression(namespace)
+                if isinstance(event_expression, Const):
+                    event_value: object = event_expression.value
+                    if isinstance(event_value, (int, float)) and not isinstance(event_value, bool):
+                        result.append((row.get_variable().name, float(event_value)))
+                    else:
+                        pass
+                elif row.has_changes():
+                    raise ValueError(
+                        f"Apply the symbolic expression for event parameter "
+                        f"'{row.get_variable().name}' separately from structural changes"
+                    )
+                else:
+                    pass
         return result
+
+
+def validate_event_parameter_expression_dependencies(
+        root_block: Block,
+        pending_expressions: Sequence[tuple[Block, Var, Expr]]) -> None:
+    """Reject cyclic initialization dependencies between event parameters.
+
+    Event expressions may depend on state, algebraic, static, or other event
+    variables. Only dependencies whose targets are also event parameters belong
+    to this local graph; the complete initialization solver resolves the other
+    DAE dependencies. A cycle between event parameters has no deterministic
+    explicit initialization order and must be rejected before mutation.
+
+    :param root_block: Complete edited block tree.
+    :param pending_expressions: Changed event expressions staged by the dialogue.
+    :return: None.
+    :raises ValueError: If event expressions contain a cyclic dependency.
+    """
+    expressions_by_uid: Dict[int, Expr] = dict()
+    names_by_uid: Dict[int, str] = dict()
+    owner: Block
+    event_variable: Var
+    event_expression: Expr
+    for owner in root_block.get_all_blocks():
+        for event_variable, event_expression in owner.event_dict.items():
+            expressions_by_uid[event_variable.uid] = event_expression
+            names_by_uid[event_variable.uid] = event_variable.name
+
+    pending_owner: Block
+    for pending_owner, event_variable, event_expression in pending_expressions:
+        _unused_pending_owner: Block = pending_owner
+        expressions_by_uid[event_variable.uid] = event_expression
+        names_by_uid[event_variable.uid] = event_variable.name
+
+    dependent_uids: Dict[int, List[int]] = dict()
+    in_degree: Dict[int, int] = dict()
+    event_uid: int
+    for event_uid in expressions_by_uid:
+        dependent_uids[event_uid] = list()
+        in_degree[event_uid] = 0
+
+    for event_uid, event_expression in expressions_by_uid.items():
+        dependency_uids_seen: set[int] = set()
+        dependency_variable: Var
+        for dependency_variable in get_expression_vars(event_expression):
+            dependency_uid: int = dependency_variable.uid
+            if dependency_uid not in expressions_by_uid or dependency_uid in dependency_uids_seen:
+                pass
+            else:
+                dependency_uids_seen.add(dependency_uid)
+                dependent_uids[dependency_uid].append(event_uid)
+                in_degree[event_uid] += 1
+
+    ready_uids: List[int] = list()
+    for event_uid, degree in in_degree.items():
+        if degree == 0:
+            ready_uids.append(event_uid)
+        else:
+            pass
+
+    ready_index: int = 0
+    resolved_count: int = 0
+    while ready_index < len(ready_uids):
+        resolved_uid: int = ready_uids[ready_index]
+        ready_index += 1
+        resolved_count += 1
+        dependent_uid: int
+        for dependent_uid in dependent_uids[resolved_uid]:
+            in_degree[dependent_uid] -= 1
+            if in_degree[dependent_uid] == 0:
+                ready_uids.append(dependent_uid)
+            else:
+                pass
+
+    if resolved_count == len(expressions_by_uid):
+        pass
+    else:
+        cyclic_names: List[str] = list()
+        for event_uid, degree in in_degree.items():
+            if degree > 0:
+                cyclic_names.append(names_by_uid[event_uid])
+            else:
+                pass
+        cyclic_names.sort()
+        raise ValueError(
+            "Cyclic event-parameter initialization: " + ", ".join(cyclic_names)
+        )
 
 
 class EquationLatexModel(QtCore.QAbstractTableModel):
@@ -2498,6 +2782,7 @@ class DaeCodeHighlighter(QtGui.QSyntaxHighlighter):
         "_string_format",
         "_comment_format",
         "_symbol_format",
+        "_function_format",
         "_symbol_names",
     )
 
@@ -2511,18 +2796,55 @@ class DaeCodeHighlighter(QtGui.QSyntaxHighlighter):
         """
         super().__init__(document)
         self._keyword_format: QtGui.QTextCharFormat = QtGui.QTextCharFormat()
-        self._keyword_format.setForeground(QtGui.QColor("#7c3aed"))
         self._keyword_format.setFontWeight(QtGui.QFont.Weight.Bold)
         self._number_format: QtGui.QTextCharFormat = QtGui.QTextCharFormat()
-        self._number_format.setForeground(QtGui.QColor("#0369a1"))
         self._string_format: QtGui.QTextCharFormat = QtGui.QTextCharFormat()
-        self._string_format.setForeground(QtGui.QColor("#15803d"))
         self._comment_format: QtGui.QTextCharFormat = QtGui.QTextCharFormat()
-        self._comment_format.setForeground(QtGui.QColor("#64748b"))
         self._comment_format.setFontItalic(True)
         self._symbol_format: QtGui.QTextCharFormat = QtGui.QTextCharFormat()
-        self._symbol_format.setForeground(QtGui.QColor("#b45309"))
+        self._function_format: QtGui.QTextCharFormat = QtGui.QTextCharFormat()
+        self._function_format.setFontWeight(QtGui.QFont.Weight.Bold)
         self._symbol_names: tuple[str, ...] = tuple(symbol_names)
+        self.set_light_mode()
+
+    def apply_theme(self, dark_theme: bool) -> None:
+        """
+        Apply DAE token colors for the current editor theme.
+
+        :param dark_theme: Whether to use the dark token palette.
+        :return: None.
+        """
+        if dark_theme:
+            self._keyword_format.setForeground(QtGui.QColor("#A78BFA"))
+            self._number_format.setForeground(QtGui.QColor("#7DD3FC"))
+            self._string_format.setForeground(QtGui.QColor("#86EFAC"))
+            self._comment_format.setForeground(QtGui.QColor("#94A3B8"))
+            self._symbol_format.setForeground(QtGui.QColor("#FBBF24"))
+            self._function_format.setForeground(QtGui.QColor("#7DD3FC"))
+        else:
+            self._keyword_format.setForeground(QtGui.QColor("#7C3AED"))
+            self._number_format.setForeground(QtGui.QColor("#0369A1"))
+            self._string_format.setForeground(QtGui.QColor("#15803D"))
+            self._comment_format.setForeground(QtGui.QColor("#64748B"))
+            self._symbol_format.setForeground(QtGui.QColor("#B45309"))
+            self._function_format.setForeground(QtGui.QColor("#0369A1"))
+        self.rehighlight()
+
+    def set_dark_mode(self) -> None:
+        """
+        Apply dark DAE syntax colors.
+
+        :return: None.
+        """
+        self.apply_theme(dark_theme=True)
+
+    def set_light_mode(self) -> None:
+        """
+        Apply light DAE syntax colors.
+
+        :return: None.
+        """
+        self.apply_theme(dark_theme=False)
 
     def set_symbol_names(self, symbol_names: Sequence[str]) -> None:
         """
@@ -2541,12 +2863,7 @@ class DaeCodeHighlighter(QtGui.QSyntaxHighlighter):
         :param text: User-entered text.
         :return: None.
         """
-        section_names: tuple[str, ...] = (
-            "state_eqs",
-            "algebraic_eqs",
-            "init_eqs",
-            "diff_init_eqs",
-        )
+        section_names: tuple[str, ...] = get_dae_section_names()
         section_name: str
         for section_name in section_names:
             self._apply_pattern(text, rf"\b{re.escape(section_name)}\b", self._keyword_format)
@@ -2557,6 +2874,16 @@ class DaeCodeHighlighter(QtGui.QSyntaxHighlighter):
         symbol_name: str
         for symbol_name in self._symbol_names:
             self._apply_pattern(text, rf"\b{re.escape(symbol_name)}\b", self._symbol_format)
+
+        # The Engine catalogue is the only accepted source of symbolic
+        # function names, so highlighting cannot drift from lint or completion.
+        function_name: str
+        for function_name in get_symbolic_parser_function_names():
+            self._apply_pattern(
+                text,
+                rf"\b{re.escape(function_name)}\b(?=\s*\()",
+                self._function_format,
+            )
 
         comment_index: int = text.find("#")
         if comment_index >= 0:
@@ -2579,480 +2906,20 @@ class DaeCodeHighlighter(QtGui.QSyntaxHighlighter):
             self.setFormat(match.start(), match.end() - match.start(), text_format)
 
 
-class DaeCodeDiagnostic:
-    """One source-local validation error shown directly inside the DAE editor."""
-
-    __slots__ = ("_line", "_column", "_length", "_message")
-
-    def __init__(self, line: int, column: int, length: int, message: str) -> None:
-        """Store a one-based line and zero-based source span.
-
-        :param line: One-based source line.
-        :param column: Zero-based source column.
-        :param length: Highlighted source length.
-        :param message: Explanation exposed as a tooltip.
-        :return: None.
-        """
-        self._line: int = max(1, line)
-        self._column: int = max(0, column)
-        self._length: int = max(1, length)
-        self._message: str = message
-
-    def get_line(self) -> int:
-        """
-        :return: The one-based source line.
-        """
-        return self._line
-
-    def get_column(self) -> int:
-        """
-        :return: The zero-based source column.
-        """
-        return self._column
-
-    def get_length(self) -> int:
-        """
-        :return: The highlighted source length.
-        """
-        return self._length
-
-    def get_message(self) -> str:
-        """
-        :return: The user-facing validation explanation.
-        """
-        return self._message
-
-
-def find_text_diagnostic(code: str, token: str, message: str) -> DaeCodeDiagnostic:
-    """Locate a semantic-error token in source and create one diagnostic.
-
-    :param code: Complete DAE source.
-    :param token: Identifier or section name associated with the error.
-    :param message: Validation explanation.
-    :return: Source-local diagnostic, falling back to the first line.
-    """
-    lines: List[str] = code.splitlines()
-    line_index: int
-    for line_index in range(len(lines)):
-        column: int = lines[line_index].find(token)
-        if column >= 0:
-            return DaeCodeDiagnostic(line_index + 1, column, len(token), message)
-        else:
-            pass
-    return DaeCodeDiagnostic(1, 0, 1, message)
-
-
-def brackets_match(opening_bracket: str, closing_bracket: str) -> bool:
-    """Return whether two Python punctuation tokens form one bracket pair.
-
-    :param opening_bracket: Candidate opening token.
-    :param closing_bracket: Candidate closing token.
-    :return: ``True`` only for matching parentheses, brackets, or braces.
-    """
-    if opening_bracket == "(" and closing_bracket == ")":
-        result: bool = True
-    elif opening_bracket == "[" and closing_bracket == "]":
-        result = True
-    elif opening_bracket == "{" and closing_bracket == "}":
-        result = True
-    else:
-        result = False
-    return result
-
-
-def normalize_algebraic_equality_syntax(code: str) -> str:
-    """Translate visible algebraic ``=`` tokens into a parse-only marker.
-
-    A single equality inside a Python list is not valid Python syntax. The DAE
-    surface language nevertheless uses mathematical ``left = right`` equations.
-    Tokenization identifies only equality signs inside ``algebraic_eqs`` and
-    replaces them with the otherwise unsupported bitwise-or operator. That
-    one-character marker preserves every source line and column for diagnostics
-    and is converted to an Engine residual after the temporary AST is built.
-
-    :param code: User-visible DAE source containing mathematical equalities.
-    :return: Temporary Python-parseable source with identical character positions.
-    :raises ValueError: If the reserved marker is written directly by the user.
-    """
-    normalized_tokens: List[tokenize.TokenInfo] = list()
-    bracket_depth: int = 0
-    waiting_for_assignment: bool = False
-    waiting_for_list: bool = False
-    algebraic_list_depth: int | None = None
-    equality_was_replaced: bool = False
-    insignificant_token_types: set[int] = set((
-        tokenize.NL,
-        tokenize.NEWLINE,
-        tokenize.INDENT,
-        tokenize.DEDENT,
-        tokenize.COMMENT,
-    ))
-
-    try:
-        source_token: tokenize.TokenInfo
-        for source_token in tokenize.generate_tokens(StringIO(code).readline):
-            token_text: str = source_token.string
-            replacement_token: tokenize.TokenInfo = source_token
-
-            if algebraic_list_depth is not None:
-                if source_token.type == tokenize.OP and token_text == "=":
-                    replacement_token = source_token._replace(string="|")
-                    equality_was_replaced = True
-                elif source_token.type == tokenize.OP and token_text == "|":
-                    raise ValueError(
-                        "The '|' operator is not supported inside algebraic_eqs; "
-                        "use one '=' to separate the two equation sides"
-                    )
-                else:
-                    pass
-            else:
-                pass
-            normalized_tokens.append(replacement_token)
-
-            if algebraic_list_depth is not None:
-                if source_token.type == tokenize.OP and token_text in ("(", "[", "{"):
-                    bracket_depth += 1
-                elif source_token.type == tokenize.OP and token_text in (")", "]", "}"):
-                    closes_algebraic_list: bool = (
-                        token_text == "]" and bracket_depth == algebraic_list_depth
-                    )
-                    bracket_depth = max(0, bracket_depth - 1)
-                    if closes_algebraic_list:
-                        algebraic_list_depth = None
-                    else:
-                        pass
-                else:
-                    pass
-            elif waiting_for_list:
-                if source_token.type in insignificant_token_types:
-                    pass
-                elif source_token.type == tokenize.OP and token_text == "[":
-                    bracket_depth += 1
-                    algebraic_list_depth = bracket_depth
-                    waiting_for_list = False
-                else:
-                    waiting_for_list = False
-            elif waiting_for_assignment:
-                if source_token.type in insignificant_token_types:
-                    pass
-                elif source_token.type == tokenize.OP and token_text == "=":
-                    waiting_for_assignment = False
-                    waiting_for_list = True
-                else:
-                    waiting_for_assignment = False
-            else:
-                if (bracket_depth == 0
-                        and source_token.type == tokenize.NAME
-                        and token_text == "algebraic_eqs"):
-                    waiting_for_assignment = True
-                else:
-                    pass
-
-                if source_token.type == tokenize.OP and token_text in ("(", "[", "{"):
-                    bracket_depth += 1
-                elif source_token.type == tokenize.OP and token_text in (")", "]", "}"):
-                    bracket_depth = max(0, bracket_depth - 1)
-                else:
-                    pass
-        normalized_code: str = tokenize.untokenize(normalized_tokens)
-    except (IndentationError, tokenize.TokenError):
-        # Tokenization still yields every complete token before an unfinished
-        # tail. Preserve replacements already made so the Python parser reaches
-        # the actual unmatched bracket instead of stopping at the visible '='.
-        if equality_was_replaced:
-            normalized_code = tokenize.untokenize(normalized_tokens)
-        else:
-            normalized_code = code
-    return normalized_code
-
-
-def build_unmatched_opening_bracket_diagnostic(
-        code: str,
-        message: str,
-        fallback_line: int) -> DaeCodeDiagnostic | None:
-    """Locate the opening bracket referenced by a Python syntax error.
-
-    Python reports a mismatched closing bracket at the point where parsing
-    becomes impossible. For editing, the useful position is the earlier
-    opening bracket named in the error message.
-
-    :param code: Complete DAE source.
-    :param message: Message produced by :func:`ast.parse`.
-    :param fallback_line: Syntax-error line when Python omits the opening line.
-    :return: Opening-bracket diagnostic or ``None`` when it cannot be located.
-    """
-    opening_match: re.Match[str] | None = re.search(
-        r"opening parenthesis '([\(\[\{])'(?: on line (\d+))?",
-        message,
-    )
-    if opening_match is None:
-        return None
-    else:
-        opening_symbol: str = opening_match.group(1)
-        opening_line_text: str | None = opening_match.group(2)
-        if opening_line_text is None:
-            opening_line: int = fallback_line
-        else:
-            opening_line = int(opening_line_text)
-
-    # Tokenization ignores brackets inside strings and comments. It can emit
-    # all useful punctuation before eventually raising at the malformed tail.
-    opening_stack: List[tuple[str, int, int]] = list()
-    try:
-        token_stream: tokenize.TokenInfo
-        for token_stream in tokenize.generate_tokens(StringIO(code).readline):
-            if token_stream.type == tokenize.OP:
-                punctuation: str = token_stream.string
-                if punctuation in ("(", "[", "{"):
-                    opening_stack.append(
-                        (punctuation, token_stream.start[0], token_stream.start[1])
-                    )
-                elif punctuation in (")", "]", "}"):
-                    if len(opening_stack) > 0 and brackets_match(
-                            opening_stack[-1][0], punctuation):
-                        opening_stack.pop()
-                    else:
-                        pass
-                else:
-                    pass
-            else:
-                pass
-    except (IndentationError, tokenize.TokenError):
-        pass
-
-    stack_entry: tuple[str, int, int]
-    for stack_entry in opening_stack:
-        if stack_entry[0] == opening_symbol and stack_entry[1] == opening_line:
-            diagnostic_message: str = (
-                f"{message}. Fix this unmatched opening bracket, then validate "
-                "again to inspect the remaining code"
-            )
-            return DaeCodeDiagnostic(
-                stack_entry[1],
-                stack_entry[2],
-                1,
-                diagnostic_message,
-            )
-        else:
-            pass
-    return None
-
-
-def build_missing_algebraic_comma_diagnostic(
-        code: str,
-        syntax_error_line: int) -> DaeCodeDiagnostic | None:
-    """Identify a new algebraic equality following an unseparated entry.
-
-    Complete equalities are normalized to Python expressions before parsing.
-    Without a comma, the following equality starts where Python expects an
-    operator. This check translates that generic syntax failure into the
-    actionable source location while retaining the original line coordinates.
-
-    :param code: Original user-visible DAE source.
-    :param syntax_error_line: One-based line reported by the temporary parser.
-    :return: Missing-comma diagnostic, or ``None`` when the pattern is absent.
-    """
-    source_lines: List[str] = code.splitlines()
-    if syntax_error_line <= 1 or syntax_error_line > len(source_lines):
-        return None
-    else:
-        pass
-    current_line: str = source_lines[syntax_error_line - 1]
-    previous_line_index: int = syntax_error_line - 2
-    while (previous_line_index >= 0
-           and len(source_lines[previous_line_index].strip()) == 0):
-        previous_line_index -= 1
-    if previous_line_index < 0:
-        previous_line: str = ""
-    else:
-        previous_line = source_lines[previous_line_index].rstrip()
-
-    # CPython can locate an adjacent-expression syntax error either at the new
-    # equation or at the preceding one. First test the reported line directly.
-    source_prefix: str = "\n".join(source_lines[:syntax_error_line])
-    algebraic_start: int = source_prefix.rfind("algebraic_eqs")
-    algebraic_end: int = source_prefix.rfind("]")
-    inside_algebraic_section: bool = algebraic_start >= 0 and algebraic_start > algebraic_end
-    previous_entry_is_open: bool = (
-        len(previous_line) > 0
-        and not previous_line.endswith(",")
-        and not previous_line.endswith("[")
-    )
-    reported_line_starts_equation: bool = "=" in current_line
-    if (inside_algebraic_section
-            and reported_line_starts_equation
-            and previous_entry_is_open):
-        first_source_column: int = len(current_line) - len(current_line.lstrip())
-        return DaeCodeDiagnostic(
-            syntax_error_line,
-            first_source_column,
-            max(1, len(current_line.strip())),
-            "Possible missing comma before this algebraic equation",
-        )
-    else:
-        pass
-
-    # When the parser points at the preceding entry, the actionable location
-    # is the first non-separated equation on the following source line.
-    following_line_number: int = syntax_error_line + 1
-    if following_line_number <= len(source_lines):
-        following_line: str = source_lines[following_line_number - 1]
-        current_entry_is_open: bool = (
-            len(current_line.rstrip()) > 0
-            and not current_line.rstrip().endswith(",")
-            and not current_line.rstrip().endswith("[")
-        )
-        following_line_starts_equation: bool = "=" in following_line
-        if (inside_algebraic_section
-                and current_entry_is_open
-                and following_line_starts_equation):
-            following_source_column: int = len(following_line) - len(following_line.lstrip())
-            return DaeCodeDiagnostic(
-                following_line_number,
-                following_source_column,
-                max(1, len(following_line.strip())),
-                "Possible missing comma before this algebraic equation",
-            )
-        else:
-            pass
-    else:
-        pass
-    return None
-
-
-def build_dae_code_diagnostics(code: str,
-                               namespace: Mapping[str, Expr]) -> List[DaeCodeDiagnostic]:
-    """Collect syntax and unknown-symbol errors without stopping at the first name.
-
-    :param code: Complete Python-like DAE source.
-    :param namespace: Symbols currently valid in the dialogue draft.
-    :return: Source-local diagnostics in textual order.
-    """
-    result: List[DaeCodeDiagnostic] = list()
-    try:
-        normalized_code: str = normalize_algebraic_equality_syntax(code)
-        module: ast.Module = ast.parse(normalized_code, mode="exec")
-    except ValueError as error:
-        result.append(find_text_diagnostic(code, "|", str(error)))
-        return result
-    except SyntaxError as error:
-        line: int = 1 if error.lineno is None else int(error.lineno)
-        column: int = 0 if error.offset is None else max(0, int(error.offset) - 1)
-        error_text: str = error.msg if len(error.msg) > 0 else str(error)
-        opening_diagnostic: DaeCodeDiagnostic | None = build_unmatched_opening_bracket_diagnostic(
-            code,
-            error_text,
-            line,
-        )
-        missing_comma_diagnostic: DaeCodeDiagnostic | None = (
-            build_missing_algebraic_comma_diagnostic(code, line)
-        )
-        if opening_diagnostic is not None:
-            result.append(opening_diagnostic)
-        elif missing_comma_diagnostic is not None:
-            result.append(missing_comma_diagnostic)
-        else:
-            result.append(DaeCodeDiagnostic(line, column, 1, error_text))
-        return result
-
-    callable_names: set[str] = set(("abs", "sin", "cos", "tan", "asin", "acos", "atan", "atan2", "sqrt", "exp", "log", "log10", "sinh", "cosh", "tanh", "floor", "ceil", "round", "real", "imag", "conj", "angle", "heaviside", "rand", "min", "max",))
-    allowed_names: set[str] = set(namespace.keys())
-    allowed_names.update(callable_names)
-    allowed_names.update(set(("state_eqs", "algebraic_eqs", "init_eqs", "diff_init_eqs",)))
-    ast_node: ast.AST
-    for ast_node in ast.walk(module):
-        if isinstance(ast_node, ast.Call):
-            # Two adjacent parenthesized list entries without a comma are
-            # valid Python syntax for a call. In DAE data, however, only the
-            # explicitly supported symbolic functions may be called. Mark the
-            # second expression, which is where the missing comma belongs.
-            valid_function_call: bool = (
-                isinstance(ast_node.func, ast.Name)
-                and ast_node.func.id in callable_names
-            )
-            if valid_function_call:
-                pass
-            elif len(ast_node.args) > 0:
-                called_argument: ast.AST = ast_node.args[0]
-                argument_length: int = max(
-                    1,
-                    int(called_argument.end_col_offset) - int(called_argument.col_offset),
-                )
-                result.append(
-                    DaeCodeDiagnostic(
-                        int(called_argument.lineno),
-                        int(called_argument.col_offset),
-                        argument_length,
-                        "Possible missing comma before this expression",
-                    )
-                )
-            else:
-                result.append(
-                    DaeCodeDiagnostic(
-                        int(ast_node.lineno),
-                        int(ast_node.col_offset),
-                        1,
-                        "Unsupported function call in DAE code",
-                    )
-                )
-        elif isinstance(ast_node, ast.Name) and isinstance(ast_node.ctx, ast.Load):
-            if ast_node.id not in allowed_names:
-                message: str = f"Unknown symbol '{ast_node.id}'"
-                result.append(
-                    DaeCodeDiagnostic(
-                        int(ast_node.lineno),
-                        int(ast_node.col_offset),
-                        len(ast_node.id),
-                        message,
-                    )
-                )
-            else:
-                pass
-        else:
-            pass
-    result.sort(key=build_diagnostic_sort_key)
-    return result
-
-
-def build_diagnostic_sort_key(diagnostic: DaeCodeDiagnostic) -> tuple[int, int]:
-    """Return deterministic source order for one DAE diagnostic.
-
-    :param diagnostic: Diagnostic being ordered.
-    :return: Line and column tuple.
-    """
-    return diagnostic.get_line(), diagnostic.get_column()
-
-
-def build_semantic_dae_diagnostic(code: str, message: str) -> DaeCodeDiagnostic:
-    """Infer the most useful source span for one parser/count error.
-
-    :param code: Complete DAE source.
-    :param message: Semantic parser error.
-    :return: Best-effort source-local diagnostic.
-    """
-    quoted_match: re.Match[str] | None = re.search(r"'(\w+)'", message)
-    if quoted_match is not None:
-        token: str = quoted_match.group(1)
-    elif "state variables" in message:
-        token = "state_eqs"
-    elif "algebraic variables" in message:
-        token = "algebraic_eqs"
-    else:
-        # A generic semantic error has no safe association with state
-        # equations. Point to the first source token without mislabelling a
-        # different DAE section.
-        token = code.strip().split(maxsplit=1)[0] if len(code.strip()) > 0 else ""
-    return find_text_diagnostic(code, token, message)
-
-
 class DaeCodeEditor(BasePythonCodeEditor):
-    """Symbolic DAE specialization with diagnostics and source search."""
+    """Symbolic DAE editor with lint feedback, search, and safe completion."""
 
     __slots__ = (
         "_diagnostics",
         "_search_ranges",
         "_active_search_index",
         "_symbol_namespace",
+        "_language_context",
+        "_qt_completer",
+        "_completion_model",
+        "_completion_shortcut",
+        "_completion_entries",
+        "_last_completion_prefix",
     )
 
     def __init__(
@@ -3066,6 +2933,7 @@ class DaeCodeEditor(BasePythonCodeEditor):
         :param symbol_namespace: Symbols accepted by the safe DAE parser.
         :return: None.
         """
+        self._qt_completer: QtWidgets.QCompleter | None = None
         super().__init__(parent)
         self._diagnostics: List[DaeCodeDiagnostic] = list()
         self._search_ranges: List[tuple[int, int]] = list()
@@ -3074,6 +2942,41 @@ class DaeCodeEditor(BasePythonCodeEditor):
             self._symbol_namespace: Dict[str, Expr] = dict()
         else:
             self._symbol_namespace = dict(symbol_namespace)
+        self._language_context: DaeLanguageContext = build_generic_dae_language_context(
+            self._symbol_namespace
+        )
+
+        # QCompleter only presents entries generated by the restricted DAE
+        # language service. It never evaluates symbolic objects or exposes the
+        # Python builtins available to the executable Scripting editor.
+        self._qt_completer = QtWidgets.QCompleter(self)
+        self._qt_completer.setWidget(self)
+        self._qt_completer.setCompletionMode(
+            QtWidgets.QCompleter.CompletionMode.PopupCompletion
+        )
+        self._qt_completer.setCaseSensitivity(QtCore.Qt.CaseSensitivity.CaseInsensitive)
+        self._qt_completer.setFilterMode(QtCore.Qt.MatchFlag.MatchStartsWith)
+        self._qt_completer.setMaxVisibleItems(12)
+        self._completion_model: QtGui.QStandardItemModel = QtGui.QStandardItemModel(self)
+        self._qt_completer.setModel(self._completion_model)
+        self._qt_completer.activated[QtCore.QModelIndex].connect(
+            self._insert_completion
+        )
+        self._completion_entries: List[DaeCompletionEntry] = list()
+        self._last_completion_prefix: str = ""
+        # QCompleter installs an event filter on the editor and its popup. On
+        # some Windows Qt builds that filter consumes Tab before keyPressEvent
+        # reaches this class. Installing the editor's filter last guarantees
+        # that accepting a completion is independent of mouse interaction.
+        self.installEventFilter(self)
+        self._qt_completer.popup().installEventFilter(self)
+        self._qt_completer.popup().viewport().installEventFilter(self)
+        self._completion_shortcut: QtGui.QShortcut = QtGui.QShortcut(
+            QtGui.QKeySequence("Ctrl+Space"),
+            self,
+        )
+        self._completion_shortcut.setContext(QtCore.Qt.ShortcutContext.WidgetShortcut)
+        self._completion_shortcut.activated.connect(self._trigger_manual_completion)
 
     def set_symbol_namespace(self, symbol_namespace: Mapping[str, Expr]) -> None:
         """Replace the symbolic identities accepted by DAE validation.
@@ -3082,6 +2985,307 @@ class DaeCodeEditor(BasePythonCodeEditor):
         :return: None.
         """
         self._symbol_namespace = dict(symbol_namespace)
+        self._language_context = build_generic_dae_language_context(
+            self._symbol_namespace
+        )
+        self._hide_completion_popup()
+
+    def set_language_context(self, language_context: DaeLanguageContext) -> None:
+        """Synchronize validation and completion with one staged block context.
+
+        :param language_context: Current symbols and owner-specific DAE roles.
+        :return: None.
+        """
+        self._language_context = language_context
+        self._symbol_namespace = language_context.get_namespace()
+        self._hide_completion_popup()
+
+    def get_language_context(self) -> DaeLanguageContext:
+        """Return the immutable completion context currently in use.
+
+        :return: Active DAE language context.
+        """
+        return self._language_context
+
+    def get_completion_entries(self) -> List[DaeCompletionEntry]:
+        """Return the candidates currently presented by the popup.
+
+        :return: Detached current completion entries.
+        """
+        return list(self._completion_entries)
+
+    def keyPressEvent(self, event: QtGui.QKeyEvent) -> None:
+        """Coordinate popup navigation and automatic identifier completion.
+
+        :param event: Incoming keyboard event.
+        :return: None.
+        """
+        completer: QtWidgets.QCompleter | None = self._qt_completer
+        if completer is None:
+            BasePythonCodeEditor.keyPressEvent(self, event)
+            return
+        else:
+            pass
+        popup: QtWidgets.QAbstractItemView = completer.popup()
+        popup_visible: bool = popup.isVisible()
+        pressed_key: int = event.key()
+        pressed_text: str = event.text()
+        completion_keys: tuple[QtCore.Qt.Key, ...] = (
+            QtCore.Qt.Key.Key_Tab,
+            QtCore.Qt.Key.Key_Return,
+            QtCore.Qt.Key.Key_Enter,
+        )
+        navigation_keys: tuple[QtCore.Qt.Key, ...] = (
+            QtCore.Qt.Key.Key_Up,
+            QtCore.Qt.Key.Key_Down,
+            QtCore.Qt.Key.Key_PageUp,
+            QtCore.Qt.Key.Key_PageDown,
+        )
+        editing_keys: tuple[QtCore.Qt.Key, ...] = (
+            QtCore.Qt.Key.Key_Backspace,
+            QtCore.Qt.Key.Key_Delete,
+        )
+        inserts_printable_text: bool = (
+            len(pressed_text) > 0
+            and pressed_text.isprintable()
+            and pressed_key not in completion_keys
+            and pressed_key != QtCore.Qt.Key.Key_Escape
+        )
+
+        if popup_visible and pressed_key in completion_keys:
+            self._accept_current_completion()
+            event.accept()
+        elif popup_visible and pressed_key == QtCore.Qt.Key.Key_Escape:
+            self._hide_completion_popup()
+            event.accept()
+        elif popup_visible and pressed_key in navigation_keys:
+            # QCompleter owns popup navigation while its event filter is active.
+            QtWidgets.QPlainTextEdit.event(self, event)
+        elif inserts_printable_text:
+            # Text is inserted before recalculating the prefix. This order is
+            # required for Windows layouts that generate symbols through AltGr.
+            BasePythonCodeEditor.keyPressEvent(self, event)
+            if pressed_text[-1].isalnum() or pressed_text[-1] == "_":
+                self._trigger_automatic_completion()
+            else:
+                self._hide_completion_popup()
+        elif pressed_key in editing_keys:
+            BasePythonCodeEditor.keyPressEvent(self, event)
+            self._trigger_automatic_completion()
+        else:
+            self._hide_completion_popup()
+            BasePythonCodeEditor.keyPressEvent(self, event)
+
+    def eventFilter(self,
+                    watched: QtCore.QObject,
+                    event: QtCore.QEvent) -> bool:
+        """Accept popup completion before Qt consumes Tab or Enter.
+
+        The filter is limited to the editor and its completion view. Normal
+        tabulation therefore continues through :class:`BasePythonCodeEditor`
+        whenever the completion popup is closed.
+
+        :param watched: Qt object currently receiving the event.
+        :param event: Event offered to the installed filter.
+        :return: ``True`` only when the popup consumes an acceptance key.
+        """
+        completer: QtWidgets.QCompleter | None = self._qt_completer
+        if completer is None:
+            return BasePythonCodeEditor.eventFilter(self, watched, event)
+        else:
+            pass
+        popup: QtWidgets.QAbstractItemView = completer.popup()
+        completion_target: bool = (
+            watched is self
+            or watched is popup
+            or watched is popup.viewport()
+        )
+        completion_accept_keys: tuple[QtCore.Qt.Key, ...] = (
+            QtCore.Qt.Key.Key_Tab,
+            QtCore.Qt.Key.Key_Return,
+            QtCore.Qt.Key.Key_Enter,
+        )
+        consumes_completion_key: bool = (
+            completion_target
+            and popup.isVisible()
+            and event.type() == QtCore.QEvent.Type.KeyPress
+            and isinstance(event, QtGui.QKeyEvent)
+            and event.key() in completion_accept_keys
+        )
+        if consumes_completion_key and isinstance(event, QtGui.QKeyEvent):
+            self._accept_current_completion()
+            event.accept()
+            result: bool = True
+        else:
+            result = BasePythonCodeEditor.eventFilter(self, watched, event)
+        return result
+
+    def event(self, event: QtCore.QEvent) -> bool:
+        """Preserve AltGr text while reserving Ctrl+Space for completion.
+
+        :param event: Qt event routed to the editor.
+        :return: ``True`` when the event is completely handled.
+        """
+        if (event.type() == QtCore.QEvent.Type.ShortcutOverride
+                and isinstance(event, QtGui.QKeyEvent)):
+            pressed_text: str = event.text()
+            is_ctrl_space: bool = (
+                event.key() == QtCore.Qt.Key.Key_Space
+                and event.modifiers() == QtCore.Qt.KeyboardModifier.ControlModifier
+            )
+            if is_ctrl_space:
+                result: bool = BasePythonCodeEditor.event(self, event)
+            elif len(pressed_text) > 0 and pressed_text.isprintable():
+                event.accept()
+                result = True
+            else:
+                result = BasePythonCodeEditor.event(self, event)
+        else:
+            result = BasePythonCodeEditor.event(self, event)
+        return result
+
+    @QtCore.Slot()
+    def _trigger_manual_completion(self) -> None:
+        """Show every context-valid candidate matching the current prefix.
+
+        :return: None.
+        """
+        self._show_completion(require_minimum_prefix=False)
+
+    def _trigger_automatic_completion(self) -> None:
+        """Show candidates after two identifier characters are present.
+
+        :return: None.
+        """
+        self._show_completion(require_minimum_prefix=True)
+
+    def _show_completion(self, require_minimum_prefix: bool) -> None:
+        """Populate and position the popup for the current lexical context.
+
+        :param require_minimum_prefix: Whether fewer than two characters hide the popup.
+        :return: None.
+        """
+        source: str = self.toPlainText()
+        cursor_position: int = self.textCursor().position()
+        position: DaeCompletionPosition = analyze_dae_completion_position(
+            source,
+            cursor_position,
+        )
+        prefix: str = position.get_prefix()
+        if require_minimum_prefix and len(prefix) < 2:
+            self._hide_completion_popup()
+            return
+        else:
+            pass
+
+        entries: List[DaeCompletionEntry] = build_dae_completion_entries(
+            self._language_context,
+            position,
+        )
+        if len(entries) == 0:
+            self._hide_completion_popup()
+            return
+        elif (require_minimum_prefix
+              and len(entries) == 1
+              and entries[0].get_name().lower() == prefix.lower()):
+            self._hide_completion_popup()
+            return
+        else:
+            pass
+
+        self._completion_entries = entries
+        self._last_completion_prefix = prefix
+        self._completion_model.clear()
+        popup: QtWidgets.QAbstractItemView = self._qt_completer.popup()
+        entry_index: int
+        entry: DaeCompletionEntry
+        for entry_index, entry in enumerate(entries):
+            label: str = f"{entry.get_display_text()}    {entry.get_description()}"
+            item: QtGui.QStandardItem = QtGui.QStandardItem(label)
+            item.setEditable(False)
+            item.setToolTip(entry.get_description())
+            item.setData(entry_index, QtCore.Qt.ItemDataRole.UserRole)
+            self._completion_model.appendRow(item)
+        self._qt_completer.setCompletionPrefix(prefix)
+        completion_rectangle: QtCore.QRect = self.cursorRect()
+        popup_width: int = (
+            popup.sizeHintForColumn(0)
+            + popup.verticalScrollBar().sizeHint().width()
+        )
+        completion_rectangle.setWidth(min(max(260, popup_width), 620))
+        self._qt_completer.complete(completion_rectangle)
+        completion_model: QtCore.QAbstractItemModel | None = popup.model()
+        if completion_model is not None and completion_model.rowCount() > 0:
+            first_index: QtCore.QModelIndex = completion_model.index(0, 0)
+            popup.setCurrentIndex(first_index)
+        else:
+            pass
+
+    def _accept_current_completion(self) -> bool:
+        """Insert the selected popup entry, falling back to its first row.
+
+        :return: Whether a valid completion entry was inserted.
+        """
+        popup: QtWidgets.QAbstractItemView = self._qt_completer.popup()
+        completion_index: QtCore.QModelIndex = popup.currentIndex()
+        completion_model: QtCore.QAbstractItemModel | None = popup.model()
+        if (not completion_index.isValid()
+                and completion_model is not None
+                and completion_model.rowCount() > 0):
+            completion_index = completion_model.index(0, 0)
+            popup.setCurrentIndex(completion_index)
+        else:
+            pass
+        if completion_index.isValid():
+            self._insert_completion(completion_index)
+            result: bool = True
+        else:
+            self._hide_completion_popup()
+            result = False
+        return result
+
+    @QtCore.Slot(QtCore.QModelIndex)
+    def _insert_completion(self, completion_index: QtCore.QModelIndex) -> None:
+        """Replace the current identifier prefix with one selected candidate.
+
+        :param completion_index: Popup model index carrying the source entry index.
+        :return: None.
+        """
+        entry_data: object = completion_index.data(QtCore.Qt.ItemDataRole.UserRole)
+        if isinstance(entry_data, int) and 0 <= entry_data < len(self._completion_entries):
+            entry: DaeCompletionEntry = self._completion_entries[entry_data]
+            text_cursor: QtGui.QTextCursor = self.textCursor()
+            text_cursor.beginEditBlock()
+            text_cursor.movePosition(
+                QtGui.QTextCursor.MoveOperation.Left,
+                QtGui.QTextCursor.MoveMode.KeepAnchor,
+                len(self._last_completion_prefix),
+            )
+            text_cursor.removeSelectedText()
+            text_cursor.insertText(entry.get_insertion_text())
+            cursor_backtrack: int = entry.get_cursor_backtrack()
+            if cursor_backtrack > 0:
+                text_cursor.movePosition(
+                    QtGui.QTextCursor.MoveOperation.Left,
+                    QtGui.QTextCursor.MoveMode.MoveAnchor,
+                    cursor_backtrack,
+                )
+            else:
+                pass
+            text_cursor.endEditBlock()
+            self.setTextCursor(text_cursor)
+        else:
+            pass
+        self._hide_completion_popup()
+
+    def _hide_completion_popup(self) -> None:
+        """Hide the popup and discard entries tied to an obsolete prefix.
+
+        :return: None.
+        """
+        self._qt_completer.popup().hide()
+        self._completion_entries.clear()
+        self._last_completion_prefix = ""
 
     def get_symbol_namespace(self) -> Dict[str, Expr]:
         """Return a detached snapshot of the active symbolic namespace.
@@ -3331,6 +3535,142 @@ def build_block_symbol_namespace(block: Block) -> Dict[str, Expr]:
             for procedural_variable in get_procedural_expression_variables(procedural_entry):
                 namespace[procedural_variable.name] = procedural_variable
     return namespace
+
+
+def get_dae_symbol_completion_description(kind: BlockSymbolKind) -> str:
+    """Return a concise DAE role description for one symbol-table kind.
+
+    :param kind: Primary role shown by the Variables or Parameters table.
+    :return: User-facing completion description.
+    """
+    if kind == BlockSymbolKind.INPUT:
+        result: str = "Input variable"
+    elif kind == BlockSymbolKind.STATE:
+        result = "State variable"
+    elif kind == BlockSymbolKind.ALGEBRAIC:
+        result = "Algebraic variable"
+    elif kind == BlockSymbolKind.DIFFERENTIAL:
+        result = "Differential variable"
+    elif kind == BlockSymbolKind.EVENT_PARAMETER:
+        result = "Event parameter"
+    elif kind == BlockSymbolKind.PARAMETER:
+        result = "Static parameter"
+    elif kind == BlockSymbolKind.MODE_PARAMETER:
+        result = "Runtime mode parameter"
+    elif kind == BlockSymbolKind.OUTPUT_ONLY:
+        result = "Legacy output variable"
+    else:
+        result = "Symbolic variable or parameter"
+    return result
+
+
+def build_dialogue_dae_language_context(
+        namespace: Mapping[str, Expr],
+        symbol_model: BlockSymbolDraftModel,
+        root_block: Block,
+        equation_owner: Block) -> DaeLanguageContext:
+    """Build the shared parser/completion context from staged dialogue rows.
+
+    :param namespace: Joint DAE and runtime-logic validation namespace.
+    :param symbol_model: Detached Variables and Parameters table model.
+    :param root_block: Complete edited block tree containing external mappings.
+    :param equation_owner: Block owning the currently visible equation buffer.
+    :return: Synchronized language context for the DAE editor.
+    """
+    entries: List[DaeCompletionEntry] = list()
+    initializable_names: List[str] = list()
+    names_seen: set[str] = set()
+    entry_indices: Dict[str, int] = dict()
+    power_flow_initialized_variables: set[Var] = set()
+    mapped_owner: Block
+    for mapped_owner in root_block.get_all_blocks():
+        mapped_variable: Var | None
+        for mapped_variable in mapped_owner.external_mapping.values():
+            if isinstance(mapped_variable, Var):
+                power_flow_initialized_variables.add(mapped_variable)
+            else:
+                pass
+    row_index: int
+    for row_index in range(symbol_model.rowCount()):
+        row: BlockSymbolDraftRow | None = symbol_model.get_row(row_index)
+        if row is not None:
+            symbol_name: str = row.get_name()
+        else:
+            symbol_name = ""
+        if row is not None and symbol_name in namespace:
+            completion_entry: DaeCompletionEntry = DaeCompletionEntry(
+                name=symbol_name,
+                display_text=symbol_name,
+                insertion_text=symbol_name,
+                description=get_dae_symbol_completion_description(row.get_kind()),
+            )
+            existing_entry_index: int | None = entry_indices.get(symbol_name, None)
+            if existing_entry_index is None:
+                names_seen.add(symbol_name)
+                entry_indices[symbol_name] = len(entries)
+                entries.append(completion_entry)
+            elif row.get_owner() is equation_owner:
+                # Shared wrapper identities may appear before their equation
+                # owner. The active block's DAE role is the useful popup type.
+                entries[existing_entry_index] = completion_entry
+            else:
+                pass
+            generally_initializable_kinds: tuple[BlockSymbolKind, ...] = (
+                BlockSymbolKind.STATE,
+                BlockSymbolKind.ALGEBRAIC,
+            )
+            row_variable: Var | None = row.get_variable()
+            is_initializable_unknown: bool = (
+                row.get_owner() is equation_owner
+                and row.get_kind() in generally_initializable_kinds
+                and (
+                    row_variable is None
+                    or row_variable not in power_flow_initialized_variables
+                )
+            )
+            if (is_initializable_unknown
+                    and symbol_name not in initializable_names):
+                initializable_names.append(symbol_name)
+            else:
+                pass
+        else:
+            pass
+
+    # Runtime modes and expression-only variables may be absent from the table
+    # while remaining valid parser identities. They are still offered with a
+    # deliberately generic description instead of being silently omitted.
+    namespace_name: str
+    for namespace_name in namespace:
+        if namespace_name not in names_seen:
+            names_seen.add(namespace_name)
+            entries.append(
+                DaeCompletionEntry(
+                    name=namespace_name,
+                    display_text=namespace_name,
+                    insertion_text=namespace_name,
+                    description="Symbolic variable or runtime value",
+                )
+            )
+        else:
+            pass
+
+    return DaeLanguageContext(
+        namespace=namespace,
+        symbol_entries=entries,
+        initializable_names=initializable_names,
+        state_names=symbol_model.get_role_names(
+            equation_owner,
+            BlockSymbolKind.STATE,
+        ),
+        algebraic_names=symbol_model.get_role_names(
+            equation_owner,
+            BlockSymbolKind.ALGEBRAIC,
+        ),
+        differential_names=symbol_model.get_role_names(
+            equation_owner,
+            BlockSymbolKind.DIFFERENTIAL,
+        ),
+    )
 
 
 def build_equation_code(block: Block) -> str:
@@ -3947,32 +4287,40 @@ def _parse_symbolic_function_call(node: ast.Call,
         raise ValueError("Keyword arguments are not supported in symbolic functions")
     else:
         function_name: str = node.func.id
+    function_arity: int | None = get_symbolic_parser_function_arity(function_name)
+    if function_arity is None:
+        raise ValueError(f"Unsupported symbolic function '{function_name}'")
+    elif len(node.args) != function_arity:
+        raise ValueError(f"Unsupported arguments for symbolic function '{function_name}'")
+    else:
+        pass
 
-    if len(node.args) == 1:
-        argument: Expr | Comparison = _parse_symbolic_ast_node(node.args[0], namespace)
+    # Parse every argument through the DAE walker first so aliases retain their
+    # exact staged Expr identities. The Engine parser then owns the canonical
+    # function-name and arity validation for both unary and binary calls.
+    temporary_namespace: Dict[str, Expr] = dict(namespace)
+    temporary_names: List[str] = list()
+    argument_index: int
+    for argument_index in range(len(node.args)):
+        argument: Expr | Comparison = _parse_symbolic_ast_node(
+            node.args[argument_index],
+            namespace,
+        )
         if not isinstance(argument, Expr):
             raise ValueError("Symbolic functions require expression arguments")
         else:
-            temporary_name: str = "__dae_function_argument"
-            temporary_namespace: Dict[str, Expr] = dict(namespace)
+            temporary_name: str = f"__dae_function_argument_{argument_index}"
             temporary_namespace[temporary_name] = argument
-            parsed: Expr | Comparison = string_to_symbolic(
-                f"{function_name}({temporary_name})",
-                temporary_namespace,
-            )
-        if isinstance(parsed, Expr):
-            return parsed
-        else:
-            raise ValueError("A symbolic function cannot return a comparison")
-    elif len(node.args) == 2 and function_name in ("atan2", "min", "max"):
-        first: Expr | Comparison = _parse_symbolic_ast_node(node.args[0], namespace)
-        second: Expr | Comparison = _parse_symbolic_ast_node(node.args[1], namespace)
-        if isinstance(first, Expr) and isinstance(second, Expr):
-            return Func2(function_name, first, second)
-        else:
-            raise ValueError("Binary symbolic functions require expression arguments")
+            temporary_names.append(temporary_name)
+    argument_source: str = ", ".join(temporary_names)
+    parsed: Expr | Comparison = string_to_symbolic(
+        f"{function_name}({argument_source})",
+        temporary_namespace,
+    )
+    if isinstance(parsed, Expr):
+        return parsed
     else:
-        raise ValueError(f"Unsupported arguments for symbolic function '{function_name}'")
+        raise ValueError("A symbolic function cannot return a comparison")
 
 
 def _parse_symbolic_comparison(node: ast.Compare,
@@ -4419,6 +4767,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         "_dae_search_status",
         "_dae_highlighter",
         "_validate_code_button",
+        "_general_options_splitter",
         "_dae_splitter",
         "_symbol_panel_splitter",
         "_latex_model",
@@ -4577,8 +4926,13 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
             self._dae_editor.document(),
             tuple(self._namespace.keys()),
         )
+        self._refresh_dae_language_context()
         self._validate_code_button: QtWidgets.QPushButton = QtWidgets.QPushButton(
             self.tr("Validate all code"), self
+        )
+        self._general_options_splitter: QtWidgets.QSplitter = QtWidgets.QSplitter(
+            Qt.Orientation.Vertical,
+            self,
         )
         self._dae_splitter: QtWidgets.QSplitter = QtWidgets.QSplitter(Qt.Orientation.Horizontal, self)
         self._symbol_panel_splitter: QtWidgets.QSplitter = QtWidgets.QSplitter(
@@ -4724,6 +5078,22 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         else:
             pass
 
+    def set_dark_mode(self) -> None:
+        """Apply the dark theme to the owned code editors.
+
+        :return: None.
+        """
+        self._dae_editor.set_dark_mode()
+        self._dae_highlighter.set_dark_mode()
+
+    def set_light_mode(self) -> None:
+        """Apply the light theme to the owned code editors.
+
+        :return: None.
+        """
+        self._dae_editor.set_light_mode()
+        self._dae_highlighter.set_light_mode()
+
     def _build_general_page(self) -> QtWidgets.QWidget:
         """
         Build block identity, configuration, and numeric parameter controls.
@@ -4732,7 +5102,10 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         """
         page: QtWidgets.QWidget = QtWidgets.QWidget(self)
         layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(page)
-        identity_group: QtWidgets.QGroupBox = QtWidgets.QGroupBox(self.tr("Block configuration"), page)
+        identity_group: QtWidgets.QGroupBox = QtWidgets.QGroupBox(
+            self.tr("Block configuration"),
+            self._general_options_splitter,
+        )
         identity_layout: QtWidgets.QFormLayout = QtWidgets.QFormLayout(identity_group)
         identity_layout.addRow(self.tr("Name"), QtWidgets.QLabel(self._block.name, identity_group))
         identity_layout.addRow(self.tr("Catalogue type"), QtWidgets.QLabel(self._block_type_name, identity_group))
@@ -4773,12 +5146,35 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         documentation_button_layout.addWidget(self._block_info_button)
         documentation_button_layout.addStretch(1)
         identity_layout.addRow(self.tr("Online documentation"), documentation_button_layout)
-        layout.addWidget(identity_group)
+
+        # The splitter must be able to hide the configuration fields while
+        # retaining the group-box title as a stable visual landmark. Removing
+        # the layout's minimum-size constraint permits that clipping, while an
+        # explicit title-height minimum prevents the whole panel disappearing.
+        identity_layout.setSizeConstraint(QtWidgets.QLayout.SizeConstraint.SetNoConstraint)
+        collapsed_configuration_height: int = max(
+            28,
+            identity_group.fontMetrics().height() + 14,
+        )
+        identity_group.setMinimumHeight(collapsed_configuration_height)
+        identity_group.setSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Ignored,
+        )
+        self._general_options_splitter.addWidget(identity_group)
+
+        # Generated-structure controls belong with the parameter editor below
+        # the handle. This keeps the resize boundary directly after Block
+        # configuration for every kind of catalogue block.
+        parameter_panel: QtWidgets.QWidget = QtWidgets.QWidget(self._general_options_splitter)
+        parameter_panel_layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(parameter_panel)
+        parameter_panel_layout.setContentsMargins(0, 0, 0, 0)
+        parameter_panel_layout.setSizeConstraint(QtWidgets.QLayout.SizeConstraint.SetNoConstraint)
 
         if self._general_structural_model.rowCount() > 0:
             structure_group: QtWidgets.QGroupBox = QtWidgets.QGroupBox(
                 self.tr("Generated structure"),
-                page,
+                parameter_panel,
             )
             structure_layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(structure_group)
             structure_table: QtWidgets.QTableView = QtWidgets.QTableView(structure_group)
@@ -4787,12 +5183,41 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
             structure_table.setAlternatingRowColors(True)
             structure_header: QtWidgets.QHeaderView = structure_table.horizontalHeader()
             configure_interactive_table_header(structure_header, list((300, 620,)))
+
+            # Size the table from its actual settings instead of accepting the
+            # large generic QTableView size hint. Five rows preserve the former
+            # panel height as an upper bound; longer builders scroll inside the
+            # table and leave the remaining dialogue height to Parameters.
+            maximum_visible_structure_rows: int = 5
+            visible_structure_rows: int = min(
+                self._general_structural_model.rowCount(),
+                maximum_visible_structure_rows,
+            )
+            structure_rows_height: int = 0
+            structure_row: int
+            structure_vertical_header: QtWidgets.QHeaderView = structure_table.verticalHeader()
+            for structure_row in range(visible_structure_rows):
+                structure_rows_height += structure_vertical_header.sectionSize(structure_row)
+            structure_table_height: int = (
+                structure_header.sizeHint().height()
+                + structure_rows_height
+                + (structure_table.frameWidth() * 2)
+            )
+            structure_table.setMinimumHeight(structure_table_height)
+            structure_table.setMaximumHeight(structure_table_height)
             structure_layout.addWidget(structure_table)
-            layout.addWidget(structure_group)
+            structure_group.setSizePolicy(
+                QtWidgets.QSizePolicy.Policy.Expanding,
+                QtWidgets.QSizePolicy.Policy.Fixed,
+            )
+            parameter_panel_layout.addWidget(structure_group)
         else:
             pass
 
-        parameters_group: QtWidgets.QGroupBox = QtWidgets.QGroupBox(self.tr("Parameters"), page)
+        parameters_group: QtWidgets.QGroupBox = QtWidgets.QGroupBox(
+            self.tr("Parameters"),
+            parameter_panel,
+        )
         parameters_layout: QtWidgets.QVBoxLayout = QtWidgets.QVBoxLayout(parameters_group)
         parameters_layout.addWidget(self._general_parameter_search)
         self._general_parameter_table.setParent(parameters_group)
@@ -4802,7 +5227,31 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         self._general_parameter_table.setAlternatingRowColors(True)
         self._general_parameter_table.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectionBehavior.SelectRows)
         parameters_layout.addWidget(self._general_parameter_table)
-        layout.addWidget(parameters_group, 1)
+        parameter_panel_layout.addWidget(parameters_group, 1)
+
+        # Neither side may collapse to zero: at either extreme the user keeps
+        # a visible title and can drag the handle back without resetting the
+        # dialogue. Parameters receive most of the initial vertical space.
+        collapsed_parameter_height: int = max(
+            28,
+            parameters_group.fontMetrics().height() + 14,
+        )
+        parameter_panel.setMinimumHeight(collapsed_parameter_height)
+        parameter_panel.setSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Ignored,
+        )
+        self._general_options_splitter.setChildrenCollapsible(False)
+        self._general_options_splitter.setHandleWidth(6)
+        self._general_options_splitter.addWidget(parameter_panel)
+        self._general_options_splitter.setStretchFactor(0, 0)
+        self._general_options_splitter.setStretchFactor(1, 1)
+        preferred_configuration_height: int = identity_group.sizeHint().height()
+        preferred_parameter_height: int = max(360, preferred_configuration_height * 2)
+        self._general_options_splitter.setSizes(
+            list((preferred_configuration_height, preferred_parameter_height,))
+        )
+        layout.addWidget(self._general_options_splitter, 1)
         return page
 
     def _build_special_settings_page(self) -> QtWidgets.QWidget:
@@ -5115,6 +5564,19 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         add_layout.addItem(form_spacer, 6, 0, 1, 2)
         add_layout.setRowStretch(6, 1)
         add_layout.addWidget(self._add_symbol_button, 7, 0, 1, 2)
+        # Permit the form contents to be clipped when the lower splitter pane
+        # is reduced. Its explicit minimum retains only the group-box title,
+        # which leaves a visible handle target for restoring the full form.
+        add_layout.setSizeConstraint(QtWidgets.QLayout.SizeConstraint.SetNoConstraint)
+        collapsed_add_symbol_height: int = max(
+            28,
+            add_group.fontMetrics().height() + 14,
+        )
+        add_group.setMinimumHeight(collapsed_add_symbol_height)
+        add_group.setSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Expanding,
+            QtWidgets.QSizePolicy.Policy.Ignored,
+        )
         # The user can trade form height for table height. This is deliberately
         # a vertical splitter inside the horizontally resizable DAE page, so
         # both dimensions remain independently adjustable.
@@ -5589,7 +6051,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         except ValueError as error:
             self._show_validation_error(str(error))
         else:
-            self._dae_highlighter.set_symbol_names(tuple(self._namespace.keys()))
+            self._refresh_dae_language_context()
             self._clear_dae_validation_feedback()
 
     @QtCore.Slot()
@@ -5606,7 +6068,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         except (TypeError, ValueError) as error:
             self._show_validation_error(str(error))
         else:
-            self._dae_highlighter.set_symbol_names(tuple(self._namespace.keys()))
+            self._refresh_dae_language_context()
             self._clear_dae_validation_feedback()
 
     def _build_joint_validation_namespace(self) -> Dict[str, Expr]:
@@ -5618,6 +6080,23 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
             build_block_symbol_namespace(self._block)
         )
         return self._runtime_logic_editor.build_validation_namespace(symbol_namespace)
+
+    def _refresh_dae_language_context(self) -> None:
+        """Synchronize parser, completer, and highlighter after draft changes.
+
+        :return: None.
+        """
+        active_buffer: BlockCodeBuffer = self._equation_buffers[
+            self._active_equation_buffer_index
+        ]
+        language_context: DaeLanguageContext = build_dialogue_dae_language_context(
+            namespace=self._namespace,
+            symbol_model=self._symbol_model,
+            root_block=self._block,
+            equation_owner=active_buffer.get_block(),
+        )
+        self._dae_editor.set_language_context(language_context)
+        self._dae_highlighter.set_symbol_names(tuple(self._namespace.keys()))
 
     @QtCore.Slot(int)
     def update_new_symbol_category(self, unused_index: int = 0) -> None:
@@ -5758,7 +6237,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
             else:
                 self._new_symbol_name.clear()
                 self._synchronize_dae_variable_declarations_for_block(selected_owner)
-                self._dae_highlighter.set_symbol_names(tuple(self._namespace.keys()))
+                self._refresh_dae_language_context()
                 self._clear_dae_validation_feedback()
 
     def _synchronize_dae_variable_declarations_for_block(self, owner: Block) -> None:
@@ -6012,7 +6491,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
             # updated active buffer.
             self._loading_equation_buffer = True
             self._dae_editor.setPlainText(active_buffer.get_code())
-            self._dae_highlighter.set_symbol_names(tuple(self._namespace.keys()))
+            self._refresh_dae_language_context()
             self._loading_equation_buffer = False
             self._clear_dae_validation_feedback()
             self._status_label.setStyleSheet("color: #16825d;")
@@ -6055,7 +6534,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
             else:
                 pass
             self._namespace = self._build_joint_validation_namespace()
-            self._dae_highlighter.set_symbol_names(tuple(self._namespace.keys()))
+            self._refresh_dae_language_context()
             self._clear_dae_validation_feedback()
         else:
             pass
@@ -6093,6 +6572,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
             selected_buffer: BlockCodeBuffer = self._equation_buffers[selected_data]
             self._loading_equation_buffer = True
             self._dae_editor.setPlainText(selected_buffer.get_code())
+            self._refresh_dae_language_context()
             self._loading_equation_buffer = False
             self._clear_dae_validation_feedback()
             self.update_dae_code_search(self._dae_code_search.text())
@@ -6106,7 +6586,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         :return: True when the active DAE code is valid; otherwise False.
         """
         active_buffer: BlockCodeBuffer = self._equation_buffers[self._active_equation_buffer_index]
-        self._dae_editor.set_symbol_namespace(self._namespace)
+        self._refresh_dae_language_context()
         code: str = self._dae_editor.toPlainText()
         diagnostics: List[DaeCodeDiagnostic] = self._dae_editor.build_current_diagnostics()
         if len(diagnostics) > 0:
@@ -6191,7 +6671,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
                 pass
         if valid:
             self._namespace = validation_namespace
-            self._dae_highlighter.set_symbol_names(tuple(self._namespace.keys()))
+            self._refresh_dae_language_context()
             self.validate_dae_code()
         else:
             if invalid_index != self._active_equation_buffer_index:
@@ -6214,11 +6694,14 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
     def _validate_equation_variable_counts(self,
                                            block: Block,
                                            equation_draft: BlockEquationDraft) -> None:
-        """Require one equation for every staged state and algebraic variable.
+        """Validate equation counts, declarations, and initialization owners.
 
         Output exposure is deliberately absent from this rule: checking or
         unchecking Output only changes the public interface and never changes a
-        variable's DAE role or its equation.
+        variable's DAE role or its equation. Initialization equations belong
+        only to state and algebraic variables. Runtime event parameters store
+        their scalar value or initialization expression directly in
+        ``event_dict`` and therefore have exactly one initialization source.
 
         :param block: Equation owner being validated.
         :param equation_draft: Parsed equations staged for that owner.
@@ -6233,6 +6716,27 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         )
         state_equation_count: int = len(equation_draft.get_state_eqs())
         algebraic_equation_count: int = len(equation_draft.get_algebraic_eqs())
+        initializable_names: set[str] = set()
+        initializable_kind: BlockSymbolKind
+        for initializable_kind in (
+                BlockSymbolKind.STATE,
+                BlockSymbolKind.ALGEBRAIC):
+            initializable_name: str
+            for initializable_name in self._symbol_model.get_role_names(
+                    block,
+                    initializable_kind):
+                initializable_names.add(initializable_name)
+        initialized_variable: Var
+        for initialized_variable in equation_draft.get_init_eqs():
+            if initialized_variable.name in initializable_names:
+                pass
+            else:
+                raise ValueError(
+                    f"Variable '{initialized_variable.name}' is not state or "
+                    "algebraic and cannot own an initialization equation. "
+                    "Put an event parameter's initialization expression in "
+                    "General options instead"
+                )
         self._validate_variable_declaration(
             block=block,
             equation_draft=equation_draft,
@@ -6318,8 +6822,9 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         :return: None.
         """
         parsed_buffers: List[tuple[Block, BlockEquationDraft]] = list()
+        pending_static_values: List[tuple[Const, float | complex]] = list()
+        pending_event_expressions: List[tuple[Block, Var, Expr]] = list()
         try:
-            pending_values: List[tuple[Const, float | complex]] = self._parameter_model.get_pending_values()
             symbol_namespace: Dict[str, Expr] = self._symbol_model.build_validation_namespace(
                 build_block_symbol_namespace(self._block)
             )
@@ -6333,6 +6838,14 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
                 validation_namespace: Dict[str, Expr] = self._runtime_logic_editor.build_validation_namespace(
                     symbol_namespace
                 )
+            pending_static_values = self._parameter_model.get_pending_static_values()
+            pending_event_expressions = self._parameter_model.get_pending_event_expressions(
+                validation_namespace
+            )
+            validate_event_parameter_expression_dependencies(
+                root_block=self._block,
+                pending_expressions=pending_event_expressions,
+            )
         except (ValueError, TypeError) as error:
             self._show_validation_error(str(error))
             return
@@ -6394,9 +6907,13 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
                 self._show_validation_error(self.tr("This block has no safe structural rebuild adapter."))
                 return
             else:
-                named_parameter_values: List[tuple[str, float | complex]] = (
-                    self._parameter_model.get_pending_named_values()
-                )
+                try:
+                    named_parameter_values: List[tuple[str, float | complex]] = (
+                        self._parameter_model.get_pending_named_values(validation_namespace)
+                    )
+                except (TypeError, ValueError) as error:
+                    self._show_validation_error(str(error))
+                    return
                 rebuild_request: BlockStructuralEditRequest = BlockStructuralEditRequest(
                     block=self._block,
                     block_type=self._structural_block_type,
@@ -6417,7 +6934,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
 
         constant: Const
         numeric_value: float | complex
-        for constant, numeric_value in pending_values:
+        for constant, numeric_value in pending_static_values:
             constant.value = numeric_value
 
         # Structural symbol changes are delayed until every text and numeric
@@ -6439,6 +6956,25 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
             )
         else:
             self._namespace = self._runtime_logic_editor.build_validation_namespace(symbol_namespace)
+
+        # Reparse changed event expressions after symbol application so their
+        # trees bind to the authoritative VarFactory identities rather than any
+        # detached variables used only for draft validation.
+        pending_event_expressions = self._parameter_model.get_pending_event_expressions(
+            self._namespace
+        )
+        validate_event_parameter_expression_dependencies(
+            root_block=self._block,
+            pending_expressions=pending_event_expressions,
+        )
+        event_owner: Block
+        event_variable: Var
+        event_expression: Expr
+        for event_owner, event_variable, event_expression in pending_event_expressions:
+            if event_variable in event_owner.event_dict:
+                event_owner.event_dict[event_variable] = event_expression
+            else:
+                pass
         self._parameter_model.reload(self._block)
         if has_new_symbols or has_new_modes:
             # Newly created symbols replace their temporary validation Vars, so
@@ -6464,6 +7000,7 @@ class DynamicBlockPropertiesDialog(QtWidgets.QDialog):
         # Rebind rows created during this Apply to their authoritative Vars.
         # This keeps subsequent edits in the still-open modal transactional.
         self._symbol_model.reload(self._block)
+        self._refresh_dae_language_context()
         active_draft: BlockEquationDraft = parsed_buffers[self._active_equation_buffer_index][1]
         self._latex_model.set_draft(active_draft)
         self._status_label.setStyleSheet("color: #16825d;")

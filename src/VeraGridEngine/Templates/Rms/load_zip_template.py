@@ -73,7 +73,7 @@ def ZIPLoadBuild(vfactory: VarFactory, name: str = "ZIP model", Pl0=1.0, Ql0=0.1
     event_dict = {
         P0: vfactory.add_const(Pl0),
         Q0: vfactory.add_const(Ql0),
-        V0: vfactory.add_const(None),
+        V0: inputs[0],
 
         # Active power ZIP
         a1: vfactory.add_const(0.1),  # Z
@@ -106,7 +106,6 @@ def ZIPLoadBuild(vfactory: VarFactory, name: str = "ZIP model", Pl0=1.0, Ql0=0.1
         )
 
     init_eqs = {
-        V0: inputs[0],
         P: P0,
         Q: Q0,
     }

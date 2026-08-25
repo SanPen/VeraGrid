@@ -5,16 +5,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Devices.Branches.sequence_line_type &mdash; VeraGrid 6.5.5 documentation</title>
+  <title>VeraGridEngine.Devices.Branches.sequence_line_type &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=ba3a54df" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/style.css?v=b3745da1" />
 
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -59,7 +59,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/short_circuit.html">⚡ Short-Circuit</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/continuation_power_flow.html">➿ Continuation power flow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/sigma_analysis.html">🌘 Sigma analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/solar_wizard.html">☀️ Solar power wizard</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/contingency_analysis.html">💥 Contingency analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/investment_optimization.html">🏦 Investment optimization</a></li>
@@ -69,9 +68,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/change_log.html">Change log</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/data_models.html">Data Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../rst_source/api/auto/modules.html">VeraGrid</a></li>
 </ul>
@@ -211,10 +214,12 @@
         <span class="s1">&#39;_R&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_X&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_B&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_G&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_Cnf&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_R0&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_X0&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_B0&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;_G0&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_Cnf0&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_use_conductance&#39;</span><span class="p">,</span>
         <span class="s1">&#39;_n_circuits&#39;</span><span class="p">,</span>
@@ -260,6 +265,13 @@
             <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
         <span class="p">),</span>
         <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;G&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;uS/km&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Positive-sequence shunt conductance per km&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
             <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;R0&#39;</span><span class="p">,</span>
             <span class="n">units</span><span class="o">=</span><span class="s1">&#39;Ohm/km&#39;</span><span class="p">,</span>
             <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
@@ -278,6 +290,13 @@
             <span class="n">units</span><span class="o">=</span><span class="s1">&#39;uS/km&#39;</span><span class="p">,</span>
             <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
             <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Zero-sequence shunt susceptance per km&#39;</span><span class="p">,</span>
+            <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
+        <span class="p">),</span>
+        <span class="n">GCProp</span><span class="p">(</span>
+            <span class="n">prop_name</span><span class="o">=</span><span class="s1">&#39;G0&#39;</span><span class="p">,</span>
+            <span class="n">units</span><span class="o">=</span><span class="s1">&#39;uS/km&#39;</span><span class="p">,</span>
+            <span class="n">tpe</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+            <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Zero-sequence shunt conductance per km&#39;</span><span class="p">,</span>
             <span class="n">cat</span><span class="o">=</span><span class="p">[</span><span class="n">PrpCat</span><span class="o">.</span><span class="n">TP</span><span class="p">],</span>
         <span class="p">),</span>
         <span class="n">GCProp</span><span class="p">(</span>
@@ -327,8 +346,8 @@
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;SequenceLine&#39;</span><span class="p">,</span>
                  <span class="n">idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">Imax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">Vnom</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-                 <span class="n">R</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span>
-                 <span class="n">R0</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">X0</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">B0</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span>
+                 <span class="n">R</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">G</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+                 <span class="n">R0</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">X0</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">B0</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">G0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
                  <span class="n">CnF</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span> <span class="n">CnF0</span><span class="o">=</span><span class="mf">1e-20</span><span class="p">,</span>
                  <span class="n">use_conductance</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                  <span class="n">capex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">opex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
@@ -340,9 +359,11 @@
 <span class="sd">        :param R: Resistance of positive sequence in Ohm/km</span>
 <span class="sd">        :param X: Reactance of positive sequence in Ohm/km</span>
 <span class="sd">        :param B: Susceptance of positive sequence in uS/km</span>
+<span class="sd">        :param G: Conductance of positive sequence in uS/km</span>
 <span class="sd">        :param R0: Resistance of zero sequence in Ohm/km</span>
 <span class="sd">        :param X0: Reactance of zero sequence in Ohm/km</span>
 <span class="sd">        :param B0: Susceptance of zero sequence in uS/km</span>
+<span class="sd">        :param G0: Conductance of zero sequence in uS/km</span>
 <span class="sd">        :param CnF: Conductivity of positive sequence in uS/km</span>
 <span class="sd">        :param CnF0: Conductivity of zero sequence in uS/km</span>
 <span class="sd">        :param capex: Capital expenditures</span>
@@ -363,11 +384,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="n">R</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">B</span> <span class="o">=</span> <span class="n">B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G</span> <span class="o">=</span> <span class="n">G</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Cnf</span> <span class="o">=</span> <span class="n">CnF</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">R0</span> <span class="o">=</span> <span class="n">R0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">X0</span> <span class="o">=</span> <span class="n">X0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">B0</span> <span class="o">=</span> <span class="n">B0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">G0</span> <span class="o">=</span> <span class="n">G0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Cnf0</span> <span class="o">=</span> <span class="n">CnF0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">use_conductance</span> <span class="o">=</span> <span class="n">use_conductance</span>
@@ -436,6 +459,39 @@
         <span class="k">return</span> <span class="n">R</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">R0</span><span class="p">,</span> <span class="n">X0</span><span class="p">,</span> <span class="n">B0</span><span class="p">,</span> <span class="n">rate</span></div>
 
 
+<div class="viewcode-block" id="SequenceLineType.get_conductance_values">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType.get_conductance_values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_conductance_values</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+            <span class="n">length</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+            <span class="n">line_Vnom</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+            <span class="n">decimals_rounding</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert sequence conductance per length to total per-unit values.</span>
+
+<span class="sd">        :param Sbase: System base power in MVA.</span>
+<span class="sd">        :param length: Physical line length in km.</span>
+<span class="sd">        :param line_Vnom: Line-to-line nominal voltage in kV.</span>
+<span class="sd">        :param decimals_rounding: Number of decimal digits retained.</span>
+<span class="sd">        :return: Positive- and zero-sequence total conductance in p.u.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">line_Vnom</span> <span class="o">&gt;</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">Sbase</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">impedance_base_ohm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">line_Vnom</span> <span class="o">*</span> <span class="n">line_Vnom</span> <span class="o">/</span> <span class="n">Sbase</span>
+            <span class="n">positive_conductance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">G</span> <span class="o">*</span> <span class="mf">1.0e-6</span> <span class="o">*</span> <span class="n">length</span> <span class="o">*</span> <span class="n">impedance_base_ohm</span><span class="p">,</span>
+                <span class="n">decimals_rounding</span><span class="p">,</span>
+            <span class="p">))</span>
+            <span class="n">zero_conductance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">G0</span> <span class="o">*</span> <span class="mf">1.0e-6</span> <span class="o">*</span> <span class="n">length</span> <span class="o">*</span> <span class="n">impedance_base_ohm</span><span class="p">,</span>
+                <span class="n">decimals_rounding</span><span class="p">,</span>
+            <span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">positive_conductance</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">zero_conductance</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">return</span> <span class="n">positive_conductance</span><span class="p">,</span> <span class="n">zero_conductance</span></div>
+
+
 <div class="viewcode-block" id="SequenceLineType.get_ys_nabc">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.Devices.Branches.html#VeraGridEngine.Devices.Branches.sequence_line_type.SequenceLineType.get_ys_nabc">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_ys_nabc</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AdmittanceMatrix</span><span class="p">:</span>
@@ -456,7 +512,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">adm</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">z_abc</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">LinAlgError</span><span class="p">:</span>
-            <span class="n">adm</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">z_abc</span><span class="p">)</span>
+            <span class="n">adm</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">z_abc</span><span class="p">,</span> <span class="n">rcond</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)</span>
 
         <span class="n">adm</span><span class="o">.</span><span class="n">phN</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">adm</span><span class="o">.</span><span class="n">phA</span> <span class="o">=</span> <span class="kc">True</span>
@@ -593,6 +649,23 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_B</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">G</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return positive-sequence shunt conductance in uS/km.</span>
+
+<span class="sd">        :return: Positive-sequence conductance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_G</span>
+
+    <span class="nd">@G</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">G</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set positive-sequence shunt conductance in uS/km.</span>
+
+<span class="sd">        :param val: Conductance to assign.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_G</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">R0</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get ``R0``.</span>
@@ -648,6 +721,23 @@
 <span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_B0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">G0</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return zero-sequence shunt conductance in uS/km.</span>
+
+<span class="sd">        :return: Zero-sequence conductance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_G0</span>
+
+    <span class="nd">@G0</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">G0</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set zero-sequence shunt conductance in uS/km.</span>
+
+<span class="sd">        :param val: Conductance to assign.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_G0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">Cnf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>

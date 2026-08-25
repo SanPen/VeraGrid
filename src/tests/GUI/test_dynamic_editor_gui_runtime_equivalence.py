@@ -7,8 +7,10 @@ from PySide6 import QtWidgets
 
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_editor import DynamicBlockEditorGUI
 from VeraGrid.Gui.DynamicModelEditor.dynamic_block_preparation import prepare_block_for_editing
+from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_tab import resolve_navigation_content_block
 from VeraGrid.Gui.DynamicModelEditor.dynamic_editor_utilities import create_generic_block
 import VeraGrid.Gui.DynamicModelEditor.dynamic_editor_graphics as graph
+from VeraGridEngine.Devices.Branches.dc_line import DcLine
 from VeraGridEngine.Devices.Branches.line import Line
 from VeraGridEngine.Devices.Branches.overhead_line_type import OverheadLineType
 from VeraGridEngine.Devices.Branches.wire import Wire
@@ -836,6 +838,114 @@ def test_decomposed_rms_block_persists_and_restores_elk_connections(
         second_editor.prepare_to_delete()
         second_editor.close()
         second_editor.deleteLater()
+
+
+def test_nested_dc_line_editor_does_not_connect_the_rms_root_interface(
+        qt_app: QtWidgets.QApplication,
+) -> None:
+    """Keep internal DC-line wrappers isolated from the device root contract.
+
+    Entering the equations of an unconnected Library block may build its local
+    boundary wires. Those wires must neither rename the block ports after the
+    outer network variables nor create graphical branches at device-root level.
+
+    :param qt_app: Shared Qt application fixture.
+    :return: None.
+    """
+    grid: MultiCircuit = MultiCircuit(Sbase=100.0, fbase=50.0)
+    bus_from: Bus = Bus(name="DC from", Vnom=400.0, is_dc=True)
+    bus_to: Bus = Bus(name="DC to", Vnom=400.0, is_dc=True)
+    grid.add_bus(bus_from)
+    grid.add_bus(bus_to)
+    dc_line: DcLine = DcLine(name="DC line", bus_from=bus_from, bus_to=bus_to, r=0.01)
+    grid.add_dc_line(dc_line)
+
+    root_block: Block = Block(name="DC line RMS root")
+    root_editor: DynamicBlockEditorGUI = _build_gui_editor(
+        qt_app=qt_app,
+        grid=grid,
+        api_object=dc_line,
+        mode=DynamicSimulationMode.RMS,
+        root_block=root_block,
+    )
+    dc_line_item: graph.GenericBlockItem | None = root_editor.create_item_using_blocktype_wizard(
+        blocktype=BlockType.DC_LINE_RMS,
+        x_pos=360.0,
+        y_pos=220.0,
+    )
+    assert isinstance(dc_line_item, graph.GenericBlockItem)
+    assert dc_line_item.subsys is not None
+    dc_line_block: Block = dc_line_item.subsys
+    assert [variable.name for variable in dc_line_block.out_vars] == ["Pf", "Pt"]
+    assert len(root_editor.diagram.con_data) == 0
+
+    root_editor.prepare_to_delete()
+    root_editor.close()
+    root_editor.deleteLater()
+    qt_app.processEvents()
+
+    equations_block: Block = resolve_navigation_content_block(dc_line_block)
+    prepared_block: Block
+    block_types: Dict[int, BlockType]
+    prepared_block, block_types = prepare_block_for_editing(
+        block=equations_block,
+        var_factory=grid.var_factory,
+    )
+    nested_editor: DynamicBlockEditorGUI = DynamicBlockEditorGUI(
+        var_factory=grid.var_factory,
+        root_block=root_block,
+        current_block=prepared_block,
+        api_object=dc_line,
+        circuit=grid,
+        mode=DynamicSimulationMode.RMS,
+        current_theme=DynEditorGraphicsModes.LIGHT,
+        templates_list=list(),
+        is_root_editor=False,
+        modal=False,
+        workspace_embedded=False,
+        block2blocktype=block_types,
+    )
+    nested_editor.show()
+    qt_app.processEvents()
+
+    assert [variable.name for variable in dc_line_block.out_vars] == ["Pf", "Pt"]
+    assert [variable.name for variable in root_block.out_vars] == ["net_conn_Pf", "net_conn_Pt"]
+
+    nested_editor.prepare_to_delete()
+    nested_editor.close()
+    nested_editor.deleteLater()
+    qt_app.processEvents()
+
+    # Reproduce the workspace navigation state: the tab still holds the child
+    # decomposition map while it constructs the ancestor editor again.
+    reopened_root_editor: DynamicBlockEditorGUI = DynamicBlockEditorGUI(
+        var_factory=grid.var_factory,
+        root_block=root_block,
+        current_block=root_block,
+        api_object=dc_line,
+        circuit=grid,
+        mode=DynamicSimulationMode.RMS,
+        current_theme=DynEditorGraphicsModes.LIGHT,
+        templates_list=list(),
+        is_root_editor=True,
+        modal=False,
+        workspace_embedded=False,
+        block2blocktype=block_types,
+    )
+    reopened_root_editor.show()
+    qt_app.processEvents()
+    try:
+        root_connections: List[graph.ConnectionItem] = [
+            scene_item for scene_item in reopened_root_editor.scene.items()
+            if isinstance(scene_item, graph.ConnectionItem)
+        ]
+        assert len(reopened_root_editor.diagram.con_data) == 0
+        assert len(root_connections) == 0
+        assert [variable.name for variable in dc_line_block.out_vars] == ["Pf", "Pt"]
+    finally:
+        reopened_root_editor.prepare_to_delete()
+        reopened_root_editor.close()
+        reopened_root_editor.deleteLater()
 
 
 def test_empty_generic_nested_editor_contains_only_boundary_ports(

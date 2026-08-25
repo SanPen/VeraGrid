@@ -136,7 +136,7 @@ class MapView(QGraphicsView):
         self.setStyleSheet("QGraphicsView { border: none; }")
 
         # Create a QLabel
-        self.attribution_label = QLabel("Bottom Left Label")
+        self.attribution_label = QLabel(self.tr("Bottom Left Label"))
         self.attribution_label.setStyleSheet(
             "background-color: rgba(0, 0, 0, 0);"
             "color: rgba(150, 150, 150, 180);"

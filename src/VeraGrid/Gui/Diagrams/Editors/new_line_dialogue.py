@@ -21,7 +21,7 @@ class NewMapLineDialogue(QDialog):
         :param parent: ?
         """
         QDialog.__init__(self, parent)
-        self.setWindowTitle("New line")
+        self.setWindowTitle(self.tr("New line"))
 
         # Create layout
         main_layout = QVBoxLayout()

@@ -164,6 +164,8 @@ def MotorLoadBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
     Eq_prime_calc = L * (Id + a * Iq) / (1 + a ** 2)
     A_val = (Iq * (Ls - Lp) + Ed_prime_calc) / Tp0
     omega_init = -A_val / (omega_s * Eq_prime_calc) + vfactory.add_const(1.0)
+    events_dict[Cl0] = u * (Eq_2prime * Iq + Ed_2prime * Id)
+    events_dict[omega0] = omega
     res_block.init_eqs = {
         Vd: -Vm * sym.sin(Va),
         Vq: Vm * sym.cos(Va),
@@ -172,11 +174,9 @@ def MotorLoadBuild(vfactory: VarFactory, name: str = "") -> RmsModelTemplate:
         Ed_2prime: u * (Vd + (Rs * Id - Lpp * Iq)),
         Eq_2prime: u * (Vq + (Rs * Iq + Lpp * Id)),
         Te: u * (Eq_2prime * Iq + Ed_2prime * Id),
-        Cl0: u * (Eq_2prime * Iq + Ed_2prime * Id),
         omega: u * omega_init,
         Ed_prime: u * Ed_prime_calc,
         Eq_prime: u * Eq_prime_calc,
-        omega0: omega,
     }
 
     templ.block = res_block

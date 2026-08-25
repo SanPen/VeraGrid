@@ -1114,7 +1114,7 @@ class SparseADJacobian:
                         pass
 
         degrees = np.array([len(adj[j]) for j in range(n_cols)], dtype=np.int32)
-        order = list(np.argsort(-degrees))
+        order = list(np.argsort(-degrees, kind="stable"))
         colors = -np.ones(n_cols, dtype=np.int32)
         max_color = -1
         used = np.zeros(n_cols, dtype=np.bool_)

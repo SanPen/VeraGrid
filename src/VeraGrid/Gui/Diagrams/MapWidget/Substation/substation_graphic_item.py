@@ -561,8 +561,10 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         Removes the substation from the schematic only. The substation will remain in the database.
         """
         ok = yes_no_question(
-            f"Remove substation {self.api_object.name} from the schematic only? It will remain in the database.",
-            "Remove substation from schematic")
+            self.tr(
+                "Remove substation {substation_name} from the schematic only? It will remain in the database."
+            ).format(substation_name=self.api_object.name),
+            self.tr("Remove substation from schematic"))
 
         if ok:
             self.editor.remove_substation(api_object=self.api_object, delete_from_db=False, substation_buses=[],
@@ -609,8 +611,11 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
                                                voltage_levels=voltage_levels, dialog_title=title)
 
         ok = yes_no_question(
-            f"Remove substation {self.api_object.name} from both the schematic and the database? This action cannot be undone.",
-            "Remove substation from schematic and database")
+            self.tr(
+                "Remove substation {substation_name} from both the schematic and the database? "
+                "This action cannot be undone."
+            ).format(substation_name=self.api_object.name),
+            self.tr("Remove substation from schematic and database"))
 
         if ok:
             self.editor.remove_substation(api_object=api_object, substation_buses=substation_buses,
@@ -636,7 +641,7 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         all_devices = devices + buses + voltage_levels
 
         if not all_devices:
-            info_msg('No devices to disconnect', dialog_title)
+            info_msg(self.tr('No devices to disconnect'), dialog_title)
             return
 
         # Create custom properties for name, type, and ID tag
@@ -673,8 +678,12 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
         :return:
         """
         if question:
-            ok = yes_no_question(f"Move substation {self.api_object.name} graphics to it's database coordinates?",
-                                 "Move substation graphics")
+            ok = yes_no_question(
+                self.tr("Move substation {substation_name} graphics to it's database coordinates?").format(
+                    substation_name=self.api_object.name,
+                ),
+                self.tr("Move substation graphics"),
+            )
 
             if ok:
                 x, y = self.move_to(lat=self.api_object.latitude,
@@ -849,8 +858,8 @@ class SubstationGraphicItem(NodeTemplate, QGraphicsRectItem):
             min_value=0.1,
             max_value=100000.0,
             default_value=self.editor.diagram.default_bus_voltage,
-            title="Add voltage level",
-            text="Voltage (kV)",
+            title=self.tr("Add voltage level"),
+            text=self.tr("Voltage (kV)"),
         )
 
         inpt.exec()

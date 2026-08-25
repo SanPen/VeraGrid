@@ -725,9 +725,6 @@ class RmsProblemDae(RmsProblemTemplate):
                                                             problem_mapping=self._static_parameters_values_mapping,
                                                             logger=None)
 
-                _, Vmf, Vaf = get_bus_rms_algebraic_vars(elm.bus_from.rms_model)
-                _, Vmt, Vat = get_bus_rms_algebraic_vars(elm.bus_to.rms_model)
-
                 self.add_variables_to_compilation_dicts(elm, elm.rms_model)
                 register_rms_fmu_cs_device(self, elm, elm.rms_model)
                 register_rms_fmu_me_device(self, elm, elm.rms_model)
@@ -738,22 +735,33 @@ class RmsProblemDae(RmsProblemTemplate):
                 self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Pt, self.St[branch_num].real)
                 self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.Qt, self.St[branch_num].imag)
 
-                if VarPowerFlowReferenceType.If_dc in elm.rms_model.external_mapping and Vmf is not None:
-                    if Vmf.uid in self.uid2idx_vars:
-                        vmf_idx = self.uid2idx_vars[Vmf.uid]
-                        if vmf_idx in self.init_guess:
-                            vmf0: float = self.init_guess[vmf_idx]
+                if elm.rms_model.external_mapping.get(VarPowerFlowReferenceType.If_dc, None) is not None:
+                    from_voltage_dc: Var | None
+                    from_voltage_dc, _, _ = get_bus_rms_algebraic_vars(bus_rms_model=elm.bus_from.rms_model)
+                    if from_voltage_dc is not None:
+                        # Reuse the DC-bus value already initialized from the PF so
+                        # the branch current and its terminal voltage share one seed.
+                        from_voltage_raw: float | int | complex | None = self.init_guess.get(
+                            from_voltage_dc.uid,
+                            None,
+                        )
+                        from_current: float = 0.0
 
-                            if abs(vmf0) > 1e-9:
-                                self.set_init_guess(
-                                    elm.rms_model,
-                                    VarPowerFlowReferenceType.If_dc,
-                                    self.Sf[branch_num].real / vmf0,
-                                )
+                        if from_voltage_raw is not None:
+                            from_voltage: float = float(np.real(from_voltage_raw))
+                            if abs(from_voltage) > 1.0e-9:
+                                from_current = float(self.Sf[branch_num].real / from_voltage)
+                            else:
+                                # A de-energized DC terminal cannot define current from P/V.
+                                pass
                         else:
                             pass
+
+                        self.set_init_guess(elm.rms_model, VarPowerFlowReferenceType.If_dc, from_current)
                     else:
                         pass
+                else:
+                    pass
 
                 # Run explicit initialization for branches to solve algebraic equations
                 if isinstance(elm, Transformer2W):
@@ -2225,26 +2233,23 @@ class RmsProblemDae(RmsProblemTemplate):
         if self.progress_signal is not None:
             self.progress_signal.emit(20)
 
-    def set_init_guess(self, mdl: Block, reference_powerflow: VarPowerFlowReferenceType, val: float):
+    def set_init_guess(self,
+                       mdl: Block,
+                       reference_powerflow: VarPowerFlowReferenceType,
+                       val: float) -> None:
         """
-        add values from powerflow to initial guess
+        Store a power-flow value as the initial guess of a mapped RMS variable.
 
-        :param mdl:
-        :type mdl:
-        :param reference_powerflow:
-        :type reference_powerflow:
-        :param val:
-        :type val:
-        :return:
-        :rtype:self._
+        :param mdl: RMS model containing the external power-flow mapping.
+        :param reference_powerflow: Power-flow quantity identifying the target variable.
+        :param val: Initial value expressed in the RMS model's units.
+        :return: None.
         """
-        if reference_powerflow in mdl.external_mapping:
-            var = mdl.external_mapping[reference_powerflow]
+        var: Var | None = mdl.external_mapping.get(reference_powerflow, None)
+        if var is not None:
             self.init_guess[var.uid] = val
-            # print(f"DEBUG: set_init_guess {reference_powerflow.value} = {val} for var {var.name} (uid={var.uid})")
-        # else:
-            # print(
-                # f"DEBUG: set_init_guess {reference_powerflow.value} NOT FOUND in external_mapping. Available: {[k.value for k in mdl.external_mapping.keys()]}")
+        else:
+            pass
 
     def get_equation_at(self, i: int) -> Expr:
         """

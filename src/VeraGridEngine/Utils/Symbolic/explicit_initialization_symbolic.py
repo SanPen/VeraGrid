@@ -22,7 +22,7 @@ from VeraGridEngine.enumerations import EmtInitializationMethod, EmtInitializati
 from VeraGridEngine.Utils.Symbolic.compiled_functions import SymbolicJacobian, SymbolicVector
 from VeraGridEngine.Utils.Symbolic.jit_compiler import RMSCompiler
 from VeraGridEngine.Utils.Symbolic.symbolic import expression2numba, get_expression_vars
-from VeraGridEngine.Utils.Symbolic.block import Block
+from VeraGridEngine.Utils.Symbolic.block import Block, normalize_event_parameter_initialization
 from VeraGridEngine.Utils.Symbolic.symbolic import Var, Const, Expr, find_vars_order
 
 
@@ -433,21 +433,15 @@ def build_explicit_init_graph(
     :rtype: Tuple[Dict[Var, Union[Expr, Const]], Dict[Var, List[Var]], List[Var]]
     :raises RuntimeError: If a cross-variable cycle is detected.
     """
+    normalize_event_parameter_initialization(block=mdl)
+
     init_vars = dict()
     init_event = dict()
     build_init_dict(mdl, init_vars, init_event)
 
-    # Merge event equations without clobbering explicit init equations with
-    # unresolved placeholders (Const(None)).
-    #
-    # For runtime parameters declared as event_dict[var] = Const(None), the
-    # corresponding initialization expression usually lives in init_eqs[var].
-    # Overwriting it here with Const(None) prevents explicit initialization from
-    # resolving the parameter value and later triggers "Event parameter ... has
-    # None Value" during RMS problem build.
+    # Event parameters own their single initialization expression directly.
+    # Normalization above migrates the former Const(None) + init_eqs pattern.
     for ev_var, ev_eq in init_event.items():
-        if isinstance(ev_eq, Const) and ev_eq.value is None and ev_var in init_vars:
-            continue
         init_vars[ev_var] = ev_eq
 
     graph: Dict[Var, List[Var]] = defaultdict(list)

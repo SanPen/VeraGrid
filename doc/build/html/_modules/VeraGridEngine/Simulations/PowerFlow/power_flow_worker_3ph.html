@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.Simulations.PowerFlow.power_flow_worker_3ph &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.Simulations.PowerFlow.power_flow_worker_3ph &mdash; VeraGrid 6.0.23 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/documentation_options.js?v=c7f96f52"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -481,10 +481,10 @@
     <span class="n">shunt_idx</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">original_idx</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">shunt_idx</span><span class="p">:</span>
 
-        <span class="k">if</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">A_floatingstar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="o">+</span> <span class="mf">0.0</span><span class="n">j</span><span class="p">:</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">shunt_Vn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">A_floatingstar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_A</span><span class="p">[</span><span class="n">shunt_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> \
-                                  <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">B_floatingstar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_B</span><span class="p">[</span><span class="n">shunt_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> \
-                                  <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">C_floatingstar</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_C</span><span class="p">[</span><span class="n">shunt_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">A_floating_star</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="o">+</span> <span class="mf">0.0</span><span class="n">j</span><span class="p">:</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">shunt_Vn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">A_floating_star</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_A</span><span class="p">[</span><span class="n">shunt_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> \
+                                  <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">B_floating_star</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_B</span><span class="p">[</span><span class="n">shunt_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">+</span> \
+                                  <span class="n">nc</span><span class="o">.</span><span class="n">shunt_data</span><span class="o">.</span><span class="n">C_floating_star</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_C</span><span class="p">[</span><span class="n">shunt_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">results</span><span class="o">.</span><span class="n">shunt_Vn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">voltage_N</span><span class="p">[</span><span class="n">shunt_bus_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>

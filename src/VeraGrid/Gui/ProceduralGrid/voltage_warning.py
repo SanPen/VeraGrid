@@ -21,7 +21,7 @@ class VoltageWarningDialog(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('Invalid Voltage Levels')
+        self.setWindowTitle(self.tr('Invalid Voltage Levels'))
 
         offenders_text = "\n".join(f"  • {name}: {v} kV" for name, v in offenders)
         self.ui.offendersLabel.setText(offenders_text)

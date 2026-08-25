@@ -42,7 +42,7 @@ class ProceduralGridWindow(QtWidgets.QDialog):
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
-        self.setWindowTitle('Procedural grid expansion')
+        self.setWindowTitle(self.tr('Procedural grid expansion'))
         self.app = app
 
         # Setup combobox
@@ -176,7 +176,7 @@ class ProceduralGridWindow(QtWidgets.QDialog):
         if distances.shape[0] > 0:
 
             distances2 = np.min(distances, axis=1)
-            sorted_indices = np.argsort(distances2, axis=0)
+            sorted_indices = np.argsort(distances2, axis=0, kind="stable")
 
             self.candidate_list.clear()
             for i in sorted_indices:
@@ -472,7 +472,7 @@ class ProceduralGridWindow(QtWidgets.QDialog):
 
         # Show logger if there are any entries
         if logger.has_logs():
-            logs_dlg = LogsDialogue('Procedural grid expansion log', logger)
+            logs_dlg = LogsDialogue(self.tr('Procedural grid expansion log'), logger)
             logs_dlg.exec()
         else:
             pass

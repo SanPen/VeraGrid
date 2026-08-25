@@ -193,7 +193,7 @@ class ScriptingMain(IoMain):
             name = os.path.basename(pth)
             self.ui.sourceCodeNameLineEdit.setText(name.replace('.py', ''))
         else:
-            error_msg(pth + self.tr(' does not exist :/'), self.tr('Open script'))
+            error_msg(self.tr("{path} does not exist :/").format(path=pth), self.tr('Open script'))
 
     def clear_source_code(self):
         """
@@ -233,7 +233,7 @@ class ScriptingMain(IoMain):
             if ok:
                 os.remove(pth)
         else:
-            error_msg(pth + self.tr(' does not exist :/'), self.tr("Delete source code file"))
+            error_msg(self.tr("{path} does not exist :/").format(path=pth), self.tr("Delete source code file"))
 
     def show_source_code_tree_context_menu(self, pos: QtCore.QPoint):
         """

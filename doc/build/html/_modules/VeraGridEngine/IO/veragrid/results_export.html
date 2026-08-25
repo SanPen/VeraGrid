@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.IO.veragrid.results_export &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.IO.veragrid.results_export &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,9 +44,9 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
@@ -67,6 +67,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
@@ -111,7 +115,12 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">io</span><span class="w"> </span><span class="kn">import</span> <span class="n">StringIO</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Rms.rms_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsResults</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.EMT.emt_results</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmtResults</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">DRIVER_OBJECTS</span><span class="p">,</span> <span class="n">RESULTS_OBJECTS</span>
@@ -135,6 +144,202 @@
             <span class="k">if</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">deadline</span><span class="p">:</span>
                 <span class="k">return</span>
             <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_dynamic_group_identity</span><span class="p">(</span><span class="n">group_idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+                                  <span class="n">group_names</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+                                  <span class="n">group_idtags</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build one stable archive label for one dynamic event group.</span>
+
+<span class="sd">    :param group_idx: Event-group positional index.</span>
+<span class="sd">    :param group_names: Event-group display names.</span>
+<span class="sd">    :param group_idtags: Event-group stable identifiers.</span>
+<span class="sd">    :return: Archive-safe group identity string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">group_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">group_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">group_idx</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">group_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_names</span><span class="p">):</span>
+        <span class="n">group_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">group_names</span><span class="p">[</span><span class="n">group_idx</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">group_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">group_idx</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">group_idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">group_idtags</span><span class="p">):</span>
+        <span class="n">group_idtag</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">group_idtags</span><span class="p">[</span><span class="n">group_idx</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">group_idtag</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1"># The exported filename should reflect the visible event-group name because</span>
+    <span class="c1"># that is the label the user recognizes in the GUI. The numeric prefix</span>
+    <span class="c1"># preserves ordering, and the fallback keeps unnamed groups exportable.</span>
+    <span class="k">if</span> <span class="n">group_name</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">identity_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">group_idx</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">group_name</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">group_idtag</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">identity_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">group_idx</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">_group&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">identity_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">group_idx</span><span class="si">:</span><span class="s2">03d</span><span class="si">}</span><span class="s2">_group&quot;</span>
+
+    <span class="c1"># sanitize zip name part</span>
+    <span class="n">raw_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">identity_text</span><span class="p">)</span>
+
+    <span class="c1"># Event-group names are user-provided labels, therefore they may contain</span>
+    <span class="c1"># path separators or punctuation that would create ambiguous zip paths.</span>
+    <span class="c1"># Normalizing them up front keeps the archive structure deterministic.</span>
+    <span class="n">sanitized_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[</span><span class="se">\\</span><span class="s1">/:*?&quot;&lt;&gt;|]+&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">raw_text</span><span class="p">)</span>
+    <span class="n">sanitized_text</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\s+&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">sanitized_text</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">sanitized_text</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;unnamed_group&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sanitized_text</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_write_dataframe_to_zip</span><span class="p">(</span><span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+                            <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">myzip</span><span class="p">:</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">,</span>
+                            <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Serialize one DataFrame into the destination zip archive.</span>
+
+<span class="sd">    :param dataframe: Table to serialize.</span>
+<span class="sd">    :param filename: Destination zip member path.</span>
+<span class="sd">    :param myzip: Open zip archive.</span>
+<span class="sd">    :param logger: Logger used to record serialization problems.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">StringIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">buffer</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dataframe</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+            <span class="n">myzip</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s1">&#39;Value error&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_export_rms_results_to_zip</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">RmsResults</span><span class="p">,</span>
+                               <span class="n">myzip</span><span class="p">:</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">,</span>
+                               <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+                               <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export RMS dynamic results as one CSV per simulated event group.</span>
+
+<span class="sd">    :param results: RMS results object.</span>
+<span class="sd">    :param myzip: Open zip archive.</span>
+<span class="sd">    :param text_func: Optional progress text callback.</span>
+<span class="sd">    :param logger: Logger used to record serialization problems.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_vars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
+    <span class="n">variable_labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_vars</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+    <span class="n">var_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="k">for</span> <span class="n">var_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_vars</span><span class="p">):</span>
+        <span class="n">variable_labels</span><span class="p">[</span><span class="n">var_index</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">uid2vars_glob_name</span><span class="p">[</span><span class="n">results</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">var_index</span><span class="p">]</span><span class="o">.</span><span class="n">uid</span><span class="p">])</span>
+
+    <span class="n">group_idx</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="c1"># The RMS payload is three-dimensional: time, variable, event-group.</span>
+    <span class="c1"># Exporting one group at a time preserves the natural simulation structure</span>
+    <span class="c1"># expected by downstream post-processing scripts.</span>
+    <span class="k">for</span> <span class="n">group_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">ng</span><span class="p">):</span>
+        <span class="n">has_group_results</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">has_event_group_results</span><span class="p">[</span><span class="n">group_idx</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">has_group_results</span><span class="p">:</span>
+            <span class="n">group_identity</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_build_dynamic_group_identity</span><span class="p">(</span><span class="n">group_idx</span><span class="o">=</span><span class="n">group_idx</span><span class="p">,</span>
+                                                                <span class="n">group_names</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">rms_events_group_names</span><span class="p">,</span>
+                                                                <span class="n">group_idtags</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">rms_events_group_idtags</span><span class="p">)</span>
+            <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;RMS simulation/</span><span class="si">{</span><span class="n">group_identity</span><span class="si">}</span><span class="s2">.csv&quot;</span>
+
+            <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">text_func</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;flushing </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="c1"># Slicing the third axis isolates the one simulation case that the</span>
+            <span class="c1"># user wants to post-process independently.</span>
+            <span class="n">group_values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">group_idx</span><span class="p">]</span>
+            <span class="n">dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">group_values</span><span class="p">,</span>
+                                                   <span class="n">index</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">time_array</span><span class="p">,</span>
+                                                   <span class="n">columns</span><span class="o">=</span><span class="n">variable_labels</span><span class="p">)</span>
+            <span class="n">_write_dataframe_to_zip</span><span class="p">(</span><span class="n">dataframe</span><span class="o">=</span><span class="n">dataframe</span><span class="p">,</span>
+                                    <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span>
+                                    <span class="n">myzip</span><span class="o">=</span><span class="n">myzip</span><span class="p">,</span>
+                                    <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Skipping RMS event group without runtime results&#39;</span><span class="p">,</span>
+                            <span class="n">device</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">rms_events_group_names</span><span class="p">[</span><span class="n">group_idx</span><span class="p">]))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_export_emt_results_to_zip</span><span class="p">(</span><span class="n">results</span><span class="p">:</span> <span class="n">EmtResults</span><span class="p">,</span>
+                               <span class="n">myzip</span><span class="p">:</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">,</span>
+                               <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span> <span class="kc">None</span><span class="p">],</span>
+                               <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export EMT dynamic results as one CSV per simulated event group and payload kind.</span>
+
+<span class="sd">    :param results: EMT results object.</span>
+<span class="sd">    :param myzip: Open zip archive.</span>
+<span class="sd">    :param text_func: Optional progress text callback.</span>
+<span class="sd">    :param logger: Logger used to record serialization problems.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n_vars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">variables</span><span class="p">)</span>
+    <span class="n">value_labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_vars</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+    <span class="n">var_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="k">for</span> <span class="n">var_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_vars</span><span class="p">):</span>
+        <span class="n">value_labels</span><span class="p">[</span><span class="n">var_index</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">uid2vars_glob_name</span><span class="p">[</span><span class="n">results</span><span class="o">.</span><span class="n">variables</span><span class="p">[</span><span class="n">var_index</span><span class="p">]</span><span class="o">.</span><span class="n">uid</span><span class="p">])</span>
+
+    <span class="n">n_vars</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">diff_variables</span><span class="p">)</span>
+    <span class="n">diff_value_labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_vars</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">)</span>
+    <span class="n">var_index</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="k">for</span> <span class="n">var_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_vars</span><span class="p">):</span>
+        <span class="n">diff_value_labels</span><span class="p">[</span><span class="n">var_index</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">uid2vars_glob_name</span><span class="p">[</span><span class="n">results</span><span class="o">.</span><span class="n">diff_variables</span><span class="p">[</span><span class="n">var_index</span><span class="p">]</span><span class="o">.</span><span class="n">uid</span><span class="p">])</span>
+
+    <span class="n">group_idx</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="c1"># EMT carries two runtime namespaces: algebraic/state values and their</span>
+    <span class="c1"># differential-variable payload. Both are needed for faithful external</span>
+    <span class="c1"># post-processing, therefore both tables are exported for each active group.</span>
+    <span class="k">for</span> <span class="n">group_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">ng</span><span class="p">):</span>
+        <span class="n">has_group_results</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">has_event_group_results</span><span class="p">[</span><span class="n">group_idx</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">has_group_results</span><span class="p">:</span>
+            <span class="n">group_identity</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">_build_dynamic_group_identity</span><span class="p">(</span><span class="n">group_idx</span><span class="o">=</span><span class="n">group_idx</span><span class="p">,</span>
+                                                                <span class="n">group_names</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">emt_events_group_names</span><span class="p">,</span>
+                                                                <span class="n">group_idtags</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">emt_events_group_idtags</span><span class="p">)</span>
+
+            <span class="n">values_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;EMT simulation/</span><span class="si">{</span><span class="n">group_identity</span><span class="si">}</span><span class="s2">.csv&quot;</span>
+            <span class="n">diff_values_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;EMT simulation/</span><span class="si">{</span><span class="n">group_identity</span><span class="si">}</span><span class="s2">_diff_values.csv&quot;</span>
+
+            <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">text_func</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;flushing </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">values_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="n">values_payload</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">values</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">group_idx</span><span class="p">]</span>
+            <span class="n">values_dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">values_payload</span><span class="p">,</span>
+                                                          <span class="n">index</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">time_array</span><span class="p">,</span>
+                                                          <span class="n">columns</span><span class="o">=</span><span class="n">value_labels</span><span class="p">)</span>
+            <span class="n">_write_dataframe_to_zip</span><span class="p">(</span><span class="n">dataframe</span><span class="o">=</span><span class="n">values_dataframe</span><span class="p">,</span>
+                                    <span class="n">filename</span><span class="o">=</span><span class="n">values_filename</span><span class="p">,</span>
+                                    <span class="n">myzip</span><span class="o">=</span><span class="n">myzip</span><span class="p">,</span>
+                                    <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">text_func</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;flushing </span><span class="si">{</span><span class="n">results</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">diff_values_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="n">diff_values_payload</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">diff_values</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">group_idx</span><span class="p">]</span>
+            <span class="n">diff_values_dataframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">diff_values_payload</span><span class="p">,</span>
+                                                               <span class="n">index</span><span class="o">=</span><span class="n">results</span><span class="o">.</span><span class="n">time_array</span><span class="p">,</span>
+                                                               <span class="n">columns</span><span class="o">=</span><span class="n">diff_value_labels</span><span class="p">)</span>
+            <span class="n">_write_dataframe_to_zip</span><span class="p">(</span><span class="n">dataframe</span><span class="o">=</span><span class="n">diff_values_dataframe</span><span class="p">,</span>
+                                    <span class="n">filename</span><span class="o">=</span><span class="n">diff_values_filename</span><span class="p">,</span>
+                                    <span class="n">myzip</span><span class="o">=</span><span class="n">myzip</span><span class="p">,</span>
+                                    <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;Skipping EMT event group without runtime results&#39;</span><span class="p">,</span>
+                            <span class="n">device</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">emt_events_group_names</span><span class="p">[</span><span class="n">group_idx</span><span class="p">]))</span>
 
 
 <div class="viewcode-block" id="export_results">
@@ -169,39 +374,73 @@
 
                 <span class="c1"># deactivate plotting</span>
                 <span class="n">results</span><span class="o">.</span><span class="n">deactivate_plotting</span><span class="p">()</span>
-
-                <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">progress_func</span><span class="p">((</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">)</span>
-
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">available_results</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                    <span class="n">available_res</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">tpe</span><span class="p">,</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">available_results</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">]</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">available_res</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">available_results</span>
-
-                <span class="k">for</span> <span class="n">available_result</span> <span class="ow">in</span> <span class="n">available_res</span><span class="p">:</span>
-
-                    <span class="c1"># ge the result type definition</span>
-                    <span class="n">result_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">available_result</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-
-                    <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="n">text_func</span><span class="p">(</span><span class="s1">&#39;flushing &#39;</span> <span class="o">+</span> <span class="n">results</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">result_name</span><span class="p">)</span>
-
-                    <span class="c1"># save the DataFrame to the buffer</span>
-                    <span class="n">mdl</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">result_type</span><span class="o">=</span><span class="n">available_result</span><span class="p">)</span>
-
-                    <span class="k">if</span> <span class="n">mdl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                        <span class="k">with</span> <span class="n">StringIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">buffer</span><span class="p">:</span>
-                            <span class="n">filename</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">result_name</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span>
-                            <span class="k">try</span><span class="p">:</span>
-                                <span class="n">mdl</span><span class="o">.</span><span class="n">save_to_csv</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
-                                <span class="n">myzip</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
-                            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                                <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s1">&#39;Value error&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">progress_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">progress_func</span><span class="p">((</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;No results for &#39;</span> <span class="o">+</span> <span class="n">results</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; - &#39;</span> <span class="o">+</span> <span class="n">result_name</span><span class="p">)</span>
+                        <span class="k">pass</span>
 
-                <span class="c1"># reactivate plotting</span>
-                <span class="n">results</span><span class="o">.</span><span class="n">activate_plotting</span><span class="p">()</span>
+                    <span class="c1"># Dynamic RMS results are stored as a 3D tensor, therefore</span>
+                    <span class="c1"># they cannot be exported through the generic ResultsTable</span>
+                    <span class="c1"># path that assumes a single 2D table per result type.</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">RmsResults</span><span class="p">):</span>
+                        <span class="n">_export_rms_results_to_zip</span><span class="p">(</span><span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
+                                                   <span class="n">myzip</span><span class="o">=</span><span class="n">myzip</span><span class="p">,</span>
+                                                   <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                                   <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># EMT follows the same per-group export strategy, but it</span>
+                        <span class="c1"># carries two runtime payload namespaces that must both</span>
+                        <span class="c1"># be exported for complete external post-processing.</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">EmtResults</span><span class="p">):</span>
+                            <span class="n">_export_emt_results_to_zip</span><span class="p">(</span><span class="n">results</span><span class="o">=</span><span class="n">results</span><span class="p">,</span>
+                                                       <span class="n">myzip</span><span class="o">=</span><span class="n">myzip</span><span class="p">,</span>
+                                                       <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                                       <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">available_results</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                                <span class="n">available_res</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">tpe</span><span class="p">,</span> <span class="n">lst</span> <span class="ow">in</span> <span class="n">results</span><span class="o">.</span><span class="n">available_results</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">lst</span><span class="p">]</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">available_res</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">available_results</span>
+
+                            <span class="k">for</span> <span class="n">available_result</span> <span class="ow">in</span> <span class="n">available_res</span><span class="p">:</span>
+
+                                <span class="c1"># The generic branch keeps the historical export</span>
+                                <span class="c1"># behavior for studies that already describe</span>
+                                <span class="c1"># themselves as 2D ResultsTable objects.</span>
+                                <span class="n">result_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">available_result</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+                                <span class="k">if</span> <span class="n">text_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                                    <span class="n">text_func</span><span class="p">(</span><span class="s1">&#39;flushing &#39;</span> <span class="o">+</span> <span class="n">results</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">result_name</span><span class="p">)</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="k">pass</span>
+
+                                <span class="n">mdl</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">mdl</span><span class="p">(</span><span class="n">result_type</span><span class="o">=</span><span class="n">available_result</span><span class="p">)</span>
+
+                                <span class="k">if</span> <span class="n">mdl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                                    <span class="k">with</span> <span class="n">StringIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">buffer</span><span class="p">:</span>
+                                        <span class="n">raw_text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">result_name</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
+
+                                        <span class="c1"># Windows extraction rejects path segments containing reserved filename</span>
+                                        <span class="c1"># characters such as ``:``. Removing those characters keeps the archive</span>
+                                        <span class="c1"># portable while preserving the original wording as closely as possible.</span>
+                                        <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;[</span><span class="se">\\</span><span class="s1">:*?&quot;&lt;&gt;|]+&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">raw_text</span><span class="p">)</span>
+                                        <span class="n">filename</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;/+&#39;</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                                        <span class="n">filename</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;\s+&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                                        <span class="k">if</span> <span class="n">filename</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                                            <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;unnamed_result.csv&quot;</span>
+
+                                        <span class="k">try</span><span class="p">:</span>
+                                            <span class="n">mdl</span><span class="o">.</span><span class="n">save_to_csv</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+                                            <span class="n">myzip</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+                                        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                                            <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="s1">&#39;Value error&#39;</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+                                <span class="k">else</span><span class="p">:</span>
+                                    <span class="n">logger</span><span class="o">.</span><span class="n">add_info</span><span class="p">(</span><span class="s1">&#39;No results for &#39;</span> <span class="o">+</span> <span class="n">results</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39; - &#39;</span> <span class="o">+</span> <span class="n">result_name</span><span class="p">)</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="c1"># Plotting is re-enabled unconditionally so any later GUI</span>
+                    <span class="c1"># visualization behaves exactly as before the archive export.</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">activate_plotting</span><span class="p">()</span>
 
     <span class="k">except</span> <span class="ne">PermissionError</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s1">&#39;Permission error.</span><span class="se">\n</span><span class="s1">Do you have the file open?&#39;</span><span class="p">)</span>

@@ -69,7 +69,7 @@ def draw_styled_qcurve_plot(plotter: MatplotlibWidget, q_curve: GeneratorQCurve,
     curve_data: Mat = q_curve.get_data()
     max_abs_value: float = abs(radius)
     if curve_data.shape[0] > 0:
-        sorted_indices: Vec = np.argsort(curve_data[:, 0])
+        sorted_indices: Vec = np.argsort(curve_data[:, 0], kind="stable")
         sorted_curve_data: Mat = curve_data[sorted_indices, :]
         p_values: np.ndarray = np.asarray(sorted_curve_data[:, 0], dtype=float)
         qmin_values: np.ndarray = np.asarray(sorted_curve_data[:, 1], dtype=float)
@@ -290,7 +290,7 @@ class GeneratorQCurveEditorTableModel(QtCore.QAbstractTableModel):
         Sort rows by active power column.
         """
         if self._data.shape[0] > 0:
-            sorted_indices: Vec = np.argsort(self._data[:, 0])
+            sorted_indices: Vec = np.argsort(self._data[:, 0], kind="stable")
             self._data = self._data[sorted_indices]
             self.layoutChanged.emit()
         else:
@@ -437,7 +437,7 @@ class GeneratorQCurveEditor(QtWidgets.QDialog):
             Snom=Snom,
         )
         self.q_curve_widget.curve_changed.connect(self._sync_from_widget)
-        self.setWindowTitle("Reactive power curve editor")
+        self.setWindowTitle(self.tr("Reactive power curve editor"))
 
         self.q_curve: GeneratorQCurve = q_curve
         self.Qmin: float = Qmin
@@ -606,7 +606,7 @@ class GeneratorEditor(TemplateDeviceEditor):
         """
         TemplateDeviceEditor.__init__(self, api_object=api_object, circuit=circuit)
         self.api_object: Generator = api_object
-        self.setWindowTitle("Generator editor")
+        self.setWindowTitle(self.tr("Generator editor"))
 
         self.solar_editor_widget: EmbeddedSolarPvEditorWidget | None = None
         self.wind_editor_widget: EmbeddedWindFarmEditorWidget | None = None
@@ -775,9 +775,9 @@ class GeneratorEditor(TemplateDeviceEditor):
         Apply previously generated solar profile values to generator profiles.
         """
         if self.solar_editor_widget is None:
-            warning_msg("Solar editor is not available", "Generator editor")
+            warning_msg(self.tr("Solar editor is not available"), self.tr("Generator editor"))
         elif not bool(self.solar_editor_widget.ok):
-            warning_msg("Generate a solar profile first", "Generator editor")
+            warning_msg(self.tr("Generate a solar profile first"), self.tr("Generator editor"))
         else:
             solar_profile_values: np.ndarray = np.asarray(self.solar_editor_widget.P, dtype=float)
             solar_temperature: np.ndarray | None = (
@@ -807,18 +807,18 @@ class GeneratorEditor(TemplateDeviceEditor):
                     pass
 
                 self.refresh_profile_table()
-                info_msg("Solar profile applied to generator", "Generator editor")
+                info_msg(self.tr("Solar profile applied to generator"), self.tr("Generator editor"))
             else:
-                warning_msg("Wrong solar profile length", "Generator editor")
+                warning_msg(self.tr("Wrong solar profile length"), self.tr("Generator editor"))
 
     def _apply_wind_profile(self) -> None:
         """
         Apply previously generated wind profile values to generator profiles.
         """
         if self.wind_editor_widget is None:
-            warning_msg("Wind editor is not available", "Generator editor")
+            warning_msg(self.tr("Wind editor is not available"), self.tr("Generator editor"))
         elif not bool(self.wind_editor_widget.ok):
-            warning_msg("Generate a wind profile first", "Generator editor")
+            warning_msg(self.tr("Generate a wind profile first"), self.tr("Generator editor"))
         else:
             wind_profile_values: np.ndarray = np.asarray(self.wind_editor_widget.P, dtype=float)
             wind_temperature: np.ndarray | None = (
@@ -845,9 +845,9 @@ class GeneratorEditor(TemplateDeviceEditor):
                     pass
 
                 self.refresh_profile_table()
-                info_msg("Wind profile applied to generator", "Generator editor")
+                info_msg(self.tr("Wind profile applied to generator"), self.tr("Generator editor"))
             else:
-                warning_msg("Wrong wind profile length", "Generator editor")
+                warning_msg(self.tr("Wrong wind profile length"), self.tr("Generator editor"))
 
     def closeEvent(self, event: QtCore.QEvent) -> None:
         """

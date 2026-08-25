@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.IO.dgs.dgs_to_veragrid &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.IO.dgs.dgs_to_veragrid &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,9 +44,9 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
@@ -67,6 +67,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
@@ -118,7 +122,9 @@
     <span class="n">ShuntControlMode</span><span class="p">,</span>
     <span class="n">ConverterControlType</span><span class="p">,</span>
     <span class="n">ConverterFaultControlType</span><span class="p">,</span>
-    <span class="n">GeneratorType</span>
+    <span class="n">GeneratorType</span><span class="p">,</span>
+    <span class="n">GeneratorControlMode</span><span class="p">,</span>
+    <span class="n">BusGraphicType</span>
 <span class="p">)</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.Branches.wire</span><span class="w"> </span><span class="kn">import</span> <span class="n">Wire</span>
@@ -685,6 +691,11 @@
         <span class="n">xpos</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span>
         <span class="n">ypos</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="o">-</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="mi">5</span><span class="p">,</span>
         <span class="n">active</span><span class="o">=</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">elmterm</span><span class="o">.</span><span class="n">outserv</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">graphic_type</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">BusGraphicType</span><span class="o">.</span><span class="n">BusBar</span>
+            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">elmterm</span><span class="o">.</span><span class="n">iUsage</span> <span class="ow">or</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="k">else</span> <span class="n">BusGraphicType</span><span class="o">.</span><span class="n">Connectivity</span>
+        <span class="p">),</span>
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="nb">float</span><span class="p">(</span><span class="n">elmterm</span><span class="o">.</span><span class="n">vtarget</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
@@ -1181,6 +1192,88 @@
 
     <span class="k">return</span> <span class="n">buses_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">buses_sorted</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">buses_sorted</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_order_tr4</span><span class="p">(</span><span class="n">bus_a</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span>
+               <span class="n">bus_b</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span>
+               <span class="n">bus_c</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span>
+               <span class="n">bus_d</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span>
+               <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
+               <span class="n">tr_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Order tr4 buses by voltage and return the original DGS-side indices.</span>
+
+<span class="sd">    DGS-side indices:</span>
+<span class="sd">    0 = h0</span>
+<span class="sd">    1 = l1</span>
+<span class="sd">    2 = l2</span>
+<span class="sd">    3 = l3</span>
+
+<span class="sd">    :param bus_a: First DGS-side bus.</span>
+<span class="sd">    :param bus_b: Second DGS-side bus.</span>
+<span class="sd">    :param bus_c: Third DGS-side bus.</span>
+<span class="sd">    :param bus_d: Fourth DGS-side bus.</span>
+<span class="sd">    :param logger: Logger.</span>
+<span class="sd">    :param tr_name: Transformer name.</span>
+<span class="sd">    :return: Ordered buses plus original DGS-side indices.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">va</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_a</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+    <span class="n">vb</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_b</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+    <span class="n">vc</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_c</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+    <span class="n">vd</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_d</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">va</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">vb</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">vc</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">vd</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;one or more buses have Vnom=0.0&quot;</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">tr_name</span><span class="p">,</span>
+            <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Transformer4W&quot;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;(va=</span><span class="si">{</span><span class="n">va</span><span class="si">}</span><span class="s2">, vb=</span><span class="si">{</span><span class="n">vb</span><span class="si">}</span><span class="s2">, vc=</span><span class="si">{</span><span class="n">vc</span><span class="si">}</span><span class="s2">, vd=</span><span class="si">{</span><span class="n">vd</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">bus_a</span><span class="p">,</span> <span class="n">bus_b</span><span class="p">,</span> <span class="n">bus_c</span><span class="p">,</span> <span class="n">bus_d</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">indexed_buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">indexed_buses</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">bus_a</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">indexed_buses</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">bus_b</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="n">indexed_buses</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">bus_c</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">indexed_buses</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">bus_d</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+    <span class="n">indexed_buses_sorted</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="n">indexed_buses</span><span class="p">,</span>
+        <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">item</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Vnom</span><span class="p">),</span>
+        <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="n">v0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">indexed_buses_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+    <span class="n">v1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">indexed_buses_sorted</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+    <span class="n">v2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">indexed_buses_sorted</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+    <span class="n">v3</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">indexed_buses_sorted</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Vnom</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">v0</span> <span class="o">==</span> <span class="n">v1</span> <span class="ow">or</span> <span class="n">v1</span> <span class="o">==</span> <span class="n">v2</span> <span class="ow">or</span> <span class="n">v2</span> <span class="o">==</span> <span class="n">v3</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;HV/LV1/LV2/LV3 ambiguous, keeping Vnom-based ordering&quot;</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">tr_name</span><span class="p">,</span>
+            <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Transformer4W&quot;</span><span class="p">,</span>
+            <span class="n">value</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;(va=</span><span class="si">{</span><span class="n">va</span><span class="si">}</span><span class="s2">, vb=</span><span class="si">{</span><span class="n">vb</span><span class="si">}</span><span class="s2">, vc=</span><span class="si">{</span><span class="n">vc</span><span class="si">}</span><span class="s2">, vd=</span><span class="si">{</span><span class="n">vd</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">ordered_original_indices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">ordered_original_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indexed_buses_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">ordered_original_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indexed_buses_sorted</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">ordered_original_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indexed_buses_sorted</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">ordered_original_indices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indexed_buses_sorted</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">indexed_buses_sorted</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">indexed_buses_sorted</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">indexed_buses_sorted</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">indexed_buses_sorted</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">ordered_original_indices</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_apply_tr3_winding_connection_data</span><span class="p">(</span>
         <span class="n">winding</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Winding</span><span class="p">,</span>
@@ -1306,6 +1399,352 @@
             <span class="n">tap_phase_min</span><span class="o">=</span><span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">get_tap_phase_min</span><span class="p">(),</span>
             <span class="n">tap_phase_max</span><span class="o">=</span><span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">get_tap_phase_max</span><span class="p">(),</span>
         <span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_fill_tr4w_simple_values</span><span class="p">(</span><span class="n">trafo4w</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">TransformerNW</span><span class="p">,</span>
+                            <span class="n">nominal_voltages</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+                            <span class="n">nominal_powers</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+                            <span class="n">short_circuit_voltages</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+                            <span class="n">copper_losses</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+                            <span class="n">Pfe</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                            <span class="n">I0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                            <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fill four-winding transformer values from simplified per-winding input data.</span>
+
+<span class="sd">    :param trafo4w: Four-winding transformer.</span>
+<span class="sd">    :param nominal_voltages: DGS-side voltages in h0, l1, l2, l3 order.</span>
+<span class="sd">    :param nominal_powers: DGS-side powers in h0, l1, l2, l3 order.</span>
+<span class="sd">    :param short_circuit_voltages: DGS-side short-circuit voltages in h0, l1, l2, l3 order.</span>
+<span class="sd">    :param copper_losses: DGS-side copper losses in h0, l1, l2, l3 order.</span>
+<span class="sd">    :param ordered_original_indices: Mapping from transformer winding order to original DGS-side order.</span>
+<span class="sd">    :param Pfe: Shared iron-core losses in kW.</span>
+<span class="sd">    :param I0: Shared no-load current in percent.</span>
+<span class="sd">    :param Sbase: System base power in MVA.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">for</span> <span class="n">winding_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+        <span class="n">winding</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Winding</span> <span class="o">=</span> <span class="n">trafo4w</span><span class="o">.</span><span class="n">windings</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+
+        <span class="n">winding</span><span class="o">.</span><span class="n">HV</span> <span class="o">=</span> <span class="n">nominal_voltages</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+        <span class="n">winding</span><span class="o">.</span><span class="n">LV</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+        <span class="n">winding</span><span class="o">.</span><span class="n">Sn</span> <span class="o">=</span> <span class="n">nominal_powers</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+        <span class="n">winding</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="n">nominal_powers</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+        <span class="n">winding</span><span class="o">.</span><span class="n">design_rate</span> <span class="o">=</span> <span class="n">nominal_powers</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+
+        <span class="n">winding</span><span class="o">.</span><span class="n">Pcu</span> <span class="o">=</span> <span class="n">copper_losses</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+        <span class="n">winding</span><span class="o">.</span><span class="n">Vsc</span> <span class="o">=</span> <span class="n">short_circuit_voltages</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+
+    <span class="n">trafo4w</span><span class="o">.</span><span class="n">Pfe</span> <span class="o">=</span> <span class="n">Pfe</span>
+    <span class="n">trafo4w</span><span class="o">.</span><span class="n">I0</span> <span class="o">=</span> <span class="n">I0</span>
+
+    <span class="n">trafo4w</span><span class="o">.</span><span class="n">recalculate_windings_from_definition</span><span class="p">(</span><span class="n">Sbase</span><span class="o">=</span><span class="n">Sbase</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_fill_tr4w_complete_values</span><span class="p">(</span>
+    <span class="n">trafo4w</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">TransformerNW</span><span class="p">,</span> <span class="n">V_h0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span><span class="n">V_l1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">V_l2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">V_l3</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="n">Sn_h0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Sn_l1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Sn_l2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Sn_l3</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Vsc_h0l1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="n">Vsc_h0l2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Vsc_h0l3</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Vsc_l1l2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Vsc_l1l3</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="n">Vsc_l2l3</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Pcu_h0l1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Pcu_h0l2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Pcu_h0l3</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="n">Pcu_l1l2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Pcu_l1l3</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Pcu_l2l3</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Pfe</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+<span class="n">I0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Sbase</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fill four-winding transformer values from simplified per-winding input data.</span>
+
+<span class="sd">        :param trafo4w: Four-winding transformer.</span>
+<span class="sd">        :param nominal_voltages: DGS-side voltages in h0, l1, l2, l3 order.</span>
+<span class="sd">        :param nominal_powers: DGS-side powers in h0, l1, l2, l3 order.</span>
+<span class="sd">        :param short_circuit_voltages: DGS-side short-circuit voltages in h0, l1, l2, l3 order.</span>
+<span class="sd">        :param copper_losses: DGS-side copper losses in h0, l1, l2, l3 order.</span>
+<span class="sd">        :param ordered_original_indices: Mapping from transformer winding order to original DGS-side order.</span>
+<span class="sd">        :param Pfe: Shared iron-core losses in kW.</span>
+<span class="sd">        :param I0: Shared no-load current in percent.</span>
+<span class="sd">        :param Sbase: System base power in MVA.</span>
+<span class="sd">        :return: None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">Sr_hv</span> <span class="o">=</span> <span class="n">Sn_h0</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_pairwise_impedance</span><span class="p">(</span>
+                <span class="n">uk</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                <span class="n">pcu</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                <span class="n">Sr_a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                <span class="n">Sr_b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">complex</span><span class="p">:</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Returns the pairwise short-circuit impedance in p.u.</span>
+
+<span class="sd">            uk: short-circuit voltage in %</span>
+<span class="sd">            pcu: copper losses in kW</span>
+<span class="sd">            Sr_a, Sr_b: rated powers in MVA</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+
+            <span class="n">Sr_pair</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">Sr_a</span><span class="p">,</span> <span class="n">Sr_b</span><span class="p">)</span>
+
+            <span class="c1"># Total impedance magnitude</span>
+            <span class="n">z_abs</span> <span class="o">=</span> <span class="p">(</span><span class="n">uk</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Sr_hv</span> <span class="o">/</span> <span class="n">Sr_pair</span><span class="p">)</span>
+
+            <span class="c1"># Resistive part</span>
+            <span class="n">zr</span> <span class="o">=</span> <span class="p">(</span><span class="n">pcu</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Sr_hv</span> <span class="o">/</span> <span class="p">(</span><span class="n">Sr_pair</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+
+            <span class="c1"># Reactive part</span>
+            <span class="n">zi_squared</span> <span class="o">=</span> <span class="n">z_abs</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">zr</span> <span class="o">**</span> <span class="mi">2</span>
+
+            <span class="k">if</span> <span class="n">zi_squared</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">zi</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">zi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">zi_squared</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="nb">complex</span><span class="p">(</span><span class="n">zr</span><span class="p">,</span> <span class="n">zi</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">parallel</span><span class="p">(</span><span class="n">z_a</span><span class="p">:</span> <span class="nb">complex</span><span class="p">,</span> <span class="n">z_b</span><span class="p">:</span> <span class="nb">complex</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">complex</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">z_a</span> <span class="o">+</span> <span class="n">z_b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">complex</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">z_a</span> <span class="o">*</span> <span class="n">z_b</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">z_a</span> <span class="o">+</span> <span class="n">z_b</span><span class="p">)</span>
+
+        <span class="c1"># Pairwise impedances</span>
+        <span class="n">z_h0l1</span> <span class="o">=</span> <span class="n">get_pairwise_impedance</span><span class="p">(</span>
+            <span class="n">uk</span><span class="o">=</span><span class="n">Vsc_h0l1</span><span class="p">,</span>
+            <span class="n">pcu</span><span class="o">=</span><span class="n">Pcu_h0l1</span><span class="p">,</span>
+            <span class="n">Sr_a</span><span class="o">=</span><span class="n">Sn_h0</span><span class="p">,</span>
+            <span class="n">Sr_b</span><span class="o">=</span><span class="n">Sn_l1</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">z_h0l2</span> <span class="o">=</span> <span class="n">get_pairwise_impedance</span><span class="p">(</span>
+            <span class="n">uk</span><span class="o">=</span><span class="n">Vsc_h0l2</span><span class="p">,</span>
+            <span class="n">pcu</span><span class="o">=</span><span class="n">Pcu_h0l2</span><span class="p">,</span>
+            <span class="n">Sr_a</span><span class="o">=</span><span class="n">Sn_h0</span><span class="p">,</span>
+            <span class="n">Sr_b</span><span class="o">=</span><span class="n">Sn_l2</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">z_h0l3</span> <span class="o">=</span> <span class="n">get_pairwise_impedance</span><span class="p">(</span>
+            <span class="n">uk</span><span class="o">=</span><span class="n">Vsc_h0l3</span><span class="p">,</span>
+            <span class="n">pcu</span><span class="o">=</span><span class="n">Pcu_h0l3</span><span class="p">,</span>
+            <span class="n">Sr_a</span><span class="o">=</span><span class="n">Sn_h0</span><span class="p">,</span>
+            <span class="n">Sr_b</span><span class="o">=</span><span class="n">Sn_l3</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">z_l1l2</span> <span class="o">=</span> <span class="n">get_pairwise_impedance</span><span class="p">(</span>
+            <span class="n">uk</span><span class="o">=</span><span class="n">Vsc_l1l2</span><span class="p">,</span>
+            <span class="n">pcu</span><span class="o">=</span><span class="n">Pcu_l1l2</span><span class="p">,</span>
+            <span class="n">Sr_a</span><span class="o">=</span><span class="n">Sn_l1</span><span class="p">,</span>
+            <span class="n">Sr_b</span><span class="o">=</span><span class="n">Sn_l2</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">z_l1l3</span> <span class="o">=</span> <span class="n">get_pairwise_impedance</span><span class="p">(</span>
+            <span class="n">uk</span><span class="o">=</span><span class="n">Vsc_l1l3</span><span class="p">,</span>
+            <span class="n">pcu</span><span class="o">=</span><span class="n">Pcu_l1l3</span><span class="p">,</span>
+            <span class="n">Sr_a</span><span class="o">=</span><span class="n">Sn_l1</span><span class="p">,</span>
+            <span class="n">Sr_b</span><span class="o">=</span><span class="n">Sn_l3</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">z_l2l3</span> <span class="o">=</span> <span class="n">get_pairwise_impedance</span><span class="p">(</span>
+            <span class="n">uk</span><span class="o">=</span><span class="n">Vsc_l2l3</span><span class="p">,</span>
+            <span class="n">pcu</span><span class="o">=</span><span class="n">Pcu_l2l3</span><span class="p">,</span>
+            <span class="n">Sr_a</span><span class="o">=</span><span class="n">Sn_l2</span><span class="p">,</span>
+            <span class="n">Sr_b</span><span class="o">=</span><span class="n">Sn_l3</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Equivalent circuit impedances</span>
+        <span class="n">k1</span> <span class="o">=</span> <span class="n">z_h0l2</span> <span class="o">+</span> <span class="n">z_l1l3</span> <span class="o">-</span> <span class="n">z_h0l1</span> <span class="o">-</span> <span class="n">z_l2l3</span>
+        <span class="n">k2</span> <span class="o">=</span> <span class="n">z_h0l2</span> <span class="o">+</span> <span class="n">z_l1l3</span> <span class="o">-</span> <span class="n">z_h0l3</span> <span class="o">-</span> <span class="n">z_l1l2</span>
+        <span class="n">k_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">k1</span> <span class="o">*</span> <span class="n">k2</span><span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">k_2</span><span class="p">)</span>
+
+        <span class="n">z_internal_i</span> <span class="o">=</span> <span class="n">k1</span> <span class="o">+</span> <span class="n">k</span>
+        <span class="n">z_internal_j</span> <span class="o">=</span> <span class="n">k2</span> <span class="o">+</span> <span class="n">k</span>
+
+        <span class="n">z_h0</span> <span class="o">=</span> <span class="p">(</span><span class="n">z_h0l1</span> <span class="o">+</span> <span class="n">z_h0l3</span> <span class="o">-</span> <span class="n">z_l1l3</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">z_l1</span> <span class="o">=</span> <span class="p">(</span><span class="n">z_h0l1</span> <span class="o">+</span> <span class="n">z_l1l2</span> <span class="o">-</span> <span class="n">z_h0l2</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">z_l2</span> <span class="o">=</span> <span class="p">(</span><span class="n">z_l1l2</span> <span class="o">+</span> <span class="n">z_l2l3</span> <span class="o">-</span> <span class="n">z_l1l3</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">z_l3</span> <span class="o">=</span> <span class="p">(</span><span class="n">z_l2l3</span> <span class="o">+</span> <span class="n">z_h0l3</span> <span class="o">-</span> <span class="n">z_h0l2</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+        <span class="c1"># Equivalent internal path impedances</span>
+        <span class="n">z_path_l1</span> <span class="o">=</span> <span class="n">parallel</span><span class="p">(</span>
+            <span class="n">z_internal_i</span><span class="p">,</span>
+            <span class="mf">2.0</span> <span class="o">*</span> <span class="n">z_internal_j</span> <span class="o">+</span> <span class="n">z_internal_i</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">z_path_l2</span> <span class="o">=</span> <span class="n">parallel</span><span class="p">(</span>
+            <span class="n">z_internal_i</span> <span class="o">+</span> <span class="n">z_internal_j</span><span class="p">,</span>
+            <span class="n">z_internal_j</span> <span class="o">+</span> <span class="n">z_internal_i</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">z_path_l3</span> <span class="o">=</span> <span class="n">parallel</span><span class="p">(</span>
+            <span class="n">z_internal_j</span><span class="p">,</span>
+            <span class="mf">2.0</span> <span class="o">*</span> <span class="n">z_internal_i</span> <span class="o">+</span> <span class="n">z_internal_j</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Add path impedance to each branch impedance</span>
+        <span class="n">z_l1</span> <span class="o">+=</span> <span class="n">z_path_l1</span>
+        <span class="n">z_l2</span> <span class="o">+=</span> <span class="n">z_path_l2</span>
+        <span class="n">z_l3</span> <span class="o">+=</span> <span class="n">z_path_l3</span>
+
+        <span class="c1"># Winding-side data in h0, l1, l2, l3 order</span>
+        <span class="n">nominal_voltages</span> <span class="o">=</span> <span class="p">[</span><span class="n">V_h0</span><span class="p">,</span> <span class="n">V_l1</span><span class="p">,</span> <span class="n">V_l2</span><span class="p">,</span> <span class="n">V_l3</span><span class="p">]</span>
+        <span class="n">nominal_powers</span> <span class="o">=</span> <span class="p">[</span><span class="n">Sn_h0</span><span class="p">,</span> <span class="n">Sn_l1</span><span class="p">,</span> <span class="n">Sn_l2</span><span class="p">,</span> <span class="n">Sn_l3</span><span class="p">]</span>
+
+        <span class="c1"># Use equivalent branch impedances obtained from the complete-input model</span>
+        <span class="n">branch_impedances_hv_base</span> <span class="o">=</span> <span class="p">[</span><span class="n">z_h0</span><span class="p">,</span> <span class="n">z_l1</span><span class="p">,</span> <span class="n">z_l2</span><span class="p">,</span> <span class="n">z_l3</span><span class="p">]</span>
+
+        <span class="c1"># Optional reporting fields, expressed approximately on each winding base</span>
+        <span class="n">short_circuit_voltages</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">copper_losses</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">z_branch</span><span class="p">,</span> <span class="n">Sn_w</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">branch_impedances_hv_base</span><span class="p">,</span> <span class="n">nominal_powers</span><span class="p">):</span>
+            <span class="c1"># Convert from HV-winding base to each winding rated-power base</span>
+            <span class="n">z_winding_base</span> <span class="o">=</span> <span class="n">z_branch</span> <span class="o">*</span> <span class="p">(</span><span class="n">Sn_w</span> <span class="o">/</span> <span class="n">Sr_hv</span><span class="p">)</span>
+
+            <span class="n">short_circuit_voltages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">z_winding_base</span><span class="p">)</span> <span class="o">*</span> <span class="mf">100.0</span><span class="p">)</span>
+            <span class="n">copper_losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">z_winding_base</span><span class="o">.</span><span class="n">real</span> <span class="o">*</span> <span class="p">(</span><span class="n">Sn_w</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">Sn_w</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1000.0</span><span class="p">)</span>
+
+        <span class="c1"># Assign winding data</span>
+        <span class="k">for</span> <span class="n">winding_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+            <span class="n">winding</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Winding</span> <span class="o">=</span> <span class="n">trafo4w</span><span class="o">.</span><span class="n">windings</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+
+            <span class="n">z_branch</span> <span class="o">=</span> <span class="n">branch_impedances_hv_base</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+
+            <span class="c1"># Convert impedance from transformer HV-rated-power base to VeraGrid system base</span>
+            <span class="n">z_system_base</span> <span class="o">=</span> <span class="n">z_branch</span> <span class="o">*</span> <span class="p">(</span><span class="n">Sbase</span> <span class="o">/</span> <span class="n">Sr_hv</span><span class="p">)</span>
+
+            <span class="n">winding</span><span class="o">.</span><span class="n">HV</span> <span class="o">=</span> <span class="n">nominal_voltages</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+            <span class="n">winding</span><span class="o">.</span><span class="n">LV</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+            <span class="n">winding</span><span class="o">.</span><span class="n">Sn</span> <span class="o">=</span> <span class="n">nominal_powers</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+            <span class="n">winding</span><span class="o">.</span><span class="n">rate</span> <span class="o">=</span> <span class="n">nominal_powers</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+            <span class="n">winding</span><span class="o">.</span><span class="n">design_rate</span> <span class="o">=</span> <span class="n">nominal_powers</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+
+            <span class="n">winding</span><span class="o">.</span><span class="n">R</span> <span class="o">=</span> <span class="n">z_system_base</span><span class="o">.</span><span class="n">real</span>
+            <span class="n">winding</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">z_system_base</span><span class="o">.</span><span class="n">imag</span>
+
+            <span class="c1"># Negative sequence is normally equal to positive sequence for passive transformer impedances</span>
+            <span class="n">winding</span><span class="o">.</span><span class="n">R2</span> <span class="o">=</span> <span class="n">z_system_base</span><span class="o">.</span><span class="n">real</span>
+            <span class="n">winding</span><span class="o">.</span><span class="n">X2</span> <span class="o">=</span> <span class="n">z_system_base</span><span class="o">.</span><span class="n">imag</span>
+
+            <span class="n">winding</span><span class="o">.</span><span class="n">Pcu</span> <span class="o">=</span> <span class="n">copper_losses</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+            <span class="n">winding</span><span class="o">.</span><span class="n">Vsc</span> <span class="o">=</span> <span class="n">short_circuit_voltages</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+
+        <span class="n">trafo4w</span><span class="o">.</span><span class="n">Pfe</span> <span class="o">=</span> <span class="n">Pfe</span>
+        <span class="n">trafo4w</span><span class="o">.</span><span class="n">I0</span> <span class="o">=</span> <span class="n">I0</span>
+
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_tr4_winding_tap_data</span><span class="p">(</span>
+        <span class="n">windings</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Winding</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span>
+        <span class="n">current_positions</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">neutral_positions</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">minimum_positions</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">maximum_positions</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+        <span class="n">step_percents</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+        <span class="n">phase_angle_degs</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply tr4 winding tap data.</span>
+
+<span class="sd">    :param windings: Four transformer windings.</span>
+<span class="sd">    :param current_positions: Current tap positions for h0, l1, l2 and l3.</span>
+<span class="sd">    :param neutral_positions: Neutral tap positions for h0, l1, l2 and l3.</span>
+<span class="sd">    :param minimum_positions: Minimum tap positions for h0, l1, l2 and l3.</span>
+<span class="sd">    :param maximum_positions: Maximum tap positions for h0, l1, l2 and l3.</span>
+<span class="sd">    :param step_percents: Tap step percentages for h0, l1, l2 and l3.</span>
+<span class="sd">    :param phase_angle_degs: Tap phase angles in degrees for h0, l1, l2 and l3.</span>
+<span class="sd">    :return: None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">winding_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+        <span class="n">winding</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Winding</span> <span class="o">=</span> <span class="n">windings</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+
+        <span class="n">current_position</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">current_positions</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+        <span class="n">neutral_position</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">neutral_positions</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+        <span class="n">minimum_position</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">minimum_positions</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+        <span class="n">maximum_position</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">maximum_positions</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+        <span class="n">step_percent</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">step_percents</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+        <span class="n">phase_angle_deg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">phase_angle_degs</span><span class="p">[</span><span class="n">winding_index</span><span class="p">]</span>
+
+        <span class="n">total_positions</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">maximum_position</span> <span class="o">-</span> <span class="n">minimum_position</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">total_positions</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tc_type</span><span class="p">:</span> <span class="n">TapChangerTypes</span> <span class="o">=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">VoltageRegulation</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">phase_angle_deg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1e-12</span><span class="p">:</span>
+                <span class="n">tc_type</span> <span class="o">=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">Symmetrical</span>
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">phase_angle_deg</span><span class="p">)</span> <span class="o">%</span> <span class="mf">180.0</span> <span class="o">-</span> <span class="mf">90.0</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+                    <span class="n">tc_type</span> <span class="o">=</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">Asymmetrical</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">total_positions</span> <span class="o">=</span> <span class="n">total_positions</span>
+            <span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">neutral_position</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">neutral_position</span> <span class="o">-</span> <span class="n">minimum_position</span><span class="p">)</span>
+            <span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">dV</span> <span class="o">=</span> <span class="n">step_percent</span> <span class="o">/</span> <span class="mf">100.0</span>
+            <span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">asymmetry_angle</span> <span class="o">=</span> <span class="n">phase_angle_deg</span>
+            <span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">tc_type</span> <span class="o">=</span> <span class="n">tc_type</span>
+
+            <span class="n">tap_position</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">current_position</span> <span class="o">-</span> <span class="n">minimum_position</span>
+            <span class="k">if</span> <span class="n">tap_position</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">tap_position</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">if</span> <span class="n">tap_position</span> <span class="o">&gt;=</span> <span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">total_positions</span><span class="p">:</span>
+                <span class="n">tap_position</span> <span class="o">=</span> <span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">total_positions</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">tap_position</span> <span class="o">=</span> <span class="n">tap_position</span>
+
+            <span class="n">fallback_tap</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">get_tap_module</span><span class="p">()</span>
+            <span class="n">fallback_tap_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">get_tap_module_min</span><span class="p">()</span>
+            <span class="n">fallback_tap_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">get_tap_module_max</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">tc_type</span> <span class="o">==</span> <span class="n">TapChangerTypes</span><span class="o">.</span><span class="n">VoltageRegulation</span><span class="p">:</span>
+                <span class="n">step</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">step_percent</span> <span class="o">/</span> <span class="mf">100.0</span>
+                <span class="n">tap</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="n">current_position</span> <span class="o">-</span> <span class="n">neutral_position</span><span class="p">)</span> <span class="o">*</span> <span class="n">step</span>
+                <span class="n">tap_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="n">minimum_position</span> <span class="o">-</span> <span class="n">neutral_position</span><span class="p">)</span> <span class="o">*</span> <span class="n">step</span>
+                <span class="n">tap_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="n">maximum_position</span> <span class="o">-</span> <span class="n">neutral_position</span><span class="p">)</span> <span class="o">*</span> <span class="n">step</span>
+
+                <span class="n">tap</span><span class="p">,</span> <span class="n">tap_min</span><span class="p">,</span> <span class="n">tap_max</span> <span class="o">=</span> <span class="n">_sanitize_tap_window</span><span class="p">(</span>
+                    <span class="n">tap_value</span><span class="o">=</span><span class="n">tap</span><span class="p">,</span>
+                    <span class="n">tap_min_value</span><span class="o">=</span><span class="n">tap_min</span><span class="p">,</span>
+                    <span class="n">tap_max_value</span><span class="o">=</span><span class="n">tap_max</span><span class="p">,</span>
+                    <span class="n">fallback_tap_value</span><span class="o">=</span><span class="n">fallback_tap</span><span class="p">,</span>
+                    <span class="n">fallback_tap_min_value</span><span class="o">=</span><span class="n">fallback_tap_min</span><span class="p">,</span>
+                    <span class="n">fallback_tap_max_value</span><span class="o">=</span><span class="n">fallback_tap_max</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">_apply_branch_tap_state</span><span class="p">(</span>
+                    <span class="n">branch</span><span class="o">=</span><span class="n">winding</span><span class="p">,</span>
+                    <span class="n">tap_value</span><span class="o">=</span><span class="n">tap</span><span class="p">,</span>
+                    <span class="n">tap_phase</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">tap_min_value</span><span class="o">=</span><span class="n">tap_min</span><span class="p">,</span>
+                    <span class="n">tap_max_value</span><span class="o">=</span><span class="n">tap_max</span><span class="p">,</span>
+                    <span class="n">tap_phase_min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                    <span class="n">tap_phase_max</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tap_value</span><span class="p">:</span> <span class="nb">float</span>
+                <span class="n">tap_min_value</span><span class="p">:</span> <span class="nb">float</span>
+                <span class="n">tap_max_value</span><span class="p">:</span> <span class="nb">float</span>
+
+                <span class="n">tap_value</span><span class="p">,</span> <span class="n">tap_min_value</span><span class="p">,</span> <span class="n">tap_max_value</span> <span class="o">=</span> <span class="n">_sanitize_tap_window</span><span class="p">(</span>
+                    <span class="n">tap_value</span><span class="o">=</span><span class="n">fallback_tap</span><span class="p">,</span>
+                    <span class="n">tap_min_value</span><span class="o">=</span><span class="n">fallback_tap_min</span><span class="p">,</span>
+                    <span class="n">tap_max_value</span><span class="o">=</span><span class="n">fallback_tap_max</span><span class="p">,</span>
+                    <span class="n">fallback_tap_value</span><span class="o">=</span><span class="n">fallback_tap</span><span class="p">,</span>
+                    <span class="n">fallback_tap_min_value</span><span class="o">=</span><span class="n">fallback_tap_min</span><span class="p">,</span>
+                    <span class="n">fallback_tap_max_value</span><span class="o">=</span><span class="n">fallback_tap_max</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="n">_apply_branch_tap_state</span><span class="p">(</span>
+                    <span class="n">branch</span><span class="o">=</span><span class="n">winding</span><span class="p">,</span>
+                    <span class="n">tap_value</span><span class="o">=</span><span class="n">tap_value</span><span class="p">,</span>
+                    <span class="n">tap_phase</span><span class="o">=</span><span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">get_tap_phase</span><span class="p">(),</span>
+                    <span class="n">tap_min_value</span><span class="o">=</span><span class="n">tap_min_value</span><span class="p">,</span>
+                    <span class="n">tap_max_value</span><span class="o">=</span><span class="n">tap_max_value</span><span class="p">,</span>
+                    <span class="n">tap_phase_min</span><span class="o">=</span><span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">get_tap_phase_min</span><span class="p">(),</span>
+                    <span class="n">tap_phase_max</span><span class="o">=</span><span class="n">winding</span><span class="o">.</span><span class="n">tap_changer</span><span class="o">.</span><span class="n">get_tap_phase_max</span><span class="p">(),</span>
+                <span class="p">)</span>
 
 
 <div class="viewcode-block" id="convert_dgs_to_transformer">
@@ -1603,6 +2042,304 @@
                                 <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
 
     <span class="n">trafo3w</span><span class="o">.</span><span class="n">fill_from_design_values</span><span class="p">(</span>
+        <span class="n">V1</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">utrn3_h</span><span class="p">),</span>
+        <span class="n">V2</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">utrn3_m</span><span class="p">),</span>
+        <span class="n">V3</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">utrn3_l</span><span class="p">),</span>
+        <span class="n">Sn1</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">strn3_h</span><span class="p">),</span>
+        <span class="n">Sn2</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">strn3_m</span><span class="p">),</span>
+        <span class="n">Sn3</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">strn3_l</span><span class="p">),</span>
+        <span class="n">Pcu12</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">pcut3_h</span><span class="p">),</span>
+        <span class="n">Pcu23</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">pcut3_m</span><span class="p">),</span>
+        <span class="n">Pcu31</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">pcut3_l</span><span class="p">),</span>
+        <span class="n">Vsc12</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">uktr3_h</span><span class="p">),</span>
+        <span class="n">Vsc23</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">uktr3_m</span><span class="p">),</span>
+        <span class="n">Vsc31</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">uktr3_l</span><span class="p">),</span>
+        <span class="n">Pfe</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">pfe</span><span class="p">),</span>
+        <span class="n">I0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">curm3</span><span class="p">),</span>
+        <span class="n">Sbase</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">baseMVA</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">_apply_tr3_winding_tap_data</span><span class="p">(</span>
+        <span class="n">winding</span><span class="o">=</span><span class="n">trafo3w</span><span class="o">.</span><span class="n">winding1</span><span class="p">,</span>
+        <span class="n">current_position</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">tr3</span><span class="o">.</span><span class="n">n3tap_h</span><span class="p">),</span>
+        <span class="n">neutral_position</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">n3tp0_h</span><span class="p">),</span>
+        <span class="n">minimum_position</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">n3tmn_h</span><span class="p">),</span>
+        <span class="n">maximum_position</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">n3tmx_h</span><span class="p">),</span>
+        <span class="n">step_percent</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">du3tp_h</span><span class="p">),</span>
+        <span class="n">phase_angle_deg</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">ph3tr_h</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">_apply_tr3_winding_tap_data</span><span class="p">(</span>
+        <span class="n">winding</span><span class="o">=</span><span class="n">trafo3w</span><span class="o">.</span><span class="n">winding2</span><span class="p">,</span>
+        <span class="n">current_position</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">tr3</span><span class="o">.</span><span class="n">n3tap_m</span><span class="p">),</span>
+        <span class="n">neutral_position</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">n3tp0_m</span><span class="p">),</span>
+        <span class="n">minimum_position</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">n3tmn_m</span><span class="p">),</span>
+        <span class="n">maximum_position</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">n3tmx_m</span><span class="p">),</span>
+        <span class="n">step_percent</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">du3tp_m</span><span class="p">),</span>
+        <span class="n">phase_angle_deg</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">ph3tr_m</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">_apply_tr3_winding_tap_data</span><span class="p">(</span>
+        <span class="n">winding</span><span class="o">=</span><span class="n">trafo3w</span><span class="o">.</span><span class="n">winding3</span><span class="p">,</span>
+        <span class="n">current_position</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">tr3</span><span class="o">.</span><span class="n">n3tap_l</span><span class="p">),</span>
+        <span class="n">neutral_position</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">n3tp0_l</span><span class="p">),</span>
+        <span class="n">minimum_position</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">n3tmn_l</span><span class="p">),</span>
+        <span class="n">maximum_position</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">n3tmx_l</span><span class="p">),</span>
+        <span class="n">step_percent</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">du3tp_l</span><span class="p">),</span>
+        <span class="n">phase_angle_deg</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">ph3tr_l</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">_apply_tr3_winding_connection_data</span><span class="p">(</span>
+        <span class="n">winding</span><span class="o">=</span><span class="n">trafo3w</span><span class="o">.</span><span class="n">winding1</span><span class="p">,</span>
+        <span class="n">pf_connection_code</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">tr3cn_h</span><span class="p">),</span>
+        <span class="n">pf_vector_group_angle</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">nt3ag_h</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">_apply_tr3_winding_connection_data</span><span class="p">(</span>
+        <span class="n">winding</span><span class="o">=</span><span class="n">trafo3w</span><span class="o">.</span><span class="n">winding2</span><span class="p">,</span>
+        <span class="n">pf_connection_code</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">tr3cn_m</span><span class="p">),</span>
+        <span class="n">pf_vector_group_angle</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">nt3ag_m</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">_apply_tr3_winding_connection_data</span><span class="p">(</span>
+        <span class="n">winding</span><span class="o">=</span><span class="n">trafo3w</span><span class="o">.</span><span class="n">winding3</span><span class="p">,</span>
+        <span class="n">pf_connection_code</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">tr3cn_l</span><span class="p">),</span>
+        <span class="n">pf_vector_group_angle</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">nt3ag_l</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">hv_closed</span><span class="p">,</span> <span class="n">mv_closed</span><span class="p">,</span> <span class="n">lv_closed</span> <span class="o">=</span> <span class="n">_get_tr3_winding_closed_states</span><span class="p">(</span>
+        <span class="n">tr3_id</span><span class="o">=</span><span class="n">tr3</span><span class="o">.</span><span class="n">ID</span><span class="p">,</span>
+        <span class="n">cubics_by_objid</span><span class="o">=</span><span class="n">cubics_by_objid</span><span class="p">,</span>
+        <span class="n">switch_by_cubic_id</span><span class="o">=</span><span class="n">switch_by_cubic_id</span><span class="p">,</span>
+        <span class="n">bus_by_term_id</span><span class="o">=</span><span class="n">bus_by_term_id</span><span class="p">,</span>
+        <span class="n">bus_hv</span><span class="o">=</span><span class="n">bus_hv</span><span class="p">,</span>
+        <span class="n">bus_mv</span><span class="o">=</span><span class="n">bus_mv</span><span class="p">,</span>
+        <span class="n">bus_lv</span><span class="o">=</span><span class="n">bus_lv</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">trafo3w</span><span class="o">.</span><span class="n">winding1</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">hv_closed</span>
+    <span class="n">trafo3w</span><span class="o">.</span><span class="n">winding2</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">mv_closed</span>
+    <span class="n">trafo3w</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">lv_closed</span>
+
+    <span class="k">return</span> <span class="n">trafo3w</span></div>
+
+
+<div class="viewcode-block" id="convert_dgs_to_transformer4w">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.dgs.html#VeraGridEngine.IO.dgs.dgs_to_veragrid.convert_dgs_to_transformer4w">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert_dgs_to_transformer4w</span><span class="p">(</span><span class="n">tr4</span><span class="p">:</span> <span class="n">ElmTr4</span><span class="p">,</span>
+                                 <span class="n">buses</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span>
+                                 <span class="n">stacubic_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
+                                 <span class="n">templates_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TypTr4</span><span class="p">],</span>
+                                 <span class="n">baseMVA</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                                 <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
+                                 <span class="n">cubics_by_objid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StaCubic</span><span class="p">]],</span>
+                                 <span class="n">bus_by_term_id</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span>
+                                 <span class="n">switch_by_cubic_id</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StaSwitch</span><span class="p">],</span>
+                                 <span class="n">parallel_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                                 <span class="n">parallel_count</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dev</span><span class="o">.</span><span class="n">TransformerNW</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert dgs to transformer4w.</span>
+
+<span class="sd">    :param tr4: tr4 parameter.</span>
+<span class="sd">    :param buses: buses parameter.</span>
+<span class="sd">    :param stacubic_dict: stacubic_dict parameter.</span>
+<span class="sd">    :param templates_dict: templates_dict parameter.</span>
+<span class="sd">    :param baseMVA: baseMVA parameter.</span>
+<span class="sd">    :param logger: logger parameter.</span>
+<span class="sd">    :param cubics_by_objid: cubics_by_objid parameter.</span>
+<span class="sd">    :param bus_by_term_id: bus_by_term_id parameter.</span>
+<span class="sd">    :param switch_by_cubic_id: switch_by_cubic_id parameter.</span>
+<span class="sd">    :param parallel_index: parallel_index parameter.</span>
+<span class="sd">    :param parallel_count: parallel_count parameter.</span>
+<span class="sd">    :return: Function result.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">template</span> <span class="o">=</span> <span class="n">_resolve_pointer_dict_value</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">tr4</span><span class="o">.</span><span class="n">typ_id</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="n">templates_dict</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">template</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No TypTr4 data for transformer </span><span class="si">{</span><span class="n">tr4</span><span class="o">.</span><span class="n">ID</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># Check connectivity through robust StaCubic.fold_id mapping first (preferred)</span>
+    <span class="n">term_ids</span> <span class="o">=</span> <span class="n">get_terminal_ids</span><span class="p">(</span><span class="n">element_id</span><span class="o">=</span><span class="n">tr4</span><span class="o">.</span><span class="n">ID</span><span class="p">,</span> <span class="n">cubics_by_objid</span><span class="o">=</span><span class="n">cubics_by_objid</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">term_ids</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">bus_a</span> <span class="o">=</span> <span class="n">bus_by_term_id</span><span class="p">[</span><span class="n">term_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">bus_b</span> <span class="o">=</span> <span class="n">bus_by_term_id</span><span class="p">[</span><span class="n">term_ids</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">bus_c</span> <span class="o">=</span> <span class="n">bus_by_term_id</span><span class="p">[</span><span class="n">term_ids</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+        <span class="n">bus_d</span> <span class="o">=</span> <span class="n">bus_by_term_id</span><span class="p">[</span><span class="n">term_ids</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">bus_ids</span> <span class="o">=</span> <span class="n">stacubic_dict</span><span class="p">[</span><span class="n">_ref_id</span><span class="p">(</span><span class="n">tr4</span><span class="o">.</span><span class="n">ID</span><span class="p">)]</span>
+        <span class="n">bus_a</span> <span class="o">=</span> <span class="n">buses</span><span class="p">[</span><span class="n">bus_ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">bus_b</span> <span class="o">=</span> <span class="n">buses</span><span class="p">[</span><span class="n">bus_ids</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">bus_c</span> <span class="o">=</span> <span class="n">buses</span><span class="p">[</span><span class="n">bus_ids</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+        <span class="n">bus_d</span> <span class="o">=</span> <span class="n">buses</span><span class="p">[</span><span class="n">bus_ids</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
+
+    <span class="c1"># bus_hv, bus_lv1, bus_lv2, bus_lv3, ordered_original_indices = _order_tr4(bus_a=bus_a, bus_b=bus_b, bus_c=bus_c, bus_d=bus_d, logger=logger, tr_name=tr4.loc_name)</span>
+
+    <span class="n">cubic_by_id</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StaCubic</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">cubic</span> <span class="ow">in</span> <span class="n">cubics_by_objid</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">_ref_id</span><span class="p">(</span><span class="n">tr4</span><span class="o">.</span><span class="n">ID</span><span class="p">),</span> <span class="nb">list</span><span class="p">()):</span>
+        <span class="n">cubic_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_ref_id</span><span class="p">(</span><span class="n">cubic</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">cubic_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">cubic_id</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">cubic_by_id</span><span class="p">[</span><span class="n">cubic_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">cubic</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">cubic_hv</span><span class="p">:</span> <span class="n">StaCubic</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_resolve_pointer_dict_value</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">tr4</span><span class="o">.</span><span class="n">bush0</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="n">cubic_by_id</span><span class="p">)</span>
+    <span class="n">cubic_lv1</span><span class="p">:</span> <span class="n">StaCubic</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_resolve_pointer_dict_value</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">tr4</span><span class="o">.</span><span class="n">busl1</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="n">cubic_by_id</span><span class="p">)</span>
+    <span class="n">cubic_lv2</span><span class="p">:</span> <span class="n">StaCubic</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_resolve_pointer_dict_value</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">tr4</span><span class="o">.</span><span class="n">busl2</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="n">cubic_by_id</span><span class="p">)</span>
+    <span class="n">cubic_lv3</span><span class="p">:</span> <span class="n">StaCubic</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_resolve_pointer_dict_value</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">tr4</span><span class="o">.</span><span class="n">busl3</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="n">cubic_by_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cubic_hv</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">cubic_lv1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">cubic_lv2</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">cubic_lv3</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing one or more ElmTr4 side cubicles for transformer </span><span class="si">{</span><span class="n">tr4</span><span class="o">.</span><span class="n">ID</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">term_hv</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_ref_id</span><span class="p">(</span><span class="n">cubic_hv</span><span class="o">.</span><span class="n">fold_id</span><span class="p">)</span>
+    <span class="n">term_lv1</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_ref_id</span><span class="p">(</span><span class="n">cubic_lv1</span><span class="o">.</span><span class="n">fold_id</span><span class="p">)</span>
+    <span class="n">term_lv2</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_ref_id</span><span class="p">(</span><span class="n">cubic_lv2</span><span class="o">.</span><span class="n">fold_id</span><span class="p">)</span>
+    <span class="n">term_lv3</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_ref_id</span><span class="p">(</span><span class="n">cubic_lv3</span><span class="o">.</span><span class="n">fold_id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">term_hv</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">term_lv1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">term_lv2</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">term_lv3</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing one or more ElmTr4 side terminals for transformer </span><span class="si">{</span><span class="n">tr4</span><span class="o">.</span><span class="n">ID</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">bus_hv</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">=</span> <span class="n">bus_by_term_id</span><span class="p">[</span><span class="n">term_hv</span><span class="p">]</span>
+    <span class="n">bus_lv1</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">=</span> <span class="n">bus_by_term_id</span><span class="p">[</span><span class="n">term_lv1</span><span class="p">]</span>
+    <span class="n">bus_lv2</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">=</span> <span class="n">bus_by_term_id</span><span class="p">[</span><span class="n">term_lv2</span><span class="p">]</span>
+    <span class="n">bus_lv3</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span> <span class="o">=</span> <span class="n">bus_by_term_id</span><span class="p">[</span><span class="n">term_lv3</span><span class="p">]</span>
+
+    <span class="c1"># Graphic position not working right now</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">bus_hv</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_lv1</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_lv2</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_lv3</span><span class="o">.</span><span class="n">x</span><span class="p">))</span> <span class="o">/</span> <span class="mf">4.0</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">bus_hv</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_lv1</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_lv2</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">bus_lv3</span><span class="o">.</span><span class="n">y</span><span class="p">))</span> <span class="o">/</span> <span class="mf">4.0</span>
+
+    <span class="n">transformer_name</span> <span class="o">=</span> <span class="n">_get_non_empty_name</span><span class="p">(</span><span class="n">tr4</span><span class="o">.</span><span class="n">loc_name</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Transformer4W_</span><span class="si">{</span><span class="n">_ref_id</span><span class="p">(</span><span class="n">tr4</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">transformer_name</span> <span class="o">=</span> <span class="n">_get_parallel_device_name</span><span class="p">(</span><span class="n">transformer_name</span><span class="p">,</span> <span class="n">parallel_index</span><span class="p">,</span> <span class="n">parallel_count</span><span class="p">)</span>
+    <span class="n">transformer_idtag</span> <span class="o">=</span> <span class="n">_get_parallel_device_idtag</span><span class="p">(</span><span class="n">_ref_id</span><span class="p">(</span><span class="n">tr4</span><span class="o">.</span><span class="n">ID</span><span class="p">),</span> <span class="n">parallel_index</span><span class="p">,</span> <span class="n">parallel_count</span><span class="p">)</span>
+
+    <span class="n">trafo4w</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">TransformerNW</span><span class="p">(</span>
+        <span class="n">idtag</span><span class="o">=</span><span class="n">transformer_idtag</span><span class="p">,</span>
+        <span class="n">code</span><span class="o">=</span><span class="n">_ref_id</span><span class="p">(</span><span class="n">tr4</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">transformer_name</span><span class="p">,</span>
+        <span class="n">bus0</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">winding_count</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">buses</span><span class="o">=</span><span class="p">[</span>
+            <span class="n">bus_hv</span><span class="p">,</span>
+            <span class="n">bus_lv1</span><span class="p">,</span>
+            <span class="n">bus_lv2</span><span class="p">,</span>
+            <span class="n">bus_lv3</span><span class="p">,</span>
+        <span class="p">],</span>
+        <span class="n">active</span><span class="o">=</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">tr4</span><span class="o">.</span><span class="n">outserv</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">Pfe</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">pfe</span><span class="p">),</span>
+        <span class="n">I0</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">curmag</span><span class="p">),</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="n">template</span><span class="o">.</span><span class="n">inputData</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">_fill_tr4w_complete_values</span><span class="p">(</span>
+            <span class="n">trafo4w</span><span class="o">=</span><span class="n">trafo4w</span><span class="p">,</span>
+            <span class="n">V_h0</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">un_h0</span><span class="p">,</span>
+            <span class="n">V_l1</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">un_l1</span><span class="p">,</span>
+            <span class="n">V_l2</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">un_l2</span><span class="p">,</span>
+            <span class="n">V_l3</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">un_l3</span><span class="p">,</span>
+
+            <span class="n">Sn_h0</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">sn_h0</span><span class="p">,</span>
+            <span class="n">Sn_l1</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">sn_l1</span><span class="p">,</span>
+            <span class="n">Sn_l2</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">sn_l2</span><span class="p">,</span>
+            <span class="n">Sn_l3</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">sn_l3</span><span class="p">,</span>
+
+            <span class="n">Vsc_h0l1</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">uk_h0l1</span><span class="p">,</span>
+            <span class="n">Vsc_h0l2</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">uk_h0l2</span><span class="p">,</span>
+            <span class="n">Vsc_h0l3</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">uk_h0l3</span><span class="p">,</span>
+            <span class="n">Vsc_l1l2</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">uk_l1l2</span><span class="p">,</span>
+            <span class="n">Vsc_l1l3</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">uk_l1l3</span><span class="p">,</span>
+            <span class="n">Vsc_l2l3</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">uk_l2l3</span><span class="p">,</span>
+
+            <span class="n">Pcu_h0l1</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">pcu_h0l1</span><span class="p">,</span>
+            <span class="n">Pcu_h0l2</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">pcu_h0l2</span><span class="p">,</span>
+            <span class="n">Pcu_h0l3</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">pcu_h0l3</span><span class="p">,</span>
+            <span class="n">Pcu_l1l2</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">pcu_l1l2</span><span class="p">,</span>
+            <span class="n">Pcu_l1l3</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">pcu_l1l3</span><span class="p">,</span>
+            <span class="n">Pcu_l2l3</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">pcu_l2l3</span><span class="p">,</span>
+
+            <span class="n">Pfe</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">pfe</span><span class="p">,</span>
+            <span class="n">I0</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">curmag</span><span class="p">,</span>
+            <span class="n">Sbase</span><span class="o">=</span><span class="n">baseMVA</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_fill_tr4w_simple_values</span><span class="p">(</span>
+            <span class="n">trafo4w</span><span class="o">=</span><span class="n">trafo4w</span><span class="p">,</span>
+            <span class="n">nominal_voltages</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">un_h0</span><span class="p">,</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">un_l1</span><span class="p">,</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">un_l2</span><span class="p">,</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">un_l3</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">nominal_powers</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">sn_h0</span><span class="p">,</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">sn_l1</span><span class="p">,</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">sn_l2</span><span class="p">,</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">sn_l3</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">short_circuit_voltages</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">uk_h0</span><span class="p">,</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">uk_l1</span><span class="p">,</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">uk_l2</span><span class="p">,</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">uk_l3</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">copper_losses</span><span class="o">=</span><span class="p">(</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">pcu_h0</span><span class="p">,</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">pcu_l1</span><span class="p">,</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">pcu_l2</span><span class="p">,</span>
+                <span class="n">template</span><span class="o">.</span><span class="n">pcu_l3</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">Pfe</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">pfe</span><span class="p">,</span>
+            <span class="n">I0</span><span class="o">=</span><span class="n">template</span><span class="o">.</span><span class="n">curmag</span><span class="p">,</span>
+            <span class="n">Sbase</span><span class="o">=</span><span class="n">baseMVA</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">trafo4w</span>
+
+    <span class="n">_apply_tr4_winding_tap_data</span><span class="p">(</span>
+        <span class="n">windings</span><span class="o">=</span><span class="n">trafo4w</span><span class="o">.</span><span class="n">windings</span><span class="p">,</span>
+        <span class="n">current_positions</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">tr4</span><span class="o">.</span><span class="n">ntap_h0</span><span class="p">,</span>
+            <span class="n">tr4</span><span class="o">.</span><span class="n">ntap_l1</span><span class="p">,</span>
+            <span class="n">tr4</span><span class="o">.</span><span class="n">ntap_l2</span><span class="p">,</span>
+            <span class="n">tr4</span><span class="o">.</span><span class="n">ntap_l3</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">neutral_positions</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">ntapneu_h0</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">ntapneu_l1</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">ntapneu_l2</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">ntapneu_l3</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">minimum_positions</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">ntapmin_h0</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">ntapmin_l1</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">ntapmin_l2</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">ntapmin_l3</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">maximum_positions</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">ntapmax_h0</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">ntapmax_l1</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">ntapmax_l2</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">ntapmax_l3</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">step_percents</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">dutap_h0</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">dutap_l1</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">dutap_l2</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">dutap_l3</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">phase_angle_degs</span><span class="o">=</span><span class="p">(</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">phitr_h0</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">phitr_l1</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">phitr_l2</span><span class="p">,</span>
+            <span class="n">template</span><span class="o">.</span><span class="n">phitr_l3</span><span class="p">,</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+
+
+    <span class="k">return</span> <span class="n">trafo4w</span>
+
+    <span class="n">trafoNw</span><span class="o">.</span><span class="n">fill_from_design_values</span><span class="p">(</span>
         <span class="n">V1</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">utrn3_h</span><span class="p">),</span>
         <span class="n">V2</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">utrn3_m</span><span class="p">),</span>
         <span class="n">V3</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">template</span><span class="o">.</span><span class="n">utrn3_l</span><span class="p">),</span>
@@ -2420,7 +3157,7 @@
     <span class="k">return</span> <span class="n">s</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_extract_load_pq</span><span class="p">(</span><span class="n">elmlod</span><span class="p">:</span> <span class="n">ElmLod</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_extract_load_pq</span><span class="p">(</span><span class="n">elmlod</span><span class="p">:</span> <span class="n">ElmLod</span><span class="p">,</span> <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extract load pq.</span>
 
@@ -2430,33 +3167,54 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">loc_name</span> <span class="ow">or</span> <span class="n">_ref_id</span><span class="p">(</span><span class="n">elmlod</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span> <span class="ow">or</span> <span class="s2">&quot;Load&quot;</span>
 
-    <span class="c1"># Primary: direct P/Q</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">plini</span>
-    <span class="n">q</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">qlini</span>
+    <span class="k">if</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">i_sym</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
 
-    <span class="c1"># Fallback: S + cos(phi)</span>
-    <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">q</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
-        <span class="n">s</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">slini</span>
-        <span class="n">cosphi</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">coslini</span>
+        <span class="c1"># Apply scaling</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">_get_scale_factor</span><span class="p">(</span><span class="n">scale0</span><span class="o">=</span><span class="n">elmlod</span><span class="o">.</span><span class="n">scale0</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">s</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">cosphi</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">cosphi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">cosphi</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">s</span> <span class="o">*</span> <span class="n">cosphi</span>
-            <span class="n">sinphi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">cosphi</span> <span class="o">*</span> <span class="n">cosphi</span><span class="p">))</span>
-            <span class="n">q</span> <span class="o">=</span> <span class="n">s</span> <span class="o">*</span> <span class="n">sinphi</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;P/Q not provided, derived from slini/coslini.&quot;</span><span class="p">,</span>
-                <span class="n">device</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;ElmLod&quot;</span><span class="p">,</span>
-                <span class="n">value</span><span class="o">=</span><span class="n">q</span><span class="p">,</span>
-            <span class="p">)</span>
+        <span class="c1"># Active Power [MW]</span>
+        <span class="n">pa</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">plinir</span> <span class="o">*</span> <span class="n">scale</span>
+        <span class="n">pb</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">plinis</span> <span class="o">*</span> <span class="n">scale</span>
+        <span class="n">pc</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">plinit</span> <span class="o">*</span> <span class="n">scale</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">pa</span> <span class="o">+</span> <span class="n">pb</span> <span class="o">+</span> <span class="n">pc</span>
 
-    <span class="c1"># Apply scaling</span>
-    <span class="n">scale</span> <span class="o">=</span> <span class="n">_get_scale_factor</span><span class="p">(</span><span class="n">scale0</span><span class="o">=</span><span class="n">elmlod</span><span class="o">.</span><span class="n">scale0</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">p</span> <span class="o">*=</span> <span class="n">scale</span>
-    <span class="n">q</span> <span class="o">*=</span> <span class="n">scale</span>
+        <span class="c1"># Reactive Power [MVAr]</span>
+        <span class="n">qa</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">qlinir</span> <span class="o">*</span> <span class="n">scale</span>
+        <span class="n">qb</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">qlinis</span> <span class="o">*</span> <span class="n">scale</span>
+        <span class="n">qc</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">qlinit</span> <span class="o">*</span> <span class="n">scale</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">qa</span> <span class="o">+</span> <span class="n">qb</span> <span class="o">+</span> <span class="n">qc</span>
 
-    <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Primary: direct P/Q</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">plini</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">qlini</span>
+
+        <span class="c1"># Fallback: S + cos(phi)</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">q</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">slini</span>
+            <span class="n">cosphi</span> <span class="o">=</span> <span class="n">elmlod</span><span class="o">.</span><span class="n">coslini</span>
+
+            <span class="k">if</span> <span class="n">s</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">cosphi</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="n">cosphi</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">cosphi</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">s</span> <span class="o">*</span> <span class="n">cosphi</span>
+                <span class="n">sinphi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">cosphi</span> <span class="o">*</span> <span class="n">cosphi</span><span class="p">))</span>
+                <span class="n">q</span> <span class="o">=</span> <span class="n">s</span> <span class="o">*</span> <span class="n">sinphi</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;P/Q not provided, derived from slini/coslini.&quot;</span><span class="p">,</span>
+                    <span class="n">device</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                    <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;ElmLod&quot;</span><span class="p">,</span>
+                    <span class="n">value</span><span class="o">=</span><span class="n">q</span><span class="p">,</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Apply scaling</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">_get_scale_factor</span><span class="p">(</span><span class="n">scale0</span><span class="o">=</span><span class="n">elmlod</span><span class="o">.</span><span class="n">scale0</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">*=</span> <span class="n">scale</span>
+        <span class="n">q</span> <span class="o">*=</span> <span class="n">scale</span>
+
+        <span class="n">pa</span><span class="p">,</span> <span class="n">pb</span><span class="p">,</span> <span class="n">pc</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span> <span class="c1"># Balanced active power</span>
+        <span class="n">qa</span><span class="p">,</span> <span class="n">qb</span><span class="p">,</span> <span class="n">qc</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span>  <span class="c1"># Balanced reactive power</span>
+
+    <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">pa</span><span class="p">,</span> <span class="n">pb</span><span class="p">,</span> <span class="n">pc</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">qa</span><span class="p">,</span> <span class="n">qb</span><span class="p">,</span> <span class="n">qc</span>
 
 
 <div class="viewcode-block" id="convert_dgs_ward_equivalent_to_load">
@@ -2530,14 +3288,21 @@
                             <span class="n">cubics_by_objid</span><span class="o">=</span><span class="n">cubics_by_objid</span><span class="p">,</span>
                             <span class="n">bus_by_term_id</span><span class="o">=</span><span class="n">bus_by_term_id</span><span class="p">)</span>
 
-    <span class="n">p_mw</span><span class="p">,</span> <span class="n">q_mvar</span> <span class="o">=</span> <span class="n">_extract_load_pq</span><span class="p">(</span><span class="n">elmlod</span><span class="o">=</span><span class="n">elmlod</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
+    <span class="n">p_mw</span><span class="p">,</span> <span class="n">pa_mw</span><span class="p">,</span> <span class="n">pb_mw</span><span class="p">,</span> <span class="n">pc_mw</span><span class="p">,</span> <span class="n">q_mvar</span><span class="p">,</span> <span class="n">qa_mvar</span><span class="p">,</span> <span class="n">qb_mvar</span><span class="p">,</span> <span class="n">qc_mvar</span> <span class="o">=</span> <span class="n">_extract_load_pq</span><span class="p">(</span><span class="n">elmlod</span><span class="o">=</span><span class="n">elmlod</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
 
     <span class="n">load</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="n">elmlod</span><span class="o">.</span><span class="n">loc_name</span> <span class="ow">or</span> <span class="sa">f</span><span class="s2">&quot;Load_</span><span class="si">{</span><span class="n">_ref_id</span><span class="p">(</span><span class="n">elmlod</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="n">P</span><span class="o">=</span><span class="n">p_mw</span><span class="p">,</span>
+        <span class="n">P1</span><span class="o">=</span><span class="n">pa_mw</span><span class="p">,</span>
+        <span class="n">P2</span><span class="o">=</span><span class="n">pb_mw</span><span class="p">,</span>
+        <span class="n">P3</span><span class="o">=</span><span class="n">pc_mw</span><span class="p">,</span>
         <span class="n">Q</span><span class="o">=</span><span class="n">q_mvar</span><span class="p">,</span>
+        <span class="n">Q1</span><span class="o">=</span><span class="n">qa_mvar</span><span class="p">,</span>
+        <span class="n">Q2</span><span class="o">=</span><span class="n">qb_mvar</span><span class="p">,</span>
+        <span class="n">Q3</span><span class="o">=</span><span class="n">qc_mvar</span><span class="p">,</span>
         <span class="n">active</span><span class="o">=</span><span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">elmlod</span><span class="o">.</span><span class="n">outserv</span><span class="p">)</span>
     <span class="p">)</span>
+    <span class="c1"># Add the connection type</span>
 
     <span class="k">return</span> <span class="n">bus</span><span class="p">,</span> <span class="n">load</span></div>
 
@@ -2574,7 +3339,7 @@
 
     <span class="c1"># Slack/reference machine indicator (PowerFactory exports ip_ctrl=1 on the slack generator)</span>
     <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">elmgenstat</span><span class="o">.</span><span class="n">ip_ctrl</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">bus</span><span class="o">.</span><span class="n">is_slack</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">bus</span><span class="o">.</span><span class="n">set_is_slack_at</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">generator_name</span> <span class="o">=</span> <span class="n">_get_non_empty_name</span><span class="p">(</span><span class="n">elmgenstat</span><span class="o">.</span><span class="n">loc_name</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_ref_id</span><span class="p">(</span><span class="n">elmgenstat</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">generator_name</span> <span class="o">=</span> <span class="n">_get_parallel_device_name</span><span class="p">(</span><span class="n">generator_name</span><span class="p">,</span> <span class="n">parallel_index</span><span class="p">,</span> <span class="n">parallel_count</span><span class="p">)</span>
@@ -2631,17 +3396,17 @@
     <span class="n">Q</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">elmgenstat</span><span class="o">.</span><span class="n">qgini</span><span class="p">)</span>
     <span class="n">pf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atan</span><span class="p">(</span><span class="n">Q</span> <span class="o">/</span> <span class="p">(</span><span class="n">P</span> <span class="o">+</span> <span class="mf">1e-20</span><span class="p">)))</span>
 
-    <span class="n">batttery</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Battery</span><span class="p">(</span>
+    <span class="n">battery</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Battery</span><span class="p">(</span>
         <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
         <span class="n">idtag</span><span class="o">=</span><span class="n">battery_idtag</span><span class="p">,</span>
         <span class="n">P</span><span class="o">=</span><span class="n">P</span><span class="p">,</span>
-        <span class="n">power_factor</span><span class="o">=</span><span class="n">pf</span><span class="p">,</span>
-        <span class="n">is_controlled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">Q</span><span class="o">=</span><span class="n">Q</span><span class="p">,</span>
+        <span class="n">control_mode</span><span class="o">=</span><span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span>
         <span class="n">Snom</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="n">elmgenstat</span><span class="o">.</span><span class="n">sgn</span><span class="p">),</span>
         <span class="n">active</span><span class="o">=</span><span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">elmgenstat</span><span class="o">.</span><span class="n">outserv</span><span class="p">)</span>
     <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">bus</span><span class="p">,</span> <span class="n">batttery</span></div>
+    <span class="k">return</span> <span class="n">bus</span><span class="p">,</span> <span class="n">battery</span></div>
 
 
 
@@ -2676,7 +3441,7 @@
 
     <span class="c1"># Slack/reference machine indicator (PowerFactory exports ip_ctrl=1 on the slack generator)</span>
     <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">elmgenstat</span><span class="o">.</span><span class="n">ip_ctrl</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">bus</span><span class="o">.</span><span class="n">is_slack</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">bus</span><span class="o">.</span><span class="n">set_is_slack_at</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="n">generator_name</span> <span class="o">=</span> <span class="n">_get_non_empty_name</span><span class="p">(</span><span class="n">elmgenstat</span><span class="o">.</span><span class="n">loc_name</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;StaticGen_</span><span class="si">{</span><span class="n">_ref_id</span><span class="p">(</span><span class="n">elmgenstat</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">generator_name</span> <span class="o">=</span> <span class="n">_get_parallel_device_name</span><span class="p">(</span><span class="n">generator_name</span><span class="p">,</span> <span class="n">parallel_index</span><span class="p">,</span> <span class="n">parallel_count</span><span class="p">)</span>
@@ -2728,7 +3493,7 @@
                      <span class="n">is_dc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                      <span class="n">is_slack</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                      <span class="n">xpos</span><span class="o">=</span><span class="n">ac_bus</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
-                     <span class="n">ypos</span><span class="o">=</span><span class="n">ac_bus</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="mi">200</span><span class="p">,</span> <span class="p">)</span>
+                     <span class="n">ypos</span><span class="o">=</span><span class="n">ac_bus</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="mi">200</span><span class="p">)</span>
 
     <span class="n">vsc_name</span> <span class="o">=</span> <span class="n">_get_non_empty_name</span><span class="p">(</span><span class="n">elmgenstat</span><span class="o">.</span><span class="n">loc_name</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;VSC_</span><span class="si">{</span><span class="n">_ref_id</span><span class="p">(</span><span class="n">elmgenstat</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">vsc_name</span> <span class="o">=</span> <span class="n">_get_parallel_device_name</span><span class="p">(</span><span class="n">vsc_name</span><span class="p">,</span> <span class="n">parallel_index</span><span class="p">,</span> <span class="n">parallel_count</span><span class="p">)</span>
@@ -2858,7 +3623,7 @@
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">bustype</span> <span class="o">==</span> <span class="s1">&#39;SL&#39;</span><span class="p">:</span>
-        <span class="n">bus</span><span class="o">.</span><span class="n">is_slack</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">bus</span><span class="o">.</span><span class="n">set_is_slack_at</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="k">elif</span> <span class="n">bustype</span> <span class="o">==</span> <span class="s1">&#39;PV&#39;</span><span class="p">:</span>
         <span class="n">gen</span><span class="o">.</span><span class="n">Vset</span> <span class="o">=</span> <span class="n">elmxnet</span><span class="o">.</span><span class="n">usetp</span>
@@ -2908,7 +3673,7 @@
     <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">bustype</span> <span class="o">==</span> <span class="s1">&#39;SL&#39;</span><span class="p">:</span>
-        <span class="n">bus</span><span class="o">.</span><span class="n">is_slack</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">bus</span><span class="o">.</span><span class="n">set_is_slack_at</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">xgrid</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">ExternalGridMode</span><span class="o">.</span><span class="n">VD</span>
         <span class="n">xgrid</span><span class="o">.</span><span class="n">Vm</span> <span class="o">=</span> <span class="n">elmxnet</span><span class="o">.</span><span class="n">usetp</span>
         <span class="n">xgrid</span><span class="o">.</span><span class="n">Va</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">elmxnet</span><span class="o">.</span><span class="n">phiini</span><span class="p">))</span>
@@ -3531,7 +4296,7 @@
 
     <span class="c1"># Slack/reference machine indicator (PowerFactory exports ip_ctrl=1 on the slack generator)</span>
     <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">elmsym</span><span class="o">.</span><span class="n">ip_ctrl</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">bus</span><span class="o">.</span><span class="n">is_slack</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">bus</span><span class="o">.</span><span class="n">set_is_slack_at</span><span class="p">(</span><span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">val</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
     <span class="c1"># Resolve type</span>
     <span class="n">typsym</span> <span class="o">=</span> <span class="n">typsym_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">elmsym</span><span class="o">.</span><span class="n">typ_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -3546,11 +4311,14 @@
 
     <span class="k">if</span> <span class="n">elmsym</span><span class="o">.</span><span class="n">av_mode</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">elmsym</span><span class="o">.</span><span class="n">av_mode</span> <span class="o">==</span> <span class="s2">&quot;constv&quot;</span><span class="p">:</span>
-            <span class="n">is_controlled</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">is_controlled</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">is_controlled</span> <span class="o">=</span> <span class="n">elmsym</span><span class="o">.</span><span class="n">iv_mode</span> <span class="o">!=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">elmsym</span><span class="o">.</span><span class="n">iv_mode</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">control_mode</span> <span class="o">=</span> <span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span>
 
     <span class="c1"># Power factor (used mainly when not controlled)</span>
     <span class="n">pf</span> <span class="o">=</span> <span class="n">elmsym</span><span class="o">.</span><span class="n">cosgini</span>
@@ -3599,7 +4367,7 @@
                         <span class="n">Q</span><span class="o">=</span><span class="n">q_mvar</span><span class="p">,</span>
                         <span class="n">power_factor</span><span class="o">=</span><span class="n">pf</span><span class="p">,</span>
                         <span class="n">vset</span><span class="o">=</span><span class="n">vset</span><span class="p">,</span>
-                        <span class="n">is_controlled</span><span class="o">=</span><span class="n">is_controlled</span><span class="p">,</span>
+                        <span class="n">control_mode</span><span class="o">=</span><span class="n">control_mode</span><span class="p">,</span>
                         <span class="n">Qmin</span><span class="o">=</span><span class="n">qmin</span><span class="p">,</span>
                         <span class="n">Qmax</span><span class="o">=</span><span class="n">qmax</span><span class="p">,</span>
                         <span class="n">Snom</span><span class="o">=</span><span class="n">snom</span><span class="p">,</span>
@@ -3610,8 +4378,8 @@
 
     <span class="c1"># Optional sequence data from type (best-effort, may not exist in all exports)</span>
     <span class="k">if</span> <span class="n">typsym</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">r1</span> <span class="o">=</span> <span class="n">typsym</span><span class="o">.</span><span class="n">rstr</span>
-        <span class="n">x1</span> <span class="o">=</span> <span class="n">typsym</span><span class="o">.</span><span class="n">xd</span>
+        <span class="n">r1</span> <span class="o">=</span> <span class="n">typsym</span><span class="o">.</span><span class="n">rstr</span> <span class="o">*</span> <span class="n">baseMVA</span> <span class="o">/</span> <span class="n">snom</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">typsym</span><span class="o">.</span><span class="n">xstr</span> <span class="o">*</span> <span class="n">baseMVA</span> <span class="o">/</span> <span class="n">snom</span>
 
         <span class="k">if</span> <span class="n">r1</span> <span class="o">!=</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="n">x1</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">:</span>
             <span class="n">gen</span><span class="o">.</span><span class="n">R1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">r1</span><span class="p">)</span>
@@ -3695,7 +4463,7 @@
                                         <span class="n">idtag</span><span class="o">=</span><span class="n">generator_idtag</span><span class="p">,</span>
                                         <span class="n">P</span><span class="o">=</span><span class="n">P</span><span class="p">,</span>
                                         <span class="n">power_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-                                        <span class="n">is_controlled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                        <span class="n">control_mode</span><span class="o">=</span><span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span>
                                         <span class="n">Snom</span><span class="o">=</span><span class="n">Sr</span><span class="p">,</span>
                                         <span class="n">active</span><span class="o">=</span><span class="p">(</span><span class="n">elmasm</span><span class="o">.</span><span class="n">outserv</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
                                         <span class="n">Rs</span><span class="o">=</span><span class="n">Rs</span><span class="p">,</span>
@@ -3719,7 +4487,7 @@
                                         <span class="n">idtag</span><span class="o">=</span><span class="n">generator_idtag</span><span class="p">,</span>
                                         <span class="n">P</span><span class="o">=</span><span class="n">P</span><span class="p">,</span>
                                         <span class="n">power_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-                                        <span class="n">is_controlled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                        <span class="n">control_mode</span><span class="o">=</span><span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span>
                                         <span class="n">Snom</span><span class="o">=</span><span class="n">P</span><span class="p">,</span>
                                         <span class="n">active</span><span class="o">=</span><span class="p">(</span><span class="n">elmasm</span><span class="o">.</span><span class="n">outserv</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
                                         <span class="n">tpe</span><span class="o">=</span><span class="n">GeneratorType</span><span class="o">.</span><span class="n">Asynchronous</span><span class="p">)</span>
@@ -3736,7 +4504,7 @@
                                     <span class="n">idtag</span><span class="o">=</span><span class="n">generator_idtag</span><span class="p">,</span>
                                     <span class="n">P</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
                                     <span class="n">power_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-                                    <span class="n">is_controlled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                    <span class="n">control_mode</span><span class="o">=</span><span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span>
                                     <span class="n">active</span><span class="o">=</span><span class="p">(</span><span class="n">elmasm</span><span class="o">.</span><span class="n">outserv</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
                                     <span class="n">tpe</span><span class="o">=</span><span class="n">GeneratorType</span><span class="o">.</span><span class="n">Asynchronous</span><span class="p">)</span>
 
@@ -3752,7 +4520,7 @@
                                 <span class="n">idtag</span><span class="o">=</span><span class="n">generator_idtag</span><span class="p">,</span>
                                 <span class="n">P</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
                                 <span class="n">power_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-                                <span class="n">is_controlled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                <span class="n">control_mode</span><span class="o">=</span><span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span>
                                 <span class="n">active</span><span class="o">=</span><span class="p">(</span><span class="n">elmasm</span><span class="o">.</span><span class="n">outserv</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
                                 <span class="n">tpe</span><span class="o">=</span><span class="n">GeneratorType</span><span class="o">.</span><span class="n">Asynchronous</span><span class="p">)</span>
 
@@ -3768,7 +4536,7 @@
                             <span class="n">idtag</span><span class="o">=</span><span class="n">generator_idtag</span><span class="p">,</span>
                             <span class="n">P</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
                             <span class="n">power_factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-                            <span class="n">is_controlled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">control_mode</span><span class="o">=</span><span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">Q</span><span class="p">,</span>
                             <span class="n">active</span><span class="o">=</span><span class="p">(</span><span class="n">elmasm</span><span class="o">.</span><span class="n">outserv</span> <span class="o">==</span> <span class="mi">0</span><span class="p">),</span>
                             <span class="n">tpe</span><span class="o">=</span><span class="n">GeneratorType</span><span class="o">.</span><span class="n">Asynchronous</span><span class="p">)</span>
 
@@ -3970,7 +4738,8 @@
                     <span class="n">parallel_count</span><span class="o">=</span><span class="n">parallel_count</span>
                 <span class="p">)</span>
                 <span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">gen</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="n">elmgenstat</span><span class="o">.</span><span class="n">cCategory</span> <span class="o">==</span> <span class="s1">&#39;Storage&#39;</span><span class="p">:</span>
+
+            <span class="k">elif</span> <span class="n">elmgenstat</span><span class="o">.</span><span class="n">cCategory</span> <span class="o">==</span> <span class="s1">&#39;Storage&#39;</span> <span class="ow">and</span> <span class="n">elmgenstat</span><span class="o">.</span><span class="n">av_mode</span> <span class="o">==</span> <span class="s1">&#39;constq&#39;</span><span class="p">:</span>
                 <span class="n">bus</span><span class="p">,</span> <span class="n">battery</span> <span class="o">=</span> <span class="n">convert_dgs_staticgen_to_battery</span><span class="p">(</span>
                     <span class="n">elmgenstat</span><span class="o">=</span><span class="n">elmgenstat</span><span class="p">,</span>
                     <span class="n">stacubic_dict</span><span class="o">=</span><span class="n">stacubic_dict</span><span class="p">,</span>
@@ -3982,6 +4751,21 @@
                     <span class="n">parallel_count</span><span class="o">=</span><span class="n">parallel_count</span>
                 <span class="p">)</span>
                 <span class="n">grid</span><span class="o">.</span><span class="n">add_battery</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">battery</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">elmgenstat</span><span class="o">.</span><span class="n">cCategory</span> <span class="o">==</span> <span class="s1">&#39;Storage&#39;</span> <span class="ow">and</span> <span class="n">elmgenstat</span><span class="o">.</span><span class="n">av_mode</span> <span class="o">==</span> <span class="s1">&#39;vdroop&#39;</span><span class="p">:</span>
+                <span class="n">dc_bus</span><span class="p">,</span> <span class="n">vsc</span> <span class="o">=</span> <span class="n">convert_dgs_staticgen_to_vsc</span><span class="p">(</span>
+                    <span class="n">elmgenstat</span><span class="o">=</span><span class="n">elmgenstat</span><span class="p">,</span>
+                    <span class="n">stacubic_dict</span><span class="o">=</span><span class="n">stacubic_dict</span><span class="p">,</span>
+                    <span class="n">buses</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">,</span>
+                    <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                    <span class="n">cubics_by_objid</span><span class="o">=</span><span class="n">cubics_by_objid</span><span class="p">,</span>
+                    <span class="n">bus_by_term_id</span><span class="o">=</span><span class="n">bus_by_term_id</span><span class="p">,</span>
+                    <span class="n">parallel_index</span><span class="o">=</span><span class="n">parallel_index</span><span class="p">,</span>
+                    <span class="n">parallel_count</span><span class="o">=</span><span class="n">parallel_count</span>
+                <span class="p">)</span>
+                <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">dc_bus</span><span class="p">)</span>
+                <span class="n">grid</span><span class="o">.</span><span class="n">add_vsc</span><span class="p">(</span><span class="n">vsc</span><span class="p">)</span>
+
             <span class="k">elif</span> <span class="n">elmgenstat</span><span class="o">.</span><span class="n">av_mode</span> <span class="o">==</span> <span class="s1">&#39;constv&#39;</span><span class="p">:</span>
                 <span class="n">bus</span><span class="p">,</span> <span class="n">gen</span> <span class="o">=</span> <span class="n">convert_dgs_staticgen_to_gen</span><span class="p">(</span>
                     <span class="n">elmgenstat</span><span class="o">=</span><span class="n">elmgenstat</span><span class="p">,</span>
@@ -4423,6 +5207,82 @@
                     <span class="n">trafo3w</span><span class="o">.</span><span class="n">winding3</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">branch_group</span>
             <span class="n">grid</span><span class="o">.</span><span class="n">add_transformer3w</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">trafo3w</span><span class="p">)</span>
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_elmtr4_transformers</span><span class="p">(</span><span class="n">dgs_grid</span><span class="p">:</span> <span class="n">DgsCircuit</span><span class="p">,</span>
+                             <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">,</span>
+                             <span class="n">stacubic_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span>
+                             <span class="n">typtr4_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TypTr4</span><span class="p">],</span>
+                             <span class="n">baseMVA</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+                             <span class="n">logger</span><span class="p">:</span> <span class="n">Logger</span><span class="p">,</span>
+                             <span class="n">cubics_by_objid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StaCubic</span><span class="p">]],</span>
+                             <span class="n">bus_by_term_id</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span>
+                             <span class="n">switch_by_cubic_id</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StaSwitch</span><span class="p">],</span>
+                             <span class="n">branch_group_by_id</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">BranchGroup</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add elmtr3 transformers.</span>
+
+<span class="sd">    :param dgs_grid: dgs_grid parameter.</span>
+<span class="sd">    :param grid: grid parameter.</span>
+<span class="sd">    :param stacubic_dict: stacubic_dict parameter.</span>
+<span class="sd">    :param typtr3_dict: typtr3_dict parameter.</span>
+<span class="sd">    :param baseMVA: baseMVA parameter.</span>
+<span class="sd">    :param logger: logger parameter.</span>
+<span class="sd">    :param cubics_by_objid: cubics_by_objid parameter.</span>
+<span class="sd">    :param bus_by_term_id: bus_by_term_id parameter.</span>
+<span class="sd">    :param switch_by_cubic_id: switch_by_cubic_id parameter.</span>
+<span class="sd">    :param branch_group_by_id: branch_group_by_id parameter.</span>
+<span class="sd">    :return: Function result.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">elmtr4</span> <span class="ow">in</span> <span class="n">dgs_grid</span><span class="o">.</span><span class="n">elmtr4s</span><span class="p">:</span>
+        <span class="n">tr4_typ_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_ref_id</span><span class="p">(</span><span class="n">elmtr4</span><span class="o">.</span><span class="n">typ_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tr4_typ_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">tr4_typ_id</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;missing typ_id (no TypTr4 reference in DGS)&quot;</span><span class="p">,</span>
+                <span class="n">device</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">elmtr4</span><span class="o">.</span><span class="n">loc_name</span><span class="si">}</span><span class="s2">&#39; (ID=</span><span class="si">{</span><span class="n">elmtr4</span><span class="o">.</span><span class="n">ID</span><span class="si">}</span><span class="s2">) &quot;</span><span class="p">,</span>
+                <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Transformer4W&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">typtr4_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tr4_typ_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;referenced TypTr4 not found&quot;</span><span class="p">,</span>
+                <span class="n">device</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">elmtr4</span><span class="o">.</span><span class="n">loc_name</span><span class="si">}</span><span class="s2">&#39; (ID=</span><span class="si">{</span><span class="n">elmtr4</span><span class="o">.</span><span class="n">ID</span><span class="si">}</span><span class="s2">) &quot;</span><span class="p">,</span>
+                <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Transformer4W&quot;</span><span class="p">,</span>
+                <span class="n">value</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">elmtr4</span><span class="o">.</span><span class="n">typ_id</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">term_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_terminal_ids</span><span class="p">(</span><span class="n">element_id</span><span class="o">=</span><span class="n">elmtr4</span><span class="o">.</span><span class="n">ID</span><span class="p">,</span> <span class="n">cubics_by_objid</span><span class="o">=</span><span class="n">cubics_by_objid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">term_ids</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">bus_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">stacubic_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">_ref_id</span><span class="p">(</span><span class="n">elmtr4</span><span class="o">.</span><span class="n">ID</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">bus_ids</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">bus_ids</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Not connected to exactly 4 terminals&quot;</span><span class="p">,</span>
+                    <span class="n">device</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">elmtr4</span><span class="o">.</span><span class="n">loc_name</span><span class="si">}</span><span class="s2">&#39; (ID=</span><span class="si">{</span><span class="n">elmtr4</span><span class="o">.</span><span class="n">ID</span><span class="si">}</span><span class="s2">) &quot;</span><span class="p">,</span>
+                    <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;Transformer4W&quot;</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+        <span class="n">parallel_count</span> <span class="o">=</span> <span class="n">_get_parallel_device_count</span><span class="p">(</span><span class="n">count</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">elmtr4</span><span class="o">.</span><span class="n">nt4nm</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">parallel_index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">parallel_count</span><span class="p">):</span>
+            <span class="n">trafo4w</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">TransformerNW</span> <span class="o">=</span> <span class="n">convert_dgs_to_transformer4w</span><span class="p">(</span>
+                <span class="n">tr4</span><span class="o">=</span><span class="n">elmtr4</span><span class="p">,</span>
+                <span class="n">buses</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">,</span>
+                <span class="n">stacubic_dict</span><span class="o">=</span><span class="n">stacubic_dict</span><span class="p">,</span>
+                <span class="n">templates_dict</span><span class="o">=</span><span class="n">typtr4_dict</span><span class="p">,</span>
+                <span class="n">baseMVA</span><span class="o">=</span><span class="n">baseMVA</span><span class="p">,</span>
+                <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+                <span class="n">cubics_by_objid</span><span class="o">=</span><span class="n">cubics_by_objid</span><span class="p">,</span>
+                <span class="n">bus_by_term_id</span><span class="o">=</span><span class="n">bus_by_term_id</span><span class="p">,</span>
+                <span class="n">switch_by_cubic_id</span><span class="o">=</span><span class="n">switch_by_cubic_id</span><span class="p">,</span>
+                <span class="n">parallel_index</span><span class="o">=</span><span class="n">parallel_index</span><span class="p">,</span>
+                <span class="n">parallel_count</span><span class="o">=</span><span class="n">parallel_count</span>
+            <span class="p">)</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">trafo4w</span><span class="o">.</span><span class="n">bus0</span><span class="p">)</span>
+            <span class="n">fold_id</span> <span class="o">=</span> <span class="n">_ref_id</span><span class="p">(</span><span class="n">elmtr4</span><span class="o">.</span><span class="n">fold_id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">fold_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">fold_id</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="n">branch_group</span> <span class="o">=</span> <span class="n">branch_group_by_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fold_id</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">branch_group</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">winding</span> <span class="ow">in</span> <span class="n">trafo4w</span><span class="o">.</span><span class="n">windings</span><span class="p">:</span>
+                        <span class="n">winding</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">branch_group</span>
+            <span class="n">grid</span><span class="o">.</span><span class="n">add_transformer_nw</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">trafo4w</span><span class="p">)</span>
+
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_build_stacubic_mappings</span><span class="p">(</span><span class="n">stacubics</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">StaCubic</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">StaCubic</span><span class="p">]]]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -4502,6 +5362,25 @@
     <span class="k">return</span> <span class="n">zone_by_id</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_add_elmarea_areas</span><span class="p">(</span><span class="n">dgs_grid</span><span class="p">:</span> <span class="n">DgsCircuit</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Area</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Add elmarea areas.</span>
+
+<span class="sd">    :param dgs_grid: dgs_grid parameter.</span>
+<span class="sd">    :param grid: grid parameter.</span>
+<span class="sd">    :return: Function result.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">area_by_id</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Area</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">elmarea</span> <span class="ow">in</span> <span class="n">dgs_grid</span><span class="o">.</span><span class="n">elmareas</span><span class="p">:</span>
+        <span class="n">aid</span> <span class="o">=</span> <span class="n">_ref_id</span><span class="p">(</span><span class="n">elmarea</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+        <span class="n">area_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">elmarea</span><span class="o">.</span><span class="n">loc_name</span> <span class="k">if</span> <span class="n">elmarea</span><span class="o">.</span><span class="n">loc_name</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;Area_</span><span class="si">{</span><span class="n">aid</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">area</span> <span class="o">=</span> <span class="n">dev</span><span class="o">.</span><span class="n">Area</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">area_name</span><span class="p">,</span> <span class="n">idtag</span><span class="o">=</span><span class="n">aid</span><span class="p">,</span> <span class="n">code</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">latitude</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">longitude</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">grid</span><span class="o">.</span><span class="n">add_area</span><span class="p">(</span><span class="n">area</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">aid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">area_by_id</span><span class="p">[</span><span class="n">aid</span><span class="p">]</span> <span class="o">=</span> <span class="n">area</span>
+    <span class="k">return</span> <span class="n">area_by_id</span>
+
+
 <span class="k">def</span><span class="w"> </span><span class="nf">_add_elmbranch_groups</span><span class="p">(</span><span class="n">dgs_grid</span><span class="p">:</span> <span class="n">DgsCircuit</span><span class="p">,</span> <span class="n">grid</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">BranchGroup</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add elmbranch groups.</span>
@@ -4561,6 +5440,27 @@
             <span class="n">zone</span> <span class="o">=</span> <span class="n">zone_by_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">zid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">bus</span><span class="o">.</span><span class="n">zone</span> <span class="o">=</span> <span class="n">zone</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_assign_elmterm_area_references</span><span class="p">(</span><span class="n">dgs_grid</span><span class="p">:</span> <span class="n">DgsCircuit</span><span class="p">,</span>
+                                    <span class="n">bus_by_term_id</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">],</span>
+                                    <span class="n">area_by_id</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Area</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Assign elmterm area references.</span>
+
+<span class="sd">    :param dgs_grid: dgs_grid parameter.</span>
+<span class="sd">    :param bus_by_term_id: bus_by_term_id parameter.</span>
+<span class="sd">    :param area_by_id: area_by_id parameter.</span>
+<span class="sd">    :return: Function result.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">elmterm</span> <span class="ow">in</span> <span class="n">dgs_grid</span><span class="o">.</span><span class="n">elmterms</span><span class="p">:</span>
+        <span class="n">tid</span> <span class="o">=</span> <span class="n">_ref_id</span><span class="p">(</span><span class="n">elmterm</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+        <span class="n">aid</span> <span class="o">=</span> <span class="n">_ref_id</span><span class="p">(</span><span class="n">elmterm</span><span class="o">.</span><span class="n">cpArea</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">aid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">aid</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">bus</span> <span class="o">=</span> <span class="n">bus_by_term_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">tid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="n">area_by_id</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">aid</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">bus</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">bus</span><span class="o">.</span><span class="n">area</span> <span class="o">=</span> <span class="n">area</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_build_typsym_dict</span><span class="p">(</span><span class="n">dgs_grid</span><span class="p">:</span> <span class="n">DgsCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TypSym</span><span class="p">]:</span>
@@ -4747,6 +5647,23 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">pass</span>
     <span class="k">return</span> <span class="n">typtr3_dict</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_build_typtr4_dict</span><span class="p">(</span><span class="n">dgs_grid</span><span class="p">:</span> <span class="n">DgsCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TypTr4</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build typtr4 dict.</span>
+
+<span class="sd">    :param dgs_grid: dgs_grid parameter.</span>
+<span class="sd">    :return: Function result.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">typtr4_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TypTr4</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">typtr4</span> <span class="ow">in</span> <span class="n">dgs_grid</span><span class="o">.</span><span class="n">typtr4s</span><span class="p">:</span>
+        <span class="n">typtr4_dict</span><span class="p">[</span><span class="n">typtr4</span><span class="o">.</span><span class="n">ID</span><span class="p">]</span> <span class="o">=</span> <span class="n">typtr4</span>
+        <span class="n">tid</span> <span class="o">=</span> <span class="n">_ref_id</span><span class="p">(</span><span class="n">typtr4</span><span class="o">.</span><span class="n">ID</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">typtr4_dict</span><span class="p">[</span><span class="n">tid</span><span class="p">]</span> <span class="o">=</span> <span class="n">typtr4</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">typtr4_dict</span>
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_build_typsind_dict</span><span class="p">(</span><span class="n">dgs_grid</span><span class="p">:</span> <span class="n">DgsCircuit</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TypSind</span><span class="p">]:</span>
@@ -5039,7 +5956,11 @@
                     <span class="n">api_line</span><span class="o">.</span><span class="n">set_circuit_idx</span><span class="p">(</span><span class="n">val</span><span class="o">=</span><span class="n">circuit_idx</span><span class="p">,</span> <span class="n">obj</span><span class="o">=</span><span class="n">ohl_type</span><span class="p">)</span>
                     <span class="n">api_line</span><span class="o">.</span><span class="n">apply_template</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">ohl_type</span><span class="p">,</span> <span class="n">Sbase</span><span class="o">=</span><span class="n">baseMVA</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">frequency</span><span class="p">,</span> <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
                 <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;ElmLne&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">api_line</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">add_warning</span><span class="p">(</span>
+                        <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">or</span> <span class="s2">&quot;Failed to apply tower template.&quot;</span><span class="p">,</span>
+                        <span class="n">device_class</span><span class="o">=</span><span class="s2">&quot;ElmLne&quot;</span><span class="p">,</span>
+                        <span class="n">device</span><span class="o">=</span><span class="n">api_line</span><span class="o">.</span><span class="n">name</span>
+                    <span class="p">)</span>
 
 
 <div class="viewcode-block" id="dgs_to_circuit">
@@ -5080,9 +6001,11 @@
     <span class="n">stacubic_dict</span><span class="p">,</span> <span class="n">cubics_by_objid</span> <span class="o">=</span> <span class="n">_build_stacubic_mappings</span><span class="p">(</span><span class="n">stacubics</span><span class="o">=</span><span class="n">dgs_grid</span><span class="o">.</span><span class="n">stacubics</span><span class="p">)</span>
 
     <span class="n">pos_by_objid</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="n">_build_graphics_positions</span><span class="p">(</span><span class="n">intgrfs</span><span class="o">=</span><span class="n">dgs_grid</span><span class="o">.</span><span class="n">intgrfs</span><span class="p">)</span>
+    <span class="n">area_by_id</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Area</span><span class="p">]</span> <span class="o">=</span> <span class="n">_add_elmarea_areas</span><span class="p">(</span><span class="n">dgs_grid</span><span class="o">=</span><span class="n">dgs_grid</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
     <span class="n">zone_by_id</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Zone</span><span class="p">]</span> <span class="o">=</span> <span class="n">_add_elmzone_zones</span><span class="p">(</span><span class="n">dgs_grid</span><span class="o">=</span><span class="n">dgs_grid</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
     <span class="n">branch_group_by_id</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">BranchGroup</span><span class="p">]</span> <span class="o">=</span> <span class="n">_add_elmbranch_groups</span><span class="p">(</span><span class="n">dgs_grid</span><span class="o">=</span><span class="n">dgs_grid</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
     <span class="n">bus_by_term_id</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">dev</span><span class="o">.</span><span class="n">Bus</span><span class="p">]</span> <span class="o">=</span> <span class="n">_add_elmterm_buses</span><span class="p">(</span><span class="n">dgs_grid</span><span class="o">=</span><span class="n">dgs_grid</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">pos_by_objid</span><span class="o">=</span><span class="n">pos_by_objid</span><span class="p">)</span>
+    <span class="n">_assign_elmterm_area_references</span><span class="p">(</span><span class="n">dgs_grid</span><span class="o">=</span><span class="n">dgs_grid</span><span class="p">,</span> <span class="n">bus_by_term_id</span><span class="o">=</span><span class="n">bus_by_term_id</span><span class="p">,</span> <span class="n">area_by_id</span><span class="o">=</span><span class="n">area_by_id</span><span class="p">)</span>
     <span class="n">_assign_elmterm_zone_references</span><span class="p">(</span><span class="n">dgs_grid</span><span class="o">=</span><span class="n">dgs_grid</span><span class="p">,</span> <span class="n">bus_by_term_id</span><span class="o">=</span><span class="n">bus_by_term_id</span><span class="p">,</span> <span class="n">zone_by_id</span><span class="o">=</span><span class="n">zone_by_id</span><span class="p">)</span>
 
     <span class="n">typsym_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TypSym</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_typsym_dict</span><span class="p">(</span><span class="n">dgs_grid</span><span class="o">=</span><span class="n">dgs_grid</span><span class="p">)</span>
@@ -5194,6 +6117,7 @@
     <span class="p">)</span>
     <span class="n">typtr2_dict</span><span class="p">,</span> <span class="n">typtr2_raw_dict</span> <span class="o">=</span> <span class="n">_build_typtr2_templates</span><span class="p">(</span><span class="n">dgs_grid</span><span class="o">=</span><span class="n">dgs_grid</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">)</span>
     <span class="n">typtr3_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TypTr3</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_typtr3_dict</span><span class="p">(</span><span class="n">dgs_grid</span><span class="o">=</span><span class="n">dgs_grid</span><span class="p">)</span>
+    <span class="n">typtr4_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TypTr4</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_typtr4_dict</span><span class="p">(</span><span class="n">dgs_grid</span><span class="o">=</span><span class="n">dgs_grid</span><span class="p">)</span>
     <span class="n">typsind_raw_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">TypSind</span><span class="p">]</span> <span class="o">=</span> <span class="n">_build_typsind_dict</span><span class="p">(</span><span class="n">dgs_grid</span><span class="o">=</span><span class="n">dgs_grid</span><span class="p">)</span>
 
     <span class="c1"># ------------------------------------------------------------</span>
@@ -5291,6 +6215,19 @@
         <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
         <span class="n">stacubic_dict</span><span class="o">=</span><span class="n">stacubic_dict</span><span class="p">,</span>
         <span class="n">typtr3_dict</span><span class="o">=</span><span class="n">typtr3_dict</span><span class="p">,</span>
+        <span class="n">baseMVA</span><span class="o">=</span><span class="n">baseMVA</span><span class="p">,</span>
+        <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
+        <span class="n">cubics_by_objid</span><span class="o">=</span><span class="n">cubics_by_objid</span><span class="p">,</span>
+        <span class="n">bus_by_term_id</span><span class="o">=</span><span class="n">bus_by_term_id</span><span class="p">,</span>
+        <span class="n">switch_by_cubic_id</span><span class="o">=</span><span class="n">switch_by_cubic_id</span><span class="p">,</span>
+        <span class="n">branch_group_by_id</span><span class="o">=</span><span class="n">branch_group_by_id</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">_add_elmtr4_transformers</span><span class="p">(</span>
+        <span class="n">dgs_grid</span><span class="o">=</span><span class="n">dgs_grid</span><span class="p">,</span>
+        <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+        <span class="n">stacubic_dict</span><span class="o">=</span><span class="n">stacubic_dict</span><span class="p">,</span>
+        <span class="n">typtr4_dict</span><span class="o">=</span><span class="n">typtr4_dict</span><span class="p">,</span>
         <span class="n">baseMVA</span><span class="o">=</span><span class="n">baseMVA</span><span class="p">,</span>
         <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">,</span>
         <span class="n">cubics_by_objid</span><span class="o">=</span><span class="n">cubics_by_objid</span><span class="p">,</span>

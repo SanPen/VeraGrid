@@ -1,0 +1,1167 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔍 Small-Signal Stability Analysis &mdash; VeraGrid 6.5.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+      <link rel="stylesheet" type="text/css" href="../_static/style.css?v=ba3a54df" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=276d7aeb"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="🔬 EMT simulations" href="emt_simulations.html" />
+    <link rel="prev" title="⏱️ RMS simulations" href="rms_simulations.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            VeraGrid
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">💽 Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_analysis.html">🔎 Grid analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="structure.html">🌁 Structure of VeraGrid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">📐 Grid Modelling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="model_debugging.html">🪲 Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="file_operations.html">💾 File loading and saving</a></li>
+<li class="toctree-l1"><a class="reference internal" href="topology.html">🌵 Topology</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clustering.html">🎳 Clustering</a></li>
+<li class="toctree-l1"><a class="reference internal" href="grid_reduction.html">👾 Grid Reduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="procedural_grid.html">🕸️ Procedural Grid Expansion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="power_flow.html">🔥 Power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="linear_analysis.html">📏 Linear analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optimal_power_flow.html">🏁 Optimal power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="short_circuit.html">⚡ Short-Circuit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stochastic_power_flow.html">🎲 Stochastic power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="continuation_power_flow.html">➿ Continuation power flow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sigma_analysis.html">🌘 Sigma analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="solar_wizard.html">☀️ Solar power wizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contingency_analysis.html">💥 Contingency analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="investment_optimization.html">🏦 Investment optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cascading.html">🎢 Cascading</a></li>
+<li class="toctree-l1"><a class="reference internal" href="net_transfer_capacity.html">🚢 Net transfer capacity optimization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reliability.html">🚧 Reliability</a></li>
+<li class="toctree-l1"><a class="reference internal" href="state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="dynamic_simulations.html">🧲 Dynamic simulations</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="rms_simulations.html">⏱️ RMS simulations</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">🔍 Small-Signal Stability Analysis</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#rms-workflow">RMS Workflow</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#settings">Settings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#numerical-formulation">Numerical Formulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dense-vs-sparse-calculation">Dense vs Sparse Calculation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results">Results</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#registered-result-properties">Registered Result Properties</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#api">API</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#benchmark">Benchmark</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rms_simulations.html#when-to-use-rms-simulation">When to use RMS simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rms_simulations.html#rms-workflow-in-veragrid">RMS workflow in VeraGrid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rms_simulations.html#rms-settings">RMS settings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rms_simulations.html#rms-events">RMS events</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rms_simulations.html#gui-example">GUI example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rms_simulations.html#rms-results">RMS results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rms_simulations.html#api">API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rms_simulations.html#practical-notes">Practical notes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="emt_simulations.html">🔬 EMT simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_model_library_index.html">📚 Dynamic model library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#why-dynamic-simulations-are-different-from-static-simulations">Why dynamic simulations are different from static simulations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#rms-and-emt">RMS and EMT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#dae-formulation">DAE formulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#from-blocks-to-equations-in-veragrid">From blocks to equations in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#symbolic-numeric-approach">Symbolic-numeric approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#dynamic-blocks-in-veragrid">Dynamic blocks in VeraGrid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#initialization">Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#initialization-references">Initialization references</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#solvers-and-integration-methods">Solvers and integration methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#events-and-simulation-scenarios">Events and simulation scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#settings">Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#results">Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#api-workflow-overview">API workflow overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#rms-example-from-scripting">RMS example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#emt-example-from-scripting">EMT example from scripting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#working-with-templates-and-model-editors">Working with templates and model editors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#importing-dynamic-models-from-external-tools">Importing dynamic models from external tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#benchmarks-and-validation">Benchmarks and validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#best-practices">Best practices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#common-pitfalls">Common pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic_simulations.html#references">References</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="development.html">💻 Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plugins.html">🧩 Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">📜 License</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../rst_source/api/auto/modules.html">VeraGrid</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">VeraGrid</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+          <li class="breadcrumb-item"><a href="rms_simulations.html">⏱️ RMS simulations</a></li>
+      <li class="breadcrumb-item active">🔍 Small-Signal Stability Analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/md_source/small_signal_stability_rms.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="small-signal-stability-analysis">
+<h1>🔍 Small-Signal Stability Analysis<a class="headerlink" href="#small-signal-stability-analysis" title="Link to this heading"></a></h1>
+<p>RMS Small-Signal stability analysis linearizes the RMS dynamic model around one operating point and computes the corresponding eigenvalues and modal information.</p>
+<p>Before running the RMS Small-Signal assessment, a power-flow solution must exist because the RMS model is initialized from that operating point.</p>
+<section id="rms-workflow">
+<h2>RMS Workflow<a class="headerlink" href="#rms-workflow" title="Link to this heading"></a></h2>
+<p>The RMS Small-Signal driver follows two stages.</p>
+<ol class="arabic simple">
+<li><p>Build and initialize the RMS DAE model from the grid and the power-flow results.</p></li>
+<li><p>Evaluate the linearization at the requested assessment time.</p></li>
+</ol>
+<p>If <code class="docutils literal notranslate"><span class="pre">ss_assessment_time</span> <span class="pre">==</span> <span class="pre">0.0</span></code>, the linearization is computed directly at the initialized RMS operating point.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">ss_assessment_time</span> <span class="pre">&gt;</span> <span class="pre">0.0</span></code>, the driver first runs an RMS simulation from <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">0</span></code> up to the requested assessment instant, and then linearizes the model at that dynamic state.</p>
+</section>
+<section id="settings">
+<h2>Settings<a class="headerlink" href="#settings" title="Link to this heading"></a></h2>
+<p>This is the Small-Signal settings page:</p>
+<p><img alt="" src="../_images/dynamic_settings.png" /></p>
+<section id="small-signal-settings">
+<h3>Small-Signal settings<a class="headerlink" href="#small-signal-settings" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Assessment time (s)</strong>: Time instant where the linearization is evaluated.</p></li>
+<li><p><strong>Modes</strong>: Number of eigenvalues to compute.</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">Modes</span></code> option selects the numerical path used by the driver.</p>
+<ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">=</span> <span class="pre">0</span></code>, all available modes are computed with the dense algorithm.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">&gt;=</span> <span class="pre">n</span> <span class="pre">-</span> <span class="pre">1</span></code>, where <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">number</span> <span class="pre">of</span> <span class="pre">states</span> <span class="pre">+</span> <span class="pre">number</span> <span class="pre">of</span> <span class="pre">differential</span> <span class="pre">variables</span></code>, the driver also falls back to the dense algorithm.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;</span> <span class="pre">k</span> <span class="pre">&lt;</span> <span class="pre">n</span> <span class="pre">-</span> <span class="pre">1</span></code>, the sparse algorithm is used and returns only <code class="docutils literal notranslate"><span class="pre">k</span></code> modes.</p></li>
+</ul>
+</section>
+<section id="rms-settings-used-by-the-assessment">
+<h3>RMS settings used by the assessment<a class="headerlink" href="#rms-settings-used-by-the-assessment" title="Link to this heading"></a></h3>
+<p>When <code class="docutils literal notranslate"><span class="pre">ss_assessment_time</span> <span class="pre">&gt;</span> <span class="pre">0.0</span></code>, the RMS simulation settings become part of the workflow because the system must first be simulated to the target instant.</p>
+<ul class="simple">
+<li><p><strong>Integration method</strong>: RMS time-domain integrator used before linearization.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">DynamicIntegrationMethod.DaeBackEuler</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Time step (s)</strong>: RMS integration step used to reach the assessment time.</p></li>
+<li><p><strong>Maximum iterations</strong>: Nonlinear iterations allowed inside each implicit RMS step.</p></li>
+<li><p><strong>Initialization method</strong>: RMS initialization strategy used to build the operating point before the simulation starts.</p>
+<ul>
+<li><p>For example: <code class="docutils literal notranslate"><span class="pre">RmsInitializationMethod.PseudoTransient</span></code></p></li>
+<li><p>Or: <code class="docutils literal notranslate"><span class="pre">RmsInitializationMethod.Explicit</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Simulation time</strong>: Must be consistent with the requested assessment time when the RMS simulation is used.</p></li>
+<li><p><strong>Verbose</strong>: Controls the amount of printed diagnostic information.</p></li>
+</ul>
+<p>The Small-Signal driver currently advances the pre-assessment RMS simulation with the RMS integration method selected in <code class="docutils literal notranslate"><span class="pre">RmsOptions</span></code> and then evaluates the Jacobians at the requested time.</p>
+</section>
+</section>
+<section id="numerical-formulation">
+<h2>Numerical Formulation<a class="headerlink" href="#numerical-formulation" title="Link to this heading"></a></h2>
+<p>The RMS Small-Signal implementation supports two related formulations.</p>
+<section id="standard-formulation">
+<h3>Standard formulation<a class="headerlink" href="#standard-formulation" title="Link to this heading"></a></h3>
+<p>When the RMS model has no differential-variable block in the generalized sense, the driver builds the classical reduced state matrix</p>
+<div class="math">
+<p><img src="../_images/math/22960db0b8a8d91277020c7b4464724ff5098610.svg" alt="A = fx - fy \, gy^{-1} \, gx"/></p>
+</div><p>from the DAE Jacobians.</p>
+<p>The eigenanalysis is then the standard problem</p>
+<div class="math">
+<p><img src="../_images/math/8ae14c6eb54638a732f5b57a4da3dd01cd93c52a.svg" alt="A v = \lambda v"/></p>
+</div><p>In this case:</p>
+<ul class="simple">
+<li><p>the state matrix stored in the results is the reduced state matrix</p></li>
+<li><p>participation factors are computed from the left and right eigenvectors of <code class="docutils literal notranslate"><span class="pre">A</span></code></p></li>
+<li><p>the participation-factor rows usually align with the RMS state variables</p></li>
+</ul>
+</section>
+<section id="generalized-formulation">
+<h3>Generalized formulation<a class="headerlink" href="#generalized-formulation" title="Link to this heading"></a></h3>
+<p>When the RMS model includes differential variables that must be retained explicitly, the driver solves the generalized eigenvalue problem</p>
+<div class="math">
+<p><img src="../_images/math/405534a2c1fb15f9c7305975f2470ecf11dba959.svg" alt="A v = \lambda E v"/></p>
+</div><p>using the matrices returned by <code class="docutils literal notranslate"><span class="pre">problem.get_static_state_matrix(x,</span> <span class="pre">dx)</span></code> and <code class="docutils literal notranslate"><span class="pre">problem.get_E_matrix(x,</span> <span class="pre">dx)</span></code>.</p>
+<p>In this case:</p>
+<ul class="simple">
+<li><p>the state matrix stored in the results corresponds to the unreduced generalized linearization matrix used for the eigenanalysis</p></li>
+<li><p>participation factors are computed with the generalized normalization</p></li>
+</ul>
+<div class="math">
+<p><img src="../_images/math/2676375ef15492d0bb209435a055f798e1b2a45c.svg" alt="w_i^T E v_i = 1"/></p>
+</div><ul class="simple">
+<li><p>the participation-factor rows and state-matrix axes can include both state and algebraic variables</p></li>
+</ul>
+<p>This is why the results object also stores:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">stat_vars_array</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">algebraic_vars_array</span></code></p></li>
+</ul>
+<p>Those arrays identify how the result tables must be labelled in standard and generalized cases.</p>
+</section>
+</section>
+<section id="dense-vs-sparse-calculation">
+<h2>Dense vs Sparse Calculation<a class="headerlink" href="#dense-vs-sparse-calculation" title="Link to this heading"></a></h2>
+<p>The RMS driver exposes two eigensolution paths.</p>
+<section id="dense-calculation">
+<h3>Dense calculation<a class="headerlink" href="#dense-calculation" title="Link to this heading"></a></h3>
+<p>Dense calculation is used when all modes are requested.</p>
+<ul class="simple">
+<li><p>It computes the complete eigenvalue spectrum.</p></li>
+<li><p>It is the path used when <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">=</span> <span class="pre">0</span></code>.</p></li>
+<li><p>It is also used when <code class="docutils literal notranslate"><span class="pre">k</span></code> is large enough that sparse extraction is no longer meaningful.</p></li>
+<li><p>For the standard formulation it solves the full eigenproblem of the reduced matrix.</p></li>
+<li><p>For the generalized formulation it solves the dense generalized eigenproblem.</p></li>
+</ul>
+<p>Dense calculation is the correct choice when:</p>
+<ul class="simple">
+<li><p>the full modal spectrum is required</p></li>
+<li><p>a complete participation-factor matrix is needed</p></li>
+<li><p>the model is small or medium enough that a full solve is affordable</p></li>
+</ul>
+</section>
+<section id="sparse-calculation">
+<h3>Sparse calculation<a class="headerlink" href="#sparse-calculation" title="Link to this heading"></a></h3>
+<p>Sparse calculation is used when only a subset of modes is requested.</p>
+<ul class="simple">
+<li><p>It computes only <code class="docutils literal notranslate"><span class="pre">k</span></code> eigenvalues.</p></li>
+<li><p>It is used when <code class="docutils literal notranslate"><span class="pre">0</span> <span class="pre">&lt;</span> <span class="pre">k</span> <span class="pre">&lt;</span> <span class="pre">n</span> <span class="pre">-</span> <span class="pre">1</span></code>.</p></li>
+<li><p>It relies on sparse linear algebra and shift-and-invert style operators.</p></li>
+<li><p>It is the preferred path for large RMS models when only the dominant modes are needed.</p></li>
+</ul>
+<p>Sparse calculation is the correct choice when:</p>
+<ul class="simple">
+<li><p>the model is large</p></li>
+<li><p>only a limited number of electromechanical or critical modes are required</p></li>
+<li><p>full-spectrum dense analysis would be unnecessarily expensive</p></li>
+</ul>
+</section>
+</section>
+<section id="results">
+<h2>Results<a class="headerlink" href="#results" title="Link to this heading"></a></h2>
+<p>The RMS Small-Signal study provides four result tables.</p>
+<ul class="simple">
+<li><p><strong>Modes</strong>: Modal properties and the source table for the S-domain plot.</p></li>
+<li><p><strong>Participation factors</strong>: Normalized participation-factor matrix. Row <code class="docutils literal notranslate"><span class="pre">k</span></code>, column <code class="docutils literal notranslate"><span class="pre">i</span></code> gives the participation of variable <code class="docutils literal notranslate"><span class="pre">k</span></code> in mode <code class="docutils literal notranslate"><span class="pre">i</span></code>.</p></li>
+<li><p><strong>State matrix</strong>: Linearized state or generalized system matrix used by the modal analysis.</p></li>
+<li><p><strong>Right eigenvectors</strong>: Right eigenvector matrix and the source table for the mode-shape plots.</p></li>
+</ul>
+<section id="modes-and-the-s-domain-plot">
+<h3>Modes and the S-domain plot<a class="headerlink" href="#modes-and-the-s-domain-plot" title="Link to this heading"></a></h3>
+<p>The <strong>Modes</strong> result replaces the former separate <strong>S-Domain Plot</strong> and <strong>S-Domain Plot in Hz</strong> entries. It contains one row per eigenvalue and the following columns.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Real</span></code></p></td>
+<td><p>Real part of the eigenvalue.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Imaginary</span> <span class="pre">[rad/s]</span></code></p></td>
+<td><p>Signed imaginary part in radians per second.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Imaginary</span> <span class="pre">[Hz]</span></code></p></td>
+<td><p>Signed imaginary part divided by <img class="math" src="../_images/math/2ef04e0a4bcc5f1840308dabe353cfe6e48632c4.svg" alt="2\pi"/>. Both members of a conjugate pair are retained.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">Damping</span> <span class="pre">ratio</span></code></p></td>
+<td><p>Damping ratio reported by the modal calculation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">Oscillation</span> <span class="pre">frequency</span></code></p></td>
+<td><p>Frequency in hertz assigned only to the representative member of an oscillatory conjugate pair. Other rows contain <code class="docutils literal notranslate"><span class="pre">NaN</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Clicking <strong>Plot</strong> with no selection draws all visible modes in the complex plane using <code class="docutils literal notranslate"><span class="pre">Real</span></code> and <code class="docutils literal notranslate"><span class="pre">Imaginary</span> <span class="pre">[rad/s]</span></code>. The plot includes the <img class="math" src="../_images/math/19d47b62b38e49ec2eeaf02e78000d22986ddc52.svg" alt="\zeta=5\%"/> damping boundary, and hovering over a point shows its mode name and coordinates.</p>
+<p>To plot a subset of modes, select cells or complete rows in the <strong>Modes</strong> table before clicking <strong>Plot</strong>. A filter applied to the table also limits the visible modes. When there is no selection, every mode that remains visible after filtering is plotted.</p>
+<p>To use hertz on the imaginary axis:</p>
+<ol class="arabic simple">
+<li><p>Hold <code class="docutils literal notranslate"><span class="pre">Ctrl</span></code> and select the complete <code class="docutils literal notranslate"><span class="pre">Real</span></code> and <code class="docutils literal notranslate"><span class="pre">Imaginary</span> <span class="pre">[Hz]</span></code> column headers.</p></li>
+<li><p>Optionally select the desired modal rows while keeping both complete columns selected.</p></li>
+<li><p>Click <strong>Plot</strong>.</p></li>
+</ol>
+<p>Only a complete pair consisting of <code class="docutils literal notranslate"><span class="pre">Real</span></code> and one of the two <code class="docutils literal notranslate"><span class="pre">Imaginary</span></code> columns changes the plot coordinates. Selecting ordinary cells chooses modes; it does not redefine the coordinate pair.</p>
+<p><img alt="" src="../_images/SDomain_plot_VeraGrid.png" /></p>
+</section>
+<section id="right-eigenvectors-and-mode-shape-plots">
+<h3>Right eigenvectors and mode-shape plots<a class="headerlink" href="#right-eigenvectors-and-mode-shape-plots" title="Link to this heading"></a></h3>
+<p>The <strong>Right eigenvectors</strong> table contains state variables in its rows and modes in its columns. Oscillatory representative modes include their frequency on a second line in the column header, for example <code class="docutils literal notranslate"><span class="pre">Mode</span> <span class="pre">4</span></code> followed by <code class="docutils literal notranslate"><span class="pre">f=0.443</span> <span class="pre">Hz</span></code>.</p>
+<p>Clicking <strong>Plot</strong> draws each selected mode in a separate real-versus-imaginary subplot. Each state component is represented by an arrow from the origin. The vectors are phase-aligned with their dominant visible component and normalized so that this component has unit magnitude; this preserves the relative magnitude and phase of the other components.</p>
+<p>Modes can be chosen by selecting their column headers or any cells in their columns. The column-name filter can also be used to reduce the table before plotting; for example, <code class="docutils literal notranslate"><span class="pre">col</span> <span class="pre">like</span> <span class="pre">Hz</span></code> keeps the oscillatory representative modes whose headers include a frequency. Select complete row headers to restrict the plotted state components. If there is no selection, all visible modes and state rows are plotted.</p>
+<p>Complex-plane plotting is available for the original <strong>Modes</strong> and <strong>Right eigenvectors</strong> representations. Table transformations such as transpose, absolute value, or cumulative distribution produce a generic transformed table and therefore use the standard series plot.</p>
+</section>
+<section id="result-interpretation-notes">
+<h3>Result interpretation notes<a class="headerlink" href="#result-interpretation-notes" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">damping_ratios</span></code> and <code class="docutils literal notranslate"><span class="pre">conjugate_frequencies</span></code> are reported for the representative member of each oscillatory conjugate pair.</p></li>
+<li><p>The other member of the conjugate pair and non-oscillatory modes keep <code class="docutils literal notranslate"><span class="pre">NaN</span></code> entries in those vectors.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Imaginary</span> <span class="pre">[Hz]</span></code> is different from <code class="docutils literal notranslate"><span class="pre">Oscillation</span> <span class="pre">frequency</span></code>: the former is a signed coordinate available for every eigenvalue, while the latter identifies one representative per oscillatory pair.</p></li>
+<li><p>In generalized RMS cases, result tables can include algebraic variables in addition to state variables.</p></li>
+</ul>
+<!-- BEGIN RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+<section id="registered-result-properties">
+<h2>Registered Result Properties<a class="headerlink" href="#registered-result-properties" title="Link to this heading"></a></h2>
+<section id="smallsignalstabilityrmsresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">SmallSignalStabilityRmsResults</span></code> registered properties<a class="headerlink" href="#smallsignalstabilityrmsresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The RMS Small-Signal stability result stores modal, matrix, and labeling data for the current linearization.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stat_vars_array</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Labels of the RMS state variables used to annotate result tables.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">algebraic_vars_array</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StrVec</span></code></p></td>
+<td><p>Labels of the RMS algebraic variables used when generalized results include algebraic rows or columns.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">eigenvalues</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Eigenvalues of the linearized RMS system.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">participation_factors</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Normalized participation-factor matrix relating variables to modes.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">damping_ratios</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Damping ratio assigned to the representative member of each oscillatory conjugate pair. Other entries remain <code class="docutils literal notranslate"><span class="pre">NaN</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">conjugate_frequencies</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Frequency in hertz assigned to the representative member of each oscillatory conjugate pair. Other entries remain <code class="docutils literal notranslate"><span class="pre">NaN</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">state_matrix</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Linearized matrix used by the RMS modal analysis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">right_eigenvectors</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Right eigenvector matrix associated with the computed modes.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="smallsignalstabilityemtresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">SmallSignalStabilityEmtResults</span></code> registered properties<a class="headerlink" href="#smallsignalstabilityemtresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The EMT Small-Signal stability result stores multiplier, eigenvalue, and participation-factor data.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">multipliers</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Discrete-time multipliers from the EMT Small-Signal analysis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">eigenvalues</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Eigenvalues of the linearized system.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">participation_factors</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Mat</span></code></p></td>
+<td><p>Participation-factor matrix relating states or variables to modes.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="eramatrixpencilresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">EraMatrixPencilResults</span></code> registered properties<a class="headerlink" href="#eramatrixpencilresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The ERA matrix pencil result stores modal estimates and reconstruction diagnostics.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">eigenvalues_s</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxVec</span></code></p></td>
+<td><p>Estimated continuous-time eigenvalues in the s-domain.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">frequencies_hz</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Mode frequencies in hertz.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">damping_ratios</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Damping ratio for each identified mode.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">is_stable</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BoolVec</span></code></p></td>
+<td><p>Stability flag for each identified mode.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">residues</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">CxMat</span></code></p></td>
+<td><p>Modal residues estimated by the ERA matrix pencil method.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">modal_energy</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Estimated energy contribution of each mode.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reconstruction_errors</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Signal reconstruction error for each selected model order.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">band_low_hz</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Lower frequency bound used for modal selection.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">band_high_hz</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Upper frequency bound used for modal selection.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">selected_orders</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Model orders selected by the ERA matrix pencil analysis.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">observable_count_per_mode</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">IntVec</span></code></p></td>
+<td><p>Number of observed signals contributing to each mode.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="rmsresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">RmsResults</span></code> registered properties<a class="headerlink" href="#rmsresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The RMS result stores the simulated variable values.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">values</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Simulated values matrix for the registered dynamic variables.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="emtresults-registered-properties">
+<h3><code class="docutils literal notranslate"><span class="pre">EmtResults</span></code> registered properties<a class="headerlink" href="#emtresults-registered-properties" title="Link to this heading"></a></h3>
+<p>The EMT result stores the simulated variable values.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">values</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Vec</span></code></p></td>
+<td><p>Simulated values matrix for the registered dynamic variables.</p></td>
+</tr>
+</tbody>
+</table>
+<!-- END RESULTS REGISTERED PROPERTIES -->
+</section>
+</section>
+<section id="api">
+<h2>API<a class="headerlink" href="#api" title="Link to this heading"></a></h2>
+<p>The maintained RMS Small-Signal example is <code class="docutils literal notranslate"><span class="pre">trunk/dynamics/small_signal/rms_kundur_small_signal.py</span></code>. The pattern below follows the current driver usage.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gce</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DynamicIntegrationMethod</span><span class="p">,</span>
+    <span class="n">RmsInitializationMethod</span><span class="p">,</span>
+    <span class="n">VarPowerFlowReferenceType</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.PowerFlow.power_flow_driver</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">PowerFlowDriver</span><span class="p">,</span>
+    <span class="n">PowerFlowOptions</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.Rms.rms_options</span><span class="w"> </span><span class="kn">import</span> <span class="n">RmsOptions</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_driver</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SmallSignalStabilityRmsDriver</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Simulations.SmallSignalStabilityRms.small_signal_options</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">RmsSmallSignalStabilityOptions</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Rms.genrow1_rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_genrow1_rms_template</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Rms.genrow2_rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_genrow2_rms_template</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Rms.genrow3_rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_genrow3_rms_template</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Rms.genrow4_rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_genrow4_rms_template</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Rms.line_rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_line_rms_template</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Utils.Symbolic.bus_rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">initialize_bus_rms</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Templates.Rms.load_rms_template</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_load_rms_template</span>
+
+<span class="c1"># this example creates the KUNDUR grid without shunts. If you want to open an already created file use the following:</span>
+<span class="c1"># grid_path = Path(&quot;..&quot;) / &quot;Grids_and_profiles&quot; / &quot;grids&quot; / &quot;IEEE39_1W.veragrid&quot;</span>
+<span class="c1"># grid = gce.open_file(str(grid_path))</span>
+
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">MultiCircuit</span><span class="p">()</span>
+
+<span class="c1"># Buses</span>
+<span class="n">bus1</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus1&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">bus2</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus2&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">bus3</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus3&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">is_slack</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">bus4</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus4&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">bus5</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus5&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mi">230</span><span class="p">)</span>
+<span class="n">bus6</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus6&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mi">230</span><span class="p">)</span>
+<span class="n">bus7</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus7&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mi">230</span><span class="p">)</span>
+<span class="n">bus8</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus8&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mi">230</span><span class="p">)</span>
+<span class="n">bus9</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus9&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mi">230</span><span class="p">)</span>
+<span class="n">bus10</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus10&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mi">230</span><span class="p">)</span>
+<span class="n">bus11</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Bus</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;Bus11&quot;</span><span class="p">,</span> <span class="n">Vnom</span><span class="o">=</span><span class="mi">230</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus1</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus2</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus3</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus4</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus5</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus6</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus7</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus8</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus9</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus10</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_bus</span><span class="p">(</span><span class="n">bus11</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">bus</span> <span class="ow">in</span> <span class="n">grid</span><span class="o">.</span><span class="n">buses</span><span class="p">:</span>
+    <span class="n">initialize_bus_rms</span><span class="p">(</span><span class="n">bus</span><span class="p">,</span> <span class="n">vf</span><span class="o">=</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span>
+
+<span class="c1"># Line</span>
+
+<span class="n">line0</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 5-6-1&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus5</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus6</span><span class="p">,</span>
+                 <span class="n">r</span><span class="o">=</span><span class="mf">0.00500</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.05000</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.02187</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">750.0</span><span class="p">)</span>
+
+<span class="n">line1</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 5-6-2&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus5</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus6</span><span class="p">,</span>
+                 <span class="n">r</span><span class="o">=</span><span class="mf">0.00500</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.05000</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.02187</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">750.0</span><span class="p">)</span>
+
+<span class="n">line2</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 6-7-1&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus6</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus7</span><span class="p">,</span>
+                 <span class="n">r</span><span class="o">=</span><span class="mf">0.00300</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.03000</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.00583</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">700.0</span><span class="p">)</span>
+
+<span class="n">line3</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 6-7-2&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus6</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus7</span><span class="p">,</span>
+                 <span class="n">r</span><span class="o">=</span><span class="mf">0.00300</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.03000</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.00583</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">700.0</span><span class="p">)</span>
+
+<span class="n">line4</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 6-7-3&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus6</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus7</span><span class="p">,</span>
+                 <span class="n">r</span><span class="o">=</span><span class="mf">0.00300</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.03000</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.00583</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">700.0</span><span class="p">)</span>
+
+<span class="n">line5</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 7-8-1&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus7</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus8</span><span class="p">,</span>
+                 <span class="n">r</span><span class="o">=</span><span class="mf">0.01100</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.11000</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.19250</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">400.0</span><span class="p">)</span>
+
+<span class="n">line6</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 7-8-2&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus7</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus8</span><span class="p">,</span>
+                 <span class="n">r</span><span class="o">=</span><span class="mf">0.01100</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.11000</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.19250</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">400.0</span><span class="p">)</span>
+
+<span class="n">line7</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 8-9-1&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus8</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus9</span><span class="p">,</span>
+                 <span class="n">r</span><span class="o">=</span><span class="mf">0.01100</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.11000</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.19250</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">400.0</span><span class="p">)</span>
+
+<span class="n">line8</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 8-9-2&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus8</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus9</span><span class="p">,</span>
+                 <span class="n">r</span><span class="o">=</span><span class="mf">0.01100</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.11000</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.19250</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">400.0</span><span class="p">)</span>
+
+<span class="n">line9</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 9-10-1&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus9</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus10</span><span class="p">,</span>
+                 <span class="n">r</span><span class="o">=</span><span class="mf">0.00300</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.03000</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.00583</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">700.0</span><span class="p">)</span>
+
+<span class="n">line10</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 9-10-2&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus9</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus10</span><span class="p">,</span>
+                  <span class="n">r</span><span class="o">=</span><span class="mf">0.00300</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.03000</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.00583</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">700.0</span><span class="p">)</span>
+
+<span class="n">line11</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 9-10-3&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus9</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus10</span><span class="p">,</span>
+                  <span class="n">r</span><span class="o">=</span><span class="mf">0.00300</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.03000</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.00583</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">700.0</span><span class="p">)</span>
+
+<span class="n">line12</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 10-11-1&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus10</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus11</span><span class="p">,</span>
+                  <span class="n">r</span><span class="o">=</span><span class="mf">0.00500</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.05000</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.02187</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">750.0</span><span class="p">)</span>
+
+<span class="n">line13</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;line 10-11-2&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus10</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus11</span><span class="p">,</span>
+                  <span class="n">r</span><span class="o">=</span><span class="mf">0.00500</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.05000</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.02187</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">750.0</span><span class="p">)</span>
+
+<span class="c1"># Transformers</span>
+<span class="n">xt1</span> <span class="o">=</span> <span class="mf">0.15</span> <span class="o">*</span> <span class="p">(</span><span class="mf">100.0</span> <span class="o">/</span> <span class="mf">900.0</span><span class="p">)</span>
+<span class="n">trafo_G1</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;trafo 5-1&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus5</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span>
+                <span class="n">r</span><span class="o">=</span><span class="mf">0.00000</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.15</span> <span class="o">*</span> <span class="p">(</span><span class="mf">100.0</span> <span class="o">/</span> <span class="mf">900.0</span><span class="p">),</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">900.0</span><span class="p">)</span>
+
+<span class="n">trafo_G2</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;trafo 6-2&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus6</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span>
+                    <span class="n">r</span><span class="o">=</span><span class="mf">0.00000</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.15</span> <span class="o">*</span> <span class="p">(</span><span class="mf">100.0</span> <span class="o">/</span> <span class="mf">900.0</span><span class="p">),</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">900.0</span><span class="p">)</span>
+
+<span class="n">trafo_G3</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;trafo 11-3&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus11</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus3</span><span class="p">,</span>
+                    <span class="n">r</span><span class="o">=</span><span class="mf">0.00000</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.15</span> <span class="o">*</span> <span class="p">(</span><span class="mf">100.0</span> <span class="o">/</span> <span class="mf">900.0</span><span class="p">),</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">900.0</span><span class="p">)</span>
+
+<span class="n">trafo_G4</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Line</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;trafo 10-4&quot;</span><span class="p">,</span> <span class="n">bus_from</span><span class="o">=</span><span class="n">bus10</span><span class="p">,</span> <span class="n">bus_to</span><span class="o">=</span><span class="n">bus4</span><span class="p">,</span>
+                    <span class="n">r</span><span class="o">=</span><span class="mf">0.00000</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">0.15</span> <span class="o">*</span> <span class="p">(</span><span class="mf">100.0</span> <span class="o">/</span> <span class="mf">900.0</span><span class="p">),</span> <span class="n">b</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">rate</span><span class="o">=</span><span class="mf">900.0</span><span class="p">)</span>
+
+<span class="c1"># load</span>
+<span class="n">load1</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;load1&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">967.0</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+
+<span class="n">load2</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Load</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;load2&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">1767.0</span><span class="p">,</span> <span class="n">Q</span><span class="o">=</span><span class="mf">100.0</span><span class="p">)</span>
+
+<span class="c1"># Generators</span>
+<span class="n">fn_1</span> <span class="o">=</span> <span class="mf">60.0</span>
+<span class="n">M_1</span> <span class="o">=</span> <span class="mf">13.0</span> <span class="o">*</span> <span class="mf">9.0</span>
+<span class="n">D_1</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="mf">9.0</span>
+<span class="n">ra_1</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">xd_1</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="mf">100.0</span> <span class="o">/</span> <span class="mf">900.0</span>
+<span class="n">omega_ref_1</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">Kp_1</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">Ki_1</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="n">fn_2</span> <span class="o">=</span> <span class="mf">60.0</span>
+<span class="n">M_2</span> <span class="o">=</span> <span class="mf">13.0</span> <span class="o">*</span> <span class="mf">9.0</span>
+<span class="n">D_2</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="mf">9.0</span>
+<span class="n">ra_2</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">xd_2</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="mf">100.0</span> <span class="o">/</span> <span class="mf">900.0</span>
+<span class="n">omega_ref_2</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">Kp_2</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">Ki_2</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="n">fn_3</span> <span class="o">=</span> <span class="mf">60.0</span>
+<span class="n">M_3</span> <span class="o">=</span> <span class="mf">12.35</span> <span class="o">*</span> <span class="mf">9.0</span>
+<span class="n">D_3</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="mf">9.0</span>
+<span class="n">ra_3</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">xd_3</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="mf">100.0</span> <span class="o">/</span> <span class="mf">900.0</span>
+<span class="n">omega_ref_3</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">Kp_3</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">Ki_3</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="n">fn_4</span> <span class="o">=</span> <span class="mf">60.0</span>
+<span class="n">M_4</span> <span class="o">=</span> <span class="mf">12.35</span> <span class="o">*</span> <span class="mf">9.0</span>
+<span class="n">D_4</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="mf">9.0</span>
+<span class="n">ra_4</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">xd_4</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="mf">100.0</span> <span class="o">/</span> <span class="mf">900.0</span>
+<span class="n">omega_ref_4</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">Kp_4</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">Ki_4</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="c1"># Generators</span>
+<span class="n">gen1</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Gen1&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">700.0</span><span class="p">,</span> <span class="n">vset</span><span class="o">=</span><span class="mf">1.03</span><span class="p">,</span> <span class="n">Snom</span><span class="o">=</span><span class="mf">900.0</span><span class="p">,</span>
+    <span class="n">x1</span><span class="o">=</span><span class="n">xd_1</span><span class="p">,</span> <span class="n">r1</span><span class="o">=</span><span class="n">ra_1</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">fn_1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">gen2</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Gen2&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">700.0</span><span class="p">,</span> <span class="n">vset</span><span class="o">=</span><span class="mf">1.01</span><span class="p">,</span> <span class="n">Snom</span><span class="o">=</span><span class="mf">900.0</span><span class="p">,</span>
+    <span class="n">x1</span><span class="o">=</span><span class="n">xd_2</span><span class="p">,</span> <span class="n">r1</span><span class="o">=</span><span class="n">ra_2</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">fn_2</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">gen3</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Gen3&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">719.091</span><span class="p">,</span> <span class="n">vset</span><span class="o">=</span><span class="mf">1.03</span><span class="p">,</span> <span class="n">Snom</span><span class="o">=</span><span class="mf">900.0</span><span class="p">,</span>
+    <span class="n">x1</span><span class="o">=</span><span class="n">xd_3</span><span class="p">,</span> <span class="n">r1</span><span class="o">=</span><span class="n">ra_3</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">fn_3</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">gen4</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Generator</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Gen4&quot;</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mf">700.0</span><span class="p">,</span> <span class="n">vset</span><span class="o">=</span><span class="mf">1.01</span><span class="p">,</span> <span class="n">Snom</span><span class="o">=</span><span class="mf">900.0</span><span class="p">,</span>
+    <span class="n">x1</span><span class="o">=</span><span class="n">xd_4</span><span class="p">,</span> <span class="n">r1</span><span class="o">=</span><span class="n">ra_4</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="n">fn_4</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1">######################################################################################################</span>
+<span class="c1"># Build Rms models</span>
+<span class="c1">######################################################################################################</span>
+
+<span class="c1"># Build rms models from template</span>
+<span class="c1"># generators</span>
+<span class="n">genrow_mdl1</span> <span class="o">=</span> <span class="n">get_genrow1_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">genrow_mdl2</span> <span class="o">=</span> <span class="n">get_genrow2_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">genrow_mdl3</span> <span class="o">=</span> <span class="n">get_genrow3_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">genrow_mdl4</span> <span class="o">=</span> <span class="n">get_genrow4_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+
+<span class="c1"># lines</span>
+<span class="n">line0_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">line1_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">line2_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">line3_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">line4_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">line5_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">line6_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">line7_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">line8_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">line9_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">line10_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">line11_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">line12_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">line13_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+
+<span class="c1"># trafos</span>
+<span class="n">trafo1_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">trafo2_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">trafo3_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">trafo4_mdl</span> <span class="o">=</span> <span class="n">get_line_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+
+<span class="c1"># loads</span>
+<span class="n">load1_mdl</span> <span class="o">=</span> <span class="n">get_load_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+<span class="n">load2_mdl</span> <span class="o">=</span> <span class="n">get_load_rms_template</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="p">)</span><span class="o">.</span><span class="n">block</span>
+
+<span class="c1"># set models parameters</span>
+<span class="n">load1_mdl</span><span class="o">.</span><span class="n">set_parameter_in_model</span><span class="p">(</span><span class="n">var_name</span><span class="o">=</span><span class="s2">&quot;Pl0&quot;</span><span class="p">,</span> <span class="n">new_value</span><span class="o">=-</span><span class="mf">9.670000000007317</span><span class="p">)</span>
+<span class="n">load1_mdl</span><span class="o">.</span><span class="n">set_parameter_in_model</span><span class="p">(</span><span class="n">var_name</span><span class="o">=</span><span class="s2">&quot;Ql0&quot;</span><span class="p">,</span> <span class="n">new_value</span><span class="o">=-</span><span class="mf">0.9999999999967969</span><span class="p">)</span>
+
+<span class="n">load2_mdl</span><span class="o">.</span><span class="n">set_parameter_in_model</span><span class="p">(</span><span class="n">var_name</span><span class="o">=</span><span class="s2">&quot;Pl0&quot;</span><span class="p">,</span> <span class="n">new_value</span><span class="o">=-</span><span class="mf">17.6699999999199</span><span class="p">)</span>
+<span class="n">load2_mdl</span><span class="o">.</span><span class="n">set_parameter_in_model</span><span class="p">(</span><span class="n">var_name</span><span class="o">=</span><span class="s2">&quot;Ql0&quot;</span><span class="p">,</span> <span class="n">new_value</span><span class="o">=-</span><span class="mf">0.999999999989467</span><span class="p">)</span>
+
+<span class="c1"># connection with buses</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">genrow_mdl1</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus1</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">genrow_mdl1</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus1</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">genrow_mdl2</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus2</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">genrow_mdl2</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus2</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">genrow_mdl3</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus3</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">genrow_mdl3</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus3</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">genrow_mdl4</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus4</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">genrow_mdl4</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus4</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line0_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus5</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line0_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus5</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line0_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus6</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line0_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus6</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line1_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus5</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line1_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus5</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line1_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus6</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line1_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus6</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line2_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus6</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line2_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus6</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line2_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus7</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line2_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus7</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line3_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus6</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line3_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus6</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line3_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus7</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line3_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus7</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line4_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus6</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line4_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus6</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line4_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus7</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line4_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus7</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line5_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus7</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line5_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus7</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line5_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus8</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line5_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus8</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line6_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus7</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line6_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus7</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line6_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus8</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line6_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus8</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line7_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus8</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line7_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus8</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line7_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus9</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line7_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus9</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line8_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus8</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line8_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus8</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line8_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus9</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line8_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus9</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line9_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus9</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line9_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus9</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line9_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus10</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line9_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus10</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line10_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus9</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line10_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus9</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line10_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus10</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line10_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus10</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line11_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus9</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line11_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus9</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line11_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus10</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line11_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus10</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line12_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus10</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line12_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus10</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line12_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus11</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line12_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus11</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line13_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus10</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line13_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus10</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line13_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus11</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">line13_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus11</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo1_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus5</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo1_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus5</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo1_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus1</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo1_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus1</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo2_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus6</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo2_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus6</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo2_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus2</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo2_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus2</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo3_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus11</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo3_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus11</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo3_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus3</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo3_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus3</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo4_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus10</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo4_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus10</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo4_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">2</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus4</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">trafo4_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">3</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus4</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">load1_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus7</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">load1_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus7</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">load2_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus9</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">var_factory</span><span class="o">.</span><span class="n">add_connections</span><span class="p">([</span><span class="n">load2_mdl</span><span class="o">.</span><span class="n">in_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">bus9</span><span class="o">.</span><span class="n">rms_model</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+<span class="c1"># external mapping</span>
+
+<span class="n">big_gen1</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Block</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="p">[</span><span class="n">genrow_mdl1</span><span class="p">])</span>
+<span class="n">big_gen2</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Block</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="p">[</span><span class="n">genrow_mdl2</span><span class="p">])</span>
+<span class="n">big_gen3</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Block</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="p">[</span><span class="n">genrow_mdl3</span><span class="p">])</span>
+<span class="n">big_gen4</span> <span class="o">=</span> <span class="n">gce</span><span class="o">.</span><span class="n">Block</span><span class="p">(</span><span class="n">children</span><span class="o">=</span><span class="p">[</span><span class="n">genrow_mdl4</span><span class="p">])</span>
+
+<span class="n">big_gen1</span><span class="o">.</span><span class="n">external_mapping</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">genrow_mdl1</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]})</span>
+<span class="n">big_gen1</span><span class="o">.</span><span class="n">external_mapping</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">:</span> <span class="n">genrow_mdl1</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]})</span>
+
+<span class="n">big_gen2</span><span class="o">.</span><span class="n">external_mapping</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">genrow_mdl2</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]})</span>
+<span class="n">big_gen2</span><span class="o">.</span><span class="n">external_mapping</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">:</span> <span class="n">genrow_mdl2</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]})</span>
+
+<span class="n">big_gen3</span><span class="o">.</span><span class="n">external_mapping</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">genrow_mdl3</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]})</span>
+<span class="n">big_gen3</span><span class="o">.</span><span class="n">external_mapping</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">:</span> <span class="n">genrow_mdl3</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]})</span>
+
+<span class="n">big_gen4</span><span class="o">.</span><span class="n">external_mapping</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">P</span><span class="p">:</span> <span class="n">genrow_mdl4</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">0</span><span class="p">]})</span>
+<span class="n">big_gen4</span><span class="o">.</span><span class="n">external_mapping</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">VarPowerFlowReferenceType</span><span class="o">.</span><span class="n">Q</span><span class="p">:</span> <span class="n">genrow_mdl4</span><span class="o">.</span><span class="n">out_vars</span><span class="p">[</span><span class="mi">1</span><span class="p">]})</span>
+
+<span class="c1"># add models to opi objects</span>
+
+<span class="n">gen1</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">big_gen1</span>
+<span class="n">gen2</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">big_gen2</span>
+<span class="n">gen3</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">big_gen3</span>
+<span class="n">gen4</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">big_gen4</span>
+
+<span class="n">line0</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">line0_mdl</span>
+<span class="n">line1</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">line1_mdl</span>
+<span class="n">line2</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">line2_mdl</span>
+<span class="n">line3</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">line3_mdl</span>
+<span class="n">line4</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">line4_mdl</span>
+<span class="n">line5</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">line5_mdl</span>
+<span class="n">line6</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">line6_mdl</span>
+<span class="n">line7</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">line7_mdl</span>
+<span class="n">line8</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">line8_mdl</span>
+<span class="n">line9</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">line9_mdl</span>
+<span class="n">line10</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">line10_mdl</span>
+<span class="n">line11</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">line11_mdl</span>
+<span class="n">line12</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">line12_mdl</span>
+<span class="n">line13</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">line13_mdl</span>
+
+<span class="n">trafo_G1</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">trafo1_mdl</span>
+<span class="n">trafo_G2</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">trafo2_mdl</span>
+<span class="n">trafo_G3</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">trafo3_mdl</span>
+<span class="n">trafo_G4</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">trafo4_mdl</span>
+
+<span class="n">load1</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">load1_mdl</span>
+<span class="n">load2</span><span class="o">.</span><span class="n">rms_model</span> <span class="o">=</span> <span class="n">load2_mdl</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line0</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line1</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line2</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line3</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line4</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line5</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line6</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line7</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line8</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line9</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line10</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line11</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line12</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">line13</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">trafo_G1</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">trafo_G2</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">trafo_G3</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">trafo_G4</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus7</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load1</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_load</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus9</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">load2</span><span class="p">)</span>
+
+<span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus1</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">gen1</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus2</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">gen2</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus3</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">gen3</span><span class="p">)</span>
+<span class="n">grid</span><span class="o">.</span><span class="n">add_generator</span><span class="p">(</span><span class="n">bus</span><span class="o">=</span><span class="n">bus4</span><span class="p">,</span> <span class="n">api_obj</span><span class="o">=</span><span class="n">gen4</span><span class="p">)</span>
+
+<span class="c1">######################################################################################################</span>
+<span class="c1"># Run PowerFlow and Small-Signal stability</span>
+<span class="c1">######################################################################################################</span>
+
+<span class="c1"># The RMS Small-Signal assessment always starts from one solved power flow.</span>
+<span class="n">pf_options</span> <span class="o">=</span> <span class="n">PowerFlowOptions</span><span class="p">(</span>
+        <span class="n">solver_type</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">SolverType</span><span class="o">.</span><span class="n">NR</span><span class="p">,</span>
+        <span class="n">retry_with_other_methods</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">initialize_with_existing_solution</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+        <span class="n">max_iter</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+        <span class="n">control_q</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">control_taps_modules</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">control_taps_phase</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">control_remote_voltage</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">orthogonalize_controls</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">apply_temperature_correction</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">branch_impedance_tolerance_mode</span><span class="o">=</span><span class="n">gce</span><span class="o">.</span><span class="n">BranchImpedanceMode</span><span class="o">.</span><span class="n">Specified</span><span class="p">,</span>
+        <span class="n">distributed_slack</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">ignore_single_node_islands</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">trust_radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">backtracking_parameter</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+        <span class="n">use_stored_guess</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">initialize_angles</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">generate_report</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="n">power_flow</span> <span class="o">=</span> <span class="n">PowerFlowDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">pf_options</span><span class="p">)</span>
+<span class="n">power_flow</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">pf_results</span> <span class="o">=</span> <span class="n">power_flow</span><span class="o">.</span><span class="n">results</span>
+
+<span class="c1"># RMS options are only used when the assessment time is strictly positive,</span>
+<span class="c1"># because the driver must simulate the RMS model up to that instant before</span>
+<span class="c1"># building the linearization.</span>
+<span class="n">rms_options</span> <span class="o">=</span> <span class="n">RmsOptions</span><span class="p">(</span><span class="n">time_step</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span>
+                         <span class="n">simulation_time</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                         <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
+                         <span class="n">integration_method</span><span class="o">=</span><span class="n">DynamicIntegrationMethod</span><span class="o">.</span><span class="n">DaeBackEuler</span><span class="p">,</span>
+                         <span class="n">initialization_method</span><span class="o">=</span><span class="n">RmsInitializationMethod</span><span class="o">.</span><span class="n">Explicit</span><span class="p">,</span>
+                         <span class="n">use_init_values</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                         <span class="n">max_iter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+                         <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+
+<span class="c1"># k = 0 requests the complete eigenvalue spectrum.</span>
+<span class="n">sss_options</span> <span class="o">=</span> <span class="n">RmsSmallSignalStabilityOptions</span><span class="p">(</span><span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                             <span class="n">ss_assessment_time</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                             <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="n">driver</span> <span class="o">=</span> <span class="n">SmallSignalStabilityRmsDriver</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+                                       <span class="n">rms_options</span><span class="o">=</span><span class="n">rms_options</span><span class="p">,</span>
+                                       <span class="n">sss_options</span><span class="o">=</span><span class="n">sss_options</span><span class="p">,</span>
+                                       <span class="n">pf_results</span><span class="o">=</span><span class="n">pf_results</span><span class="p">,</span>
+                                       <span class="p">)</span>
+<span class="n">driver</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">driver</span><span class="o">.</span><span class="n">results</span>
+
+<span class="n">eigenvalues</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">eigenvalues</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+<span class="n">participation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">participation_factors</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">damping_ratios</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">damping_ratios</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">frequencies_hz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">conjugate_frequencies</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">state_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">state_matrix</span><span class="p">)</span>
+<span class="n">right_eigenvectors</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">right_eigenvectors</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">complex</span><span class="p">)</span>
+<span class="n">state_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">stat_vars_array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+<span class="n">algebraic_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">algebraic_vars_array</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="assessment-at-a-nonzero-time">
+<h3>Assessment at a nonzero time<a class="headerlink" href="#assessment-at-a-nonzero-time" title="Link to this heading"></a></h3>
+<p>To linearize the system at a later instant, keep the same workflow and change the assessment time.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sss_options</span> <span class="o">=</span> <span class="n">RmsSmallSignalStabilityOptions</span><span class="p">(</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">ss_assessment_time</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>In that case, the driver first runs the RMS simulation to <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">5.0</span> <span class="pre">s</span></code> and then computes the modal analysis there.</p>
+</section>
+</section>
+<section id="benchmark">
+<h2>Benchmark<a class="headerlink" href="#benchmark" title="Link to this heading"></a></h2>
+<section id="running-andes">
+<h3>Running ANDES<a class="headerlink" href="#running-andes" title="Link to this heading"></a></h3>
+<p>Thanks to its symbolic precision and reliable numerical performance, ANDES provides a great baseline for stability analysis in contemporary power system studies. That’s why VeraGrid uses ANDES as its benchmark for Small-Signal analysis. Of course, VeraGrid successfully reproduces all eigenvalue placements from ANDES.</p>
+<p>VeraGrid loads ANDES models by opening json files. Naturally, VeraGrid replicates all eigenvalue results from ANDES across standard benchmarks like the Kundur two area system with consistent accuracy and sub-second performance.</p>
+<p>This is the code to get ANDES results:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">To run this script andes must be installed (pip install andes)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">andes</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">stability_andes</span><span class="p">():</span>
+
+   <span class="n">ss</span> <span class="o">=</span> <span class="n">andes</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">&#39;Gen_Load/kundur_ieee_no_shunt.json&#39;</span><span class="p">,</span> <span class="n">default_config</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+   <span class="n">n_xy</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ss</span><span class="o">.</span><span class="n">dae</span><span class="o">.</span><span class="n">xy_name</span><span class="p">)</span>
+   <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Andes variables = </span><span class="si">{</span><span class="n">n_xy</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+   <span class="n">ss</span><span class="o">.</span><span class="n">files</span><span class="o">.</span><span class="n">no_output</span> <span class="o">=</span> <span class="kc">True</span>
+
+   <span class="c1"># fix P &amp; Q load ANDES</span>
+   <span class="n">ss</span><span class="o">.</span><span class="n">PQ</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">p2p</span> <span class="o">=</span> <span class="mf">1.0</span>
+   <span class="n">ss</span><span class="o">.</span><span class="n">PQ</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">p2i</span> <span class="o">=</span> <span class="mi">0</span>
+   <span class="n">ss</span><span class="o">.</span><span class="n">PQ</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">p2z</span> <span class="o">=</span> <span class="mi">0</span>
+
+   <span class="n">ss</span><span class="o">.</span><span class="n">PQ</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">q2q</span> <span class="o">=</span> <span class="mf">1.0</span>
+   <span class="n">ss</span><span class="o">.</span><span class="n">PQ</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">q2i</span> <span class="o">=</span> <span class="mi">0</span>
+   <span class="n">ss</span><span class="o">.</span><span class="n">PQ</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">q2z</span> <span class="o">=</span> <span class="mi">0</span>
+
+   <span class="n">dae</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">dae</span>
+
+   <span class="c1"># Run PF</span>
+   <span class="n">ss</span><span class="o">.</span><span class="n">PFlow</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-8</span>
+   <span class="n">ss</span><span class="o">.</span><span class="n">PFlow</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+   <span class="c1">#Run Small-Signal Stability analysis</span>
+   <span class="n">eig</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">EIG</span>
+   <span class="n">eig</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+   <span class="n">df_Eig</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">eig</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+   <span class="n">df_Eig</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;Eigenvalues_results_Andes.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+   <span class="n">df_pfactors</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">eig</span><span class="o">.</span><span class="n">pfactors</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+   <span class="n">df_pfactors</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;pfactors_results_Andes.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%.10f</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">eig</span><span class="o">.</span><span class="n">mu</span><span class="p">,</span> <span class="n">eig</span><span class="o">.</span><span class="n">pfactors</span>
+</pre></div>
+</div>
+<p>Comparing the case of Kundur two-area system VeraGrid gets exactly the same results.</p>
+<p><img alt="" src="../_images/andes_vs_veragrid_kundur.png" /></p>
+<p>The following plot template is used to compare results.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">x1</span> <span class="o">=</span> <span class="n">VeraGrid_Eig</span><span class="o">.</span><span class="n">real</span>
+<span class="n">y1</span> <span class="o">=</span> <span class="n">VeraGrid_Eig</span><span class="o">.</span><span class="n">imag</span>
+<span class="n">x2</span><span class="o">=</span> <span class="n">Andes_Eig</span><span class="o">.</span><span class="n">real</span>
+<span class="n">y2</span> <span class="o">=</span> <span class="n">Andes_Eig</span><span class="o">.</span><span class="n">imag</span>
+<span class="n">slope</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">0.05</span>
+<span class="n">x_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+<span class="n">y_z</span> <span class="o">=</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">x_z</span>
+<span class="c1"># Plot the two lines (positive and negative imaginary axis)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_z</span><span class="p">,</span> <span class="n">y_z</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$\lambda$ = 5%&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_z</span><span class="p">,</span> <span class="o">-</span><span class="n">y_z</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Andes&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;VeraGrid&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Re [s -1]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Im [s -1]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Stability plot&quot;</span><span class="p">)</span>
+<span class="n">margin_x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">x1</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">*</span> <span class="mf">0.1</span>
+<span class="n">margin_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">y1</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">y1</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">*</span> <span class="mf">0.1</span>
+<span class="n">x_min</span> <span class="o">=</span> <span class="n">x1</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">margin_x</span>
+<span class="n">x_max</span> <span class="o">=</span> <span class="n">x1</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">margin_x</span>
+<span class="n">y_min</span> <span class="o">=</span> <span class="n">y1</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="n">margin_y</span>
+<span class="n">y_max</span> <span class="o">=</span> <span class="n">y1</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="n">margin_y</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">([</span><span class="n">x_min</span><span class="p">,</span> <span class="n">x_max</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">([</span><span class="n">y_min</span><span class="p">,</span> <span class="n">y_max</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Where <code class="docutils literal notranslate"><span class="pre">VeraGrid_Eig</span></code> and <code class="docutils literal notranslate"><span class="pre">Andes_Eig</span></code> are numpy arrays with the eigenvalues results from the VeraGrid and Andes stability assessments respectively.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="rms_simulations.html" class="btn btn-neutral float-left" title="⏱️ RMS simulations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="emt_simulations.html" class="btn btn-neutral float-right" title="🔬 EMT simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Santiago Peñate Vera et. al..</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

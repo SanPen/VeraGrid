@@ -272,14 +272,26 @@ class IoMain(ScenariosMain):
                     # Just open the file
                     self.open_file_now(filenames=file_names)
 
-    def new_project_now(self, create_default_diagrams: bool = True) -> None:
+    def new_project_now(self, create_default_diagrams: bool = True) -> bool:
         """
         Reset the current GUI state and create one empty project immediately.
 
         :param create_default_diagrams: Whether to create the default schematic
             and map diagrams for the new empty circuit.
-        :return: None.
+        :return: ``True`` when the project was replaced; ``False`` when an open
+            dynamic editor cancelled the replacement.
         """
+        # Dynamic editors retain direct references to their circuit, devices,
+        # symbolic blocks and working copies. Close the complete detachable
+        # workspace family before invalidating those project-owned objects.
+        dynamic_editors_closed: bool = self.dynamic_editor_workspace_session.close_all_for_project_replacement(
+            parent=self,
+        )
+        if dynamic_editors_closed:
+            pass
+        else:
+            return False
+
         # clear the circuit model
         self.circuit = MultiCircuit()
 
@@ -315,6 +327,7 @@ class IoMain(ScenariosMain):
             self.set_diagram_widget(self.diagram_widgets_list[0])
 
         self.collect_memory()
+        return True
 
     def new_project(self) -> None:
         """
@@ -752,10 +765,13 @@ class IoMain(ScenariosMain):
                               title=self.tr("File opening"))
                     return
 
-            self.file_name = normalized_filenames[0]
+            selected_file_name: str = normalized_filenames[0]
 
-            # store the working directory
-            self.project_directory = os.path.dirname(self.file_name)
+            # Store the selected directory immediately, but keep the current
+            # project's filename until the loaded circuit is accepted. This
+            # preserves the old project identity if a dynamic editor cancels
+            # the replacement after parsing has completed.
+            self.project_directory = os.path.dirname(selected_file_name)
 
             # lock the ui
             self.LOCK()
@@ -830,8 +846,20 @@ class IoMain(ScenariosMain):
 
             if self.open_file_thread_object.valid:
 
-                # assign the loaded circuit
-                self.new_project_now(create_default_diagrams=False)
+                # A successfully parsed file must not coexist with editors that
+                # retain devices from the previous circuit. If the user keeps
+                # unapplied editor changes, leave the old project untouched.
+                project_replacement_accepted: bool = self.new_project_now(create_default_diagrams=False)
+                if project_replacement_accepted:
+                    pass
+                else:
+                    self.show_info_toast(
+                        self.tr(
+                            "The file was loaded but the current project was kept "
+                            "because closing a dynamic editor was cancelled."
+                        )
+                    )
+                    return
 
                 if self.open_file_thread_object.multiverse is not None:
                     # A multiverse file already contains the complete scenario tree and active

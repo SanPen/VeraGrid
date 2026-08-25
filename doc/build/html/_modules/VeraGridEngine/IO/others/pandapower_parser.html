@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.IO.others.pandapower_parser &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.IO.others.pandapower_parser &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,9 +44,9 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
@@ -67,6 +67,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
@@ -115,13 +119,27 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
 <span class="c1"># from VeraGridEngine.Devices.Branches.tap_changer import TapChanger</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">ExternalGridMode</span><span class="p">,</span> <span class="n">TapChangerTypes</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.enumerations</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">ExternalGridMode</span><span class="p">,</span> <span class="n">TapChangerTypes</span><span class="p">,</span> <span class="n">GeneratorControlMode</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ALL_DEV_TYPES</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">VeraGridEngine.basic_structures</span><span class="w"> </span><span class="kn">import</span> <span class="n">Logger</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">pandapower</span><span class="w"> </span><span class="kn">import</span> <span class="n">from_pickle</span><span class="p">,</span> <span class="n">from_sqlite</span><span class="p">,</span> <span class="n">from_json</span><span class="p">,</span> <span class="n">from_excel</span>
+    <span class="n">alias_map</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Inf&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+        <span class="s2">&quot;bool&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">,</span>
+        <span class="s2">&quot;int&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="s2">&quot;float&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="s2">&quot;complex&quot;</span><span class="p">:</span> <span class="nb">complex</span><span class="p">,</span>
+        <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="nb">object</span><span class="p">,</span>
+        <span class="s2">&quot;str&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">alias_name</span><span class="p">,</span> <span class="n">alias_value</span> <span class="ow">in</span> <span class="n">alias_map</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">alias_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">np</span><span class="p">,</span> <span class="n">alias_name</span><span class="p">,</span> <span class="n">alias_value</span><span class="p">)</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pandapower</span><span class="w"> </span><span class="kn">import</span> <span class="n">from_pickle</span><span class="p">,</span> <span class="n">from_sqlite</span><span class="p">,</span> <span class="n">from_json</span><span class="p">,</span> <span class="n">from_excel</span><span class="p">,</span> <span class="n">create_empty_network</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">pandapower.auxiliary</span><span class="w"> </span><span class="kn">import</span> <span class="n">pandapowerNet</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pandapower.io_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPJSONDecoder</span>
 
     <span class="n">PANDAPOWER_AVAILABLE</span> <span class="o">=</span> <span class="kc">True</span>
 
@@ -151,17 +169,35 @@
 
 <div class="viewcode-block" id="is_pandapower_json">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.is_pandapower_json">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">is_pandapower_json</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_pandapower_json</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Check if a file is pandapower JSON</span>
-<span class="sd">    :param file_path:</span>
-<span class="sd">    :return:</span>
+<span class="sd">    Check if a file is pandapower JSON.</span>
+
+<span class="sd">    :param file_path: Path to the candidate JSON file.</span>
+<span class="sd">    :returns: ``True`` when the JSON has pandapower markers or can be loaded by pandapower.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_pointer</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONDecodeError</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">module_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_module&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_class&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># pandapower JSON exports carry explicit top-level markers.</span>
+        <span class="k">if</span> <span class="n">module_name</span> <span class="o">==</span> <span class="s2">&quot;pandapower.auxiliary&quot;</span> <span class="ow">and</span> <span class="n">class_name</span> <span class="o">==</span> <span class="s2">&quot;pandapowerNet&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
     <span class="k">if</span> <span class="n">PANDAPOWER_AVAILABLE</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-            <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">all</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;bus&quot;</span><span class="p">,</span> <span class="s2">&quot;line&quot;</span><span class="p">,</span> <span class="s2">&quot;load&quot;</span><span class="p">,</span> <span class="s2">&quot;ext_grid&quot;</span><span class="p">])</span>
+            <span class="n">net</span> <span class="o">=</span> <span class="n">from_json</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">pandapowerNet</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
     <span class="k">else</span><span class="p">:</span>
@@ -188,6 +224,74 @@
             <span class="k">return</span> <span class="kc">False</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="tolerant_from_pandapower_sqlite">
+<a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.others.html#VeraGridEngine.IO.others.pandapower_parser.tolerant_from_pandapower_sqlite">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">tolerant_from_pandapower_sqlite</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a pandapower SQLite file while tolerating tables that the installed</span>
+<span class="sd">    pandapower version does not know yet.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">from_sqlite</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">conn</span><span class="p">:</span>
+            <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;SELECT name FROM sqlite_master WHERE type=&#39;table&#39;;&quot;</span><span class="p">)</span>
+            <span class="n">dodfs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">table_name</span><span class="p">,</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">():</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_sql_query</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SELECT * FROM &#39;</span><span class="si">{</span><span class="n">table_name</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span>
+                <span class="n">table</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">dodfs</span><span class="p">[</span><span class="n">table_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span>
+
+        <span class="n">net</span> <span class="o">=</span> <span class="n">create_empty_network</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">item</span><span class="p">,</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">dodfs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">item</span> <span class="o">==</span> <span class="s2">&quot;dtypes&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">item</span> <span class="o">==</span> <span class="s2">&quot;parameters&quot;</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                    <span class="n">net</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">column</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">column</span> <span class="o">==</span> <span class="s2">&quot;name&quot;</span> <span class="ow">and</span> <span class="n">pd</span><span class="o">.</span><span class="n">isnull</span><span class="p">(</span><span class="n">net</span><span class="p">[</span><span class="n">column</span><span class="p">]):</span>
+                        <span class="n">net</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;line_geodata&quot;</span><span class="p">,</span> <span class="s2">&quot;bus_geodata&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">net</span><span class="p">:</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="n">net</span><span class="p">[</span><span class="n">item</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_std_types&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">item</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;fuse&quot;</span><span class="p">):</span>
+                    <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                        <span class="n">table</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                            <span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">value</span>
+                        <span class="p">)</span>
+                <span class="n">net</span><span class="p">[</span><span class="s2">&quot;std_types&quot;</span><span class="p">][</span><span class="n">item</span><span class="p">[:</span><span class="o">-</span><span class="mi">10</span><span class="p">]]</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">item</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_profiles&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s2">&quot;profiles&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">net</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">net</span><span class="p">[</span><span class="s2">&quot;profiles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">net</span><span class="p">[</span><span class="s2">&quot;profiles&quot;</span><span class="p">][</span><span class="n">item</span><span class="p">[:</span><span class="o">-</span><span class="mi">9</span><span class="p">]]</span> <span class="o">=</span> <span class="n">table</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">item</span> <span class="o">==</span> <span class="s2">&quot;user_pf_options&quot;</span><span class="p">:</span>
+                <span class="n">net</span><span class="p">[</span><span class="s2">&quot;user_pf_options&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">column</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">column</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])}</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">json_column</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;object&quot;</span><span class="p">,</span> <span class="s2">&quot;recycle&quot;</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">json_column</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                        <span class="n">table</span><span class="p">[</span><span class="n">json_column</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">json_column</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                            <span class="k">lambda</span> <span class="n">value</span><span class="p">:</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">PPJSONDecoder</span><span class="p">)</span>
+                        <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="p">)</span> <span class="ow">and</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">net</span><span class="p">:</span>
+                    <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="n">net</span><span class="p">[</span><span class="n">item</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="n">net</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">net</span><span class="p">[</span><span class="n">item</span><span class="p">]</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">net</span><span class="p">[</span><span class="n">item</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+                <span class="k">pass</span>
+
+        <span class="k">return</span> <span class="n">net</span></div>
 
 
 
@@ -228,7 +332,7 @@
                 <span class="k">if</span> <span class="n">file_or_net</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.p&quot;</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="p">:</span> <span class="n">pandapowerNet</span> <span class="o">=</span> <span class="n">from_pickle</span><span class="p">(</span><span class="n">file_or_net</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">file_or_net</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.sqlite&quot;</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="p">:</span> <span class="n">pandapowerNet</span> <span class="o">=</span> <span class="n">from_sqlite</span><span class="p">(</span><span class="n">file_or_net</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="p">:</span> <span class="n">pandapowerNet</span> <span class="o">=</span> <span class="n">tolerant_from_pandapower_sqlite</span><span class="p">(</span><span class="n">file_or_net</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">file_or_net</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">):</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">panda_net</span><span class="p">:</span> <span class="n">pandapowerNet</span> <span class="o">=</span> <span class="n">from_json</span><span class="p">(</span><span class="n">file_or_net</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="n">file_or_net</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.xlsx&quot;</span><span class="p">):</span>
@@ -538,7 +642,7 @@
                     <span class="n">name</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span>
                     <span class="n">code</span><span class="o">=</span><span class="n">idx</span><span class="p">,</span>
                     <span class="n">P</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;p_mw&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_scale</span><span class="p">,</span>
-                    <span class="n">is_controlled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">control_mode</span><span class="o">=</span><span class="n">GeneratorControlMode</span><span class="o">.</span><span class="n">V</span><span class="p">,</span>
                     <span class="n">idtag</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;uuid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
                     <span class="n">vset</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;vm_pu&quot;</span><span class="p">]</span>
                 <span class="p">)</span>

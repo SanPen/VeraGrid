@@ -174,9 +174,12 @@ def get_dc_voltage_source_emt_template(vf: VarFactory,
     i_dc: Var = vf.add_var(name=f"i_dc", reference=VarPowerFlowReferenceType.Idc)
     v_src: Var = vf.add_var(name=f"V_src")
     g_src: Var = vf.add_var(name=f"g_src")
-    templ.block.event_dict[v_src] = vf.add_const(
-        None if source_voltage_value is None else float(source_voltage_value)
-    )
+    if source_voltage_value is None:
+        # A source voltage derived from the power-flow operating point is an
+        # event-parameter expression, not a DAE initialization unknown.
+        templ.block.event_dict[v_src] = v_dc + i_dc / g_src
+    else:
+        templ.block.event_dict[v_src] = vf.add_const(float(source_voltage_value))
     templ.block.event_dict[g_src] = vf.add_const(float(source_conductance_value))
 
     templ.block.in_vars = [v_dc]
@@ -188,7 +191,6 @@ def get_dc_voltage_source_emt_template(vf: VarFactory,
         VarPowerFlowReferenceType.Idc: i_dc,
     }
     templ.block.init_eqs[i_dc] = g_src * (v_src - v_dc)
-    templ.block.init_eqs[v_src] = v_dc + i_dc / g_src
     return templ
 
 

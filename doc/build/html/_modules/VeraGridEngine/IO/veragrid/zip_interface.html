@@ -5,7 +5,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VeraGridEngine.IO.veragrid.zip_interface &mdash; VeraGrid 6.0.19 documentation</title>
+  <title>VeraGridEngine.IO.veragrid.zip_interface &mdash; VeraGrid 6.4.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
@@ -14,7 +14,7 @@
   
       <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../../_static/documentation_options.js?v=daba22e2"></script>
+      <script src="../../../../_static/documentation_options.js?v=f2c0b4ab"></script>
       <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
       <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -44,9 +44,9 @@
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/installation.html">💽 Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/user_interface.html">📊 User interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/grid_analysis.html">🔎 Grid analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/structure.html">🌁 Structure of VeraGrid</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/modelling.html">📐 Grid Modelling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">🔍 Small-Signal stability analysis</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/model_debugging.html">🪲 Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/file_operations.html">💾 File loading and saving</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/topology.html">🌵 Topology</a></li>
@@ -67,6 +67,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/nodal_hosting_capacity.html">🏭 Nodal hosting capacity</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/reliability.html">🚧 Reliability</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/state_estimation.html">🌀 State estimation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/dynamic_simulations.html">🧲 Dynamic simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/rms_simulations.html">📝 RMS simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/small_signal_stability.html">Small-Signal Stability Analysis</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../md_source/emt_simulations.html">🔬 EMT simulations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/development.html">💻 Development</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/plugins.html">🧩 Plugins</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../md_source/license.html">📜 License</a></li>
@@ -127,6 +131,62 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">VeraGridEngine.Devices</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dev</span>
 
 
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_active_multiverse_grid_idtag</span><span class="p">(</span><span class="n">zip_file_pointer</span><span class="p">:</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Resolve the active multiverse scenario circuit idtag from the archive metadata.</span>
+
+<span class="sd">    :param zip_file_pointer: Open VeraGrid archive.</span>
+<span class="sd">    :return: Active scenario circuit idtag, or ``None`` when unavailable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">metadata_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;multiverse/metadata.json&quot;</span>
+
+    <span class="k">if</span> <span class="n">metadata_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">namelist</span><span class="p">():</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_json_from_file_pointer</span><span class="p">(</span><span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">metadata_name</span><span class="p">))</span>
+    <span class="n">active_node_id_raw</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;active_node_id&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">active_node_id_raw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">nodes_data</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nodes&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">())</span>
+    <span class="n">active_node_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">active_node_id_raw</span><span class="p">)</span>
+    <span class="n">active_node_data</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">nodes_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">active_node_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">active_node_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">active_node_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;circuit_idtag&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_split_session_entry_path</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">active_grid_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalize one archive path to the generic ``session/study/array`` tuple.</span>
+
+<span class="sd">    :param path: Archive path split by ``/``.</span>
+<span class="sd">    :param active_grid_idtag: Active multiverse scenario idtag, when applicable.</span>
+<span class="sd">    :return: Normalized tuple, or ``None`` when the path is not a supported session entry.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;sessions&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="p">(</span>
+        <span class="n">active_grid_idtag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">6</span>
+        <span class="ow">and</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;multiverse&quot;</span>
+        <span class="ow">and</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">active_grid_idtag</span>
+        <span class="ow">and</span> <span class="n">path</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;sessions&quot;</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">path</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">path</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+
 <div class="viewcode-block" id="load_json_from_file_pointer">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.load_json_from_file_pointer">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_json_from_file_pointer</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
@@ -167,6 +227,7 @@
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">session_data</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sessions_data</span><span class="p">):</span>
 
         <span class="k">if</span> <span class="n">session_data</span><span class="o">.</span><span class="n">results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">session_data</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">prepare_for_saving</span><span class="p">()</span>
 
             <span class="c1"># traverse the registered results</span>
             <span class="k">for</span> <span class="n">arr_name</span><span class="p">,</span> <span class="n">arr_prop</span> <span class="ow">in</span> <span class="n">session_data</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">data_variables</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -183,14 +244,28 @@
                     <span class="c1"># pack the array into a DataFrame</span>
 
                     <span class="k">try</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+                            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
+                                <span class="n">filename</span> <span class="o">+=</span> <span class="s2">&quot;__complex__&quot;</span>
+                                <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">arr</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">arr</span><span class="p">)]])</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+                                <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.parquet&quot;</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[[</span><span class="n">arr</span><span class="p">]])</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+                                <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.parquet&quot;</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+                        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">arr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                            <span class="c1"># Dynamic simulations store tensor-shaped traces.</span>
+                            <span class="c1"># Those arrays do not fit the historical 2-D parquet</span>
+                            <span class="c1"># path, so persist them as raw NumPy payloads.</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">arr</span><span class="p">)</span>
+                            <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+                        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">iscomplexobj</span><span class="p">(</span><span class="n">arr</span><span class="p">):</span>
                             <span class="n">filename</span> <span class="o">+=</span> <span class="s2">&quot;__complex__&quot;</span>
                             <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">arr</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">arr</span><span class="o">.</span><span class="n">imag</span><span class="p">])</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+                            <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.parquet&quot;</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">arr</span><span class="p">)</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
-
-                        <span class="c1"># save the buffer to the zip file</span>
-                        <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.parquet&quot;</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+                            <span class="c1"># save the buffer to the zip file</span>
+                            <span class="n">f_zip_ptr</span><span class="o">.</span><span class="n">writestr</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="s2">&quot;.parquet&quot;</span><span class="p">,</span> <span class="n">buffer</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
 
                     <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                         <span class="n">warn</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
@@ -200,7 +275,7 @@
 
         <span class="c1"># save logger</span>
         <span class="k">if</span> <span class="n">session_data</span><span class="o">.</span><span class="n">logger</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;sessions/&#39;</span> <span class="o">+</span> <span class="n">session_data</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">session_data</span><span class="o">.</span><span class="n">tpe</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;/logger.parquet&#39;</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">folder</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">session_data</span><span class="o">.</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">session_data</span><span class="o">.</span><span class="n">tpe</span><span class="o">.</span><span class="n">value</span> <span class="o">+</span> <span class="s1">&#39;/logger.parquet&#39;</span>
             <span class="k">with</span> <span class="n">BytesIO</span><span class="p">()</span> <span class="k">as</span> <span class="n">buffer</span><span class="p">:</span>
                 <span class="c1"># save the DataFrame to the buffer, protocol4 is to be compatible with python 3.6</span>
                 <span class="n">session_data</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">to_df</span><span class="p">()</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
@@ -214,6 +289,8 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">save_multiverse_data_to_zip</span><span class="p">(</span><span class="n">f_zip_ptr</span><span class="p">:</span> <span class="n">zipfile</span><span class="o">.</span><span class="n">ZipFile</span><span class="p">,</span>
                                 <span class="n">multiverse</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiVerse</span><span class="p">,</span>
                                 <span class="n">filename_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                                <span class="n">active_grid_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="n">active_sessions_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DriverToSave</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                 <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                 <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                 <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -227,6 +304,15 @@
 
     <span class="k">for</span> <span class="n">grid_idtag</span><span class="p">,</span> <span class="n">diff_grid</span> <span class="ow">in</span> <span class="n">multiverse_model_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">base_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;multiverse/</span><span class="si">{</span><span class="n">grid_idtag</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">sessions_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DriverToSave</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">multiverse_drivers_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">grid_idtag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">active_grid_idtag</span> <span class="o">==</span> <span class="n">grid_idtag</span> <span class="ow">and</span> <span class="n">active_sessions_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># The GUI save flow provides the active scenario session payload explicitly.</span>
+            <span class="c1"># Use that payload for the active scenario instead of assuming node.drivers</span>
+            <span class="c1"># has already been synchronized with the session object.</span>
+            <span class="n">sessions_data</span> <span class="o">=</span> <span class="n">active_sessions_data</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">gather_model_as_jsons</span><span class="p">(</span><span class="n">diff_grid</span><span class="p">,</span> <span class="n">project_directory</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="n">filename_zip</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;model_data&quot;</span><span class="p">:</span>
@@ -246,15 +332,13 @@
                     <span class="n">logger</span><span class="o">.</span><span class="n">add_error</span><span class="p">(</span><span class="n">msg</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">),</span> <span class="n">device_class</span><span class="o">=</span><span class="n">object_type_name</span><span class="p">)</span>
                     <span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">object_type_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-            <span class="n">base_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;multiverse/</span><span class="si">{</span><span class="n">grid_idtag</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">sessions_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DriverToSave</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">multiverse_drivers_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">grid_idtag</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">sessions_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">save_results_in_zip</span><span class="p">(</span><span class="n">f_zip_ptr</span><span class="o">=</span><span class="n">f_zip_ptr</span><span class="p">,</span>
-                                    <span class="n">filename_zip</span><span class="o">=</span><span class="n">filename_zip</span><span class="p">,</span>
-                                    <span class="n">folder</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_path</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">sub_folder</span><span class="si">}</span><span class="s2">/sessions&quot;</span><span class="p">,</span>
-                                    <span class="n">sessions_data</span><span class="o">=</span><span class="n">sessions_data</span><span class="p">,</span>
-                                    <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
-                                    <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sessions_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">save_results_in_zip</span><span class="p">(</span><span class="n">f_zip_ptr</span><span class="o">=</span><span class="n">f_zip_ptr</span><span class="p">,</span>
+                                <span class="n">filename_zip</span><span class="o">=</span><span class="n">filename_zip</span><span class="p">,</span>
+                                <span class="n">folder</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_path</span><span class="si">}</span><span class="s2">/sessions&quot;</span><span class="p">,</span>
+                                <span class="n">sessions_data</span><span class="o">=</span><span class="n">sessions_data</span><span class="p">,</span>
+                                <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
+                                <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">diagram</span> <span class="ow">in</span> <span class="n">diff_grid</span><span class="o">.</span><span class="n">diagrams</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_path</span><span class="si">}</span><span class="s2">/diagrams/</span><span class="si">{</span><span class="n">diagram</span><span class="o">.</span><span class="n">idtag</span><span class="si">}</span><span class="s2">.diagram&quot;</span>
@@ -392,11 +476,13 @@
 <div class="viewcode-block" id="save_veragrid_multiverse_data_to_zip">
 <a class="viewcode-back" href="../../../../rst_source/api/auto/VeraGridEngine.IO.veragrid.html#VeraGridEngine.IO.veragrid.zip_interface.save_veragrid_multiverse_data_to_zip">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">save_veragrid_multiverse_data_to_zip</span><span class="p">(</span><span class="n">filename_zip</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-                              <span class="n">json_files</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
-                              <span class="n">multiverse</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiVerse</span><span class="p">,</span>
-                              <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                              <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                              <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">()):</span>
+                                         <span class="n">json_files</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">],</span>
+                                         <span class="n">multiverse</span><span class="p">:</span> <span class="n">dev</span><span class="o">.</span><span class="n">MultiVerse</span><span class="p">,</span>
+                                         <span class="n">active_grid_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                         <span class="n">active_sessions_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DriverToSave</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                         <span class="n">text_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                         <span class="n">progress_func</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="kc">None</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                         <span class="n">logger</span><span class="o">=</span><span class="n">Logger</span><span class="p">()):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Save a list of DataFrames to a zip file without saving to disk the csv files</span>
 <span class="sd">    :param filename_zip: file name where to save all</span>
@@ -420,6 +506,8 @@
         <span class="n">save_multiverse_data_to_zip</span><span class="p">(</span><span class="n">f_zip_ptr</span><span class="o">=</span><span class="n">f_zip_ptr</span><span class="p">,</span>
                                     <span class="n">multiverse</span><span class="o">=</span><span class="n">multiverse</span><span class="p">,</span>
                                     <span class="n">filename_zip</span><span class="o">=</span><span class="n">filename_zip</span><span class="p">,</span>
+                                    <span class="n">active_grid_idtag</span><span class="o">=</span><span class="n">active_grid_idtag</span><span class="p">,</span>
+                                    <span class="n">active_sessions_data</span><span class="o">=</span><span class="n">active_sessions_data</span><span class="p">,</span>
                                     <span class="n">text_func</span><span class="o">=</span><span class="n">text_func</span><span class="p">,</span>
                                     <span class="n">progress_func</span><span class="o">=</span><span class="n">progress_func</span><span class="p">,</span>
                                     <span class="n">logger</span><span class="o">=</span><span class="n">logger</span><span class="p">)</span>
@@ -753,25 +841,31 @@
         <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span>
 
     <span class="n">names</span> <span class="o">=</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">namelist</span><span class="p">()</span>
+    <span class="n">active_grid_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_get_active_multiverse_grid_idtag</span><span class="p">(</span><span class="n">zip_file_pointer</span><span class="p">)</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
         <span class="k">if</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;sessions&#39;</span><span class="p">:</span>
+            <span class="n">session_entry</span> <span class="o">=</span> <span class="n">_split_session_entry_path</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">active_grid_idtag</span><span class="o">=</span><span class="n">active_grid_idtag</span><span class="p">)</span>
 
-                <span class="n">session_name</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-                <span class="n">study_name</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-                <span class="n">array_name</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">session_entry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">session_name</span><span class="p">,</span> <span class="n">study_name</span><span class="p">,</span> <span class="n">array_name</span> <span class="o">=</span> <span class="n">session_entry</span>
 
                 <span class="k">if</span> <span class="n">session_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="n">data</span><span class="p">[</span><span class="n">session_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
 
                 <span class="k">if</span> <span class="n">study_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">session_name</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                     <span class="n">data</span><span class="p">[</span><span class="n">session_name</span><span class="p">][</span><span class="n">study_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
 
                 <span class="n">data</span><span class="p">[</span><span class="n">session_name</span><span class="p">][</span><span class="n">study_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">array_name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
 
     <span class="k">return</span> <span class="n">data</span></div>
 
@@ -795,22 +889,32 @@
         <span class="k">return</span> <span class="nb">dict</span><span class="p">()</span>
 
     <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">active_grid_idtag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">_get_active_multiverse_grid_idtag</span><span class="p">(</span><span class="n">zip_file_pointer</span><span class="p">)</span>
 
-    <span class="c1"># traverse the zip names and pick all those that start with sessions_data/session_name/study_name</span>
+    <span class="c1"># Traverse the zip names and pick all those that belong to the standard</span>
+    <span class="c1"># session tree or to the active multiverse scenario session tree.</span>
     <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">namelist</span><span class="p">():</span>
         <span class="k">if</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
             <span class="n">path</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">path</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;sessions&#39;</span> <span class="ow">and</span> <span class="n">session_name</span> <span class="o">==</span> <span class="n">path</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">study_name</span> <span class="o">==</span> <span class="n">path</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+            <span class="n">session_entry</span> <span class="o">=</span> <span class="n">_split_session_entry_path</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">active_grid_idtag</span><span class="o">=</span><span class="n">active_grid_idtag</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">session_entry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">path_session_name</span><span class="p">,</span> <span class="n">path_study_name</span><span class="p">,</span> <span class="n">path_array_name</span> <span class="o">=</span> <span class="n">session_entry</span>
+
+                <span class="k">if</span> <span class="n">session_name</span> <span class="o">==</span> <span class="n">path_session_name</span> <span class="ow">and</span> <span class="n">study_name</span> <span class="o">==</span> <span class="n">path_study_name</span><span class="p">:</span>
                     <span class="c1"># create a buffer to read the file</span>
                     <span class="n">file_pointer</span> <span class="o">=</span> <span class="n">zip_file_pointer</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
                     <span class="c1"># split the file name into name and extension</span>
                     <span class="n">_</span><span class="p">,</span> <span class="n">extension</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">splitext</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-                    <span class="n">arr_name</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">extension</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+                    <span class="n">arr_name</span> <span class="o">=</span> <span class="n">path_array_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">extension</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
 
                     <span class="c1"># read the data</span>
                     <span class="n">data</span><span class="p">[</span><span class="n">arr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_data_frame_from_zip</span><span class="p">(</span><span class="n">file_pointer</span><span class="p">,</span> <span class="n">extension</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span>
 
     <span class="k">return</span> <span class="n">data</span></div>
 

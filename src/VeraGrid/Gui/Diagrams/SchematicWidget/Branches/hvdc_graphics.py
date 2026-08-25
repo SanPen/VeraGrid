@@ -158,8 +158,8 @@ class HvdcGraphicItem(LineGraphicTemplateItem):
         """
         Convert this HvdcLine to a vsc + DC line system
         """
-        ok = yes_no_question('Do you want to change the HvdcLine by 2 VSC converters + 1 DC Line?',
-                             'Change by a VSC system')
+        ok = yes_no_question(self.tr('Do you want to change the HvdcLine by 2 VSC converters + 1 DC Line?'),
+                             self.tr('Change by a VSC system'))
 
         if ok:
             self.editor.convert_hvdc_line_to_vsc_system(hvdc_line=self.api_object)

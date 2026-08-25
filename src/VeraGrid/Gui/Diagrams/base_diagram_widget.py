@@ -696,8 +696,8 @@ class BaseDiagramWidget(QSplitter):
             plt.legend()
             plt.show()
         else:
-            info_msg("No time series results to plot, run some time series results. Even partial results are fine",
-                     f"{api_object.name} results plot")
+            info_msg(self.tr("No time series results to plot, run some time series results. Even partial results are fine"),
+                     self.tr("{device_name} results plot").format(device_name=api_object.name))
 
     def plot_hvdc_branch(self, i: int, api_object: HvdcLine):
         """
@@ -746,8 +746,8 @@ class BaseDiagramWidget(QSplitter):
             plt.legend()
             plt.show()
         else:
-            info_msg("No time series results to plot, run some time series results. Even partial results are fine",
-                     f"{api_object.name} results plot")
+            info_msg(self.tr("No time series results to plot, run some time series results. Even partial results are fine"),
+                     self.tr("{device_name} results plot").format(device_name=api_object.name))
 
     @staticmethod
     def set_rate_to_profile(api_object: ALL_DEV_TYPES):
@@ -760,7 +760,10 @@ class BaseDiagramWidget(QSplitter):
                 quit_msg = (f"{api_object.name}\nAre you sure that you want to overwrite the "
                             f"rates profile with the snapshot value?")
 
-                ok = yes_no_question(text=quit_msg, title='Overwrite the profile')
+                ok = yes_no_question(
+                    text=quit_msg,
+                    title=QtCore.QCoreApplication.translate("BaseDiagramWidget", "Overwrite the profile"),
+                )
 
                 if ok:
                     api_object.rate_prof.fill(api_object.rate)
@@ -779,7 +782,10 @@ class BaseDiagramWidget(QSplitter):
                     quit_msg = (f"{api_object.name}\nAre you sure that you want to overwrite the "
                                 f"active profile with the snapshot value?")
 
-                    ok = yes_no_question(text=quit_msg, title='Overwrite the active profile')
+                    ok = yes_no_question(
+                        text=quit_msg,
+                        title=QtCore.QCoreApplication.translate("BaseDiagramWidget", "Overwrite the active profile"),
+                    )
                 else:
                     ok = True
 

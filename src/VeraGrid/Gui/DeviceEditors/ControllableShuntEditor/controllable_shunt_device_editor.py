@@ -31,7 +31,7 @@ class ControllableShuntDeviceEditor(TemplateDeviceEditor):
         """
         TemplateDeviceEditor.__init__(self, api_object=api_object, circuit=circuit)
         self.api_object: ControllableShunt = api_object
-        self.setWindowTitle("Controllable shunt editor")
+        self.setWindowTitle(self.tr("Controllable shunt editor"))
 
         self.steps_editor_widget: ControllableShuntStepsEditorWidget | None = None
         self._build_steps_editor_tab()

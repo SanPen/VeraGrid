@@ -217,7 +217,7 @@ class ConfigurationMain(ResultsMain):
         # check boxes
         # Use the checkbox state-change signal so the theme refresh path runs for both
         # user clicks and programmatic setChecked() calls during configuration loading.
-        self.ui.dark_mode_checkBox.toggled.connect(self.change_theme_mode)
+        self.ui.dark_mode_checkBox.toggled.connect(self.on_dark_mode_checkBox_toggled)
 
         self.plugins_investment_evaluation_method_dict = dict()
 
@@ -368,6 +368,21 @@ class ConfigurationMain(ResultsMain):
         super().refresh_runtime_translations()
         self.refresh_language_combo_box_texts()
 
+    @QtCore.Slot(bool)
+    def on_dark_mode_checkBox_toggled(self, checked: bool) -> None:
+        """
+        Apply the GUI theme after the Main dark-mode checkbox changes.
+
+        :param checked: Current checkbox state.
+        :return: None.
+        """
+        self.recolour_script_editors(dark_theme=checked)
+        diagram_widgets_list: object = self.__dict__.get("diagram_widgets_list", None)
+        if isinstance(diagram_widgets_list, list):
+            self.change_theme_mode(checked)
+        else:
+            pass
+
     def change_theme_mode(self, _checked: bool | None = None) -> None:
         """
         Change the GUI theme.
@@ -378,7 +393,12 @@ class ConfigurationMain(ResultsMain):
         custom_colors = {"primary": "#00aa88ff",
                          "primary>list.selectionBackground": "#00aa88be"}
 
-        if self.ui.dark_mode_checkBox.isChecked():
+        if _checked is None:
+            dark_theme: bool = self.ui.dark_mode_checkBox.isChecked()
+        else:
+            dark_theme = _checked
+
+        if dark_theme:
             qdarktheme.setup_theme(theme='dark',
                                    custom_colors=custom_colors,
                                    additional_qss="QToolTip {color: white; background-color: black; border: 0px; }")
@@ -389,6 +409,7 @@ class ConfigurationMain(ResultsMain):
                 if isinstance(diagram, SchematicWidget):
                     diagram.set_dark_mode()
 
+            self.recolour_script_editors(dark_theme=True)
             self.dynamic_editor_workspace_session.set_dark_mode()
 
             self.colour_diagrams()
@@ -404,9 +425,24 @@ class ConfigurationMain(ResultsMain):
                 if isinstance(diagram, SchematicWidget):
                     diagram.set_light_mode()
 
+            self.recolour_script_editors(dark_theme=False)
             self.dynamic_editor_workspace_session.set_light_mode()
 
             self.colour_diagrams()
+
+    def recolour_script_editors(self, dark_theme: bool) -> None:
+        """
+        Recolor the Main GUI scripting widgets from the Main theme event.
+
+        :param dark_theme: Whether the Main dark-mode checkbox is checked.
+        :return: None.
+        """
+        if dark_theme:
+            self.console.set_dark_mode()
+            self.code_editor.set_dark_mode()
+        else:
+            self.console.set_light_mode()
+            self.code_editor.set_light_mode()
 
     @staticmethod
     def config_file_path() -> str:
@@ -637,11 +673,9 @@ class ConfigurationMain(ResultsMain):
         struct = self.get_config_structure()
         config_data_to_struct(data_=data, struct_=struct)
 
-        # light / dark mode
-        if self.ui.dark_mode_checkBox.isChecked():
-            set_dark_mode()
-        else:
-            set_light_mode()
+        # Apply the theme through the same path used by the dark-mode checkbox,
+        # so the main editor, console, diagrams, and dynamic editor stay aligned.
+        self.change_theme_mode()
 
         graphics_data: object = data.get("graphics", None)
         if isinstance(graphics_data, dict):
